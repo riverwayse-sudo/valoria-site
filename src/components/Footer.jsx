@@ -6,7 +6,7 @@ export default function Footer() {
     <>
       <style>{`
         footer.vi-footer {
-          background: var(--dark-mid);
+          background: var(--dark);
           border-top: 1px solid rgba(201,168,76,.15);
           padding: clamp(48px,6vw,80px) var(--pad) 32px;
         }

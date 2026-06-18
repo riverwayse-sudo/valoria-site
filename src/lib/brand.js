@@ -9,7 +9,7 @@ export const BRAND = {
   location: 'Lagos, Nigeria',
   compliance: 'NDPA 2023 Compliant',
   assessmentUrl: 'https://assessment.valoriainstitute.com/',
-  logo: 'https://cdn.prod.website-files.com/69dc1aa64e9486349988bac7/69dc1c27ba1412845b48c9e6_relume-885162.png',
+  logo: 'https://valoriainstitute.com/logo.png',
 }
 
 export const COLORS = {
@@ -32,7 +32,7 @@ export const PRIME_CLUSTERS = [
   { letter: 'P', name: 'Presence', color: COLORS.teal },
   { letter: 'R', name: 'Relationships', color: COLORS.blue },
   { letter: 'I', name: 'Influence', color: COLORS.purple },
-  { letter: 'M', name: 'TBD', color: COLORS.amber },
+  { letter: 'M', name: 'Mastery', color: COLORS.amber },
   { letter: 'E', name: 'Enterprise', color: COLORS.coral },
 ]
 

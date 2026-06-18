@@ -1,8 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500&display=swap');
 
-/* Webflow badge suppression */
-.w-webflow-badge { display: none !important; }
-
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -12,9 +9,9 @@
 :root {
   --gold: #C9A84C;
   --gold-light: #E2C97E;
-  --dark: #0F0F1A;
-  --dark-mid: #1A1A2E;
-  --dark-card: #161624;
+  --dark: #1A1A2E;
+  --dark-mid: #2E2E4A;
+  --dark-card: #12122A;
   --parchment: #F7F4EE;
   --dim: rgba(247, 244, 238, .55);
   --faint: rgba(247, 244, 238, .22);
@@ -27,7 +24,7 @@
   --max: 1160px;
   --pad: clamp(24px, 5vw, 64px);
   --btn-radius: 9999px;
-  --nav-bg: #0F0F1A;
+  --nav-bg: #1A1A2E;
 }
 
 @media (prefers-reduced-motion: reduce) {
