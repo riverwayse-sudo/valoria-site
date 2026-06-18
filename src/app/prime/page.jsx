@@ -13,7 +13,7 @@ const CLUSTER_DESCRIPTIONS = {
   P: 'How a professional shows up — composure, communication, and how clearly they carry their own expertise into a room.',
   R: 'How a professional works with others — collaboration, trust-building, and the quality of the relationships they sustain.',
   I: 'How a professional moves a decision — the ability to shift outcomes, not just contribute an opinion to them.',
-  M: 'Placeholder pending confirmation — naming and definition for this cluster have not yet been finalised. Do not publish without sign-off.',
+  M: 'How a professional delivers — execution, accountability, resilience, and adaptability under pressure.',
   E: 'How a professional builds and operates — the structures, systems, and ventures they can stand up and run.',
 }
 
@@ -41,7 +41,7 @@ export default function PrimePage() {
                   <div>
                     <div className="cluster-name" style={{ color: 'var(--parchment)' }}>
                       {c.name}
-                      {c.name === 'TBD' && <span className="cluster-pending">NAME PENDING CONFIRMATION</span>}
+                      {c.name === 'Mastery' && <span className="cluster-pending">NAME PENDING CONFIRMATION</span>}
                     </div>
                     <p className="cluster-desc">{CLUSTER_DESCRIPTIONS[c.letter]}</p>
                   </div>
