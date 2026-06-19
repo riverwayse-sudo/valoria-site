@@ -1,7 +1,6 @@
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
-import WaitlistForm from '@/components/WaitlistForm'
 import { ENTRY_POINTS } from '@/lib/brand'
 import './home.css'
 
@@ -289,47 +288,18 @@ export default function HomePage() {
             .waitlist-card .eyebrow { margin-bottom: 16px; }
             .waitlist-card-desc {
               font-size: 14px; font-weight: 300; color: rgba(247,244,238,.45);
-              line-height: 1.7; margin-bottom: 20px;
+              line-height: 1.7; margin-bottom: 24px;
             }
-            .wl-field-label {
-              display: block; font-size: 10px; font-weight: 600;
-              letter-spacing: .14em; color: rgba(201,168,76,.6);
-              margin-bottom: 7px;
-            }
-            .wl-field {
-              display: block; width: 100%; box-sizing: border-box;
-              background: rgba(255,255,255,.04);
-              border: 1px solid rgba(201,168,76,.2);
-              border-radius: 6px;
-              padding: 11px 14px;
-              font-size: 13px; font-weight: 300;
-              color: var(--parchment);
-              outline: none;
-              transition: border-color .2s;
-              margin-bottom: 14px;
-              font-family: inherit;
-              -webkit-appearance: none; appearance: none;
-            }
-            .wl-field:focus { border-color: rgba(201,168,76,.55); }
-            .wl-field option { background: #1A1A2E; color: var(--parchment); }
             .wl-btn {
               display: block; width: 100%; text-align: center;
-              padding: 14px 28px;
+              padding: 16px 28px;
               background: var(--gold); color: var(--dark);
               font-size: 12px; font-weight: 700; letter-spacing: .14em;
               border-radius: var(--btn-radius);
-              border: none; cursor: pointer;
+              text-decoration: none;
               transition: opacity .2s;
-              font-family: inherit;
             }
             .wl-btn:hover { opacity: .88; }
-            .wl-btn:disabled { opacity: .5; cursor: not-allowed; }
-            .wl-success {
-              text-align: center; padding: 20px 0;
-              font-size: 14px; font-weight: 300;
-              color: rgba(247,244,238,.6); line-height: 1.7;
-            }
-            .wl-success strong { display: block; color: var(--gold); font-size: 20px; margin-bottom: 8px; font-family: var(--font); font-weight: 300; }
             @media (max-width: 780px) {
               .waitlist-inner { grid-template-columns: 1fr; }
             }
@@ -366,7 +336,21 @@ export default function HomePage() {
             </Reveal>
 
             <Reveal>
-              <WaitlistForm />
+              <div className="waitlist-card">
+                <div className="eyebrow">
+                  <div className="eyebrow-line" />
+                  <span className="eyebrow-text">JOIN THE WAITLIST</span>
+                </div>
+                <p className="waitlist-card-desc">
+                  Email us directly with &ldquo;Founding Cohort&rdquo; and your name, location, and which entry point you&apos;re interested in — candidate, speaker, facilitator, employer, or organiser.
+                </p>
+                <a
+                  href={`mailto:info@valoriainstitute.com?subject=Founding%20Cohort%20Waitlist`}
+                  className="wl-btn"
+                >
+                  JOIN THE WAITLIST
+                </a>
+              </div>
             </Reveal>
           </div>
         </section>
