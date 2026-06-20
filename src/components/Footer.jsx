@@ -54,6 +54,7 @@ export default function Footer() {
               <div className="uf-col-title">Platform</div>
               <ul className="uf-links">
                 <li><a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer">VALU Index</a></li>
+                <li><Link href="/marketplace">Marketplace</Link></li>
                 <li><Link href="/prime">PRIME Framework</Link></li>
                 <li><Link href="/atb-connect">ATB Connect</Link></li>
                 <li><Link href="/spotlight">ATB Spotlight</Link></li>
@@ -81,7 +82,7 @@ export default function Footer() {
               <div className="uf-col-title" style={{ marginTop: '28px' }}>Get Started</div>
               <ul className="uf-links">
                 <li><a href="https://assessment.valoriainstitute.com/" className="uf-cta" target="_blank" rel="noopener noreferrer">Take the VALU Index &rarr;</a></li>
-                <li><Link href="/register">Create Account</Link></li>
+                <li><Link href="/signup">Create Account</Link></li>
                 <li><Link href="/login">Sign In</Link></li>
               </ul>
             </div>

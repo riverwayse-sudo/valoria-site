@@ -97,6 +97,7 @@ export default function Nav() {
         </Link>
 
         <ul className="nav-links" role="list">
+          <li><Link href="/marketplace">Marketplace</Link></li>
           <li><Link href="/dashboard">Dashboard</Link></li>
           <li><Link href="/atb-connect">Find Talent</Link></li>
           <li><Link href="/spotlight">Book a Speaker</Link></li>
@@ -121,6 +122,7 @@ export default function Nav() {
       </nav>
 
       <nav className={`nav-mobile${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation">
+        <Link href="/marketplace" onClick={closeMenu}>Marketplace</Link>
         <Link href="/dashboard" onClick={closeMenu}>Dashboard</Link>
         <Link href="/atb-connect" onClick={closeMenu}>Find Talent</Link>
         <Link href="/spotlight" onClick={closeMenu}>Book a Speaker</Link>
