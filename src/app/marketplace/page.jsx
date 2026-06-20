@@ -1,6 +1,7 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 const GOLD = '#C9A84C'
@@ -18,7 +19,17 @@ const TIER_BADGES = {
 const AVAIL_COLORS = { open: '#1D9E75', contract_only: GOLD, not_available: '#888' }
 
 export default function MarketplacePage() {
-  const [mode, setMode] = useState('talent') // 'talent' | 'speaker'
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: DARK }} />}>
+      <MarketplaceContent />
+    </Suspense>
+  )
+}
+
+function MarketplaceContent() {
+  const searchParams = useSearchParams()
+  const initialMode = searchParams.get('mode') === 'speaker' ? 'speaker' : 'talent'
+  const [mode, setMode] = useState(initialMode) // 'talent' | 'speaker'
   const [profiles, setProfiles] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')

@@ -32,7 +32,7 @@ export default function HomePage() {
                 One marketplace. Three ways to engage Africa&apos;s best professionals. Search candidates, book speakers, commission facilitators — every profile underwritten by one independently assessed standard.
               </p>
               <div className="hero-actions au d4">
-                <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">
+                <a href="/marketplace" className="btn-gold">
                   EXPLORE THE PLATFORM
                 </a>
                 <a href="https://assessment.valoriainstitute.com/" className="btn-outline" target="_blank" rel="noopener noreferrer">
@@ -96,7 +96,7 @@ export default function HomePage() {
               <p className="alignment-sub">
                 Valoria Institute exists to move African professionals from category two — used, deployed as a resource without development — to category three. Every profile, every assessment, every programme is an act of infrastructure toward that one outcome.
               </p>
-              <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">
+              <a href="/about-us" className="btn-gold">
                 SEE HOW IT WORKS
               </a>
               <div className="alignment-cats" aria-label="The four categories">

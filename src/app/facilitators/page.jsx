@@ -24,7 +24,7 @@ export default function FacilitatorsPage() {
               Valoria Develop is the facilitator modality of the marketplace. Commission PRIME-certified facilitators to run development programmes for your teams, built directly on the same five-cluster standard the VALU Index measures against.
             </p>
             <div className="page-hero-actions">
-              <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">COMMISSION FACILITATORS</a>
+              <a href="/contact-us" className="btn-gold">COMMISSION FACILITATORS</a>
               <a href="/prime" className="btn-outline">SEE THE PRIME FRAMEWORK</a>
             </div>
           </div>
@@ -61,8 +61,8 @@ export default function FacilitatorsPage() {
           <Reveal>
             <div className="eyebrow" style={{ justifyContent: 'center' }}><div className="eyebrow-line" /><span className="eyebrow-text">FOR TRAINING BUYERS</span><div className="eyebrow-line" /></div>
             <h2 className="section-title">Develop your team<br /><em>against the standard.</em></h2>
-            <p className="page-sub">Valoria Develop is live on the assessment platform. Create an account to start browsing certified facilitators.</p>
-            <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">COMMISSION FACILITATORS</a>
+            <p className="page-sub">Valoria Develop is in early access — commissioning runs through a direct conversation with the team for now, not a self-service search.</p>
+            <a href="/contact-us" className="btn-gold">COMMISSION FACILITATORS</a>
           </Reveal>
         </section>
       </main>

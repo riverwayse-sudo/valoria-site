@@ -24,7 +24,7 @@ export default function AtbConnectPage() {
               ATB Connect is the candidate modality of the Valoria marketplace. Every professional you search has already been through the VALU Index — so you&apos;re comparing assessed capability, not curated résumés.
             </p>
             <div className="page-hero-actions">
-              <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">SEARCH TALENT</a>
+              <a href="/marketplace?mode=talent" className="btn-gold">SEARCH TALENT</a>
               <a href="/prime" className="btn-outline">SEE THE PRIME FRAMEWORK</a>
             </div>
           </div>
@@ -61,8 +61,8 @@ export default function AtbConnectPage() {
           <Reveal>
             <div className="eyebrow" style={{ justifyContent: 'center' }}><div className="eyebrow-line" /><span className="eyebrow-text">FOR EMPLOYERS</span><div className="eyebrow-line" /></div>
             <h2 className="section-title">Start searching<br /><em>assessed talent.</em></h2>
-            <p className="page-sub">ATB Connect is live on the assessment platform. Create an employer account to start filtering candidates.</p>
-            <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">SEARCH TALENT</a>
+            <p className="page-sub">Browse the talent pool free — no account required. Create an account when you&apos;re ready to message a candidate directly.</p>
+            <a href="/marketplace?mode=talent" className="btn-gold">SEARCH TALENT</a>
           </Reveal>
         </section>
       </main>

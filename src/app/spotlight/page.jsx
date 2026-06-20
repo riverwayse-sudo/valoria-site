@@ -24,7 +24,7 @@ export default function SpotlightPage() {
               ATB Spotlight is the speaker modality of the Valoria marketplace. Search by expertise, sector, and VALU Index score to find voices beyond the usual conference circuit — every one of them independently assessed.
             </p>
             <div className="page-hero-actions">
-              <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">FIND A SPEAKER</a>
+              <a href="/marketplace?mode=speaker" className="btn-gold">FIND A SPEAKER</a>
               <a href="/prime" className="btn-outline">SEE THE PRIME FRAMEWORK</a>
             </div>
           </div>
@@ -61,8 +61,8 @@ export default function SpotlightPage() {
           <Reveal>
             <div className="eyebrow" style={{ justifyContent: 'center' }}><div className="eyebrow-line" /><span className="eyebrow-text">FOR EVENT ORGANISERS</span><div className="eyebrow-line" /></div>
             <h2 className="section-title">Build a lineup<br /><em>worth attending for.</em></h2>
-            <p className="page-sub">ATB Spotlight is live on the assessment platform. Create an organiser account to start browsing speakers.</p>
-            <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">FIND A SPEAKER</a>
+            <p className="page-sub">Browse the speaker roster free — no account required. Create an account when you&apos;re ready to send a booking enquiry.</p>
+            <a href="/marketplace?mode=speaker" className="btn-gold">FIND A SPEAKER</a>
           </Reveal>
         </section>
       </main>
