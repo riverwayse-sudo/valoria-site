@@ -85,7 +85,7 @@ export default function PublicProfilePage({ params }) {
       {/* HEADER */}
       <header style={styles.header}>
         <Link href="/" style={styles.backLink}>
-          <img src="https://cdn.prod.website-files.com/69dc1aa64e9486349988bac7/69dc1c27ba1412845b48c9e6_relume-885162.png" alt="Valoria Institute" style={{ height: '40px', width: 'auto' }} />
+          <img src="/logo.png" alt="Valoria Institute" style={{ height: '40px', width: 'auto' }} />
         </Link>
         <div style={{ display: 'flex', gap: '12px' }}>
           <Link href="/marketplace" style={styles.navLink}>← Marketplace</Link>

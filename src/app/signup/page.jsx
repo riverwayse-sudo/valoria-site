@@ -85,6 +85,7 @@ export default function SignupPage() {
             Check your email to confirm your address, then complete your profile.
           </p>
           <a href="/profile/edit" style={styles.btnGold}>COMPLETE YOUR PROFILE</a>
+          <a href="/dashboard" style={{ ...styles.btnGold, background: 'transparent', border: '1px solid rgba(201,168,76,.3)', color: GOLD, marginTop: '10px', display: 'block', textAlign: 'center' }}>GO TO DASHBOARD</a>
         </div>
       </div>
     )

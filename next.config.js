@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'valoriainstitute.com',
       },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+      },
     ],
   },
 }

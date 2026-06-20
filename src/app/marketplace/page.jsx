@@ -59,7 +59,7 @@ export default function MarketplacePage() {
       {/* TOP BAR */}
       <header style={styles.header}>
         <Link href="/" style={styles.logo}>
-          <img src="https://cdn.prod.website-files.com/69dc1aa64e9486349988bac7/69dc1c27ba1412845b48c9e6_relume-885162.png" alt="Valoria Institute" style={{ height: '44px', width: 'auto' }} />
+          <img src="/logo.png" alt="Valoria Institute" style={{ height: '44px', width: 'auto' }} />
         </Link>
         <div style={styles.modeTabs}>
           <button onClick={() => setMode('talent')} style={{ ...styles.modeTab, ...(mode === 'talent' ? styles.modeTabActive : {}) }}>
