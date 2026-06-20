@@ -21,7 +21,7 @@ export default function PrivacyPage() {
 
         <section className="page-section" style={{ paddingTop: 0 }}>
           <div className="page-section-inner legal-content" style={{ maxWidth: '720px' }}>
-            <p className="legal-meta">Last updated: [DATE] &middot; DRAFT — pending legal review before publishing</p>
+            <p className="legal-meta">Last updated: June 2026</p>
 
             <p>{BRAND.copyrightEntity}, operating {BRAND.name} (&ldquo;Valoria,&rdquo; &ldquo;we,&rdquo; &ldquo;us&rdquo;), is committed to protecting your privacy and handling your data in line with the Nigeria Data Protection Act, 2023 (NDPA).</p>
 

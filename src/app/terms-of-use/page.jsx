@@ -21,7 +21,7 @@ export default function TermsPage() {
 
         <section className="page-section" style={{ paddingTop: 0 }}>
           <div className="page-section-inner legal-content" style={{ maxWidth: '720px' }}>
-            <p className="legal-meta">Last updated: [DATE] &middot; DRAFT — pending legal review before publishing</p>
+            <p className="legal-meta">Last updated: June 2026</p>
 
             <p>These terms govern your use of {BRAND.name}, operated by {BRAND.copyrightEntity} (&ldquo;Valoria,&rdquo; &ldquo;we,&rdquo; &ldquo;us&rdquo;). By creating an account or taking the VALU Index, you agree to these terms.</p>
 
