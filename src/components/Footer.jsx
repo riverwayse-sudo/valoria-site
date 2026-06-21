@@ -66,7 +66,9 @@ export default function Footer() {
         <div className="container">
           <div className="uf-grid">
             <div className="uf-brand">
-              <img src={BRAND.logo} alt="Valoria Institute" style={{ height: '60px', width: 'auto', display: 'block', marginBottom: '14px' }} />
+              <img src={BRAND.logo} alt="" style={{ height: '52px', width: 'auto', display: 'block', marginBottom: '16px' }} />
+              <div className="uf-name">VALORIA</div>
+              <div className="uf-sub">INSTITUTE</div>
               <p className="uf-desc">The marketplace where African professionals rise. One assessed standard. Three ways to engage.</p>
               <div className="uf-tagline">Worth. Built.</div>
             </div>

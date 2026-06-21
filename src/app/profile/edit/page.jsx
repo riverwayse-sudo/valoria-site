@@ -82,6 +82,10 @@ export default function ProfileEditPage() {
   }
 
   async function save() {
+    if (isSupply && profile.is_visible && !hasVALU) {
+      setError('You need a VALU Index score before your profile can be listed. Take the assessment, or turn off "Listed" for now.')
+      return
+    }
     setSaving(true); setError('')
     try {
       const { error } = await supabase.from('profiles').upsert({ ...profile, id: user.id })

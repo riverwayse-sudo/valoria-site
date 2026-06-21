@@ -32,11 +32,13 @@ export default function PublicProfilePage({ params }) {
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase.from('profiles').select('*').eq('id', params.id).single()
+      const [{ data }, { data: { user } }] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', params.id).single(),
+        supabase.auth.getUser(),
+      ])
       setProfile(data)
-      setLoading(false)
-      const { data: { user } } = await supabase.auth.getUser()
       setCurrentUser(user)
+      setLoading(false)
     }
     load()
   }, [params.id])
@@ -75,13 +77,34 @@ export default function PublicProfilePage({ params }) {
   if (loading) return <div style={{ minHeight: '100vh', background: DARK, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Raleway', color: GOLD }}>Loading profile…</div>
   if (!profile) return <div style={{ minHeight: '100vh', background: DARK, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Raleway', color: 'rgba(247,244,238,.4)' }}>Profile not found.</div>
 
+  const isOwner = currentUser?.id === profile.id
+
+  // Unlisted profiles are only viewable by their owner (previewing their own
+  // listing). Everyone else gets a clean "not available" state rather than
+  // the full profile — the visibility toggle on profile/edit only means
+  // anything if this is actually enforced here, not just in the marketplace
+  // search query.
+  if (!profile.is_visible && !isOwner) {
+    return (
+      <div style={{ minHeight: '100vh', background: DARK, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '16px', fontFamily: 'Raleway', padding: '20px', textAlign: 'center' }}>
+        <div style={{ fontSize: '28px', color: GOLD }}>◈</div>
+        <div style={{ color: PARCHMENT, fontSize: '18px', fontWeight: 300 }}>This profile isn&apos;t currently listed.</div>
+        <Link href="/marketplace" style={{ color: GOLD, fontSize: '13px', textDecoration: 'none' }}>← Back to the marketplace</Link>
+      </div>
+    )
+  }
+
   const isSpeaker = profile.user_type === 'speaker'
   const tier = TIER_BADGES[profile.tier] || TIER_BADGES.emerging
   const videoEmbeds = (profile.youtube_links || []).filter(Boolean).map(getYouTubeEmbed).filter(Boolean)
-  const isOwner = currentUser?.id === profile.id
 
   return (
     <div style={styles.page}>
+      {!profile.is_visible && isOwner && (
+        <div style={{ background: 'rgba(201,168,76,.12)', borderBottom: '1px solid rgba(201,168,76,.25)', padding: '10px 24px', textAlign: 'center', fontSize: '12px', color: GOLD, fontWeight: 600, letterSpacing: '.04em' }}>
+          PREVIEW MODE — this profile is not listed and buyers can&apos;t see it. <Link href="/profile/edit" style={{ color: GOLD, textDecoration: 'underline' }}>Make it visible →</Link>
+        </div>
+      )}
       {/* HEADER */}
       <header style={styles.header}>
         <Link href="/" style={styles.backLink}>

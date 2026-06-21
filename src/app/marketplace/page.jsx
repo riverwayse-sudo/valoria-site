@@ -43,9 +43,10 @@ function MarketplaceContent() {
     setLoading(true)
     const { data } = await supabase
       .from('profiles')
-      .select('id, display_name, headline, location, photo_url, user_type, industry, skills, topics, tier, availability, speaking_credits, bio')
+      .select('id, display_name, headline, location, photo_url, user_type, industry, skills, topics, tier, availability, speaking_credits, bio, valu_score')
       .eq('user_type', mode)
       .eq('is_visible', true)
+      .not('valu_score', 'is', null)
       .order('speaking_credits', { ascending: false })
     setProfiles(data || [])
     setLoading(false)
@@ -171,7 +172,14 @@ function ProfileCard({ profile: p, mode }) {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={styles.cardName}>{p.display_name || 'Anonymous'}</div>
           <div style={styles.cardHeadline}>{p.headline || 'Valoria Professional'}</div>
-          {p.location && <div style={styles.cardLocation}>{p.location}</div>}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
+            {p.location && <div style={styles.cardLocation}>{p.location}</div>}
+            {p.valu_score != null && (
+              <span style={{ fontSize: '11px', fontWeight: 700, color: '#C9A84C', letterSpacing: '.02em' }}>
+                VALU {p.valu_score}
+              </span>
+            )}
+          </div>
         </div>
         {mode === 'speaker' && (
           <span style={{ ...styles.tierBadge, background: tier.bg, color: tier.text, border: tier.border !== 'none' ? `1px solid ${tier.border}` : 'none' }}>
