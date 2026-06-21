@@ -18,7 +18,11 @@ export const COLORS = {
   dark: '#0F0F1A',
   darkMid: '#1A1A2E',
   darkCard: '#161624',
+  slateIndigo: '#2E2E4A',   // ATB sub-brand surfaces, hover states
+  antiqueLinen: '#EDE8DC',  // accent backgrounds, card fills
+  subtleBrass: '#D4C9A8',   // borders/dividers only — never background, never text
   parchment: '#F7F4EE',
+  ivoryWhite: '#FAFAF7',    // body copy on dark surfaces
   teal: '#1D9E75',
   blue: '#378ADD',
   purple: '#7F77DD',

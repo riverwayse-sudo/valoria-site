@@ -10,16 +10,17 @@ export async function generateMetadata({ params }) {
     const client = createClient(supabaseUrl, supabaseKey)
     const { data: profile } = await client
       .from('profiles')
-      .select('display_name, headline, bio, industry, tier, user_type, photo_url, is_visible')
+      .select('display_name, headline, bio, industry, tier, user_type, photo_url, is_visible, valu_score')
       .eq('id', params.id)
       .single()
 
     if (!profile || !profile.is_visible) return { title: 'Profile', robots: { index: false, follow: false } }
 
     const roleLabel = profile.user_type === 'speaker' ? 'Speaker' : 'Professional'
+    const scoreLine = profile.valu_score != null ? ` VALU Index: ${profile.valu_score}/100.` : ''
     const title = `${profile.display_name} — ${profile.headline || roleLabel}`
-    const description = (profile.bio && profile.bio.slice(0, 155)) ||
-      `${profile.display_name} is a ${roleLabel.toLowerCase()} on Valoria Institute${profile.industry ? `, in ${profile.industry}` : ''}. Independently assessed against the PRIME framework.`
+    const description = (profile.bio && profile.bio.slice(0, 140) + scoreLine) ||
+      `${profile.display_name} is a ${roleLabel.toLowerCase()} on Valoria Institute${profile.industry ? `, in ${profile.industry}` : ''}.${scoreLine} Independently assessed against the PRIME framework.`
 
     return {
       title,

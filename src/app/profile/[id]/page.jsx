@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { PRIME_CLUSTERS } from '@/lib/brand'
 
 const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
@@ -173,6 +174,41 @@ export default function PublicProfilePage({ params }) {
         {/* MAIN CONTENT */}
         <main style={styles.main}>
 
+          {/* PRIME Assessment — the actual differentiator. Was fetched but never
+              shown on this page before; buyers had no way to see it. */}
+          {profile.valu_score != null && (
+            <Section title="PRIME Assessment">
+              <div style={styles.scoreRow}>
+                <div>
+                  <div style={styles.scoreNum}>{profile.valu_score}<span style={styles.scoreOf}>/100</span></div>
+                  <div style={styles.scoreLabel}>VALU Index Score</div>
+                </div>
+              </div>
+              {profile.cluster_scores && (
+                <div style={styles.clusterGrid}>
+                  {PRIME_CLUSTERS.map(c => {
+                    const score = profile.cluster_scores[c.letter]
+                    if (score == null) return null
+                    return (
+                      <div key={c.letter} style={styles.clusterRow}>
+                        <span style={{ ...styles.clusterLetterBig, color: c.color, borderColor: c.color }}>{c.letter}</span>
+                        <div style={{ flex: 1 }}>
+                          <div style={styles.clusterRowTop}>
+                            <span style={styles.clusterName}>{c.name}</span>
+                            <span style={{ color: c.color, fontWeight: 700, fontSize: '13px' }}>{score}</span>
+                          </div>
+                          <div style={styles.clusterTrack}>
+                            <div style={{ width: `${score}%`, height: '100%', background: c.color, borderRadius: '3px', transition: 'width .5s' }} />
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </Section>
+          )}
+
           {/* Bio */}
           {profile.bio && (
             <Section title="About">
@@ -327,6 +363,16 @@ const styles = {
   section: { marginBottom: '40px', paddingBottom: '40px', borderBottom: '1px solid rgba(201,168,76,.08)' },
   sectionTitle: { fontSize: '16px', fontWeight: 600, color: PARCHMENT, marginBottom: '16px', letterSpacing: '-.01em' },
   bio: { fontSize: '14px', fontWeight: 300, color: 'rgba(247,244,238,.7)', lineHeight: 1.7 },
+  scoreRow: { marginBottom: '20px' },
+  scoreNum: { fontSize: '42px', fontWeight: 200, color: GOLD, lineHeight: 1 },
+  scoreOf: { fontSize: '18px', color: 'rgba(247,244,238,.3)', fontWeight: 300 },
+  scoreLabel: { fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(247,244,238,.4)', textTransform: 'uppercase', marginTop: '4px' },
+  clusterGrid: { display: 'flex', flexDirection: 'column', gap: '14px' },
+  clusterRow: { display: 'flex', alignItems: 'center', gap: '12px' },
+  clusterLetterBig: { width: '28px', height: '28px', flexShrink: 0, borderRadius: '50%', border: '1.5px solid', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700 },
+  clusterRowTop: { display: 'flex', justifyContent: 'space-between', marginBottom: '4px' },
+  clusterName: { fontSize: '12px', color: 'rgba(247,244,238,.6)', fontWeight: 500 },
+  clusterTrack: { height: '5px', background: 'rgba(255,255,255,.06)', borderRadius: '3px', overflow: 'hidden' },
   tagGrid: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
   tag: { padding: '5px 14px', borderRadius: '999px', border: '1px solid rgba(201,168,76,.25)', fontSize: '12px', color: 'rgba(247,244,238,.6)', fontWeight: 500 },
   videoGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' },

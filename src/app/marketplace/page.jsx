@@ -3,6 +3,7 @@ import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { PRIME_CLUSTERS } from '@/lib/brand'
 
 const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
@@ -36,6 +37,7 @@ function MarketplaceContent() {
   const [filterIndustry, setFilterIndustry] = useState('')
   const [filterTier, setFilterTier] = useState('')
   const [filterAvail, setFilterAvail] = useState('')
+  const [filterCluster, setFilterCluster] = useState('')
 
   useEffect(() => { fetchProfiles() }, [mode])
 
@@ -43,7 +45,7 @@ function MarketplaceContent() {
     setLoading(true)
     const { data } = await supabase
       .from('profiles')
-      .select('id, display_name, headline, location, photo_url, user_type, industry, skills, topics, tier, availability, speaking_credits, bio, valu_score')
+      .select('id, display_name, headline, location, photo_url, user_type, industry, skills, topics, tier, availability, speaking_credits, bio, valu_score, cluster_scores')
       .eq('user_type', mode)
       .eq('is_visible', true)
       .not('valu_score', 'is', null)
@@ -62,7 +64,8 @@ function MarketplaceContent() {
     const matchIndustry = !filterIndustry || p.industry === filterIndustry
     const matchTier = !filterTier || p.tier === filterTier
     const matchAvail = !filterAvail || p.availability === filterAvail
-    return matchSearch && matchIndustry && matchTier && matchAvail
+    const matchCluster = !filterCluster || (p.cluster_scores && p.cluster_scores[filterCluster] >= 75)
+    return matchSearch && matchIndustry && matchTier && matchAvail && matchCluster
   })
 
   return (
@@ -121,7 +124,33 @@ function MarketplaceContent() {
             </FilterSection>
           )}
 
-          <button onClick={() => { setSearch(''); setFilterIndustry(''); setFilterTier(''); setFilterAvail('') }}
+          <FilterSection label="STRONGEST IN">
+            <div style={styles.clusterChipRow}>
+              {PRIME_CLUSTERS.map(c => {
+                const active = filterCluster === c.letter
+                return (
+                  <button
+                    key={c.letter}
+                    onClick={() => setFilterCluster(active ? '' : c.letter)}
+                    title={c.name}
+                    style={{
+                      ...styles.clusterChip,
+                      background: active ? c.color : 'transparent',
+                      borderColor: c.color,
+                      color: active ? MIDNIGHT : c.color,
+                    }}
+                  >
+                    {c.letter}
+                  </button>
+                )
+              })}
+            </div>
+            {filterCluster && (
+              <div style={styles.clusterChipLabel}>{PRIME_CLUSTERS.find(c => c.letter === filterCluster)?.name} ≥ 75</div>
+            )}
+          </FilterSection>
+
+          <button onClick={() => { setSearch(''); setFilterIndustry(''); setFilterTier(''); setFilterAvail(''); setFilterCluster('') }}
             style={styles.clearBtn}>Clear filters</button>
         </aside>
 
@@ -203,6 +232,24 @@ function ProfileCard({ profile: p, mode }) {
         </div>
       )}
 
+      {/* PRIME cluster strength — the actual assessed breakdown, not just the headline score */}
+      {p.cluster_scores && (
+        <div style={styles.clusterStrip} title="PRIME cluster strength">
+          {PRIME_CLUSTERS.map(c => {
+            const score = p.cluster_scores[c.letter]
+            if (score == null) return null
+            return (
+              <div key={c.letter} style={styles.clusterSeg}>
+                <div style={styles.clusterBarTrack}>
+                  <div style={{ ...styles.clusterBarFill, height: `${score}%`, background: c.color }} />
+                </div>
+                <span style={{ ...styles.clusterLetter, color: c.color }}>{c.letter}</span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
       {/* Bio snippet */}
       {p.bio && <p style={styles.cardBio}>{p.bio.slice(0, 120)}{p.bio.length > 120 ? '…' : ''}</p>}
 
@@ -244,6 +291,9 @@ const styles = {
   select: { width: '100%', padding: '9px 12px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.15)', borderRadius: '6px', color: PARCHMENT, fontSize: '13px', fontFamily: "'Raleway', sans-serif", outline: 'none' },
   radioLabel: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'rgba(247,244,238,.55)', cursor: 'pointer', marginBottom: '8px' },
   clearBtn: { width: '100%', padding: '8px', background: 'transparent', border: '1px solid rgba(201,168,76,.15)', borderRadius: '6px', color: 'rgba(247,244,238,.35)', fontSize: '11px', cursor: 'pointer', fontFamily: "'Raleway', sans-serif", marginTop: '8px' },
+  clusterChipRow: { display: 'flex', gap: '6px' },
+  clusterChip: { flex: 1, padding: '8px 0', borderRadius: '6px', border: '1.5px solid', background: 'transparent', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Raleway', sans-serif", transition: 'all .15s' },
+  clusterChipLabel: { fontSize: '10px', color: 'rgba(247,244,238,.4)', marginTop: '8px', textAlign: 'center' },
   results: { padding: '32px' },
   resultsHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '28px' },
   resultsTitle: { fontSize: 'clamp(20px,2.5vw,30px)', fontWeight: 200, letterSpacing: '-.02em', marginBottom: '4px' },
@@ -261,6 +311,11 @@ const styles = {
   availBadge: { fontSize: '11px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0 },
   tagRow: { display: 'flex', flexWrap: 'wrap', gap: '6px' },
   tag: { padding: '4px 10px', borderRadius: '999px', border: '1px solid #D4C9A8', fontSize: '11px', color: '#2E2E4A', fontWeight: 500, background: '#EDE8DC' },
+  clusterStrip: { display: 'flex', gap: '6px', alignItems: 'flex-end', padding: '10px 4px 2px', borderTop: '1px solid #EDE8DC' },
+  clusterSeg: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', flex: 1 },
+  clusterBarTrack: { width: '100%', height: '28px', background: '#EDE8DC', borderRadius: '2px', display: 'flex', alignItems: 'flex-end', overflow: 'hidden' },
+  clusterBarFill: { width: '100%', borderRadius: '2px', transition: 'height .3s' },
+  clusterLetter: { fontSize: '9px', fontWeight: 700, letterSpacing: '.04em' },
   cardBio: { fontSize: '12px', color: '#444441', lineHeight: 1.6, margin: 0 },
   cardActions: { display: 'flex', gap: '8px', marginTop: '4px' },
   btnViewProfile: { flex: 1, padding: '9px', border: `1px solid ${MIDNIGHT}`, borderRadius: '999px', color: MIDNIGHT, fontSize: '10px', fontWeight: 700, letterSpacing: '.1em', textAlign: 'center', textDecoration: 'none', background: 'transparent' },
