@@ -1,5 +1,3 @@
-import { supabase } from '@/lib/supabase'
-
 const SITE_URL = 'https://valoriainstitute.com'
 
 export default async function sitemap() {
@@ -35,19 +33,24 @@ export default async function sitemap() {
   // and speaker profiles, not just the marketing pages.
   let profileEntries = []
   try {
-    const { data } = await supabase
-      .from('profiles')
-      .select('id, updated_at')
-      .eq('is_visible', true)
-    profileEntries = (data || []).map((p) => ({
-      url: `${SITE_URL}/profile/${p.id}`,
-      lastModified: p.updated_at ? new Date(p.updated_at) : now,
-      changeFrequency: 'weekly',
-      priority: 0.6,
-    }))
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (supabaseUrl && supabaseKey) {
+      const { createClient } = await import('@supabase/supabase-js')
+      const client = createClient(supabaseUrl, supabaseKey)
+      const { data } = await client
+        .from('profiles')
+        .select('id, updated_at')
+        .eq('is_visible', true)
+      profileEntries = (data || []).map((p) => ({
+        url: `${SITE_URL}/profile/${p.id}`,
+        lastModified: p.updated_at ? new Date(p.updated_at) : now,
+        changeFrequency: 'weekly',
+        priority: 0.6,
+      }))
+    }
   } catch {
-    // Build-time Supabase failure shouldn't break the whole sitemap —
-    // fall back to just the static pages.
+    // Build-time Supabase failure shouldn't break the whole sitemap
   }
 
   return [...staticEntries, ...profileEntries]
