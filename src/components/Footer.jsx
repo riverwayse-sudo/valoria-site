@@ -1,7 +1,28 @@
+'use client'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { BRAND } from '@/lib/brand'
+import { supabase } from '@/lib/supabase'
 
 export default function Footer() {
+  const [user, setUser] = useState(null)
+  const [authChecked, setAuthChecked] = useState(false)
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+      setAuthChecked(true)
+    })
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null)
+    })
+    return () => listener.subscription.unsubscribe()
+  }, [])
+
+  function handleSignOut() {
+    supabase.auth.signOut().then(() => { window.location.href = '/' })
+  }
+
   return (
     <>
       <style>{`
@@ -22,8 +43,8 @@ export default function Footer() {
         .uf-tagline { font-family: var(--font); font-size: 15px; font-style: italic; font-weight: 300; color: rgba(201,168,76,.45); letter-spacing: .06em; }
         .uf-col-title { font-size: 9px; font-weight: 700; color: rgba(201,168,76,.5); letter-spacing: .2em; margin-bottom: 14px; }
         .uf-links { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
-        .uf-links a { font-size: 13px; font-weight: 300; color: rgba(247,244,238,.45); text-decoration: none; transition: color .2s; letter-spacing: .02em; }
-        .uf-links a:hover { color: var(--gold); }
+        .uf-links a, .uf-links button { font-size: 13px; font-weight: 300; color: rgba(247,244,238,.45); text-decoration: none; transition: color .2s; letter-spacing: .02em; background: none; border: none; padding: 0; cursor: pointer; text-align: left; font-family: var(--font); }
+        .uf-links a:hover, .uf-links button:hover { color: var(--gold); }
         .uf-cta { color: var(--gold) !important; font-weight: 600 !important; }
         .uf-bottom {
           display: flex; justify-content: space-between; align-items: center;
@@ -82,8 +103,19 @@ export default function Footer() {
               <div className="uf-col-title" style={{ marginTop: '28px' }}>Get Started</div>
               <ul className="uf-links">
                 <li><a href="https://assessment.valoriainstitute.com/" className="uf-cta" target="_blank" rel="noopener noreferrer">Take the VALU Index &rarr;</a></li>
-                <li><Link href="/signup">Create Account</Link></li>
-                <li><Link href="/login">Sign In</Link></li>
+                {authChecked && (
+                  user ? (
+                    <>
+                      <li><Link href="/dashboard">Dashboard</Link></li>
+                      <li><button onClick={handleSignOut}>Sign Out</button></li>
+                    </>
+                  ) : (
+                    <>
+                      <li><Link href="/signup">Create Account</Link></li>
+                      <li><Link href="/login">Sign In</Link></li>
+                    </>
+                  )
+                )}
               </ul>
             </div>
           </div>

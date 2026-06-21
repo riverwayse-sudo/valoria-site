@@ -3,10 +3,13 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { BRAND } from '@/lib/brand'
+import { supabase } from '@/lib/supabase'
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [user, setUser] = useState(null)
+  const [authChecked, setAuthChecked] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -17,6 +20,23 @@ export default function Nav() {
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
   }, [menuOpen])
+
+  // Pull the Supabase-stored session on load — this is what makes the nav
+  // "remember" a signed-in visitor instead of always showing Sign In.
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+      setAuthChecked(true)
+    })
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null)
+    })
+    return () => listener.subscription.unsubscribe()
+  }, [])
+
+  function handleSignOut() {
+    supabase.auth.signOut().then(() => { window.location.href = '/' })
+  }
 
   const closeMenu = () => setMenuOpen(false)
 
@@ -53,6 +73,19 @@ export default function Nav() {
           letter-spacing: .14em; transition: background .2s, color .2s !important;
         }
         .nav-cta:hover { background: var(--gold) !important; color: var(--dark) !important; }
+        .nav-link-btn {
+          background: none; border: none; cursor: pointer; padding: 0;
+          font-size: 12px; color: var(--dim); letter-spacing: .06em;
+          font-weight: 400; font-family: var(--font); transition: color .2s;
+        }
+        .nav-link-btn:hover { color: var(--parchment); }
+        .nav-mobile button.m-signout {
+          background: none; border: none; cursor: pointer; text-align: left;
+          font-size: 22px; font-family: var(--font); color: var(--dim); font-weight: 300;
+          padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,.05);
+          transition: color .2s; width: 100%;
+        }
+        .nav-mobile button.m-signout:hover { color: var(--parchment); }
         .nav-burger {
           display: none; flex-direction: column; gap: 5px;
           cursor: pointer; padding: 4px; background: none; border: none;
@@ -98,7 +131,19 @@ export default function Nav() {
 
         <ul className="nav-links" role="list">
           <li><Link href="/marketplace">Marketplace</Link></li>
-          <li><Link href="/dashboard">Dashboard</Link></li>
+          {authChecked && (
+            user ? (
+              <>
+                <li><Link href="/dashboard">Dashboard</Link></li>
+                <li><button onClick={handleSignOut} className="nav-link-btn">Sign Out</button></li>
+              </>
+            ) : (
+              <>
+                <li><Link href="/login">Sign In</Link></li>
+                <li><Link href="/signup">Create Account</Link></li>
+              </>
+            )
+          )}
           <li><Link href="/atb-connect">Find Talent</Link></li>
           <li><Link href="/spotlight">Book a Speaker</Link></li>
           <li><Link href="/facilitators">Commission Facilitators</Link></li>
@@ -123,7 +168,19 @@ export default function Nav() {
 
       <nav className={`nav-mobile${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation">
         <Link href="/marketplace" onClick={closeMenu}>Marketplace</Link>
-        <Link href="/dashboard" onClick={closeMenu}>Dashboard</Link>
+        {authChecked && (
+          user ? (
+            <>
+              <Link href="/dashboard" onClick={closeMenu}>Dashboard</Link>
+              <button className="m-signout" onClick={() => { closeMenu(); handleSignOut() }}>Sign Out</button>
+            </>
+          ) : (
+            <>
+              <Link href="/login" onClick={closeMenu}>Sign In</Link>
+              <Link href="/signup" onClick={closeMenu}>Create Account</Link>
+            </>
+          )
+        )}
         <Link href="/atb-connect" onClick={closeMenu}>Find Talent</Link>
         <Link href="/spotlight" onClick={closeMenu}>Book a Speaker</Link>
         <Link href="/facilitators" onClick={closeMenu}>Commission Facilitators</Link>
