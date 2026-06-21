@@ -11,7 +11,11 @@ const DIM = 'rgba(247,244,238,.45)'
 const FAINT = 'rgba(247,244,238,.2)'
 
 // Admin emails — add Temitayo's email here
-const ADMIN_EMAILS = ['oluwafemi@riverwayse.com', 'info@valoriainstitute.com']
+const ADMIN_EMAILS = [
+  'admin@valoriainstitute.com',
+  'oluwafemi@valoriainstitute.com',
+  'oluwafemi@riverwayse.com',
+]
 
 const STATUS_OPTIONS = ['pending', 'reviewing', 'introduced', 'declined', 'completed']
 
