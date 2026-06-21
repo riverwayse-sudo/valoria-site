@@ -85,10 +85,6 @@ export default function Nav() {
         /* LOGO */
         .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; line-height: 0; }
         .nav-logo img { height: 40px; width: auto; display: block; }
-        .nav-wordmark { display: flex; flex-direction: column; line-height: 1; }
-        .nav-wordmark .vw-main { font-family: var(--font); font-size: 17px; font-weight: 700; color: var(--gold); letter-spacing: .05em; }
-        .nav-wordmark .vw-sub { font-family: var(--font); font-size: 9px; font-weight: 400; color: var(--gold); letter-spacing: .3em; opacity: .85; margin-top: 3px; }
-        @media (max-width: 560px) { .nav-wordmark { display: none; } }
 
         /* DESKTOP LINKS */
         .nav-links { display: flex; align-items: center; gap: 6px; list-style: none; margin: 0; padding: 0; }
@@ -224,11 +220,7 @@ export default function Nav() {
       <nav className={`vi-nav${scrolled ? ' scrolled' : ''}`} style={{ top: '3px' }}>
         {/* LOGO */}
         <Link href="/" className="nav-logo" aria-label="Valoria Institute home">
-          <img src="/logo.png" alt="" />
-          <span className="nav-wordmark">
-            <span className="vw-main">VALORIA</span>
-            <span className="vw-sub">INSTITUTE</span>
-          </span>
+          <img src="/logo.png" alt="Valoria Institute" />
         </Link>
 
         {/* DESKTOP NAV — 4 visible items max */}
