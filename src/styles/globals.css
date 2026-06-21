@@ -178,3 +178,43 @@ body::before {
   transition: border-color .25s, transform .25s;
 }
 .card-gold:hover { border-color: rgba(201, 168, 76, .45); transform: translateY(-2px); }
+
+/* WaitlistForm component — used on homepage and /waitlist */
+.wl-field-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: var(--dim);
+  margin-bottom: 6px;
+  margin-top: 16px;
+}
+.wl-field-label:first-of-type { margin-top: 0; }
+.wl-field {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(201,168,76,.2);
+  border-radius: 6px;
+  color: var(--parchment);
+  font-size: 14px;
+  font-family: var(--font);
+  outline: none;
+  box-sizing: border-box;
+}
+.wl-field:focus { border-color: var(--gold); }
+.wl-btn:disabled { opacity: .45; cursor: not-allowed; }
+.wl-success {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--dim);
+  line-height: 1.7;
+}
+.wl-success strong {
+  display: block;
+  color: var(--gold);
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 10px;
+}

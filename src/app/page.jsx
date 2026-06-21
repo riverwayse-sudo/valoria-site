@@ -1,6 +1,7 @@
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
+import WaitlistForm from '@/components/WaitlistForm'
 import { ENTRY_POINTS } from '@/lib/brand'
 import './home.css'
 
@@ -336,21 +337,7 @@ export default function HomePage() {
             </Reveal>
 
             <Reveal>
-              <div className="waitlist-card">
-                <div className="eyebrow">
-                  <div className="eyebrow-line" />
-                  <span className="eyebrow-text">JOIN THE WAITLIST</span>
-                </div>
-                <p className="waitlist-card-desc">
-                  Email us directly with &ldquo;Founding Cohort&rdquo; and your name, location, and which entry point you&apos;re interested in — candidate, speaker, facilitator, employer, or organiser.
-                </p>
-                <a
-                  href={`mailto:info@valoriainstitute.com?subject=Founding%20Cohort%20Waitlist`}
-                  className="wl-btn"
-                >
-                  JOIN THE WAITLIST
-                </a>
-              </div>
+              <WaitlistForm />
             </Reveal>
           </div>
         </section>

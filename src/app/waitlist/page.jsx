@@ -1,7 +1,7 @@
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
-import { BRAND } from '@/lib/brand'
+import WaitlistForm from '@/components/WaitlistForm'
 import '../pages.css'
 
 export const metadata = {
@@ -43,15 +43,7 @@ export default function WaitlistPage() {
             </Reveal>
 
             <Reveal>
-              <div className="bridge-card" style={{ margin: 0, textAlign: 'left' }}>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">JOIN THE WAITLIST</span></div>
-                <p style={{ color: 'var(--dim)', fontWeight: 300, fontSize: '14px', lineHeight: 1.7, marginBottom: '20px' }}>
-                  Email us directly with &ldquo;Founding Cohort&rdquo; and your name, location, and which entry point you&apos;re interested in — candidate, speaker, facilitator, employer, or organiser.
-                </p>
-                <a href={`mailto:${BRAND.email}?subject=Founding%20Cohort%20Waitlist`} className="btn-gold" style={{ width: '100%', textAlign: 'center' }}>
-                  JOIN THE WAITLIST
-                </a>
-              </div>
+              <WaitlistForm />
             </Reveal>
           </div>
         </section>
