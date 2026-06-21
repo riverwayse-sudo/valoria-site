@@ -7,17 +7,22 @@ const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
 const PARCHMENT = '#F7F4EE'
 const DARK = '#0F0F1A'
-const SLATE = '#2E2E4A'
+const DIM = 'rgba(247,244,238,.45)'
+const FAINT = 'rgba(247,244,238,.2)'
 
-const TIER_BADGES = {
-  emerging:    { label: '✦ Emerging',    bg: '#EDE8DC', text: '#2E2E4A', border: '#D4C9A8' },
-  established: { label: '✦✦ Established', bg: MIDNIGHT,  text: GOLD,     border: 'none' },
-  elite:       { label: '✦✦✦ Elite',      bg: GOLD,      text: MIDNIGHT,  border: 'none' },
-}
+const PRIME_CLUSTERS = [
+  { id: 'P', name: 'Presence',      color: '#1D9E75' },
+  { id: 'R', name: 'Relationships', color: '#378ADD' },
+  { id: 'I', name: 'Intelligence',  color: '#7F77DD' },
+  { id: 'M', name: 'Mastery',       color: '#BA7517' },
+  { id: 'E', name: 'Enterprise',    color: '#D85A30' },
+]
 
-const INDUSTRIES = ['Finance','Technology','Healthcare','Energy','Media','Education','Legal','Consulting','NGO/Development','Government','Other']
-const EXPERIENCE_LEVELS = ['emerging','mid','senior','executive']
-const TOPIC_OPTIONS = ['Leadership','Strategy','Innovation','DEI','Finance','Technology','Communication','Entrepreneurship','Governance','People Development','Mental Health','Global Affairs']
+const INDUSTRIES = ['Finance','Technology','Healthcare','Energy','Media & Communications','Education','Legal','Consulting','NGO / Development','Government','Real Estate','Logistics','Other']
+const SKILLS = ['Strategic Thinking','Executive Communication','Financial Analysis','Business Development','Team Leadership','Project Management','Data Analysis','Digital Marketing','Product Management','Risk Management','Stakeholder Management','Change Management','Public Speaking','Research & Insights','Operations']
+const TOPIC_OPTIONS = ['Leadership','Strategy','Innovation','Diversity & Inclusion','Finance','Technology & AI','Communication','Entrepreneurship','Governance','People Development','Mental Health at Work','Global Affairs','Sustainability','Future of Work']
+const AVAILABILITY = ['Open to full-time roles','Open to contract work','Open to advisory roles','Available for speaking','Available for facilitation','Not currently available']
+const MODALITY = ['In-person','Virtual','Hybrid']
 
 export default function ProfileEditPage() {
   const [user, setUser] = useState(null)
@@ -37,23 +42,25 @@ export default function ProfileEditPage() {
       if (!user) { window.location.href = '/login'; return }
       setUser(user)
       const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
-      setProfile(data || { id: user.id, user_type: 'talent', skills: [], topics: [], youtube_links: [], portfolio_images: [] })
+      setProfile(data || {
+        id: user.id, user_type: 'talent',
+        skills: [], topics: [], youtube_links: ['', '', '', ''],
+        availability: [], modality: [], languages: [],
+      })
       setLoading(false)
     }
     load()
   }, [])
 
   function update(key, val) { setProfile(p => ({ ...p, [key]: val })) }
-
   function toggleArray(key, val) {
     setProfile(p => {
       const arr = p[key] || []
       return { ...p, [key]: arr.includes(val) ? arr.filter(x => x !== val) : [...arr, val] }
     })
   }
-
   function updateYoutube(i, val) {
-    const links = [...(profile.youtube_links || ['', '', '', ''])]
+    const links = [...(profile.youtube_links || ['','','',''])]
     links[i] = val
     update('youtube_links', links)
   }
@@ -75,13 +82,11 @@ export default function ProfileEditPage() {
   }
 
   async function save() {
-    setSaving(true)
-    setError('')
+    setSaving(true); setError('')
     try {
       const { error } = await supabase.from('profiles').upsert({ ...profile, id: user.id })
       if (error) throw error
-      setSaved(true)
-      setTimeout(() => setSaved(false), 3000)
+      setSaved(true); setTimeout(() => setSaved(false), 3000)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -89,295 +94,336 @@ export default function ProfileEditPage() {
     }
   }
 
-  if (loading) return <div style={{ ...styles.page, justifyContent: 'center', alignItems: 'center' }}><div style={{ color: GOLD, fontFamily: 'Raleway', fontSize: '14px' }}>Loading profile…</div></div>
+  if (loading) return (
+    <div style={{ minHeight:'100vh', background:DARK, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Raleway', color:GOLD, fontSize:'14px' }}>
+      Loading your profile…
+    </div>
+  )
 
+  const isSupply = profile.user_type === 'talent' || profile.user_type === 'speaker'
   const isSpeaker = profile.user_type === 'speaker'
-  const isTalent = profile.user_type === 'talent'
-  const tier = TIER_BADGES[profile.tier] || TIER_BADGES.emerging
+  const isEmployer = profile.user_type === 'employer'
+  const hasVALU = profile.valu_score != null
 
   return (
-    <div style={styles.page}>
-      <div style={styles.layout}>
+    <div style={{ minHeight:'100vh', background:DARK, fontFamily:"'Raleway','Helvetica Neue',Arial,sans-serif", color:PARCHMENT }}>
 
-        {/* SIDEBAR */}
-        <aside style={styles.sidebar}>
-          <Link href="/" style={styles.backLink}>← Back to site</Link>
+      {/* HEADER */}
+      <header style={S.header}>
+        <Link href="/" style={{ lineHeight:0 }}><img src="/logo.png" alt="Valoria Institute" style={{ height:'44px', width:'auto' }} /></Link>
+        <nav style={{ display:'flex', gap:'16px', alignItems:'center' }}>
+          <Link href="/dashboard" style={S.navLink}>Dashboard</Link>
+          <Link href={`/profile/${user?.id}`} target="_blank" style={S.navLink}>View Public Profile</Link>
+          <button onClick={() => supabase.auth.signOut().then(() => window.location.href='/')} style={S.signOutBtn}>Sign Out</button>
+        </nav>
+      </header>
 
-          {/* Cover image */}
-          <div style={{ position: 'relative', marginBottom: '0' }}>
-            <div
-              style={{ ...styles.coverImg, backgroundImage: profile.cover_url ? `url(${profile.cover_url})` : undefined }}
-              onClick={() => coverRef.current.click()}
-            >
-              {!profile.cover_url && <span style={{ color: 'rgba(247,244,238,.3)', fontSize: '12px' }}>+ Cover image</span>}
-              {uploadingCover && <div style={styles.uploadOverlay}>Uploading…</div>}
+      <div style={S.page}>
+        <div style={S.twoCol}>
+
+          {/* LEFT — photo, VALU score, listing toggle */}
+          <aside style={S.sidebar}>
+
+            {/* Profile photo */}
+            <div style={{ marginBottom:'24px' }}>
+              <div style={S.sectionLabel}>Profile Photo</div>
+              <div style={S.photoWrap} onClick={() => photoRef.current?.click()}>
+                {profile.photo_url
+                  ? <img src={profile.photo_url} alt="Profile" style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
+                  : <span style={{ fontSize:'28px', color:GOLD }}>◈</span>}
+                <div style={S.photoOverlay}>{uploadingPhoto ? '…' : '+'}</div>
+              </div>
+              <input ref={photoRef} type="file" accept="image/*" style={{ display:'none' }}
+                onChange={e => e.target.files[0] && uploadImage(e.target.files[0], 'photo', url => update('photo_url', url), setUploadingPhoto)} />
+              <p style={S.hint}>Square image, min 400×400px recommended.</p>
             </div>
-            <input ref={coverRef} type="file" accept="image/*" style={{ display: 'none' }}
-              onChange={e => e.target.files[0] && uploadImage(e.target.files[0], 'cover', url => update('cover_url', url), setUploadingCover)} />
-          </div>
 
-          {/* Avatar */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-36px', marginBottom: '16px', position: 'relative', zIndex: 2 }}>
-            <div style={styles.avatarWrap} onClick={() => photoRef.current.click()}>
-              {profile.photo_url
-                ? <img src={profile.photo_url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-                : <span style={{ color: 'rgba(247,244,238,.4)', fontSize: '12px', textAlign: 'center' }}>+ Photo</span>}
-              {uploadingPhoto && <div style={styles.uploadOverlay}>…</div>}
+            {/* Cover image */}
+            <div style={{ marginBottom:'24px' }}>
+              <div style={S.sectionLabel}>Cover Image</div>
+              <div style={{ ...S.coverWrap, cursor:'pointer' }} onClick={() => coverRef.current?.click()}>
+                {profile.cover_url
+                  ? <img src={profile.cover_url} alt="Cover" style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'8px' }} />
+                  : <span style={{ fontSize:'13px', color:FAINT }}>Click to upload</span>}
+              </div>
+              <input ref={coverRef} type="file" accept="image/*" style={{ display:'none' }}
+                onChange={e => e.target.files[0] && uploadImage(e.target.files[0], 'cover', url => update('cover_url', url), setUploadingCover)} />
             </div>
-            <input ref={photoRef} type="file" accept="image/*" style={{ display: 'none' }}
-              onChange={e => e.target.files[0] && uploadImage(e.target.files[0], 'photo', url => update('photo_url', url), setUploadingPhoto)} />
-          </div>
 
-          {/* Tier badge (speaker only) */}
-          {isSpeaker && (
-            <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-              <span style={{ ...styles.tierBadge, background: tier.bg, color: tier.text, border: tier.border !== 'none' ? `1px solid ${tier.border}` : 'none' }}>
-                {tier.label}
-              </span>
-              <p style={{ fontSize: '11px', color: 'rgba(247,244,238,.3)', marginTop: '8px', lineHeight: 1.5 }}>
-                Tier is merit-based and assigned by Valoria.
-              </p>
-            </div>
-          )}
+            {/* VALU Index score — read only, populated from assessment */}
+            {hasVALU && (
+              <div style={S.valuCard}>
+                <div style={S.sectionLabel}>VALU Index</div>
+                <div style={{ fontSize:'36px', fontWeight:700, color:GOLD, lineHeight:1 }}>{profile.valu_score}</div>
+                <div style={{ fontSize:'10px', letterSpacing:'.12em', color:DIM, marginTop:'4px' }}>OUT OF 100</div>
+                {profile.valu_tier && (
+                  <div style={{ fontSize:'11px', fontWeight:700, color:GOLD, marginTop:'8px', letterSpacing:'.1em', textTransform:'uppercase' }}>{profile.valu_tier}</div>
+                )}
+                {profile.assessment_completed_at && (
+                  <div style={{ fontSize:'10px', color:FAINT, marginTop:'6px' }}>
+                    Assessed {new Date(profile.assessment_completed_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })}
+                  </div>
+                )}
+                {profile.cluster_scores && (
+                  <div style={{ marginTop:'16px', display:'flex', flexDirection:'column', gap:'8px' }}>
+                    {PRIME_CLUSTERS.map(c => (
+                      <div key={c.id}>
+                        <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'3px' }}>
+                          <span style={{ fontSize:'11px', color:c.color }}>{c.name}</span>
+                          <span style={{ fontSize:'11px', color:c.color, fontWeight:600 }}>{profile.cluster_scores[c.id] ?? '—'}</span>
+                        </div>
+                        <div style={{ height:'2px', background:'rgba(255,255,255,.06)', borderRadius:'1px' }}>
+                          <div style={{ height:'100%', width:`${profile.cluster_scores[c.id] ?? 0}%`, background:c.color, borderRadius:'1px', transition:'width .4s' }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer"
+                  style={{ display:'block', marginTop:'16px', fontSize:'10px', color:DIM, textAlign:'center', textDecoration:'none' }}>
+                  Reassess after 90 days →
+                </a>
+              </div>
+            )}
 
-          <div style={styles.sideNav}>
-            {['basic', 'professional', isSpeaker ? 'speaking' : 'portfolio', 'social'].map(s => (
-              <a key={s} href={`#${s}`} style={styles.sideNavLink}>
-                {s.charAt(0).toUpperCase() + s.slice(1)}
-              </a>
-            ))}
-          </div>
+            {!hasVALU && isSupply && (
+              <div style={S.valuCard}>
+                <div style={S.sectionLabel}>VALU Index</div>
+                <p style={{ fontSize:'13px', color:DIM, lineHeight:1.6, marginBottom:'16px' }}>Take the VALU Index to get your score and unlock marketplace listing.</p>
+                <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer"
+                  style={{ display:'block', textAlign:'center', padding:'10px', background:GOLD, color:'#0F0F1A', fontSize:'11px', fontWeight:700, letterSpacing:'.12em', borderRadius:'999px', textDecoration:'none' }}>
+                  TAKE THE VALU INDEX — FREE
+                </a>
+              </div>
+            )}
 
-          <a href={`/profile/${user?.id}`} style={styles.btnOutline} target="_blank">VIEW PUBLIC PROFILE</a>
-        </aside>
+            {/* Listing visibility toggle — only supply side */}
+            {isSupply && (
+              <div style={S.valuCard}>
+                <div style={S.sectionLabel}>Marketplace Listing</div>
+                <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'8px' }}>
+                  <div
+                    onClick={() => update('is_visible', !profile.is_visible)}
+                    style={{
+                      width:'40px', height:'22px', borderRadius:'999px', cursor:'pointer',
+                      background: profile.is_visible ? '#1D9E75' : 'rgba(255,255,255,.1)',
+                      transition:'background .2s', position:'relative', flexShrink:0,
+                    }}
+                  >
+                    <div style={{
+                      position:'absolute', top:'3px',
+                      left: profile.is_visible ? '21px' : '3px',
+                      width:'16px', height:'16px', borderRadius:'50%',
+                      background:'white', transition:'left .2s',
+                    }} />
+                  </div>
+                  <span style={{ fontSize:'13px', color: profile.is_visible ? '#1D9E75' : FAINT, fontWeight:600 }}>
+                    {profile.is_visible ? 'Listed — visible to buyers' : 'Not listed'}
+                  </span>
+                </div>
+                {!hasVALU && profile.is_visible && (
+                  <p style={{ fontSize:'11px', color:'#D85A30', lineHeight:1.5 }}>A VALU Index score is required to appear in search results.</p>
+                )}
+              </div>
+            )}
+          </aside>
 
-        {/* MAIN CONTENT */}
-        <main style={styles.main}>
-          <div style={styles.mainHeader}>
-            <div>
-              <div style={styles.eyebrow}><div style={styles.eyebrowLine} /><span style={styles.eyebrowText}>EDIT PROFILE</span></div>
-              <h1 style={styles.title}>Your profile.<br /><em style={{ color: GOLD }}>Built with intention.</em></h1>
-            </div>
-            <button onClick={save} disabled={saving} style={styles.btnGold}>
-              {saving ? 'SAVING…' : saved ? '✓ SAVED' : 'SAVE PROFILE'}
-            </button>
-          </div>
+          {/* RIGHT — main profile fields */}
+          <main style={S.main}>
 
-          {error && <div style={styles.errorBox}>{error}</div>}
+            {/* BASICS */}
+            <Section label="Basic Information">
+              <Field label="Display Name *">
+                <input style={S.input} value={profile.display_name || ''} onChange={e => update('display_name', e.target.value)} placeholder="Your full name as it appears on your profile" />
+              </Field>
+              <Field label={isSpeaker ? 'Speaker Title / Role' : isEmployer ? 'Job Title' : 'Professional Title / Current Role'}>
+                <input style={S.input} value={profile.headline || ''} onChange={e => update('headline', e.target.value)} placeholder={isSpeaker ? 'e.g. Leadership Speaker & Executive Coach' : 'e.g. Head of Finance, Zenith Bank'} />
+              </Field>
+              <Field label="Location">
+                <input style={S.input} value={profile.location || ''} onChange={e => update('location', e.target.value)} placeholder="City, Country" />
+              </Field>
+              <Field label="Industry / Sector">
+                <select style={S.input} value={profile.industry || ''} onChange={e => update('industry', e.target.value)}>
+                  <option value="">Select sector…</option>
+                  {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
+                </select>
+              </Field>
+              <Field label="Years of Professional Experience">
+                <input style={S.input} type="number" min="0" max="50" value={profile.experience_years || ''} onChange={e => update('experience_years', parseInt(e.target.value) || null)} placeholder="e.g. 12" />
+              </Field>
+            </Section>
 
-          {/* BASIC */}
-          <section id="basic" style={styles.section}>
-            <h2 style={styles.sectionTitle}>Basic information</h2>
-            <div style={styles.grid2}>
-              <Field label="Full Name" value={profile.display_name || ''} onChange={v => update('display_name', v)} placeholder="Your full name" />
-              <Field label="Location" value={profile.location || ''} onChange={v => update('location', v)} placeholder="City, Country" />
-            </div>
-            <Field label="Professional Headline" value={profile.headline || ''} onChange={v => update('headline', v)} placeholder={isSpeaker ? 'e.g. Leadership Strategist & Keynote Speaker' : 'e.g. Senior Finance Manager | FMCG Specialist'} />
-            <div style={styles.field}>
-              <label style={styles.label}>Bio</label>
-              <textarea
-                value={profile.bio || ''}
-                onChange={e => update('bio', e.target.value)}
-                placeholder="Write a concise professional bio. Speak in third person."
-                rows={5}
-                style={{ ...styles.input, resize: 'vertical' }}
-              />
-            </div>
-          </section>
+            {/* BIO */}
+            <Section label="Professional Bio">
+              <Field label="Bio" hint="Write in third person. This appears on your public profile. 80–200 words works best.">
+                <textarea style={{ ...S.input, resize:'vertical', minHeight:'120px' }} value={profile.bio || ''} onChange={e => update('bio', e.target.value)}
+                  placeholder="A senior finance professional with 12 years across Lagos and Nairobi…" />
+              </Field>
+              {isEmployer && (
+                <Field label="Company / Organisation Name">
+                  <input style={S.input} value={profile.company_name || ''} onChange={e => update('company_name', e.target.value)} placeholder="e.g. Zenith Capital Ltd" />
+                </Field>
+              )}
+            </Section>
 
-          {/* PROFESSIONAL (Talent) */}
-          {isTalent && (
-            <section id="professional" style={styles.section}>
-              <h2 style={styles.sectionTitle}>Professional details</h2>
-              <div style={styles.grid2}>
-                <div style={styles.field}>
-                  <label style={styles.label}>Industry / Sector</label>
-                  <select value={profile.industry || ''} onChange={e => update('industry', e.target.value)} style={styles.input}>
-                    <option value="">Select industry</option>
-                    {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
+            {/* SUPPLY-SIDE — skills, topics, availability */}
+            {isSupply && (
+              <>
+                <Section label="Core Skills">
+                  <p style={S.hint}>Select up to 8 skills that best represent your professional capability.</p>
+                  <div style={S.chipGrid}>
+                    {SKILLS.map(s => (
+                      <ChipBtn key={s} active={(profile.skills || []).includes(s)} onClick={() => toggleArray('skills', s)}>{s}</ChipBtn>
+                    ))}
+                  </div>
+                </Section>
+
+                {isSpeaker && (
+                  <Section label="Speaking Topics">
+                    <p style={S.hint}>Select the topics you speak on — these appear in Spotlight search filters.</p>
+                    <div style={S.chipGrid}>
+                      {TOPIC_OPTIONS.map(t => (
+                        <ChipBtn key={t} active={(profile.topics || []).includes(t)} onClick={() => toggleArray('topics', t)}>{t}</ChipBtn>
+                      ))}
+                    </div>
+                  </Section>
+                )}
+
+                <Section label="Availability">
+                  <p style={S.hint}>What opportunities are you open to right now?</p>
+                  <div style={S.chipGrid}>
+                    {AVAILABILITY.map(a => (
+                      <ChipBtn key={a} active={(profile.availability || []).includes(a)} onClick={() => toggleArray('availability', a)}>{a}</ChipBtn>
+                    ))}
+                  </div>
+                </Section>
+
+                <Section label="Preferred Work Modality">
+                  <div style={S.chipGrid}>
+                    {MODALITY.map(m => (
+                      <ChipBtn key={m} active={(profile.modality || []).includes(m)} onClick={() => toggleArray('modality', m)}>{m}</ChipBtn>
+                    ))}
+                  </div>
+                </Section>
+              </>
+            )}
+
+            {/* SPEAKER-SPECIFIC */}
+            {isSpeaker && (
+              <Section label="Speaker Details">
+                <Field label="Fee Range (USD)">
+                  <select style={S.input} value={profile.fee_range || ''} onChange={e => update('fee_range', e.target.value)}>
+                    <option value="">Select range…</option>
+                    {['Under $500','$500–$1,500','$1,500–$5,000','$5,000–$15,000','$15,000+','Negotiable','Pro bono available'].map(f => <option key={f} value={f}>{f}</option>)}
                   </select>
-                </div>
-                <div style={styles.field}>
-                  <label style={styles.label}>Experience Level</label>
-                  <select value={profile.experience_level || ''} onChange={e => update('experience_level', e.target.value)} style={styles.input}>
-                    <option value="">Select level</option>
-                    {EXPERIENCE_LEVELS.map(l => <option key={l} value={l}>{l.charAt(0).toUpperCase() + l.slice(1)}</option>)}
+                </Field>
+                <Field label="Speaker Reel / Intro Video (YouTube URL)">
+                  <input style={S.input} type="url" value={(profile.youtube_links || [])[0] || ''} onChange={e => updateYoutube(0, e.target.value)} placeholder="https://youtube.com/watch?v=..." />
+                </Field>
+                <Field label="Additional Video Links (optional)">
+                  {[1, 2, 3].map(i => (
+                    <input key={i} style={{ ...S.input, marginTop:'8px' }} type="url" value={(profile.youtube_links || [])[i] || ''} onChange={e => updateYoutube(i, e.target.value)} placeholder={`https://youtube.com/watch?v=...`} />
+                  ))}
+                </Field>
+              </Section>
+            )}
+
+            {/* LINKS */}
+            <Section label="Links & Social">
+              <Field label="LinkedIn Profile URL">
+                <input style={S.input} type="url" value={profile.linkedin_url || ''} onChange={e => update('linkedin_url', e.target.value)} placeholder="https://linkedin.com/in/yourname" />
+              </Field>
+              <Field label="Personal Website / Portfolio">
+                <input style={S.input} type="url" value={profile.website_url || ''} onChange={e => update('website_url', e.target.value)} placeholder="https://yourwebsite.com" />
+              </Field>
+              <Field label="Twitter / X">
+                <input style={S.input} type="url" value={profile.twitter_url || ''} onChange={e => update('twitter_url', e.target.value)} placeholder="https://twitter.com/yourhandle" />
+              </Field>
+            </Section>
+
+            {/* EMPLOYER-SPECIFIC */}
+            {isEmployer && (
+              <Section label="Hiring Details">
+                <Field label="Typical roles you hire for">
+                  <textarea style={{ ...S.input, resize:'vertical', minHeight:'80px' }} value={profile.hiring_focus || ''} onChange={e => update('hiring_focus', e.target.value)} placeholder="e.g. Senior Finance Managers, Strategy Leads, Operations Directors" />
+                </Field>
+                <Field label="Company size">
+                  <select style={S.input} value={profile.company_size || ''} onChange={e => update('company_size', e.target.value)}>
+                    <option value="">Select…</option>
+                    {['1–10','11–50','51–200','201–500','500+'].map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
-                </div>
-              </div>
-              <div style={styles.field}>
-                <label style={styles.label}>Availability</label>
-                <div style={styles.radioGroup}>
-                  {[['open','Open to opportunities'],['contract_only','Contract only'],['not_available','Not available']].map(([val, lbl]) => (
-                    <label key={val} style={styles.radioLabel}>
-                      <input type="radio" name="availability" value={val} checked={profile.availability === val} onChange={() => update('availability', val)} style={{ accentColor: GOLD }} />
-                      {lbl}
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div style={styles.field}>
-                <label style={styles.label}>Key Skills (select all that apply)</label>
-                <div style={styles.tagGrid}>
-                  {['Strategy','Finance','Operations','People Management','Technology','Analytics','Business Development','Legal','Marketing','Communications','Project Management','Risk Management'].map(skill => (
-                    <button key={skill} type="button"
-                      onClick={() => toggleArray('skills', skill)}
-                      style={{ ...styles.tag, background: (profile.skills || []).includes(skill) ? 'rgba(201,168,76,.15)' : 'transparent', borderColor: (profile.skills || []).includes(skill) ? GOLD : 'rgba(201,168,76,.2)', color: (profile.skills || []).includes(skill) ? GOLD : 'rgba(247,244,238,.5)' }}>
-                      {skill}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </section>
-          )}
+                </Field>
+              </Section>
+            )}
 
-          {/* SPEAKING (Speaker) */}
-          {isSpeaker && (
-            <section id="speaking" style={styles.section}>
-              <h2 style={styles.sectionTitle}>Speaking profile</h2>
-              <div style={styles.field}>
-                <label style={styles.label}>Speaking Topics (select all that apply)</label>
-                <div style={styles.tagGrid}>
-                  {TOPIC_OPTIONS.map(t => (
-                    <button key={t} type="button"
-                      onClick={() => toggleArray('topics', t)}
-                      style={{ ...styles.tag, background: (profile.topics || []).includes(t) ? 'rgba(201,168,76,.15)' : 'transparent', borderColor: (profile.topics || []).includes(t) ? GOLD : 'rgba(201,168,76,.2)', color: (profile.topics || []).includes(t) ? GOLD : 'rgba(247,244,238,.5)' }}>
-                      {t}
-                    </button>
-                  ))}
-                </div>
+            {/* ERROR + SAVE */}
+            {error && (
+              <div style={{ padding:'12px 16px', background:'rgba(216,90,48,.1)', border:'1px solid rgba(216,90,48,.3)', borderRadius:'8px', fontSize:'13px', color:'#F09595', marginBottom:'16px' }}>
+                {error}
               </div>
-              <div style={styles.grid2}>
-                <Field label="Fee Range" value={profile.fee_range || ''} onChange={v => update('fee_range', v)} placeholder="e.g. ₦500k – ₦1.5M" />
-                <div style={styles.field}>
-                  <label style={styles.label}>Speaking Credits (number of engagements)</label>
-                  <input type="number" min={0} value={profile.speaking_credits || 0} onChange={e => update('speaking_credits', parseInt(e.target.value))} style={styles.input} />
-                </div>
-              </div>
-              <Field label="Speaking Experience" value={profile.speaking_experience || ''} onChange={v => update('speaking_experience', v)} placeholder="Describe your speaking background and expertise…" multiline />
-              <Field label="Past Events / Appearances" value={profile.past_events || ''} onChange={v => update('past_events', v)} placeholder="List notable events, conferences, or engagements…" multiline />
+            )}
 
-              <div style={styles.field}>
-                <label style={styles.label}>Video Links (YouTube, Vimeo — up to 4)</label>
-                <p style={{ fontSize: '12px', color: 'rgba(247,244,238,.35)', marginBottom: '10px' }}>Paste your speaking video URLs. These display as preview cards on your profile.</p>
-                {[0,1,2,3].map(i => (
-                  <input key={i} type="url" value={(profile.youtube_links || [])[i] || ''} onChange={e => updateYoutube(i, e.target.value)}
-                    placeholder={`Video link ${i + 1} — YouTube or Vimeo URL`}
-                    style={{ ...styles.input, marginBottom: '8px' }} />
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* PORTFOLIO (Talent) */}
-          {isTalent && (
-            <section id="portfolio" style={styles.section}>
-              <h2 style={styles.sectionTitle}>Portfolio images</h2>
-              <p style={{ fontSize: '13px', color: 'rgba(247,244,238,.4)', marginBottom: '16px' }}>Upload up to 6 portfolio or work images. These appear on your public profile.</p>
-              <div style={styles.portfolioGrid}>
-                {[0,1,2,3,4,5].map(i => {
-                  const url = (profile.portfolio_images || [])[i]
-                  return (
-                    <label key={i} style={styles.portfolioSlot}>
-                      {url
-                        ? <img src={url} alt={`Portfolio ${i+1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '6px' }} />
-                        : <span style={{ color: 'rgba(247,244,238,.25)', fontSize: '22px' }}>+</span>}
-                      <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => {
-                        if (!e.target.files[0]) return
-                        uploadImage(e.target.files[0], `portfolio-${i}`, url => {
-                          const imgs = [...(profile.portfolio_images || [])]
-                          imgs[i] = url
-                          update('portfolio_images', imgs)
-                        }, setUploadingPhoto)
-                      }} />
-                    </label>
-                  )
-                })}
-              </div>
-            </section>
-          )}
-
-          {/* SOCIAL */}
-          <section id="social" style={styles.section}>
-            <h2 style={styles.sectionTitle}>Social & contact links</h2>
-            <div style={styles.grid2}>
-              <Field label="LinkedIn URL" value={profile.linkedin_url || ''} onChange={v => update('linkedin_url', v)} placeholder="https://linkedin.com/in/…" />
-              <Field label="Instagram" value={profile.instagram_url || ''} onChange={v => update('instagram_url', v)} placeholder="https://instagram.com/…" />
-              {isSpeaker && <>
-                <Field label="Facebook" value={profile.facebook_url || ''} onChange={v => update('facebook_url', v)} placeholder="https://facebook.com/…" />
-                <Field label="Twitter / X" value={profile.twitter_url || ''} onChange={v => update('twitter_url', v)} placeholder="https://x.com/…" />
-              </>}
+            <div style={{ display:'flex', gap:'12px', alignItems:'center' }}>
+              <button onClick={save} disabled={saving}
+                style={{ padding:'14px 32px', background:GOLD, color:'#0F0F1A', border:'none', borderRadius:'999px', fontSize:'12px', fontWeight:700, letterSpacing:'.14em', cursor:saving ? 'default' : 'pointer', opacity:saving ? 0.7 : 1, fontFamily:'Raleway' }}>
+                {saving ? 'SAVING…' : 'SAVE PROFILE'}
+              </button>
+              {saved && <span style={{ fontSize:'12px', color:'#1D9E75', fontWeight:600 }}>✓ Saved</span>}
             </div>
-          </section>
 
-          {/* Visibility toggle */}
-          <section style={{ ...styles.section, border: 'none' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-              <input type="checkbox" checked={!!profile.is_visible} onChange={e => update('is_visible', e.target.checked)} style={{ accentColor: GOLD, width: '18px', height: '18px' }} />
-              <span style={{ fontSize: '14px', color: PARCHMENT, fontWeight: 400 }}>
-                Make my profile visible in the marketplace
-              </span>
-            </label>
-            <p style={{ fontSize: '12px', color: 'rgba(247,244,238,.35)', marginTop: '8px', marginLeft: '30px' }}>
-              When visible, {isSpeaker ? 'event organisers' : 'employers'} can find and contact you.
-            </p>
-          </section>
-
-          <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-            <button onClick={save} disabled={saving} style={{ ...styles.btnGold, flex: 1 }}>
-              {saving ? 'SAVING…' : saved ? '✓ SAVED' : 'SAVE PROFILE'}
-            </button>
-            <a href={`/profile/${user?.id}`} target="_blank" style={{ ...styles.btnOutline, flex: 1, textAlign: 'center' }}>
-              VIEW PUBLIC PROFILE
-            </a>
-          </div>
-        </main>
+            <div style={{ display:'flex', gap:'16px', marginTop:'20px', flexWrap:'wrap' }}>
+              <Link href="/dashboard" style={{ fontSize:'12px', color:DIM }}>← Back to dashboard</Link>
+              <Link href={`/profile/${user?.id}`} target="_blank" style={{ fontSize:'12px', color:GOLD }}>View public profile →</Link>
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   )
 }
 
-function Field({ label, value, onChange, placeholder, multiline }) {
+function Section({ label, children }) {
   return (
-    <div style={styles.field}>
-      <label style={styles.label}>{label}</label>
-      {multiline
-        ? <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} rows={4} style={{ ...styles.input, resize: 'vertical' }} />
-        : <input type="text" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} style={styles.input} />}
+    <div style={{ marginBottom:'32px', paddingBottom:'32px', borderBottom:'1px solid rgba(201,168,76,.08)' }}>
+      <div style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.16em', color:'rgba(201,168,76,.5)', marginBottom:'20px', textTransform:'uppercase' }}>{label}</div>
+      <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>{children}</div>
     </div>
   )
 }
 
-const styles = {
-  page: { minHeight: '100vh', background: DARK, fontFamily: "'Raleway', 'Helvetica Neue', Arial, sans-serif", color: PARCHMENT },
-  layout: { display: 'grid', gridTemplateColumns: '280px 1fr', minHeight: '100vh', maxWidth: '1200px', margin: '0 auto' },
-  sidebar: { background: 'rgba(26,26,46,.8)', borderRight: '1px solid rgba(201,168,76,.1)', padding: '0 0 40px', position: 'sticky', top: 0, height: '100vh', overflowY: 'auto' },
-  backLink: { display: 'block', padding: '20px 24px', fontSize: '12px', color: 'rgba(247,244,238,.4)', textDecoration: 'none', letterSpacing: '.05em' },
-  coverImg: { height: '120px', background: 'rgba(201,168,76,.06)', backgroundSize: 'cover', backgroundPosition: 'center', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(201,168,76,.1)', position: 'relative' },
-  uploadOverlay: { position: 'absolute', inset: 0, background: 'rgba(0,0,0,.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', color: GOLD },
-  avatarWrap: { width: '80px', height: '80px', borderRadius: '50%', border: `2px solid ${GOLD}`, background: 'rgba(201,168,76,.08)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' },
-  tierBadge: { display: 'inline-block', padding: '6px 16px', borderRadius: '999px', fontSize: '12px', fontWeight: 700 },
-  sideNav: { padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: '4px' },
-  sideNavLink: { padding: '8px 12px', fontSize: '13px', color: 'rgba(247,244,238,.5)', textDecoration: 'none', borderRadius: '6px', display: 'block' },
-  btnOutline: { display: 'block', margin: '16px 24px 0', padding: '12px', border: `1px solid ${GOLD}`, borderRadius: '999px', color: GOLD, fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', textAlign: 'center', textDecoration: 'none', background: 'transparent' },
-  main: { padding: 'clamp(24px,4vw,56px)' },
-  mainHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '40px', gap: '16px', flexWrap: 'wrap' },
-  eyebrow: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' },
-  eyebrowLine: { width: '24px', height: '1px', background: 'rgba(201,168,76,.4)' },
-  eyebrowText: { fontSize: '10px', fontWeight: 700, letterSpacing: '.16em', color: GOLD },
-  title: { fontSize: 'clamp(24px,3vw,38px)', fontWeight: 200, lineHeight: 1.1, letterSpacing: '-.02em' },
-  section: { marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid rgba(201,168,76,.08)' },
-  sectionTitle: { fontSize: '16px', fontWeight: 600, color: PARCHMENT, marginBottom: '24px', letterSpacing: '-.01em' },
-  grid2: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' },
-  field: { marginBottom: '16px' },
-  label: { display: 'block', fontSize: '10px', fontWeight: 700, letterSpacing: '.12em', color: 'rgba(247,244,238,.45)', textTransform: 'uppercase', marginBottom: '6px' },
-  input: { width: '100%', padding: '11px 13px', background: 'rgba(255,255,255,.03)', border: '1px solid rgba(201,168,76,.18)', borderRadius: '6px', color: PARCHMENT, fontSize: '14px', fontFamily: "'Raleway', sans-serif", outline: 'none', boxSizing: 'border-box' },
-  radioGroup: { display: 'flex', gap: '20px', flexWrap: 'wrap' },
-  radioLabel: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'rgba(247,244,238,.6)', cursor: 'pointer' },
-  tagGrid: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
-  tag: { padding: '6px 14px', borderRadius: '999px', border: '1px solid', fontSize: '12px', fontWeight: 500, cursor: 'pointer', fontFamily: "'Raleway', sans-serif", transition: 'all .15s' },
-  portfolioGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' },
-  portfolioSlot: { height: '120px', border: '1px dashed rgba(201,168,76,.2)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden', background: 'rgba(255,255,255,.02)' },
-  btnGold: { padding: '12px 28px', background: GOLD, color: MIDNIGHT, fontSize: '11px', fontWeight: 700, letterSpacing: '.13em', borderRadius: '999px', border: 'none', cursor: 'pointer', fontFamily: "'Raleway', sans-serif", textDecoration: 'none', display: 'inline-block', whiteSpace: 'nowrap' },
-  errorBox: { padding: '12px 14px', background: 'rgba(216,90,48,.12)', border: '1px solid rgba(216,90,48,.3)', borderRadius: '6px', fontSize: '13px', color: '#F09595', marginBottom: '24px' },
+function Field({ label, hint, children }) {
+  return (
+    <div>
+      <label style={{ display:'block', fontSize:'11px', fontWeight:700, letterSpacing:'.08em', color:DIM, marginBottom:'6px', textTransform:'uppercase' }}>{label}</label>
+      {hint && <p style={{ fontSize:'12px', color:FAINT, marginBottom:'8px', lineHeight:1.5 }}>{hint}</p>}
+      {children}
+    </div>
+  )
+}
+
+function ChipBtn({ active, onClick, children }) {
+  return (
+    <button onClick={onClick} type="button"
+      style={{ padding:'7px 14px', borderRadius:'999px', border:`1px solid ${active ? GOLD : 'rgba(201,168,76,.2)'}`, background:active ? 'rgba(201,168,76,.1)' : 'transparent', color:active ? GOLD : DIM, fontSize:'12px', cursor:'pointer', fontFamily:'Raleway', transition:'all .15s' }}>
+      {children}
+    </button>
+  )
+}
+
+const S = {
+  header: { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 32px', height:'64px', background:MIDNIGHT, borderBottom:'1px solid rgba(201,168,76,.12)', position:'sticky', top:0, zIndex:100 },
+  navLink: { fontSize:'12px', color:DIM, textDecoration:'none' },
+  signOutBtn: { fontSize:'11px', fontWeight:700, letterSpacing:'.1em', color:'rgba(201,168,76,.6)', background:'transparent', border:'1px solid rgba(201,168,76,.2)', borderRadius:'999px', padding:'7px 16px', cursor:'pointer', fontFamily:'Raleway' },
+  page: { maxWidth:'1100px', margin:'0 auto', padding:'48px 24px 80px' },
+  twoCol: { display:'grid', gridTemplateColumns:'280px 1fr', gap:'48px', alignItems:'start' },
+  sidebar: { position:'sticky', top:'88px', display:'flex', flexDirection:'column', gap:'0' },
+  main: { minWidth:0 },
+  sectionLabel: { fontSize:'10px', fontWeight:700, letterSpacing:'.14em', color:'rgba(201,168,76,.5)', marginBottom:'12px', textTransform:'uppercase' },
+  photoWrap: { width:'100px', height:'100px', borderRadius:'50%', border:'2px solid rgba(201,168,76,.3)', background:MIDNIGHT, display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden', cursor:'pointer', position:'relative', marginBottom:'8px' },
+  photoOverlay: { position:'absolute', inset:0, background:'rgba(0,0,0,.4)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'20px', color:'white', opacity:0, transition:'opacity .2s', borderRadius:'50%' },
+  coverWrap: { width:'100%', height:'80px', borderRadius:'8px', border:'1px dashed rgba(201,168,76,.2)', background:'rgba(255,255,255,.02)', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden', marginBottom:'8px' },
+  valuCard: { background:'rgba(26,26,46,.5)', border:'1px solid rgba(201,168,76,.12)', borderRadius:'10px', padding:'20px', marginBottom:'16px' },
+  input: { width:'100%', padding:'10px 12px', background:'rgba(255,255,255,.04)', border:'1px solid rgba(201,168,76,.18)', borderRadius:'6px', color:PARCHMENT, fontSize:'13px', fontFamily:"'Raleway',sans-serif", outline:'none', boxSizing:'border-box' },
+  chipGrid: { display:'flex', flexWrap:'wrap', gap:'8px' },
+  hint: { fontSize:'12px', color:FAINT, lineHeight:1.5, marginBottom:'4px' },
 }

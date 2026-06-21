@@ -43,7 +43,7 @@ export default function LoginPage() {
     setError('')
     try {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(form.email, {
-        redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/login` : undefined,
+        redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/reset-password` : 'https://valoriainstitute.com/reset-password',
       })
       if (resetError) throw resetError
       setResetSent(true)
@@ -108,10 +108,16 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p style={styles.loginLink}>
-          Don&apos;t have an account?{' '}
-          <Link href="/signup" style={{ color: GOLD }}>Create one</Link>
-        </p>
+        <div style={{ marginTop: '24px', fontSize: '13px', color: 'rgba(247,244,238,.4)', textAlign: 'center', lineHeight: 1.8 }}>
+          <p style={{ margin: '0 0 4px' }}>
+            Employer or organiser?{' '}
+            <Link href="/signup" style={{ color: GOLD }}>Create account</Link>
+          </p>
+          <p style={{ margin: 0 }}>
+            Talent or speaker?{' '}
+            <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer" style={{ color: GOLD }}>Take the VALU Index</a>
+          </p>
+        </div>
       </div>
     </div>
   )
