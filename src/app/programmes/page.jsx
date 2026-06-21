@@ -19,7 +19,7 @@ export const metadata = {
 const CLUSTER_DETAIL = {
   P: { focus: 'Communication · Executive presence · Composure under scrutiny', outcome: 'Professionals who can carry their capability clearly into any room — without losing it to nerves, noise, or hierarchy.' },
   R: { focus: 'Trust-building · Collaborative intelligence · Network quality', outcome: 'Professionals who don\'t just work with others — they raise the output of everyone around them.' },
-  I: { focus: 'Critical thinking · Strategic positioning · Decision influence', outcome: 'Professionals who don\'t just contribute opinions — they move what happens next.' },
+  I: { focus: 'Critical thinking · Analytical depth · Decision-making · Cognitive agility', outcome: 'Professionals who don\'t just consume information — they synthesise it into decisions that hold under scrutiny.' },
   M: { focus: 'Execution discipline · Accountability · Resilience · Adaptability', outcome: 'Professionals who finish what they start, improve while doing it, and don\'t externalise when things break.' },
   E: { focus: 'Commercial thinking · Systems building · Venture mindset', outcome: 'Professionals who can build structures that outlast them, not just work well inside ones others built.' },
 }

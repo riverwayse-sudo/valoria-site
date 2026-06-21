@@ -6,8 +6,8 @@ import '../pages.css'
 
 export const metadata = {
   title: 'The PRIME Framework — Five Clusters. One Assessed Standard.',
-  description: 'PRIME defines what professional capability actually means across five dimensions: Presence, Relationships, Influence, Mastery, Enterprise. It is the architecture beneath the VALU Index and every Valoria programme.',
-  keywords: ['PRIME framework', 'professional capability assessment', 'VALU Index clusters', 'African professional standard', 'Presence Relationships Influence Mastery Enterprise'],
+  description: 'PRIME defines what professional capability actually means across five dimensions: Presence, Relationships, Intelligence, Mastery, Enterprise. It is the architecture beneath the VALU Index and every Valoria programme.',
+  keywords: ['PRIME framework', 'professional capability assessment', 'VALU Index clusters', 'African professional standard', 'Presence Relationships Intelligence Mastery Enterprise'],
   openGraph: {
     title: 'The PRIME Framework | Valoria Institute',
     description: 'Five clusters. One assessed standard. PRIME is the architecture beneath the VALU Index.',
@@ -30,10 +30,10 @@ const CLUSTER_DATA = {
     weight: 'High-weight for team leads, partnership roles, and collaborative environments.',
   },
   I: {
-    subtitle: 'How a professional moves a decision.',
-    body: 'Influence is the cluster that separates contributors from drivers. Critical thinking, strategic positioning, and the ability to shift outcomes — not just contribute an opinion to them. A high Influence score means your input changes what happens next, not just what gets discussed.',
-    signals: ['Thinks critically rather than reactively', 'Positions arguments to land, not just to inform', 'Shapes decisions before they are made', 'Builds and uses credibility as strategic capital'],
-    weight: 'High-weight for consulting, advisory, thought leadership, and senior leadership roles.',
+    subtitle: 'How you think.',
+    body: 'Intelligence is the cluster that separates professionals who consume information from those who deploy it. Critical thinking, analytical depth, and the ability to synthesise complexity into decisions that hold under scrutiny. A high Intelligence score means your thinking is both rigorous and usable — not just impressive in a meeting.',
+    signals: ['Thinks critically rather than reactively', 'Analyses complexity without losing the thread', 'Synthesises information into clear, defensible positions', 'Challenges assumptions — including their own'],
+    weight: 'High-weight for consulting, advisory, research, and senior decision-making roles.',
   },
   M: {
     subtitle: 'How a professional delivers.',
@@ -153,7 +153,7 @@ export default function PrimePage() {
                   { tier: 'Proficient', range: '55–74', desc: 'Solid assessed baseline. Listed and searchable, eligible for development through Valoria Develop.', color: '#378ADD' },
                   { tier: 'Standard', range: '35–54', desc: 'Assessed and on-platform. Eligible for cluster development to move up to Proficient.', color: '#1D9E75' },
                 ].map(t => (
-                  <div key={t.tier} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', padding: '16px', background: 'rgba(255,255,255,.03)', border: '1px solid rgba(201,168,76,.08)', borderRadius: '8px' }}>
+                  <div key={t.tier} className="card-gold" style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
                     <div style={{ flexShrink: 0, minWidth: '90px' }}>
                       <div style={{ fontSize: '13px', fontWeight: 700, color: t.color }}>{t.tier}</div>
                       <div style={{ fontSize: '11px', color: 'var(--faint)', marginTop: '2px' }}>{t.range}</div>

@@ -111,7 +111,7 @@ export default function DevelopPage() {
                   'L&D professionals building an independent practice alongside corporate roles',
                   'Consultants who want a structured, measurable development offering',
                   'Practitioners already working in any of the five PRIME cluster domains',
-                  'Subject matter experts with facilitation capability across Influence, Enterprise, or other clusters',
+                  'Subject matter experts with facilitation capability across Intelligence, Enterprise, or other clusters',
                 ].map((t, i) => (
                   <li key={i}>
                     <span className="dot"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#1D9E75" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg></span>

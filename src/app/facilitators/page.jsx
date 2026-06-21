@@ -19,7 +19,7 @@ export const metadata = {
 const color = COLORS.teal
 
 const HOW_IT_WORKS = [
-  { step: '01', title: 'Tell us what you need.', body: 'Submit an enquiry through the platform or contact us directly. Tell us which cluster your team needs to close — Presence, Relationships, Influence, Mastery, or Enterprise — and the context: team size, delivery format, timeline.' },
+  { step: '01', title: 'Tell us what you need.', body: 'Submit an enquiry through the platform or contact us directly. Tell us which cluster your team needs to close — Presence, Relationships, Intelligence, Mastery, or Enterprise — and the context: team size, delivery format, timeline.' },
   { step: '02', title: 'We match you with a certified facilitator.', body: 'Every facilitator in Valoria Develop is PRIME-certified and has taken the VALU Index themselves. We match based on the cluster you need, the facilitator\'s specialisation, and the commercial context.' },
   { step: '03', title: 'The programme runs against the standard.', body: 'Programmes are built directly on the PRIME framework — the same architecture the VALU Index measures against. So development closes the exact gaps the assessment surfaced, not generic training content.' },
   { step: '04', title: 'Measure movement on the same standard.', body: 'Teams can re-take the VALU Index after 90 days to see cluster score movement. Development that doesn\'t produce measurable shift is not development — it\'s content delivery.' },
@@ -27,7 +27,7 @@ const HOW_IT_WORKS = [
 
 const DIFF = [
   { label: 'Certified against PRIME', desc: 'Not just experienced trainers — facilitators who know the framework from the inside, because they\'ve been assessed against it themselves.' },
-  { label: 'Mapped to your VALU gaps', desc: 'If your team\'s Influence cluster scores are pulling the total down, that\'s where the programme targets. Not a generic leadership module.' },
+  { label: 'Mapped to your VALU gaps', desc: 'If your team\'s Intelligence cluster scores are pulling the total down, that\'s where the programme targets. Not a generic leadership module.' },
   { label: 'Measurable by design', desc: 'Because development and assessment run on the same framework, before-and-after VALU Index scores tell you what actually moved.' },
   { label: 'One team, or a full cohort', desc: 'Commission for a single senior team, a graduate cohort, or a multi-site org. The framework scales — the delivery doesn\'t change.' },
 ]

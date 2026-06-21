@@ -31,7 +31,7 @@ export const COLORS = {
 export const PRIME_CLUSTERS = [
   { letter: 'P', name: 'Presence', color: COLORS.teal },
   { letter: 'R', name: 'Relationships', color: COLORS.blue },
-  { letter: 'I', name: 'Influence', color: COLORS.purple },
+  { letter: 'I', name: 'Intelligence', color: COLORS.purple },
   { letter: 'M', name: 'Mastery', color: COLORS.amber },
   { letter: 'E', name: 'Enterprise', color: COLORS.coral },
 ]

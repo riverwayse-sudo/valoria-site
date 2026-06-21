@@ -20,7 +20,7 @@ const color = COLORS.blue
 
 const WHAT_YOU_GET = [
   { label: 'A VALU Index score', desc: 'Every candidate\'s total assessed score, updated with each reassessment.' },
-  { label: 'A five-cluster breakdown', desc: 'Presence, Relationships, Influence, Mastery, Enterprise — visible individually, so you can match to what your role actually needs.' },
+  { label: 'A five-cluster breakdown', desc: 'Presence, Relationships, Intelligence, Mastery, Enterprise — visible individually, so you can match to what your role actually needs.' },
   { label: 'A tier designation', desc: 'Standard, Proficient, Distinguished, or Elite — comparable across every professional on the platform.' },
   { label: 'Sector and availability signals', desc: 'Industry background, work modality preferences, and whether they\'re open to engagement right now.' },
 ]

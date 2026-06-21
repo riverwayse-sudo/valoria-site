@@ -74,7 +74,7 @@ export default function AboutPage() {
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WHAT WE BUILT</span></div>
               <h2 className="section-title">One standard.<br /><em>Three ways in.</em></h2>
               <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px' }}>
-                The VALU Index assesses every professional across five PRIME clusters — Presence, Relationships, Influence, Mastery, Enterprise. That single assessed score then powers three distinct entry points into the professional market: ATB Connect for employers searching assessed candidates, ATB Spotlight for event organisers booking assessed speakers, and Valoria Develop for training buyers commissioning PRIME-certified facilitators.
+                The VALU Index assesses every professional across five PRIME clusters — Presence, Relationships, Intelligence, Mastery, Enterprise. That single assessed score then powers three distinct entry points into the professional market: ATB Connect for employers searching assessed candidates, ATB Spotlight for event organisers booking assessed speakers, and Valoria Develop for training buyers commissioning PRIME-certified facilitators.
               </p>
               <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px', marginTop: '16px' }}>
                 One assessment. One standard. Every professional context it serves.
