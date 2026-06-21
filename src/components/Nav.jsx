@@ -67,10 +67,10 @@ export default function Nav() {
     <>
       <style>{`
         nav.vi-nav {
-          position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+          position: fixed; top: 3px; left: 0; right: 0; z-index: 200;
           padding: 0 var(--pad);
           display: flex; align-items: center; justify-content: space-between;
-          height: 68px;
+          height: 64px;
           transition: background .3s, border-color .3s;
           background: var(--nav-bg);
           border-bottom: 1px solid rgba(201,168,76,0.08);
@@ -214,7 +214,14 @@ export default function Nav() {
         />
       )}
 
-      <nav className={`vi-nav${scrolled ? ' scrolled' : ''}`}>
+      {/* PRIME cluster stripe — 3px at very top, matches assessment platform */}
+      <div aria-hidden="true" style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '3px', display: 'flex', zIndex: 201, pointerEvents: 'none' }}>
+        {[['#1D9E75',20],['#378ADD',25],['#7F77DD',25],['#BA7517',20],['#D85A30',10]].map(([color, pct], i) => (
+          <div key={i} style={{ flex: pct, background: color, opacity: 0.85 }} />
+        ))}
+      </div>
+
+      <nav className={`vi-nav${scrolled ? ' scrolled' : ''}`} style={{ top: '3px' }}>
         {/* LOGO */}
         <Link href="/" className="nav-logo" aria-label="Valoria Institute home">
           <img src="/logo.png" alt="" />
