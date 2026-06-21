@@ -41,7 +41,6 @@ export default function PrimePage() {
                   <div>
                     <div className="cluster-name" style={{ color: 'var(--parchment)' }}>
                       {c.name}
-                      {c.name === 'Mastery' && <span className="cluster-pending">}
                     </div>
                     <p className="cluster-desc">{CLUSTER_DESCRIPTIONS[c.letter]}</p>
                   </div>
