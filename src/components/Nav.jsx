@@ -8,6 +8,7 @@ export default function Nav() {
   const [menuOpen, setMenuOpen]     = useState(false)
   const [dropOpen, setDropOpen]     = useState(false)
   const [user, setUser]             = useState(null)
+  const [userType, setUserType]     = useState(null)
   const [authChecked, setAuthChecked] = useState(false)
 
   useEffect(() => {
@@ -21,11 +22,25 @@ export default function Nav() {
   }, [menuOpen])
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user); setAuthChecked(true)
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      setUser(user)
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles').select('user_type').eq('id', user.id).single()
+        setUserType(profile?.user_type || user?.user_metadata?.user_type || null)
+      }
+      setAuthChecked(true)
     })
-    const { data: listener } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user || null)
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_e, session) => {
+      const u = session?.user || null
+      setUser(u)
+      if (u) {
+        const { data: profile } = await supabase
+          .from('profiles').select('user_type').eq('id', u.id).single()
+        setUserType(profile?.user_type || u?.user_metadata?.user_type || null)
+      } else {
+        setUserType(null)
+      }
     })
     return () => listener.subscription.unsubscribe()
   }, [])
@@ -229,10 +244,17 @@ export default function Nav() {
             </div>
           </li>
 
-          {/* 2. Auth-aware: Dashboard or Sign In */}
+          {/* 2. Auth-aware: correct destination or Sign In */}
           {authChecked && (
             user ? (
               <>
+                <li>
+                  {userType === 'talent' || userType === 'speaker' ? (
+                    <a href="https://assessment.valoriainstitute.com/" className="nav-link" target="_blank" rel="noopener noreferrer">My Profile</a>
+                  ) : (
+                    <Link href="/marketplace" className="nav-link">Marketplace</Link>
+                  )}
+                </li>
                 <li><Link href="/dashboard" className="nav-link">Dashboard</Link></li>
                 <li><button onClick={handleSignOut} className="nav-link-btn">Sign Out</button></li>
               </>
@@ -283,13 +305,19 @@ export default function Nav() {
         {authChecked && (
           user ? (
             <>
+              {userType === 'talent' || userType === 'speaker' ? (
+                <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>My Profile</a>
+              ) : (
+                <Link href="/marketplace" onClick={closeMenu}>Marketplace</Link>
+              )}
               <Link href="/dashboard" onClick={closeMenu}>Dashboard</Link>
               <button className="m-signout" onClick={() => { closeMenu(); handleSignOut() }}>Sign Out</button>
             </>
           ) : (
             <>
               <Link href="/login" onClick={closeMenu}>Sign In</Link>
-              <Link href="/signup" onClick={closeMenu}>Create Account</Link>
+              <Link href="/signup" onClick={closeMenu}>Create Account — Employers & Organisers</Link>
+              <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>Talent & Speakers — Take VALU Index</a>
             </>
           )
         )}

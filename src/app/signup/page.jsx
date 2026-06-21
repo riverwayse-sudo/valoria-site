@@ -77,11 +77,11 @@ export default function SignupPage() {
           <div style={{ fontSize: '28px', color: GOLD, textAlign: 'center', marginBottom: '16px' }}>✦</div>
           <h2 style={S.title}>Account created.</h2>
           <p style={S.sub}>
-            Check your email and click the confirmation link to activate your account. Then sign in to access the marketplace.
+            Check your email and click the confirmation link to activate your account. Then start searching the marketplace.
           </p>
-          <a href="/login" style={S.btnGold}>SIGN IN →</a>
-          <a href="/marketplace" style={{ ...S.btnGold, background: 'transparent', border: '1px solid rgba(201,168,76,.3)', color: GOLD, marginTop: '10px', display: 'block', textAlign: 'center' }}>
-            BROWSE THE MARKETPLACE
+          <a href="/marketplace" style={S.btnGold}>BROWSE THE MARKETPLACE →</a>
+          <a href="/dashboard" style={{ ...S.btnGold, background: 'transparent', border: '1px solid rgba(201,168,76,.3)', color: GOLD, marginTop: '10px', display: 'block', textAlign: 'center' }}>
+            GO TO DASHBOARD
           </a>
         </div>
       </div>

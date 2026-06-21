@@ -25,7 +25,19 @@ export default function LoginPage() {
         password: form.password,
       })
       if (loginError) throw loginError
-      window.location.href = '/dashboard'
+      const { data: { user } } = await supabase.auth.getUser()
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', user.id)
+        .single()
+
+      const userType = profile?.user_type || user?.user_metadata?.user_type
+      if (userType === 'talent' || userType === 'speaker') {
+        window.location.href = 'https://assessment.valoriainstitute.com/'
+      } else {
+        window.location.href = '/marketplace'
+      }
     } catch (err) {
       setError(
         err.message === 'Invalid login credentials'
