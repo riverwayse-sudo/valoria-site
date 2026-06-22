@@ -64,7 +64,7 @@ export default function ProgrammesPage() {
                 const detail = CLUSTER_DETAIL[c.letter]
                 return (
                   <Reveal key={c.letter}>
-                    <div className="card-gold" style={{ borderTop: `3px solid ${c.color}` }}>
+                    <div className="card-gold" style={{ "--card-color": c.color }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                         <div className="cluster-letter" style={{ color: c.color, fontSize: '28px', lineHeight: 1 }}>{c.letter}</div>
                         <div className="cluster-name">{c.name} Programme</div>

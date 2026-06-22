@@ -24,6 +24,8 @@
   --amber: #BA7517;
   --coral: #D85A30;
   --font: 'Raleway', sans-serif;
+  --font-display: 'Raleway', sans-serif;
+  --card-color: #C9A84C;
   --max: 1160px;
   --pad: clamp(24px, 5vw, 64px);
   --btn-radius: 9999px;
@@ -176,32 +178,107 @@ body::before {
 }
 .card:hover { border-color: rgba(201, 168, 76, .25); transform: translateY(-2px); }
 
+/* ── APPROVED CARD SYSTEM — matches homepage entry point cards exactly ── */
+/* Use .vi-card on the wrapper div. Set --card-color as a CSS var for accent. */
+.vi-card {
+  background: var(--dark-card);
+  border: 1px solid rgba(201,168,76,.12);
+  border-radius: 0;
+  padding: clamp(28px,3.5vw,44px) clamp(24px,3vw,36px);
+  position: relative;
+  overflow: hidden;
+  transition: background .3s, box-shadow .3s, transform .3s;
+  cursor: default;
+}
+.vi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--card-color, #C9A84C);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .4s cubic-bezier(.22,1,.36,1);
+}
+.vi-card:hover { background: rgba(18,18,28,.98); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,.3); }
+.vi-card:hover::before { transform: scaleX(1); }
+
+/* Card grid — 1px gold separator lines between cells */
+.vi-card-grid {
+  display: grid;
+  gap: 1px;
+  background: rgba(201,168,76,.12);
+  border: 1px solid rgba(201,168,76,.12);
+}
+.vi-card-grid-2 { grid-template-columns: repeat(2,1fr); }
+.vi-card-grid-3 { grid-template-columns: repeat(3,1fr); }
+.vi-card-grid-4 { grid-template-columns: repeat(4,1fr); }
+
+/* Card inner elements — exact spec from approved entry point cards */
+.vi-card-num {
+  font-size: 10px; font-weight: 600;
+  color: var(--faint); letter-spacing: .18em;
+  margin-bottom: 20px;
+}
+.vi-card-icon {
+  width: 44px; height: 44px;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.vi-card-name {
+  font-family: var(--font-display, var(--font));
+  font-size: clamp(18px,2vw,24px);
+  font-weight: 300; line-height: 1.15;
+  color: var(--parchment);
+  margin-bottom: 6px;
+}
+.vi-card-label {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .18em; margin-bottom: 14px;
+  color: var(--card-color, rgba(201,168,76,.5));
+  opacity: .7;
+}
+.vi-card-body {
+  font-size: 13px; font-weight: 300;
+  color: var(--dim); line-height: 1.7;
+  margin-bottom: 20px;
+}
+.vi-card-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 2px;
+  font-size: 11px; font-weight: 600; letter-spacing: .1em;
+  margin-bottom: 20px;
+}
+.vi-card-link {
+  font-size: 11px; font-weight: 600; letter-spacing: .12em;
+  text-decoration: none; color: var(--card-color, #C9A84C);
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: gap .2s;
+}
+.vi-card:hover .vi-card-link { gap: 14px; }
+
+/* Rectangular variant — keeps border-radius for softer use cases */
+.vi-card-rounded { border-radius: 10px; }
+
+/* Legacy card-gold — keep for backward compat but redirect to vi-card spec */
 .card-gold {
   background: var(--dark-card);
-  border: 1px solid rgba(201, 168, 76, .18);
-  border-radius: 10px;
-  padding: clamp(20px, 2.5vw, 32px);
-  transition: border-color .3s ease, transform .3s ease, box-shadow .3s ease;
-  position: relative;
+  border: 1px solid rgba(201,168,76,.12);
+  border-radius: 0;
+  padding: clamp(20px,2.5vw,32px);
+  position: relative; overflow: hidden;
+  transition: background .3s ease, transform .3s ease, box-shadow .3s ease;
 }
 .card-gold::before {
   content: '';
-  position: absolute;
-  left: 0; top: 20%; bottom: 20%;
-  width: 2px;
-  background: rgba(201, 168, 76, 0);
-  border-radius: 0 2px 2px 0;
-  transition: background .3s ease, top .3s ease, bottom .3s ease;
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--card-color, #C9A84C);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .4s cubic-bezier(.22,1,.36,1);
 }
-.card-gold:hover {
-  border-color: rgba(201, 168, 76, .4);
-  transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(0,0,0,.25), 0 0 0 1px rgba(201,168,76,.06);
-}
-.card-gold:hover::before {
-  background: rgba(201, 168, 76, .6);
-  top: 15%; bottom: 15%;
-}
+.card-gold:hover { background: rgba(18,18,28,.98); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,.3); }
+.card-gold:hover::before { transform: scaleX(1); }
 
 /* WaitlistForm component — used on homepage and /waitlist */
 .wl-field-label {

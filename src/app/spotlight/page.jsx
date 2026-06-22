@@ -118,7 +118,7 @@ export default function SpotlightPage() {
             <Reveal>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {SPEAKER_TIERS.map((t, i) => (
-                  <div key={i} className="card-gold" style={{ borderLeft: `3px solid ${t.color}` }}>
+                  <div key={i} className="card-gold" style={{ "--card-color": t.color }}>
                     <div style={{ fontSize: '13px', fontWeight: 700, color: t.color, marginBottom: '8px' }}>{t.tier}</div>
                     <p style={{ fontSize: '13px', color: 'var(--dim)', fontWeight: 300, lineHeight: 1.6, margin: 0 }}>{t.desc}</p>
                   </div>

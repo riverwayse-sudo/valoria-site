@@ -93,10 +93,10 @@ export default function AboutPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
               {PRINCIPLES.map(p => (
                 <Reveal key={p.num}>
-                  <div className="card-gold" style={{ height: '100%' }}>
-                    <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '.16em', color: 'rgba(201,168,76,.45)', marginBottom: '12px' }}>{p.num}</div>
-                    <div className="cluster-name" style={{ marginBottom: '12px' }}>{p.title}</div>
-                    <p className="cluster-desc">{p.body}</p>
+                  <div className="card-gold">
+                    <div className="vi-card-num">{p.num}</div>
+                    <div className="vi-card-name" style={{ marginBottom: '12px' }}>{p.title}</div>
+                    <p className="vi-card-body">{p.body}</p>
                   </div>
                 </Reveal>
               ))}
