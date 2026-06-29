@@ -4,11 +4,11 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
 export default function Nav() {
-  const [scrolled, setScrolled]     = useState(false)
-  const [menuOpen, setMenuOpen]     = useState(false)
-  const [dropOpen, setDropOpen]     = useState(false)
-  const [user, setUser]             = useState(null)
-  const [userType, setUserType]     = useState(null)
+  const [scrolled, setScrolled]       = useState(false)
+  const [menuOpen, setMenuOpen]       = useState(false)
+  const [dropOpen, setDropOpen]       = useState(false)
+  const [user, setUser]               = useState(null)
+  const [userType, setUserType]       = useState(null)
   const [authChecked, setAuthChecked] = useState(false)
 
   useEffect(() => {
@@ -51,18 +51,6 @@ export default function Nav() {
 
   const closeMenu = () => setMenuOpen(false)
 
-  // "Explore" dropdown items
-  const exploreLinks = [
-    { href: '/marketplace',   label: 'Marketplace' },
-    { href: '/atb-connect',   label: 'Find Talent' },
-    { href: '/spotlight',     label: 'Book a Speaker' },
-    { href: '/facilitators',  label: 'Commission Facilitators' },
-    { href: '/prime',         label: 'PRIME Framework' },
-    { href: '/about-us',      label: 'About' },
-    { href: '/programmes',    label: 'Programmes' },
-    { href: '/contact-us',    label: 'Contact' },
-  ]
-
   return (
     <>
       <style>{`
@@ -82,11 +70,9 @@ export default function Nav() {
           -webkit-backdrop-filter: blur(16px);
         }
 
-        /* LOGO */
         .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; line-height: 0; }
         .nav-logo img { height: 40px; width: auto; display: block; }
 
-        /* DESKTOP LINKS */
         .nav-links { display: flex; align-items: center; gap: 6px; list-style: none; margin: 0; padding: 0; }
 
         /* Explore dropdown trigger */
@@ -97,9 +83,7 @@ export default function Nav() {
           display: flex; align-items: center; gap: 5px;
         }
         .nav-explore-btn:hover { color: var(--parchment); }
-        .nav-explore-arrow {
-          font-size: 8px; transition: transform .2s; display: inline-block;
-        }
+        .nav-explore-arrow { font-size: 8px; transition: transform .2s; display: inline-block; }
         .nav-explore-arrow.open { transform: rotate(180deg); }
 
         /* Dropdown panel */
@@ -116,12 +100,9 @@ export default function Nav() {
           letter-spacing: .06em; transition: color .15s, background .15s;
         }
         .nav-dropdown a:hover { color: var(--parchment); background: rgba(201,168,76,.06); }
-        .nav-dropdown-divider {
-          height: 1px; background: rgba(201,168,76,.08); margin: 6px 0;
-        }
+        .nav-dropdown-divider { height: 1px; background: rgba(201,168,76,.08); margin: 6px 0; }
         .nav-explore-wrap { position: relative; }
 
-        /* Plain nav links */
         .nav-link {
           font-size: 12px; color: var(--dim); text-decoration: none;
           letter-spacing: .07em; font-weight: 400; transition: color .2s;
@@ -129,7 +110,6 @@ export default function Nav() {
         }
         .nav-link:hover { color: var(--parchment); }
 
-        /* Sign Out button styled like a nav link */
         .nav-link-btn {
           background: none; border: none; cursor: pointer; padding: 8px 14px;
           font-size: 12px; color: var(--dim); letter-spacing: .07em;
@@ -137,7 +117,6 @@ export default function Nav() {
         }
         .nav-link-btn:hover { color: var(--parchment); }
 
-        /* Primary CTA */
         .nav-cta {
           padding: 10px 22px;
           background: var(--gold); color: var(--dark) !important;
@@ -148,7 +127,6 @@ export default function Nav() {
         }
         .nav-cta:hover { opacity: .88; }
 
-        /* Burger */
         .nav-burger {
           display: none; flex-direction: column; gap: 5px;
           cursor: pointer; padding: 4px; background: none; border: none;
@@ -161,7 +139,6 @@ export default function Nav() {
         .nav-burger.open span:nth-child(2) { opacity: 0; }
         .nav-burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
-        /* Mobile overlay */
         .nav-mobile {
           display: none; position: fixed; inset: 0; top: 68px;
           background: rgba(10,10,20,.98); z-index: 199;
@@ -180,7 +157,6 @@ export default function Nav() {
           background: none; border: none; border-bottom: 1px solid rgba(255,255,255,.05);
           cursor: pointer; text-align: left; width: 100%;
         }
-        button.m-signout:hover { color: var(--parchment); }
         .nav-mobile .m-section-label {
           font-size: 9px; font-weight: 700; letter-spacing: .18em;
           color: rgba(201,168,76,.4); margin: 24px 0 4px; text-transform: uppercase;
@@ -191,7 +167,6 @@ export default function Nav() {
           font-size: 12px; font-weight: 700; letter-spacing: .14em;
           text-align: center; border-radius: var(--btn-radius); border: none;
         }
-        .nav-mobile .m-cta:hover { opacity: .88; }
 
         @media (max-width: 900px) {
           .nav-links { display: none; }
@@ -199,18 +174,12 @@ export default function Nav() {
         }
       `}</style>
 
-      <a href="#main-content" className="skip-link">Skip to main content</a>
-
-      {/* Backdrop to close dropdown on outside click */}
       {dropOpen && (
-        <div
-          onClick={() => setDropOpen(false)}
-          style={{ position: 'fixed', inset: 0, zIndex: 199 }}
-          aria-hidden="true"
-        />
+        <div onClick={() => setDropOpen(false)}
+          style={{ position: 'fixed', inset: 0, zIndex: 199 }} aria-hidden="true" />
       )}
 
-      {/* PRIME cluster stripe — 3px at very top, matches assessment platform */}
+      {/* PRIME cluster stripe */}
       <div aria-hidden="true" style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '3px', display: 'flex', zIndex: 201, pointerEvents: 'none' }}>
         {[['#1D9E75',20],['#378ADD',25],['#7F77DD',25],['#BA7517',20],['#D85A30',10]].map(([color, pct], i) => (
           <div key={i} style={{ flex: pct, background: color, opacity: 0.85 }} />
@@ -218,15 +187,13 @@ export default function Nav() {
       </div>
 
       <nav className={`vi-nav${scrolled ? ' scrolled' : ''}`} style={{ top: '3px' }}>
-        {/* LOGO */}
         <Link href="/" className="nav-logo" aria-label="Valoria Institute home">
           <img src="/logo.png" alt="Valoria Institute" />
         </Link>
 
-        {/* DESKTOP NAV — 4 visible items max */}
         <ul className="nav-links" role="list">
 
-          {/* 1. Explore dropdown */}
+          {/* 1. Explore dropdown — marketplace only, no About/Contact/PRIME */}
           <li className="nav-explore-wrap">
             <button
               className="nav-explore-btn"
@@ -238,20 +205,21 @@ export default function Nav() {
               <span className={`nav-explore-arrow${dropOpen ? ' open' : ''}`}>▾</span>
             </button>
             <div className={`nav-dropdown${dropOpen ? ' open' : ''}`} role="menu">
-              <a href="/marketplace" onClick={() => setDropOpen(false)}>Marketplace</a>
+              <a href="/atb-connect" onClick={() => setDropOpen(false)}>ATB Connect — Find Talent</a>
+              <a href="/spotlight" onClick={() => setDropOpen(false)}>ATB Spotlight — Book a Speaker</a>
+              <a href="/facilitators" onClick={() => setDropOpen(false)}>ATB Develop — Commission Facilitators</a>
               <div className="nav-dropdown-divider" />
-              <a href="/atb-connect" onClick={() => setDropOpen(false)}>Find Talent</a>
-              <a href="/spotlight" onClick={() => setDropOpen(false)}>Book a Speaker</a>
-              <a href="/facilitators" onClick={() => setDropOpen(false)}>Commission Facilitators</a>
-              <div className="nav-dropdown-divider" />
-              <a href="/prime" onClick={() => setDropOpen(false)}>PRIME Framework</a>
               <a href="/programmes" onClick={() => setDropOpen(false)}>Programmes</a>
-              <a href="/about-us" onClick={() => setDropOpen(false)}>About</a>
-              <a href="/contact-us" onClick={() => setDropOpen(false)}>Contact</a>
             </div>
           </li>
 
-          {/* 2. Auth-aware: correct destination or Sign In */}
+          {/* 2. About — top level, visible */}
+          <li><Link href="/about-us" className="nav-link">About</Link></li>
+
+          {/* 3. Contact — top level, visible */}
+          <li><Link href="/contact-us" className="nav-link">Contact</Link></li>
+
+          {/* 4. Auth-aware */}
           {authChecked && (
             user ? (
               <>
@@ -259,10 +227,9 @@ export default function Nav() {
                   {userType === 'talent' || userType === 'speaker' ? (
                     <a href="https://assessment.valoriainstitute.com/" className="nav-link" target="_blank" rel="noopener noreferrer">My Profile</a>
                   ) : (
-                    <Link href="/marketplace" className="nav-link">Marketplace</Link>
+                    <Link href="/dashboard" className="nav-link">Dashboard</Link>
                   )}
                 </li>
-                <li><Link href="/dashboard" className="nav-link">Dashboard</Link></li>
                 <li><button onClick={handleSignOut} className="nav-link-btn">Sign Out</button></li>
               </>
             ) : (
@@ -270,20 +237,14 @@ export default function Nav() {
             )
           )}
 
-          {/* 3. Primary CTA — always visible, always gold */}
+          {/* 5. Primary CTA */}
           <li>
-            <a
-              href="https://assessment.valoriainstitute.com/"
-              className="nav-cta"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://assessment.valoriainstitute.com/" className="nav-cta" target="_blank" rel="noopener noreferrer">
               TAKE THE VALU INDEX
             </a>
           </li>
         </ul>
 
-        {/* BURGER */}
         <button
           className={`nav-burger${menuOpen ? ' open' : ''}`}
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
@@ -297,15 +258,13 @@ export default function Nav() {
       {/* MOBILE OVERLAY */}
       <nav className={`nav-mobile${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation">
         <div className="m-section-label">Marketplace</div>
-        <Link href="/marketplace" onClick={closeMenu}>Browse All</Link>
-        <Link href="/atb-connect" onClick={closeMenu}>Find Talent</Link>
-        <Link href="/spotlight" onClick={closeMenu}>Book a Speaker</Link>
-        <Link href="/facilitators" onClick={closeMenu}>Commission Facilitators</Link>
+        <Link href="/atb-connect" onClick={closeMenu}>ATB Connect — Find Talent</Link>
+        <Link href="/spotlight" onClick={closeMenu}>ATB Spotlight — Book a Speaker</Link>
+        <Link href="/facilitators" onClick={closeMenu}>ATB Develop — Facilitators</Link>
 
-        <div className="m-section-label">Platform</div>
-        <Link href="/prime" onClick={closeMenu}>PRIME Framework</Link>
-        <Link href="/programmes" onClick={closeMenu}>Programmes</Link>
+        <div className="m-section-label">Company</div>
         <Link href="/about-us" onClick={closeMenu}>About</Link>
+        <Link href="/programmes" onClick={closeMenu}>Programmes</Link>
         <Link href="/contact-us" onClick={closeMenu}>Contact</Link>
 
         <div className="m-section-label">Account</div>
@@ -315,27 +274,18 @@ export default function Nav() {
               {userType === 'talent' || userType === 'speaker' ? (
                 <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>My Profile</a>
               ) : (
-                <Link href="/marketplace" onClick={closeMenu}>Marketplace</Link>
+                <Link href="/dashboard" onClick={closeMenu}>Dashboard</Link>
               )}
-              <Link href="/dashboard" onClick={closeMenu}>Dashboard</Link>
               <button className="m-signout" onClick={() => { closeMenu(); handleSignOut() }}>Sign Out</button>
             </>
           ) : (
             <>
               <Link href="/login" onClick={closeMenu}>Sign In</Link>
-              <Link href="/signup" onClick={closeMenu}>Create Account — Employers & Organisers</Link>
-              <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>Talent & Speakers — Take VALU Index</a>
             </>
           )
         )}
 
-        <a
-          href="https://assessment.valoriainstitute.com/"
-          className="m-cta"
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={closeMenu}
-        >
+        <a href="https://assessment.valoriainstitute.com/" className="m-cta" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>
           TAKE THE VALU INDEX — FREE
         </a>
       </nav>

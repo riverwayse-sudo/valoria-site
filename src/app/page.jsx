@@ -2,6 +2,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import WaitlistForm from '@/components/WaitlistForm'
+import WaitlistGate from '@/components/WaitlistGate'
 import { ENTRY_POINTS } from '@/lib/brand'
 import './home.css'
 
@@ -13,27 +14,35 @@ export const metadata = {
 export default function HomePage() {
   return (
     <>
+      {/* Waitlist gate — shows as overlay on first visit */}
+      <WaitlistGate />
+
       <Nav />
 
       <main id="main-content">
-        {/* HERO */}
+        {/* ── HERO ─────────────────────────────────────────────────────── */}
         <section className="hero" id="hero">
           <div className="hero-bg" aria-hidden="true" />
           <div className="hero-grid" aria-hidden="true" />
+
           <div className="container hero-inner">
             <div>
               <div className="hero-eyebrow au d1" aria-hidden="true">
                 <div className="hero-eyebrow-line" />
                 <span className="hero-eyebrow-text">THE AFRICAN PROFESSIONAL MARKETPLACE</span>
               </div>
+
+              {/* FIX: reduced h1 size and tightened spacing so hero fits viewport */}
               <h1 className="hero-title au d2">
                 Valoria is where<br />African professionals<br /><em>rise.</em>
               </h1>
+
               <p className="hero-sub au d3">
                 One marketplace. Three ways to engage Africa&apos;s best professionals. Search candidates, book speakers, commission facilitators — every profile underwritten by one independently assessed standard.
               </p>
+
               <div className="hero-actions au d4">
-                <a href="/marketplace" className="btn-gold">
+                <a href="/atb-connect" className="btn-gold">
                   EXPLORE THE PLATFORM
                 </a>
                 <a href="https://assessment.valoriainstitute.com/" className="btn-outline" target="_blank" rel="noopener noreferrer">
@@ -81,7 +90,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ALIGNMENT PRINCIPLE */}
+        {/* ── ALIGNMENT PRINCIPLE ───────────────────────────────────────── */}
         <section className="alignment" id="alignment">
           <div className="alignment-numeral" aria-hidden="true">3</div>
           <div className="container">
@@ -97,9 +106,7 @@ export default function HomePage() {
               <p className="alignment-sub">
                 Valoria Institute exists to move African professionals from category two — used, deployed as a resource without development — to category three. Every profile, every assessment, every programme is an act of infrastructure toward that one outcome.
               </p>
-              <a href="/about-us" className="btn-gold">
-                SEE HOW IT WORKS
-              </a>
+              <a href="/about-us" className="btn-gold">SEE HOW IT WORKS</a>
               <div className="alignment-cats" aria-label="The four categories">
                 <div className="cat-item"><div className="cat-num">01</div><div className="cat-name">Forgotten</div></div>
                 <div className="cat-item"><div className="cat-num">02</div><div className="cat-name">Used</div></div>
@@ -110,7 +117,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ENTRY POINTS */}
+        {/* ── ENTRY POINTS ─────────────────────────────────────────────── */}
         <section className="entry-points" id="entry-points">
           <div className="container">
             <Reveal className="ep-header">
@@ -128,30 +135,61 @@ export default function HomePage() {
               </p>
             </Reveal>
 
+            {/* ATB Connect / ATB Spotlight / ATB Develop — 3 cards */}
             <Reveal className="ep-grid" as="div">
-              {ENTRY_POINTS.map((ep) => (
-                <div className={`ep-card ep-${ep.num}`} key={ep.id} style={{ '--ep-color': ep.color }}>
-                  <style>{`.ep-${ep.num}::before { background: ${ep.color}; }`}</style>
-                  <div className="ep-num">{ep.num}</div>
-                  <div className="ep-icon" style={{ background: `${ep.color}1A`, border: `1px solid ${ep.color}40` }}>
-                    <EntryIcon id={ep.id} color={ep.color} />
-                  </div>
-                  <h3 className="ep-name" style={{ color: ep.color }} dangerouslySetInnerHTML={{ __html: ep.name.replace(' ', '<br/>') }} />
-                  <div className="ep-buyer" style={{ color: ep.color }}>{ep.buyer}</div>
-                  <p className="ep-desc-text">{ep.desc}</p>
-                  <div className="ep-modality" style={{ background: `${ep.color}14`, color: ep.color, border: `1px solid ${ep.color}33` }}>
-                    {ep.modality}
-                  </div>
-                  <a href={ep.href} className="ep-link" style={{ color: ep.color }}>
-                    {ep.linkLabel} <span aria-hidden="true">→</span>
-                  </a>
+              <div className="ep-card ep-1" style={{ '--ep-color': '#378ADD' }}>
+                <style>{`.ep-1::before { background: #378ADD; }`}</style>
+                <div className="ep-num">01</div>
+                <div className="ep-icon" style={{ background: 'rgba(55,138,221,.1)', border: '1px solid rgba(55,138,221,.25)' }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect x="2" y="7" width="20" height="14" rx="2" stroke="#378ADD" strokeWidth="1.5" />
+                    <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="#378ADD" strokeWidth="1.5" />
+                    <circle cx="12" cy="14" r="2" stroke="#378ADD" strokeWidth="1.5" />
+                  </svg>
                 </div>
-              ))}
+                <h3 className="ep-name" style={{ color: '#378ADD' }}>ATB<br/>Connect</h3>
+                <div className="ep-buyer" style={{ color: '#378ADD' }}>For Employers &amp; Recruiters</div>
+                <p className="ep-desc-text">Search pre-assessed candidates by VALU Index score, cluster strength, sector, and designation. Every profile backed by one independently assessed standard.</p>
+                <div className="ep-modality" style={{ background: 'rgba(55,138,221,.1)', color: '#378ADD', border: '1px solid rgba(55,138,221,.2)' }}>CANDIDATE</div>
+                <a href="/atb-connect" className="ep-link" style={{ color: '#378ADD' }}>Find Talent <span aria-hidden="true">→</span></a>
+              </div>
+
+              <div className="ep-card ep-2" style={{ '--ep-color': '#C9A84C' }}>
+                <style>{`.ep-2::before { background: #C9A84C; }`}</style>
+                <div className="ep-num">02</div>
+                <div className="ep-icon" style={{ background: 'rgba(201,168,76,.1)', border: '1px solid rgba(201,168,76,.25)' }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="8" r="4" stroke="#C9A84C" strokeWidth="1.5" />
+                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round" />
+                    <path d="M17 4l2 2-2 2M19 6h-3" stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <h3 className="ep-name" style={{ color: '#C9A84C' }}>ATB<br/>Spotlight</h3>
+                <div className="ep-buyer" style={{ color: '#C9A84C' }}>For Event Planners &amp; Organisers</div>
+                <p className="ep-desc-text">Discover and book speakers by expertise, PRIME cluster strength, tier designation, and VALU Index score. Every speaker assessed. No guesswork.</p>
+                <div className="ep-modality" style={{ background: 'rgba(201,168,76,.1)', color: '#C9A84C', border: '1px solid rgba(201,168,76,.2)' }}>SPEAKER</div>
+                <a href="/spotlight" className="ep-link" style={{ color: '#C9A84C' }}>Book a Speaker <span aria-hidden="true">→</span></a>
+              </div>
+
+              <div className="ep-card ep-3" style={{ '--ep-color': '#1D9E75' }}>
+                <style>{`.ep-3::before { background: #1D9E75; }`}</style>
+                <div className="ep-num">03</div>
+                <div className="ep-icon" style={{ background: 'rgba(29,158,117,.1)', border: '1px solid rgba(29,158,117,.25)' }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#1D9E75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <h3 className="ep-name" style={{ color: '#1D9E75' }}>ATB<br/>Develop</h3>
+                <div className="ep-buyer" style={{ color: '#1D9E75' }}>For L&amp;D &amp; HR Leaders</div>
+                <p className="ep-desc-text">Commission PRIME-certified facilitators to run development programmes. Every facilitator carries an assessed track record you can verify before you sign.</p>
+                <div className="ep-modality" style={{ background: 'rgba(29,158,117,.1)', color: '#1D9E75', border: '1px solid rgba(29,158,117,.2)' }}>FACILITATOR</div>
+                <a href="/facilitators" className="ep-link" style={{ color: '#1D9E75' }}>Commission Facilitators <span aria-hidden="true">→</span></a>
+              </div>
             </Reveal>
           </div>
         </section>
 
-        {/* VALU INDEX */}
+        {/* ── VALU INDEX ───────────────────────────────────────────────── */}
         <section className="valu-section" id="valu">
           <div className="container valu-inner">
             <Reveal>
@@ -223,19 +261,18 @@ export default function HomePage() {
             </Reveal>
           </div>
         </section>
-        {/* FOUNDING COHORT WAITLIST */}
+
+        {/* ── FOUNDING COHORT WAITLIST ──────────────────────────────────── */}
         <section className="waitlist-section" id="waitlist">
           <style>{`
             .waitlist-section {
               padding: clamp(72px,10vw,120px) var(--pad);
               background: linear-gradient(180deg, var(--dark) 0%, #0a0a14 100%);
               border-top: 1px solid rgba(201,168,76,.12);
-              position: relative;
-              overflow: hidden;
+              position: relative; overflow: hidden;
             }
             .waitlist-section::before {
-              content: '';
-              position: absolute;
+              content: ''; position: absolute;
               top: -120px; left: 50%; transform: translateX(-50%);
               width: 600px; height: 600px;
               background: radial-gradient(circle, rgba(201,168,76,.06) 0%, transparent 70%);
@@ -243,20 +280,14 @@ export default function HomePage() {
             }
             .waitlist-inner {
               max-width: 1100px; margin: 0 auto;
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: clamp(32px,5vw,72px);
-              align-items: center;
+              display: grid; grid-template-columns: 1fr 1fr;
+              gap: clamp(32px,5vw,72px); align-items: center;
             }
             .waitlist-eyebrow { margin-bottom: 20px; }
             .waitlist-title {
-              font-family: var(--font);
-              font-size: clamp(32px,4vw,54px);
-              font-weight: 200;
-              line-height: 1.05;
-              letter-spacing: -.02em;
-              color: var(--parchment);
-              margin-bottom: 20px;
+              font-family: var(--font); font-size: clamp(32px,4vw,54px);
+              font-weight: 200; line-height: 1.05; letter-spacing: -.02em;
+              color: var(--parchment); margin-bottom: 20px;
             }
             .waitlist-title em { color: var(--gold); font-style: italic; font-weight: 300; }
             .waitlist-sub {
@@ -269,38 +300,18 @@ export default function HomePage() {
             }
             .waitlist-checklist li {
               display: flex; align-items: flex-start; gap: 10px;
-              font-size: 14px; font-weight: 300; color: rgba(247,244,238,.6);
-              line-height: 1.5;
+              font-size: 14px; font-weight: 300; color: rgba(247,244,238,.6); line-height: 1.5;
             }
             .waitlist-checklist .wl-dot {
-              flex-shrink: 0; margin-top: 3px;
-              width: 18px; height: 18px;
-              border-radius: 50%;
-              background: rgba(201,168,76,.1);
+              flex-shrink: 0; margin-top: 3px; width: 18px; height: 18px;
+              border-radius: 50%; background: rgba(201,168,76,.1);
               border: 1px solid rgba(201,168,76,.3);
               display: flex; align-items: center; justify-content: center;
             }
             .waitlist-card {
-              background: rgba(201,168,76,.04);
-              border: 1px solid rgba(201,168,76,.18);
-              border-radius: 12px;
-              padding: clamp(28px,4vw,44px);
+              background: rgba(201,168,76,.04); border: 1px solid rgba(201,168,76,.18);
+              border-radius: 12px; padding: clamp(28px,4vw,44px);
             }
-            .waitlist-card .eyebrow { margin-bottom: 16px; }
-            .waitlist-card-desc {
-              font-size: 14px; font-weight: 300; color: rgba(247,244,238,.45);
-              line-height: 1.7; margin-bottom: 24px;
-            }
-            .wl-btn {
-              display: block; width: 100%; text-align: center;
-              padding: 16px 28px;
-              background: var(--gold); color: var(--dark);
-              font-size: 12px; font-weight: 700; letter-spacing: .14em;
-              border-radius: var(--btn-radius);
-              text-decoration: none;
-              transition: opacity .2s;
-            }
-            .wl-btn:hover { opacity: .88; }
             @media (max-width: 780px) {
               .waitlist-inner { grid-template-columns: 1fr; }
             }
@@ -335,7 +346,6 @@ export default function HomePage() {
                 ))}
               </ul>
             </Reveal>
-
             <Reveal>
               <WaitlistForm />
             </Reveal>
@@ -345,31 +355,5 @@ export default function HomePage() {
 
       <Footer />
     </>
-  )
-}
-
-function EntryIcon({ id, color }) {
-  if (id === 'atb-connect') {
-    return (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <rect x="2" y="7" width="20" height="14" rx="2" stroke={color} strokeWidth="1.5" />
-        <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke={color} strokeWidth="1.5" />
-        <circle cx="12" cy="14" r="2" stroke={color} strokeWidth="1.5" />
-      </svg>
-    )
-  }
-  if (id === 'spotlight') {
-    return (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <circle cx="12" cy="8" r="4" stroke={color} strokeWidth="1.5" />
-        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M17 4l2 2-2 2M19 6h-3" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    )
-  }
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
   )
 }
