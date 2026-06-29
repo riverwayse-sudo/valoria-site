@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 
 const GATE_KEY = 'vi_waitlist_gate_v2'
+const COOKIE_KEY = 'vi_waitlist_v2'
 
 export default function WaitlistGate() {
   const [visible, setVisible]   = useState(false)
@@ -14,8 +15,9 @@ export default function WaitlistGate() {
   const [error, setError]       = useState('')
 
   useEffect(() => {
-    const submitted = localStorage.getItem(GATE_KEY)
-    if (!submitted) {
+    const inLocal = localStorage.getItem(GATE_KEY)
+    const inCookie = document.cookie.includes(COOKIE_KEY)
+    if (!inLocal && !inCookie) {
       const t = setTimeout(() => setVisible(true), 600)
       return () => clearTimeout(t)
     }
@@ -45,6 +47,7 @@ export default function WaitlistGate() {
       }
       setStatus('done')
       localStorage.setItem(GATE_KEY, 'submitted')
+      document.cookie = `${COOKIE_KEY}=submitted; path=/; max-age=31536000`
     } catch (err) {
       setError('Something went wrong. Please try again.')
       setStatus('idle')
@@ -146,9 +149,7 @@ export default function WaitlistGate() {
         }
         .vi-gate-btn:hover { opacity: 0.88; }
         .vi-gate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .vi-gate-done {
-          padding: 8px 0;
-        }
+        .vi-gate-done { padding: 8px 0; }
         .vi-gate-done-icon {
           width: 56px; height: 56px; border-radius: 50%;
           background: rgba(29,158,117,0.12);
@@ -194,8 +195,7 @@ export default function WaitlistGate() {
 
               <div style={{
                 borderTop: '1px solid rgba(201,168,76,0.15)',
-                marginTop: '24px',
-                paddingTop: '24px',
+                marginTop: '24px', paddingTop: '24px',
               }}>
                 <div style={{
                   fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em',
@@ -204,26 +204,17 @@ export default function WaitlistGate() {
                 }}>
                   WHAT VALORIA IS BUILDING
                 </div>
-
                 {[
                   { icon: '◈', title: 'Assessed Talent Profiles', desc: 'Every professional on the platform is VALU Index verified — no more guesswork for employers.' },
                   { icon: '◈', title: 'African Professional Marketplace', desc: 'Connect assessed talent with employers, event organisers, and opportunities across the continent.' },
                   { icon: '◈', title: 'ATB Connect & ATB Develop', desc: 'Two dedicated pathways — one for career opportunities, one for professional growth.' },
                   { icon: '◈', title: 'Founding Cohort Advantage', desc: 'Early members get priority visibility when the marketplace goes live.' },
                 ].map((item, i) => (
-                  <div key={i} style={{
-                    display: 'flex', gap: '12px', marginBottom: '16px', alignItems: 'flex-start',
-                  }}>
+                  <div key={i} style={{ display: 'flex', gap: '12px', marginBottom: '16px', alignItems: 'flex-start' }}>
                     <span style={{ color: '#C9A84C', fontSize: '14px', marginTop: '1px', flexShrink: 0 }}>{item.icon}</span>
                     <div>
-                      <div style={{
-                        fontSize: '12px', fontWeight: 600, color: '#F7F4EE',
-                        marginBottom: '3px', fontFamily: 'var(--font)',
-                      }}>{item.title}</div>
-                      <div style={{
-                        fontSize: '11px', color: 'rgba(247,244,238,0.4)',
-                        lineHeight: 1.6, fontFamily: 'var(--font)',
-                      }}>{item.desc}</div>
+                      <div style={{ fontSize: '12px', fontWeight: 600, color: '#F7F4EE', marginBottom: '3px', fontFamily: 'var(--font)' }}>{item.title}</div>
+                      <div style={{ fontSize: '11px', color: 'rgba(247,244,238,0.4)', lineHeight: 1.6, fontFamily: 'var(--font)' }}>{item.desc}</div>
                     </div>
                   </div>
                 ))}
@@ -243,37 +234,29 @@ export default function WaitlistGate() {
                 <div className="vi-gate-row">
                   <div className="vi-gate-field">
                     <label className="vi-gate-label" htmlFor="gate-name">Full Name</label>
-                    <input
-                      id="gate-name" className="vi-gate-input" type="text"
+                    <input id="gate-name" className="vi-gate-input" type="text"
                       placeholder="Your name" value={name}
-                      onChange={e => setName(e.target.value)} required
-                    />
+                      onChange={e => setName(e.target.value)} required />
                   </div>
                   <div className="vi-gate-field">
                     <label className="vi-gate-label" htmlFor="gate-email">Email Address</label>
-                    <input
-                      id="gate-email" className="vi-gate-input" type="email"
+                    <input id="gate-email" className="vi-gate-input" type="email"
                       placeholder="you@example.com" value={email}
-                      onChange={e => setEmail(e.target.value)} required
-                    />
+                      onChange={e => setEmail(e.target.value)} required />
                   </div>
                 </div>
 
                 <div className="vi-gate-row">
                   <div className="vi-gate-field">
                     <label className="vi-gate-label" htmlFor="gate-role">Your Role / Title</label>
-                    <input
-                      id="gate-role" className="vi-gate-input" type="text"
+                    <input id="gate-role" className="vi-gate-input" type="text"
                       placeholder="e.g. Head of People" value={role}
-                      onChange={e => setRole(e.target.value)}
-                    />
+                      onChange={e => setRole(e.target.value)} />
                   </div>
                   <div className="vi-gate-field">
                     <label className="vi-gate-label" htmlFor="gate-interest">I am a...</label>
-                    <select
-                      id="gate-interest" className="vi-gate-select"
-                      value={interest} onChange={e => setInterest(e.target.value)}
-                    >
+                    <select id="gate-interest" className="vi-gate-select"
+                      value={interest} onChange={e => setInterest(e.target.value)}>
                       <option value="">Select one</option>
                       <option value="professional">Professional / Talent</option>
                       <option value="speaker">Speaker / Facilitator</option>
@@ -286,10 +269,7 @@ export default function WaitlistGate() {
 
                 {error && <div className="vi-gate-error">{error}</div>}
 
-                <button
-                  type="submit" className="vi-gate-btn"
-                  disabled={status === 'submitting'}
-                >
+                <button type="submit" className="vi-gate-btn" disabled={status === 'submitting'}>
                   {status === 'submitting' ? 'JOINING...' : 'JOIN THE FOUNDING COHORT →'}
                 </button>
               </form>
