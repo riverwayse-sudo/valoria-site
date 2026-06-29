@@ -4,18 +4,18 @@ export function middleware(request) {
   const submitted = request.cookies.get('vi_waitlist_v2')
   const { pathname } = request.nextUrl
 
-  const allowed = [
-    '/api/',
-    '/_next/',
-    '/favicon',
-    '/robots',
-    '/sitemap',
-  ]
-  if (allowed.some(p => pathname.startsWith(p))) {
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/favicon') ||
+    pathname.startsWith('/robots') ||
+    pathname.startsWith('/sitemap') ||
+    pathname === '/'
+  ) {
     return NextResponse.next()
   }
 
-  if (!submitted && pathname !== '/') {
+  if (!submitted) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
