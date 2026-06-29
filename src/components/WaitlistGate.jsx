@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 
-const GATE_KEY = 'vi_waitlist_gate_v1'
+const GATE_KEY = 'vi_waitlist_gate_v2'
 
 export default function WaitlistGate() {
   const [visible, setVisible]   = useState(false)
@@ -14,17 +14,12 @@ export default function WaitlistGate() {
   const [error, setError]       = useState('')
 
   useEffect(() => {
-    const dismissed = sessionStorage.getItem(GATE_KEY)
-    if (!dismissed) {
+    const submitted = localStorage.getItem(GATE_KEY)
+    if (!submitted) {
       const t = setTimeout(() => setVisible(true), 600)
       return () => clearTimeout(t)
     }
   }, [])
-
-  function dismiss() {
-    sessionStorage.setItem(GATE_KEY, 'dismissed')
-    setVisible(false)
-  }
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -49,7 +44,7 @@ export default function WaitlistGate() {
         throw sbError
       }
       setStatus('done')
-      sessionStorage.setItem(GATE_KEY, 'submitted')
+      localStorage.setItem(GATE_KEY, 'submitted')
     } catch (err) {
       setError('Something went wrong. Please try again.')
       setStatus('idle')
@@ -89,13 +84,6 @@ export default function WaitlistGate() {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        .vi-gate-dismiss {
-          position: absolute; top: 16px; right: 16px;
-          background: none; border: none; color: rgba(247,244,238,0.3);
-          font-size: 22px; cursor: pointer; line-height: 1;
-          transition: color 0.2s; padding: 4px;
-        }
-        .vi-gate-dismiss:hover { color: rgba(247,244,238,0.7); }
         .vi-gate-stripe {
           display: flex; height: 3px; border-radius: 2px;
           overflow: hidden; margin-bottom: 28px;
@@ -158,18 +146,6 @@ export default function WaitlistGate() {
         }
         .vi-gate-btn:hover { opacity: 0.88; }
         .vi-gate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .vi-gate-skip {
-          text-align: center; margin-top: 14px;
-          font-size: 11px; color: rgba(247,244,238,0.25);
-          letter-spacing: 0.06em;
-        }
-        .vi-gate-skip button {
-          background: none; border: none; cursor: pointer;
-          color: rgba(247,244,238,0.35); font-size: 11px;
-          text-decoration: underline; transition: color 0.2s;
-          font-family: var(--font);
-        }
-        .vi-gate-skip button:hover { color: rgba(247,244,238,0.6); }
         .vi-gate-done {
           padding: 8px 0;
         }
@@ -197,7 +173,6 @@ export default function WaitlistGate() {
 
       <div className="vi-gate-overlay" role="dialog" aria-modal="true" aria-label="Join the Valoria waitlist">
         <div className="vi-gate-card">
-          <button className="vi-gate-dismiss" onClick={dismiss} aria-label="Close and browse site">×</button>
 
           <div className="vi-gate-stripe">
             {[['#1D9E75',20],['#378ADD',25],['#7F77DD',25],['#BA7517',20],['#D85A30',10]].map(([color, pct], i) => (
@@ -318,10 +293,6 @@ export default function WaitlistGate() {
                   {status === 'submitting' ? 'JOINING...' : 'JOIN THE FOUNDING COHORT →'}
                 </button>
               </form>
-
-              <div className="vi-gate-skip">
-                <button onClick={dismiss}>Browse the site first</button>
-              </div>
             </>
           )}
         </div>
