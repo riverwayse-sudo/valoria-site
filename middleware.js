@@ -1,22 +1,24 @@
 import { NextResponse } from 'next/server'
 
 export function middleware(request) {
-  const submitted = request.cookies.get('vi_waitlist_v2')
   const { pathname } = request.nextUrl
 
+  // Skip static files and API routes
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
-    pathname.startsWith('/favicon') ||
-    pathname.startsWith('/robots') ||
-    pathname.startsWith('/sitemap') ||
+    pathname === '/favicon.ico' ||
     pathname === '/'
   ) {
     return NextResponse.next()
   }
 
-  if (!submitted) {
-    return NextResponse.redirect(new URL('/', request.url))
+  // Check for waitlist cookie
+  const cookie = request.cookies.get('vi_waitlist_v2')
+  if (!cookie) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/'
+    return NextResponse.redirect(url)
   }
 
   return NextResponse.next()
