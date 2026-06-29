@@ -1,119 +1,394 @@
-import Nav from '@/components/Nav'
-import Footer from '@/components/Footer'
-import Reveal from '@/components/Reveal'
-import WaitlistForm from '@/components/WaitlistForm'
-import '../pages.css'
+'use client';
 
-export const metadata = {
-  title: 'Join the Founding Cohort — Valoria Institute',
-  description: 'The founding cohort gets first access to the marketplace, priority placement in search, and a direct line to shape how Valoria develops. Applications close when the cohort fills.',
-  keywords: ['Valoria Institute waitlist', 'founding cohort Africa', 'early access professional marketplace', 'ATB Connect early access'],
-  openGraph: {
-    title: 'Join the Founding Cohort | Valoria Institute',
-    description: 'First access. Priority placement. A direct line to shape what the platform becomes.',
-    url: 'https://valoriainstitute.com/waitlist',
-  },
-  alternates: { canonical: 'https://valoriainstitute.com/waitlist' },
-}
+import { useState } from 'react';
 
-const COHORT_BENEFITS = [
-  { num: '01', title: 'First access.', desc: 'Founding cohort members get into the marketplace before it opens to general applicants. No queue. No wait.' },
-  { num: '02', title: 'Priority placement.', desc: 'When general search opens, founding cohort profiles are weighted in results. Being first in means staying visible.' },
-  { num: '03', title: 'Direct input.', desc: 'How ATB Connect, Spotlight, and Develop evolve will be shaped by what the founding cohort actually uses and needs. That input window closes when the cohort fills and the platform scales.' },
-  { num: '04', title: 'Early intelligence.', desc: 'First to know when new sectors, geographies, and platform features go live — and first to benefit from them.' },
-]
-
-const WHO_FOR = [
-  { type: 'Professionals', desc: 'You want your capability visible to the right employers and event organisers — and you want to be assessed, not just listed. The founding cohort gets priority placement once the marketplace opens to search.' },
-  { type: 'Employers', desc: 'You want to search assessed African talent before the general market does. Founding employer accounts get early access to the talent pool and direct input into how search and filtering evolve.' },
-  { type: 'Event Organisers', desc: 'You want speaker discovery beyond the names you already know. Founding organiser accounts get early access to the Spotlight roster and shape how the speaker marketplace develops.' },
-]
+const ROLES = [
+  'HR / People Professional',
+  'L&D / Talent Development',
+  'Recruiter / Talent Acquisition',
+  'Business Leader / Executive',
+  'Consultant / Coach',
+  'Student / Early Career',
+  'Other',
+];
 
 export default function WaitlistPage() {
+  const [form, setForm] = useState({ full_name: '', email: '', role: '' });
+  const [status, setStatus] = useState('idle'); // idle | loading | success | error
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus('loading');
+    setErrorMsg('');
+
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setErrorMsg(data.error || 'Something went wrong.');
+        setStatus('error');
+        return;
+      }
+
+      setStatus('success');
+    } catch {
+      setErrorMsg('Network error. Please check your connection.');
+      setStatus('error');
+    }
+  };
+
   return (
     <>
-      <Nav />
-      <main id="main-content">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap');
 
-        {/* HERO */}
-        <section className="page-hero">
-          <div className="page-hero-inner">
-            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOUNDING COHORT</span></div>
-            <h1 className="page-title">Get in before<br />the <em>marketplace fills up.</em></h1>
-            <p className="page-sub">
-              The founding cohort is a deliberately small group of professionals, employers, and event organisers who shape how the Valoria marketplace develops from the inside. The application window is open. It closes when the cohort is full.
-            </p>
-          </div>
-        </section>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        {/* WHAT YOU GET */}
-        <section className="page-section">
-          <div className="page-section-inner two-col">
-            <Reveal>
-              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WHAT FOUNDING COHORT MEANS</span></div>
-              <h2 className="section-title">Not a waitlist.<br /><em>A head start.</em></h2>
-              <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px' }}>
-                Most waitlists are a queue. This one is a deliberate design choice: we want the founding cohort to be the group that shapes the marketplace before it scales — not a long list of emails waiting to be told it&apos;s their turn. If you&apos;re in, you&apos;re in early, with full access and real input. If the cohort fills before your application is reviewed, you&apos;ll be notified and moved to general access priority.
+        body {
+          font-family: 'Raleway', sans-serif;
+          background: #0F0F1A;
+          color: #F7F4EE;
+          min-height: 100vh;
+        }
+
+        .page {
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 48px 24px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        /* Ambient background glow */
+        .page::before {
+          content: '';
+          position: absolute;
+          top: -200px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 700px;
+          height: 700px;
+          background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+          pointer-events: none;
+        }
+
+        .logo-wrap {
+          margin-bottom: 48px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .logo-mark {
+          width: 36px;
+          height: 36px;
+          border: 2px solid #C9A84C;
+          border-radius: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .logo-mark span {
+          font-size: 18px;
+          font-weight: 800;
+          color: #C9A84C;
+          letter-spacing: -1px;
+        }
+
+        .logo-name {
+          font-size: 18px;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          color: #F7F4EE;
+          text-transform: uppercase;
+        }
+
+        .card {
+          width: 100%;
+          max-width: 520px;
+          background: #1A1A2E;
+          border: 1px solid rgba(201,168,76,0.2);
+          border-radius: 16px;
+          padding: 48px 40px;
+          position: relative;
+          z-index: 1;
+        }
+
+        .eyebrow {
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: #C9A84C;
+          margin-bottom: 16px;
+        }
+
+        .headline {
+          font-size: 32px;
+          font-weight: 800;
+          line-height: 1.2;
+          color: #F7F4EE;
+          margin-bottom: 16px;
+        }
+
+        .headline em {
+          font-style: normal;
+          color: #C9A84C;
+        }
+
+        .subtext {
+          font-size: 15px;
+          font-weight: 400;
+          line-height: 1.7;
+          color: rgba(247,244,238,0.65);
+          margin-bottom: 36px;
+        }
+
+        .divider {
+          height: 1px;
+          background: rgba(201,168,76,0.15);
+          margin-bottom: 32px;
+        }
+
+        .field {
+          margin-bottom: 20px;
+        }
+
+        label {
+          display: block;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: rgba(247,244,238,0.5);
+          margin-bottom: 8px;
+        }
+
+        input, select {
+          width: 100%;
+          background: rgba(15,15,26,0.8);
+          border: 1px solid rgba(201,168,76,0.25);
+          border-radius: 8px;
+          padding: 14px 16px;
+          font-family: 'Raleway', sans-serif;
+          font-size: 15px;
+          font-weight: 500;
+          color: #F7F4EE;
+          outline: none;
+          transition: border-color 0.2s;
+          appearance: none;
+        }
+
+        input::placeholder { color: rgba(247,244,238,0.25); }
+
+        input:focus, select:focus {
+          border-color: #C9A84C;
+        }
+
+        select option {
+          background: #1A1A2E;
+          color: #F7F4EE;
+        }
+
+        .select-wrap {
+          position: relative;
+        }
+
+        .select-wrap::after {
+          content: '▾';
+          position: absolute;
+          right: 16px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #C9A84C;
+          pointer-events: none;
+          font-size: 14px;
+        }
+
+        .submit-btn {
+          width: 100%;
+          background: #C9A84C;
+          color: #0F0F1A;
+          border: none;
+          border-radius: 8px;
+          padding: 16px;
+          font-family: 'Raleway', sans-serif;
+          font-size: 15px;
+          font-weight: 700;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          cursor: pointer;
+          margin-top: 8px;
+          transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .submit-btn:hover { opacity: 0.9; }
+        .submit-btn:active { transform: scale(0.98); }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .error-msg {
+          background: rgba(220,60,60,0.12);
+          border: 1px solid rgba(220,60,60,0.3);
+          border-radius: 8px;
+          padding: 12px 16px;
+          font-size: 13px;
+          color: #ff8080;
+          margin-top: 16px;
+        }
+
+        .success-state {
+          text-align: center;
+          padding: 16px 0;
+        }
+
+        .success-icon {
+          width: 64px;
+          height: 64px;
+          border-radius: 50%;
+          background: rgba(201,168,76,0.12);
+          border: 2px solid #C9A84C;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 24px;
+          font-size: 28px;
+        }
+
+        .success-title {
+          font-size: 24px;
+          font-weight: 800;
+          color: #F7F4EE;
+          margin-bottom: 12px;
+        }
+
+        .success-sub {
+          font-size: 15px;
+          color: rgba(247,244,238,0.6);
+          line-height: 1.7;
+        }
+
+        .footer-note {
+          margin-top: 24px;
+          text-align: center;
+          font-size: 12px;
+          color: rgba(247,244,238,0.3);
+          letter-spacing: 0.04em;
+        }
+
+        @media (max-width: 560px) {
+          .card { padding: 36px 24px; }
+          .headline { font-size: 26px; }
+        }
+      `}</style>
+
+      <div className="page">
+        {/* Logo */}
+        <div className="logo-wrap">
+          <div className="logo-mark"><span>V</span></div>
+          <span className="logo-name">Valoria Institute</span>
+        </div>
+
+        <div className="card">
+          {status === 'success' ? (
+            <div className="success-state">
+              <div className="success-icon">✦</div>
+              <div className="success-title">You're on the list.</div>
+              <p className="success-sub">
+                We'll reach out when Valoria opens for your cohort.<br />
+                Keep building — your PRIME score awaits.
               </p>
-            </Reveal>
-            <Reveal>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {COHORT_BENEFITS.map(b => (
-                  <div key={b.num} style={{ display: 'flex', gap: '16px' }}>
-                    <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.14em', color: 'rgba(201,168,76,.4)', flexShrink: 0, paddingTop: '3px', minWidth: '24px' }}>{b.num}</div>
-                    <div>
-                      <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--parchment)', marginBottom: '4px' }}>{b.title}</div>
-                      <p style={{ fontSize: '13px', color: 'var(--dim)', fontWeight: 300, lineHeight: 1.6, margin: 0 }}>{b.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* WHO IT'S FOR */}
-        <section className="page-section alt">
-          <div className="page-section-inner">
-            <Reveal>
-              <div className="eyebrow" style={{ justifyContent: 'center' }}><div className="eyebrow-line" /><span className="eyebrow-text">WHO THE COHORT IS FOR</span><div className="eyebrow-line" /></div>
-              <h2 className="section-title" style={{ textAlign: 'center', marginBottom: '40px' }}>Three types of<br /><em>founding member.</em></h2>
-            </Reveal>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
-              {WHO_FOR.map((w, i) => (
-                <Reveal key={i}>
-                  <div className="card-gold">
-                    <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '.14em', color: 'rgba(201,168,76,.5)', marginBottom: '12px', textTransform: 'uppercase' }}>{w.type}</div>
-                    <p className="cluster-desc" style={{ lineHeight: 1.7 }}>{w.desc}</p>
-                  </div>
-                </Reveal>
-              ))}
             </div>
-          </div>
-        </section>
-
-        {/* THE FORM */}
-        <section className="page-section">
-          <div className="page-section-inner two-col">
-            <Reveal>
-              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">APPLY FOR THE COHORT</span></div>
-              <h2 className="section-title">Applications take<br /><em>three minutes.</em></h2>
-              <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px' }}>
-                We review every application and respond within five business days. If you&apos;re accepted, your access opens immediately. If the cohort fills before your application is reviewed, you&apos;ll be first in line for general access.
+          ) : (
+            <>
+              <div className="eyebrow">Early Access</div>
+              <h1 className="headline">
+                Africa's <em>professional capability</em> platform is almost ready.
+              </h1>
+              <p className="subtext">
+                Valoria Institute is building the definitive tool for measuring, developing,
+                and showcasing professional excellence across Africa. Join the waitlist to be
+                first in.
               </p>
-              <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px', marginTop: '12px' }}>
-                Questions first? Email us at{' '}
-                <a href="mailto:info@valoriainstitute.com" style={{ color: 'var(--gold)' }}>info@valoriainstitute.com</a>.
-              </p>
-            </Reveal>
-            <Reveal>
-              <WaitlistForm />
-            </Reveal>
-          </div>
-        </section>
 
-      </main>
-      <Footer />
+              <div className="divider" />
+
+              <form onSubmit={handleSubmit}>
+                <div className="field">
+                  <label htmlFor="full_name">Full Name</label>
+                  <input
+                    id="full_name"
+                    name="full_name"
+                    type="text"
+                    placeholder="Your full name"
+                    value={form.full_name}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="field">
+                  <label htmlFor="email">Work Email</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="you@company.com"
+                    value={form.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="field">
+                  <label htmlFor="role">Your Role</label>
+                  <div className="select-wrap">
+                    <select
+                      id="role"
+                      name="role"
+                      value={form.role}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select your role</option>
+                      {ROLES.map((r) => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="submit-btn"
+                  disabled={status === 'loading'}
+                >
+                  {status === 'loading' ? 'Joining…' : 'Join the Waitlist →'}
+                </button>
+
+                {status === 'error' && (
+                  <div className="error-msg">{errorMsg}</div>
+                )}
+              </form>
+            </>
+          )}
+        </div>
+
+        <p className="footer-note">© {new Date().getFullYear()} Valoria Institute · valoriainstitute.com</p>
+      </div>
     </>
-  )
+  );
 }
