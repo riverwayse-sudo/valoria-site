@@ -10,14 +10,12 @@ export default function WaitlistGate() {
   const [email, setEmail]       = useState('')
   const [role, setRole]         = useState('')
   const [interest, setInterest] = useState('')
-  const [status, setStatus]     = useState('idle') // idle | submitting | done | error
+  const [status, setStatus]     = useState('idle')
   const [error, setError]       = useState('')
 
   useEffect(() => {
-    // Show gate unless they've already submitted or dismissed in this session
     const dismissed = sessionStorage.getItem(GATE_KEY)
     if (!dismissed) {
-      // Small delay so page renders first
       const t = setTimeout(() => setVisible(true), 600)
       return () => clearTimeout(t)
     }
@@ -40,14 +38,14 @@ export default function WaitlistGate() {
       const { error: sbError } = await supabase
         .from('waitlist')
         .insert([{
-          name: name.trim(),
+          full_name: name.trim(),
           email: email.trim().toLowerCase(),
           role: role.trim() || null,
           interest: interest || null,
           type: 'gate',
           source: 'site_gate',
         }])
-      if (sbError && sbError.code !== '23505') { // 23505 = duplicate, not a real error
+      if (sbError && sbError.code !== '23505') {
         throw sbError
       }
       setStatus('done')
@@ -197,7 +195,6 @@ export default function WaitlistGate() {
         <div className="vi-gate-card">
           <button className="vi-gate-dismiss" onClick={dismiss} aria-label="Close and browse site">×</button>
 
-          {/* PRIME stripe */}
           <div className="vi-gate-stripe">
             {[['#1D9E75',20],['#378ADD',25],['#7F77DD',25],['#BA7517',20],['#D85A30',10]].map(([color, pct], i) => (
               <div key={i} style={{ flex: pct, background: color, opacity: 0.85 }} />
