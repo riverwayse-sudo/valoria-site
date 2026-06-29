@@ -82,6 +82,8 @@ export default function WaitlistGate() {
           max-width: 520px; width: 100%;
           position: relative;
           animation: gateUp 0.4s ease;
+          max-height: 90vh;
+          overflow-y: auto;
         }
         @keyframes gateUp {
           from { opacity: 0; transform: translateY(20px); }
@@ -169,7 +171,7 @@ export default function WaitlistGate() {
         }
         .vi-gate-skip button:hover { color: rgba(247,244,238,0.6); }
         .vi-gate-done {
-          text-align: center; padding: 20px 0;
+          padding: 8px 0;
         }
         .vi-gate-done-icon {
           width: 56px; height: 56px; border-radius: 50%;
@@ -181,10 +183,12 @@ export default function WaitlistGate() {
         .vi-gate-done-title {
           font-family: var(--font); font-size: 24px;
           font-weight: 200; color: #F7F4EE; margin-bottom: 10px;
+          text-align: center;
         }
         .vi-gate-done-sub {
           font-size: 13px; color: rgba(247,244,238,0.45);
-          line-height: 1.7; margin-bottom: 24px;
+          line-height: 1.7; margin-bottom: 0;
+          text-align: center;
         }
         @media (max-width: 480px) {
           .vi-gate-row { grid-template-columns: 1fr; }
@@ -210,11 +214,45 @@ export default function WaitlistGate() {
               </div>
               <div className="vi-gate-done-title">You&apos;re on the list.</div>
               <p className="vi-gate-done-sub">
-                We&apos;ll reach out when the marketplace opens and your profile is ready to be found. Take the VALU Index now to be ahead of the queue.
+                We&apos;ll reach out personally when the marketplace is ready for you.
               </p>
-              <button className="vi-gate-btn" onClick={dismiss}>
-                EXPLORE THE PLATFORM →
-              </button>
+
+              <div style={{
+                borderTop: '1px solid rgba(201,168,76,0.15)',
+                marginTop: '24px',
+                paddingTop: '24px',
+              }}>
+                <div style={{
+                  fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em',
+                  color: 'rgba(201,168,76,0.45)', marginBottom: '16px',
+                  fontFamily: 'var(--font)',
+                }}>
+                  WHAT VALORIA IS BUILDING
+                </div>
+
+                {[
+                  { icon: '◈', title: 'Assessed Talent Profiles', desc: 'Every professional on the platform is VALU Index verified — no more guesswork for employers.' },
+                  { icon: '◈', title: 'African Professional Marketplace', desc: 'Connect assessed talent with employers, event organisers, and opportunities across the continent.' },
+                  { icon: '◈', title: 'ATB Connect & ATB Develop', desc: 'Two dedicated pathways — one for career opportunities, one for professional growth.' },
+                  { icon: '◈', title: 'Founding Cohort Advantage', desc: 'Early members get priority visibility when the marketplace goes live.' },
+                ].map((item, i) => (
+                  <div key={i} style={{
+                    display: 'flex', gap: '12px', marginBottom: '16px', alignItems: 'flex-start',
+                  }}>
+                    <span style={{ color: '#C9A84C', fontSize: '14px', marginTop: '1px', flexShrink: 0 }}>{item.icon}</span>
+                    <div>
+                      <div style={{
+                        fontSize: '12px', fontWeight: 600, color: '#F7F4EE',
+                        marginBottom: '3px', fontFamily: 'var(--font)',
+                      }}>{item.title}</div>
+                      <div style={{
+                        fontSize: '11px', color: 'rgba(247,244,238,0.4)',
+                        lineHeight: 1.6, fontFamily: 'var(--font)',
+                      }}>{item.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : (
             <>
