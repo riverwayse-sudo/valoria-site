@@ -10,6 +10,13 @@ export default function Nav() {
   const [user, setUser]               = useState(null)
   const [userType, setUserType]       = useState(null)
   const [authChecked, setAuthChecked] = useState(false)
+  const [gateCleared, setGateCleared] = useState(false)
+
+  useEffect(() => {
+    const inCookie = document.cookie.includes('vi_waitlist_v2')
+    const inLocal = localStorage.getItem('vi_waitlist_gate_v2')
+    setGateCleared(inCookie || !!inLocal)
+  }, [])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -51,6 +58,9 @@ export default function Nav() {
 
   const closeMenu = () => setMenuOpen(false)
 
+  // Hide nav entirely until gate is cleared
+  if (!gateCleared) return null
+
   return (
     <>
       <style>{`
@@ -69,13 +79,9 @@ export default function Nav() {
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
         }
-
         .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; line-height: 0; }
         .nav-logo img { height: 40px; width: auto; display: block; }
-
         .nav-links { display: flex; align-items: center; gap: 6px; list-style: none; margin: 0; padding: 0; }
-
-        /* Explore dropdown trigger */
         .nav-explore-btn {
           background: none; border: none; cursor: pointer; padding: 8px 14px;
           font-size: 12px; color: var(--dim); letter-spacing: .07em;
@@ -85,8 +91,6 @@ export default function Nav() {
         .nav-explore-btn:hover { color: var(--parchment); }
         .nav-explore-arrow { font-size: 8px; transition: transform .2s; display: inline-block; }
         .nav-explore-arrow.open { transform: rotate(180deg); }
-
-        /* Dropdown panel */
         .nav-dropdown {
           position: absolute; top: calc(100% + 8px); left: 0;
           background: rgba(15,15,26,.98); border: 1px solid rgba(201,168,76,.15);
@@ -102,21 +106,18 @@ export default function Nav() {
         .nav-dropdown a:hover { color: var(--parchment); background: rgba(201,168,76,.06); }
         .nav-dropdown-divider { height: 1px; background: rgba(201,168,76,.08); margin: 6px 0; }
         .nav-explore-wrap { position: relative; }
-
         .nav-link {
           font-size: 12px; color: var(--dim); text-decoration: none;
           letter-spacing: .07em; font-weight: 400; transition: color .2s;
           padding: 8px 14px; display: block;
         }
         .nav-link:hover { color: var(--parchment); }
-
         .nav-link-btn {
           background: none; border: none; cursor: pointer; padding: 8px 14px;
           font-size: 12px; color: var(--dim); letter-spacing: .07em;
           font-weight: 400; font-family: var(--font); transition: color .2s;
         }
         .nav-link-btn:hover { color: var(--parchment); }
-
         .nav-cta {
           padding: 10px 22px;
           background: var(--gold); color: var(--dark) !important;
@@ -126,7 +127,6 @@ export default function Nav() {
           transition: opacity .2s; margin-left: 8px;
         }
         .nav-cta:hover { opacity: .88; }
-
         .nav-burger {
           display: none; flex-direction: column; gap: 5px;
           cursor: pointer; padding: 4px; background: none; border: none;
@@ -138,7 +138,6 @@ export default function Nav() {
         .nav-burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
         .nav-burger.open span:nth-child(2) { opacity: 0; }
         .nav-burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
-
         .nav-mobile {
           display: none; position: fixed; inset: 0; top: 68px;
           background: rgba(10,10,20,.98); z-index: 199;
@@ -167,7 +166,6 @@ export default function Nav() {
           font-size: 12px; font-weight: 700; letter-spacing: .14em;
           text-align: center; border-radius: var(--btn-radius); border: none;
         }
-
         @media (max-width: 900px) {
           .nav-links { display: none; }
           .nav-burger { display: flex; }
@@ -179,7 +177,6 @@ export default function Nav() {
           style={{ position: 'fixed', inset: 0, zIndex: 199 }} aria-hidden="true" />
       )}
 
-      {/* PRIME cluster stripe */}
       <div aria-hidden="true" style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '3px', display: 'flex', zIndex: 201, pointerEvents: 'none' }}>
         {[['#1D9E75',20],['#378ADD',25],['#7F77DD',25],['#BA7517',20],['#D85A30',10]].map(([color, pct], i) => (
           <div key={i} style={{ flex: pct, background: color, opacity: 0.85 }} />
@@ -192,15 +189,8 @@ export default function Nav() {
         </Link>
 
         <ul className="nav-links" role="list">
-
-          {/* 1. Explore dropdown — marketplace only, no About/Contact/PRIME */}
           <li className="nav-explore-wrap">
-            <button
-              className="nav-explore-btn"
-              onClick={() => setDropOpen(d => !d)}
-              aria-expanded={dropOpen}
-              aria-haspopup="true"
-            >
+            <button className="nav-explore-btn" onClick={() => setDropOpen(d => !d)} aria-expanded={dropOpen} aria-haspopup="true">
               Explore
               <span className={`nav-explore-arrow${dropOpen ? ' open' : ''}`}>▾</span>
             </button>
@@ -212,14 +202,8 @@ export default function Nav() {
               <a href="/programmes" onClick={() => setDropOpen(false)}>Programmes</a>
             </div>
           </li>
-
-          {/* 2. About — top level, visible */}
           <li><Link href="/about-us" className="nav-link">About</Link></li>
-
-          {/* 3. Contact — top level, visible */}
           <li><Link href="/contact-us" className="nav-link">Contact</Link></li>
-
-          {/* 4. Auth-aware */}
           {authChecked && (
             user ? (
               <>
@@ -236,8 +220,6 @@ export default function Nav() {
               <li><Link href="/login" className="nav-link">Sign In</Link></li>
             )
           )}
-
-          {/* 5. Primary CTA */}
           <li>
             <a href="https://assessment.valoriainstitute.com/" className="nav-cta" target="_blank" rel="noopener noreferrer">
               TAKE THE VALU INDEX
@@ -245,28 +227,20 @@ export default function Nav() {
           </li>
         </ul>
 
-        <button
-          className={`nav-burger${menuOpen ? ' open' : ''}`}
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
+        <button className={`nav-burger${menuOpen ? ' open' : ''}`} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
           <span /><span /><span />
         </button>
       </nav>
 
-      {/* MOBILE OVERLAY */}
       <nav className={`nav-mobile${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation">
         <div className="m-section-label">Marketplace</div>
         <Link href="/atb-connect" onClick={closeMenu}>ATB Connect — Find Talent</Link>
         <Link href="/spotlight" onClick={closeMenu}>ATB Spotlight — Book a Speaker</Link>
         <Link href="/facilitators" onClick={closeMenu}>ATB Develop — Facilitators</Link>
-
         <div className="m-section-label">Company</div>
         <Link href="/about-us" onClick={closeMenu}>About</Link>
         <Link href="/programmes" onClick={closeMenu}>Programmes</Link>
         <Link href="/contact-us" onClick={closeMenu}>Contact</Link>
-
         <div className="m-section-label">Account</div>
         {authChecked && (
           user ? (
@@ -279,12 +253,9 @@ export default function Nav() {
               <button className="m-signout" onClick={() => { closeMenu(); handleSignOut() }}>Sign Out</button>
             </>
           ) : (
-            <>
-              <Link href="/login" onClick={closeMenu}>Sign In</Link>
-            </>
+            <Link href="/login" onClick={closeMenu}>Sign In</Link>
           )
         )}
-
         <a href="https://assessment.valoriainstitute.com/" className="m-cta" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>
           TAKE THE VALU INDEX — FREE
         </a>
