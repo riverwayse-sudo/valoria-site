@@ -58,7 +58,6 @@ export default function Nav() {
 
   const closeMenu = () => setMenuOpen(false)
 
-  // Hide nav entirely until gate is cleared
   if (!gateCleared) return null
 
   return (
@@ -165,6 +164,7 @@ export default function Nav() {
           background: var(--gold); color: var(--dark);
           font-size: 12px; font-weight: 700; letter-spacing: .14em;
           text-align: center; border-radius: var(--btn-radius); border: none;
+          text-decoration: none; display: block;
         }
         @media (max-width: 900px) {
           .nav-links { display: none; }
@@ -209,7 +209,7 @@ export default function Nav() {
               <>
                 <li>
                   {userType === 'talent' || userType === 'speaker' ? (
-                    <a href="https://assessment.valoriainstitute.com/" className="nav-link" target="_blank" rel="noopener noreferrer">My Profile</a>
+                    <Link href="/dashboard" className="nav-link">Dashboard</Link>
                   ) : (
                     <Link href="/dashboard" className="nav-link">Dashboard</Link>
                   )}
@@ -221,8 +221,8 @@ export default function Nav() {
             )
           )}
           <li>
-            <a href="https://assessment.valoriainstitute.com/" className="nav-cta" target="_blank" rel="noopener noreferrer">
-              TAKE THE VALU INDEX
+            <a href="/#waitlist" className="nav-cta">
+              JOIN THE WAITLIST
             </a>
           </li>
         </ul>
@@ -245,19 +245,15 @@ export default function Nav() {
         {authChecked && (
           user ? (
             <>
-              {userType === 'talent' || userType === 'speaker' ? (
-                <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>My Profile</a>
-              ) : (
-                <Link href="/dashboard" onClick={closeMenu}>Dashboard</Link>
-              )}
+              <Link href="/dashboard" onClick={closeMenu}>Dashboard</Link>
               <button className="m-signout" onClick={() => { closeMenu(); handleSignOut() }}>Sign Out</button>
             </>
           ) : (
             <Link href="/login" onClick={closeMenu}>Sign In</Link>
           )
         )}
-        <a href="https://assessment.valoriainstitute.com/" className="m-cta" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>
-          TAKE THE VALU INDEX — FREE
+        <a href="/#waitlist" className="m-cta" onClick={closeMenu}>
+          JOIN THE WAITLIST
         </a>
       </nav>
     </>
