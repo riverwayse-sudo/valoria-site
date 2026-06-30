@@ -2,5 +2,52 @@
   "framework": "nextjs",
   "buildCommand": "next build",
   "devCommand": "next dev",
-  "installCommand": "npm install"
+  "installCommand": "npm install",
+  "redirects": [
+    {
+      "source": "/about-us",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/atb-connect",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/spotlight",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/develop",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/prime",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/programmes",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/contact-us",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/marketplace",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/facilitators",
+      "destination": "/",
+      "permanent": false
+    }
+  ]
 }
