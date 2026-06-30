@@ -190,34 +190,60 @@ export default function WaitlistGate() {
               </div>
               <div className="vi-gate-done-title">You&apos;re on the list.</div>
               <p className="vi-gate-done-sub">
-                We&apos;ll reach out personally when the marketplace is ready for you.
+                Something is being built that Africa has never had before.
               </p>
 
-              <div style={{
-                borderTop: '1px solid rgba(201,168,76,0.15)',
-                marginTop: '24px', paddingTop: '24px',
-              }}>
-                <div style={{
-                  fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em',
-                  color: 'rgba(201,168,76,0.45)', marginBottom: '16px',
-                  fontFamily: 'var(--font)',
-                }}>
-                  WHAT VALORIA IS BUILDING
+              <div style={{ borderTop: '1px solid rgba(201,168,76,0.15)', marginTop: '24px', paddingTop: '24px' }}>
+
+                <div style={{ marginBottom: '28px' }}>
+                  <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', color: 'rgba(201,168,76,0.45)', marginBottom: '8px', fontFamily: 'var(--font)' }}>THE PROBLEM</div>
+                  <p style={{ fontSize: '13px', color: 'rgba(247,244,238,0.55)', lineHeight: 1.8, fontFamily: 'var(--font)', fontWeight: 300, margin: 0 }}>
+                    Every day, exceptional African professionals are passed over — not because they lack capability, but because no one can prove it. The same names circulate. The same networks win. Everyone else waits.
+                  </p>
                 </div>
-                {[
-                  { icon: '◈', title: 'Assessed Talent Profiles', desc: 'Every professional on the platform is VALU Index verified — no more guesswork for employers.' },
-                  { icon: '◈', title: 'African Professional Marketplace', desc: 'Connect assessed talent with employers, event organisers, and opportunities across the continent.' },
-                  { icon: '◈', title: 'ATB Connect & ATB Develop', desc: 'Two dedicated pathways — one for career opportunities, one for professional growth.' },
-                  { icon: '◈', title: 'Founding Cohort Advantage', desc: 'Early members get priority visibility when the marketplace goes live.' },
-                ].map((item, i) => (
-                  <div key={i} style={{ display: 'flex', gap: '12px', marginBottom: '16px', alignItems: 'flex-start' }}>
-                    <span style={{ color: '#C9A84C', fontSize: '14px', marginTop: '1px', flexShrink: 0 }}>{item.icon}</span>
-                    <div>
-                      <div style={{ fontSize: '12px', fontWeight: 600, color: '#F7F4EE', marginBottom: '3px', fontFamily: 'var(--font)' }}>{item.title}</div>
-                      <div style={{ fontSize: '11px', color: 'rgba(247,244,238,0.4)', lineHeight: 1.6, fontFamily: 'var(--font)' }}>{item.desc}</div>
+
+                <div style={{ marginBottom: '28px' }}>
+                  <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', color: 'rgba(201,168,76,0.45)', marginBottom: '8px', fontFamily: 'var(--font)' }}>THE SHIFT</div>
+                  <p style={{ fontSize: '13px', color: 'rgba(247,244,238,0.55)', lineHeight: 1.8, fontFamily: 'var(--font)', fontWeight: 300, margin: 0 }}>
+                    Valoria changes the question employers and organisers ask. Not <em style={{ color: '#F7F4EE', fontStyle: 'italic' }}>"who do I already know?"</em> — but <em style={{ color: '#C9A84C', fontStyle: 'italic' }}>"who is genuinely the best for this?"</em> One assessed standard. No guesswork. No gatekeeping.
+                  </p>
+                </div>
+
+                <div style={{ marginBottom: '28px' }}>
+                  <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', color: 'rgba(201,168,76,0.45)', marginBottom: '8px', fontFamily: 'var(--font)' }}>WHAT&apos;S COMING</div>
+                  <p style={{ fontSize: '13px', color: 'rgba(247,244,238,0.55)', lineHeight: 1.8, fontFamily: 'var(--font)', fontWeight: 300, margin: 0 }}>
+                    A marketplace where every profile is verified by the VALU Index. Where employers search by capability, not connection. Where speakers get booked on merit. Where facilitators earn trust before they walk into the room.
+                  </p>
+                </div>
+
+                <div style={{ borderTop: '1px solid rgba(201,168,76,0.1)', paddingTop: '20px', marginBottom: '4px' }}>
+                  <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.2em', color: 'rgba(201,168,76,0.45)', marginBottom: '16px', fontFamily: 'var(--font)' }}>THREE WAYS IN</div>
+                  {[
+                    { color: '#378ADD', label: 'ATB CONNECT', desc: 'For employers and recruiters — search pre-assessed candidates by score, strength, and sector.' },
+                    { color: '#C9A84C', label: 'ATB SPOTLIGHT', desc: 'For event planners — discover and book speakers whose capability you can actually verify.' },
+                    { color: '#1D9E75', label: 'ATB DEVELOP', desc: 'For L&D leaders — commission PRIME-certified facilitators with an assessed track record.' },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: 'flex', gap: '12px', marginBottom: '14px', alignItems: 'flex-start' }}>
+                      <div style={{ width: '3px', borderRadius: '2px', background: item.color, flexShrink: 0, marginTop: '3px', alignSelf: 'stretch', minHeight: '36px' }} />
+                      <div>
+                        <div style={{ fontSize: '10px', fontWeight: 700, color: item.color, letterSpacing: '0.14em', marginBottom: '3px', fontFamily: 'var(--font)' }}>{item.label}</div>
+                        <div style={{ fontSize: '11px', color: 'rgba(247,244,238,0.4)', lineHeight: 1.6, fontFamily: 'var(--font)' }}>{item.desc}</div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+
+                <div style={{
+                  borderTop: '1px solid rgba(201,168,76,0.1)',
+                  paddingTop: '20px', marginTop: '8px',
+                  fontSize: '13px', color: 'rgba(247,244,238,0.35)',
+                  lineHeight: 1.8, fontFamily: 'var(--font)', fontWeight: 300,
+                  fontStyle: 'italic', textAlign: 'center',
+                }}>
+                  You&apos;re early. That matters more than you think.<br />
+                  <span style={{ color: 'rgba(201,168,76,0.6)', fontStyle: 'normal', fontSize: '11px', letterSpacing: '0.1em' }}>WE&apos;LL BE IN TOUCH.</span>
+                </div>
+
               </div>
             </div>
           ) : (
