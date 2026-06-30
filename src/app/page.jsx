@@ -14,9 +14,7 @@ export const metadata = {
 export default function HomePage() {
   return (
     <>
-      {/* Waitlist gate — shows as overlay on first visit */}
       <WaitlistGate />
-
       <Nav />
 
       <main id="main-content">
@@ -32,7 +30,6 @@ export default function HomePage() {
                 <span className="hero-eyebrow-text">THE AFRICAN PROFESSIONAL MARKETPLACE</span>
               </div>
 
-              {/* FIX: reduced h1 size and tightened spacing so hero fits viewport */}
               <h1 className="hero-title au d2">
                 Valoria is where<br />African professionals<br /><em>rise.</em>
               </h1>
@@ -42,11 +39,11 @@ export default function HomePage() {
               </p>
 
               <div className="hero-actions au d4">
-                <a href="/atb-connect" className="btn-gold">
-                  EXPLORE THE PLATFORM
+                <a href="#waitlist" className="btn-gold">
+                  JOIN THE FOUNDING COHORT
                 </a>
-                <a href="https://assessment.valoriainstitute.com/" className="btn-outline" target="_blank" rel="noopener noreferrer">
-                  TAKE THE VALU INDEX
+                <a href="#valu" className="btn-outline">
+                  SEE HOW IT WORKS
                 </a>
               </div>
 
@@ -106,7 +103,7 @@ export default function HomePage() {
               <p className="alignment-sub">
                 Valoria Institute exists to move African professionals from category two — used, deployed as a resource without development — to category three. Every profile, every assessment, every programme is an act of infrastructure toward that one outcome.
               </p>
-              <a href="/about-us" className="btn-gold">SEE HOW IT WORKS</a>
+              <a href="#waitlist" className="btn-gold">JOIN THE FOUNDING COHORT</a>
               <div className="alignment-cats" aria-label="The four categories">
                 <div className="cat-item"><div className="cat-num">01</div><div className="cat-name">Forgotten</div></div>
                 <div className="cat-item"><div className="cat-num">02</div><div className="cat-name">Used</div></div>
@@ -135,7 +132,6 @@ export default function HomePage() {
               </p>
             </Reveal>
 
-            {/* ATB Connect / ATB Spotlight / ATB Develop — 3 cards */}
             <Reveal className="ep-grid" as="div">
               <div className="ep-card ep-1" style={{ '--ep-color': '#378ADD' }}>
                 <style>{`.ep-1::before { background: #378ADD; }`}</style>
@@ -151,7 +147,7 @@ export default function HomePage() {
                 <div className="ep-buyer" style={{ color: '#378ADD' }}>For Employers &amp; Recruiters</div>
                 <p className="ep-desc-text">Search pre-assessed candidates by VALU Index score, cluster strength, sector, and designation. Every profile backed by one independently assessed standard.</p>
                 <div className="ep-modality" style={{ background: 'rgba(55,138,221,.1)', color: '#378ADD', border: '1px solid rgba(55,138,221,.2)' }}>CANDIDATE</div>
-                <a href="/atb-connect" className="ep-link" style={{ color: '#378ADD' }}>Find Talent <span aria-hidden="true">→</span></a>
+                <a href="#waitlist" className="ep-link" style={{ color: '#378ADD' }}>Get Early Access <span aria-hidden="true">→</span></a>
               </div>
 
               <div className="ep-card ep-2" style={{ '--ep-color': '#C9A84C' }}>
@@ -168,7 +164,7 @@ export default function HomePage() {
                 <div className="ep-buyer" style={{ color: '#C9A84C' }}>For Event Planners &amp; Organisers</div>
                 <p className="ep-desc-text">Discover and book speakers by expertise, PRIME cluster strength, tier designation, and VALU Index score. Every speaker assessed. No guesswork.</p>
                 <div className="ep-modality" style={{ background: 'rgba(201,168,76,.1)', color: '#C9A84C', border: '1px solid rgba(201,168,76,.2)' }}>SPEAKER</div>
-                <a href="/spotlight" className="ep-link" style={{ color: '#C9A84C' }}>Book a Speaker <span aria-hidden="true">→</span></a>
+                <a href="#waitlist" className="ep-link" style={{ color: '#C9A84C' }}>Get Early Access <span aria-hidden="true">→</span></a>
               </div>
 
               <div className="ep-card ep-3" style={{ '--ep-color': '#1D9E75' }}>
@@ -183,7 +179,7 @@ export default function HomePage() {
                 <div className="ep-buyer" style={{ color: '#1D9E75' }}>For L&amp;D &amp; HR Leaders</div>
                 <p className="ep-desc-text">Commission PRIME-certified facilitators to run development programmes. Every facilitator carries an assessed track record you can verify before you sign.</p>
                 <div className="ep-modality" style={{ background: 'rgba(29,158,117,.1)', color: '#1D9E75', border: '1px solid rgba(29,158,117,.2)' }}>FACILITATOR</div>
-                <a href="/facilitators" className="ep-link" style={{ color: '#1D9E75' }}>Commission Facilitators <span aria-hidden="true">→</span></a>
+                <a href="#waitlist" className="ep-link" style={{ color: '#1D9E75' }}>Get Early Access <span aria-hidden="true">→</span></a>
               </div>
             </Reveal>
           </div>
@@ -217,8 +213,8 @@ export default function HomePage() {
                   </li>
                 ))}
               </ul>
-              <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">
-                BEGIN THE VALU INDEX — FREE
+              <a href="#waitlist" className="btn-gold">
+                JOIN THE FOUNDING COHORT →
               </a>
             </Reveal>
 
