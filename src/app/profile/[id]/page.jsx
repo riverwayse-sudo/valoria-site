@@ -2,19 +2,20 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import { PRIME_CLUSTERS } from '@/lib/brand'
 
-const GOLD = '#C9A84C'
-const MIDNIGHT = '#1A1A2E'
-const PARCHMENT = '#F7F4EE'
-const DARK = '#0F0F1A'
-const DIM = 'rgba(247,244,238,.45)'
-const FAINT = 'rgba(247,244,238,.2)'
+// ─── helpers ─────────────────────────────────────────────────────────────────
+function getInitials(name) {
+  if (!name) return '??'
+  const words = name.trim().split(/\s+/).filter(Boolean)
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
+  return words.slice(0, 3).map(w => w[0].toUpperCase()).join('.')  + '.'
+}
 
-const TIER_MAP = {
-  emerging:    { label: '✦ Emerging',     color: '#D4C9A8' },
-  established: { label: '✦✦ Established', color: GOLD },
-  elite:       { label: '✦✦✦ Elite',      color: '#FFE09A' },
+function getAvatarLetters(name) {
+  if (!name) return '?'
+  const words = name.trim().split(/\s+/).filter(Boolean)
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
+  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
 }
 
 function getYouTubeId(url) {
@@ -23,44 +24,30 @@ function getYouTubeId(url) {
   return m ? m[1] : null
 }
 
-function ScoreBar({ label, score, color }) {
-  return (
-    <div style={{ marginBottom: '10px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-        <span style={{ fontSize: '12px', color }}>{label}</span>
-        <span style={{ fontSize: '12px', color, fontWeight: 700 }}>{score ?? '—'}</span>
-      </div>
-      <div style={{ height: '3px', background: 'rgba(255,255,255,.06)', borderRadius: '2px' }}>
-        <div style={{ height: '100%', width: `${score ?? 0}%`, background: color, borderRadius: '2px', transition: 'width .5s ease' }} />
-      </div>
-    </div>
-  )
-}
-
-export default function PublicProfilePage({ params }) {
+// ─── component ───────────────────────────────────────────────────────────────
+export default function ProfilePage({ params }) {
   const { id } = params
   const [profile, setProfile] = useState(null)
-  const [source, setSource] = useState(null) // 'profiles' | 'marketplace_profiles'
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const [activeVideo, setActiveVideo] = useState(null)
 
   useEffect(() => {
     async function load() {
-      // Try real user profiles first
+      // Try real professional_profiles first
       const { data: real } = await supabase
-        .from('profiles')
-        .select('*')
+        .from('professional_profiles')
+        .select('id, display_name, headline, location, industry, years_experience, bio, skills, topics, active_tracks, listing_status, valu_index, cluster_scores, designation, assessment_completed_at, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability')
         .eq('id', id)
         .single()
 
       if (real) {
-        setProfile(real)
-        setSource('profiles')
+        setProfile({ ...real, _source: 'real', valu_score: real.valu_index, user_type: (real.active_tracks||[])[0] || 'candidate' })
         setLoading(false)
         return
       }
 
-      // Fallback: check marketplace_profiles (dummy accounts)
+      // Fallback: dummy marketplace_profiles
       const { data: dummy } = await supabase
         .from('marketplace_profiles')
         .select('*')
@@ -68,31 +55,29 @@ export default function PublicProfilePage({ params }) {
         .single()
 
       if (dummy) {
-        // Normalise dummy profile to the same shape as a real profile
         setProfile({
           id: dummy.id,
           display_name: dummy.full_name,
           headline: dummy.headline,
           location: dummy.location,
           industry: dummy.industry,
+          years_experience: dummy.years_experience,
           bio: dummy.bio,
-          photo_url: dummy.avatar_url,
-          cover_url: null,
           skills: dummy.skills || [],
           topics: dummy.skills || [],
+          user_type: dummy.section,
+          valu_score: null,
+          cluster_scores: null,
           linkedin_url: dummy.linkedin_url,
           website_url: dummy.portfolio_url,
           youtube_links: dummy.video_url ? [dummy.video_url] : [],
           fee_range: dummy.fee_range,
+          salary_expectation: dummy.salary_expectation,
+          atb_id: dummy.atb_id,
           availability: 'open',
-          years_experience: dummy.years_experience,
-          user_type: dummy.section,
-          valu_score: null,
-          valu_tier: null,
-          cluster_scores: null,
           is_dummy: true,
+          _source: 'dummy',
         })
-        setSource('marketplace_profiles')
         setLoading(false)
         return
       }
@@ -103,294 +88,350 @@ export default function PublicProfilePage({ params }) {
     load()
   }, [id])
 
-  if (loading) {
-    return (
-      <div style={{ minHeight: '100vh', background: DARK, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Raleway', color: GOLD, fontSize: '14px' }}>
-        Loading profile…
-      </div>
-    )
-  }
+  if (loading) return (
+    <div style={{ minHeight:'100vh', background:'#05060B', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Inter,sans-serif', color:'rgba(243,239,230,.4)', fontSize:'14px', letterSpacing:'.06em' }}>
+      Loading profile…
+    </div>
+  )
 
-  if (notFound) {
-    return (
-      <div style={{ minHeight: '100vh', background: DARK, fontFamily: 'Raleway', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', color: PARCHMENT }}>
-        <div style={{ fontSize: '36px', color: GOLD }}>◈</div>
-        <h1 style={{ fontSize: '20px', fontWeight: 200 }}>Profile not found</h1>
-        <Link href="/marketplace" style={{ fontSize: '13px', color: GOLD }}>← Back to marketplace</Link>
-      </div>
-    )
-  }
+  if (notFound) return (
+    <div style={{ minHeight:'100vh', background:'#05060B', fontFamily:'Inter,sans-serif', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'16px', color:'#F3EFE6' }}>
+      <div style={{ fontSize:'40px', color:'#D4A24C' }}>◈</div>
+      <h1 style={{ fontSize:'20px', fontWeight:300 }}>Profile not found</h1>
+      <Link href="/atb-connect" style={{ fontSize:'13px', color:'#D4A24C', textDecoration:'none' }}>← Back to marketplace</Link>
+    </div>
+  )
 
   const p = profile
   const isSpeaker = p.user_type === 'speaker'
-  const hasVALU = p.valu_score != null
-  const tier = TIER_MAP[p.valu_tier] || null
-  const videoLinks = (p.youtube_links || []).filter(Boolean)
+  const initials = getInitials(p.display_name)
+  const avatarLetters = getAvatarLetters(p.display_name)
+  const atbId = p.atb_id || '—'
+  const videos = (p.youtube_links || []).filter(Boolean)
+  const compensation = isSpeaker
+    ? (p.fee_range || null)
+    : (p.salary_expectation || p.fee_range || null)
+  const compensationLabel = isSpeaker ? 'Speaking Fee' : 'Salary Range'
 
   return (
-    <div style={{ minHeight: '100vh', background: DARK, fontFamily: "'Raleway','Helvetica Neue',Arial,sans-serif", color: PARCHMENT }}>
+    <>
+      {/* Google Fonts */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        :root {
+          --ink:#05060B; --panel:#10131F; --panel-raised:#161A2A;
+          --gold:#D4A24C; --gold-bright:#F0C878;
+          --ivory:#F3EFE6; --slate:#8791A6; --slate-dim:#5C6478;
+          --line:rgba(212,162,76,0.16); --line-bright:rgba(212,162,76,0.32);
+        }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { background:var(--ink); }
+        @keyframes pulse-dot {
+          0%{box-shadow:0 0 0 0 rgba(111,227,160,.55);}
+          70%{box-shadow:0 0 0 7px rgba(111,227,160,0);}
+          100%{box-shadow:0 0 0 0 rgba(111,227,160,0);}
+        }
+        @keyframes rotate-ring { to { transform:rotate(360deg); } }
+        .vi-avatar-ring { animation: rotate-ring 8s linear infinite; }
+        .vi-status-dot { animation: pulse-dot 2s infinite; }
+        .vi-btn { transition: transform .15s ease, box-shadow .15s ease; }
+        .vi-btn:hover { transform: translateY(-1px); }
+        .vi-btn-primary:hover { box-shadow: 0 6px 24px rgba(212,162,76,.4); }
+        .vi-btn-ghost:hover { border-color: var(--gold-bright) !important; color: var(--gold-bright) !important; }
+        .vi-nav-link:hover { color: var(--gold-bright); }
+        .vi-story:hover .vi-story-thumb { opacity:.8; }
+        @media (max-width:760px) {
+          .vi-nav-links { display:none !important; }
+          .vi-header-block { flex-direction:column !important; align-items:flex-start !important; margin-top:-70px !important; }
+          .vi-cta-row { margin-left:0 !important; }
+          .vi-avatar-ring { width:120px !important; height:120px !important; }
+          .vi-name-id { font-size:22px !important; }
+          .vi-intro-card { flex-direction:column !important; align-items:flex-start !important; }
+          .vi-stat-strip { flex-wrap:wrap !important; }
+          .vi-stat { flex: 1 1 50% !important; border-bottom:1px solid var(--line) !important; }
+          .vi-main-grid { grid-template-columns:1fr !important; }
+          .vi-video-grid { grid-template-columns:1fr !important; }
+        }
+      `}</style>
 
-      {/* NAV */}
-      <header style={S.header}>
-        <Link href="/" style={{ lineHeight: 0 }}>
-          <img src="/logo.png" alt="Valoria Institute" style={{ height: '40px', width: 'auto' }} />
-        </Link>
-        <nav style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <Link href="/marketplace" style={S.navLink}>← Marketplace</Link>
-          <Link href={`/marketplace?mode=${isSpeaker ? 'speaker' : 'talent'}`} style={S.navLink}>
-            {isSpeaker ? 'More Speakers' : 'More Talent'}
+      <div style={{ minHeight:'100vh', background:'var(--ink)', color:'var(--ivory)', fontFamily:"'Inter',sans-serif", WebkitFontSmoothing:'antialiased' }}>
+
+        {/* NAV */}
+        <nav style={{ position:'sticky', top:0, zIndex:50, display:'flex', alignItems:'center', justifyContent:'space-between', padding:'18px 40px', background:'rgba(5,6,11,0.85)', backdropFilter:'blur(12px)', borderBottom:'1px solid var(--line)' }}>
+          <Link href="/" style={{ display:'flex', alignItems:'center', gap:'10px', textDecoration:'none', color:'var(--ivory)' }}>
+            <div style={{ width:'26px', height:'26px', background:'linear-gradient(135deg,#F0C878,#D4A24C 60%,#8a6420)', clipPath:'polygon(50% 0%,100% 100%,50% 78%,0% 100%)' }} />
+            <span style={{ fontFamily:"'Fraunces',serif", fontSize:'17px', letterSpacing:'.02em', fontWeight:600 }}>VALORIA</span>
           </Link>
+          <div className="vi-nav-links" style={{ display:'flex', gap:'28px', fontSize:'13px', color:'var(--slate)', letterSpacing:'.04em', textTransform:'uppercase' }}>
+            <Link href={isSpeaker ? '/spotlight' : '/atb-connect'} className="vi-nav-link" style={{ color:'var(--slate)', textDecoration:'none', transition:'color .15s' }}>← {isSpeaker ? 'Speakers' : 'Talent'}</Link>
+            <Link href={isSpeaker ? '/atb-connect' : '/spotlight'} className="vi-nav-link" style={{ color:'var(--slate)', textDecoration:'none', transition:'color .15s' }}>{isSpeaker ? 'ATB Connect' : 'ATB Spotlight'}</Link>
+          </div>
         </nav>
-      </header>
 
-      {/* COVER */}
-      <div style={{
-        width: '100%', height: '220px',
-        background: p.cover_url ? `url(${p.cover_url}) center/cover no-repeat` : `linear-gradient(135deg, #1A1A2E 0%, #0F0F1A 50%, rgba(201,168,76,.08) 100%)`,
-        borderBottom: '1px solid rgba(201,168,76,.1)',
-        position: 'relative',
-      }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,15,26,.9) 0%, transparent 60%)' }} />
-      </div>
+        {/* COVER */}
+        <div style={{ position:'relative', height:'300px', overflow:'hidden', background:'radial-gradient(ellipse 700px 400px at 15% 20%,rgba(212,162,76,.35),transparent 60%),radial-gradient(ellipse 600px 500px at 85% 80%,rgba(212,162,76,.18),transparent 55%),linear-gradient(160deg,#0c0f1a 0%,#05060B 70%)' }}>
+          <svg viewBox="0 0 1200 300" preserveAspectRatio="none" style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:.5 }}>
+            <defs>
+              <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#D4A24C" stopOpacity="0.5"/>
+                <stop offset="100%" stopColor="#D4A24C" stopOpacity="0"/>
+              </linearGradient>
+            </defs>
+            <g stroke="#D4A24C" strokeOpacity="0.18" strokeWidth="1">
+              <path d="M0,260 C300,180 500,300 800,200 S1100,260 1200,180"/>
+              <path d="M0,200 C300,120 500,240 800,140 S1100,200 1200,120"/>
+              <path d="M0,140 C300,60 500,180 800,80 S1100,140 1200,60"/>
+            </g>
+            <polygon points="1080,60 1130,150 1080,120 1030,150" fill="url(#lg)"/>
+          </svg>
+          {/* Availability status */}
+          <div style={{ position:'absolute', top:'20px', right:'28px', display:'flex', alignItems:'center', gap:'7px', background:'rgba(16,19,31,.7)', border:'1px solid var(--line-bright)', padding:'7px 14px 7px 10px', borderRadius:'999px', fontSize:'11.5px', letterSpacing:'.06em', textTransform:'uppercase', color:'var(--gold-bright)', backdropFilter:'blur(8px)' }}>
+            <div className="vi-status-dot" style={{ width:'7px', height:'7px', borderRadius:'50%', background:'#6FE3A0' }} />
+            {p.availability === 'open' ? 'Open to Introductions' : p.availability === 'contract_only' ? 'Contract Only' : 'Not Available'}
+          </div>
+          <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg,transparent 40%,#05060B 100%)' }} />
+        </div>
 
-      {/* MAIN CONTENT */}
-      <div style={S.container}>
-        <div style={S.twoCol}>
-
-          {/* LEFT SIDEBAR */}
-          <aside style={S.sidebar}>
-
-            {/* Avatar */}
-            <div style={{ marginTop: '-64px', marginBottom: '20px', position: 'relative', zIndex: 2 }}>
-              <div style={S.avatarWrap}>
-                {p.photo_url
-                  ? <img src={p.photo_url} alt={p.display_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-                  : <span style={{ fontSize: '36px', color: GOLD }}>◈</span>}
-              </div>
-            </div>
-
-            {/* Name + headline */}
-            <h1 style={{ fontSize: '22px', fontWeight: 700, color: PARCHMENT, lineHeight: 1.2, marginBottom: '6px' }}>
-              {p.display_name || 'Valoria Professional'}
-            </h1>
-            {p.headline && (
-              <div style={{ fontSize: '13px', color: GOLD, marginBottom: '8px', fontWeight: 500 }}>{p.headline}</div>
-            )}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '20px' }}>
-              {p.location && <span style={{ fontSize: '12px', color: DIM }}>📍 {p.location}</span>}
-              {p.industry && <span style={{ fontSize: '12px', color: DIM }}>🏢 {p.industry}</span>}
-              {p.years_experience && <span style={{ fontSize: '12px', color: DIM }}>⏱ {p.years_experience} years experience</span>}
-            </div>
-
-            {/* VALU Score */}
-            {hasVALU ? (
-              <div style={S.card}>
-                <div style={S.cardLabel}>VALU INDEX</div>
-                <div style={{ fontSize: '40px', fontWeight: 700, color: GOLD, lineHeight: 1 }}>{p.valu_score}</div>
-                <div style={{ fontSize: '10px', color: DIM, letterSpacing: '.1em', marginTop: '2px' }}>OUT OF 100</div>
-                {tier && (
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: tier.color, marginTop: '8px', letterSpacing: '.08em', textTransform: 'uppercase' }}>
-                    {tier.label}
-                  </div>
-                )}
-                {p.assessment_completed_at && (
-                  <div style={{ fontSize: '10px', color: FAINT, marginTop: '6px' }}>
-                    Assessed {new Date(p.assessment_completed_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </div>
-                )}
-                {p.cluster_scores && (
-                  <div style={{ marginTop: '20px' }}>
-                    <div style={S.cardLabel}>PRIME BREAKDOWN</div>
-                    {PRIME_CLUSTERS.map(c => (
-                      <ScoreBar key={c.letter} label={c.name} score={p.cluster_scores[c.letter]} color={c.color} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div style={S.card}>
-                <div style={S.cardLabel}>VALU INDEX</div>
-                <p style={{ fontSize: '12px', color: DIM, lineHeight: 1.6, marginBottom: '12px' }}>
-                  This professional has not yet completed their VALU Index assessment.
-                </p>
-                <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer"
-                  style={{ display: 'block', textAlign: 'center', padding: '10px', background: 'rgba(201,168,76,.12)', border: '1px solid rgba(201,168,76,.25)', color: GOLD, fontSize: '10px', fontWeight: 700, letterSpacing: '.1em', borderRadius: '999px', textDecoration: 'none' }}>
-                  ABOUT THE VALU INDEX
-                </a>
-              </div>
-            )}
-
-            {/* Availability */}
-            {p.availability && Array.isArray(p.availability) && p.availability.length > 0 && (
-              <div style={S.card}>
-                <div style={S.cardLabel}>AVAILABILITY</div>
-                {p.availability.map(a => (
-                  <div key={a} style={{ fontSize: '12px', color: DIM, marginBottom: '4px' }}>● {a}</div>
-                ))}
-              </div>
-            )}
-
-            {/* Fee range (speakers) */}
-            {isSpeaker && p.fee_range && (
-              <div style={S.card}>
-                <div style={S.cardLabel}>SPEAKING FEE</div>
-                <div style={{ fontSize: '16px', fontWeight: 700, color: GOLD }}>{p.fee_range}</div>
-              </div>
-            )}
-
-            {/* Links */}
-            {(p.linkedin_url || p.website_url || p.twitter_url) && (
-              <div style={S.card}>
-                <div style={S.cardLabel}>LINKS</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {p.linkedin_url && (
-                    <a href={p.linkedin_url} target="_blank" rel="noopener noreferrer" style={S.linkBtn}>
-                      <span>in</span> LinkedIn
-                    </a>
-                  )}
-                  {p.website_url && (
-                    <a href={p.website_url} target="_blank" rel="noopener noreferrer" style={S.linkBtn}>
-                      <span>↗</span> Website
-                    </a>
-                  )}
-                  {p.twitter_url && (
-                    <a href={p.twitter_url} target="_blank" rel="noopener noreferrer" style={S.linkBtn}>
-                      <span>𝕏</span> Twitter / X
-                    </a>
-                  )}
+        {/* HEADER BLOCK */}
+        <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'0 40px' }}>
+          <div className="vi-header-block" style={{ display:'flex', alignItems:'flex-end', gap:'26px', marginTop:'-86px', position:'relative', zIndex:5 }}>
+            {/* Avatar with rotating ring */}
+            <div className="vi-avatar-ring" style={{ width:'156px', height:'156px', borderRadius:'50%', padding:'4px', background:'conic-gradient(from 180deg,#F0C878,#D4A24C,#8a6420,#D4A24C,#F0C878)', flexShrink:0 }}>
+              <div style={{ width:'100%', height:'100%', borderRadius:'50%', background:'#05060B', padding:'4px' }}>
+                <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: p.photo_url ? undefined : 'linear-gradient(145deg,#2a2f42,#171a26)', overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Fraunces',serif", fontSize:'44px', fontWeight:500, color:'var(--gold-bright)' }}>
+                  {p.photo_url
+                    ? <img src={p.photo_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                    : avatarLetters}
                 </div>
               </div>
+            </div>
+            {/* ID block — ATB ID is the hero, initials are the identifier */}
+            <div style={{ paddingBottom:'14px' }}>
+              <div className="vi-name-id" style={{ fontFamily:"'JetBrains Mono',monospace", fontWeight:600, fontSize:'30px', letterSpacing:'.01em', lineHeight:1.1, marginBottom:'10px', background:'linear-gradient(90deg,#F3EFE6,#F0C878)', WebkitBackgroundClip:'text', backgroundClip:'text', color:'transparent' }}>
+                {atbId}
+              </div>
+              <div style={{ display:'flex', alignItems:'center', gap:'12px', flexWrap:'wrap' }}>
+                <span style={{ color:'var(--gold-bright)', fontSize:'15px', fontWeight:500 }}>{p.headline || (isSpeaker ? 'Valoria Speaker' : 'Valoria Professional')}</span>
+                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'12px', letterSpacing:'.03em', background:'var(--panel-raised)', border:'1px solid var(--line-bright)', padding:'4px 10px', borderRadius:'5px', color:'var(--slate)' }}>
+                  {initials} · Verified {isSpeaker ? 'Speaker' : 'Professional'}
+                </span>
+              </div>
+            </div>
+            {/* CTAs */}
+            <div className="vi-cta-row" style={{ marginLeft:'auto', display:'flex', gap:'10px', paddingBottom:'14px' }}>
+              <Link href={isSpeaker ? '/spotlight' : '/atb-connect'} className="vi-btn vi-btn-ghost" style={{ padding:'12px 22px', borderRadius:'8px', fontSize:'13.5px', fontWeight:600, cursor:'pointer', background:'transparent', border:'1px solid var(--line-bright)', color:'var(--ivory)', textDecoration:'none', transition:'border-color .15s,color .15s' }}>
+                More {isSpeaker ? 'Speakers' : 'Talent'}
+              </Link>
+              <a href={`mailto:info@valoriainstitute.com?subject=Introduction Request — ${atbId}`} className="vi-btn vi-btn-primary" style={{ padding:'12px 22px', borderRadius:'8px', fontSize:'13.5px', fontWeight:600, cursor:'pointer', background:'linear-gradient(135deg,#F0C878,#D4A24C)', color:'#1a1204', boxShadow:'0 4px 20px rgba(212,162,76,.25)', textDecoration:'none' }}>
+                {isSpeaker ? 'Book Speaker' : 'Request Introduction'}
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* STAT STRIP */}
+        <div className="vi-stat-strip" style={{ maxWidth:'1100px', margin:'34px auto 0', padding:'0 40px', display:'flex', borderTop:'1px solid var(--line)', borderBottom:'1px solid var(--line)' }}>
+          {[
+            { label:'Location', value: p.location || '—' },
+            { label:'Industry', value: p.industry || '—' },
+            { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
+            { label: compensationLabel, value: compensation || '—' },
+            { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} / 100` : 'Not yet assessed' },
+          ].map((s, i, arr) => (
+            <div key={s.label} className="vi-stat" style={{ flex:1, padding:'16px 12px', borderRight: i < arr.length - 1 ? '1px solid var(--line)' : 'none' }}>
+              <div style={{ fontSize:'10.5px', letterSpacing:'.09em', textTransform:'uppercase', color:'var(--slate-dim)', marginBottom:'6px' }}>{s.label}</div>
+              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'14px', color:'var(--ivory)', fontWeight:500 }}>{s.value}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* STORIES / VIDEO HIGHLIGHTS */}
+        {videos.length > 0 && (
+          <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'26px 40px 6px' }}>
+            <div style={{ fontSize:'11px', letterSpacing:'.09em', textTransform:'uppercase', color:'var(--slate-dim)', marginBottom:'14px' }}>Highlights</div>
+            <div style={{ display:'flex', gap:'18px', overflowX:'auto', paddingBottom:'6px' }}>
+              {videos.map((url, i) => {
+                const ytId = getYouTubeId(url)
+                const labels = ['Intro reel', 'Case study', 'Keynote clip', 'Panel talk']
+                const isActive = activeVideo === i
+                return (
+                  <div key={i} className="vi-story" style={{ flexShrink:0, width:'88px', textAlign:'center', cursor:'pointer' }} onClick={() => setActiveVideo(isActive ? null : i)}>
+                    <div style={{ width:'76px', height:'76px', borderRadius:'50%', margin:'0 auto 8px', padding:'2.5px', background: isActive ? 'conic-gradient(#F0C878,#D4A24C 40%,#4a3a14 41%,#4a3a14)' : 'var(--slate-dim)' }}>
+                      <div className="vi-story-thumb" style={{ width:'100%', height:'100%', borderRadius:'50%', background:'var(--panel-raised)', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--gold-bright)', fontSize:'20px', border:'2px solid #05060B' }}>
+                        {ytId
+                          ? <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
+                          : '▶'}
+                      </div>
+                    </div>
+                    <div style={{ fontSize:'11px', color:'var(--slate)' }}>{labels[i] || `Video ${i+1}`}</div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* MAIN GRID */}
+        <div className="vi-main-grid" style={{ maxWidth:'1100px', margin:'30px auto 100px', padding:'0 40px', display:'grid', gridTemplateColumns:'290px 1fr', gap:'28px' }}>
+
+          {/* SIDEBAR */}
+          <div>
+            {/* VALU Index card */}
+            <div style={{ background:'var(--panel)', border:'1px solid var(--line)', borderRadius:'14px', padding:'22px', marginBottom:'20px' }}>
+              <div style={{ fontSize:'10.5px', letterSpacing:'.09em', textTransform:'uppercase', color:'var(--gold-bright)', marginBottom:'12px', fontWeight:600 }}>VALU Index</div>
+              {p.valu_score != null ? (
+                <>
+                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'48px', fontWeight:600, color:'var(--gold-bright)', lineHeight:1, marginBottom:'4px' }}>{p.valu_score}</div>
+                  <div style={{ fontSize:'10px', color:'var(--slate-dim)', letterSpacing:'.1em', marginBottom:'16px' }}>OUT OF 100</div>
+                  {p.designation && <div style={{ fontSize:'12px', fontWeight:600, color:'var(--gold)', marginBottom:'16px', textTransform:'uppercase', letterSpacing:'.08em' }}>{p.designation.replace(/_/g, ' ')}</div>}
+                  {p.cluster_scores && (
+                    <div style={{ marginTop:'16px' }}>
+                      {['P','R','I','M','E'].map(letter => {
+                        const score = p.cluster_scores[letter]
+                        if (score == null) return null
+                        const colors = { P:'#6BA3D6', R:'#E07B54', I:'#6DBF8E', M:'#C4A24C', E:'#A67CC5' }
+                        return (
+                          <div key={letter} style={{ marginBottom:'8px' }}>
+                            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'3px' }}>
+                              <span style={{ fontSize:'11px', color: colors[letter] }}>{letter}</span>
+                              <span style={{ fontSize:'11px', color: colors[letter], fontWeight:700, fontFamily:'JetBrains Mono' }}>{score}</span>
+                            </div>
+                            <div style={{ height:'3px', background:'rgba(255,255,255,.06)', borderRadius:'2px' }}>
+                              <div style={{ height:'100%', width:`${score}%`, background: colors[letter], borderRadius:'2px' }} />
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div style={{ fontSize:'13.5px', color:'var(--slate)', lineHeight:1.55, marginBottom:'16px' }}>
+                    This professional has not yet completed their VALU Index assessment.
+                  </div>
+                  <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer"
+                    style={{ display:'block', width:'100%', padding:'12px', background:'transparent', border:'1px solid var(--line-bright)', borderRadius:'8px', color:'var(--ivory)', fontSize:'13px', fontWeight:600, textAlign:'center', textDecoration:'none' }}>
+                    About the VALU Index
+                  </a>
+                </>
+              )}
+            </div>
+
+            {/* Links card — gated until introduction */}
+            {(p.linkedin_url || p.website_url) && (
+              <div style={{ background:'var(--panel)', border:'1px solid var(--line)', borderRadius:'14px', padding:'22px', marginBottom:'20px' }}>
+                <div style={{ fontSize:'10.5px', letterSpacing:'.09em', textTransform:'uppercase', color:'var(--gold-bright)', marginBottom:'12px', fontWeight:600 }}>Links</div>
+                {p.linkedin_url && (
+                  <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'11px 0', fontSize:'13.5px', color:'var(--slate)', borderTop:'1px solid var(--line)' }}>
+                    in&nbsp;&nbsp;LinkedIn — available after introduction
+                  </div>
+                )}
+                {p.website_url && (
+                  <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'11px 0', fontSize:'13.5px', color:'var(--slate)', borderTop:'1px solid var(--line)' }}>
+                    ↗&nbsp;&nbsp;Website — available after introduction
+                  </div>
+                )}
+              </div>
             )}
 
-          </aside>
+            {/* ATB ID verification card */}
+            <div style={{ background:'var(--panel)', border:'1px solid var(--line)', borderRadius:'14px', padding:'22px' }}>
+              <div style={{ fontSize:'10.5px', letterSpacing:'.09em', textTransform:'uppercase', color:'var(--gold-bright)', marginBottom:'12px', fontWeight:600 }}>Profile ID</div>
+              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'14px', color:'var(--ivory)', fontWeight:600, letterSpacing:'.04em', marginBottom:'8px' }}>{atbId}</div>
+              <div style={{ fontSize:'11.5px', color:'var(--slate-dim)', lineHeight:1.5 }}>This ID verifies that this professional is registered with African Talent Bureau Ltd.</div>
+            </div>
+          </div>
 
-          {/* RIGHT — main content */}
-          <main style={{ minWidth: 0 }}>
-
-            {/* Bio */}
+          {/* MAIN CONTENT */}
+          <div>
+            {/* About */}
             {p.bio && (
-              <Section label="About">
-                <p style={{ fontSize: '14px', color: DIM, lineHeight: 1.8, fontWeight: 300 }}>{p.bio}</p>
-              </Section>
+              <div style={{ marginBottom:'32px' }}>
+                <div style={{ fontFamily:"'Fraunces',serif", fontSize:'22px', fontWeight:600, marginBottom:'14px' }}>About</div>
+                <p style={{ fontSize:'15px', lineHeight:1.7, color:'#D9D4C8' }}>{p.bio}</p>
+              </div>
             )}
 
-            {/* Skills */}
-            {p.skills && p.skills.length > 0 && !isSpeaker && (
-              <Section label="Core Skills">
-                <div style={S.chipGrid}>
-                  {p.skills.map(s => <Chip key={s}>{s}</Chip>)}
+            {/* Skills / Topics */}
+            {((isSpeaker ? p.topics : p.skills) || []).length > 0 && (
+              <div style={{ marginBottom:'34px' }}>
+                <div style={{ fontFamily:"'Fraunces',serif", fontSize:'22px', fontWeight:600, marginBottom:'14px' }}>
+                  {isSpeaker ? 'Speaking Topics' : 'Core Skills'}
                 </div>
-              </Section>
-            )}
-
-            {/* Speaking topics */}
-            {p.topics && p.topics.length > 0 && isSpeaker && (
-              <Section label="Speaking Topics">
-                <div style={S.chipGrid}>
-                  {p.topics.map(t => <Chip key={t}>{t}</Chip>)}
+                <div style={{ display:'flex', flexWrap:'wrap', gap:'10px' }}>
+                  {(isSpeaker ? p.topics : p.skills).map(s => (
+                    <div key={s} style={{ padding:'9px 16px', borderRadius:'999px', fontSize:'13px', fontWeight:500, border:'1px solid var(--line-bright)', color:'var(--ivory)', background:'var(--panel-raised)' }}>{s}</div>
+                  ))}
                 </div>
-              </Section>
+              </div>
             )}
 
-            {/* Modality */}
-            {p.modality && p.modality.length > 0 && (
-              <Section label="Work Modality">
-                <div style={S.chipGrid}>
-                  {p.modality.map(m => <Chip key={m}>{m}</Chip>)}
+            {/* Videos — active one expands */}
+            {videos.length > 0 && (
+              <div style={{ marginBottom:'34px' }}>
+                <div style={{ fontFamily:"'Fraunces',serif", fontSize:'22px', fontWeight:600, marginBottom:'14px' }}>
+                  {isSpeaker ? 'Speaker Reel & Videos' : 'Videos'}
                 </div>
-              </Section>
-            )}
-
-            {/* Video reel(s) */}
-            {videoLinks.length > 0 && (
-              <Section label={isSpeaker ? 'Speaker Reel & Videos' : 'Videos'}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  {videoLinks.map((url, i) => {
-                    const ytId = getYouTubeId(url)
-                    if (ytId) {
+                {activeVideo !== null && videos[activeVideo] && (() => {
+                  const ytId = getYouTubeId(videos[activeVideo])
+                  return ytId ? (
+                    <div style={{ position:'relative', paddingBottom:'56.25%', height:0, borderRadius:'10px', overflow:'hidden', background:'#000', marginBottom:'14px' }}>
+                      <iframe src={`https://www.youtube.com/embed/${ytId}?autoplay=1`}
+                        title="Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen
+                        style={{ position:'absolute', top:0, left:0, width:'100%', height:'100%', border:'none' }} />
+                    </div>
+                  ) : null
+                })()}
+                {activeVideo === null && (
+                  <div className="vi-video-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'14px' }}>
+                    {videos.slice(0,4).map((url, i) => {
+                      const ytId = getYouTubeId(url)
                       return (
-                        <div key={i} style={{ position: 'relative', paddingBottom: '56.25%', height: 0, borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
-                          <iframe
-                            src={`https://www.youtube.com/embed/${ytId}`}
-                            title={`Video ${i + 1}`}
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
-                          />
+                        <div key={i} onClick={() => setActiveVideo(i)}
+                          style={{ borderRadius:'10px', overflow:'hidden', border:'1px solid var(--line)', aspectRatio:'16/10', position:'relative', background:'linear-gradient(145deg,#1a1e2e,#0d0f18)', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>
+                          {ytId && <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:.6 }} />}
+                          <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'rgba(212,162,76,.9)', display:'flex', alignItems:'center', justifyContent:'center', color:'#1a1204', fontSize:'16px', position:'relative', zIndex:1 }}>▶</div>
                         </div>
                       )
-                    }
-                    return (
-                      <a key={i} href={url} target="_blank" rel="noopener noreferrer"
-                        style={{ display: 'block', padding: '12px 16px', border: '1px solid rgba(201,168,76,.2)', borderRadius: '8px', color: GOLD, fontSize: '13px', textDecoration: 'none' }}>
-                        ▶ Watch video {i + 1} →
-                      </a>
-                    )
-                  })}
-                </div>
-              </Section>
+                    })}
+                  </div>
+                )}
+                {activeVideo !== null && (
+                  <button onClick={() => setActiveVideo(null)} style={{ fontSize:'12px', color:'var(--slate)', background:'none', border:'none', cursor:'pointer', padding:'8px 0', fontFamily:'Inter,sans-serif' }}>
+                    ← Back to highlights
+                  </button>
+                )}
+              </div>
             )}
 
-            {/* Contact CTA */}
-            <div id="contact" style={{ ...S.card, background: 'rgba(201,168,76,.06)', border: '1px solid rgba(201,168,76,.18)', marginTop: '8px' }}>
-              <div style={S.cardLabel}>GET IN TOUCH</div>
-              <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.7, marginBottom: '16px' }}>
-                {isSpeaker
-                  ? `Interested in booking ${p.display_name || 'this speaker'} for your event? Reach out via the Valoria Institute.`
-                  : `Want to connect with ${p.display_name || 'this professional'}? Send an introduction through the Valoria Institute.`}
-              </p>
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent(`Enquiry: ${p.display_name || 'Profile'} — Valoria Institute`)}`}
-                  style={{ padding: '12px 24px', background: GOLD, color: '#0F0F1A', borderRadius: '999px', fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', textDecoration: 'none' }}>
-                  {isSpeaker ? 'BOOK THIS SPEAKER' : 'SEND INTRODUCTION'}
-                </a>
-                <Link href={`/marketplace?mode=${isSpeaker ? 'speaker' : 'talent'}`}
-                  style={{ padding: '12px 24px', border: '1px solid rgba(201,168,76,.25)', color: GOLD, borderRadius: '999px', fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', textDecoration: 'none' }}>
-                  {isSpeaker ? 'MORE SPEAKERS' : 'MORE TALENT'}
-                </Link>
+            {/* Introduction CTA */}
+            <div className="vi-intro-card" style={{ background:'linear-gradient(135deg,rgba(212,162,76,.09),rgba(16,19,31,.4))', border:'1px solid var(--line-bright)', borderRadius:'14px', padding:'26px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'20px' }}>
+              <div>
+                <div style={{ fontSize:'10.5px', letterSpacing:'.09em', textTransform:'uppercase', color:'var(--gold-bright)', marginBottom:'6px', fontWeight:600 }}>
+                  {isSpeaker ? 'Book This Speaker' : 'Get in Touch'}
+                </div>
+                <p style={{ fontSize:'13.5px', color:'var(--slate)', maxWidth:'380px', lineHeight:1.6 }}>
+                  {isSpeaker
+                    ? `Interested in booking ${initials} for your event? Valoria Institute will facilitate the introduction directly.`
+                    : `Want to connect with ${initials}? Send an introduction through Valoria Institute and we'll facilitate the connection.`}
+                </p>
               </div>
+              <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent((isSpeaker ? 'Speaker Booking' : 'Introduction Request') + ' — ' + atbId)}`}
+                className="vi-btn vi-btn-primary"
+                style={{ padding:'14px 26px', borderRadius:'8px', fontSize:'13.5px', fontWeight:600, background:'linear-gradient(135deg,#F0C878,#D4A24C)', color:'#1a1204', boxShadow:'0 4px 20px rgba(212,162,76,.25)', textDecoration:'none', whiteSpace:'nowrap', flexShrink:0 }}>
+                {isSpeaker ? 'Book Speaker' : 'Send Introduction'}
+              </a>
             </div>
 
-            {/* Dummy badge — remove once real profiles exist */}
             {p.is_dummy && (
-              <div style={{ marginTop: '24px', padding: '10px 14px', background: 'rgba(201,168,76,.06)', border: '1px solid rgba(201,168,76,.1)', borderRadius: '6px', fontSize: '11px', color: 'rgba(201,168,76,.4)', textAlign: 'center' }}>
+              <div style={{ textAlign:'center', fontSize:'11.5px', color:'var(--slate-dim)', marginTop:'26px', letterSpacing:'.02em' }}>
                 Sample profile — real professionals launching soon.
               </div>
             )}
-
-          </main>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
-}
-
-function Section({ label, children }) {
-  return (
-    <div style={{ marginBottom: '32px', paddingBottom: '32px', borderBottom: '1px solid rgba(201,168,76,.08)' }}>
-      <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.16em', color: 'rgba(201,168,76,.5)', marginBottom: '16px', textTransform: 'uppercase' }}>{label}</div>
-      {children}
-    </div>
-  )
-}
-
-function Chip({ children }) {
-  return (
-    <span style={{ padding: '6px 14px', borderRadius: '999px', border: '1px solid rgba(201,168,76,.2)', color: DIM, fontSize: '12px', background: 'rgba(201,168,76,.04)' }}>
-      {children}
-    </span>
-  )
-}
-
-const S = {
-  header: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: '60px', background: MIDNIGHT, borderBottom: '1px solid rgba(201,168,76,.12)', position: 'sticky', top: 0, zIndex: 100 },
-  navLink: { fontSize: '12px', color: DIM, textDecoration: 'none' },
-  container: { maxWidth: '1060px', margin: '0 auto', padding: '0 24px 80px' },
-  twoCol: { display: 'grid', gridTemplateColumns: '280px 1fr', gap: '48px', alignItems: 'start' },
-  sidebar: { position: 'sticky', top: '80px' },
-  avatarWrap: { width: '112px', height: '112px', borderRadius: '50%', border: `3px solid ${GOLD}`, background: MIDNIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  card: { background: 'rgba(26,26,46,.5)', border: '1px solid rgba(201,168,76,.1)', borderRadius: '10px', padding: '20px', marginBottom: '16px' },
-  cardLabel: { fontSize: '9px', fontWeight: 700, letterSpacing: '.16em', color: 'rgba(201,168,76,.5)', marginBottom: '12px', textTransform: 'uppercase' },
-  chipGrid: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
-  linkBtn: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: DIM, textDecoration: 'none', padding: '8px 12px', border: '1px solid rgba(201,168,76,.12)', borderRadius: '6px' },
 }
