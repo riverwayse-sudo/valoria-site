@@ -1,42 +1,56 @@
-const SITE_URL = 'https://valoriainstitute.com'
+import { supabase } from '@/lib/supabase'
 
 export async function generateMetadata({ params }) {
-  try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    if (!supabaseUrl || !supabaseKey) return { title: 'Profile' }
+  const { id } = params
 
-    const { createClient } = await import('@supabase/supabase-js')
-    const client = createClient(supabaseUrl, supabaseKey)
-    const { data: profile } = await client
-      .from('profiles')
-      .select('display_name, headline, bio, industry, tier, user_type, photo_url, is_visible, valu_score')
-      .eq('id', params.id)
-      .single()
+  // Try real profiles first
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('display_name, headline, bio, photo_url, user_type')
+    .eq('id', id)
+    .single()
 
-    if (!profile || !profile.is_visible) return { title: 'Profile', robots: { index: false, follow: false } }
-
-    const roleLabel = profile.user_type === 'speaker' ? 'Speaker' : 'Professional'
-    const scoreLine = profile.valu_score != null ? ` VALU Index: ${profile.valu_score}/100.` : ''
-    const title = `${profile.display_name} — ${profile.headline || roleLabel}`
-    const description = (profile.bio && profile.bio.slice(0, 140) + scoreLine) ||
-      `${profile.display_name} is a ${roleLabel.toLowerCase()} on Valoria Institute${profile.industry ? `, in ${profile.industry}` : ''}.${scoreLine} Independently assessed against the PRIME framework.`
-
+  if (profile) {
+    const name = profile.display_name || 'Valoria Professional'
+    const type = profile.user_type === 'speaker' ? 'Speaker' : 'Professional'
     return {
-      title,
-      description,
-      alternates: { canonical: `/profile/${params.id}` },
+      title: `${name} — ${type} Profile`,
+      description: profile.bio?.slice(0, 160) || `${name} — ${profile.headline || type} on Valoria Institute.`,
       openGraph: {
-        title, description,
-        url: `${SITE_URL}/profile/${params.id}`,
-        type: 'profile',
-        images: profile.photo_url
-          ? [{ url: profile.photo_url, width: 800, height: 800, alt: profile.display_name }]
-          : [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Valoria Institute' }],
+        title: `${name} | Valoria Institute`,
+        description: profile.bio?.slice(0, 160) || `${name} on Valoria Institute.`,
+        images: profile.photo_url ? [{ url: profile.photo_url }] : [{ url: '/og-image.png' }],
       },
-      twitter: { card: 'summary', title, description, images: [profile.photo_url || '/og-image.png'] },
+      robots: { index: true, follow: true },
     }
-  } catch { return { title: 'Profile' } }
+  }
+
+  // Fallback for dummy profiles
+  const { data: dummy } = await supabase
+    .from('marketplace_profiles')
+    .select('full_name, headline, bio, avatar_url, section')
+    .eq('id', id)
+    .single()
+
+  if (dummy) {
+    const name = dummy.full_name || 'Valoria Professional'
+    return {
+      title: `${name} — ${dummy.section === 'speaker' ? 'Speaker' : 'Professional'} Profile`,
+      description: dummy.bio?.slice(0, 160) || `${name} — ${dummy.headline || 'Professional'} on Valoria Institute.`,
+      openGraph: {
+        title: `${name} | Valoria Institute`,
+        images: dummy.avatar_url ? [{ url: dummy.avatar_url }] : [{ url: '/og-image.png' }],
+      },
+      robots: { index: true, follow: true },
+    }
+  }
+
+  return {
+    title: 'Professional Profile | Valoria Institute',
+    robots: { index: false },
+  }
 }
 
-export default function ProfileLayout({ children }) { return children }
+export default function ProfileLayout({ children }) {
+  return children
+}

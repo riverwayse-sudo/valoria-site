@@ -8,386 +8,389 @@ const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
 const PARCHMENT = '#F7F4EE'
 const DARK = '#0F0F1A'
-const LINEN = '#EDE8DC'
+const DIM = 'rgba(247,244,238,.45)'
+const FAINT = 'rgba(247,244,238,.2)'
 
-const TIER_BADGES = {
-  emerging:    { label: '✦ Emerging',    bg: LINEN,    text: '#2E2E4A', border: '#D4C9A8' },
-  established: { label: '✦✦ Established', bg: MIDNIGHT, text: GOLD,     border: 'none' },
-  elite:       { label: '✦✦✦ Elite',      bg: GOLD,     text: MIDNIGHT,  border: 'none' },
+const TIER_MAP = {
+  emerging:    { label: '✦ Emerging',     color: '#D4C9A8' },
+  established: { label: '✦✦ Established', color: GOLD },
+  elite:       { label: '✦✦✦ Elite',      color: '#FFE09A' },
 }
 
-function getYouTubeEmbed(url) {
+function getYouTubeId(url) {
   if (!url) return null
-  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/)
-  return m ? `https://www.youtube.com/embed/${m[1]}` : null
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
+  return m ? m[1] : null
+}
+
+function ScoreBar({ label, score, color }) {
+  return (
+    <div style={{ marginBottom: '10px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+        <span style={{ fontSize: '12px', color }}>{label}</span>
+        <span style={{ fontSize: '12px', color, fontWeight: 700 }}>{score ?? '—'}</span>
+      </div>
+      <div style={{ height: '3px', background: 'rgba(255,255,255,.06)', borderRadius: '2px' }}>
+        <div style={{ height: '100%', width: `${score ?? 0}%`, background: color, borderRadius: '2px', transition: 'width .5s ease' }} />
+      </div>
+    </div>
+  )
 }
 
 export default function PublicProfilePage({ params }) {
+  const { id } = params
   const [profile, setProfile] = useState(null)
+  const [source, setSource] = useState(null) // 'profiles' | 'marketplace_profiles'
   const [loading, setLoading] = useState(true)
-  const [form, setForm] = useState({ name: '', email: '', organisation: '', message: '', event_name: '', event_date: '' })
-  const [sending, setSending] = useState(false)
-  const [sent, setSent] = useState(false)
-  const [formError, setFormError] = useState('')
-  const [currentUser, setCurrentUser] = useState(null)
+  const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
     async function load() {
-      const [{ data }, { data: { user } }] = await Promise.all([
-        supabase.from('profiles').select('*').eq('id', params.id).single(),
-        supabase.auth.getUser(),
-      ])
-      setProfile(data)
-      setCurrentUser(user)
+      // Try real user profiles first
+      const { data: real } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (real) {
+        setProfile(real)
+        setSource('profiles')
+        setLoading(false)
+        return
+      }
+
+      // Fallback: check marketplace_profiles (dummy accounts)
+      const { data: dummy } = await supabase
+        .from('marketplace_profiles')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (dummy) {
+        // Normalise dummy profile to the same shape as a real profile
+        setProfile({
+          id: dummy.id,
+          display_name: dummy.full_name,
+          headline: dummy.headline,
+          location: dummy.location,
+          industry: dummy.industry,
+          bio: dummy.bio,
+          photo_url: dummy.avatar_url,
+          cover_url: null,
+          skills: dummy.skills || [],
+          topics: dummy.skills || [],
+          linkedin_url: dummy.linkedin_url,
+          website_url: dummy.portfolio_url,
+          youtube_links: dummy.video_url ? [dummy.video_url] : [],
+          fee_range: dummy.fee_range,
+          availability: 'open',
+          years_experience: dummy.years_experience,
+          user_type: dummy.section,
+          valu_score: null,
+          valu_tier: null,
+          cluster_scores: null,
+          is_dummy: true,
+        })
+        setSource('marketplace_profiles')
+        setLoading(false)
+        return
+      }
+
+      setNotFound(true)
       setLoading(false)
     }
     load()
-  }, [params.id])
+  }, [id])
 
-  async function sendMessage(e) {
-    e.preventDefault()
-    setSending(true)
-    setFormError('')
-    try {
-      const { error } = await supabase.from('messages').insert({
-        sender_id: currentUser?.id || null,
-        recipient_profile_id: params.id,
-        subject: profile?.user_type === 'speaker' ? `Booking enquiry: ${form.event_name}` : `Talent enquiry from ${form.organisation}`,
-        body: `From: ${form.name} (${form.email})\nOrganisation: ${form.organisation}\n${profile?.user_type === 'speaker' ? `Event: ${form.event_name}\nDate: ${form.event_date}\n` : ''}\n${form.message}`,
-      })
-      if (error) throw error
-
-      if (profile?.user_type === 'speaker' && form.event_name) {
-        await supabase.from('bookings').insert({
-          booker_id: currentUser?.id || null,
-          profile_id: params.id,
-          booker_type: 'organiser',
-          message: form.message,
-          event_name: form.event_name,
-          event_date: form.event_date || null,
-        })
-      }
-      setSent(true)
-    } catch (err) {
-      setFormError(err.message || 'Something went wrong. Please try again.')
-    } finally {
-      setSending(false)
-    }
-  }
-
-  if (loading) return <div style={{ minHeight: '100vh', background: DARK, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Raleway', color: GOLD }}>Loading profile…</div>
-  if (!profile) return <div style={{ minHeight: '100vh', background: DARK, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Raleway', color: 'rgba(247,244,238,.4)' }}>Profile not found.</div>
-
-  const isOwner = currentUser?.id === profile.id
-
-  // Unlisted profiles are only viewable by their owner (previewing their own
-  // listing). Everyone else gets a clean "not available" state rather than
-  // the full profile — the visibility toggle on profile/edit only means
-  // anything if this is actually enforced here, not just in the marketplace
-  // search query.
-  if (!profile.is_visible && !isOwner) {
+  if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: DARK, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '16px', fontFamily: 'Raleway', padding: '20px', textAlign: 'center' }}>
-        <div style={{ fontSize: '28px', color: GOLD }}>◈</div>
-        <div style={{ color: PARCHMENT, fontSize: '18px', fontWeight: 300 }}>This profile isn&apos;t currently listed.</div>
-        <Link href="/marketplace" style={{ color: GOLD, fontSize: '13px', textDecoration: 'none' }}>← Back to the marketplace</Link>
+      <div style={{ minHeight: '100vh', background: DARK, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Raleway', color: GOLD, fontSize: '14px' }}>
+        Loading profile…
       </div>
     )
   }
 
-  const isSpeaker = profile.user_type === 'speaker'
-  const tier = TIER_BADGES[profile.tier] || TIER_BADGES.emerging
-  const videoEmbeds = (profile.youtube_links || []).filter(Boolean).map(getYouTubeEmbed).filter(Boolean)
+  if (notFound) {
+    return (
+      <div style={{ minHeight: '100vh', background: DARK, fontFamily: 'Raleway', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', color: PARCHMENT }}>
+        <div style={{ fontSize: '36px', color: GOLD }}>◈</div>
+        <h1 style={{ fontSize: '20px', fontWeight: 200 }}>Profile not found</h1>
+        <Link href="/marketplace" style={{ fontSize: '13px', color: GOLD }}>← Back to marketplace</Link>
+      </div>
+    )
+  }
+
+  const p = profile
+  const isSpeaker = p.user_type === 'speaker'
+  const hasVALU = p.valu_score != null
+  const tier = TIER_MAP[p.valu_tier] || null
+  const videoLinks = (p.youtube_links || []).filter(Boolean)
 
   return (
-    <div style={styles.page}>
-      {!profile.is_visible && isOwner && (
-        <div style={{ background: 'rgba(201,168,76,.12)', borderBottom: '1px solid rgba(201,168,76,.25)', padding: '10px 24px', textAlign: 'center', fontSize: '12px', color: GOLD, fontWeight: 600, letterSpacing: '.04em' }}>
-          PREVIEW MODE — this profile is not listed and buyers can&apos;t see it. <Link href="/profile/edit" style={{ color: GOLD, textDecoration: 'underline' }}>Make it visible →</Link>
-        </div>
-      )}
-      {/* HEADER */}
-      <header style={styles.header}>
-        <Link href="/" style={styles.backLink}>
+    <div style={{ minHeight: '100vh', background: DARK, fontFamily: "'Raleway','Helvetica Neue',Arial,sans-serif", color: PARCHMENT }}>
+
+      {/* NAV */}
+      <header style={S.header}>
+        <Link href="/" style={{ lineHeight: 0 }}>
           <img src="/logo.png" alt="Valoria Institute" style={{ height: '40px', width: 'auto' }} />
         </Link>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <Link href="/marketplace" style={styles.navLink}>← Marketplace</Link>
-          {isOwner && <Link href="/profile/edit" style={styles.editBtn}>EDIT PROFILE</Link>}
-        </div>
+        <nav style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          <Link href="/marketplace" style={S.navLink}>← Marketplace</Link>
+          <Link href={`/marketplace?mode=${isSpeaker ? 'speaker' : 'talent'}`} style={S.navLink}>
+            {isSpeaker ? 'More Speakers' : 'More Talent'}
+          </Link>
+        </nav>
       </header>
 
       {/* COVER */}
-      <div style={{ ...styles.cover, backgroundImage: profile.cover_url ? `url(${profile.cover_url})` : undefined }}>
-        <div style={styles.coverOverlay} />
+      <div style={{
+        width: '100%', height: '220px',
+        background: p.cover_url ? `url(${p.cover_url}) center/cover no-repeat` : `linear-gradient(135deg, #1A1A2E 0%, #0F0F1A 50%, rgba(201,168,76,.08) 100%)`,
+        borderBottom: '1px solid rgba(201,168,76,.1)',
+        position: 'relative',
+      }}>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,15,26,.9) 0%, transparent 60%)' }} />
       </div>
 
-      <div style={styles.layout}>
-        {/* LEFT COLUMN */}
-        <aside style={styles.aside}>
-          <div style={styles.avatarWrap}>
-            {profile.photo_url
-              ? <img src={profile.photo_url} alt={profile.display_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-              : <span style={{ fontSize: '36px', color: 'rgba(247,244,238,.2)' }}>◈</span>}
-          </div>
+      {/* MAIN CONTENT */}
+      <div style={S.container}>
+        <div style={S.twoCol}>
 
-          <h1 style={styles.name}>{profile.display_name}</h1>
-          <p style={styles.headline}>{profile.headline}</p>
-          {profile.location && <p style={styles.location}>📍 {profile.location}</p>}
+          {/* LEFT SIDEBAR */}
+          <aside style={S.sidebar}>
 
-          {isSpeaker && (
-            <div style={{ marginBottom: '20px' }}>
-              <span style={{ ...styles.tierBadge, background: tier.bg, color: tier.text, border: tier.border !== 'none' ? `1px solid ${tier.border}` : 'none' }}>
-                {tier.label}
-              </span>
+            {/* Avatar */}
+            <div style={{ marginTop: '-64px', marginBottom: '20px', position: 'relative', zIndex: 2 }}>
+              <div style={S.avatarWrap}>
+                {p.photo_url
+                  ? <img src={p.photo_url} alt={p.display_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                  : <span style={{ fontSize: '36px', color: GOLD }}>◈</span>}
+              </div>
             </div>
-          )}
 
-          {isSpeaker && profile.speaking_credits > 0 && (
-            <div style={styles.statRow}>
-              <div style={styles.stat}><span style={styles.statNum}>{profile.speaking_credits}</span><span style={styles.statLabel}>Speaking Credits</span></div>
+            {/* Name + headline */}
+            <h1 style={{ fontSize: '22px', fontWeight: 700, color: PARCHMENT, lineHeight: 1.2, marginBottom: '6px' }}>
+              {p.display_name || 'Valoria Professional'}
+            </h1>
+            {p.headline && (
+              <div style={{ fontSize: '13px', color: GOLD, marginBottom: '8px', fontWeight: 500 }}>{p.headline}</div>
+            )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '20px' }}>
+              {p.location && <span style={{ fontSize: '12px', color: DIM }}>📍 {p.location}</span>}
+              {p.industry && <span style={{ fontSize: '12px', color: DIM }}>🏢 {p.industry}</span>}
+              {p.years_experience && <span style={{ fontSize: '12px', color: DIM }}>⏱ {p.years_experience} years experience</span>}
             </div>
-          )}
 
-          {!isSpeaker && profile.availability && (
-            <div style={{ marginBottom: '16px', fontSize: '12px', fontWeight: 600, color: profile.availability === 'open' ? '#1D9E75' : profile.availability === 'contract_only' ? GOLD : '#888' }}>
-              ● {profile.availability === 'open' ? 'Open to opportunities' : profile.availability === 'contract_only' ? 'Contract only' : 'Not available'}
-            </div>
-          )}
+            {/* VALU Score */}
+            {hasVALU ? (
+              <div style={S.card}>
+                <div style={S.cardLabel}>VALU INDEX</div>
+                <div style={{ fontSize: '40px', fontWeight: 700, color: GOLD, lineHeight: 1 }}>{p.valu_score}</div>
+                <div style={{ fontSize: '10px', color: DIM, letterSpacing: '.1em', marginTop: '2px' }}>OUT OF 100</div>
+                {tier && (
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: tier.color, marginTop: '8px', letterSpacing: '.08em', textTransform: 'uppercase' }}>
+                    {tier.label}
+                  </div>
+                )}
+                {p.assessment_completed_at && (
+                  <div style={{ fontSize: '10px', color: FAINT, marginTop: '6px' }}>
+                    Assessed {new Date(p.assessment_completed_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </div>
+                )}
+                {p.cluster_scores && (
+                  <div style={{ marginTop: '20px' }}>
+                    <div style={S.cardLabel}>PRIME BREAKDOWN</div>
+                    {PRIME_CLUSTERS.map(c => (
+                      <ScoreBar key={c.letter} label={c.name} score={p.cluster_scores[c.letter]} color={c.color} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div style={S.card}>
+                <div style={S.cardLabel}>VALU INDEX</div>
+                <p style={{ fontSize: '12px', color: DIM, lineHeight: 1.6, marginBottom: '12px' }}>
+                  This professional has not yet completed their VALU Index assessment.
+                </p>
+                <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer"
+                  style={{ display: 'block', textAlign: 'center', padding: '10px', background: 'rgba(201,168,76,.12)', border: '1px solid rgba(201,168,76,.25)', color: GOLD, fontSize: '10px', fontWeight: 700, letterSpacing: '.1em', borderRadius: '999px', textDecoration: 'none' }}>
+                  ABOUT THE VALU INDEX
+                </a>
+              </div>
+            )}
 
-          {isSpeaker && profile.fee_range && (
-            <div style={styles.feeBox}>
-              <div style={styles.feeLabel}>SPEAKING FEE</div>
-              <div style={styles.feeValue}>{profile.fee_range}</div>
-            </div>
-          )}
+            {/* Availability */}
+            {p.availability && Array.isArray(p.availability) && p.availability.length > 0 && (
+              <div style={S.card}>
+                <div style={S.cardLabel}>AVAILABILITY</div>
+                {p.availability.map(a => (
+                  <div key={a} style={{ fontSize: '12px', color: DIM, marginBottom: '4px' }}>● {a}</div>
+                ))}
+              </div>
+            )}
 
-          {/* Social links */}
-          <div style={styles.socials}>
-            {profile.linkedin_url && <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" style={styles.socialLink}>LinkedIn</a>}
-            {profile.instagram_url && <a href={profile.instagram_url} target="_blank" rel="noopener noreferrer" style={styles.socialLink}>Instagram</a>}
-            {profile.facebook_url && <a href={profile.facebook_url} target="_blank" rel="noopener noreferrer" style={styles.socialLink}>Facebook</a>}
-            {profile.twitter_url && <a href={profile.twitter_url} target="_blank" rel="noopener noreferrer" style={styles.socialLink}>Twitter / X</a>}
-          </div>
-        </aside>
+            {/* Fee range (speakers) */}
+            {isSpeaker && p.fee_range && (
+              <div style={S.card}>
+                <div style={S.cardLabel}>SPEAKING FEE</div>
+                <div style={{ fontSize: '16px', fontWeight: 700, color: GOLD }}>{p.fee_range}</div>
+              </div>
+            )}
 
-        {/* MAIN CONTENT */}
-        <main style={styles.main}>
-
-          {/* PRIME Assessment — the actual differentiator. Was fetched but never
-              shown on this page before; buyers had no way to see it. */}
-          {profile.valu_score != null && (
-            <Section title="PRIME Assessment">
-              <div style={styles.scoreRow}>
-                <div>
-                  <div style={styles.scoreNum}>{profile.valu_score}<span style={styles.scoreOf}>/100</span></div>
-                  <div style={styles.scoreLabel}>VALU Index Score</div>
+            {/* Links */}
+            {(p.linkedin_url || p.website_url || p.twitter_url) && (
+              <div style={S.card}>
+                <div style={S.cardLabel}>LINKS</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {p.linkedin_url && (
+                    <a href={p.linkedin_url} target="_blank" rel="noopener noreferrer" style={S.linkBtn}>
+                      <span>in</span> LinkedIn
+                    </a>
+                  )}
+                  {p.website_url && (
+                    <a href={p.website_url} target="_blank" rel="noopener noreferrer" style={S.linkBtn}>
+                      <span>↗</span> Website
+                    </a>
+                  )}
+                  {p.twitter_url && (
+                    <a href={p.twitter_url} target="_blank" rel="noopener noreferrer" style={S.linkBtn}>
+                      <span>𝕏</span> Twitter / X
+                    </a>
+                  )}
                 </div>
               </div>
-              {profile.cluster_scores && (
-                <div style={styles.clusterGrid}>
-                  {PRIME_CLUSTERS.map(c => {
-                    const score = profile.cluster_scores[c.letter]
-                    if (score == null) return null
-                    return (
-                      <div key={c.letter} style={styles.clusterRow}>
-                        <span style={{ ...styles.clusterLetterBig, color: c.color, borderColor: c.color }}>{c.letter}</span>
-                        <div style={{ flex: 1 }}>
-                          <div style={styles.clusterRowTop}>
-                            <span style={styles.clusterName}>{c.name}</span>
-                            <span style={{ color: c.color, fontWeight: 700, fontSize: '13px' }}>{score}</span>
-                          </div>
-                          <div style={styles.clusterTrack}>
-                            <div style={{ width: `${score}%`, height: '100%', background: c.color, borderRadius: '3px', transition: 'width .5s' }} />
-                          </div>
+            )}
+
+          </aside>
+
+          {/* RIGHT — main content */}
+          <main style={{ minWidth: 0 }}>
+
+            {/* Bio */}
+            {p.bio && (
+              <Section label="About">
+                <p style={{ fontSize: '14px', color: DIM, lineHeight: 1.8, fontWeight: 300 }}>{p.bio}</p>
+              </Section>
+            )}
+
+            {/* Skills */}
+            {p.skills && p.skills.length > 0 && !isSpeaker && (
+              <Section label="Core Skills">
+                <div style={S.chipGrid}>
+                  {p.skills.map(s => <Chip key={s}>{s}</Chip>)}
+                </div>
+              </Section>
+            )}
+
+            {/* Speaking topics */}
+            {p.topics && p.topics.length > 0 && isSpeaker && (
+              <Section label="Speaking Topics">
+                <div style={S.chipGrid}>
+                  {p.topics.map(t => <Chip key={t}>{t}</Chip>)}
+                </div>
+              </Section>
+            )}
+
+            {/* Modality */}
+            {p.modality && p.modality.length > 0 && (
+              <Section label="Work Modality">
+                <div style={S.chipGrid}>
+                  {p.modality.map(m => <Chip key={m}>{m}</Chip>)}
+                </div>
+              </Section>
+            )}
+
+            {/* Video reel(s) */}
+            {videoLinks.length > 0 && (
+              <Section label={isSpeaker ? 'Speaker Reel & Videos' : 'Videos'}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {videoLinks.map((url, i) => {
+                    const ytId = getYouTubeId(url)
+                    if (ytId) {
+                      return (
+                        <div key={i} style={{ position: 'relative', paddingBottom: '56.25%', height: 0, borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
+                          <iframe
+                            src={`https://www.youtube.com/embed/${ytId}`}
+                            title={`Video ${i + 1}`}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+                          />
                         </div>
-                      </div>
+                      )
+                    }
+                    return (
+                      <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                        style={{ display: 'block', padding: '12px 16px', border: '1px solid rgba(201,168,76,.2)', borderRadius: '8px', color: GOLD, fontSize: '13px', textDecoration: 'none' }}>
+                        ▶ Watch video {i + 1} →
+                      </a>
                     )
                   })}
                 </div>
-              )}
-            </Section>
-          )}
-
-          {/* Bio */}
-          {profile.bio && (
-            <Section title="About">
-              <p style={styles.bio}>{profile.bio}</p>
-            </Section>
-          )}
-
-          {/* Topics / Skills */}
-          {isSpeaker && (profile.topics || []).length > 0 && (
-            <Section title="Speaking Topics">
-              <div style={styles.tagGrid}>
-                {profile.topics.map(t => <span key={t} style={styles.tag}>{t}</span>)}
-              </div>
-            </Section>
-          )}
-
-          {!isSpeaker && (profile.skills || []).length > 0 && (
-            <Section title="Key Skills">
-              <div style={styles.tagGrid}>
-                {profile.skills.map(s => <span key={s} style={styles.tag}>{s}</span>)}
-              </div>
-            </Section>
-          )}
-
-          {/* Speaking experience */}
-          {isSpeaker && profile.speaking_experience && (
-            <Section title="Speaking Experience">
-              <p style={styles.bio}>{profile.speaking_experience}</p>
-            </Section>
-          )}
-
-          {isSpeaker && profile.past_events && (
-            <Section title="Past Events">
-              <p style={styles.bio}>{profile.past_events}</p>
-            </Section>
-          )}
-
-          {/* Video embeds */}
-          {videoEmbeds.length > 0 && (
-            <Section title="Speaking Reels">
-              <div style={styles.videoGrid}>
-                {videoEmbeds.map((src, i) => (
-                  <div key={i} style={styles.videoWrap}>
-                    <iframe src={src} title={`Speaking video ${i + 1}`} frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen style={{ width: '100%', height: '100%', borderRadius: '6px' }} />
-                  </div>
-                ))}
-              </div>
-            </Section>
-          )}
-
-          {/* Portfolio images */}
-          {!isSpeaker && (profile.portfolio_images || []).filter(Boolean).length > 0 && (
-            <Section title="Portfolio">
-              <div style={styles.portfolioGrid}>
-                {profile.portfolio_images.filter(Boolean).map((url, i) => (
-                  <img key={i} src={url} alt={`Portfolio ${i + 1}`} style={{ width: '100%', height: '160px', objectFit: 'cover', borderRadius: '6px' }} />
-                ))}
-              </div>
-            </Section>
-          )}
-
-          {/* CONTACT / BOOKING FORM */}
-          <section id="contact" style={styles.contactSection}>
-            <div style={styles.eyebrow}><div style={styles.eyebrowLine} /><span style={styles.eyebrowText}>{isSpeaker ? 'BOOK THIS SPEAKER' : 'CONTACT THIS PROFESSIONAL'}</span></div>
-            <h2 style={styles.sectionTitle}>{isSpeaker ? 'Make your booking enquiry.' : 'Start a conversation.'}</h2>
-
-            {sent ? (
-              <div style={styles.sentBox}>
-                <div style={{ fontSize: '24px', color: GOLD, marginBottom: '8px' }}>✦</div>
-                <p style={{ fontWeight: 600, color: PARCHMENT, marginBottom: '4px' }}>Enquiry sent.</p>
-                <p style={{ fontSize: '13px', color: 'rgba(247,244,238,.5)' }}>Valoria Institute will facilitate the introduction.</p>
-              </div>
-            ) : (
-              <form onSubmit={sendMessage} style={styles.form}>
-                <div style={styles.formGrid}>
-                  <FormField label="Your Name" value={form.name} onChange={v => setForm({ ...form, name: v })} required />
-                  <FormField label="Email Address" value={form.email} onChange={v => setForm({ ...form, email: v })} type="email" required />
-                  <FormField label="Organisation" value={form.organisation} onChange={v => setForm({ ...form, organisation: v })} />
-                  {isSpeaker && <>
-                    <FormField label="Event Name" value={form.event_name} onChange={v => setForm({ ...form, event_name: v })} />
-                    <FormField label="Event Date" value={form.event_date} onChange={v => setForm({ ...form, event_date: v })} type="date" />
-                  </>}
-                </div>
-                <div style={styles.field}>
-                  <label style={styles.label}>{isSpeaker ? 'Tell us about the event and what you need' : 'Your message'}</label>
-                  <textarea value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} required rows={5}
-                    placeholder={isSpeaker ? 'Event format, audience size, topic brief…' : 'What role are you looking to fill and why this professional caught your attention?'}
-                    style={{ ...styles.input, resize: 'vertical' }} />
-                </div>
-                {formError && <div style={styles.errorBox}>{formError}</div>}
-                <button type="submit" disabled={sending} style={styles.btnGold}>
-                  {sending ? 'SENDING…' : isSpeaker ? 'SEND BOOKING ENQUIRY' : 'SEND MESSAGE'}
-                </button>
-                <p style={{ fontSize: '12px', color: 'rgba(247,244,238,.3)', marginTop: '12px' }}>
-                  Valoria Institute facilitates all introductions. Your message is sent securely.
-                </p>
-              </form>
+              </Section>
             )}
-          </section>
-        </main>
+
+            {/* Contact CTA */}
+            <div id="contact" style={{ ...S.card, background: 'rgba(201,168,76,.06)', border: '1px solid rgba(201,168,76,.18)', marginTop: '8px' }}>
+              <div style={S.cardLabel}>GET IN TOUCH</div>
+              <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.7, marginBottom: '16px' }}>
+                {isSpeaker
+                  ? `Interested in booking ${p.display_name || 'this speaker'} for your event? Reach out via the Valoria Institute.`
+                  : `Want to connect with ${p.display_name || 'this professional'}? Send an introduction through the Valoria Institute.`}
+              </p>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent(`Enquiry: ${p.display_name || 'Profile'} — Valoria Institute`)}`}
+                  style={{ padding: '12px 24px', background: GOLD, color: '#0F0F1A', borderRadius: '999px', fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', textDecoration: 'none' }}>
+                  {isSpeaker ? 'BOOK THIS SPEAKER' : 'SEND INTRODUCTION'}
+                </a>
+                <Link href={`/marketplace?mode=${isSpeaker ? 'speaker' : 'talent'}`}
+                  style={{ padding: '12px 24px', border: '1px solid rgba(201,168,76,.25)', color: GOLD, borderRadius: '999px', fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', textDecoration: 'none' }}>
+                  {isSpeaker ? 'MORE SPEAKERS' : 'MORE TALENT'}
+                </Link>
+              </div>
+            </div>
+
+            {/* Dummy badge — remove once real profiles exist */}
+            {p.is_dummy && (
+              <div style={{ marginTop: '24px', padding: '10px 14px', background: 'rgba(201,168,76,.06)', border: '1px solid rgba(201,168,76,.1)', borderRadius: '6px', fontSize: '11px', color: 'rgba(201,168,76,.4)', textAlign: 'center' }}>
+                Sample profile — real professionals launching soon.
+              </div>
+            )}
+
+          </main>
+        </div>
       </div>
     </div>
   )
 }
 
-function Section({ title, children }) {
+function Section({ label, children }) {
   return (
-    <section style={styles.section}>
-      <h2 style={styles.sectionTitle}>{title}</h2>
+    <div style={{ marginBottom: '32px', paddingBottom: '32px', borderBottom: '1px solid rgba(201,168,76,.08)' }}>
+      <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.16em', color: 'rgba(201,168,76,.5)', marginBottom: '16px', textTransform: 'uppercase' }}>{label}</div>
       {children}
-    </section>
-  )
-}
-
-function FormField({ label, value, onChange, type = 'text', required }) {
-  return (
-    <div style={styles.field}>
-      <label style={styles.label}>{label}{required && ' *'}</label>
-      <input type={type} value={value} onChange={e => onChange(e.target.value)} required={required}
-        style={styles.input} />
     </div>
   )
 }
 
-const styles = {
-  page: { minHeight: '100vh', background: DARK, fontFamily: "'Raleway', 'Helvetica Neue', Arial, sans-serif", color: PARCHMENT },
-  header: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: '64px', background: MIDNIGHT, borderBottom: '1px solid rgba(201,168,76,.12)', position: 'sticky', top: 0, zIndex: 100 },
-  backLink: { display: 'flex', alignItems: 'center' },
-  navLink: { fontSize: '13px', color: 'rgba(247,244,238,.4)', textDecoration: 'none' },
-  editBtn: { padding: '8px 20px', background: GOLD, color: MIDNIGHT, fontSize: '10px', fontWeight: 700, letterSpacing: '.12em', borderRadius: '999px', textDecoration: 'none' },
-  cover: { height: '220px', background: `linear-gradient(180deg, rgba(26,26,46,.4) 0%, ${DARK} 100%), ${MIDNIGHT}`, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' },
-  coverOverlay: { position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, rgba(15,15,26,.9) 100%)' },
-  layout: { display: 'grid', gridTemplateColumns: '280px 1fr', gap: '0', maxWidth: '1100px', margin: '-80px auto 0', position: 'relative', zIndex: 2, padding: '0 24px 80px' },
-  aside: { paddingRight: '32px', paddingTop: '16px' },
-  avatarWrap: { width: '100px', height: '100px', borderRadius: '50%', border: `2px solid ${GOLD}`, background: MIDNIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: '16px' },
-  name: { fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 700, color: PARCHMENT, marginBottom: '6px', lineHeight: 1.2 },
-  headline: { fontSize: '14px', color: GOLD, fontWeight: 500, marginBottom: '6px' },
-  location: { fontSize: '12px', color: 'rgba(247,244,238,.4)', marginBottom: '16px' },
-  tierBadge: { display: 'inline-block', padding: '5px 14px', borderRadius: '999px', fontSize: '12px', fontWeight: 700 },
-  statRow: { display: 'flex', gap: '20px', marginBottom: '16px' },
-  stat: { display: 'flex', flexDirection: 'column', gap: '2px' },
-  statNum: { fontSize: '22px', fontWeight: 700, color: GOLD },
-  statLabel: { fontSize: '10px', color: 'rgba(247,244,238,.35)', letterSpacing: '.1em', textTransform: 'uppercase' },
-  feeBox: { padding: '14px', background: 'rgba(201,168,76,.06)', border: '1px solid rgba(201,168,76,.2)', borderRadius: '8px', marginBottom: '16px' },
-  feeLabel: { fontSize: '9px', fontWeight: 700, letterSpacing: '.14em', color: 'rgba(201,168,76,.6)', marginBottom: '4px' },
-  feeValue: { fontSize: '16px', fontWeight: 600, color: GOLD },
-  socials: { display: 'flex', flexDirection: 'column', gap: '8px' },
-  socialLink: { fontSize: '13px', color: 'rgba(247,244,238,.45)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' },
-  main: { paddingTop: '32px', paddingLeft: '16px' },
-  section: { marginBottom: '40px', paddingBottom: '40px', borderBottom: '1px solid rgba(201,168,76,.08)' },
-  sectionTitle: { fontSize: '16px', fontWeight: 600, color: PARCHMENT, marginBottom: '16px', letterSpacing: '-.01em' },
-  bio: { fontSize: '14px', fontWeight: 300, color: 'rgba(247,244,238,.7)', lineHeight: 1.7 },
-  scoreRow: { marginBottom: '20px' },
-  scoreNum: { fontSize: '42px', fontWeight: 200, color: GOLD, lineHeight: 1 },
-  scoreOf: { fontSize: '18px', color: 'rgba(247,244,238,.3)', fontWeight: 300 },
-  scoreLabel: { fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(247,244,238,.4)', textTransform: 'uppercase', marginTop: '4px' },
-  clusterGrid: { display: 'flex', flexDirection: 'column', gap: '14px' },
-  clusterRow: { display: 'flex', alignItems: 'center', gap: '12px' },
-  clusterLetterBig: { width: '28px', height: '28px', flexShrink: 0, borderRadius: '50%', border: '1.5px solid', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700 },
-  clusterRowTop: { display: 'flex', justifyContent: 'space-between', marginBottom: '4px' },
-  clusterName: { fontSize: '12px', color: 'rgba(247,244,238,.6)', fontWeight: 500 },
-  clusterTrack: { height: '5px', background: 'rgba(255,255,255,.06)', borderRadius: '3px', overflow: 'hidden' },
-  tagGrid: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
-  tag: { padding: '5px 14px', borderRadius: '999px', border: '1px solid rgba(201,168,76,.25)', fontSize: '12px', color: 'rgba(247,244,238,.6)', fontWeight: 500 },
-  videoGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' },
-  videoWrap: { position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '6px', background: MIDNIGHT },
-  portfolioGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' },
-  contactSection: { background: 'rgba(26,26,46,.5)', border: '1px solid rgba(201,168,76,.12)', borderRadius: '12px', padding: '32px' },
-  eyebrow: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' },
-  eyebrowLine: { width: '20px', height: '1px', background: 'rgba(201,168,76,.4)' },
-  eyebrowText: { fontSize: '9px', fontWeight: 700, letterSpacing: '.16em', color: GOLD },
-  form: { display: 'flex', flexDirection: 'column', gap: '0' },
-  formGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' },
-  field: { marginBottom: '12px' },
-  label: { display: 'block', fontSize: '10px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(247,244,238,.4)', textTransform: 'uppercase', marginBottom: '5px' },
-  input: { width: '100%', padding: '10px 12px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.18)', borderRadius: '6px', color: PARCHMENT, fontSize: '13px', fontFamily: "'Raleway', sans-serif", outline: 'none', boxSizing: 'border-box' },
-  errorBox: { padding: '10px 12px', background: 'rgba(216,90,48,.1)', border: '1px solid rgba(216,90,48,.3)', borderRadius: '6px', fontSize: '13px', color: '#F09595', marginBottom: '12px' },
-  btnGold: { padding: '14px 28px', background: GOLD, color: MIDNIGHT, fontSize: '11px', fontWeight: 700, letterSpacing: '.13em', borderRadius: '999px', border: 'none', cursor: 'pointer', fontFamily: "'Raleway', sans-serif", width: '100%' },
-  sentBox: { padding: '32px', textAlign: 'center', background: 'rgba(201,168,76,.04)', borderRadius: '8px', border: '1px solid rgba(201,168,76,.15)' },
+function Chip({ children }) {
+  return (
+    <span style={{ padding: '6px 14px', borderRadius: '999px', border: '1px solid rgba(201,168,76,.2)', color: DIM, fontSize: '12px', background: 'rgba(201,168,76,.04)' }}>
+      {children}
+    </span>
+  )
+}
+
+const S = {
+  header: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: '60px', background: MIDNIGHT, borderBottom: '1px solid rgba(201,168,76,.12)', position: 'sticky', top: 0, zIndex: 100 },
+  navLink: { fontSize: '12px', color: DIM, textDecoration: 'none' },
+  container: { maxWidth: '1060px', margin: '0 auto', padding: '0 24px 80px' },
+  twoCol: { display: 'grid', gridTemplateColumns: '280px 1fr', gap: '48px', alignItems: 'start' },
+  sidebar: { position: 'sticky', top: '80px' },
+  avatarWrap: { width: '112px', height: '112px', borderRadius: '50%', border: `3px solid ${GOLD}`, background: MIDNIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  card: { background: 'rgba(26,26,46,.5)', border: '1px solid rgba(201,168,76,.1)', borderRadius: '10px', padding: '20px', marginBottom: '16px' },
+  cardLabel: { fontSize: '9px', fontWeight: 700, letterSpacing: '.16em', color: 'rgba(201,168,76,.5)', marginBottom: '12px', textTransform: 'uppercase' },
+  chipGrid: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
+  linkBtn: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: DIM, textDecoration: 'none', padding: '8px 12px', border: '1px solid rgba(201,168,76,.12)', borderRadius: '6px' },
 }
