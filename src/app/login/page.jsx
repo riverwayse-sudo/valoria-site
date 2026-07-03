@@ -26,17 +26,19 @@ export default function LoginPage() {
       })
       if (loginError) throw loginError
       const { data: { user } } = await supabase.auth.getUser()
+      // Check if professional has a profile set up
       const { data: profile } = await supabase
-        .from('profiles')
-        .select('user_type')
+        .from('professional_profiles')
+        .select('id, display_name, listing_status, active_tracks')
         .eq('id', user.id)
         .single()
 
-      const userType = profile?.user_type || user?.user_metadata?.user_type
-      if (userType === 'talent' || userType === 'speaker') {
-        window.location.href = 'https://assessment.valoriainstitute.com/'
+      if (!profile || !profile.display_name) {
+        // First time — go to setup wizard
+        window.location.href = '/profile/setup'
       } else {
-        window.location.href = '/marketplace'
+        // Returning user — go to dashboard
+        window.location.href = '/dashboard'
       }
     } catch (err) {
       setError(
