@@ -41,6 +41,9 @@ export default function WaitlistPage() {
         return;
       }
 
+      // Set access cookie so they can browse after signing up
+      localStorage.setItem('vi_waitlist_gate_v2', 'submitted')
+      document.cookie = 'vi_waitlist_v2=submitted; path=/; max-age=31536000'
       setStatus('success');
     } catch {
       setErrorMsg('Network error. Please check your connection.');
