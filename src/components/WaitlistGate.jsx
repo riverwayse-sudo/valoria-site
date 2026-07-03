@@ -32,18 +32,21 @@ export default function WaitlistGate() {
     setStatus('submitting')
     setError('')
     try {
-      const { error: sbError } = await supabase
-        .from('waitlist')
-        .insert([{
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           full_name: name.trim(),
           email: email.trim().toLowerCase(),
           role: role.trim() || null,
           interest: interest || null,
           type: 'gate',
           source: 'site_gate',
-        }])
-      if (sbError && sbError.code !== '23505') {
-        throw sbError
+        }),
+      })
+      // 409 = already on list — treat as success
+      if (!res.ok && res.status !== 409) {
+        throw new Error('signup_failed')
       }
       setStatus('done')
       localStorage.setItem(GATE_KEY, 'submitted')
