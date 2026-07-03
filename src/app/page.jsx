@@ -135,7 +135,7 @@ export default function HomePage() {
             <Reveal className="ep-grid" as="div">
               <div className="ep-card ep-1" style={{ '--ep-color': '#378ADD' }}>
                 <style>{`.ep-1::before { background: #378ADD; }`}</style>
-                <div className="ep-num">01</div>
+                
                 <div className="ep-icon" style={{ background: 'rgba(55,138,221,.1)', border: '1px solid rgba(55,138,221,.25)' }}>
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <rect x="2" y="7" width="20" height="14" rx="2" stroke="#378ADD" strokeWidth="1.5" />
@@ -152,7 +152,7 @@ export default function HomePage() {
 
               <div className="ep-card ep-2" style={{ '--ep-color': '#C9A84C' }}>
                 <style>{`.ep-2::before { background: #C9A84C; }`}</style>
-                <div className="ep-num">02</div>
+                
                 <div className="ep-icon" style={{ background: 'rgba(201,168,76,.1)', border: '1px solid rgba(201,168,76,.25)' }}>
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <circle cx="12" cy="8" r="4" stroke="#C9A84C" strokeWidth="1.5" />
@@ -169,7 +169,7 @@ export default function HomePage() {
 
               <div className="ep-card ep-3" style={{ '--ep-color': '#1D9E75' }}>
                 <style>{`.ep-3::before { background: #1D9E75; }`}</style>
-                <div className="ep-num">03</div>
+                
                 <div className="ep-icon" style={{ background: 'rgba(29,158,117,.1)', border: '1px solid rgba(29,158,117,.25)' }}>
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#1D9E75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
