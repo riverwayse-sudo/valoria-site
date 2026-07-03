@@ -6,12 +6,12 @@ export async function generateMetadata({ params }) {
   // Try real profiles first
   const { data: profile } = await supabase
     .from('profiles')
-    .select('display_name, headline, bio, photo_url, user_type')
+    .select('display_initials, headline, bio, photo_url, user_type')
     .eq('id', id)
     .single()
 
   if (profile) {
-    const name = profile.display_name || 'Valoria Professional'
+    const name = profile.display_initials || 'Valoria Professional'
     const type = profile.user_type === 'speaker' ? 'Speaker' : 'Professional'
     return {
       title: `${name} — ${type} Profile`,
@@ -28,12 +28,12 @@ export async function generateMetadata({ params }) {
   // Fallback for dummy profiles
   const { data: dummy } = await supabase
     .from('marketplace_profiles')
-    .select('full_name, headline, bio, avatar_url, section')
+    .select('display_initials, headline, bio, avatar_url, section')
     .eq('id', id)
     .single()
 
   if (dummy) {
-    const name = dummy.full_name || 'Valoria Professional'
+    const name = dummy.display_initials || 'Valoria Professional'
     return {
       title: `${name} — ${dummy.section === 'speaker' ? 'Speaker' : 'Professional'} Profile`,
       description: dummy.bio?.slice(0, 160) || `${name} — ${dummy.headline || 'Professional'} on Valoria Institute.`,

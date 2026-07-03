@@ -20,6 +20,12 @@ const TOPICS = ['Leadership','Strategy','Innovation','Diversity & Inclusion','Fi
   'Technology & AI','Communication','Entrepreneurship','Governance','People Development',
   'Mental Health at Work','Global Affairs','Sustainability','Future of Work']
 
+function getAvatarLetters(displayInitials) {
+  if (!displayInitials) return '?'
+  const letters = displayInitials.replace(/\./g, '')
+  return letters ? letters.toUpperCase() : '?'
+}
+
 export default function ATBSpotlightPage() {
   const [profiles, setProfiles] = useState([])
   const [loading, setLoading] = useState(true)
@@ -36,7 +42,7 @@ export default function ATBSpotlightPage() {
     // Try real assessed speakers first
     const { data: real } = await supabase
       .from('professional_profiles')
-      .select('id, display_name, headline, location, photo_url, active_tracks, industry, topics, speaker_tier, bio, valu_index, cluster_scores, listing_status, fee_range, youtube_links')
+      .select('id, atb_id, display_initials, headline, location, photo_url, active_tracks, industry, topics, speaker_tier, bio, valu_index, cluster_scores, listing_status, fee_range, youtube_links')
       .eq('listing_status', 'listed')
       .contains('active_tracks', ['speaker'])
       .order('valu_index', { ascending: false })
@@ -50,14 +56,15 @@ export default function ATBSpotlightPage() {
     // Fallback: dummy speaker profiles
     const { data: dummy } = await supabase
       .from('marketplace_profiles')
-      .select('id, full_name, headline, location, avatar_url, industry, skills, bio, fee_range, featured, video_url, years_experience')
+      .select('id, atb_id, display_initials, headline, location, avatar_url, industry, skills, bio, fee_range, featured, video_url, years_experience')
       .eq('section', 'speaker')
       .eq('status', 'active')
       .order('featured', { ascending: false })
 
     setProfiles((dummy || []).map(p => ({
       id: p.id,
-      display_name: p.full_name,
+      atb_id: p.atb_id,
+      display_initials: p.display_initials,
       headline: p.headline,
       location: p.location,
       photo_url: p.avatar_url,
@@ -77,7 +84,7 @@ export default function ATBSpotlightPage() {
   const filtered = profiles.filter(p => {
     const q = search.toLowerCase()
     const matchSearch = !q ||
-      (p.display_name || '').toLowerCase().includes(q) ||
+      (p.atb_id || '').toLowerCase().includes(q) ||
       (p.headline || '').toLowerCase().includes(q) ||
       (p.bio || '').toLowerCase().includes(q) ||
       (p.topics || []).some(t => t.toLowerCase().includes(q))
@@ -181,17 +188,21 @@ function SpeakerCard({ profile: p }) {
   const tier = TIER_BADGES[p.speaker_tier] || TIER_BADGES.tier_3
   const topics = (p.topics || []).slice(0, 3)
   const hasReel = p.youtube_links && p.youtube_links.length > 0 && p.youtube_links[0]
+  const initials = p.display_initials || '—'
+  const avatarLetters = getAvatarLetters(p.display_initials)
+  const atbId = p.atb_id || '—'
 
   return (
     <div style={S.card}>
       <div style={S.cardHeader}>
         <div style={S.avatar}>
           {p.photo_url
-            ? <img src={p.photo_url} alt={p.display_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-            : <span style={{ color: 'rgba(247,244,238,.3)', fontSize: '18px' }}>◈</span>}
+            ? <img src={p.photo_url} alt={`${initials} profile photo`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+            : <span style={{ color: MIDNIGHT, fontSize: '15px', fontWeight: 700 }}>{avatarLetters}</span>}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={S.cardName}>{p.display_name || 'Anonymous'}</div>
+          <div style={S.cardName}>{atbId}</div>
+          <div style={S.cardInitials}>{initials} · Verified</div>
           <div style={S.cardHeadline}>{p.headline || 'Valoria Speaker'}</div>
           {p.location && <div style={S.cardLocation}>📍 {p.location}</div>}
         </div>
@@ -278,7 +289,8 @@ const S = {
   card: { background: PARCHMENT, border: '0.5px solid #D4C9A8', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' },
   cardHeader: { display: 'flex', alignItems: 'flex-start', gap: '12px' },
   avatar: { width: '52px', height: '52px', flexShrink: 0, borderRadius: '50%', border: `2px solid ${GOLD}`, background: MIDNIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  cardName: { fontSize: '15px', fontWeight: 700, color: MIDNIGHT, lineHeight: 1.2, marginBottom: '2px' },
+  cardName: { fontSize: '13px', fontWeight: 700, color: MIDNIGHT, lineHeight: 1.2, marginBottom: '2px', fontFamily: "'JetBrains Mono',monospace", letterSpacing: '.01em' },
+  cardInitials: { fontSize: '10.5px', color: '#8A8578', fontWeight: 600, marginBottom: '4px', letterSpacing: '.03em' },
   cardHeadline: { fontSize: '12px', color: GOLD, fontWeight: 500, marginBottom: '2px' },
   cardLocation: { fontSize: '11px', color: '#5F5E5A' },
   tierBadge: { display: 'inline-block', padding: '4px 10px', borderRadius: '999px', fontSize: '10px', fontWeight: 700, whiteSpace: 'nowrap' },

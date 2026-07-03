@@ -151,7 +151,7 @@ export default function ProfilePage({ params }) {
         {/* NAV */}
         <nav style={{ position:'sticky', top:0, zIndex:50, display:'flex', alignItems:'center', justifyContent:'space-between', padding:'18px 40px', background:'rgba(5,6,11,0.85)', backdropFilter:'blur(12px)', borderBottom:'1px solid var(--line)' }}>
           <Link href="/" style={{ display:'flex', alignItems:'center', gap:'10px', textDecoration:'none', color:'var(--ivory)' }}>
-            <div style={{ width:'26px', height:'26px', background:'linear-gradient(135deg,#F0C878,#D4A24C 60%,#8a6420)', clipPath:'polygon(50% 0%,100% 100%,50% 78%,0% 100%)' }} />
+            <img src="/logo.png" alt="Valoria Institute" style={{ height:'32px', width:'auto' }} />
             <span style={{ fontFamily:"'Fraunces',serif", fontSize:'17px', letterSpacing:'.02em', fontWeight:600 }}>VALORIA</span>
           </Link>
           <div className="vi-nav-links" style={{ display:'flex', gap:'28px', fontSize:'13px', color:'var(--slate)', letterSpacing:'.04em', textTransform:'uppercase' }}>
