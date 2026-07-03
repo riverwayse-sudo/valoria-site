@@ -161,16 +161,38 @@ export default function WaitlistPage() {
           </div>
 
           {status === 'success' ? (
-            <div>
+            <div className="wl-success-wrap">
               <div className="vi-page-done-icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <path d="M5 12l5 5L20 7" stroke="#1D9E75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
               <div className="vi-page-done-title">You&apos;re on the list.</div>
-              <p className="vi-page-done-sub">
-                We&apos;ll reach out when it&apos;s ready for you.
-              </p>
+              <p className="vi-page-done-sub">Something is being built that Africa has never had before.</p>
+              <div className="wl-done-sections">
+                <div className="wl-done-section">
+                  <div className="wl-done-label">THE PROBLEM</div>
+                  <p className="wl-done-body">Every day, exceptional African professionals are passed over — not because they lack capability, but because no one can prove it. The same names circulate. The same networks win. Everyone else waits.</p>
+                </div>
+                <div className="wl-done-section">
+                  <div className="wl-done-label">THE SHIFT</div>
+                  <p className="wl-done-body">Valoria changes the question employers and organisers ask. Not <em className="wl-em-white">&ldquo;who do I already know?&rdquo;</em> — but <em className="wl-em-gold">&ldquo;who is genuinely the best for this?&rdquo;</em> One assessed standard. No guesswork. No gatekeeping.</p>
+                </div>
+                <div className="wl-done-section">
+                  <div className="wl-done-label">WHAT&apos;S COMING</div>
+                  <p className="wl-done-body">A marketplace where every profile is verified by the VALU Index. Where employers search by capability, not connection. Where speakers get booked on merit. Where facilitators earn trust before they walk into the room.</p>
+                </div>
+                <div className="wl-done-three">
+                  <div className="wl-done-label">THREE WAYS IN</div>
+                  <div className="wl-done-track"><div className="wl-track-bar" style={{background:"#378ADD"}}/><div><div className="wl-track-name" style={{color:"#378ADD"}}>ATB CONNECT</div><div className="wl-track-desc">For employers and recruiters — search pre-assessed candidates by score, strength, and sector.</div></div></div>
+                  <div className="wl-done-track"><div className="wl-track-bar" style={{background:"#C9A84C"}}/><div><div className="wl-track-name" style={{color:"#C9A84C"}}>ATB SPOTLIGHT</div><div className="wl-track-desc">For event planners — discover and book speakers whose capability you can actually verify.</div></div></div>
+                  <div className="wl-done-track"><div className="wl-track-bar" style={{background:"#1D9E75"}}/><div><div className="wl-track-name" style={{color:"#1D9E75"}}>ATB DEVELOP</div><div className="wl-track-desc">For L&D leaders — commission PRIME-certified facilitators with an assessed track record.</div></div></div>
+                </div>
+                <div className="wl-done-close">
+                  You&apos;re early. That matters more than you think.<br/>
+                  <span className="wl-done-close-tag">WE&apos;LL BE IN TOUCH.</span>
+                </div>
+              </div>
             </div>
           ) : (
             <>
