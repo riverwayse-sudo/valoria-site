@@ -13,6 +13,12 @@ const BLUE = '#378ADD'
 
 const AVAIL_COLORS = { open: '#1D9E75', contract_only: GOLD, not_available: '#888' }
 
+function getAvatarLetters(displayInitials) {
+  if (!displayInitials) return '?'
+  const letters = displayInitials.replace(/\./g, '')
+  return letters ? letters.toUpperCase() : '?'
+}
+
 export default function ATBConnectPage() {
   const [profiles, setProfiles] = useState([])
   const [loading, setLoading] = useState(true)
@@ -29,7 +35,7 @@ export default function ATBConnectPage() {
     // Try real assessed candidates first
     const { data: real } = await supabase
       .from('professional_profiles')
-      .select('id, display_name, headline, location, photo_url, active_tracks, industry, skills, availability, bio, valu_index, cluster_scores, listing_status, designation')
+      .select('id, atb_id, display_initials, headline, location, photo_url, active_tracks, industry, skills, availability, bio, valu_index, cluster_scores, listing_status, designation')
       .eq('listing_status', 'listed')
       .contains('active_tracks', ['candidate'])
       .order('valu_index', { ascending: false })
@@ -43,14 +49,15 @@ export default function ATBConnectPage() {
     // Fallback: dummy talent profiles
     const { data: dummy } = await supabase
       .from('marketplace_profiles')
-      .select('id, full_name, headline, location, avatar_url, industry, skills, bio, fee_range, featured, years_experience')
+      .select('id, atb_id, display_initials, headline, location, avatar_url, industry, skills, bio, fee_range, featured, years_experience')
       .eq('section', 'talent')
       .eq('status', 'active')
       .order('featured', { ascending: false })
 
     setProfiles((dummy || []).map(p => ({
       id: p.id,
-      display_name: p.full_name,
+      atb_id: p.atb_id,
+      display_initials: p.display_initials,
       headline: p.headline,
       location: p.location,
       photo_url: p.avatar_url,
@@ -68,7 +75,7 @@ export default function ATBConnectPage() {
   const filtered = profiles.filter(p => {
     const q = search.toLowerCase()
     const matchSearch = !q ||
-      (p.display_name || '').toLowerCase().includes(q) ||
+      (p.atb_id || '').toLowerCase().includes(q) ||
       (p.headline || '').toLowerCase().includes(q) ||
       (p.bio || '').toLowerCase().includes(q) ||
       (p.skills || []).some(s => s.toLowerCase().includes(q))
@@ -102,7 +109,7 @@ export default function ATBConnectPage() {
         <aside style={S.filters}>
           <div style={S.eyebrow}><div style={S.eyebrowLine} /><span style={S.eyebrowText}>FILTER</span></div>
 
-          <input type="search" placeholder="Search by name, skill, topic…"
+          <input type="search" placeholder="Search by ID, skill, topic…"
             value={search} onChange={e => setSearch(e.target.value)} style={S.searchInput} />
 
           <FilterSection label="INDUSTRY">
@@ -174,17 +181,21 @@ export default function ATBConnectPage() {
 function CandidateCard({ profile: p }) {
   const tags = (p.skills || []).slice(0, 3)
   const availColor = AVAIL_COLORS[p.availability] || '#888'
+  const initials = p.display_initials || '—'
+  const avatarLetters = getAvatarLetters(p.display_initials)
+  const atbId = p.atb_id || '—'
 
   return (
     <div style={S.card}>
       <div style={S.cardHeader}>
         <div style={S.avatar}>
           {p.photo_url
-            ? <img src={p.photo_url} alt={p.display_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-            : <span style={{ color: 'rgba(247,244,238,.3)', fontSize: '18px' }}>◈</span>}
+            ? <img src={p.photo_url} alt={`${initials} profile photo`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+            : <span style={{ color: MIDNIGHT, fontSize: '15px', fontWeight: 700 }}>{avatarLetters}</span>}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={S.cardName}>{p.display_name || 'Anonymous'}</div>
+          <div style={S.cardName}>{atbId}</div>
+          <div style={S.cardInitials}>{initials} · Verified</div>
           <div style={S.cardHeadline}>{p.headline || 'Valoria Professional'}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
             {p.location && <div style={S.cardLocation}>📍 {p.location}</div>}
@@ -271,7 +282,8 @@ const S = {
   card: { background: PARCHMENT, border: '0.5px solid #D4C9A8', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' },
   cardHeader: { display: 'flex', alignItems: 'flex-start', gap: '12px' },
   avatar: { width: '52px', height: '52px', flexShrink: 0, borderRadius: '50%', border: `2px solid ${GOLD}`, background: MIDNIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  cardName: { fontSize: '15px', fontWeight: 700, color: MIDNIGHT, lineHeight: 1.2, marginBottom: '2px' },
+  cardName: { fontSize: '13px', fontWeight: 700, color: MIDNIGHT, lineHeight: 1.2, marginBottom: '2px', fontFamily: "'JetBrains Mono',monospace", letterSpacing: '.01em' },
+  cardInitials: { fontSize: '10.5px', color: '#8A8578', fontWeight: 600, marginBottom: '4px', letterSpacing: '.03em' },
   cardHeadline: { fontSize: '12px', color: GOLD, fontWeight: 500, marginBottom: '2px' },
   cardLocation: { fontSize: '11px', color: '#5F5E5A' },
   tagRow: { display: 'flex', flexWrap: 'wrap', gap: '6px' },

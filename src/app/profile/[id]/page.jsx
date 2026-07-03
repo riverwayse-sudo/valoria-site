@@ -4,18 +4,10 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
-function getInitials(name) {
-  if (!name) return '??'
-  const words = name.trim().split(/\s+/).filter(Boolean)
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
-  return words.slice(0, 3).map(w => w[0].toUpperCase()).join('.')  + '.'
-}
-
-function getAvatarLetters(name) {
-  if (!name) return '?'
-  const words = name.trim().split(/\s+/).filter(Boolean)
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
-  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
+function getAvatarLetters(displayInitials) {
+  if (!displayInitials) return '?'
+  const letters = displayInitials.replace(/\./g, '')
+  return letters ? letters.toUpperCase() : '?'
 }
 
 function getYouTubeId(url) {
@@ -37,7 +29,7 @@ export default function ProfilePage({ params }) {
       // Try real professional_profiles first
       const { data: real } = await supabase
         .from('professional_profiles')
-        .select('id, display_name, headline, location, industry, years_experience, bio, skills, topics, active_tracks, listing_status, valu_index, cluster_scores, designation, assessment_completed_at, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability')
+        .select('id, display_initials, headline, location, industry, years_experience, bio, skills, topics, active_tracks, listing_status, valu_index, cluster_scores, designation, assessment_completed_at, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability')
         .eq('id', id)
         .single()
 
@@ -50,14 +42,14 @@ export default function ProfilePage({ params }) {
       // Fallback: dummy marketplace_profiles
       const { data: dummy } = await supabase
         .from('marketplace_profiles')
-        .select('*')
+        .select('id, atb_id, display_initials, headline, location, industry, years_experience, bio, skills, section, linkedin_url, portfolio_url, video_url, fee_range, salary_expectation')
         .eq('id', id)
         .single()
 
       if (dummy) {
         setProfile({
           id: dummy.id,
-          display_name: dummy.full_name,
+          display_initials: dummy.display_initials,
           headline: dummy.headline,
           location: dummy.location,
           industry: dummy.industry,
@@ -104,8 +96,8 @@ export default function ProfilePage({ params }) {
 
   const p = profile
   const isSpeaker = p.user_type === 'speaker'
-  const initials = getInitials(p.display_name)
-  const avatarLetters = getAvatarLetters(p.display_name)
+  const initials = p.display_initials || '—'
+  const avatarLetters = getAvatarLetters(p.display_initials)
   const atbId = p.atb_id || '—'
   const videos = (p.youtube_links || []).filter(Boolean)
   const compensation = isSpeaker
