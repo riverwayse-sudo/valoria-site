@@ -2,54 +2,77 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import Nav from '@/components/Nav'
+import Footer from '@/components/Footer'
 
-// ─── helpers ─────────────────────────────────────────────────────────────────
-function getAvatarLetters(displayInitials) {
-  if (!displayInitials) return '?'
-  const letters = displayInitials.replace(/\./g, '')
-  return letters ? letters.toUpperCase() : '?'
+// ─── helpers ──────────────────────────────────────────────────────────────────
+function getInitials(name) {
+  if (!name) return '??'
+  const words = name.trim().split(/\s+/).filter(Boolean)
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
+  return words.slice(0, 3).map(w => w[0].toUpperCase()).join('.') + '.'
 }
-
+function getAvatarLetters(name) {
+  if (!name) return '?'
+  const words = name.trim().split(/\s+/).filter(Boolean)
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
+  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
+}
 function getYouTubeId(url) {
   if (!url) return null
   const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
   return m ? m[1] : null
 }
 
-// ─── component ───────────────────────────────────────────────────────────────
+// ─── brand tokens ──────────────────────────────────────────────────────────────
+const GOLD    = '#C9A84C'
+const DARK    = '#0F0F1A'
+const MID     = '#1A1A2E'
+const PARCH   = '#F7F4EE'
+const DIM     = 'rgba(247,244,238,.5)'
+const FAINT   = 'rgba(247,244,238,.15)'
+const GLINE   = 'rgba(201,168,76,.12)'
+const GLINE2  = 'rgba(201,168,76,.28)'
+const PRIME   = [
+  { letter: 'P', color: '#1D9E75' },
+  { letter: 'R', color: '#378ADD' },
+  { letter: 'I', color: '#7F77DD' },
+  { letter: 'M', color: '#BA7517' },
+  { letter: 'E', color: '#D85A30' },
+]
+
+// ─── component ────────────────────────────────────────────────────────────────
 export default function ProfilePage({ params }) {
   const { id } = params
-  const [profile, setProfile] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [notFound, setNotFound] = useState(false)
+  const [profile, setProfile]     = useState(null)
+  const [loading, setLoading]     = useState(true)
+  const [notFound, setNotFound]   = useState(false)
   const [activeVideo, setActiveVideo] = useState(null)
 
   useEffect(() => {
     async function load() {
-      // Try real professional_profiles first
       const { data: real } = await supabase
         .from('professional_profiles')
-        .select('id, display_initials, headline, location, industry, years_experience, bio, skills, topics, active_tracks, listing_status, valu_index, cluster_scores, designation, assessment_completed_at, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability')
+        .select('id, display_name, headline, location, industry, years_experience, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability')
         .eq('id', id)
         .single()
 
       if (real) {
-        setProfile({ ...real, _source: 'real', valu_score: real.valu_index, user_type: (real.active_tracks||[])[0] || 'candidate' })
+        setProfile({ ...real, valu_score: real.valu_index, user_type: (real.active_tracks||[])[0] || 'candidate', _source: 'real' })
         setLoading(false)
         return
       }
 
-      // Fallback: dummy marketplace_profiles
       const { data: dummy } = await supabase
         .from('marketplace_profiles')
-        .select('id, atb_id, display_initials, headline, location, industry, years_experience, bio, skills, section, linkedin_url, portfolio_url, video_url, fee_range, salary_expectation')
+        .select('*')
         .eq('id', id)
         .single()
 
       if (dummy) {
         setProfile({
           id: dummy.id,
-          display_initials: dummy.display_initials,
+          display_name: dummy.full_name,
           headline: dummy.headline,
           location: dummy.location,
           industry: dummy.industry,
@@ -73,7 +96,6 @@ export default function ProfilePage({ params }) {
         setLoading(false)
         return
       }
-
       setNotFound(true)
       setLoading(false)
     }
@@ -81,181 +103,148 @@ export default function ProfilePage({ params }) {
   }, [id])
 
   if (loading) return (
-    <div style={{ minHeight:'100vh', background:'#05060B', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Inter,sans-serif', color:'rgba(243,239,230,.4)', fontSize:'14px', letterSpacing:'.06em' }}>
-      Loading profile…
+    <div style={{ minHeight:'100vh', background: DARK, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font,Raleway,sans-serif)', color: DIM, fontSize:'13px', letterSpacing:'.08em' }}>
+      Loading…
     </div>
   )
 
   if (notFound) return (
-    <div style={{ minHeight:'100vh', background:'#05060B', fontFamily:'Inter,sans-serif', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'16px', color:'#F3EFE6' }}>
-      <div style={{ fontSize:'40px', color:'#D4A24C' }}>◈</div>
-      <h1 style={{ fontSize:'20px', fontWeight:300 }}>Profile not found</h1>
-      <Link href="/atb-connect" style={{ fontSize:'13px', color:'#D4A24C', textDecoration:'none' }}>← Back to marketplace</Link>
-    </div>
+    <>
+      <Nav />
+      <div style={{ minHeight:'100vh', background: DARK, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'16px', fontFamily:'var(--font,Raleway,sans-serif)', color: PARCH }}>
+        <div style={{ fontSize:'32px', color: GOLD }}>◈</div>
+        <p style={{ fontSize:'14px', fontWeight:300, color: DIM }}>Profile not found</p>
+        <Link href="/atb-connect" style={{ fontSize:'12px', color: GOLD, textDecoration:'none', letterSpacing:'.08em' }}>← Back to marketplace</Link>
+      </div>
+      <Footer />
+    </>
   )
 
-  const p = profile
-  const isSpeaker = p.user_type === 'speaker'
-  const initials = p.display_initials || '—'
-  const avatarLetters = getAvatarLetters(p.display_initials)
-  const atbId = p.atb_id || '—'
-  const videos = (p.youtube_links || []).filter(Boolean)
-  const compensation = isSpeaker
-    ? (p.fee_range || null)
-    : (p.salary_expectation || p.fee_range || null)
-  const compensationLabel = isSpeaker ? 'Speaking Fee' : 'Salary Range'
+  const p           = profile
+  const isSpeaker   = p.user_type === 'speaker'
+  const initials    = getInitials(p.display_name)
+  const avatarLetters = getAvatarLetters(p.display_name)
+  const atbId       = p.atb_id || '—'
+  const videos      = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
+  const compensation = isSpeaker ? (p.fee_range || null) : (p.salary_expectation || p.fee_range || null)
+  const compLabel   = isSpeaker ? 'Speaking Fee' : 'Salary Range'
+  const tags        = isSpeaker ? (p.topics || []) : (p.skills || [])
 
   return (
     <>
-      {/* Google Fonts */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-        :root {
-          --ink:#05060B; --panel:#10131F; --panel-raised:#161A2A;
-          --gold:#D4A24C; --gold-bright:#F0C878;
-          --ivory:#F3EFE6; --slate:#8791A6; --slate-dim:#5C6478;
-          --line:rgba(212,162,76,0.16); --line-bright:rgba(212,162,76,0.32);
-        }
-        * { box-sizing:border-box; margin:0; padding:0; }
-        body { background:var(--ink); }
-        @keyframes pulse-dot {
-          0%{box-shadow:0 0 0 0 rgba(111,227,160,.55);}
-          70%{box-shadow:0 0 0 7px rgba(111,227,160,0);}
-          100%{box-shadow:0 0 0 0 rgba(111,227,160,0);}
-        }
-        @keyframes rotate-ring { to { transform:rotate(360deg); } }
-        .vi-avatar-ring { animation: rotate-ring 8s linear infinite; }
-        .vi-status-dot { animation: pulse-dot 2s infinite; }
-        .vi-btn { transition: transform .15s ease, box-shadow .15s ease; }
-        .vi-btn:hover { transform: translateY(-1px); }
-        .vi-btn-primary:hover { box-shadow: 0 6px 24px rgba(212,162,76,.4); }
-        .vi-btn-ghost:hover { border-color: var(--gold-bright) !important; color: var(--gold-bright) !important; }
-        .vi-nav-link:hover { color: var(--gold-bright); }
-        .vi-story:hover .vi-story-thumb { opacity:.8; }
-        @media (max-width:760px) {
-          .vi-nav-links { display:none !important; }
-          .vi-header-block { flex-direction:column !important; align-items:flex-start !important; margin-top:-70px !important; }
-          .vi-cta-row { margin-left:0 !important; }
-          .vi-avatar-ring { width:120px !important; height:120px !important; }
-          .vi-name-id { font-size:22px !important; }
-          .vi-intro-card { flex-direction:column !important; align-items:flex-start !important; }
-          .vi-stat-strip { flex-wrap:wrap !important; }
-          .vi-stat { flex: 1 1 50% !important; border-bottom:1px solid var(--line) !important; }
-          .vi-main-grid { grid-template-columns:1fr !important; }
-          .vi-video-grid { grid-template-columns:1fr !important; }
-        }
-      `}</style>
+      <Nav />
 
-      <div style={{ minHeight:'100vh', background:'var(--ink)', color:'var(--ivory)', fontFamily:"'Inter',sans-serif", WebkitFontSmoothing:'antialiased' }}>
+      <div style={{ minHeight:'100vh', background: DARK, color: PARCH, fontFamily:'var(--font,Raleway,sans-serif)', paddingTop:'67px' }}>
 
-        {/* NAV */}
-        <nav style={{ position:'sticky', top:0, zIndex:50, display:'flex', alignItems:'center', justifyContent:'space-between', padding:'18px 40px', background:'rgba(5,6,11,0.85)', backdropFilter:'blur(12px)', borderBottom:'1px solid var(--line)' }}>
-          <Link href="/" style={{ display:'flex', alignItems:'center', gap:'10px', textDecoration:'none', color:'var(--ivory)' }}>
-            <img src="/logo.png" alt="Valoria Institute" style={{ height:'32px', width:'auto' }} />
-            <span style={{ fontFamily:"'Fraunces',serif", fontSize:'17px', letterSpacing:'.02em', fontWeight:600 }}>VALORIA</span>
-          </Link>
-          <div className="vi-nav-links" style={{ display:'flex', gap:'28px', fontSize:'13px', color:'var(--slate)', letterSpacing:'.04em', textTransform:'uppercase' }}>
-            <Link href={isSpeaker ? '/spotlight' : '/atb-connect'} className="vi-nav-link" style={{ color:'var(--slate)', textDecoration:'none', transition:'color .15s' }}>← {isSpeaker ? 'Speakers' : 'Talent'}</Link>
-            <Link href={isSpeaker ? '/atb-connect' : '/spotlight'} className="vi-nav-link" style={{ color:'var(--slate)', textDecoration:'none', transition:'color .15s' }}>{isSpeaker ? 'ATB Connect' : 'ATB Spotlight'}</Link>
-          </div>
-        </nav>
+        {/* PRIME stripe */}
+        <div style={{ position:'fixed', top:0, left:0, right:0, height:'3px', display:'flex', zIndex:201, pointerEvents:'none' }}>
+          {[['#1D9E75',20],['#378ADD',25],['#7F77DD',25],['#BA7517',20],['#D85A30',10]].map(([c,p],i) => (
+            <div key={i} style={{ flex:p, background:c, opacity:.85 }} />
+          ))}
+        </div>
 
-        {/* COVER */}
-        <div style={{ position:'relative', height:'300px', overflow:'hidden', background:'radial-gradient(ellipse 700px 400px at 15% 20%,rgba(212,162,76,.35),transparent 60%),radial-gradient(ellipse 600px 500px at 85% 80%,rgba(212,162,76,.18),transparent 55%),linear-gradient(160deg,#0c0f1a 0%,#05060B 70%)' }}>
-          <svg viewBox="0 0 1200 300" preserveAspectRatio="none" style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:.5 }}>
-            <defs>
-              <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#D4A24C" stopOpacity="0.5"/>
-                <stop offset="100%" stopColor="#D4A24C" stopOpacity="0"/>
-              </linearGradient>
-            </defs>
-            <g stroke="#D4A24C" strokeOpacity="0.18" strokeWidth="1">
-              <path d="M0,260 C300,180 500,300 800,200 S1100,260 1200,180"/>
-              <path d="M0,200 C300,120 500,240 800,140 S1100,200 1200,120"/>
-              <path d="M0,140 C300,60 500,180 800,80 S1100,140 1200,60"/>
+        {/* COVER BANNER */}
+        <div style={{ position:'relative', height:'280px', overflow:'hidden', background:`radial-gradient(ellipse 800px 400px at 10% 30%, rgba(201,168,76,.22), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 70%, rgba(201,168,76,.1), transparent 55%), linear-gradient(155deg, ${MID} 0%, ${DARK} 70%)` }}>
+          <svg viewBox="0 0 1200 280" preserveAspectRatio="none" style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:.45 }}>
+            <g stroke="#C9A84C" strokeOpacity=".18" strokeWidth="1" fill="none">
+              <path d="M0,240 C300,160 500,280 800,180 S1100,240 1200,160"/>
+              <path d="M0,180 C300,100 500,220 800,120 S1100,180 1200,100"/>
+              <path d="M0,120 C300,40 500,160 800,60 S1100,120 1200,40"/>
+              <path d="M0,280 C200,220 400,260 600,200 S900,240 1200,200"/>
             </g>
-            <polygon points="1080,60 1130,150 1080,120 1030,150" fill="url(#lg)"/>
+            <polygon points="1060,50 1110,140 1060,110 1010,140" fill="rgba(201,168,76,.15)"/>
+            <polygon points="80,200 120,260 80,240 40,260" fill="rgba(201,168,76,.08)"/>
           </svg>
-          {/* Availability status */}
-          <div style={{ position:'absolute', top:'20px', right:'28px', display:'flex', alignItems:'center', gap:'7px', background:'rgba(16,19,31,.7)', border:'1px solid var(--line-bright)', padding:'7px 14px 7px 10px', borderRadius:'999px', fontSize:'11.5px', letterSpacing:'.06em', textTransform:'uppercase', color:'var(--gold-bright)', backdropFilter:'blur(8px)' }}>
-            <div className="vi-status-dot" style={{ width:'7px', height:'7px', borderRadius:'50%', background:'#6FE3A0' }} />
+          {/* availability chip */}
+          <div style={{ position:'absolute', top:'20px', right:'28px', display:'flex', alignItems:'center', gap:'7px', background:'rgba(26,26,46,.75)', border:`1px solid ${GLINE2}`, padding:'7px 16px 7px 12px', borderRadius:'999px', fontSize:'11px', letterSpacing:'.1em', textTransform:'uppercase', color: GOLD, backdropFilter:'blur(8px)' }}>
+            <div style={{ width:'7px', height:'7px', borderRadius:'50%', background:'#1D9E75', boxShadow:'0 0 0 0 rgba(29,158,117,.6)', animation:'vi-pulse 2s infinite' }} />
             {p.availability === 'open' ? 'Open to Introductions' : p.availability === 'contract_only' ? 'Contract Only' : 'Not Available'}
           </div>
-          <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg,transparent 40%,#05060B 100%)' }} />
+          <div style={{ position:'absolute', inset:0, background:`linear-gradient(180deg, transparent 35%, ${DARK} 100%)` }} />
         </div>
 
         {/* HEADER BLOCK */}
-        <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'0 40px' }}>
-          <div className="vi-header-block" style={{ display:'flex', alignItems:'flex-end', gap:'26px', marginTop:'-86px', position:'relative', zIndex:5 }}>
-            {/* Avatar with rotating ring */}
-            <div className="vi-avatar-ring" style={{ width:'156px', height:'156px', borderRadius:'50%', padding:'4px', background:'conic-gradient(from 180deg,#F0C878,#D4A24C,#8a6420,#D4A24C,#F0C878)', flexShrink:0 }}>
-              <div style={{ width:'100%', height:'100%', borderRadius:'50%', background:'#05060B', padding:'4px' }}>
-                <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: p.photo_url ? undefined : 'linear-gradient(145deg,#2a2f42,#171a26)', overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Fraunces',serif", fontSize:'44px', fontWeight:500, color:'var(--gold-bright)' }}>
+        <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'0 clamp(20px,4vw,40px)' }}>
+          <div style={{ display:'flex', alignItems:'flex-end', gap:'24px', marginTop:'-80px', position:'relative', zIndex:5, flexWrap:'wrap' }}>
+
+            {/* Rotating ring avatar */}
+            <div style={{ width:'148px', height:'148px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, animation:'vi-rotate 10s linear infinite' }}>
+              <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
+                <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: p.photo_url ? undefined : `linear-gradient(145deg,${MID},${DARK})`, overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'36px', fontWeight:700, color: GOLD, letterSpacing:'.04em' }}>
                   {p.photo_url
                     ? <img src={p.photo_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
                     : avatarLetters}
                 </div>
               </div>
             </div>
-            {/* ID block — ATB ID is the hero, initials are the identifier */}
-            <div style={{ paddingBottom:'14px' }}>
-              <div className="vi-name-id" style={{ fontFamily:"'JetBrains Mono',monospace", fontWeight:600, fontSize:'30px', letterSpacing:'.01em', lineHeight:1.1, marginBottom:'10px', background:'linear-gradient(90deg,#F3EFE6,#F0C878)', WebkitBackgroundClip:'text', backgroundClip:'text', color:'transparent' }}>
+
+            {/* ID block */}
+            <div style={{ paddingBottom:'16px', flex:1, minWidth:'200px' }}>
+              <div style={{ fontSize:'clamp(22px,3.5vw,32px)', fontWeight:700, letterSpacing:'.04em', lineHeight:1.1, marginBottom:'10px', color: PARCH, fontVariantNumeric:'tabular-nums' }}>
                 {atbId}
               </div>
-              <div style={{ display:'flex', alignItems:'center', gap:'12px', flexWrap:'wrap' }}>
-                <span style={{ color:'var(--gold-bright)', fontSize:'15px', fontWeight:500 }}>{p.headline || (isSpeaker ? 'Valoria Speaker' : 'Valoria Professional')}</span>
-                <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'12px', letterSpacing:'.03em', background:'var(--panel-raised)', border:'1px solid var(--line-bright)', padding:'4px 10px', borderRadius:'5px', color:'var(--slate)' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
+                <span style={{ fontSize:'14px', fontWeight:400, color: GOLD, letterSpacing:'.04em' }}>
+                  {p.headline || (isSpeaker ? 'Valoria Speaker' : 'Valoria Professional')}
+                </span>
+                <span style={{ fontSize:'11px', letterSpacing:'.06em', background: MID, border:`1px solid ${GLINE2}`, padding:'4px 10px', borderRadius:'4px', color: DIM }}>
                   {initials} · Verified {isSpeaker ? 'Speaker' : 'Professional'}
                 </span>
               </div>
             </div>
+
             {/* CTAs */}
-            <div className="vi-cta-row" style={{ marginLeft:'auto', display:'flex', gap:'10px', paddingBottom:'14px' }}>
-              <Link href={isSpeaker ? '/spotlight' : '/atb-connect'} className="vi-btn vi-btn-ghost" style={{ padding:'12px 22px', borderRadius:'8px', fontSize:'13.5px', fontWeight:600, cursor:'pointer', background:'transparent', border:'1px solid var(--line-bright)', color:'var(--ivory)', textDecoration:'none', transition:'border-color .15s,color .15s' }}>
-                More {isSpeaker ? 'Speakers' : 'Talent'}
+            <div style={{ display:'flex', gap:'10px', paddingBottom:'16px', flexShrink:0, flexWrap:'wrap' }}>
+              <Link href={isSpeaker ? '/spotlight' : '/atb-connect'}
+                style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
+                MORE {isSpeaker ? 'SPEAKERS' : 'TALENT'}
               </Link>
-              <a href={`mailto:info@valoriainstitute.com?subject=Introduction Request — ${atbId}`} className="vi-btn vi-btn-primary" style={{ padding:'12px 22px', borderRadius:'8px', fontSize:'13.5px', fontWeight:600, cursor:'pointer', background:'linear-gradient(135deg,#F0C878,#D4A24C)', color:'#1a1204', boxShadow:'0 4px 20px rgba(212,162,76,.25)', textDecoration:'none' }}>
-                {isSpeaker ? 'Book Speaker' : 'Request Introduction'}
+              <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent((isSpeaker ? 'Speaker Booking' : 'Introduction Request') + ' — ' + atbId)}`}
+                style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
+                {isSpeaker ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
               </a>
             </div>
           </div>
         </div>
 
         {/* STAT STRIP */}
-        <div className="vi-stat-strip" style={{ maxWidth:'1100px', margin:'34px auto 0', padding:'0 40px', display:'flex', borderTop:'1px solid var(--line)', borderBottom:'1px solid var(--line)' }}>
-          {[
-            { label:'Location', value: p.location || '—' },
-            { label:'Industry', value: p.industry || '—' },
-            { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
-            { label: compensationLabel, value: compensation || '—' },
-            { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} / 100` : 'Not yet assessed' },
-          ].map((s, i, arr) => (
-            <div key={s.label} className="vi-stat" style={{ flex:1, padding:'16px 12px', borderRight: i < arr.length - 1 ? '1px solid var(--line)' : 'none' }}>
-              <div style={{ fontSize:'10.5px', letterSpacing:'.09em', textTransform:'uppercase', color:'var(--slate-dim)', marginBottom:'6px' }}>{s.label}</div>
-              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'14px', color:'var(--ivory)', fontWeight:500 }}>{s.value}</div>
-            </div>
-          ))}
+        <div style={{ maxWidth:'1100px', margin:'32px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+          <div style={{ display:'flex', borderTop:`1px solid ${GLINE}`, borderBottom:`1px solid ${GLINE}`, flexWrap:'wrap' }}>
+            {[
+              { label:'Location',   value: p.location || '—' },
+              { label:'Industry',   value: p.industry || '—' },
+              { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
+              { label: compLabel,   value: compensation || '—' },
+              { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} / 100` : 'Not assessed' },
+            ].map((s, i, arr) => (
+              <div key={s.label} style={{ flex:'1 1 140px', padding:'16px 16px 16px 0', borderRight: i < arr.length - 1 ? `1px solid ${GLINE}` : 'none', paddingLeft: i > 0 ? '16px' : 0 }}>
+                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.16em', textTransform:'uppercase', color:'rgba(201,168,76,.45)', marginBottom:'6px' }}>{s.label}</div>
+                <div style={{ fontSize:'14px', fontWeight:500, color: PARCH, letterSpacing:'.02em' }}>{s.value}</div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* STORIES / VIDEO HIGHLIGHTS */}
+        {/* VIDEO HIGHLIGHTS ROW */}
         {videos.length > 0 && (
-          <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'26px 40px 6px' }}>
-            <div style={{ fontSize:'11px', letterSpacing:'.09em', textTransform:'uppercase', color:'var(--slate-dim)', marginBottom:'14px' }}>Highlights</div>
-            <div style={{ display:'flex', gap:'18px', overflowX:'auto', paddingBottom:'6px' }}>
+          <div style={{ maxWidth:'1100px', margin:'32px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+            <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.45)', marginBottom:'14px' }}>Highlights</div>
+            <div style={{ display:'flex', gap:'16px', overflowX:'auto', paddingBottom:'6px' }}>
               {videos.map((url, i) => {
                 const ytId = getYouTubeId(url)
-                const labels = ['Intro reel', 'Case study', 'Keynote clip', 'Panel talk']
+                const labels = ['Intro reel','Case study','Keynote clip','Panel talk']
                 const isActive = activeVideo === i
                 return (
-                  <div key={i} className="vi-story" style={{ flexShrink:0, width:'88px', textAlign:'center', cursor:'pointer' }} onClick={() => setActiveVideo(isActive ? null : i)}>
-                    <div style={{ width:'76px', height:'76px', borderRadius:'50%', margin:'0 auto 8px', padding:'2.5px', background: isActive ? 'conic-gradient(#F0C878,#D4A24C 40%,#4a3a14 41%,#4a3a14)' : 'var(--slate-dim)' }}>
-                      <div className="vi-story-thumb" style={{ width:'100%', height:'100%', borderRadius:'50%', background:'var(--panel-raised)', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--gold-bright)', fontSize:'20px', border:'2px solid #05060B' }}>
+                  <div key={i} onClick={() => setActiveVideo(isActive ? null : i)}
+                    style={{ flexShrink:0, width:'84px', textAlign:'center', cursor:'pointer' }}>
+                    <div style={{ width:'72px', height:'72px', borderRadius:'50%', margin:'0 auto 8px', padding:'2.5px', background: isActive ? `conic-gradient(${GOLD}, rgba(201,168,76,.2) 40%, rgba(201,168,76,.05) 41%)` : 'rgba(201,168,76,.15)', border: isActive ? `none` : `1px solid ${GLINE}` }}>
+                      <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: MID, display:'flex', alignItems:'center', justifyContent:'center', color: GOLD, fontSize:'18px', border:`2px solid ${DARK}`, overflow:'hidden' }}>
                         {ytId
                           ? <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
                           : '▶'}
                       </div>
                     </div>
-                    <div style={{ fontSize:'11px', color:'var(--slate)' }}>{labels[i] || `Video ${i+1}`}</div>
+                    <div style={{ fontSize:'10px', color: DIM, letterSpacing:'.04em' }}>{labels[i] || `Video ${i+1}`}</div>
                   </div>
                 )
               })}
@@ -264,32 +253,32 @@ export default function ProfilePage({ params }) {
         )}
 
         {/* MAIN GRID */}
-        <div className="vi-main-grid" style={{ maxWidth:'1100px', margin:'30px auto 100px', padding:'0 40px', display:'grid', gridTemplateColumns:'290px 1fr', gap:'28px' }}>
+        <div style={{ maxWidth:'1100px', margin:'36px auto 80px', padding:'0 clamp(20px,4vw,40px)', display:'grid', gridTemplateColumns:'280px 1fr', gap:'40px' }}>
 
           {/* SIDEBAR */}
-          <div>
-            {/* VALU Index card */}
-            <div style={{ background:'var(--panel)', border:'1px solid var(--line)', borderRadius:'14px', padding:'22px', marginBottom:'20px' }}>
-              <div style={{ fontSize:'10.5px', letterSpacing:'.09em', textTransform:'uppercase', color:'var(--gold-bright)', marginBottom:'12px', fontWeight:600 }}>VALU Index</div>
+          <div style={{ minWidth:0 }}>
+
+            {/* VALU Index */}
+            <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
+              <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'14px' }}>VALU Index</div>
               {p.valu_score != null ? (
                 <>
-                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'48px', fontWeight:600, color:'var(--gold-bright)', lineHeight:1, marginBottom:'4px' }}>{p.valu_score}</div>
-                  <div style={{ fontSize:'10px', color:'var(--slate-dim)', letterSpacing:'.1em', marginBottom:'16px' }}>OUT OF 100</div>
-                  {p.designation && <div style={{ fontSize:'12px', fontWeight:600, color:'var(--gold)', marginBottom:'16px', textTransform:'uppercase', letterSpacing:'.08em' }}>{p.designation.replace(/_/g, ' ')}</div>}
+                  <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_score}</div>
+                  <div style={{ fontSize:'9px', color: DIM, letterSpacing:'.14em', marginBottom:'16px' }}>OUT OF 100</div>
+                  {p.designation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{p.designation.replace(/_/g,' ')}</div>}
                   {p.cluster_scores && (
-                    <div style={{ marginTop:'16px' }}>
-                      {['P','R','I','M','E'].map(letter => {
+                    <div>
+                      {PRIME.map(({ letter, color }) => {
                         const score = p.cluster_scores[letter]
                         if (score == null) return null
-                        const colors = { P:'#6BA3D6', R:'#E07B54', I:'#6DBF8E', M:'#C4A24C', E:'#A67CC5' }
                         return (
-                          <div key={letter} style={{ marginBottom:'8px' }}>
-                            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'3px' }}>
-                              <span style={{ fontSize:'11px', color: colors[letter] }}>{letter}</span>
-                              <span style={{ fontSize:'11px', color: colors[letter], fontWeight:700, fontFamily:'JetBrains Mono' }}>{score}</span>
+                          <div key={letter} style={{ marginBottom:'10px' }}>
+                            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'4px' }}>
+                              <span style={{ fontSize:'11px', color }}>{letter}</span>
+                              <span style={{ fontSize:'11px', color, fontWeight:700 }}>{score}</span>
                             </div>
-                            <div style={{ height:'3px', background:'rgba(255,255,255,.06)', borderRadius:'2px' }}>
-                              <div style={{ height:'100%', width:`${score}%`, background: colors[letter], borderRadius:'2px' }} />
+                            <div style={{ height:'3px', background: FAINT, borderRadius:'1px' }}>
+                              <div style={{ height:'100%', width:`${score}%`, background: color, borderRadius:'1px' }} />
                             </div>
                           </div>
                         )
@@ -299,131 +288,155 @@ export default function ProfilePage({ params }) {
                 </>
               ) : (
                 <>
-                  <div style={{ fontSize:'13.5px', color:'var(--slate)', lineHeight:1.55, marginBottom:'16px' }}>
+                  <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
                     This professional has not yet completed their VALU Index assessment.
-                  </div>
+                  </p>
                   <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer"
-                    style={{ display:'block', width:'100%', padding:'12px', background:'transparent', border:'1px solid var(--line-bright)', borderRadius:'8px', color:'var(--ivory)', fontSize:'13px', fontWeight:600, textAlign:'center', textDecoration:'none' }}>
-                    About the VALU Index
+                    style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
+                    ABOUT THE VALU INDEX
                   </a>
                 </>
               )}
             </div>
 
-            {/* Links card — gated until introduction */}
+            {/* Profile ID verification */}
+            <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
+              <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'12px' }}>Profile ID</div>
+              <div style={{ fontSize:'13px', fontWeight:700, color: PARCH, letterSpacing:'.06em', marginBottom:'8px', fontVariantNumeric:'tabular-nums' }}>{atbId}</div>
+              <div style={{ fontSize:'11px', fontWeight:300, color: DIM, lineHeight:1.6 }}>Registered with African Talent Bureau Ltd.</div>
+            </div>
+
+            {/* Links — gated */}
             {(p.linkedin_url || p.website_url) && (
-              <div style={{ background:'var(--panel)', border:'1px solid var(--line)', borderRadius:'14px', padding:'22px', marginBottom:'20px' }}>
-                <div style={{ fontSize:'10.5px', letterSpacing:'.09em', textTransform:'uppercase', color:'var(--gold-bright)', marginBottom:'12px', fontWeight:600 }}>Links</div>
+              <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px' }}>
+                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'12px' }}>Links</div>
                 {p.linkedin_url && (
-                  <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'11px 0', fontSize:'13.5px', color:'var(--slate)', borderTop:'1px solid var(--line)' }}>
-                    in&nbsp;&nbsp;LinkedIn — available after introduction
+                  <div style={{ fontSize:'13px', fontWeight:300, color: DIM, padding:'10px 0', borderTop:`1px solid ${GLINE}` }}>
+                    in&ensp;LinkedIn — visible after introduction
                   </div>
                 )}
                 {p.website_url && (
-                  <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'11px 0', fontSize:'13.5px', color:'var(--slate)', borderTop:'1px solid var(--line)' }}>
-                    ↗&nbsp;&nbsp;Website — available after introduction
+                  <div style={{ fontSize:'13px', fontWeight:300, color: DIM, padding:'10px 0', borderTop:`1px solid ${GLINE}` }}>
+                    ↗&ensp;Website — visible after introduction
                   </div>
                 )}
               </div>
             )}
-
-            {/* ATB ID verification card */}
-            <div style={{ background:'var(--panel)', border:'1px solid var(--line)', borderRadius:'14px', padding:'22px' }}>
-              <div style={{ fontSize:'10.5px', letterSpacing:'.09em', textTransform:'uppercase', color:'var(--gold-bright)', marginBottom:'12px', fontWeight:600 }}>Profile ID</div>
-              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:'14px', color:'var(--ivory)', fontWeight:600, letterSpacing:'.04em', marginBottom:'8px' }}>{atbId}</div>
-              <div style={{ fontSize:'11.5px', color:'var(--slate-dim)', lineHeight:1.5 }}>This ID verifies that this professional is registered with African Talent Bureau Ltd.</div>
-            </div>
           </div>
 
           {/* MAIN CONTENT */}
-          <div>
+          <div style={{ minWidth:0 }}>
+
+            {/* Expanded video player */}
+            {activeVideo !== null && videos[activeVideo] && (() => {
+              const ytId = getYouTubeId(videos[activeVideo])
+              return ytId ? (
+                <div style={{ marginBottom:'32px' }}>
+                  <div style={{ position:'relative', paddingBottom:'56.25%', height:0, background:'#000', overflow:'hidden' }}>
+                    <iframe src={`https://www.youtube.com/embed/${ytId}?autoplay=1`}
+                      title="Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen
+                      style={{ position:'absolute', top:0, left:0, width:'100%', height:'100%', border:'none' }} />
+                  </div>
+                  <button onClick={() => setActiveVideo(null)}
+                    style={{ fontSize:'12px', color: DIM, background:'none', border:'none', cursor:'pointer', padding:'10px 0', fontFamily:'var(--font,Raleway,sans-serif)', letterSpacing:'.04em' }}>
+                    ← Close video
+                  </button>
+                </div>
+              ) : null
+            })()}
+
             {/* About */}
             {p.bio && (
-              <div style={{ marginBottom:'32px' }}>
-                <div style={{ fontFamily:"'Fraunces',serif", fontSize:'22px', fontWeight:600, marginBottom:'14px' }}>About</div>
-                <p style={{ fontSize:'15px', lineHeight:1.7, color:'#D9D4C8' }}>{p.bio}</p>
-              </div>
+              <Section label="About">
+                <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
+              </Section>
             )}
 
             {/* Skills / Topics */}
-            {((isSpeaker ? p.topics : p.skills) || []).length > 0 && (
-              <div style={{ marginBottom:'34px' }}>
-                <div style={{ fontFamily:"'Fraunces',serif", fontSize:'22px', fontWeight:600, marginBottom:'14px' }}>
-                  {isSpeaker ? 'Speaking Topics' : 'Core Skills'}
-                </div>
+            {tags.length > 0 && (
+              <Section label={isSpeaker ? 'Speaking Topics' : 'Core Skills'}>
                 <div style={{ display:'flex', flexWrap:'wrap', gap:'10px' }}>
-                  {(isSpeaker ? p.topics : p.skills).map(s => (
-                    <div key={s} style={{ padding:'9px 16px', borderRadius:'999px', fontSize:'13px', fontWeight:500, border:'1px solid var(--line-bright)', color:'var(--ivory)', background:'var(--panel-raised)' }}>{s}</div>
+                  {tags.map(t => (
+                    <span key={t} style={{ padding:'8px 16px', border:`1px solid ${GLINE2}`, fontSize:'12px', fontWeight:400, color: DIM, letterSpacing:'.04em' }}>
+                      {t}
+                    </span>
                   ))}
                 </div>
-              </div>
+              </Section>
             )}
 
-            {/* Videos — active one expands */}
-            {videos.length > 0 && (
-              <div style={{ marginBottom:'34px' }}>
-                <div style={{ fontFamily:"'Fraunces',serif", fontSize:'22px', fontWeight:600, marginBottom:'14px' }}>
-                  {isSpeaker ? 'Speaker Reel & Videos' : 'Videos'}
+            {/* Video grid (when no video expanded) */}
+            {videos.length > 0 && activeVideo === null && (
+              <Section label={isSpeaker ? 'Speaker Reel & Videos' : 'Videos'}>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:'12px' }}>
+                  {videos.slice(0,4).map((url, i) => {
+                    const ytId = getYouTubeId(url)
+                    return (
+                      <div key={i} onClick={() => setActiveVideo(i)}
+                        style={{ aspectRatio:'16/10', position:'relative', background:`linear-gradient(145deg,${MID},${DARK})`, border:`1px solid ${GLINE}`, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', overflow:'hidden' }}>
+                        {ytId && <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:.5 }} />}
+                        <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'rgba(201,168,76,.9)', display:'flex', alignItems:'center', justifyContent:'center', color: DARK, fontSize:'15px', position:'relative', zIndex:1 }}>▶</div>
+                      </div>
+                    )
+                  })}
                 </div>
-                {activeVideo !== null && videos[activeVideo] && (() => {
-                  const ytId = getYouTubeId(videos[activeVideo])
-                  return ytId ? (
-                    <div style={{ position:'relative', paddingBottom:'56.25%', height:0, borderRadius:'10px', overflow:'hidden', background:'#000', marginBottom:'14px' }}>
-                      <iframe src={`https://www.youtube.com/embed/${ytId}?autoplay=1`}
-                        title="Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen
-                        style={{ position:'absolute', top:0, left:0, width:'100%', height:'100%', border:'none' }} />
-                    </div>
-                  ) : null
-                })()}
-                {activeVideo === null && (
-                  <div className="vi-video-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'14px' }}>
-                    {videos.slice(0,4).map((url, i) => {
-                      const ytId = getYouTubeId(url)
-                      return (
-                        <div key={i} onClick={() => setActiveVideo(i)}
-                          style={{ borderRadius:'10px', overflow:'hidden', border:'1px solid var(--line)', aspectRatio:'16/10', position:'relative', background:'linear-gradient(145deg,#1a1e2e,#0d0f18)', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>
-                          {ytId && <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:.6 }} />}
-                          <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'rgba(212,162,76,.9)', display:'flex', alignItems:'center', justifyContent:'center', color:'#1a1204', fontSize:'16px', position:'relative', zIndex:1 }}>▶</div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
-                {activeVideo !== null && (
-                  <button onClick={() => setActiveVideo(null)} style={{ fontSize:'12px', color:'var(--slate)', background:'none', border:'none', cursor:'pointer', padding:'8px 0', fontFamily:'Inter,sans-serif' }}>
-                    ← Back to highlights
-                  </button>
-                )}
-              </div>
+              </Section>
             )}
 
             {/* Introduction CTA */}
-            <div className="vi-intro-card" style={{ background:'linear-gradient(135deg,rgba(212,162,76,.09),rgba(16,19,31,.4))', border:'1px solid var(--line-bright)', borderRadius:'14px', padding:'26px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'20px' }}>
+            <div style={{ background:`linear-gradient(135deg, rgba(201,168,76,.06), rgba(26,26,46,.3))`, border:`1px solid ${GLINE2}`, padding:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', flexWrap:'wrap', marginTop:'8px' }}>
               <div>
-                <div style={{ fontSize:'10.5px', letterSpacing:'.09em', textTransform:'uppercase', color:'var(--gold-bright)', marginBottom:'6px', fontWeight:600 }}>
+                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'8px' }}>
                   {isSpeaker ? 'Book This Speaker' : 'Get in Touch'}
                 </div>
-                <p style={{ fontSize:'13.5px', color:'var(--slate)', maxWidth:'380px', lineHeight:1.6 }}>
+                <p style={{ fontSize:'13px', fontWeight:300, color: DIM, maxWidth:'380px', lineHeight:1.7 }}>
                   {isSpeaker
-                    ? `Interested in booking ${initials} for your event? Valoria Institute will facilitate the introduction directly.`
-                    : `Want to connect with ${initials}? Send an introduction through Valoria Institute and we'll facilitate the connection.`}
+                    ? `Interested in booking ${initials} for your event? Valoria Institute facilitates all introductions.`
+                    : `Want to connect with ${initials}? All introductions go through Valoria Institute — your details stay protected.`}
                 </p>
               </div>
               <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent((isSpeaker ? 'Speaker Booking' : 'Introduction Request') + ' — ' + atbId)}`}
-                className="vi-btn vi-btn-primary"
-                style={{ padding:'14px 26px', borderRadius:'8px', fontSize:'13.5px', fontWeight:600, background:'linear-gradient(135deg,#F0C878,#D4A24C)', color:'#1a1204', boxShadow:'0 4px 20px rgba(212,162,76,.25)', textDecoration:'none', whiteSpace:'nowrap', flexShrink:0 }}>
-                {isSpeaker ? 'Book Speaker' : 'Send Introduction'}
+                style={{ padding:'14px 28px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.14em', textDecoration:'none', flexShrink:0, whiteSpace:'nowrap' }}>
+                {isSpeaker ? 'BOOK SPEAKER' : 'SEND INTRODUCTION'}
               </a>
             </div>
 
             {p.is_dummy && (
-              <div style={{ textAlign:'center', fontSize:'11.5px', color:'var(--slate-dim)', marginTop:'26px', letterSpacing:'.02em' }}>
+              <div style={{ textAlign:'center', fontSize:'11px', fontWeight:300, color:'rgba(201,168,76,.25)', marginTop:'24px', letterSpacing:'.06em' }}>
                 Sample profile — real professionals launching soon.
               </div>
             )}
           </div>
         </div>
       </div>
+
+      <Footer />
+
+      <style>{`
+        @keyframes vi-pulse {
+          0%{box-shadow:0 0 0 0 rgba(29,158,117,.55);}
+          70%{box-shadow:0 0 0 6px rgba(29,158,117,0);}
+          100%{box-shadow:0 0 0 0 rgba(29,158,117,0);}
+        }
+        @keyframes vi-rotate { to { transform: rotate(360deg); } }
+        @media (max-width: 860px) {
+          .vi-profile-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 640px) {
+          .vi-stat-strip { flex-wrap: wrap !important; }
+          .vi-header-block { margin-top: -60px !important; }
+          .vi-cta-intro { flex-direction: column !important; align-items: flex-start !important; }
+        }
+      `}</style>
     </>
+  )
+}
+
+function Section({ label, children }) {
+  return (
+    <div style={{ marginBottom:'36px', paddingBottom:'36px', borderBottom:`1px solid ${GLINE}` }}>
+      <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.45)', marginBottom:'16px' }}>{label}</div>
+      {children}
+    </div>
   )
 }
