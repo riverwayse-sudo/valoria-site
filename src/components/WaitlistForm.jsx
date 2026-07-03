@@ -1,28 +1,49 @@
 'use client'
 import { useState } from 'react'
+import { supabase } from '@/lib/supabase'
+
+const GATE_KEY  = 'vi_waitlist_gate_v2'
+const COOKIE_KEY = 'vi_waitlist_v2'
 
 export default function WaitlistForm() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [role, setRole] = useState('')
+  const [name,      setName]      = useState('')
+  const [email,     setEmail]     = useState('')
+  const [interest,  setInterest]  = useState('')
   const [submitted, setSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [loading,   setLoading]   = useState(false)
+  const [error,     setError]     = useState('')
 
-  const valid = name.trim() && email.includes('@') && role
+  const valid = name.trim() && email.includes('@') && interest
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!valid || loading) return
     setLoading(true)
-    // Compose and open mailto — no backend needed at this stage
-    const subject = encodeURIComponent('Founding Cohort Waitlist')
-    const body = encodeURIComponent(
-      `Name: ${name.trim()}\nEmail: ${email.trim()}\nEntry Point: ${role}\n\nI'd like to join the Valoria Institute founding cohort.`
-    )
-    window.location.href = `mailto:info@valoriainstitute.com?subject=${subject}&body=${body}`
-    setTimeout(() => {
+    setError('')
+
+    try {
+      const { error: sbError } = await supabase
+        .from('waitlist')
+        .insert([{
+          full_name: name.trim(),
+          email:     email.trim().toLowerCase(),
+          role:      interest,
+          interest:  interest,
+          type:      'homepage',
+          source:    'homepage_form',
+        }])
+
+      if (sbError && sbError.code !== '23505') throw sbError
+
+      // Set cookie + localStorage so gate clears
+      localStorage.setItem(GATE_KEY, 'submitted')
+      document.cookie = `${COOKIE_KEY}=submitted; path=/; max-age=31536000`
+
       setSubmitted(true)
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
+    } finally {
       setLoading(false)
-    }, 800)
+    }
   }
 
   return (
@@ -31,64 +52,47 @@ export default function WaitlistForm() {
         <div className="eyebrow-line" />
         <span className="eyebrow-text">JOIN THE WAITLIST</span>
       </div>
+
       {submitted ? (
         <div className="wl-success">
-          <strong>You&rsquo;re on the list.</strong>
-          Your email client opened with a pre-filled message — send it to confirm your spot in the founding cohort. If nothing opened, email{' '}
-          <a href="mailto:info@valoriainstitute.com" style={{ color: 'var(--gold)', textDecoration: 'none' }}>
-            info@valoriainstitute.com
-          </a>{' '}
-          with &ldquo;Founding Cohort&rdquo; in the subject.
+          <strong>You're on the list.</strong>{' '}
+          We'll reach out when the marketplace opens for your cohort.
         </div>
       ) : (
         <>
           <p className="waitlist-card-desc">
-            Tell us who you are and how you&apos;d like to engage — we&apos;ll hold your spot in the founding cohort.
+            Tell us who you are and how you'd like to engage — we'll hold your spot in the founding cohort.
           </p>
 
           <label className="wl-field-label" htmlFor="wl-name">FULL NAME</label>
-          <input
-            id="wl-name"
-            className="wl-field"
-            type="text"
-            placeholder="Your name"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            autoComplete="name"
-          />
+          <input id="wl-name" className="wl-field" type="text"
+            placeholder="Your name" value={name}
+            onChange={e => setName(e.target.value)} autoComplete="name" />
 
           <label className="wl-field-label" htmlFor="wl-email">EMAIL ADDRESS</label>
-          <input
-            id="wl-email"
-            className="wl-field"
-            type="email"
-            placeholder="you@email.com"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            autoComplete="email"
-          />
+          <input id="wl-email" className="wl-field" type="email"
+            placeholder="you@email.com" value={email}
+            onChange={e => setEmail(e.target.value)} autoComplete="email" />
 
           <label className="wl-field-label" htmlFor="wl-role">I AM JOINING AS A</label>
-          <select
-            id="wl-role"
-            className="wl-field"
-            value={role}
-            onChange={e => setRole(e.target.value)}
-          >
+          <select id="wl-role" className="wl-field"
+            value={interest} onChange={e => setInterest(e.target.value)}>
             <option value="" disabled>Select your entry point…</option>
-            <option value="Candidate (Professional)">Candidate — Professional</option>
-            <option value="Speaker">Speaker</option>
-            <option value="Facilitator">Facilitator</option>
-            <option value="Employer">Employer</option>
-            <option value="Event Organiser">Event Organiser</option>
+            <option value="professional">Candidate — Professional</option>
+            <option value="speaker">Speaker</option>
+            <option value="facilitator">Facilitator</option>
+            <option value="employer">Employer</option>
+            <option value="event_planner">Event Organiser</option>
           </select>
 
-          <button
-            className="wl-btn"
-            onClick={handleSubmit}
-            disabled={!valid || loading}
-          >
-            {loading ? 'SENDING…' : 'JOIN THE WAITLIST'}
+          {error && (
+            <div style={{ fontSize:'12px', color:'#D85A30', marginBottom:'12px', padding:'10px 12px', background:'rgba(216,90,48,.07)', borderLeft:'2px solid rgba(216,90,48,.5)' }}>
+              {error}
+            </div>
+          )}
+
+          <button className="wl-btn" onClick={handleSubmit} disabled={!valid || loading}>
+            {loading ? 'JOINING…' : 'JOIN THE WAITLIST'}
           </button>
         </>
       )}
