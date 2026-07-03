@@ -97,7 +97,25 @@ export default function WaitlistForm() {
           type:      'homepage',
           source:    'homepage_form',
         }])
-      if (sbError && sbError.code !== '23505') throw sbError
+      if (sbError) {
+        if (sbError.code === '23505') {
+          // Already on the list — still show success + set cookie
+          localStorage.setItem(GATE_KEY, 'submitted')
+          document.cookie = `${COOKIE_KEY}=submitted; path=/; max-age=31536000`
+          setSubmitted(true)
+          return
+        }
+        // Column missing? Try without interest field
+        if (sbError.message && sbError.message.includes('interest')) {
+          const { error: retry } = await supabase.from('waitlist').insert([{
+            full_name: name.trim(), email: email.trim().toLowerCase(),
+            role: role.trim() || null, type: 'homepage', source: 'homepage_form',
+          }])
+          if (retry && retry.code !== '23505') throw retry
+        } else {
+          throw sbError
+        }
+      }
       localStorage.setItem(GATE_KEY, 'submitted')
       document.cookie = `${COOKIE_KEY}=submitted; path=/; max-age=31536000`
       setSubmitted(true)
