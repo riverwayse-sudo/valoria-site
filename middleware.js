@@ -1,39 +1,67 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server'
 
-// Routes that are always accessible (don't get locked)
-const PUBLIC_PATHS = [
+// Always accessible — no cookie required
+const PUBLIC = new Set([
+  '/',
   '/waitlist',
-  '/api/waitlist',
-  '/_next',
-  '/favicon.ico',
-  '/fonts',
-  '/images',
-  '/logo',
-];
+  '/login',
+  '/signup',
+  '/register',
+  '/reset-password',
+  '/privacypolicy',
+  '/terms-of-use',
+  '/about-us',
+  '/contact-us',
+])
 
 export function middleware(request) {
-  const { pathname } = request.nextUrl;
+  const { pathname } = request.nextUrl
 
-  // Allow public paths through
-  const isPublic = PUBLIC_PATHS.some((path) => pathname.startsWith(path));
-  if (isPublic) {
-    return NextResponse.next();
+  // Static assets — never gate
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname === '/favicon.ico' ||
+    pathname.match(/\.(png|jpg|jpeg|svg|ico|webp|woff|woff2|ttf)$/)
+  ) {
+    return NextResponse.next()
   }
 
-  // Redirect everything else to /waitlist
-  const waitlistUrl = request.nextUrl.clone();
-  waitlistUrl.pathname = '/waitlist';
-  return NextResponse.redirect(waitlistUrl);
+  // Always-public pages
+  if (PUBLIC.has(pathname)) {
+    return NextResponse.next()
+  }
+
+  // ── Dev preview bypass ────────────────────────────────────────────────────
+  // Visit any URL with ?preview=vi2025 to bypass the gate for 7 days.
+  // Uses a SEPARATE cookie (vi_dev_preview) so it doesn't affect
+  // the WaitlistGate component which checks vi_waitlist_v2.
+  const preview = request.nextUrl.searchParams.get('preview')
+  if (preview === 'vi2025') {
+    const res = NextResponse.next()
+    res.cookies.set('vi_dev_preview', '1', {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+      sameSite: 'lax',
+    })
+    return res
+  }
+
+  // ── Gate check ────────────────────────────────────────────────────────────
+  // Allow through if they have either:
+  // (a) submitted the waitlist — vi_waitlist_v2 cookie (set by WaitlistGate or /waitlist page)
+  // (b) dev preview bypass — vi_dev_preview cookie (set above)
+  const waitlistCookie = request.cookies.get('vi_waitlist_v2')
+  const previewCookie  = request.cookies.get('vi_dev_preview')
+
+  if (waitlistCookie || previewCookie) {
+    return NextResponse.next()
+  }
+
+  // No cookie — send to home page where the WaitlistGate popup appears
+  return NextResponse.redirect(new URL('/', request.url))
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths EXCEPT:
-     * - _next/static (static files)
-     * - _next/image (image optimization)
-     * - favicon.ico
-     */
-    '/((?!_next/static|_next/image|favicon.ico).*)',
-  ],
-};
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+}
