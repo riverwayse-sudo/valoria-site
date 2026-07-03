@@ -8,12 +8,13 @@ const COOKIE_KEY = 'vi_waitlist_v2'
 export default function WaitlistForm() {
   const [name,      setName]      = useState('')
   const [email,     setEmail]     = useState('')
+  const [role,      setRole]      = useState('')
   const [interest,  setInterest]  = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [loading,   setLoading]   = useState(false)
   const [error,     setError]     = useState('')
 
-  const valid = name.trim() && email.includes('@') && interest
+  const valid = name.trim() && email.includes('@')
 
   async function handleSubmit() {
     if (!valid || loading) return
@@ -26,8 +27,8 @@ export default function WaitlistForm() {
         .insert([{
           full_name: name.trim(),
           email:     email.trim().toLowerCase(),
-          role:      interest,
-          interest:  interest,
+          role:      role.trim() || null,
+          interest:  interest || null,
           type:      'homepage',
           source:    'homepage_form',
         }])
@@ -50,18 +51,18 @@ export default function WaitlistForm() {
     <div className="waitlist-card">
       <div className="eyebrow">
         <div className="eyebrow-line" />
-        <span className="eyebrow-text">JOIN THE WAITLIST</span>
+        <span className="eyebrow-text">FOUNDING COHORT — NOW OPEN</span>
       </div>
 
       {submitted ? (
         <div className="wl-success">
           <strong>You're on the list.</strong>{' '}
-          We'll reach out when the marketplace opens for your cohort.
+          We'll reach out when it's ready for you.
         </div>
       ) : (
         <>
           <p className="waitlist-card-desc">
-            Tell us who you are and how you'd like to engage — we'll hold your spot in the founding cohort.
+            We're building the marketplace for assessed African professionals. Join the list — we'll reach out when it's ready for you.
           </p>
 
           <label className="wl-field-label" htmlFor="wl-name">FULL NAME</label>
@@ -71,18 +72,23 @@ export default function WaitlistForm() {
 
           <label className="wl-field-label" htmlFor="wl-email">EMAIL ADDRESS</label>
           <input id="wl-email" className="wl-field" type="email"
-            placeholder="you@email.com" value={email}
+            placeholder="you@example.com" value={email}
             onChange={e => setEmail(e.target.value)} autoComplete="email" />
 
-          <label className="wl-field-label" htmlFor="wl-role">I AM JOINING AS A</label>
+          <label className="wl-field-label" htmlFor="wl-role-title">YOUR ROLE / TITLE</label>
+          <input id="wl-role-title" className="wl-field" type="text"
+            placeholder="e.g. Head of People" value={role}
+            onChange={e => setRole(e.target.value)} autoComplete="organization-title" />
+
+          <label className="wl-field-label" htmlFor="wl-role">I AM A...</label>
           <select id="wl-role" className="wl-field"
             value={interest} onChange={e => setInterest(e.target.value)}>
-            <option value="" disabled>Select your entry point…</option>
-            <option value="professional">Candidate — Professional</option>
-            <option value="speaker">Speaker</option>
-            <option value="facilitator">Facilitator</option>
-            <option value="employer">Employer</option>
-            <option value="event_planner">Event Organiser</option>
+            <option value="">Select one</option>
+            <option value="professional">Professional / Talent</option>
+            <option value="speaker">Speaker / Facilitator</option>
+            <option value="employer">Employer / Recruiter</option>
+            <option value="event_planner">Event Planner / Organiser</option>
+            <option value="other">Other</option>
           </select>
 
           {error && (
@@ -92,7 +98,7 @@ export default function WaitlistForm() {
           )}
 
           <button className="wl-btn" onClick={handleSubmit} disabled={!valid || loading}>
-            {loading ? 'JOINING…' : 'JOIN THE WAITLIST'}
+            {loading ? 'JOINING...' : 'JOIN THE FOUNDING COHORT →'}
           </button>
         </>
       )}

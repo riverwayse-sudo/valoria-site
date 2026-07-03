@@ -2,18 +2,8 @@
 
 import { useState } from 'react';
 
-const ROLES = [
-  'HR / People Professional',
-  'L&D / Talent Development',
-  'Recruiter / Talent Acquisition',
-  'Business Leader / Executive',
-  'Consultant / Coach',
-  'Student / Early Career',
-  'Other',
-];
-
 export default function WaitlistPage() {
-  const [form, setForm] = useState({ full_name: '', email: '', role: '' });
+  const [form, setForm] = useState({ full_name: '', email: '', role: '', interest: '' });
   const [status, setStatus] = useState('idle'); // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -23,6 +13,11 @@ export default function WaitlistPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!form.full_name.trim() || !form.email.trim()) {
+      setErrorMsg('Please enter your name and email.');
+      setStatus('error');
+      return;
+    }
     setStatus('loading');
     setErrorMsg('');
 
@@ -41,9 +36,9 @@ export default function WaitlistPage() {
         return;
       }
 
-      // Set access cookie so they can browse after signing up
-      localStorage.setItem('vi_waitlist_gate_v2', 'submitted')
-      document.cookie = 'vi_waitlist_v2=submitted; path=/; max-age=31536000'
+      // Same cookie key the gate and homepage form use — one submission clears all three
+      localStorage.setItem('vi_waitlist_gate_v2', 'submitted');
+      document.cookie = 'vi_waitlist_v2=submitted; path=/; max-age=31536000';
       setStatus('success');
     } catch {
       setErrorMsg('Network error. Please check your connection.');
@@ -54,344 +49,187 @@ export default function WaitlistPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap');
-
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-          font-family: 'Raleway', sans-serif;
+        .vi-page-overlay {
+          min-height: 100vh;
+          background: #0a0a14;
+          display: flex; align-items: center; justify-content: center;
+          padding: 20px;
+        }
+        .vi-page-card {
           background: #0F0F1A;
-          color: #F7F4EE;
-          min-height: 100vh;
-        }
-
-        .page {
-          min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 48px 24px;
-          position: relative;
-          overflow: hidden;
-        }
-
-        /* Ambient background glow */
-        .page::before {
-          content: '';
-          position: absolute;
-          top: -200px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 700px;
-          height: 700px;
-          background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
-          pointer-events: none;
-        }
-
-        .logo-wrap {
-          margin-bottom: 48px;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .logo-mark {
-          width: 36px;
-          height: 36px;
-          border: 2px solid #C9A84C;
-          border-radius: 4px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .logo-mark span {
-          font-size: 18px;
-          font-weight: 800;
-          color: #C9A84C;
-          letter-spacing: -1px;
-        }
-
-        .logo-name {
-          font-size: 18px;
-          font-weight: 600;
-          letter-spacing: 0.08em;
-          color: #F7F4EE;
-          text-transform: uppercase;
-        }
-
-        .card {
-          width: 100%;
-          max-width: 520px;
-          background: #1A1A2E;
           border: 1px solid rgba(201,168,76,0.2);
           border-radius: 16px;
-          padding: 48px 40px;
-          position: relative;
-          z-index: 1;
+          padding: clamp(32px,5vw,52px);
+          max-width: 520px; width: 100%;
         }
-
-        .eyebrow {
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: #C9A84C;
-          margin-bottom: 16px;
+        .vi-page-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+        .vi-page-stripe {
+          display: flex; height: 3px; border-radius: 2px;
+          overflow: hidden; margin-bottom: 28px;
         }
-
-        .headline {
-          font-size: 32px;
-          font-weight: 800;
-          line-height: 1.2;
-          color: #F7F4EE;
-          margin-bottom: 16px;
+        .vi-page-eyebrow {
+          font-size: 9px; font-weight: 700; letter-spacing: 0.22em;
+          color: rgba(201,168,76,0.5); text-transform: uppercase;
+          margin-bottom: 12px; font-family: var(--font);
         }
-
-        .headline em {
-          font-style: normal;
-          color: #C9A84C;
+        .vi-page-title {
+          font-family: var(--font);
+          font-size: clamp(24px, 4vw, 36px);
+          font-weight: 200; line-height: 1.1;
+          letter-spacing: -0.02em;
+          color: #F7F4EE; margin-bottom: 12px;
         }
-
-        .subtext {
-          font-size: 15px;
-          font-weight: 400;
-          line-height: 1.7;
-          color: rgba(247,244,238,0.65);
-          margin-bottom: 36px;
+        .vi-page-title em { color: #C9A84C; font-style: italic; font-weight: 300; }
+        .vi-page-sub {
+          font-size: 13px; font-weight: 300;
+          color: rgba(247,244,238,0.45); line-height: 1.7;
+          margin-bottom: 28px;
         }
-
-        .divider {
-          height: 1px;
-          background: rgba(201,168,76,0.15);
-          margin-bottom: 32px;
+        .vi-page-field { margin-bottom: 14px; }
+        .vi-page-label {
+          display: block; font-size: 9px; font-weight: 700;
+          color: rgba(201,168,76,0.45); letter-spacing: 0.2em;
+          text-transform: uppercase; margin-bottom: 7px;
+          font-family: var(--font);
         }
-
-        .field {
-          margin-bottom: 20px;
-        }
-
-        label {
-          display: block;
-          font-size: 12px;
-          font-weight: 600;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          color: rgba(247,244,238,0.5);
-          margin-bottom: 8px;
-        }
-
-        input, select {
-          width: 100%;
-          background: rgba(15,15,26,0.8);
-          border: 1px solid rgba(201,168,76,0.25);
-          border-radius: 8px;
-          padding: 14px 16px;
-          font-family: 'Raleway', sans-serif;
-          font-size: 15px;
-          font-weight: 500;
-          color: #F7F4EE;
-          outline: none;
+        .vi-page-input, .vi-page-select {
+          width: 100%; background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(247,244,238,0.1);
+          border-radius: 6px; padding: 12px 14px;
+          color: #F7F4EE; font-size: 13px; font-family: var(--font);
           transition: border-color 0.2s;
-          appearance: none;
+          -webkit-appearance: none; appearance: none;
+          box-sizing: border-box;
         }
-
-        input::placeholder { color: rgba(247,244,238,0.25); }
-
-        input:focus, select:focus {
-          border-color: #C9A84C;
+        .vi-page-input::placeholder { color: rgba(247,244,238,0.2); }
+        .vi-page-input:focus, .vi-page-select:focus {
+          outline: none;
+          border-color: rgba(201,168,76,0.45);
+          box-shadow: 0 0 0 3px rgba(201,168,76,0.07);
         }
-
-        select option {
-          background: #1A1A2E;
-          color: #F7F4EE;
+        .vi-page-select { color: rgba(247,244,238,0.6); cursor: pointer; }
+        .vi-page-select option { background: #0F0F1A; color: #F7F4EE; }
+        .vi-page-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .vi-page-error {
+          font-size: 12px; color: #D85A30; margin-bottom: 12px;
+          padding: 10px 12px; background: rgba(216,90,48,0.07);
+          border-left: 2px solid rgba(216,90,48,0.5); border-radius: 0 4px 4px 0;
         }
-
-        .select-wrap {
-          position: relative;
+        .vi-page-btn {
+          width: 100%; padding: 15px 24px;
+          background: #C9A84C; color: #0F0F1A;
+          font-size: 11px; font-weight: 700; letter-spacing: 0.16em;
+          border: none; border-radius: 9999px; cursor: pointer;
+          font-family: var(--font); transition: opacity 0.2s;
+          margin-top: 6px;
         }
-
-        .select-wrap::after {
-          content: '▾';
-          position: absolute;
-          right: 16px;
-          top: 50%;
-          transform: translateY(-50%);
-          color: #C9A84C;
-          pointer-events: none;
-          font-size: 14px;
+        .vi-page-btn:hover { opacity: 0.88; }
+        .vi-page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .vi-page-done-icon {
+          width: 56px; height: 56px; border-radius: 50%;
+          background: rgba(29,158,117,0.12);
+          border: 1px solid rgba(29,158,117,0.3);
+          display: flex; align-items: center; justify-content: center;
+          margin: 0 auto 20px;
         }
-
-        .submit-btn {
-          width: 100%;
-          background: #C9A84C;
-          color: #0F0F1A;
-          border: none;
-          border-radius: 8px;
-          padding: 16px;
-          font-family: 'Raleway', sans-serif;
-          font-size: 15px;
-          font-weight: 700;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
-          cursor: pointer;
-          margin-top: 8px;
-          transition: opacity 0.2s, transform 0.1s;
-        }
-
-        .submit-btn:hover { opacity: 0.9; }
-        .submit-btn:active { transform: scale(0.98); }
-        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .error-msg {
-          background: rgba(220,60,60,0.12);
-          border: 1px solid rgba(220,60,60,0.3);
-          border-radius: 8px;
-          padding: 12px 16px;
-          font-size: 13px;
-          color: #ff8080;
-          margin-top: 16px;
-        }
-
-        .success-state {
+        .vi-page-done-title {
+          font-family: var(--font); font-size: 24px;
+          font-weight: 200; color: #F7F4EE; margin-bottom: 10px;
           text-align: center;
-          padding: 16px 0;
         }
-
-        .success-icon {
-          width: 64px;
-          height: 64px;
-          border-radius: 50%;
-          background: rgba(201,168,76,0.12);
-          border: 2px solid #C9A84C;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 auto 24px;
-          font-size: 28px;
-        }
-
-        .success-title {
-          font-size: 24px;
-          font-weight: 800;
-          color: #F7F4EE;
-          margin-bottom: 12px;
-        }
-
-        .success-sub {
-          font-size: 15px;
-          color: rgba(247,244,238,0.6);
-          line-height: 1.7;
-        }
-
-        .footer-note {
-          margin-top: 24px;
+        .vi-page-done-sub {
+          font-size: 13px; color: rgba(247,244,238,0.45);
+          line-height: 1.7; margin-bottom: 0;
           text-align: center;
-          font-size: 12px;
-          color: rgba(247,244,238,0.3);
-          letter-spacing: 0.04em;
         }
-
-        @media (max-width: 560px) {
-          .card { padding: 36px 24px; }
-          .headline { font-size: 26px; }
+        @media (max-width: 480px) {
+          .vi-page-row { grid-template-columns: 1fr; }
         }
       `}</style>
 
-      <div className="page">
-        {/* Logo */}
-        <div className="logo-wrap">
-          <div className="logo-mark"><span>V</span></div>
-          <span className="logo-name">Valoria Institute</span>
-        </div>
+      <div className="vi-page-overlay">
+        <div className="vi-page-card">
 
-        <div className="card">
+          <div className="vi-page-logo">
+            <img src="/logo.png" alt="Valoria Institute" style={{ height: '32px', width: 'auto' }} />
+          </div>
+
+          <div className="vi-page-stripe">
+            {[['#1D9E75',20],['#378ADD',25],['#7F77DD',25],['#BA7517',20],['#D85A30',10]].map(([color, pct], i) => (
+              <div key={i} style={{ flex: pct, background: color, opacity: 0.85 }} />
+            ))}
+          </div>
+
           {status === 'success' ? (
-            <div className="success-state">
-              <div className="success-icon">✦</div>
-              <div className="success-title">You're on the list.</div>
-              <p className="success-sub">
-                We'll reach out when Valoria opens for your cohort.<br />
-                Keep building — your PRIME score awaits.
+            <div>
+              <div className="vi-page-done-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12l5 5L20 7" stroke="#1D9E75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <div className="vi-page-done-title">You&apos;re on the list.</div>
+              <p className="vi-page-done-sub">
+                We&apos;ll reach out when it&apos;s ready for you.
               </p>
             </div>
           ) : (
             <>
-              <div className="eyebrow">Early Access</div>
-              <h1 className="headline">
-                Africa's <em>professional capability</em> platform is almost ready.
+              <div className="vi-page-eyebrow">FOUNDING COHORT — NOW OPEN</div>
+              <h1 className="vi-page-title">
+                Be first when<br />the <em>marketplace opens.</em>
               </h1>
-              <p className="subtext">
-                Valoria Institute is building the definitive tool for measuring, developing,
-                and showcasing professional excellence across Africa. Join the waitlist to be
-                first in.
+              <p className="vi-page-sub">
+                We&apos;re building the marketplace for assessed African professionals. Join the list — we&apos;ll reach out when it&apos;s ready for you.
               </p>
 
-              <div className="divider" />
-
-              <form onSubmit={handleSubmit}>
-                <div className="field">
-                  <label htmlFor="full_name">Full Name</label>
-                  <input
-                    id="full_name"
-                    name="full_name"
-                    type="text"
-                    placeholder="Your full name"
-                    value={form.full_name}
-                    onChange={handleChange}
-                    required
-                  />
+              <form onSubmit={handleSubmit} noValidate>
+                <div className="vi-page-row">
+                  <div className="vi-page-field">
+                    <label className="vi-page-label" htmlFor="full_name">Full Name</label>
+                    <input id="full_name" name="full_name" className="vi-page-input" type="text"
+                      placeholder="Your name" value={form.full_name}
+                      onChange={handleChange} required />
+                  </div>
+                  <div className="vi-page-field">
+                    <label className="vi-page-label" htmlFor="email">Email Address</label>
+                    <input id="email" name="email" className="vi-page-input" type="email"
+                      placeholder="you@example.com" value={form.email}
+                      onChange={handleChange} required />
+                  </div>
                 </div>
 
-                <div className="field">
-                  <label htmlFor="email">Work Email</label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="you@company.com"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="field">
-                  <label htmlFor="role">Your Role</label>
-                  <div className="select-wrap">
-                    <select
-                      id="role"
-                      name="role"
-                      value={form.role}
-                      onChange={handleChange}
-                    >
-                      <option value="">Select your role</option>
-                      {ROLES.map((r) => (
-                        <option key={r} value={r}>{r}</option>
-                      ))}
+                <div className="vi-page-row">
+                  <div className="vi-page-field">
+                    <label className="vi-page-label" htmlFor="role">Your Role / Title</label>
+                    <input id="role" name="role" className="vi-page-input" type="text"
+                      placeholder="e.g. Head of People" value={form.role}
+                      onChange={handleChange} />
+                  </div>
+                  <div className="vi-page-field">
+                    <label className="vi-page-label" htmlFor="interest">I am a...</label>
+                    <select id="interest" name="interest" className="vi-page-select"
+                      value={form.interest} onChange={handleChange}>
+                      <option value="">Select one</option>
+                      <option value="professional">Professional / Talent</option>
+                      <option value="speaker">Speaker / Facilitator</option>
+                      <option value="employer">Employer / Recruiter</option>
+                      <option value="event_planner">Event Planner / Organiser</option>
+                      <option value="other">Other</option>
                     </select>
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  className="submit-btn"
-                  disabled={status === 'loading'}
-                >
-                  {status === 'loading' ? 'Joining…' : 'Join the Waitlist →'}
-                </button>
+                {status === 'error' && errorMsg && <div className="vi-page-error">{errorMsg}</div>}
 
-                {status === 'error' && (
-                  <div className="error-msg">{errorMsg}</div>
-                )}
+                <button type="submit" className="vi-page-btn" disabled={status === 'loading'}>
+                  {status === 'loading' ? 'JOINING...' : 'JOIN THE FOUNDING COHORT →'}
+                </button>
               </form>
             </>
           )}
         </div>
-
-        <p className="footer-note">© {new Date().getFullYear()} Valoria Institute · valoriainstitute.com</p>
       </div>
     </>
   );
 }
+

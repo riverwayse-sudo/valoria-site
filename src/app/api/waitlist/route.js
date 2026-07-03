@@ -9,7 +9,7 @@ const supabase = createClient(
 export async function POST(request) {
   try {
     const body = await request.json()
-    const { full_name, email, role } = body
+    const { full_name, email, role, interest } = body
 
     if (!full_name?.trim() || !email?.trim()) {
       return Response.json({ error: 'Name and email are required.' }, { status: 400 })
@@ -26,6 +26,7 @@ export async function POST(request) {
         full_name: full_name.trim(),
         email: email.trim().toLowerCase(),
         role: role?.trim() || null,
+        interest: interest || null,
         type: 'standalone',
         source: 'waitlist_page',
       }])
