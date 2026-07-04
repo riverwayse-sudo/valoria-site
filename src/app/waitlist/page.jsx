@@ -91,7 +91,7 @@ export default function WaitlistPage() {
       <main style={{ background: DARK, color: PARCH, fontFamily: "var(--font,'Raleway','Helvetica Neue',Arial,sans-serif)", overflow: 'hidden' }}>
 
         {/* ── HERO ─────────────────────────────────────────────────────── */}
-        <section style={{ padding: 'clamp(80px,10vw,140px) clamp(20px,5vw,80px) clamp(60px,8vw,100px)', borderBottom: `1px solid ${GLINE}`, position: 'relative', overflow: 'hidden' }}>
+        <section style={{ padding: 'clamp(60px,8vw,110px) clamp(20px,5vw,80px) clamp(48px,6vw,80px)', borderBottom: `1px solid ${GLINE}`, position: 'relative', overflow: 'hidden' }}>
           {/* Background glow */}
           <div style={{ position:'absolute', top:'-20%', right:'-10%', width:'600px', height:'600px', borderRadius:'50%', background:`radial-gradient(circle, rgba(201,168,76,.1) 0%, transparent 70%)`, pointerEvents:'none' }} />
           <div style={{ position:'absolute', bottom:'-10%', left:'-5%', width:'400px', height:'400px', borderRadius:'50%', background:`radial-gradient(circle, rgba(55,138,221,.07) 0%, transparent 70%)`, pointerEvents:'none' }} />
@@ -102,8 +102,8 @@ export default function WaitlistPage() {
               <span style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.18em', color:GOLD }}>FOUNDING COHORT — NOW OPEN</span>
             </div>
 
-            <h1 style={{ fontSize:'clamp(36px,6vw,72px)', fontWeight:200, lineHeight:1.0, letterSpacing:'-.03em', marginBottom:'24px', color:PARCH }}>
-              The best person<br/>for the job keeps<br/>losing to the<br/>
+            <h1 style={{ fontSize:'clamp(32px,5vw,60px)', fontWeight:200, lineHeight:1.15, letterSpacing:'-.03em', marginBottom:'24px', color:PARCH, maxWidth:'820px', marginLeft:'auto', marginRight:'auto' }}>
+              The best person for the job keeps losing to the{' '}
               <em style={{ fontStyle:'italic', color:GOLD, fontWeight:300 }}>most connected one.</em>
             </h1>
             <p style={{ fontSize:'clamp(16px,2vw,20px)', fontWeight:300, color:DIM, lineHeight:1.75, maxWidth:'560px', margin:'0 auto 40px' }}>
