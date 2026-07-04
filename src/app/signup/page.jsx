@@ -54,6 +54,8 @@ export default function SignupPage() {
         },
       })
       if (signupError) throw signupError
+      // Authenticated users must never be blocked by the waitlist gate.
+      document.cookie = `vi_waitlist_v2=submitted; path=/; max-age=31536000`
       if (data.user) {
         await supabase.from('profiles').upsert({
           id: data.user.id,

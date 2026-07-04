@@ -22,6 +22,7 @@ const STATUS_COLORS = {
 export default function DashboardPage() {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
+  const [isSupply, setIsSupply] = useState(false)   // professional (candidate/speaker/facilitator) vs buyer (employer/organiser)
   const [enquiries, setEnquiries] = useState([])   // messages received (supply side)
   const [requests, setRequests] = useState([])      // messages sent (demand side)
   const [loading, setLoading] = useState(true)
@@ -32,16 +33,32 @@ export default function DashboardPage() {
       if (!user) { window.location.href = '/login'; return }
       setUser(user)
 
-      const { data: prof } = await supabase
-        .from('profiles')
+      // Professionals (candidate/speaker/facilitator) live in professional_profiles,
+      // set up via the /profile/setup wizard. Buyers (employer/organiser) live in
+      // profiles, set up via /signup. Check professional_profiles first.
+      const { data: proProfile } = await supabase
+        .from('professional_profiles')
         .select('*')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
+
+      let prof = proProfile
+      let supply = !!proProfile
+
+      if (!prof) {
+        const { data: buyerProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle()
+        prof = buyerProfile
+        supply = false
+      }
+
       setProfile(prof)
+      setIsSupply(supply)
 
-      const isSupply = prof?.user_type === 'talent' || prof?.user_type === 'speaker'
-
-      if (isSupply) {
+      if (supply) {
         // Messages/bookings this professional received
         const { data: msgs } = await supabase
           .from('messages')
@@ -53,7 +70,7 @@ export default function DashboardPage() {
         // Messages/bookings this employer/organiser sent
         const { data: msgs } = await supabase
           .from('messages')
-          .select('*, profiles:recipient_profile_id(display_name, headline, photo_url, user_type)')
+          .select('*, professional_profiles:recipient_profile_id(display_name, headline, photo_url, active_tracks)')
           .eq('sender_id', user.id)
           .order('created_at', { ascending: false })
         setRequests(msgs || [])
@@ -71,14 +88,14 @@ export default function DashboardPage() {
 
   if (!profile) return (
     <div style={{ minHeight: '100vh', background: DARK, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: 'Raleway', color: PARCHMENT, gap: '16px' }}>
-      <p>No profile found.</p>
-      <Link href="/signup" style={styles.btnGold}>Complete Setup</Link>
+      <p>No profile found yet.</p>
+      <Link href="/profile/setup" style={styles.btnGold}>Complete Your Profile</Link>
     </div>
   )
 
-  const isSupply = profile.user_type === 'talent' || profile.user_type === 'speaker'
-  const isSpeaker = profile.user_type === 'speaker'
-  const isOrganiser = profile.user_type === 'organiser'
+  const isSpeaker = isSupply && (profile.active_tracks || []).includes('speaker')
+  const isOrganiser = !isSupply && profile.user_type === 'organiser'
+  const isVisible = isSupply && profile.listing_status === 'live'
 
   return (
     <div style={{ minHeight: '100vh', background: DARK, fontFamily: "'Raleway', 'Helvetica Neue', Arial, sans-serif", color: PARCHMENT }}>
@@ -118,14 +135,14 @@ export default function DashboardPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{
                   width: '10px', height: '10px', borderRadius: '50%',
-                  background: profile.is_visible ? '#1D9E75' : '#888',
+                  background: isVisible ? '#1D9E75' : '#888',
                   flexShrink: 0
                 }} />
-                <span style={{ fontSize: '13px', fontWeight: 600, color: profile.is_visible ? '#1D9E75' : 'rgba(247,244,238,.4)' }}>
-                  {profile.is_visible ? 'Listed — visible to buyers' : 'Not listed'}
+                <span style={{ fontSize: '13px', fontWeight: 600, color: isVisible ? '#1D9E75' : 'rgba(247,244,238,.4)' }}>
+                  {isVisible ? 'Listed — visible to buyers' : 'Not listed'}
                 </span>
               </div>
-              {!profile.is_visible && (
+              {!isVisible && (
                 <Link href="/profile/edit" style={{ fontSize: '11px', color: GOLD, marginTop: '8px', display: 'block' }}>
                   Go to profile → enable listing
                 </Link>
@@ -150,10 +167,10 @@ export default function DashboardPage() {
               {enquiries.length === 0 ? (
                 <EmptyState
                   icon="◈"
-                  message={profile.is_visible
+                  message={isVisible
                     ? "No enquiries yet — your profile is live and visible."
                     : "Enable your marketplace listing to start receiving enquiries."}
-                  cta={!profile.is_visible ? { label: 'Enable Listing', href: '/profile/edit' } : null}
+                  cta={!isVisible ? { label: 'Enable Listing', href: '/profile/edit' } : null}
                 />
               ) : (
                 <div style={styles.enquiryList}>
@@ -275,7 +292,7 @@ function EnquiryCard({ msg, isSpeaker }) {
 function SentRequestCard({ msg }) {
   const date = new Date(msg.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
   const status = STATUS_COLORS[msg.status] || STATUS_COLORS.pending
-  const prof = msg.profiles
+  const prof = msg.professional_profiles
 
   return (
     <div style={styles.enquiryCard}>

@@ -25,6 +25,8 @@ export default function LoginPage() {
         password: form.password,
       })
       if (loginError) throw loginError
+      // Authenticated users must never be blocked by the waitlist gate.
+      document.cookie = `vi_waitlist_v2=submitted; path=/; max-age=31536000`
       const { data: { user } } = await supabase.auth.getUser()
       // Check if professional has a profile set up
       const { data: profile } = await supabase

@@ -61,7 +61,9 @@ export default function ProfileSetupPage() {
   const [user, setUser]       = useState(null)
   const [step, setStep]       = useState(0)
   const [saving, setSaving]   = useState(false)
+  const [saveError, setSaveError] = useState('')
   const [photoUploading, setPhotoUploading] = useState(false)
+  const [photoError, setPhotoError] = useState('')
   const fileRef = useRef(null)
 
   const [form, setForm] = useState({
@@ -120,6 +122,7 @@ export default function ProfileSetupPage() {
   async function uploadPhoto(file) {
     if (!file || !user) return
     setPhotoUploading(true)
+    setPhotoError('')
     const ext  = file.name.split('.').pop()
     const path = `profiles/${user.id}/avatar.${ext}`
     const { error } = await supabase.storage
@@ -128,12 +131,14 @@ export default function ProfileSetupPage() {
     if (!error) {
       const { data } = supabase.storage.from('avatars').getPublicUrl(path)
       set('photo_url', data.publicUrl)
+    } else {
+      setPhotoError('Could not upload your photo. Please try again, or continue and add it later from your profile.')
     }
     setPhotoUploading(false)
   }
 
   async function saveProgress() {
-    if (!user) return
+    if (!user) return false
     const payload = {
       id:                 user.id,
       display_name:       form.display_name || null,
@@ -156,23 +161,31 @@ export default function ProfileSetupPage() {
       listing_status:     'pending',
       updated_at:         new Date().toISOString(),
     }
-    await supabase
+    const { error } = await supabase
       .from('professional_profiles')
       .upsert(payload, { onConflict: 'id' })
+    if (error) {
+      setSaveError('Something went wrong saving your progress. Please check your connection and try again.')
+      return false
+    }
+    setSaveError('')
+    return true
   }
 
   async function handleNext() {
     setSaving(true)
-    await saveProgress()
+    const ok = await saveProgress()
     setSaving(false)
+    if (!ok) return
     setStep(s => s + 1)
     window.scrollTo(0, 0)
   }
 
   async function handleFinish() {
     setSaving(true)
-    await saveProgress()
+    const ok = await saveProgress()
     setSaving(false)
+    if (!ok) return
     router.push('/dashboard')
   }
 
@@ -266,6 +279,7 @@ export default function ProfileSetupPage() {
             </div>
 
             <NavButtons
+              error={saveError}
               onNext={handleNext}
               nextDisabled={form.active_tracks.length === 0}
               saving={saving}
@@ -313,6 +327,7 @@ export default function ProfileSetupPage() {
             </div>
 
             <NavButtons
+              error={saveError}
               onBack={() => setStep(s => s-1)}
               onNext={handleNext}
               nextDisabled={!form.display_name.trim() || !form.headline.trim() || !form.bio.trim()}
@@ -363,6 +378,7 @@ export default function ProfileSetupPage() {
             )}
 
             <NavButtons
+              error={saveError}
               onBack={() => setStep(s => s-1)}
               onNext={handleNext}
               saving={saving}
@@ -393,6 +409,7 @@ export default function ProfileSetupPage() {
                     {photoUploading ? 'Uploading…' : form.photo_url ? 'Change photo' : 'Upload photo'}
                   </button>
                   <p style={{ fontSize:'11px', color:DIM, margin:0, lineHeight:1.6 }}>JPG or PNG. Square crop recommended. At least 400×400px.</p>
+                  {photoError && <p style={{ fontSize:'11px', color:'#D85A30', margin:'6px 0 0' }}>{photoError}</p>}
                   <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp"
                     style={{ display:'none' }}
                     onChange={e => e.target.files[0] && uploadPhoto(e.target.files[0])} />
@@ -435,6 +452,7 @@ export default function ProfileSetupPage() {
             </div>
 
             <NavButtons
+              error={saveError}
               onBack={() => setStep(s => s-1)}
               onNext={handleNext}
               saving={saving}
@@ -495,6 +513,7 @@ export default function ProfileSetupPage() {
             </div>
 
             <NavButtons
+              error={saveError}
               onBack={() => setStep(s => s-1)}
               onNext={handleNext}
               saving={saving}
@@ -585,6 +604,12 @@ export default function ProfileSetupPage() {
               </span>
             </label>
 
+            {saveError && (
+              <div style={{ padding:'12px 16px', marginBottom:'16px', background:'rgba(216,90,48,.08)', border:'1px solid rgba(216,90,48,.3)', fontSize:'13px', color:'#D85A30' }}>
+                {saveError}
+              </div>
+            )}
+
             <button onClick={handleFinish}
               disabled={!form.consent || saving}
               style={{ display:'block', width:'100%', padding:'16px', background: form.consent && !saving ? GOLD : 'rgba(201,168,76,.25)', color: form.consent && !saving ? DARK : 'rgba(201,168,76,.4)', fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor: form.consent && !saving ? 'pointer' : 'not-allowed', fontFamily:'inherit', marginBottom:'16px' }}>
@@ -631,9 +656,15 @@ function CharCount({ val, max }) {
   )
 }
 
-function NavButtons({ onBack, onNext, onFinish, nextDisabled, saving, showBack=true }) {
+function NavButtons({ onBack, onNext, onFinish, nextDisabled, saving, showBack=true, error }) {
   return (
-    <div style={{ display:'flex', gap:'12px', marginTop:'40px' }}>
+    <div style={{ marginTop:'40px' }}>
+      {error && (
+        <div style={{ padding:'12px 16px', marginBottom:'12px', background:'rgba(216,90,48,.08)', border:'1px solid rgba(216,90,48,.3)', fontSize:'13px', color:'#D85A30' }}>
+          {error}
+        </div>
+      )}
+      <div style={{ display:'flex', gap:'12px' }}>
       {showBack && (
         <button onClick={onBack}
           style={{ padding:'14px 24px', background:'transparent', border:`1px solid rgba(201,168,76,.2)`, color:'rgba(247,244,238,.5)', fontSize:'11px', fontWeight:700, letterSpacing:'.12em', cursor:'pointer', fontFamily:'inherit' }}>
@@ -647,6 +678,7 @@ function NavButtons({ onBack, onNext, onFinish, nextDisabled, saving, showBack=t
           {saving ? 'SAVING…' : 'CONTINUE →'}
         </button>
       )}
+      </div>
     </div>
   )
 }
