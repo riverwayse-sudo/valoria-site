@@ -240,24 +240,28 @@
 }
 .ep-grid {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: clamp(16px,2.5vw,28px);
+  gap: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.07);
 }
 .ep-card {
   position: relative;
   background: rgba(255,255,255,.025);
-  border: 1px solid rgba(255,255,255,.07);
-  border-radius: 12px;
+  border: none;
+  border-right: 1px solid rgba(255,255,255,.07);
+  border-radius: 0;
   padding: clamp(24px,3vw,36px);
   overflow: hidden;
-  transition: border-color .25s, transform .25s;
+  transition: background .25s;
 }
+.ep-card:last-child { border-right: none; }
 .ep-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
 }
-.ep-card:hover { border-color: rgba(255,255,255,.14); transform: translateY(-3px); }
+.ep-card:hover { background: rgba(255,255,255,.04); }
 .ep-num {
-  font-size: 9px; font-weight: 700; letter-spacing: .2em;
-  color: rgba(255,255,255,.2); margin-bottom: 16px;
+  display: none;
 }
 .ep-icon {
   width: 44px; height: 44px; border-radius: 10px;
