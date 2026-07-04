@@ -20,8 +20,8 @@ const COOKIE_KEY = 'vi_waitlist_v2'
 // ─── Copy data ───────────────────────────────────────────────────────────────
 const PAIN_POINTS = [
   { icon: '👔', headline: 'You applied for the job.', body: 'Someone with half your experience got it. Why? Because they knew the hiring manager.' },
-  { icon: '🎤', headline: 'You should be on that stage.', body: 'The same three speakers keep getting booked — not because they're the best, but because the organiser only has five contacts.' },
-  { icon: '📋', headline: 'You've done the work.', body: 'But the training contract went to the big-name consultant everyone already knows. Your track record stayed invisible.' },
+  { icon: '🎤', headline: 'You should be on that stage.', body: "The same three speakers keep getting booked — not because they're the best, but because the organiser only has five contacts." },
+  { icon: '📋', headline: "You've done the work.", body: 'But the training contract went to the big-name consultant everyone already knows. Your track record stayed invisible.' },
 ]
 
 const HOW_IT_WORKS = [
@@ -31,9 +31,9 @@ const HOW_IT_WORKS = [
 ]
 
 const FOR_WHO = [
-  { color: '#378ADD', tag: 'CANDIDATE', title: 'You want the right job.', body: 'You're a professional looking for your next role, contract, or opportunity. You want employers to find you based on what you can do — not who you know.' },
+  { color: '#378ADD', tag: 'CANDIDATE', title: 'You want the right job.', body: "You're a professional looking for your next role, contract, or opportunity. You want employers to find you based on what you can do — not who you know." },
   { color: GOLD,       tag: 'SPEAKER',   title: 'You want to be booked.', body: 'You speak, train, or present. You want event organisers to discover you, verify your capability, and book you without three layers of referral.' },
-  { color: '#1D9E75', tag: 'EMPLOYER',   title: 'You want the right person.', body: 'You hire, organise events, or commission training. You're tired of the same recycled names. You want to find the genuinely best person — assessed, verified, ready.' },
+  { color: '#1D9E75', tag: 'EMPLOYER',   title: 'You want the right person.', body: "You hire, organise events, or commission training. You're tired of the same recycled names. You want to find the genuinely best person — assessed, verified, ready." },
 ]
 
 const SUCCESS_TRACKS = [
