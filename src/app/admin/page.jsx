@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { ADMIN_EMAILS } from '@/lib/adminEmails'
 
 const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
@@ -9,13 +10,6 @@ const PARCHMENT = '#F7F4EE'
 const DARK = '#0F0F1A'
 const DIM = 'rgba(247,244,238,.45)'
 const FAINT = 'rgba(247,244,238,.2)'
-
-// Admin emails — add Temitayo's email here
-const ADMIN_EMAILS = [
-  'admin@valoriainstitute.com',
-  'oluwafemi@valoriainstitute.com',
-  'oluwafemi@riverwayse.com',
-]
 
 const STATUS_OPTIONS = ['pending', 'reviewing', 'introduced', 'declined', 'completed']
 
@@ -66,7 +60,7 @@ export default function AdminPage() {
       .from('messages')
       .select(`
         *,
-        recipient:recipient_profile_id ( id, display_name, headline, user_type, photo_url )
+        recipient:recipient_profile_id ( id, display_name, headline, active_tracks, photo_url )
       `)
       .order('created_at', { ascending: false })
     setMessages(data || [])
@@ -74,8 +68,8 @@ export default function AdminPage() {
 
   async function fetchProfiles() {
     const { data } = await supabase
-      .from('profiles')
-      .select('id, display_name, headline, user_type, is_visible, tier, industry, availability, created_at, email')
+      .from('professional_profiles')
+      .select('id, display_name, headline, active_tracks, listing_status, industry, availability, created_at')
       .order('created_at', { ascending: false })
     setProfiles(data || [])
   }
@@ -88,8 +82,9 @@ export default function AdminPage() {
   }
 
   async function toggleVisibility(profileId, current) {
-    await supabase.from('profiles').update({ is_visible: !current }).eq('id', profileId)
-    setProfiles(prev => prev.map(p => p.id === profileId ? { ...p, is_visible: !current } : p))
+    const next = current === 'listed' ? 'unlisted' : 'listed'
+    await supabase.from('professional_profiles').update({ listing_status: next }).eq('id', profileId)
+    setProfiles(prev => prev.map(p => p.id === profileId ? { ...p, listing_status: next } : p))
   }
 
   if (loading) return (
@@ -110,7 +105,7 @@ export default function AdminPage() {
   // Filtered message queue
   const filteredMessages = messages.filter(m => {
     const matchStatus = !filterStatus || m.status === filterStatus || (!m.status && filterStatus === 'pending')
-    const matchType = !filterType || m.recipient?.user_type === filterType
+    const matchType = !filterType || (m.recipient?.active_tracks || []).includes(filterType)
     const q = searchQ.toLowerCase()
     const matchSearch = !q || (m.subject || '').toLowerCase().includes(q) || (m.body || '').toLowerCase().includes(q) || (m.recipient?.display_name || '').toLowerCase().includes(q)
     return matchStatus && matchType && matchSearch
@@ -121,11 +116,11 @@ export default function AdminPage() {
   const pendingCount = messages.filter(m => !m.status || m.status === 'pending').length
   const introducedCount = messages.filter(m => m.status === 'introduced').length
   const completedCount = messages.filter(m => m.status === 'completed').length
-  const listedProfiles = profiles.filter(p => p.is_visible).length
-  const talentCount = profiles.filter(p => p.user_type === 'talent').length
-  const speakerCount = profiles.filter(p => p.user_type === 'speaker').length
-  const employerCount = profiles.filter(p => p.user_type === 'employer').length
-  const organiserCount = profiles.filter(p => p.user_type === 'organiser').length
+  const listedProfiles = profiles.filter(p => p.listing_status === 'listed').length
+  const talentCount = profiles.filter(p => (p.active_tracks || []).includes('candidate')).length
+  const speakerCount = profiles.filter(p => (p.active_tracks || []).includes('speaker')).length
+  const employerCount = profiles.filter(p => (p.active_tracks || []).includes('facilitator')).length
+  const organiserCount = 0 // buyers tracked separately
 
   return (
     <div style={{ minHeight: '100vh', background: DARK, fontFamily: "'Raleway', 'Helvetica Neue', Arial, sans-serif", color: PARCHMENT }}>
@@ -189,7 +184,7 @@ export default function AdminPage() {
               </select>
               <select value={filterType} onChange={e => setFilterType(e.target.value)} style={styles.select}>
                 <option value="">All types</option>
-                <option value="talent">Talent enquiries</option>
+                <option value="candidate">Talent enquiries</option>
                 <option value="speaker">Speaker bookings</option>
               </select>
               {(filterStatus || filterType || searchQ) && (
@@ -237,7 +232,7 @@ export default function AdminPage() {
               <ProfileRow
                 key={p.id}
                 profile={p}
-                onToggle={() => toggleVisibility(p.id, p.is_visible)}
+                onToggle={() => toggleVisibility(p.id, p.listing_status)}
               />
             ))}
           </div>
@@ -279,7 +274,7 @@ function MessageRow({ msg, updating, onStatusChange }) {
             <div style={{ fontSize: '13px', fontWeight: 600, color: PARCHMENT, marginBottom: '2px' }}>
               {prof?.display_name || 'Unknown'}
               <span style={{ marginLeft: '8px', fontSize: '10px', color: DIM, fontWeight: 400 }}>
-                [{prof?.user_type || '—'}]
+                [{(prof?.active_tracks || []).join(', ') || '—'}]
               </span>
             </div>
             <div style={{ fontSize: '12px', color: DIM, fontWeight: 300, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -341,14 +336,16 @@ function MessageRow({ msg, updating, onStatusChange }) {
 
 function ProfileRow({ profile: p, onToggle }) {
   const date = new Date(p.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' })
-  const typeColors = { talent: '#378ADD', speaker: '#7F77DD', employer: '#1D9E75', organiser: '#BA7517' }
+  const typeColors = { candidate: '#378ADD', speaker: '#7F77DD', facilitator: '#1D9E75' }
+  const tracks = p.active_tracks || []
+  const isListed = p.listing_status === 'listed'
 
   return (
     <div style={styles.tableRow}>
       <div>
         <div style={{ fontSize: '13px', fontWeight: 600, color: PARCHMENT, marginBottom: '2px' }}>{p.display_name || '—'}</div>
-        <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.08em', color: typeColors[p.user_type] || DIM, textTransform: 'uppercase' }}>
-          {p.user_type}
+        <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.08em', color: typeColors[tracks[0]] || DIM, textTransform: 'uppercase' }}>
+          {tracks.join(', ') || '—'}
         </span>
       </div>
       <div style={{ fontSize: '12px', color: DIM, fontWeight: 300 }}>{p.headline || '—'}</div>
@@ -358,11 +355,11 @@ function ProfileRow({ profile: p, onToggle }) {
           style={{
             padding: '4px 12px', borderRadius: '999px', fontSize: '10px', fontWeight: 700,
             letterSpacing: '.08em', cursor: 'pointer', border: 'none', fontFamily: 'Raleway',
-            background: p.is_visible ? 'rgba(29,158,117,.15)' : 'rgba(255,255,255,.06)',
-            color: p.is_visible ? '#1D9E75' : 'rgba(247,244,238,.3)',
+            background: isListed ? 'rgba(29,158,117,.15)' : 'rgba(255,255,255,.06)',
+            color: isListed ? '#1D9E75' : 'rgba(247,244,238,.3)',
           }}
         >
-          {p.is_visible ? '● Listed' : '○ Hidden'}
+          {isListed ? '● Listed' : '○ Hidden'}
         </button>
       </div>
       <div style={{ fontSize: '11px', color: FAINT }}>{date}</div>
