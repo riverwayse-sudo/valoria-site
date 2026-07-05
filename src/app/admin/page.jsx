@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { ADMIN_EMAILS } from '@/lib/adminEmails'
 
 const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
@@ -9,13 +10,6 @@ const PARCHMENT = '#F7F4EE'
 const DARK = '#0F0F1A'
 const DIM = 'rgba(247,244,238,.45)'
 const FAINT = 'rgba(247,244,238,.2)'
-
-// Admin emails — add Temitayo's email here
-const ADMIN_EMAILS = [
-  'admin@valoriainstitute.com',
-  'oluwafemi@valoriainstitute.com',
-  'oluwafemi@riverwayse.com',
-]
 
 const STATUS_OPTIONS = ['pending', 'reviewing', 'introduced', 'declined', 'completed']
 
