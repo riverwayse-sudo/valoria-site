@@ -68,8 +68,8 @@ export default function AdminPage() {
 
   async function fetchProfiles() {
     const { data } = await supabase
-      .from('profiles')
-      .select('id, display_name, headline, user_type, is_visible, tier, industry, availability, created_at, email')
+      .from('professional_profiles')
+      .select('id, display_name, headline, active_tracks, listing_status, industry, availability, created_at')
       .order('created_at', { ascending: false })
     setProfiles(data || [])
   }
@@ -82,7 +82,7 @@ export default function AdminPage() {
   }
 
   async function toggleVisibility(profileId, current) {
-    await supabase.from('profiles').update({ is_visible: !current }).eq('id', profileId)
+    await supabase.from('professional_profiles').update({ listing_status: current === 'listed' ? 'unlisted' : 'listed' }).eq('id', profileId)
     setProfiles(prev => prev.map(p => p.id === profileId ? { ...p, is_visible: !current } : p))
   }
 
@@ -115,11 +115,11 @@ export default function AdminPage() {
   const pendingCount = messages.filter(m => !m.status || m.status === 'pending').length
   const introducedCount = messages.filter(m => m.status === 'introduced').length
   const completedCount = messages.filter(m => m.status === 'completed').length
-  const listedProfiles = profiles.filter(p => p.is_visible).length
-  const talentCount = profiles.filter(p => p.user_type === 'talent').length
-  const speakerCount = profiles.filter(p => p.user_type === 'speaker').length
-  const employerCount = profiles.filter(p => p.user_type === 'employer').length
-  const organiserCount = profiles.filter(p => p.user_type === 'organiser').length
+  const listedProfiles = profiles.filter(p => p.listing_status === 'listed').length
+  const talentCount = profiles.filter(p => (p.active_tracks || []).includes('candidate')).length
+  const speakerCount = profiles.filter(p => (p.active_tracks || []).includes('speaker')).length
+  const employerCount = profiles.filter(p => (p.active_tracks || []).includes('facilitator')).length
+  const organiserCount = 0 // buyers tracked separately
 
   return (
     <div style={{ minHeight: '100vh', background: DARK, fontFamily: "'Raleway', 'Helvetica Neue', Arial, sans-serif", color: PARCHMENT }}>
