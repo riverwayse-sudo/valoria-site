@@ -33,11 +33,15 @@ export function middleware(request) {
   }
 
   // ── Dev preview bypass ────────────────────────────────────────────────────
-  // Visit any URL with ?preview=vi2025 to bypass the gate for 7 days.
+  // Visit any URL with ?preview=<WAITLIST_PREVIEW_CODE> to bypass the gate
+  // for 7 days. The code lives in an env var (set it in Vercel), not in the
+  // source — the old hardcoded 'vi2025' value is sitting in public GitHub
+  // history and must be treated as burned even after this change ships.
   // Uses a SEPARATE cookie (vi_dev_preview) so it doesn't affect
   // the WaitlistGate component which checks vi_waitlist_v2.
   const preview = request.nextUrl.searchParams.get('preview')
-  if (preview === 'vi2025') {
+  const previewCode = process.env.WAITLIST_PREVIEW_CODE
+  if (previewCode && preview === previewCode) {
     const res = NextResponse.next()
     res.cookies.set('vi_dev_preview', '1', {
       path: '/',

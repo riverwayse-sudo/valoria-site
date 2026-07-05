@@ -1,6 +1,8 @@
 // lockEngine.js — Single source of truth for assessment lock logic.
 // Extracted from assessmentLock.js v2.2.
 // Covers: fingerprint generation, lock read/write, lock validation.
+// Must stay byte-identical between valoria-platform (.cjs) and
+// valoria-site (.js) — see scoringEngine header for why.
 
 "use strict";
 

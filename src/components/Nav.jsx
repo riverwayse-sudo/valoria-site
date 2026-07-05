@@ -33,8 +33,8 @@ export default function Nav() {
       setUser(user)
       if (user) {
         const { data: profile } = await supabase
-          .from('profiles').select('user_type').eq('id', user.id).single()
-        setUserType(profile?.user_type || user?.user_metadata?.user_type || null)
+          .from('professional_profiles').select('active_tracks').eq('id', user.id).maybeSingle()
+        setUserType((profile?.active_tracks?.[0]) || user?.user_metadata?.user_type || null)
       }
       setAuthChecked(true)
     })
@@ -43,8 +43,8 @@ export default function Nav() {
       setUser(u)
       if (u) {
         const { data: profile } = await supabase
-          .from('profiles').select('user_type').eq('id', u.id).single()
-        setUserType(profile?.user_type || u?.user_metadata?.user_type || null)
+          .from('professional_profiles').select('active_tracks').eq('id', u.id).maybeSingle()
+        setUserType((profile?.active_tracks?.[0]) || u?.user_metadata?.user_type || null)
       } else {
         setUserType(null)
       }
