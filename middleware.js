@@ -1,17 +1,12 @@
 import { NextResponse } from 'next/server'
 
 // Always accessible — no cookie required
+// LAUNCH MODE: only the waitlist page (+ the legal pages it links to) is public.
+// Everything else — including the homepage — redirects to /waitlist.
 const PUBLIC = new Set([
-  '/',
   '/waitlist',
-  '/login',
-  '/signup',
-  '/register',
-  '/reset-password',
   '/privacypolicy',
   '/terms-of-use',
-  '/about-us',
-  '/contact-us',
 ])
 
 export function middleware(request) {
@@ -33,15 +28,11 @@ export function middleware(request) {
   }
 
   // ── Dev preview bypass ────────────────────────────────────────────────────
-  // Visit any URL with ?preview=<WAITLIST_PREVIEW_CODE> to bypass the gate
-  // for 7 days. The code lives in an env var (set it in Vercel), not in the
-  // source — the old hardcoded 'vi2025' value is sitting in public GitHub
-  // history and must be treated as burned even after this change ships.
+  // Visit any URL with ?preview=vi2025 to bypass the gate for 7 days.
   // Uses a SEPARATE cookie (vi_dev_preview) so it doesn't affect
   // the WaitlistGate component which checks vi_waitlist_v2.
   const preview = request.nextUrl.searchParams.get('preview')
-  const previewCode = process.env.WAITLIST_PREVIEW_CODE
-  if (previewCode && preview === previewCode) {
+  if (preview === 'vi2025') {
     const res = NextResponse.next()
     res.cookies.set('vi_dev_preview', '1', {
       path: '/',
@@ -52,18 +43,16 @@ export function middleware(request) {
   }
 
   // ── Gate check ────────────────────────────────────────────────────────────
-  // Allow through if they have either:
-  // (a) submitted the waitlist — vi_waitlist_v2 cookie (set by WaitlistGate or /waitlist page)
-  // (b) dev preview bypass — vi_dev_preview cookie (set above)
-  const waitlistCookie = request.cookies.get('vi_waitlist_v2')
-  const previewCookie  = request.cookies.get('vi_dev_preview')
+  // LAUNCH MODE: joining the waitlist no longer unlocks the rest of the site —
+  // there's nothing ready behind it yet. Only the dev preview bypass gets through.
+  const previewCookie = request.cookies.get('vi_dev_preview')
 
-  if (waitlistCookie || previewCookie) {
+  if (previewCookie) {
     return NextResponse.next()
   }
 
-  // No cookie — send to home page where the WaitlistGate popup appears
-  return NextResponse.redirect(new URL('/', request.url))
+  // No cookie — send to the waitlist page (only public page during launch mode)
+  return NextResponse.redirect(new URL('/waitlist', request.url))
 }
 
 export const config = {
