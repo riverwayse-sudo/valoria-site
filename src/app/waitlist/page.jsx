@@ -156,6 +156,35 @@ export default function WaitlistPage() {
   const openJoin = () => { setShowPopup(false); setJoinOpen(true) }
   const scrollToJourney = () => howItWorksRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
+  // ── Desktop side-nav: tracks which section is in view ──
+  const NAV_SECTIONS = [
+    { id: 'who',           label: "Who it's for" },
+    { id: 'problem',       label: 'The problem' },
+    { id: 'solution',      label: 'The solution' },
+    { id: 'how-it-works',  label: 'How it works' },
+    { id: 'founding',      label: 'Founding cohort' },
+    { id: 'join-cta',      label: 'Join' },
+  ]
+  const [activeSection, setActiveSection] = useState('who')
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id)
+        })
+      },
+      { rootMargin: '-40% 0px -50% 0px', threshold: 0 }
+    )
+    NAV_SECTIONS.forEach(s => {
+      const el = document.getElementById(s.id)
+      if (el) observer.observe(el)
+    })
+    return () => observer.disconnect()
+  }, [])
+
+  const scrollToSection = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
   return (
     <>
       <Nav />
@@ -183,6 +212,20 @@ export default function WaitlistPage() {
           JOIN THE WAITLIST →
         </button>
       </div>
+
+      {/* ── DESKTOP SIDE NAV — hidden on mobile, tracks scroll position ── */}
+      <nav className="wl-side-nav" aria-label="Page sections">
+        {NAV_SECTIONS.map(s => (
+          <button
+            key={s.id}
+            onClick={() => scrollToSection(s.id)}
+            className={`wl-side-nav-item${activeSection === s.id ? ' active' : ''}`}
+          >
+            <span className="wl-side-nav-dot" />
+            <span className="wl-side-nav-label">{s.label}</span>
+          </button>
+        ))}
+      </nav>
 
       {showPopup && (
         <div
@@ -250,34 +293,69 @@ export default function WaitlistPage() {
           <div style={{ position:'absolute', top:'-20%', right:'-10%', width:'600px', height:'600px', borderRadius:'50%', background:`radial-gradient(circle, rgba(201,168,76,.1) 0%, transparent 70%)`, pointerEvents:'none' }} />
           <div style={{ position:'absolute', bottom:'-10%', left:'-5%', width:'400px', height:'400px', borderRadius:'50%', background:`radial-gradient(circle, rgba(55,138,221,.07) 0%, transparent 70%)`, pointerEvents:'none' }} />
 
-          <div style={{ maxWidth:'760px', margin:'0 auto', textAlign:'center', position:'relative' }}>
-            <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'28px', padding:'7px 16px', border:`1px solid ${GLINE2}`, background:'rgba(201,168,76,.06)' }}>
-              <div style={{ width:'7px', height:'7px', borderRadius:'50%', background:'#1D9E75', animation:'vi-pulse 2s infinite' }} />
-              <span style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.18em', color:GOLD }}>FOUNDING COHORT. NOW OPEN.</span>
+          <div className="wl-hero-grid" style={{ position:'relative' }}>
+            <div className="wl-hero-text">
+              <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'28px', padding:'7px 16px', border:`1px solid ${GLINE2}`, background:'rgba(201,168,76,.06)' }}>
+                <div style={{ width:'7px', height:'7px', borderRadius:'50%', background:'#1D9E75', animation:'vi-pulse 2s infinite' }} />
+                <span style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.18em', color:GOLD }}>FOUNDING COHORT. NOW OPEN.</span>
+              </div>
+
+              <h1 style={{ fontSize:'clamp(32px,5vw,58px)', fontWeight:200, lineHeight:1.15, letterSpacing:'-.03em', marginBottom:'24px', color:PARCH }}>
+                The best person for the job keeps losing to the{' '}
+                <em style={{ fontStyle:'italic', color:GOLD, fontWeight:300 }}>most connected one.</em>
+              </h1>
+              <p style={{ fontSize:'clamp(16px,2vw,20px)', fontWeight:300, color:DIM, lineHeight:1.75, marginBottom:'40px' }}>
+                Valoria is where African professionals get assessed, verified, and put in front of the people who actually hire, book, and commission, based on what they can do, not who they know.
+              </p>
+              <div style={{ display:'flex', gap:'12px', flexWrap:'wrap' }} className="wl-hero-cta">
+                <button onClick={openJoin}
+                  style={{ padding:'15px 36px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:600, letterSpacing:'.16em', border:'none', borderRadius:'9999px', cursor:'pointer', fontFamily:'inherit' }}>
+                  JOIN THE WAITLIST →
+                </button>
+                <button onClick={scrollToJourney}
+                  style={{ padding:'14px 30px', border:`1px solid ${PLINE}`, color:DIM, fontSize:'12px', fontWeight:400, letterSpacing:'.14em', background:'transparent', borderRadius:'9999px', cursor:'pointer', fontFamily:'inherit' }}>
+                  SEE HOW IT WORKS
+                </button>
+              </div>
             </div>
 
-            <h1 style={{ fontSize:'clamp(32px,5vw,60px)', fontWeight:200, lineHeight:1.15, letterSpacing:'-.03em', marginBottom:'24px', color:PARCH, maxWidth:'820px', marginLeft:'auto', marginRight:'auto' }}>
-              The best person for the job keeps losing to the{' '}
-              <em style={{ fontStyle:'italic', color:GOLD, fontWeight:300 }}>most connected one.</em>
-            </h1>
-            <p style={{ fontSize:'clamp(16px,2vw,20px)', fontWeight:300, color:DIM, lineHeight:1.75, maxWidth:'560px', margin:'0 auto 40px' }}>
-              Valoria is where African professionals get assessed, verified, and put in front of the people who actually hire, book, and commission, based on what they can do, not who they know.
-            </p>
-            <div style={{ display:'flex', gap:'12px', justifyContent:'center', flexWrap:'wrap' }} className="wl-hero-cta">
-              <button onClick={openJoin}
-                style={{ padding:'15px 36px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:600, letterSpacing:'.16em', border:'none', borderRadius:'9999px', cursor:'pointer', fontFamily:'inherit' }}>
-                JOIN THE WAITLIST →
-              </button>
-              <button onClick={scrollToJourney}
-                style={{ padding:'14px 30px', border:`1px solid ${PLINE}`, color:DIM, fontSize:'12px', fontWeight:400, letterSpacing:'.14em', background:'transparent', borderRadius:'9999px', cursor:'pointer', fontFamily:'inherit' }}>
-                SEE HOW IT WORKS
-              </button>
+            {/* Desktop-only visual: a preview of what a VALU Index profile looks like */}
+            <div className="wl-hero-visual">
+              <div style={{ background:CARD, border:`1px solid ${GLINE2}`, borderRadius:'18px', padding:'32px', width:'100%', maxWidth:'380px' }}>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'22px' }}>
+                  <span style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.16em', color:FAINT }}>VALU INDEX PROFILE</span>
+                  <span style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.12em', color:'#1D9E75', padding:'3px 9px', border:'1px solid rgba(29,158,117,.35)', borderRadius:'9999px' }}>VERIFIED</span>
+                </div>
+                <div style={{ display:'flex', alignItems:'baseline', gap:'8px', marginBottom:'26px' }}>
+                  <span style={{ fontSize:'52px', fontWeight:200, color:GOLD, letterSpacing:'-.02em', lineHeight:1 }}>91</span>
+                  <span style={{ fontSize:'13px', fontWeight:300, color:DIM }}>/ 100 overall score</span>
+                </div>
+                <div style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
+                  {[
+                    { name:'Presence', color:'#1D9E75', pct:88 },
+                    { name:'Resolve', color:'#378ADD', pct:94 },
+                    { name:'Intelligence', color:'#7F77DD', pct:90 },
+                    { name:'Mastery', color:'#BA7517', pct:85 },
+                    { name:'Expression', color:'#D85A30', pct:96 },
+                  ].map(d => (
+                    <div key={d.name}>
+                      <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'5px' }}>
+                        <span style={{ fontSize:'11px', fontWeight:500, color:PARCH }}>{d.name}</span>
+                        <span style={{ fontSize:'11px', fontWeight:600, color:d.color }}>{d.pct}</span>
+                      </div>
+                      <div style={{ height:'4px', borderRadius:'2px', background:'rgba(255,255,255,.06)', overflow:'hidden' }}>
+                        <div style={{ height:'100%', width:`${d.pct}%`, borderRadius:'2px', background:d.color }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
         {/* ── WHO IT'S FOR — the next thing you see after the hero ─────── */}
-        <section style={{ padding:'clamp(60px,8vw,100px) clamp(20px,5vw,80px)', borderBottom:`1px solid ${GLINE}`, background:MID }}>
+        <section id="who" style={{ padding:'clamp(60px,8vw,100px) clamp(20px,5vw,80px)', borderBottom:`1px solid ${GLINE}`, background:MID }}>
           <div style={{ maxWidth:'900px', margin:'0 auto', textAlign:'center' }}>
             <SectionIntro eyebrow="WHO IT'S FOR" />
             <h2 style={{ fontSize:'clamp(28px,4vw,52px)', fontWeight:200, lineHeight:1.1, letterSpacing:'-.02em', marginBottom:'48px' }}>
@@ -314,7 +392,7 @@ export default function WaitlistPage() {
         </section>
 
         {/* ── PROBLEM (P) ──────────────────────────────────────────────── */}
-        <section style={{ padding:'clamp(60px,8vw,100px) clamp(20px,5vw,80px)', borderBottom:`1px solid ${GLINE}` }}>
+        <section id="problem" style={{ padding:'clamp(60px,8vw,100px) clamp(20px,5vw,80px)', borderBottom:`1px solid ${GLINE}` }}>
           <div style={{ maxWidth:'900px', margin:'0 auto', textAlign:'center' }}>
             <SectionIntro eyebrow="THE PROBLEM" />
             <h2 style={{ fontSize:'clamp(28px,4vw,52px)', fontWeight:200, lineHeight:1.1, letterSpacing:'-.02em', marginBottom:'16px' }}>
@@ -352,7 +430,7 @@ export default function WaitlistPage() {
         </section>
 
         {/* ── SOLUTION (S) ─────────────────────────────────────────────── */}
-        <section style={{ padding:'clamp(60px,8vw,100px) clamp(20px,5vw,80px)', borderBottom:`1px solid ${GLINE}` }}>
+        <section id="solution" style={{ padding:'clamp(60px,8vw,100px) clamp(20px,5vw,80px)', borderBottom:`1px solid ${GLINE}` }}>
           <div style={{ maxWidth:'900px', margin:'0 auto', textAlign:'center' }}>
             <SectionIntro eyebrow="THE SOLUTION" />
             <h2 style={{ fontSize:'clamp(28px,4vw,52px)', fontWeight:200, lineHeight:1.1, letterSpacing:'-.02em', marginBottom:'20px' }}>
@@ -402,7 +480,7 @@ export default function WaitlistPage() {
 
         {/* ── HOW IT WORKS / YOUR JOURNEY ──────────────────────────────── */}
         <section ref={howItWorksRef} id="how-it-works" style={{ padding:'clamp(60px,8vw,100px) clamp(20px,5vw,80px)', borderBottom:`1px solid ${GLINE}`, background:MID }}>
-          <div style={{ maxWidth:'900px', margin:'0 auto', textAlign:'center' }}>
+          <div style={{ maxWidth:'1000px', margin:'0 auto', textAlign:'center' }}>
             <SectionIntro eyebrow="HOW IT WORKS" />
             <h2 style={{ fontSize:'clamp(28px,4vw,52px)', fontWeight:200, lineHeight:1.1, letterSpacing:'-.02em', marginBottom:'16px' }}>
               Your journey,<br/><em style={{ fontStyle:'italic', color:GOLD }}>mapped out.</em>
@@ -411,47 +489,48 @@ export default function WaitlistPage() {
               What happens next looks a little different depending on why you are here. Pick the path that matches you.
             </p>
 
-            <div style={{ display:'flex', gap:'8px', justifyContent:'center', flexWrap:'wrap', marginBottom:'48px' }}>
-              {Object.entries(JOURNEYS).map(([key, j]) => (
-                <button key={key} onClick={() => setPersona(key)} style={{
-                  padding:'11px 22px', fontSize:'11px', fontWeight:600, letterSpacing:'.12em', borderRadius:'9999px',
-                  border: persona === key ? `1px solid ${j.color}` : `1px solid ${GLINE}`,
-                  background: persona === key ? `${j.color}1A` : 'transparent',
-                  color: persona === key ? j.color : FAINT,
-                  cursor:'pointer', fontFamily:'inherit',
-                }}>
-                  {j.label}
-                </button>
-              ))}
-            </div>
+            <div className="wl-journey-grid">
+              <div className="wl-journey-tabs">
+                {Object.entries(JOURNEYS).map(([key, j]) => (
+                  <button key={key} onClick={() => setPersona(key)} style={{
+                    padding:'11px 22px', fontSize:'11px', fontWeight:600, letterSpacing:'.12em', borderRadius:'9999px',
+                    border: persona === key ? `1px solid ${j.color}` : `1px solid ${GLINE}`,
+                    background: persona === key ? `${j.color}1A` : 'transparent',
+                    color: persona === key ? j.color : FAINT,
+                    cursor:'pointer', fontFamily:'inherit', textAlign:'left',
+                  }}>
+                    {j.label}
+                  </button>
+                ))}
+              </div>
 
-            <div style={{ display:'flex', flexDirection:'column', gap:'2px', textAlign:'left' }}>
-              {JOURNEYS[persona].steps.map((h, i) => (
-                <div key={i} style={{ display:'grid', gridTemplateColumns:'60px 4px 1fr', gap:'0 24px', alignItems:'stretch' }}>
-                  <div style={{ display:'flex', alignItems:'flex-start', paddingTop:'28px', justifyContent:'flex-end' }}>
-                    <span style={{ fontFamily:'var(--font,Raleway,sans-serif)', fontSize:'11px', fontWeight:700, letterSpacing:'.1em', color:JOURNEYS[persona].color }}>
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
+              <div style={{ display:'flex', flexDirection:'column', gap:'2px', textAlign:'left' }}>
+                {JOURNEYS[persona].steps.map((h, i) => (
+                  <div key={i} style={{ display:'grid', gridTemplateColumns:'60px 4px 1fr', gap:'0 24px', alignItems:'stretch' }}>
+                    <div style={{ display:'flex', alignItems:'flex-start', paddingTop:'28px', justifyContent:'flex-end' }}>
+                      <span style={{ fontFamily:'var(--font,Raleway,sans-serif)', fontSize:'11px', fontWeight:700, letterSpacing:'.1em', color:JOURNEYS[persona].color }}>
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                    </div>
+                    <div style={{ display:'flex', flexDirection:'column', alignItems:'center' }}>
+                      <div style={{ width:'4px', height:'28px', background: i === 0 ? 'transparent' : GLINE }} />
+                      <div style={{ width:'14px', height:'14px', borderRadius:'50%', border:`2px solid ${JOURNEYS[persona].color}`, background:MID, flexShrink:0 }} />
+                      <div style={{ flex:1, width:'2px', background: i === JOURNEYS[persona].steps.length - 1 ? 'transparent' : GLINE }} />
+                    </div>
+                    <div style={{ padding:'20px 0 32px' }}>
+                      <div style={{ fontSize:'16px', fontWeight:600, color:PARCH, marginBottom:'8px' }}>{h.title}</div>
+                      <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.75, margin:0, maxWidth:'560px' }}>{h.body}</p>
+                    </div>
                   </div>
-                  <div style={{ display:'flex', flexDirection:'column', alignItems:'center' }}>
-                    <div style={{ width:'4px', height:'28px', background: i === 0 ? 'transparent' : GLINE }} />
-                    <div style={{ width:'14px', height:'14px', borderRadius:'50%', border:`2px solid ${JOURNEYS[persona].color}`, background:MID, flexShrink:0 }} />
-                    <div style={{ flex:1, width:'2px', background: i === JOURNEYS[persona].steps.length - 1 ? 'transparent' : GLINE }} />
-                  </div>
-                  <div style={{ padding:'20px 0 32px' }}>
-                    <div style={{ fontSize:'16px', fontWeight:600, color:PARCH, marginBottom:'8px' }}>{h.title}</div>
-                    <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.75, margin:0, maxWidth:'560px' }}>{h.body}</p>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
         <CtaStrip nudge={NUDGES[1]} onClick={openJoin} />
 
-        {/* ── THE FOUNDING COHORT ──────────────────────────────────────── */}
-        <section style={{ padding:'clamp(60px,8vw,100px) clamp(20px,5vw,80px)', borderBottom:`1px solid ${GLINE}` }}>
+        <section id="founding" style={{ padding:'clamp(60px,8vw,100px) clamp(20px,5vw,80px)', borderBottom:`1px solid ${GLINE}` }}>
           <div style={{ maxWidth:'900px', margin:'0 auto', textAlign:'center' }}>
             <SectionIntro eyebrow="THE FOUNDING COHORT" />
             <h2 style={{ fontSize:'clamp(28px,4vw,52px)', fontWeight:200, lineHeight:1.1, letterSpacing:'-.02em', marginBottom:'20px' }}>
@@ -479,7 +558,7 @@ export default function WaitlistPage() {
         <CtaStrip nudge={NUDGES[2]} onClick={openJoin} />
 
         {/* ── FINAL CALL ────────────────────────────────────────────────── */}
-        <section style={{ padding:'clamp(70px,9vw,120px) clamp(20px,5vw,80px)', background:MID, textAlign:'center' }}>
+        <section id="join-cta" style={{ padding:'clamp(70px,9vw,120px) clamp(20px,5vw,80px)', background:MID, textAlign:'center' }}>
           <div style={{ maxWidth:'620px', margin:'0 auto' }}>
             <h2 style={{ fontSize:'clamp(28px,4vw,46px)', fontWeight:200, color:PARCH, lineHeight:1.15, marginBottom:'16px', letterSpacing:'-.02em' }}>
               Join the<br/><em style={{ fontStyle:'italic', color:GOLD }}>founding cohort.</em>
@@ -524,6 +603,65 @@ export default function WaitlistPage() {
         }
         @media (max-width: 640px) {
           .wl-hero-cta { flex-direction: column !important; }
+        }
+
+        /* ── Mobile-first defaults (this is exactly what you have today) ── */
+        .wl-hero-grid { max-width: 760px; margin: 0 auto; text-align: center; }
+        .wl-hero-text { }
+        .wl-hero-visual { display: none; }
+
+        .wl-journey-grid { display: block; max-width: 900px; margin: 0 auto; }
+        .wl-journey-tabs { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; }
+
+        .wl-side-nav { display: none; }
+
+        /* ── Real desktop experience, 1024px and up ── */
+        @media (min-width: 1024px) {
+          .wl-hero-grid {
+            max-width: 1160px; text-align: left;
+            display: grid; grid-template-columns: 1.05fr .95fr; gap: 64px; align-items: center;
+          }
+          .wl-hero-cta { justify-content: flex-start; }
+          .wl-hero-visual { display: flex; justify-content: center; }
+
+          .wl-journey-grid {
+            max-width: 1000px;
+            display: grid; grid-template-columns: 200px 1fr; gap: 8px 48px; align-items: start;
+          }
+          .wl-journey-tabs {
+            flex-direction: column; justify-content: flex-start; margin-bottom: 0;
+            position: sticky; top: 120px;
+          }
+        }
+
+        /* ── Sticky side-nav, only once there's real room beside the content ── */
+        @media (min-width: 1440px) {
+          .wl-side-nav {
+            display: flex; flex-direction: column; gap: 18px;
+            position: fixed; left: 40px; top: 50%; transform: translateY(-50%);
+            z-index: 400;
+          }
+          .wl-side-nav-item {
+            display: flex; align-items: center; gap: 10px;
+            background: none; border: none; cursor: pointer; padding: 2px 0;
+            font-family: inherit;
+          }
+          .wl-side-nav-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: rgba(247,244,238,.2);
+            transition: background .25s, transform .25s;
+            flex-shrink: 0;
+          }
+          .wl-side-nav-label {
+            font-size: 11px; font-weight: 400; letter-spacing: .04em;
+            color: rgba(247,244,238,.3);
+            white-space: nowrap;
+            opacity: 0; transform: translateX(-6px);
+            transition: opacity .2s, transform .2s;
+          }
+          .wl-side-nav:hover .wl-side-nav-label { opacity: 1; transform: translateX(0); }
+          .wl-side-nav-item.active .wl-side-nav-dot { background: #C9A84C; transform: scale(1.3); }
+          .wl-side-nav-item.active .wl-side-nav-label { color: #C9A84C; opacity: 1; transform: translateX(0); }
         }
       `}</style>
       <Footer />
