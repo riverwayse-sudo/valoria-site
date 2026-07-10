@@ -1,6 +1,5 @@
 'use client'
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
 
 const GATE_KEY   = 'vi_waitlist_gate_v2'
 const COOKIE_KEY = 'vi_waitlist_v2'
@@ -87,40 +86,32 @@ export default function WaitlistForm() {
     setLoading(true)
     setError('')
     try {
-      const { error: sbError } = await supabase
-        .from('waitlist')
-        .insert([{
+      // Goes through the server route rather than calling Supabase directly
+      // from the browser — that's what actually sends the welcome email and
+      // syncs to Brevo (both need a server-side API key that must never be
+      // exposed client-side). The route itself already treats a duplicate
+      // signup as a success, so any non-ok response here is a real error.
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           full_name: name.trim(),
           email:     email.trim().toLowerCase(),
           role:      role.trim() || null,
           interest:  interest || null,
           type:      'homepage',
           source:    'homepage_form',
-        }])
-      if (sbError) {
-        if (sbError.code === '23505') {
-          // Already on the list — still show success + set cookie
-          localStorage.setItem(GATE_KEY, 'submitted')
-          document.cookie = `${COOKIE_KEY}=submitted; path=/; max-age=31536000`
-          setSubmitted(true)
-          return
-        }
-        // Column missing? Try without interest field
-        if (sbError.message && sbError.message.includes('interest')) {
-          const { error: retry } = await supabase.from('waitlist').insert([{
-            full_name: name.trim(), email: email.trim().toLowerCase(),
-            role: role.trim() || null, type: 'homepage', source: 'homepage_form',
-          }])
-          if (retry && retry.code !== '23505') throw retry
-        } else {
-          throw sbError
-        }
+        }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Something went wrong.')
       }
       localStorage.setItem(GATE_KEY, 'submitted')
       document.cookie = `${COOKIE_KEY}=submitted; path=/; max-age=31536000`
       setSubmitted(true)
-    } catch {
-      setError('Something went wrong. Please try again.')
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Please try again.')
     } finally {
       setLoading(false)
     }

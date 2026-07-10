@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { isLaunched } from '@/lib/launchDate'
 
 export default function Nav() {
   const [scrolled, setScrolled]       = useState(false)
@@ -11,8 +12,18 @@ export default function Nav() {
   const [userType, setUserType]       = useState(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [gateCleared, setGateCleared] = useState(false)
+  const [launched, setLaunched]       = useState(false)
 
   useEffect(() => {
+    // Post-launch, the nav always shows — the full-lockdown gate is gone
+    // entirely at that point (see middleware.js). Pre-launch, it still
+    // shows only once the visitor has cleared the waitlist popup/page.
+    const launchedNow = isLaunched()
+    setLaunched(launchedNow)
+    if (launchedNow) {
+      setGateCleared(true)
+      return
+    }
     const inCookie = document.cookie.includes('vi_waitlist_v2')
     const inLocal = localStorage.getItem('vi_waitlist_gate_v2')
     setGateCleared(inCookie || !!inLocal)
@@ -57,6 +68,15 @@ export default function Nav() {
   }
 
   const closeMenu = () => setMenuOpen(false)
+
+  // Pre-launch: always push toward the waitlist. Post-launch: the site is
+  // actually open, so pushing people to "JOIN THE WAITLIST" would look
+  // broken — swap to a real signup/dashboard CTA instead.
+  const cta = !launched
+    ? { label: 'JOIN THE WAITLIST', href: '/#waitlist' }
+    : user
+      ? { label: 'GET STARTED', href: '/dashboard' }
+      : { label: 'JOIN VALORIA', href: '/register' }
 
   if (!gateCleared) return null
 
@@ -221,8 +241,8 @@ export default function Nav() {
             )
           )}
           <li>
-            <a href="/#waitlist" className="nav-cta">
-              JOIN THE WAITLIST
+            <a href={cta.href} className="nav-cta">
+              {cta.label}
             </a>
           </li>
         </ul>
@@ -252,8 +272,8 @@ export default function Nav() {
             <Link href="/login" onClick={closeMenu}>Sign In</Link>
           )
         )}
-        <a href="/#waitlist" className="m-cta" onClick={closeMenu}>
-          JOIN THE WAITLIST
+        <a href={cta.href} className="m-cta" onClick={closeMenu}>
+          {cta.label}
         </a>
       </nav>
     </>

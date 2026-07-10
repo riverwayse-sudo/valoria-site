@@ -9,6 +9,7 @@ const supabase = createClient(
 )
 
 const BREVO_KEY = process.env.BREVO_API_KEY
+const BREVO_LIST_ID = process.env.BREVO_LIST_ID
 const FROM_EMAIL = 'info@valoriainstitute.com'
 const FROM_NAME  = 'Valoria Institute'
 
@@ -182,6 +183,39 @@ async function sendWelcomeEmail(email, fullName, interest, role) {
   })
 }
 
+// Adds/updates this signup as a contact in a Brevo list, so it can be used
+// for real marketing campaigns (e.g. the webinar invite) from Brevo's own
+// dashboard — rather than a one-off script here.
+// Requires BREVO_LIST_ID (numeric ID from Brevo → Contacts → Lists), and
+// the custom attributes ROLE/INTEREST/SOURCE created in Brevo's contact
+// attribute settings — Brevo silently drops attributes it doesn't know.
+async function syncToBrevoList(email, fullName, role, interest, source) {
+  if (!BREVO_KEY || !BREVO_LIST_ID) return
+
+  const [firstName, ...rest] = (fullName || '').trim().split(' ')
+  const lastName = rest.join(' ') || ''
+
+  await fetch('https://api.brevo.com/v3/contacts', {
+    method: 'POST',
+    headers: {
+      'api-key': BREVO_KEY,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email,
+      attributes: {
+        FIRSTNAME: firstName || '',
+        LASTNAME:  lastName,
+        ROLE:      role || '',
+        INTEREST:  interest || '',
+        SOURCE:    source || '',
+      },
+      listIds: [Number(BREVO_LIST_ID)],
+      updateEnabled: true,
+    }),
+  }).catch(() => {})
+}
+
 export async function POST(request) {
   try {
     const body = await request.json()
@@ -215,6 +249,11 @@ export async function POST(request) {
     // Send welcome email (fire and forget — don't block the response)
     sendWelcomeEmail(email.trim().toLowerCase(), full_name.trim(), interest, role?.trim()).catch(
       err => console.error('Brevo email error:', err)
+    )
+
+    // Sync to Brevo marketing list (fire and forget — don't block the response)
+    syncToBrevoList(email.trim().toLowerCase(), full_name.trim(), role?.trim(), interest, source || 'waitlist_page').catch(
+      err => console.error('Brevo list sync error:', err)
     )
 
     return Response.json({ message: 'Joined successfully.' }, { status: 200 })

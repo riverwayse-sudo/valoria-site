@@ -1,18 +1,26 @@
 import { NextResponse } from 'next/server'
+import { isLaunched } from '@/lib/launchDate'
 
-// Always accessible — no cookie required
-// LAUNCH MODE: only the waitlist page (+ the legal pages it links to) is public.
+// FULL LOCKDOWN, by design, until launch: only these stay reachable.
 // Everything else — including the homepage — redirects to /waitlist.
+// After LAUNCH_DATE, this whole gate lifts automatically, for every
+// route, with no redeploy and no manual toggle. See src/lib/launchDate.js
+// for the one shared switch both this file and Nav.jsx read from.
 const PUBLIC = new Set([
   '/waitlist',
   '/privacypolicy',
   '/terms-of-use',
 ])
 
+// Server-only secret for Joshua's own pre-launch testing. Never prefixed
+// NEXT_PUBLIC_, so it never ships in the client bundle or public source.
+const PREVIEW_SECRET = process.env.PREVIEW_BYPASS_SECRET
+
 export function middleware(request) {
   const { pathname } = request.nextUrl
 
-  // Static assets — never gate
+  // Static assets and API routes — never gate. The waitlist page itself
+  // depends on /api/waitlist working pre-launch, so this must never block.
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
@@ -22,36 +30,26 @@ export function middleware(request) {
     return NextResponse.next()
   }
 
-  // Always-public pages
-  if (PUBLIC.has(pathname)) {
-    return NextResponse.next()
-  }
-
-  // ── Dev preview bypass ────────────────────────────────────────────────────
-  // Visit any URL with ?preview=vi2025 to bypass the gate for 7 days.
-  // Uses a SEPARATE cookie (vi_dev_preview) so it doesn't affect
-  // the WaitlistGate component which checks vi_waitlist_v2.
-  const preview = request.nextUrl.searchParams.get('preview')
-  if (preview === 'vi2025') {
+  // ── Preview bypass (Joshua's own testing only) ────────────────────────────
+  const previewCookie = request.cookies.get('vi_dev_preview')
+  if (PREVIEW_SECRET && request.nextUrl.searchParams.get('preview') === PREVIEW_SECRET) {
     const res = NextResponse.next()
-    res.cookies.set('vi_dev_preview', '1', {
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7,
-      sameSite: 'lax',
-    })
+    res.cookies.set('vi_dev_preview', '1', { path: '/', maxAge: 60 * 60 * 24 * 7, sameSite: 'lax' })
     return res
   }
-
-  // ── Gate check ────────────────────────────────────────────────────────────
-  // LAUNCH MODE: joining the waitlist no longer unlocks the rest of the site —
-  // there's nothing ready behind it yet. Only the dev preview bypass gets through.
-  const previewCookie = request.cookies.get('vi_dev_preview')
-
   if (previewCookie) {
     return NextResponse.next()
   }
 
-  // No cookie — send to the waitlist page (only public page during launch mode)
+  // ── Post-launch: full lockdown lifts automatically ────────────────────────
+  if (isLaunched()) {
+    return NextResponse.next()
+  }
+
+  // ── Pre-launch: only the always-public pages are reachable ───────────────
+  if (PUBLIC.has(pathname)) {
+    return NextResponse.next()
+  }
   return NextResponse.redirect(new URL('/waitlist', request.url))
 }
 
