@@ -95,7 +95,7 @@ export default function DashboardPage() {
 
   const isSpeaker = isSupply && (profile.active_tracks || []).includes('speaker')
   const isOrganiser = !isSupply && profile.user_type === 'organiser'
-  const isVisible = isSupply && profile.listing_status === 'live'
+  const isVisible = isSupply && profile.listing_status === 'listed'
 
   return (
     <div style={{ minHeight: '100vh', background: DARK, fontFamily: "'Raleway', 'Helvetica Neue', Arial, sans-serif", color: PARCHMENT }}>
