@@ -1,7 +1,43 @@
 'use client'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Footer from '@/components/Footer'
 import EntryPointsGrid from '@/components/EntryPointsGrid'
+import WaitlistForm from '@/components/WaitlistForm'
+import { WaitlistSocialProofToast, WaitlistLiveCountBadge } from '@/components/WaitlistSocialProof'
+
+// Saturday, July 18, 2026, 10:00 AM WAT (UTC+1) = 09:00 UTC.
+const EVENT_DATE = new Date('2026-07-18T09:00:00Z')
+const MEET_LINK = 'https://meet.google.com/zmv-xjtb-iby'
+function pad(n) { return String(n).padStart(2, '0') }
+
+function useCountdown(target) {
+  const [timeLeft, setTimeLeft] = useState(null)
+  useEffect(() => {
+    function tick() {
+      const diff = target.getTime() - Date.now()
+      if (diff <= 0) { setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, done: true }); return }
+      setTimeLeft({
+        days: Math.floor(diff / 86400000),
+        hours: Math.floor((diff % 86400000) / 3600000),
+        minutes: Math.floor((diff % 3600000) / 60000),
+        seconds: Math.floor((diff % 60000) / 1000),
+        done: false,
+      })
+    }
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [target])
+  return timeLeft
+}
+
+// Tags this visit as coming from the webinar CTA so WaitlistForm can route
+// it into the separate Brevo webinar list + reminder automation, instead of
+// logging as a generic signup. Same pattern as HeroSlider.jsx.
+function markWebinarSource() {
+  try { sessionStorage.setItem('vi_signup_source', 'webinar_july18') } catch {}
+}
 
 // ─── brand ──────────────────────────────────────────────────────────────
 const GOLD    = '#C9A84C'
@@ -35,6 +71,7 @@ const WEBINAR_DETAILS = [
 
 // ─── component ──────────────────────────────────────────────────────────
 export default function WaitlistPage() {
+  const timeLeft = useCountdown(EVENT_DATE)
   return (
     <>
       <main style={{ background: DARK, color: PARCH, fontFamily: "var(--font,'Raleway','Helvetica Neue',Arial,sans-serif)", overflow: 'hidden' }}>
@@ -59,7 +96,7 @@ export default function WaitlistPage() {
               Valoria is where African professionals get assessed, verified, and put in front of the people who actually hire, book, and commission — based on what they can do, not who they know.
             </p>
             <div style={{ display:'flex', gap:'12px', justifyContent:'center', flexWrap:'wrap' }}>
-              <Link href="/#waitlist"
+              <Link href="#join"
                 style={{ padding:'16px 36px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor:'pointer', fontFamily:'inherit', textDecoration:'none', display:'inline-block' }}>
                 JOIN THE WAITLIST →
               </Link>
@@ -67,7 +104,16 @@ export default function WaitlistPage() {
                 SEE HOW IT WORKS
               </Link>
             </div>
+            <div style={{ marginTop:'20px' }}>
+              <WaitlistLiveCountBadge />
+            </div>
           </div>
+        </section>
+
+        {/* ── JOIN FORM — the actual signup mechanism. Everything above and
+             below this exists to get someone here and get them to submit. ── */}
+        <section id="join" style={{ padding:'clamp(48px,7vw,80px) clamp(20px,5vw,80px)', borderBottom:`1px solid ${GLINE}`, display:'flex', justifyContent:'center' }}>
+          <WaitlistForm />
         </section>
 
         {/* ── WEBINAR FLYER ─────────────────────────────────────────────── */}
@@ -86,6 +132,41 @@ export default function WaitlistPage() {
                 A new standard for visibility, trust, and opportunity.
               </p>
 
+              {/* Live ticking countdown — was previously just a static
+                  date/time row with nothing that moved. Urgency triggers
+                  work because they're visibly alive, not printed once. */}
+              <div style={{ marginBottom:'32px' }}>
+                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.22em', color:'rgba(201,168,76,.5)', textTransform:'uppercase', marginBottom:'16px' }}>
+                  {timeLeft && timeLeft.done ? "WE'RE LIVE" : 'STARTS IN'}
+                </div>
+                {timeLeft && !timeLeft.done ? (
+                  <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'center', gap:'4px' }}>
+                    {[
+                      { n: timeLeft.days, l: 'Days' },
+                      { n: timeLeft.hours, l: 'Hrs' },
+                      { n: timeLeft.minutes, l: 'Min' },
+                      { n: timeLeft.seconds, l: 'Sec' },
+                    ].map((u, i, arr) => (
+                      <div key={u.l} style={{ display:'flex', alignItems:'flex-start' }}>
+                        <div style={{ display:'flex', flexDirection:'column', alignItems:'center', minWidth:'52px' }}>
+                          <span style={{ fontFamily:'var(--font)', fontSize:'clamp(28px,3.5vw,40px)', fontWeight:200, color:PARCH, lineHeight:1, fontVariantNumeric:'tabular-nums' }}>{pad(u.n)}</span>
+                          <span style={{ fontSize:'9px', fontWeight:600, letterSpacing:'.12em', color:'rgba(247,244,238,.4)', textTransform:'uppercase', marginTop:'6px' }}>{u.l}</span>
+                        </div>
+                        {i < arr.length - 1 && <span style={{ fontSize:'clamp(24px,3vw,34px)', fontWeight:200, color:'rgba(201,168,76,.3)', padding:'0 2px' }}>:</span>}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <a href={MEET_LINK} target="_blank" rel="noopener noreferrer" onClick={markWebinarSource}
+                    style={{ display:'inline-block', fontSize:'18px', fontWeight:300, color:GOLD, textDecoration:'none' }}>
+                    Join now →
+                  </a>
+                )}
+                <div style={{ marginTop:'20px', paddingTop:'16px', borderTop:`1px solid ${GLINE}` }}>
+                  <WaitlistLiveCountBadge />
+                </div>
+              </div>
+
               <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(150px,1fr))', gap:'1px', background:GLINE, marginBottom:'32px', border:`1px solid ${GLINE}` }}>
                 {WEBINAR_DETAILS.map((d, i) => (
                   <div key={i} style={{ background:DARK, padding:'18px 12px' }}>
@@ -99,7 +180,7 @@ export default function WaitlistPage() {
                 Hosted by <strong style={{ color:DIM, fontWeight:600 }}>Temitayo Adetokunbo</strong> — Founder, Valoria Institute
               </p>
 
-              <Link href="/#waitlist"
+              <Link href="#join" onClick={markWebinarSource}
                 style={{ padding:'16px 40px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', textDecoration:'none', display:'inline-block' }}>
                 RESERVE YOUR SEAT →
               </Link>
@@ -241,7 +322,7 @@ export default function WaitlistPage() {
             {/* Three entry points — same shared component as the homepage,
                 so this never drifts out of sync with it again. */}
             <div className="ep-grid" style={{ border:`1px solid ${GLINE2}` }}>
-              <EntryPointsGrid ctaHref="/#waitlist" />
+              <EntryPointsGrid ctaHref="#join" />
             </div>
           </div>
         </section>
@@ -273,7 +354,7 @@ export default function WaitlistPage() {
                 </div>
               ))}
             </div>
-            <Link href="/#waitlist"
+            <Link href="#join"
               style={{ padding:'16px 36px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', textDecoration:'none', display:'inline-block' }}>
               JOIN THE FOUNDING COHORT →
             </Link>
@@ -308,6 +389,7 @@ export default function WaitlistPage() {
         }
         select option { background: #1A1A2E; color: #F7F4EE; }
       `}</style>
+      <WaitlistSocialProofToast />
       <Footer />
     </>
   )

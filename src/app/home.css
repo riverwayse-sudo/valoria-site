@@ -126,7 +126,7 @@
   text-transform: uppercase;
 }
 @media (max-width: 900px) {
-  .webinar-countdown-card { display: none; }
+  .webinar-countdown-card { padding: 20px; margin-top: 8px; }
 }
 
 .hero-bg {

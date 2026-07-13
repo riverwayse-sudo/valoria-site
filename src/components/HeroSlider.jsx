@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import WaitlistForm from '@/components/WaitlistForm'
+import { WaitlistSocialProofToast, WaitlistLiveCountBadge } from '@/components/WaitlistSocialProof'
 
 // Saturday, July 18, 2026, 10:00 AM WAT (UTC+1) = 09:00 UTC.
 // Update this if the event date/time changes — nothing else needs to.
@@ -195,7 +196,7 @@ export default function HeroSlider() {
               ) : (
                 <a href={MEET_LINK} target="_blank" rel="noopener noreferrer" className="wc-live-link" onClick={markWebinarSource}>Join now →</a>
               )}
-              <div className="wc-foot">Worth. Built</div>
+              <div className="wc-foot"><WaitlistLiveCountBadge /></div>
             </div>
           </div>
         </div>
@@ -237,6 +238,8 @@ export default function HeroSlider() {
           <path d="M1 1l6 6 6-6" stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
+
+      <WaitlistSocialProofToast />
     </section>
   )
 }
