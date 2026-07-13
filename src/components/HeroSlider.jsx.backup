@@ -195,7 +195,7 @@ export default function HeroSlider() {
               ) : (
                 <a href={MEET_LINK} target="_blank" rel="noopener noreferrer" className="wc-live-link" onClick={markWebinarSource}>Join now →</a>
               )}
-              <div className="wc-foot">Worth. Built</div>
+              <div className="wc-foot">Discovered. Trusted. Rewarded.</div>
             </div>
           </div>
         </div>
