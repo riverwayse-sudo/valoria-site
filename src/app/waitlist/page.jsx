@@ -1,11 +1,10 @@
 'use client'
-import { useState, useRef } from 'react'
 import Link from 'next/link'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import EntryPointsGrid from '@/components/EntryPointsGrid'
 
-// ─── brand ───────────────────────────────────────────────────────────────────
+// ─── brand ──────────────────────────────────────────────────────────────
 const GOLD    = '#C9A84C'
 const DARK    = '#0F0F1A'
 const MID     = '#1A1A2E'
@@ -15,12 +14,9 @@ const FAINT   = 'rgba(247,244,238,.25)'
 const GLINE   = 'rgba(201,168,76,.12)'
 const GLINE2  = 'rgba(201,168,76,.28)'
 
-const GATE_KEY   = 'vi_waitlist_gate_v2'
-const COOKIE_KEY = 'vi_waitlist_v2'
-
-// ─── Copy data ───────────────────────────────────────────────────────────────
+// ─── Copy data ──────────────────────────────────────────────────────────
 const PAIN_POINTS = [
-  { icon: '👔', headline: 'You applied for the job.', body: 'Someone with half your experience got it. Why? Because they knew the hiring manager.' },
+  { icon: '👀', headline: 'You applied for the job.', body: 'Someone with half your experience got it. Why? Because they knew the hiring manager.' },
   { icon: '🎤', headline: 'You should be on that stage.', body: "The same three speakers keep getting booked — not because they're the best, but because the organiser only has five contacts." },
   { icon: '📋', headline: "You've done the work.", body: 'But the training contract went to the big-name consultant everyone already knows. Your track record stayed invisible.' },
 ]
@@ -65,79 +61,15 @@ const FOR_WHO = [
   },
 ]
 
-const SUCCESS_TRACKS = [
-  { color:'#378ADD', label:'ATB CONNECT',   desc:'Employers find pre-assessed candidates by score, strength, and sector.' },
-  { color: GOLD,      label:'ATB SPOTLIGHT', desc:'Event planners discover and book speakers whose capability is verified.' },
-  { color:'#1D9E75', label:'ATB DEVELOP',   desc:'L&D leaders commission PRIME-certified facilitators with an assessed track record.' },
+const WEBINAR_DETAILS = [
+  { label: 'DATE', value: 'Saturday, July 18, 2026' },
+  { label: 'TIME', value: '10:00 AM – 1:00 PM WAT' },
+  { label: 'FORMAT', value: 'Virtual — Google Meet' },
+  { label: 'COST', value: 'Free' },
 ]
 
-// ─── component ───────────────────────────────────────────────────────────────
+// ─── component ──────────────────────────────────────────────────────────
 export default function WaitlistPage() {
-  const [name,      setName]      = useState('')
-  const [email,     setEmail]     = useState('')
-  const [role,      setRole]      = useState('')
-  const [interest,  setInterest]  = useState('')
-  const [submitted, setSubmitted] = useState(false)
-  const [loading,   setLoading]   = useState(false)
-  const [error,     setError]     = useState('')
-  const formRef = useRef(null)
-
-  const valid = name.trim().length > 1 && email.includes('@') && email.includes('.')
-
-  async function handleSubmit() {
-    if (!valid || loading) return
-    setLoading(true)
-    setError('')
-
-    // Same webinar tagging as the homepage form — plus a URL param fallback
-    // (?ref=webinar) so a direct link shared on social/ads for the flyer
-    // still lands people in the right Brevo list even without going through
-    // the homepage slider first.
-    let source = 'waitlist_page'
-    let type = 'standalone'
-    try {
-      const params = new URLSearchParams(window.location.search)
-      const webinarSource = sessionStorage.getItem('vi_signup_source') || (params.get('ref') === 'webinar' ? 'webinar_july18' : null)
-      if (webinarSource) {
-        source = webinarSource
-        type = 'webinar'
-        sessionStorage.removeItem('vi_signup_source')
-      }
-    } catch {}
-
-    try {
-      const res = await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          full_name: name.trim(),
-          email:     email.trim().toLowerCase(),
-          role:      role.trim() || null,
-          interest:  interest || null,
-          type,
-          source,
-        }),
-      })
-      if (!res.ok && res.status !== 409) throw new Error('failed')
-      // Set access cookie + localStorage
-      localStorage.setItem(GATE_KEY, 'submitted')
-      document.cookie = `${COOKIE_KEY}=submitted; path=/; max-age=31536000`
-      setSubmitted(true)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-
-      if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
-        window.fbq('track', 'Lead')
-        if (type === 'webinar') {
-          window.fbq('track', 'CompleteRegistration', { content_name: 'Webinar — July 18' })
-        }
-      }
-    } catch {
-      setError('Something went wrong. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
     <>
       <style>{`
@@ -153,7 +85,7 @@ export default function WaitlistPage() {
       <Nav />
       <main style={{ background: DARK, color: PARCH, fontFamily: "var(--font,'Raleway','Helvetica Neue',Arial,sans-serif)", overflow: 'hidden' }}>
 
-        {/* ── HERO ─────────────────────────────────────────────────────── */}
+        {/* ── HERO ──────────────────────────────────────────────────────── */}
         <section style={{ padding: 'clamp(60px,8vw,110px) clamp(20px,5vw,80px) clamp(48px,6vw,80px)', borderBottom: `1px solid ${GLINE}`, position: 'relative', overflow: 'hidden' }}>
           {/* Background glow */}
           <div style={{ position:'absolute', top:'-20%', right:'-10%', width:'600px', height:'600px', borderRadius:'50%', background:`radial-gradient(circle, rgba(201,168,76,.1) 0%, transparent 70%)`, pointerEvents:'none' }} />
@@ -173,12 +105,49 @@ export default function WaitlistPage() {
               Valoria is where African professionals get assessed, verified, and put in front of the people who actually hire, book, and commission — based on what they can do, not who they know.
             </p>
             <div style={{ display:'flex', gap:'12px', justifyContent:'center', flexWrap:'wrap' }}>
-              <button onClick={() => formRef.current?.scrollIntoView({ behavior:'smooth' })}
-                style={{ padding:'16px 36px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor:'pointer', fontFamily:'inherit' }}>
+              <Link href="/#waitlist"
+                style={{ padding:'16px 36px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor:'pointer', fontFamily:'inherit', textDecoration:'none', display:'inline-block' }}>
                 JOIN THE WAITLIST →
-              </button>
+              </Link>
               <Link href="/atb-connect?preview=vi2025" style={{ padding:'16px 36px', border:`1px solid ${GLINE2}`, color:PARCH, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', textDecoration:'none' }}>
                 SEE HOW IT WORKS
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ── WEBINAR FLYER ─────────────────────────────────────────────── */}
+        <section style={{ padding:'clamp(48px,7vw,80px) clamp(20px,5vw,80px)', borderBottom:`1px solid ${GLINE}`, background:MID }}>
+          <div style={{ maxWidth:'760px', margin:'0 auto' }}>
+            <div style={{ border:`1px solid ${GLINE2}`, background:'rgba(201,168,76,.05)', padding:'clamp(28px,5vw,48px)', textAlign:'center', position:'relative' }}>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'20px', padding:'6px 14px', border:`1px solid ${GLINE2}` }}>
+                <div style={{ width:'6px', height:'6px', borderRadius:'50%', background:'#D85A30' }} />
+                <span style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.18em', color:GOLD }}>LIVE WEBINAR</span>
+              </div>
+
+              <h2 style={{ fontSize:'clamp(24px,3.6vw,38px)', fontWeight:200, lineHeight:1.2, letterSpacing:'-.02em', color:PARCH, marginBottom:'12px' }}>
+                Why being good at your job<br/>is no longer <em style={{ fontStyle:'italic', color:GOLD }}>enough.</em>
+              </h2>
+              <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.7, marginBottom:'32px' }}>
+                A new standard for visibility, trust, and opportunity.
+              </p>
+
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(150px,1fr))', gap:'1px', background:GLINE, marginBottom:'32px', border:`1px solid ${GLINE}` }}>
+                {WEBINAR_DETAILS.map((d, i) => (
+                  <div key={i} style={{ background:DARK, padding:'18px 12px' }}>
+                    <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.16em', color:'rgba(201,168,76,.5)', marginBottom:'6px' }}>{d.label}</div>
+                    <div style={{ fontSize:'13px', fontWeight:500, color:PARCH }}>{d.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <p style={{ fontSize:'12px', fontWeight:300, color:FAINT, marginBottom:'28px' }}>
+                Hosted by <strong style={{ color:DIM, fontWeight:600 }}>Temitayo Adetokunbo</strong> — Founder, Valoria Institute
+              </p>
+
+              <Link href="/#waitlist"
+                style={{ padding:'16px 40px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', textDecoration:'none', display:'inline-block' }}>
+                RESERVE YOUR SEAT →
               </Link>
             </div>
           </div>
@@ -335,7 +304,7 @@ export default function WaitlistPage() {
             {/* Three entry points — same shared component as the homepage,
                 so this never drifts out of sync with it again. */}
             <div className="ep-grid" style={{ border:`1px solid ${GLINE2}` }}>
-              <EntryPointsGrid ctaHref="#join" />
+              <EntryPointsGrid ctaHref="/#waitlist" />
             </div>
           </div>
         </section>
@@ -354,7 +323,7 @@ export default function WaitlistPage() {
             <p style={{ fontSize:'clamp(15px,1.8vw,18px)', fontWeight:300, color:DIM, lineHeight:1.8, maxWidth:'580px', margin:'0 auto 40px' }}>
               We're building the founding cohort right now. The professionals who join before public launch get priority placement, early access to the marketplace, and a direct line to shape how Valoria develops.
             </p>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px,1fr))', gap:'1px', background:GLINE, marginBottom:'0', border:`1px solid ${GLINE}` }}>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px,1fr))', gap:'1px', background:GLINE, marginBottom:'40px', border:`1px solid ${GLINE}` }}>
               {[
                 { stat:'1st access', label:'Before the public launch' },
                 { stat:'Priority',   label:'Placement in search results' },
@@ -367,139 +336,10 @@ export default function WaitlistPage() {
                 </div>
               ))}
             </div>
-          </div>
-        </section>
-
-        {/* ── THE FORM ─────────────────────────────────────────────────── */}
-        <section ref={formRef} id="join" style={{ padding:'clamp(60px,8vw,100px) clamp(20px,5vw,80px)', background:MID }}>
-          <div style={{ maxWidth:'560px', margin:'0 auto' }}>
-
-            {submitted ? (
-              /* ── SUCCESS STATE ── */
-              <div>
-                <div style={{ display:'flex', justifyContent:'center', marginBottom:'24px' }}>
-                  <div style={{ width:'56px', height:'56px', borderRadius:'50%', background:'rgba(29,158,117,.12)', border:'1px solid rgba(29,158,117,.3)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M5 12l5 5L20 7" stroke="#1D9E75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                </div>
-                <h2 style={{ fontSize:'clamp(28px,4vw,44px)', fontWeight:200, color:PARCH, textAlign:'center', lineHeight:1.1, marginBottom:'12px', letterSpacing:'-.02em' }}>
-                  You're on the list.
-                </h2>
-                <p style={{ fontSize:'14px', fontWeight:300, color:DIM, textAlign:'center', lineHeight:1.75, marginBottom:'40px' }}>
-                  Something is being built that Africa has never had before.
-                </p>
-                <div style={{ borderTop:`1px solid ${GLINE}`, paddingTop:'32px' }}>
-                  {[
-                    { label:'THE PROBLEM', body:'Every day, exceptional African professionals are passed over — not because they lack capability, but because no one can prove it. The same names circulate. The same networks win. Everyone else waits.' },
-                    { label:'THE SHIFT',   body:'Valoria changes the question employers and organisers ask. Not "who do I already know?" — but "who is genuinely the best for this?" One assessed standard. No guesswork. No gatekeeping.' },
-                    { label:"WHAT'S COMING", body:'A marketplace where every profile is verified by the VALU Index. Where employers search by capability, not connection. Where speakers get booked on merit. Where facilitators earn trust before they walk into the room.' },
-                  ].map((s, i) => (
-                    <div key={i} style={{ marginBottom:'28px', paddingBottom:'28px', borderBottom:`1px solid ${GLINE}` }}>
-                      <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.2em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>{s.label}</div>
-                      <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.8, margin:0 }}>{s.body}</p>
-                    </div>
-                  ))}
-
-                  <div style={{ marginBottom:'28px' }}>
-                    <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.2em', color:'rgba(201,168,76,.45)', marginBottom:'16px' }}>THREE WAYS IN</div>
-                    {SUCCESS_TRACKS.map((t, i) => (
-                      <div key={i} style={{ display:'flex', gap:'12px', marginBottom:'14px', alignItems:'flex-start' }}>
-                        <div style={{ width:'3px', background:t.color, flexShrink:0, alignSelf:'stretch', borderRadius:'2px', minHeight:'32px' }} />
-                        <div>
-                          <div style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.14em', color:t.color, marginBottom:'3px' }}>{t.label}</div>
-                          <div style={{ fontSize:'12px', color:FAINT, lineHeight:1.6 }}>{t.desc}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div style={{ borderTop:`1px solid ${GLINE}`, paddingTop:'20px', textAlign:'center' }}>
-                    <p style={{ fontSize:'14px', fontWeight:200, color:FAINT, lineHeight:1.8, fontStyle:'italic', marginBottom:'8px' }}>You're early. That matters more than you think.</p>
-                    <span style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.5)' }}>WE'LL BE IN TOUCH.</span>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              /* ── FORM ── */
-              <div>
-                <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'16px' }}>
-                  <div style={{ height:'1px', width:'32px', background:GLINE2 }} />
-                  <span style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.2em', color:'rgba(201,168,76,.5)' }}>SECURE YOUR SPOT</span>
-                </div>
-                <h2 style={{ fontSize:'clamp(28px,4vw,44px)', fontWeight:200, color:PARCH, lineHeight:1.1, letterSpacing:'-.02em', marginBottom:'12px' }}>
-                  Join the<br/><em style={{ fontStyle:'italic', color:GOLD }}>founding cohort.</em>
-                </h2>
-                <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.75, marginBottom:'40px' }}>
-                  We'll hold your spot and reach out when the marketplace opens for your cohort. No spam. One email to confirm. Then we build together.
-                </p>
-
-                <div style={{ display:'flex', flexDirection:'column', gap:'4px' }}>
-                  {/* Full name */}
-                  <label style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.16em', color:'rgba(201,168,76,.5)', marginBottom:'6px' }}>FULL NAME *</label>
-                  <input
-                    style={S.input}
-                    type="text"
-                    placeholder="Your full name"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    autoComplete="name"
-                  />
-
-                  {/* Email */}
-                  <label style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.16em', color:'rgba(201,168,76,.5)', margin:'16px 0 6px' }}>EMAIL ADDRESS *</label>
-                  <input
-                    style={S.input}
-                    type="email"
-                    placeholder="you@email.com"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    autoComplete="email"
-                  />
-
-                  {/* Role */}
-                  <label style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.16em', color:'rgba(201,168,76,.5)', margin:'16px 0 6px' }}>YOUR ROLE / TITLE</label>
-                  <input
-                    style={S.input}
-                    type="text"
-                    placeholder="e.g. Head of Growth, Speaker, L&D Manager"
-                    value={role}
-                    onChange={e => setRole(e.target.value)}
-                  />
-
-                  {/* Interest */}
-                  <label style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.16em', color:'rgba(201,168,76,.5)', margin:'16px 0 6px' }}>I AM JOINING AS A...</label>
-                  <select style={{ ...S.input, color: interest ? PARCH : DIM }} value={interest} onChange={e => setInterest(e.target.value)}>
-                    <option value="" style={{ color: DIM }}>Select one</option>
-                    <option value="professional">Professional / Candidate</option>
-                    <option value="speaker">Speaker</option>
-                    <option value="facilitator">Facilitator / Trainer</option>
-                    <option value="employer">Employer / Recruiter</option>
-                    <option value="event_planner">Event Planner / Organiser</option>
-                    <option value="other">Other</option>
-                  </select>
-
-                  {error && (
-                    <div style={{ marginTop:'12px', padding:'12px 16px', background:'rgba(216,90,48,.08)', border:'1px solid rgba(216,90,48,.3)', fontSize:'13px', color:'#D85A30' }}>
-                      {error}
-                    </div>
-                  )}
-
-                  <button
-                    onClick={handleSubmit}
-                    disabled={!valid || loading}
-                    style={{ marginTop:'24px', padding:'18px', background: valid && !loading ? GOLD : 'rgba(201,168,76,.2)', color: valid && !loading ? DARK : 'rgba(201,168,76,.4)', fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor: valid && !loading ? 'pointer' : 'not-allowed', fontFamily:'inherit', width:'100%' }}>
-                    {loading ? 'JOINING…' : 'JOIN THE FOUNDING COHORT →'}
-                  </button>
-
-                  <p style={{ fontSize:'11px', fontWeight:300, color:FAINT, textAlign:'center', lineHeight:1.6, marginTop:'16px' }}>
-                    No spam. We'll confirm your spot and reach out when the marketplace opens. You can unsubscribe any time. Read our{' '}
-                    <Link href="/privacypolicy" style={{ color:'rgba(201,168,76,.55)', textDecoration:'none' }}>Privacy Policy</Link>.
-                  </p>
-                </div>
-              </div>
-            )}
+            <Link href="/#waitlist"
+              style={{ padding:'16px 36px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', textDecoration:'none', display:'inline-block' }}>
+              JOIN THE FOUNDING COHORT →
+            </Link>
           </div>
         </section>
 
@@ -530,26 +370,8 @@ export default function WaitlistPage() {
           100%{ box-shadow: 0 0 0 0 rgba(29,158,117,0); }
         }
         select option { background: #1A1A2E; color: #F7F4EE; }
-        @media (max-width: 640px) {
-          .wl-hero-cta { flex-direction: column !important; }
-        }
       `}</style>
       <Footer />
     </>
   )
-}
-
-const S = {
-  input: {
-    width: '100%',
-    padding: '14px 16px',
-    background: 'rgba(255,255,255,.04)',
-    border: '1px solid rgba(201,168,76,.2)',
-    color: '#F7F4EE',
-    fontSize: '14px',
-    fontFamily: "var(--font,'Raleway','Helvetica Neue',Arial,sans-serif)",
-    outline: 'none',
-    boxSizing: 'border-box',
-    WebkitAppearance: 'none',
-  }
 }

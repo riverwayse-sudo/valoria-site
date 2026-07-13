@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import WaitlistForm from '@/components/WaitlistForm'
 
 // Saturday, July 18, 2026, 10:00 AM WAT (UTC+1) = 09:00 UTC.
 // Update this if the event date/time changes — nothing else needs to.
@@ -75,7 +76,7 @@ export default function HeroSlider() {
       <div className="hero-grid" aria-hidden="true" />
 
       <div className="hero-slides">
-        {/* ── SLIDE 1 — main introduction ─────────────────────────────── */}
+        {/* ── SLIDE 1 — main introduction ────────────────────────────────── */}
         <div className={`hero-slide ${slide === 0 ? 'is-active' : ''}`} aria-hidden={slide !== 0}>
           <div className="container hero-inner">
             <div>
@@ -141,7 +142,7 @@ export default function HeroSlider() {
           </div>
         </div>
 
-        {/* ── SLIDE 2 — live webinar ──────────────────────────────────── */}
+        {/* ── SLIDE 2 — live webinar ─────────────────────────────────────── */}
         <div className={`hero-slide ${slide === 1 ? 'is-active' : ''}`} aria-hidden={slide !== 1}>
           <div className="container hero-inner">
             <div>
@@ -197,6 +198,19 @@ export default function HeroSlider() {
               <div className="wc-foot">Discovered. Trusted. Rewarded.</div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* ── IN-HERO WAITLIST FORM ─────────────────────────────────────────
+          Lives inside the Hero (not further down the page) so ad traffic
+          converts without scrolling. Reuses id="waitlist" — both slides'
+          CTA buttons already point to href="#waitlist", so they needed no
+          changes. This is now the ONLY waitlist form on the site; the
+          homepage's old bottom section and the standalone /waitlist page's
+          inline form were both removed to avoid duplicate forms/ids. */}
+      <div id="waitlist" className="container" style={{ padding: 'clamp(40px,6vw,72px) 0 clamp(24px,4vw,48px)', position: 'relative', zIndex: 2 }}>
+        <div style={{ maxWidth: '480px', margin: '0 auto' }}>
+          <WaitlistForm />
         </div>
       </div>
 

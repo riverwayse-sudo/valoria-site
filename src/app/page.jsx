@@ -3,7 +3,6 @@ import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
 import EntryPointsGrid from '@/components/EntryPointsGrid'
-import WaitlistForm from '@/components/WaitlistForm'
 import WaitlistGate from '@/components/WaitlistGate'
 import './home.css'
 
@@ -19,10 +18,12 @@ export default function HomePage() {
       <Nav />
 
       <main id="main-content">
-        {/* ── HERO ─────────────────────────────────────────────────────── */}
+        {/* ── HERO ──────────────────────────────────────────────────────
+            The waitlist form now lives inside HeroSlider itself
+            (id="waitlist" is rendered there). */}
         <HeroSlider />
 
-        {/* ── ALIGNMENT PRINCIPLE ───────────────────────────────────────── */}
+        {/* ── ALIGNMENT PRINCIPLE ──────────────────────────────────────── */}
         <section className="alignment" id="alignment">
           <div className="container">
             <Reveal className="alignment-inner">
@@ -141,96 +142,6 @@ export default function HomePage() {
                   <div className="rc-desig">FORCE TO ALIGN WITH</div>
                 </div>
               </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ── FOUNDING COHORT WAITLIST ──────────────────────────────────── */}
-        <section className="waitlist-section" id="waitlist">
-          <style>{`
-            .waitlist-section {
-              padding: clamp(72px,10vw,120px) var(--pad);
-              background: linear-gradient(180deg, var(--dark) 0%, #0a0a14 100%);
-              border-top: 1px solid rgba(201,168,76,.12);
-              position: relative; overflow: hidden;
-            }
-            .waitlist-section::before {
-              content: ''; position: absolute;
-              top: -120px; left: 50%; transform: translateX(-50%);
-              width: 600px; height: 600px;
-              background: radial-gradient(circle, rgba(201,168,76,.06) 0%, transparent 70%);
-              pointer-events: none;
-            }
-            .waitlist-inner {
-              max-width: 1100px; margin: 0 auto;
-              display: grid; grid-template-columns: 1fr 1fr;
-              gap: clamp(32px,5vw,72px); align-items: center;
-            }
-            .waitlist-eyebrow { margin-bottom: 20px; }
-            .waitlist-title {
-              font-family: var(--font); font-size: clamp(32px,4vw,54px);
-              font-weight: 200; line-height: 1.05; letter-spacing: -.02em;
-              color: var(--parchment); margin-bottom: 20px;
-            }
-            .waitlist-title em { color: var(--gold); font-style: italic; font-weight: 300; }
-            .waitlist-sub {
-              font-size: 15px; font-weight: 300; color: rgba(247,244,238,.5);
-              line-height: 1.7; margin-bottom: 28px;
-            }
-            .waitlist-checklist {
-              list-style: none; padding: 0; margin: 0 0 32px;
-              display: flex; flex-direction: column; gap: 12px;
-            }
-            .waitlist-checklist li {
-              display: flex; align-items: flex-start; gap: 10px;
-              font-size: 14px; font-weight: 300; color: rgba(247,244,238,.6); line-height: 1.5;
-            }
-            .waitlist-checklist .wl-dot {
-              flex-shrink: 0; margin-top: 3px; width: 18px; height: 18px;
-              border-radius: 50%; background: rgba(201,168,76,.1);
-              border: 1px solid rgba(201,168,76,.3);
-              display: flex; align-items: center; justify-content: center;
-            }
-            .waitlist-card {
-              background: rgba(201,168,76,.04); border: 1px solid rgba(201,168,76,.18);
-              border-radius: 12px; padding: clamp(28px,4vw,44px);
-            }
-            @media (max-width: 780px) {
-              .waitlist-inner { grid-template-columns: 1fr; }
-            }
-          `}</style>
-          <div className="waitlist-inner">
-            <Reveal>
-              <div className="waitlist-eyebrow eyebrow">
-                <div className="eyebrow-line" />
-                <span className="eyebrow-text">FOUNDING COHORT</span>
-              </div>
-              <h2 className="waitlist-title">
-                Get in before<br />the <em>marketplace fills up.</em>
-              </h2>
-              <p className="waitlist-sub">
-                The founding cohort gets first access to the marketplace, priority placement once it opens to general search, and a direct line to shape how Valoria develops.
-              </p>
-              <ul className="waitlist-checklist" role="list">
-                {[
-                  'Early access ahead of general marketplace launch',
-                  'Priority placement in search results once live',
-                  'Direct input into how ATB Connect, Spotlight, and Develop evolve',
-                  'First to know when new sectors and regions open',
-                ].map((t, i) => (
-                  <li key={i}>
-                    <span className="wl-dot">
-                      <svg width="9" height="9" viewBox="0 0 9 9" fill="none" aria-hidden="true">
-                        <path d="M1.5 4.5l2 2 4-4" stroke="#C9A84C" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </span>
-                    {t}
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-            <Reveal>
-              <WaitlistForm />
             </Reveal>
           </div>
         </section>
