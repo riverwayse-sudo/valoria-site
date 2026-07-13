@@ -281,6 +281,23 @@ body::before {
 .card-gold:hover::before { transform: scaleX(1); }
 
 /* WaitlistForm component — used on homepage and /waitlist */
+.waitlist-card {
+  background: var(--dark-card);
+  border: 1px solid rgba(201,168,76,.2);
+  border-radius: 12px;
+  padding: clamp(24px, 4vw, 40px);
+  max-width: 460px;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+.waitlist-card-desc {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--dim);
+  line-height: 1.7;
+  margin: 0 0 4px;
+}
 .wl-field-label {
   display: block;
   font-size: 10px;

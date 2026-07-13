@@ -195,7 +195,7 @@ async function sendWelcomeEmail(email, fullName, interest, role) {
 // Requires BREVO_LIST_ID (numeric ID from Brevo → Contacts → Lists), and
 // the custom attributes ROLE/INTEREST/SOURCE created in Brevo's contact
 // attribute settings — Brevo silently drops attributes it doesn't know.
-async function syncToBrevoList(email, fullName, role, interest, source) {
+async function syncToBrevoList(email, fullName, role, interest, source, utm = {}) {
   if (!BREVO_KEY || !BREVO_LIST_ID) return
 
   const [firstName, ...rest] = (fullName || '').trim().split(' ')
@@ -212,6 +212,12 @@ async function syncToBrevoList(email, fullName, role, interest, source) {
     INTEREST:  interest || '',
     SOURCE:    source || '',
   }
+  // Only sent if utm_source/utm_medium/utm_campaign attributes exist in
+  // Brevo → Contacts → Settings → Attributes; otherwise Brevo silently
+  // drops them (same behavior as EVENT_NAME/EVENT_DATE below) — safe either way.
+  if (utm.source)   attributes.UTM_SOURCE = utm.source
+  if (utm.medium)   attributes.UTM_MEDIUM = utm.medium
+  if (utm.campaign) attributes.UTM_CAMPAIGN = utm.campaign
   // Merge fields the Brevo automation's emails can reference (e.g.
   // {{ contact.EVENT_NAME }}, {{ contact.EVENT_DATE }}) — create these as
   // custom attributes in Brevo → Contacts → Settings → Attributes first,
@@ -239,7 +245,7 @@ async function syncToBrevoList(email, fullName, role, interest, source) {
 export async function POST(request) {
   try {
     const body = await request.json()
-    const { full_name, email, role, interest, type, source } = body
+    const { full_name, email, role, interest, type, source, utm_source, utm_medium, utm_campaign } = body
 
     if (!full_name?.trim() || !email?.trim()) {
       return Response.json({ error: 'Name and email are required.' }, { status: 400 })
@@ -250,6 +256,15 @@ export async function POST(request) {
       return Response.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     }
 
+    const baseSource = source || 'waitlist_page'
+    // Fold UTM into the existing `source` text column instead of adding new
+    // Supabase columns — avoids a schema migration while still keeping full
+    // attribution readable in the admin dashboard / CSV export.
+    const hasUtm = utm_source || utm_medium || utm_campaign
+    const sourceForDb = hasUtm
+      ? `${baseSource} [utm:${utm_source || '-'}/${utm_medium || '-'}/${utm_campaign || '-'}]`
+      : baseSource
+
     const { error } = await supabase
       .from('waitlist')
       .insert([{
@@ -258,7 +273,7 @@ export async function POST(request) {
         role:      role?.trim() || null,
         interest:  interest || null,
         type:      type || 'standalone',
-        source:    source || 'waitlist_page',
+        source:    sourceForDb,
       }])
 
     if (error && error.code !== '23505') {
@@ -272,7 +287,10 @@ export async function POST(request) {
     )
 
     // Sync to Brevo marketing list (fire and forget — don't block the response)
-    syncToBrevoList(email.trim().toLowerCase(), full_name.trim(), role?.trim(), interest, source || 'waitlist_page').catch(
+    syncToBrevoList(
+      email.trim().toLowerCase(), full_name.trim(), role?.trim(), interest, source || 'waitlist_page',
+      { source: utm_source, medium: utm_medium, campaign: utm_campaign }
+    ).catch(
       err => console.error('Brevo list sync error:', err)
     )
 

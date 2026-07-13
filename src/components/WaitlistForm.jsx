@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const GATE_KEY   = 'vi_waitlist_gate_v2'
 const COOKIE_KEY = 'vi_waitlist_v2'
@@ -78,6 +78,17 @@ export default function WaitlistForm() {
   const [submitted, setSubmitted] = useState(false)
   const [loading,   setLoading]   = useState(false)
   const [error,     setError]     = useState('')
+  const [utm,       setUtm]       = useState({ source: null, medium: null, campaign: null })
+
+  // Capture UTM params on mount so live campaign traffic is attributable.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const source = params.get('utm_source')
+    const medium = params.get('utm_medium')
+    const campaign = params.get('utm_campaign')
+    if (source || medium || campaign) setUtm({ source, medium, campaign })
+  }, [])
 
   const valid = name.trim() && email.includes('@')
 
@@ -116,6 +127,9 @@ export default function WaitlistForm() {
           interest:  interest || null,
           type,
           source,
+          utm_source: utm.source,
+          utm_medium: utm.medium,
+          utm_campaign: utm.campaign,
         }),
       })
       if (!res.ok && res.status !== 409) throw new Error('failed')
