@@ -85,12 +85,27 @@ export default function WaitlistForm() {
     if (!valid || loading) return
     setLoading(true)
     setError('')
+
+    // If this visit came from the webinar CTA (set by HeroSlider), route this
+    // signup into the webinar's own Brevo list/attributes instead of the
+    // general waitlist — read once, then clear so it doesn't leak into a
+    // later, unrelated signup in the same browser session.
+    let source = 'homepage_form'
+    let type = 'homepage'
     try {
-      // Goes through the server route rather than calling Supabase directly
-      // from the browser — that's what actually sends the welcome email and
-      // syncs to Brevo (both need a server-side API key that must never be
-      // exposed client-side). The route itself already treats a duplicate
-      // signup as a success, so any non-ok response here is a real error.
+      const webinarSource = sessionStorage.getItem('vi_signup_source')
+      if (webinarSource) {
+        source = webinarSource
+        type = 'webinar'
+        sessionStorage.removeItem('vi_signup_source')
+      }
+    } catch {}
+
+    try {
+      // FIX: previously inserted directly into Supabase from the browser,
+      // which skipped the Brevo welcome email + CRM list sync entirely —
+      // both only run inside the /api/waitlist route. Routing through the
+      // API here is what actually gets these signups into Brevo.
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -99,19 +114,26 @@ export default function WaitlistForm() {
           email:     email.trim().toLowerCase(),
           role:      role.trim() || null,
           interest:  interest || null,
-          type:      'homepage',
-          source:    'homepage_form',
+          type,
+          source,
         }),
       })
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error(data.error || 'Something went wrong.')
-      }
+      if (!res.ok && res.status !== 409) throw new Error('failed')
+
       localStorage.setItem(GATE_KEY, 'submitted')
       document.cookie = `${COOKIE_KEY}=submitted; path=/; max-age=31536000`
       setSubmitted(true)
-    } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.')
+
+      // Meta Pixel — fires only if NEXT_PUBLIC_META_PIXEL_ID is configured
+      // and the base pixel script (in layout.jsx) has loaded.
+      if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
+        window.fbq('track', 'Lead')
+        if (type === 'webinar') {
+          window.fbq('track', 'CompleteRegistration', { content_name: 'Webinar — July 18' })
+        }
+      }
+    } catch {
+      setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
     }

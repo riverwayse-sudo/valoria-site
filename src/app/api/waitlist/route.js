@@ -10,6 +10,12 @@ const supabase = createClient(
 
 const BREVO_KEY = process.env.BREVO_API_KEY
 const BREVO_LIST_ID = process.env.BREVO_LIST_ID
+// Separate list for webinar registrants — create this list in Brevo and put
+// its numeric ID here. Keeping it separate (rather than just an attribute)
+// is what lets a Brevo automation workflow trigger cleanly off list
+// membership: "contact added to list X" → send invite → wait → reminder.
+const BREVO_WEBINAR_LIST_ID = process.env.BREVO_WEBINAR_LIST_ID
+const WEBINAR_SOURCES = new Set(['webinar_july18'])
 const FROM_EMAIL = 'info@valoriainstitute.com'
 const FROM_NAME  = 'Valoria Institute'
 
@@ -194,6 +200,26 @@ async function syncToBrevoList(email, fullName, role, interest, source) {
 
   const [firstName, ...rest] = (fullName || '').trim().split(' ')
   const lastName = rest.join(' ') || ''
+  const isWebinar = WEBINAR_SOURCES.has(source)
+
+  const listIds = [Number(BREVO_LIST_ID)]
+  if (isWebinar && BREVO_WEBINAR_LIST_ID) listIds.push(Number(BREVO_WEBINAR_LIST_ID))
+
+  const attributes = {
+    FIRSTNAME: firstName || '',
+    LASTNAME:  lastName,
+    ROLE:      role || '',
+    INTEREST:  interest || '',
+    SOURCE:    source || '',
+  }
+  // Merge fields the Brevo automation's emails can reference (e.g.
+  // {{ contact.EVENT_NAME }}, {{ contact.EVENT_DATE }}) — create these as
+  // custom attributes in Brevo → Contacts → Settings → Attributes first,
+  // same as ROLE/INTEREST/SOURCE above, or Brevo silently drops them.
+  if (isWebinar) {
+    attributes.EVENT_NAME = 'Why Being Good At Your Job Is No Longer Enough'
+    attributes.EVENT_DATE = 'Saturday, July 18, 2026 — 10:00 AM to 1:00 PM WAT'
+  }
 
   await fetch('https://api.brevo.com/v3/contacts', {
     method: 'POST',
@@ -203,14 +229,8 @@ async function syncToBrevoList(email, fullName, role, interest, source) {
     },
     body: JSON.stringify({
       email,
-      attributes: {
-        FIRSTNAME: firstName || '',
-        LASTNAME:  lastName,
-        ROLE:      role || '',
-        INTEREST:  interest || '',
-        SOURCE:    source || '',
-      },
-      listIds: [Number(BREVO_LIST_ID)],
+      attributes,
+      listIds,
       updateEnabled: true,
     }),
   }).catch(() => {})
