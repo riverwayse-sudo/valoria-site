@@ -1,9 +1,10 @@
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
+import HeroSlider from '@/components/HeroSlider'
+import EntryPointsGrid from '@/components/EntryPointsGrid'
 import WaitlistForm from '@/components/WaitlistForm'
 import WaitlistGate from '@/components/WaitlistGate'
-import { ENTRY_POINTS } from '@/lib/brand'
 import './home.css'
 
 export const metadata = {
@@ -19,77 +20,10 @@ export default function HomePage() {
 
       <main id="main-content">
         {/* ── HERO ─────────────────────────────────────────────────────── */}
-        <section className="hero" id="hero">
-          <div className="hero-bg" aria-hidden="true" />
-          <div className="hero-grid" aria-hidden="true" />
-
-          <div className="container hero-inner">
-            <div>
-              <div className="hero-eyebrow au d1" aria-hidden="true">
-                <div className="hero-eyebrow-line" />
-                <span className="hero-eyebrow-text">THE AFRICAN PROFESSIONAL MARKETPLACE</span>
-              </div>
-
-              <h1 className="hero-title au d2">
-                Valoria is where<br />African professionals<br /><em>rise.</em>
-              </h1>
-
-              <p className="hero-sub au d3">
-                One marketplace. Three ways to engage Africa&apos;s best professionals. Search candidates, book speakers, commission facilitators — every profile underwritten by one independently assessed standard.
-              </p>
-
-              <div className="hero-actions au d4">
-                <a href="#waitlist" className="btn-gold">
-                  JOIN THE FOUNDING COHORT
-                </a>
-                <a href="#valu" className="btn-outline">
-                  SEE HOW IT WORKS
-                </a>
-              </div>
-
-              <div className="hero-mobile-card au d5" aria-hidden="true">
-                <div className="hmc-row">
-                  <div className="hmc-score">84</div>
-                  <div className="hmc-right">
-                    <div className="hmc-desig">FORCE TO ALIGN WITH</div>
-                    <div className="hmc-bars">
-                      <div className="hmc-bar" style={{ background: '#1D9E75', width: '88%' }} />
-                      <div className="hmc-bar" style={{ background: '#378ADD', width: '90%' }} />
-                      <div className="hmc-bar" style={{ background: '#7F77DD', width: '82%' }} />
-                      <div className="hmc-bar" style={{ background: '#BA7517', width: '80%' }} />
-                      <div className="hmc-bar" style={{ background: '#D85A30', width: '75%' }} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="valu-card au d4" aria-label="Sample VALU Index profile">
-              <div className="vc-label">VALU INDEX &nbsp;&middot;&nbsp; ILLUSTRATIVE PROFILE</div>
-              <div className="vc-score">
-                <span className="vc-num">84</span>
-                <span className="vc-denom">/ 100</span>
-              </div>
-              <div className="vc-desig">FORCE TO ALIGN WITH</div>
-              <div className="vc-modalities">
-                <span className="mod-pill" style={{ background: 'rgba(55,138,221,.12)', color: '#378ADD', border: '1px solid rgba(55,138,221,.25)' }}>CANDIDATE</span>
-                <span className="mod-pill" style={{ background: 'rgba(201,168,76,.1)', color: '#C9A84C', border: '1px solid rgba(201,168,76,.25)' }}>SPEAKER</span>
-              </div>
-              <div className="vc-bars">
-                <div className="vb"><span className="vb-l">P</span><div className="vb-bg"><div className="vb-fill" style={{ width: '88%', background: '#1D9E75' }} /></div><span className="vb-s">88</span></div>
-                <div className="vb"><span className="vb-l">R</span><div className="vb-bg"><div className="vb-fill" style={{ width: '90%', background: '#378ADD' }} /></div><span className="vb-s">90</span></div>
-                <div className="vb"><span className="vb-l">I</span><div className="vb-bg"><div className="vb-fill" style={{ width: '82%', background: '#7F77DD' }} /></div><span className="vb-s">82</span></div>
-                <div className="vb"><span className="vb-l">M</span><div className="vb-bg"><div className="vb-fill" style={{ width: '80%', background: '#BA7517' }} /></div><span className="vb-s">80</span></div>
-                <div className="vb"><span className="vb-l">E</span><div className="vb-bg"><div className="vb-fill" style={{ width: '75%', background: '#D85A30' }} /></div><span className="vb-s">75</span></div>
-              </div>
-              <div className="vc-foot">illustrative profile — one identity, two active modalities</div>
-            </div>
-          </div>
-        </section>
+        <HeroSlider />
 
         {/* ── ALIGNMENT PRINCIPLE ───────────────────────────────────────── */}
         <section className="alignment" id="alignment">
-          <div className="alignment-numeral" aria-hidden="true">3</div>
           <div className="container">
             <Reveal className="alignment-inner">
               <div className="eyebrow" style={{ justifyContent: 'center' }}>
@@ -133,54 +67,7 @@ export default function HomePage() {
             </Reveal>
 
             <Reveal className="ep-grid" as="div">
-              <div className="ep-card ep-1" style={{ '--ep-color': '#378ADD' }}>
-                <style>{`.ep-1::before { background: #378ADD; }`}</style>
-                
-                <div className="ep-icon" style={{ background: 'rgba(55,138,221,.1)', border: '1px solid rgba(55,138,221,.25)' }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <rect x="2" y="7" width="20" height="14" rx="2" stroke="#378ADD" strokeWidth="1.5" />
-                    <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="#378ADD" strokeWidth="1.5" />
-                    <circle cx="12" cy="14" r="2" stroke="#378ADD" strokeWidth="1.5" />
-                  </svg>
-                </div>
-                <h3 className="ep-name" style={{ color: '#378ADD' }}>ATB<br/>Connect</h3>
-                <div className="ep-buyer" style={{ color: '#378ADD' }}>For Employers &amp; Recruiters</div>
-                <p className="ep-desc-text">Search pre-assessed candidates by VALU Index score, cluster strength, sector, and designation. Every profile backed by one independently assessed standard.</p>
-                <div className="ep-modality" style={{ background: 'rgba(55,138,221,.1)', color: '#378ADD', border: '1px solid rgba(55,138,221,.2)' }}>CANDIDATE</div>
-                <a href="#waitlist" className="ep-link" style={{ color: '#378ADD' }}>Get Early Access <span aria-hidden="true">→</span></a>
-              </div>
-
-              <div className="ep-card ep-2" style={{ '--ep-color': '#C9A84C' }}>
-                <style>{`.ep-2::before { background: #C9A84C; }`}</style>
-                
-                <div className="ep-icon" style={{ background: 'rgba(201,168,76,.1)', border: '1px solid rgba(201,168,76,.25)' }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <circle cx="12" cy="8" r="4" stroke="#C9A84C" strokeWidth="1.5" />
-                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round" />
-                    <path d="M17 4l2 2-2 2M19 6h-3" stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-                <h3 className="ep-name" style={{ color: '#C9A84C' }}>ATB<br/>Spotlight</h3>
-                <div className="ep-buyer" style={{ color: '#C9A84C' }}>For Event Planners &amp; Organisers</div>
-                <p className="ep-desc-text">Discover and book speakers by expertise, PRIME cluster strength, tier designation, and VALU Index score. Every speaker assessed. No guesswork.</p>
-                <div className="ep-modality" style={{ background: 'rgba(201,168,76,.1)', color: '#C9A84C', border: '1px solid rgba(201,168,76,.2)' }}>SPEAKER</div>
-                <a href="#waitlist" className="ep-link" style={{ color: '#C9A84C' }}>Get Early Access <span aria-hidden="true">→</span></a>
-              </div>
-
-              <div className="ep-card ep-3" style={{ '--ep-color': '#1D9E75' }}>
-                <style>{`.ep-3::before { background: #1D9E75; }`}</style>
-                
-                <div className="ep-icon" style={{ background: 'rgba(29,158,117,.1)', border: '1px solid rgba(29,158,117,.25)' }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#1D9E75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-                <h3 className="ep-name" style={{ color: '#1D9E75' }}>ATB<br/>Develop</h3>
-                <div className="ep-buyer" style={{ color: '#1D9E75' }}>For L&amp;D &amp; HR Leaders</div>
-                <p className="ep-desc-text">Commission PRIME-certified facilitators to run development programmes. Every facilitator carries an assessed track record you can verify before you sign.</p>
-                <div className="ep-modality" style={{ background: 'rgba(29,158,117,.1)', color: '#1D9E75', border: '1px solid rgba(29,158,117,.2)' }}>FACILITATOR</div>
-                <a href="#waitlist" className="ep-link" style={{ color: '#1D9E75' }}>Get Early Access <span aria-hidden="true">→</span></a>
-              </div>
+              <EntryPointsGrid />
             </Reveal>
           </div>
         </section>
