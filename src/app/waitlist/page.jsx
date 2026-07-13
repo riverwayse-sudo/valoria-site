@@ -1,6 +1,5 @@
 'use client'
 import Link from 'next/link'
-import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import EntryPointsGrid from '@/components/EntryPointsGrid'
 
@@ -27,40 +26,6 @@ const HOW_IT_WORKS = [
   { num: '03', color: '#1D9E75', title: 'Valoria makes the introduction', body: 'Interested employers and organisers submit a request. We review it. Only then do we connect you — never the other way around.' },
 ]
 
-const FOR_WHO = [
-  {
-    color: '#378ADD', tag: 'CANDIDATE', title: 'You want the right job.',
-    body: "You're a professional looking for your next role, contract, or opportunity. You want employers to find you based on what you can do — not who you know.",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <rect x="2" y="7" width="20" height="14" rx="2" stroke="#378ADD" strokeWidth="1.5" />
-        <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="#378ADD" strokeWidth="1.5" />
-        <circle cx="12" cy="14" r="2" stroke="#378ADD" strokeWidth="1.5" />
-      </svg>
-    ),
-  },
-  {
-    color: GOLD, tag: 'SPEAKER', title: 'You want to be booked.',
-    body: 'You speak, train, or present. You want event organisers to discover you, verify your capability, and book you without three layers of referral.',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <circle cx="12" cy="8" r="4" stroke="#C9A84C" strokeWidth="1.5" />
-        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M17 4l2 2-2 2M19 6h-3" stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-  {
-    color: '#1D9E75', tag: 'EMPLOYER', title: 'You want the right person.',
-    body: "You hire, organise events, or commission training. You're tired of the same recycled names. You want to find the genuinely best person — assessed, verified, ready.",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#1D9E75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-]
-
 const WEBINAR_DETAILS = [
   { label: 'DATE', value: 'Saturday, July 18, 2026' },
   { label: 'TIME', value: '10:00 AM – 1:00 PM WAT' },
@@ -72,17 +37,6 @@ const WEBINAR_DETAILS = [
 export default function WaitlistPage() {
   return (
     <>
-      <style>{`
-        @keyframes wfBadgeGlow {
-          0%, 100% { box-shadow: 0 0 0 0 transparent; }
-          50% { box-shadow: 0 0 14px 2px var(--glow-color); }
-        }
-        .wf-badge-glow { animation: wfBadgeGlow 2.4s ease-in-out infinite; }
-        @media (prefers-reduced-motion: reduce) {
-          .wf-badge-glow { animation: none; }
-        }
-      `}</style>
-      <Nav />
       <main style={{ background: DARK, color: PARCH, fontFamily: "var(--font,'Raleway','Helvetica Neue',Arial,sans-serif)", overflow: 'hidden' }}>
 
         {/* ── HERO ──────────────────────────────────────────────────────── */}
@@ -283,23 +237,6 @@ export default function WaitlistPage() {
             <h2 style={{ fontSize:'clamp(28px,4vw,52px)', fontWeight:200, lineHeight:1.1, letterSpacing:'-.02em', marginBottom:'48px' }}>
               If any of these<br/><em style={{ fontStyle:'italic', color:GOLD }}>sound like you.</em>
             </h2>
-
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(260px,1fr))', gap:'16px', marginBottom:'48px' }}>
-              {FOR_WHO.map((f, i) => (
-                <div key={i} className={`ep-card wf-${i}`} style={{ '--ep-color': f.color, border:`1px solid ${GLINE}` }}>
-                  <style>{`.wf-${i}::before { background: ${f.color}; }`}</style>
-                  <div className="ep-icon" style={{ background: `${f.color}1a`, border: `1px solid ${f.color}40` }}>
-                    {f.icon}
-                  </div>
-                  <h3 className="ep-name" style={{ color: f.color, fontSize: '20px' }}>{f.title}</h3>
-                  <p className="ep-desc-text">{f.body}</p>
-                  <div
-                    className="ep-modality wf-badge-glow"
-                    style={{ background: `${f.color}1a`, color: f.color, border: `1px solid ${f.color}33`, '--glow-color': f.color }}
-                  >{f.tag}</div>
-                </div>
-              ))}
-            </div>
 
             {/* Three entry points — same shared component as the homepage,
                 so this never drifts out of sync with it again. */}
