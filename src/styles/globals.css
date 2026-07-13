@@ -372,3 +372,112 @@ select.wl-field option:disabled {
   font-weight: 400;
   margin-bottom: 10px;
 }
+
+/* ── AUTH FORMS (login/signup) — shared with WaitlistForm's field/button
+   look, but as reusable classes instead of each page duplicating its own
+   ad-hoc style object with no :focus state. ── */
+.auth-input {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(201,168,76,.2);
+  border-radius: 6px;
+  color: var(--parchment);
+  font-size: 14px;
+  font-family: var(--font);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color .2s;
+}
+.auth-input:focus { border-color: var(--gold); }
+
+.btn-gold-block {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 16px;
+  font-size: 12px;
+}
+
+/* Error/success message colors — previously used one-off hex (#F09595,
+   #7FD9B8) that didn't derive from the coral/teal tokens their box
+   background and border were already built from. These are proper light
+   tints of --coral and --teal so the text reads as part of the same color,
+   not a mismatched third shade. */
+.form-error-box {
+  padding: 12px 14px;
+  background: rgba(216,90,48,.12);
+  border: 1px solid rgba(216,90,48,.3);
+  border-radius: 6px;
+  font-size: 13px;
+  color: #E89A82;
+}
+.form-success-box {
+  padding: 12px 14px;
+  background: rgba(29,158,117,.12);
+  border: 1px solid rgba(29,158,117,.3);
+  border-radius: 6px;
+  font-size: 13px;
+  color: #7FCBAE;
+}
+
+/* ── ENTRY POINTS CARD GRID (shared component: EntryPointsGrid.jsx) ─────
+   Moved here from home.css so it's one canonical style available on every
+   page that renders <EntryPointsGrid /> — previously this was hand-copied
+   per page and drifted (icons, title weight, tag shape, spacing all ended
+   up different between the homepage and the waitlist page). ── */
+.ep-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.07);
+}
+.ep-card {
+  position: relative;
+  background: rgba(255,255,255,.025);
+  border: none;
+  border-right: 1px solid rgba(255,255,255,.07);
+  border-radius: 0;
+  padding: clamp(24px,3vw,36px);
+  overflow: hidden;
+  transition: background .25s;
+}
+.ep-card:last-child { border-right: none; }
+.ep-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.ep-card:hover { background: rgba(255,255,255,.04); }
+.ep-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+}
+.ep-name {
+  font-family: var(--font); font-size: clamp(20px,2.2vw,26px);
+  font-weight: 200; line-height: 1.1; margin: 0 0 8px;
+}
+.ep-buyer {
+  font-size: 10px; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; margin-bottom: 14px; opacity: .75;
+}
+.ep-desc-text {
+  font-size: 13px; font-weight: 300; color: rgba(247,244,238,.45);
+  line-height: 1.65; margin-bottom: 18px;
+}
+.ep-modality {
+  display: inline-block; font-size: 9px; font-weight: 700;
+  letter-spacing: .14em; padding: 4px 10px;
+  border-radius: 9999px; margin-bottom: 20px;
+}
+.ep-link {
+  font-size: 11px; font-weight: 600; letter-spacing: .1em;
+  text-decoration: none; transition: opacity .2s; display: block;
+}
+.ep-link:hover { opacity: .7; }
+@media (max-width: 640px) {
+  .ep-grid { grid-template-columns: 1fr; }
+  .ep-card { border-right: none; border-bottom: 1px solid rgba(255,255,255,.07); }
+  .ep-card:last-child { border-bottom: none; }
+}
