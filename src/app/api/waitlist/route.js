@@ -172,7 +172,7 @@ async function sendWelcomeEmail(email, fullName, interest, role) {
 </body>
 </html>`
 
-  await fetch('https://api.brevo.com/v3/smtp/email', {
+  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
     headers: {
       'api-key': BREVO_KEY,
@@ -187,6 +187,12 @@ async function sendWelcomeEmail(email, fullName, interest, role) {
       tags: ['waitlist', 'welcome', interest || 'general'],
     }),
   })
+  // fetch() only rejects on a network failure — a 400/401/403 from Brevo
+  // resolves normally and would previously slip past silently. Surface it.
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    console.error('Brevo welcome email failed:', res.status, body)
+  }
 }
 
 // Adds/updates this signup as a contact in a Brevo list, so it can be used
@@ -227,7 +233,7 @@ async function syncToBrevoList(email, fullName, role, interest, source, utm = {}
     attributes.EVENT_DATE = 'Saturday, July 18, 2026 — 10:00 AM to 1:00 PM WAT'
   }
 
-  await fetch('https://api.brevo.com/v3/contacts', {
+  const res = await fetch('https://api.brevo.com/v3/contacts', {
     method: 'POST',
     headers: {
       'api-key': BREVO_KEY,
@@ -239,7 +245,11 @@ async function syncToBrevoList(email, fullName, role, interest, source, utm = {}
       listIds,
       updateEnabled: true,
     }),
-  }).catch(() => {})
+  })
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    console.error('Brevo contact sync failed:', res.status, body, { email, listIds })
+  }
 }
 
 export async function POST(request) {
