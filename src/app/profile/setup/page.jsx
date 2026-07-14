@@ -87,11 +87,43 @@ export default function ProfileSetupPage() {
   const isFacilitator = form.active_tracks.includes('facilitator')
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { router.push('/login'); return }
       setUser(user)
-      if (user.user_metadata?.full_name)
+
+      // Prefill from an existing row so this page also serves as "edit" —
+      // previously it only ever started blank, even for someone who'd
+      // already completed setup and just wanted to change one field.
+      const { data: existing } = await supabase
+        .from('professional_profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      if (existing) {
+        setForm(f => ({
+          ...f,
+          ...existing,
+          // Array/object columns come back null from Postgres if never set —
+          // fall back to the form's own empty defaults rather than passing
+          // null into .includes()/.map() calls throughout the wizard.
+          active_tracks:       existing.active_tracks || f.active_tracks,
+          languages:           existing.languages || f.languages,
+          skills:              existing.skills || f.skills,
+          topics:              existing.topics || f.topics,
+          facilitation_topics: existing.facilitation_topics || f.facilitation_topics,
+          programme_types:     existing.programme_types || f.programme_types,
+          format_capabilities: existing.format_capabilities || f.format_capabilities,
+          audience_sizes:      existing.audience_sizes || f.audience_sizes,
+          work_history:        existing.work_history?.length ? existing.work_history : f.work_history,
+          past_events:         existing.past_events?.length ? existing.past_events : f.past_events,
+          past_clients:        existing.past_clients?.length ? existing.past_clients : f.past_clients,
+          youtube_links:       existing.youtube_links?.length ? existing.youtube_links : f.youtube_links,
+          modality:            existing.modality || f.modality,
+        }))
+      } else if (user.user_metadata?.full_name) {
         setForm(f => ({ ...f, display_name: user.user_metadata.full_name }))
+      }
     })
   }, [])
 
