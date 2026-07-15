@@ -53,13 +53,16 @@ const EMPTY_FORM = {
 // from the current form so track changes (candidate/speaker/facilitator)
 // immediately reshape which screens exist — e.g. a pure candidate never
 // sees the speaker fee-range or past-events screens at all.
-function buildScreens(form) {
+function buildScreens(form, showTrackScreens) {
   const isCandidate   = form.active_tracks.includes('candidate')
   const isSpeaker     = form.active_tracks.includes('speaker')
   const isFacilitator = form.active_tracks.includes('facilitator')
   const s = []
 
-  s.push({ key:'active_tracks', kind:'tracks', section:'Track' })
+  if (showTrackScreens) {
+    s.push({ key:'active_tracks', kind:'primary-track', section:'Track' })
+    if (form.active_tracks.length > 0) s.push({ key:'active_tracks', kind:'add-track', section:'Track' })
+  }
   s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your name is hidden from buyers until Valoria facilitates an introduction.', placeholder:'Your full professional name', required:true })
   s.push({ key:'headline', kind:'text', section:'Profile', title:'Sum up what you do in one line.', sub:'This is the first thing buyers see on your profile.', placeholder: isSpeaker ? 'e.g. Executive Coach & Leadership Speaker' : 'e.g. Head of Strategy — Fintech & Payments', maxLength:100, required:true })
   s.push({ key:'location', kind:'text', section:'Profile', title:'Where are you based?', sub:'Optional, but helps buyers searching by region.', placeholder:'e.g. Lagos, Nigeria', required:false })
@@ -104,7 +107,14 @@ export default function ProfileSetupPage() {
   const [transitioning, setTransitioning] = useState(false)
   const [photoUploading, setPhotoUploading] = useState(false)
   const [photoError, setPhotoError] = useState('')
+  const [editingTracks, setEditingTracks] = useState(false)
+  const [submittedInfo, setSubmittedInfo] = useState(null)
   const fileRef = useRef(null)
+  // Captured once on load — whether this person already had tracks set
+  // before this session touched anything. A returning multi-track profile
+  // must never have its second track silently wiped just because they
+  // clicked through a "pick one" screen again.
+  const hadExistingTracksRef = useRef(false)
 
   const [form, setForm] = useState(EMPTY_FORM)
 
@@ -112,7 +122,12 @@ export default function ProfileSetupPage() {
   const isSpeaker     = form.active_tracks.includes('speaker')
   const isFacilitator = form.active_tracks.includes('facilitator')
 
-  const screens = useMemo(() => buildScreens(form), [form.active_tracks, form.display_name, isSpeaker, isFacilitator])
+  // New profiles: forced through "pick one, then optionally add a second"
+  // so nobody multi-selects three tracks without deliberation. Returning
+  // profiles skip straight past those two screens — their tracks stay
+  // exactly as they were unless they explicitly hit "Change your paths".
+  const showTrackScreens = !hadExistingTracksRef.current || editingTracks
+  const screens = useMemo(() => buildScreens(form, showTrackScreens), [form.active_tracks, form.display_name, isSpeaker, isFacilitator, showTrackScreens])
   const screen = screens[Math.min(screenIndex, screens.length - 1)]
   const progress = Math.round((screenIndex / (screens.length - 1)) * 100)
 
@@ -131,6 +146,7 @@ export default function ProfileSetupPage() {
         .maybeSingle()
 
       if (existing) {
+        hadExistingTracksRef.current = (existing.active_tracks || []).length > 0
         setForm(f => ({
           ...f, ...existing,
           active_tracks:       existing.active_tracks || f.active_tracks,
@@ -241,8 +257,16 @@ export default function ProfileSetupPage() {
   async function handleFinish() {
     setSaving(true)
     await saveProgress()
+    // Fetch back what the database actually assigned (atb_id is set by a
+    // trigger, not by this app) so we can show it — previously this just
+    // redirected silently with no confirmation of any kind.
+    const { data: row } = await supabase
+      .from('professional_profiles')
+      .select('atb_id, listing_status')
+      .eq('id', user.id)
+      .maybeSingle()
     setSaving(false)
-    router.push('/dashboard')
+    setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: row?.listing_status || 'pending' })
   }
 
   async function handleSaveExit() {
@@ -251,6 +275,45 @@ export default function ProfileSetupPage() {
   }
 
   if (!ready) return <div style={{ minHeight:'100vh', background:DARK, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font,Raleway,sans-serif)', color:DIM, fontSize:'13px' }}>Loading…</div>
+
+  if (submittedInfo) {
+    return (
+      <div style={{ minHeight:'100vh', background:DARK, color:PARCH, fontFamily:'var(--font,Raleway,sans-serif)', display:'flex', alignItems:'center', justifyContent:'center', padding:'20px' }}>
+        <div style={{ maxWidth:'480px', width:'100%', textAlign:'center' }}>
+          <div style={{ height:'3px', display:'flex', marginBottom:'40px', borderRadius:'2px', overflow:'hidden' }}>
+            {Object.values(PRIME_COLORS).map((c,i) => <div key={i} style={{ flex:1, background:c, opacity:.85 }} />)}
+          </div>
+          <div style={{ width:'56px', height:'56px', borderRadius:'50%', background:'rgba(29,158,117,.12)', border:'1px solid rgba(29,158,117,.3)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 24px' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#1D9E75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </div>
+          <Title>You&apos;re in,<br/><Em>{form.display_name?.split(' ')[0] || 'welcome'}.</Em></Title>
+          <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.75, marginBottom:'28px' }}>
+            Your profile has been submitted to the founding cohort.
+          </p>
+
+          <div style={{ background:MID, border:`1px solid ${GLINE}`, padding:'24px', marginBottom:'24px' }}>
+            <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>YOUR PROFILE ID</div>
+            {submittedInfo.atb_id ? (
+              <div style={{ fontSize:'22px', fontWeight:700, color:GOLD, letterSpacing:'.04em', fontFamily:'monospace' }}>{submittedInfo.atb_id}</div>
+            ) : (
+              <div style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.6 }}>Your ID will appear on your dashboard once your profile clears review — usually within 48 hours.</div>
+            )}
+          </div>
+
+          <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'28px', textAlign:'left' }}>
+            <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>WHAT HAPPENS NEXT</div>
+            <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.8, margin:0 }}>
+              Status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? 'Listed' : 'Pending review'}</strong>. Complete the VALU Index (if you haven&apos;t already) to become eligible for marketplace listing — a score of 35 or above unlocks it.
+            </p>
+          </div>
+
+          <button onClick={() => router.push('/dashboard')} style={{ display:'block', width:'100%', padding:'16px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor:'pointer', fontFamily:'inherit' }}>
+            GO TO DASHBOARD →
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   const tags       = [...form.skills, ...form.topics, ...form.facilitation_topics]
   const videoLinks = (form.youtube_links || []).filter(Boolean)
@@ -285,6 +348,7 @@ export default function ProfileSetupPage() {
           photoUploading={photoUploading} photoError={photoError} fileRef={fileRef} uploadPhoto={uploadPhoto}
           isCandidate={isCandidate} isSpeaker={isSpeaker} isFacilitator={isFacilitator}
           tags={tags} videoLinks={videoLinks} handleFinish={handleFinish}
+          onChangeTracks={() => { setEditingTracks(true); setScreenIndex(0) }}
         />
 
         <div style={{ display:'flex', gap:'12px', marginTop:'32px' }}>
@@ -302,40 +366,67 @@ export default function ProfileSetupPage() {
 // ── Generic single-screen renderer — one question, one job ──────────────
 function ScreenBody(props) {
   const { screen, form, set, toggleArr, updateListItem, selectAndAdvance, goNext, saving,
-          photoUploading, photoError, fileRef, uploadPhoto, isSpeaker, tags, videoLinks, handleFinish } = props
+          photoUploading, photoError, fileRef, uploadPhoto, isSpeaker, tags, videoLinks, handleFinish, onChangeTracks } = props
 
   const val = form[screen.key]
 
   switch (screen.kind) {
 
-    case 'tracks': {
+    case 'primary-track': {
       const options = [
         { id:'candidate',   label:'Candidate / Talent', desc:'I want employers and recruiters to find me through ATB Connect.', color:'#378ADD' },
         { id:'speaker',     label:'Speaker',            desc:'I want to be booked for events and conferences through ATB Spotlight.', color:GOLD },
         { id:'facilitator', label:'Facilitator',        desc:'I want to be commissioned for L&D programmes through ATB Develop.', color:'#1D9E75' },
       ]
+      const current = form.active_tracks[0] || null
       return (
         <div>
           <Title>How are you joining<br/><Em>Valoria?</Em></Title>
-          <Sub>Select all that apply — a speaker can also be a candidate.</Sub>
-          <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginBottom:'28px' }}>
+          <Sub>Pick the path that fits best — you'll get the chance to add a second one right after.</Sub>
+          <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginBottom:'8px' }}>
             {options.map(t => {
-              const active = form.active_tracks.includes(t.id)
+              const active = current === t.id
               return (
-                <div key={t.id} onClick={() => toggleArr('active_tracks', t.id)}
+                <div key={t.id}
+                  onClick={() => selectAndAdvance('active_tracks', [t.id, ...form.active_tracks.filter(x => x !== t.id)])}
                   style={{ padding:'20px', border:`1.5px solid ${active ? t.color : GLINE}`, cursor:'pointer', background: active ? `${t.color}0f` : `${MID}66`, transition:'all .15s' }}>
-                  <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'6px' }}>
-                    <div style={{ width:'18px', height:'18px', border:`2px solid ${active ? t.color : 'rgba(247,244,238,.25)'}`, borderRadius:'4px', background: active ? t.color : 'transparent', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                      {active && <span style={{ color: t.id === 'speaker' ? DARK : '#fff', fontSize:'11px', fontWeight:700 }}>✓</span>}
-                    </div>
-                    <span style={{ fontSize:'15px', fontWeight:600, color: active ? t.color : PARCH }}>{t.label}</span>
-                  </div>
-                  <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.65, margin:0, paddingLeft:'30px' }}>{t.desc}</p>
+                  <div style={{ fontSize:'15px', fontWeight:600, color: active ? t.color : PARCH, marginBottom:'6px' }}>{t.label}</div>
+                  <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.65, margin:0 }}>{t.desc}</p>
                 </div>
               )
             })}
           </div>
-          <ContinueBar onNext={goNext} nextDisabled={form.active_tracks.length === 0} saving={saving} />
+        </div>
+      )
+    }
+
+    case 'add-track': {
+      const allTracks = [
+        { id:'candidate',   label:'Candidate / Talent', color:'#378ADD' },
+        { id:'speaker',     label:'Speaker',            color:GOLD },
+        { id:'facilitator', label:'Facilitator',        color:'#1D9E75' },
+      ]
+      const primary = form.active_tracks[0]
+      const others  = allTracks.filter(t => t.id !== primary)
+      return (
+        <div>
+          <Title>Want to add a<br/><Em>second path?</Em></Title>
+          <Sub>Optional — this gives you a second, independently-listed profile in that marketplace too. You can also do this later from your dashboard.</Sub>
+          <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginBottom:'28px' }}>
+            {others.map(t => {
+              const active = form.active_tracks.includes(t.id)
+              return (
+                <div key={t.id} onClick={() => toggleArr('active_tracks', t.id)}
+                  style={{ padding:'18px 20px', border:`1.5px solid ${active ? t.color : GLINE}`, cursor:'pointer', background: active ? `${t.color}0f` : `${MID}66`, display:'flex', alignItems:'center', gap:'12px' }}>
+                  <div style={{ width:'18px', height:'18px', border:`2px solid ${active ? t.color : 'rgba(247,244,238,.25)'}`, borderRadius:'4px', background: active ? t.color : 'transparent', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                    {active && <span style={{ color: t.id === 'speaker' ? DARK : '#fff', fontSize:'11px', fontWeight:700 }}>✓</span>}
+                  </div>
+                  <span style={{ fontSize:'15px', fontWeight:600, color: active ? t.color : PARCH }}>{t.label}</span>
+                </div>
+              )
+            })}
+          </div>
+          <ContinueBar onNext={goNext} nextDisabled={false} saving={saving} showSkip />
         </div>
       )
     }
@@ -524,7 +615,7 @@ function ScreenBody(props) {
     }
 
     case 'review': {
-      return <ReviewScreen {...props} tags={tags} videoLinks={videoLinks} handleFinish={handleFinish} />
+      return <ReviewScreen {...props} tags={tags} videoLinks={videoLinks} handleFinish={handleFinish} onChangeTracks={onChangeTracks} />
     }
 
     default:
@@ -532,7 +623,7 @@ function ScreenBody(props) {
   }
 }
 
-function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, videoLinks, handleFinish, saving, set }) {
+function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, videoLinks, handleFinish, saving, set, onChangeTracks }) {
   return (
     <div>
       <Title>Review &amp;<br/><Em>submit.</Em></Title>
@@ -577,6 +668,10 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
           </div>
         ))}
       </div>
+
+      <button onClick={onChangeTracks} style={{ background:'none', border:'none', color:GOLD, fontSize:'12px', cursor:'pointer', fontFamily:'inherit', textDecoration:'underline', padding:0, marginBottom:'24px', display:'block' }}>
+        Change your paths →
+      </button>
 
       <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
         <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — VALU INDEX ASSESSMENT</div>
