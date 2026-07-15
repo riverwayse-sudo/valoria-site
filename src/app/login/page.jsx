@@ -28,12 +28,28 @@ export default function LoginPage() {
       // Authenticated users must never be blocked by the waitlist gate.
       document.cookie = `vi_waitlist_v2=submitted; path=/; max-age=31536000`
       const { data: { user } } = await supabase.auth.getUser()
-      // Check if professional has a profile set up
+
+      // Buyers (employer/organiser) live in `profiles`, professionals in
+      // `professional_profiles` — these are two entirely separate tables.
+      // Checking only professional_profiles meant every buyer account (zero
+      // rows there, always) got misrouted into the professional setup
+      // wizard on every login after their first session.
+      const { data: buyerProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      if (buyerProfile) {
+        window.location.href = '/dashboard'
+        return
+      }
+
       const { data: profile } = await supabase
         .from('professional_profiles')
         .select('id, display_name, listing_status, active_tracks')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
 
       if (!profile || !profile.display_name) {
         // First time — go to setup wizard

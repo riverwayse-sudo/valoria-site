@@ -115,6 +115,12 @@ export default function ProfileSetupPage() {
   // must never have its second track silently wiped just because they
   // clicked through a "pick one" screen again.
   const hadExistingTracksRef = useRef(false)
+  // The assessment app can auto-list a profile (listing_status: 'listed')
+  // the moment someone signs up post-assessment. Previously every save
+  // here unconditionally reset that to 'pending', silently unlisting
+  // someone from the marketplace just because they opened this page to
+  // add a photo. Preserve whatever status already existed on load.
+  const existingListingStatusRef = useRef(null)
 
   const [form, setForm] = useState(EMPTY_FORM)
 
@@ -147,6 +153,7 @@ export default function ProfileSetupPage() {
 
       if (existing) {
         hadExistingTracksRef.current = (existing.active_tracks || []).length > 0
+        existingListingStatusRef.current = existing.listing_status || null
         setForm(f => ({
           ...f, ...existing,
           active_tracks:       existing.active_tracks || f.active_tracks,
@@ -223,7 +230,7 @@ export default function ProfileSetupPage() {
       availability: f.availability, modality: f.modality,
       contract_preference: f.contract_preference, notice_period: f.notice_period || null,
       salary_expectation: f.salary_expectation || null, fee_range: f.fee_range || null,
-      listing_status: 'pending', updated_at: new Date().toISOString(),
+      listing_status: existingListingStatusRef.current || 'pending', updated_at: new Date().toISOString(),
     }, { onConflict: 'id' })
     setSaving(false)
   }
