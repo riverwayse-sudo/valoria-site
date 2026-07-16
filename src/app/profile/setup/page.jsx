@@ -23,6 +23,13 @@ const AVAILABILITY = [{ value:'open', label:'Open to opportunities' }, { value:'
 const MODALITY = ['In-person','Virtual','Hybrid','Open to relocation']
 const FORMAT_CAPS = ['Keynote','Panel speaker','Workshop facilitator','Masterclass host','Conference MC','Fireside chat']
 const AUDIENCE_SIZES = ['Under 50','50–200','200–500','500–1,000','1,000–5,000','5,000+']
+const CURRENCIES = [
+  { code:'NGN', symbol:'\u20a6' }, { code:'USD', symbol:'$' }, { code:'GBP', symbol:'\u00a3' },
+  { code:'EUR', symbol:'\u20ac' }, { code:'KES', symbol:'KSh' }, { code:'GHS', symbol:'GH\u20b5' },
+  { code:'ZAR', symbol:'R' },
+]
+const NOTICE_PERIODS = ['Immediately','2 weeks','1 month','2 months','3+ months']
+const WORK_DURATIONS = ['Less than 1 year','1–2 years','2–3 years','3–5 years','5–10 years','10+ years']
 
 function getInitials(name) {
   if (!name) return '?'
@@ -53,7 +60,7 @@ const EMPTY_FORM = {
 // from the current form so track changes (candidate/speaker/facilitator)
 // immediately reshape which screens exist — e.g. a pure candidate never
 // sees the speaker fee-range or past-events screens at all.
-function buildScreens(form, showTrackScreens) {
+function buildScreens(form, showTrackScreens, allowAddTrack) {
   const isCandidate   = form.active_tracks.includes('candidate')
   const isSpeaker     = form.active_tracks.includes('speaker')
   const isFacilitator = form.active_tracks.includes('facilitator')
@@ -61,7 +68,13 @@ function buildScreens(form, showTrackScreens) {
 
   if (showTrackScreens) {
     s.push({ key:'active_tracks', kind:'primary-track', section:'Track' })
-    if (form.active_tracks.length > 0) s.push({ key:'active_tracks', kind:'add-track', section:'Track' })
+    // A second track is only ever offered when someone explicitly returns
+    // to change their paths after their first profile already exists —
+    // never during initial signup. Previously this showed right after
+    // picking the first track, in the same session, before that profile
+    // was even submitted — and the two tracks were saved onto a single
+    // row anyway, not the "independently-listed profile" the copy implied.
+    if (allowAddTrack && form.active_tracks.length > 0) s.push({ key:'active_tracks', kind:'add-track', section:'Track' })
   }
   s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your name is hidden from buyers until Valoria facilitates an introduction.', placeholder:'Your full professional name', required:true })
   s.push({ key:'headline', kind:'text', section:'Profile', title:'Sum up what you do in one line.', sub:'This is the first thing buyers see on your profile.', placeholder: isSpeaker ? 'e.g. Executive Coach & Leadership Speaker' : 'e.g. Head of Strategy — Fintech & Payments', maxLength:100, required:true })
@@ -79,7 +92,7 @@ function buildScreens(form, showTrackScreens) {
   if (isFacilitator) s.push({ key:'programme_types', kind:'multi-chip', section:'Expertise', title:'What programme types do you run?', sub:'Select all that apply.', options:PROGRAMME_TYPES, required:false, color:'#1D9E75' })
   if (isFacilitator) s.push({ key:'past_clients', kind:'list', section:'Expertise', title:'Any past clients or programmes?', sub:'Optional — up to 3.', fields:[{ key:'name', placeholder:'Organisation' }, { key:'programme', placeholder:'Programme delivered' }], max:3, addLabel:'+ Add client', required:false })
   if (isFacilitator) s.push({ key:'pcp_certified', kind:'boolean', section:'Expertise', title:'Do you hold a Valoria PCP certification?', sub:'PRIME-Certified Practitioner.' })
-  if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Optional — up to 3 roles. Buyers use this to understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organisation' }, { key:'duration', placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:false })
+  if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Optional — up to 3 roles. Buyers use this to understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organisation' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:false })
   if (isCandidate) s.push({ key:'certifications', kind:'text', section:'Expertise', title:'Any certifications or credentials?', sub:'Optional — comma separated.', placeholder:'PMP, Google Analytics, HubSpot Marketing', required:false })
 
   s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'Profiles with a photo receive significantly more introduction requests.' })
@@ -89,9 +102,9 @@ function buildScreens(form, showTrackScreens) {
 
   s.push({ key:'availability', kind:'single-radio', section:'Terms', title:'What\u2019s your current availability?', options:AVAILABILITY })
   if (isCandidate) s.push({ key:'contract_preference', kind:'single-radio', section:'Terms', title:'What kind of work are you open to?', options:CONTRACT_PREFS })
-  if (isCandidate) s.push({ key:'notice_period', kind:'text', section:'Terms', title:'How quickly could you start a new role?', sub:'Optional.', placeholder:'e.g. 1 month, Immediately, 3 months', required:false })
-  if (isCandidate) s.push({ key:'salary_expectation', kind:'text', section:'Terms', title:'What\u2019s your salary expectation?', sub:'Optional — helps match you to relevant opportunities.', placeholder:'e.g. \u20a66M \u2013 \u20a610M / year', required:false })
-  if (isSpeaker || isFacilitator) s.push({ key:'fee_range', kind:'text', section:'Terms', title: isFacilitator && isSpeaker ? 'Your speaking / facilitation fee?' : isSpeaker ? 'Your speaking fee?' : 'Your facilitation day rate?', sub:'Optional — visible to buyers on your profile.', placeholder:'e.g. $1,500 \u2013 $3,000 per engagement', required:false })
+  if (isCandidate) s.push({ key:'notice_period', kind:'select', section:'Terms', title:'How quickly could you start a new role?', sub:'Optional.', options:NOTICE_PERIODS, required:false })
+  if (isCandidate) s.push({ key:'salary_expectation', kind:'currency-range', section:'Terms', title:'What\u2019s your salary expectation?', sub:'Optional — helps match you to relevant opportunities. Pick your currency.', period:'year', required:false })
+  if (isSpeaker || isFacilitator) s.push({ key:'fee_range', kind:'currency-range', section:'Terms', title: isFacilitator && isSpeaker ? 'Your speaking / facilitation fee?' : isSpeaker ? 'Your speaking fee?' : 'Your facilitation day rate?', sub:'Optional — visible to buyers on your profile. Pick your currency.', period:'engagement', required:false })
   s.push({ key:'modality', kind:'multi-chip', section:'Terms', title:'What work modality do you prefer?', sub:'Select all that apply.', options:MODALITY, required:false })
 
   s.push({ key:'review', kind:'review', section:'Review' })
@@ -133,7 +146,7 @@ export default function ProfileSetupPage() {
   // profiles skip straight past those two screens — their tracks stay
   // exactly as they were unless they explicitly hit "Change your paths".
   const showTrackScreens = !hadExistingTracksRef.current || editingTracks
-  const screens = useMemo(() => buildScreens(form, showTrackScreens), [form.active_tracks, form.display_name, isSpeaker, isFacilitator, showTrackScreens])
+  const screens = useMemo(() => buildScreens(form, showTrackScreens, editingTracks), [form.active_tracks, form.display_name, isSpeaker, isFacilitator, showTrackScreens, editingTracks])
   const screen = screens[Math.min(screenIndex, screens.length - 1)]
   const progress = Math.round((screenIndex / (screens.length - 1)) * 100)
 
@@ -389,7 +402,7 @@ function ScreenBody(props) {
       return (
         <div>
           <Title>How are you joining<br/><Em>Valoria?</Em></Title>
-          <Sub>Pick the path that fits best — you'll get the chance to add a second one right after.</Sub>
+          <Sub>Pick the path that fits best. Once your profile is live, you can add a second path from your dashboard.</Sub>
           <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginBottom:'8px' }}>
             {options.map(t => {
               const active = current === t.id
@@ -469,6 +482,36 @@ function ScreenBody(props) {
           />
           {screen.maxLength && <CharCount val={val} max={screen.maxLength} />}
           <ContinueBar onNext={goNext} nextDisabled={!isValid} saving={saving} />
+        </div>
+      )
+    }
+
+    case 'select': {
+      const isValid = !screen.required || !!val
+      return (
+        <div>
+          <Title>{screen.title}</Title>
+          {screen.sub && <Sub>{screen.sub}</Sub>}
+          <select value={val || ''} onChange={e => set(screen.key, e.target.value)} style={selectStyle}>
+            <option value="" disabled>Select…</option>
+            {screen.options.map(o => (
+              typeof o === 'string'
+                ? <option key={o} value={o}>{o}</option>
+                : <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+          <ContinueBar onNext={goNext} nextDisabled={!isValid} saving={saving} showSkip={!screen.required && !val} />
+        </div>
+      )
+    }
+
+    case 'currency-range': {
+      return (
+        <div>
+          <Title>{screen.title}</Title>
+          {screen.sub && <Sub>{screen.sub}</Sub>}
+          <CurrencyRangeInput value={val} onChange={v => set(screen.key, v)} periodLabel={screen.period} />
+          <ContinueBar onNext={goNext} nextDisabled={false} saving={saving} showSkip={!screen.required && !val} />
         </div>
       )
     }
@@ -555,8 +598,16 @@ function ScreenBody(props) {
             {rows.map((row, i) => (
               <div key={i} style={{ display:'grid', gridTemplateColumns: `repeat(${screen.fields.length}, 1fr)`, gap:'10px', marginBottom:'10px' }}>
                 {screen.fields.map(f => (
-                  <input key={f.key} style={inputStyle} placeholder={f.placeholder} value={row[f.key] || ''}
-                    onChange={e => updateListItem(screen.key, i, f.key, e.target.value)} />
+                  f.type === 'select' ? (
+                    <select key={f.key} style={selectStyle} value={row[f.key] || ''}
+                      onChange={e => updateListItem(screen.key, i, f.key, e.target.value)}>
+                      <option value="" disabled>{f.placeholder}</option>
+                      {f.options.map(o => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                  ) : (
+                    <input key={f.key} style={inputStyle} placeholder={f.placeholder} value={row[f.key] || ''}
+                      onChange={e => updateListItem(screen.key, i, f.key, e.target.value)} />
+                  )
                 ))}
               </div>
             ))}
@@ -680,15 +731,35 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
         Change your paths →
       </button>
 
-      <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
-        <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — VALU INDEX ASSESSMENT</div>
-        <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
-          Your profile is set to <strong style={{ color:PARCH }}>Pending</strong> until you complete the VALU Index. Profiles scoring 35 or above become eligible for marketplace listing. The assessment takes approximately 25 minutes.
-        </p>
-        <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
-          TAKE THE VALU INDEX →
-        </a>
-      </div>
+      {/* Someone who signed up through the assessment app already has a
+          valu_index/designation/assessment_completed_at on this row —
+          previously this block ignored that entirely and told every single
+          person to go take the assessment, even people who'd already
+          scored and were sitting in front of their own result. */}
+      {form.assessment_completed_at ? (
+        <div style={{ background:'rgba(29,158,117,.06)', border:'1px solid rgba(29,158,117,.3)', padding:'20px', marginBottom:'24px' }}>
+          <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'#1D9E75', marginBottom:'10px' }}>VALU INDEX — COMPLETE</div>
+          <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 6px' }}>
+            Your VALU Index score is <strong style={{ color:PARCH }}>{form.valu_index}</strong>
+            {form.designation ? <> — <strong style={{ color:'#1D9E75' }}>{form.designation}</strong></> : null}.
+          </p>
+          <p style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.6, margin:0 }}>
+            {Number(form.valu_index) >= 35
+              ? 'You\u2019re eligible for marketplace listing once this profile is reviewed.'
+              : 'Profiles scoring 35 or above become eligible for marketplace listing — you can retake the VALU Index any time to improve your score.'}
+          </p>
+        </div>
+      ) : (
+        <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
+          <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — VALU INDEX ASSESSMENT</div>
+          <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
+            Your profile is set to <strong style={{ color:PARCH }}>Pending</strong> until you complete the VALU Index. Profiles scoring 35 or above become eligible for marketplace listing. The assessment takes approximately 25 minutes.
+          </p>
+          <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
+            TAKE THE VALU INDEX →
+          </a>
+        </div>
+      )}
 
       <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'28px' }}>
         <input type="checkbox" checked={form.consent} onChange={e => set('consent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
@@ -740,4 +811,56 @@ function ContinueBar({ onNext, nextDisabled, saving, showSkip }) {
 }
 
 const inputStyle = { width:'100%', padding:'14px 16px', background:'rgba(255,255,255,.04)', border:'1px solid rgba(201,168,76,.2)', color:PARCH, fontSize:'15px', fontFamily:'var(--font,Raleway,sans-serif)', outline:'none', boxSizing:'border-box', marginBottom:'8px' }
+const selectStyle = { ...inputStyle, cursor:'pointer' }
 const ghostBtnStyle = { padding:'10px 20px', background:'transparent', border:'1px solid rgba(201,168,76,.2)', color:'rgba(247,244,238,.5)', fontSize:'11px', fontWeight:700, letterSpacing:'.1em', cursor:'pointer', fontFamily:'var(--font,Raleway,sans-serif)' }
+
+// ── Currency-aware amount range, used by salary_expectation and fee_range ──
+// The underlying DB column is still a plain text string (no schema change
+// needed), but the input itself is now a currency dropdown + two number
+// fields instead of one free-text box with a hardcoded ₦ or $ in the
+// placeholder — previously a candidate paid in Naira and a speaker quoting
+// in Dollars were typing into the exact same unstructured field.
+function parseCurrencyRange(str) {
+  if (!str) return { currency:'NGN', min:'', max:'' }
+  const m = str.match(/^(NGN|USD|GBP|EUR|KES|GHS|ZAR)\s[^\d]*([\d,]*)\s?(?:\u2013\s?[^\d]*([\d,]*))?/)
+  if (!m) return { currency:'NGN', min:'', max:'', legacy: str }
+  return { currency:m[1], min:(m[2]||'').replace(/,/g,''), max:(m[3]||'').replace(/,/g,'') }
+}
+function formatCurrencyRange({ currency, min, max }, periodLabel) {
+  const sym = CURRENCIES.find(c => c.code === currency)?.symbol || currency
+  const fmt = n => n ? Number(n).toLocaleString() : ''
+  if (!min && !max) return ''
+  if (min && max) return `${currency} ${sym}${fmt(min)} \u2013 ${sym}${fmt(max)}${periodLabel ? ' / ' + periodLabel : ''}`
+  return `${currency} ${sym}${fmt(min || max)}${periodLabel ? ' / ' + periodLabel : ''}`
+}
+function CurrencyRangeInput({ value, onChange, periodLabel }) {
+  const parsed = parseCurrencyRange(value)
+  const [currency, setCurrency] = useState(parsed.currency)
+  const [min, setMin] = useState(parsed.min)
+  const [max, setMax] = useState(parsed.max)
+
+  function commit(next) {
+    const merged = { currency, min, max, ...next }
+    onChange(formatCurrencyRange(merged, periodLabel))
+  }
+
+  return (
+    <div>
+      {parsed.legacy && (
+        <p style={{ fontSize:'11px', color:DIM, margin:'0 0 10px' }}>
+          Currently saved: <span style={{ color:PARCH }}>{parsed.legacy}</span> — update below to replace it.
+        </p>
+      )}
+      <div style={{ display:'grid', gridTemplateColumns:'110px 1fr 1fr', gap:'10px', marginBottom:'6px' }}>
+        <select value={currency} onChange={e => { setCurrency(e.target.value); commit({ currency:e.target.value }) }} style={selectStyle}>
+          {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} {c.symbol}</option>)}
+        </select>
+        <input type="number" min="0" inputMode="numeric" style={inputStyle} placeholder="Min" value={min}
+          onChange={e => { setMin(e.target.value); commit({ min:e.target.value }) }} />
+        <input type="number" min="0" inputMode="numeric" style={inputStyle} placeholder="Max" value={max}
+          onChange={e => { setMax(e.target.value); commit({ max:e.target.value }) }} />
+      </div>
+      {periodLabel && <p style={{ fontSize:'11px', color:DIM, margin:0 }}>per {periodLabel}</p>}
+    </div>
+  )
+}
