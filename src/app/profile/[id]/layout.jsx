@@ -1,18 +1,29 @@
 import { supabase } from '@/lib/supabase'
 
+function getInitials(name) {
+  if (!name) return 'Valoria Professional'
+  const w = name.trim().split(/\s+/)
+  return w.length === 1 ? w[0].slice(0,2).toUpperCase() : (w[0][0] + w[w.length-1][0]).toUpperCase()
+}
+
 export async function generateMetadata({ params }) {
   const { id } = params
 
-  // Try real profiles first
+  // Real professionals live in professional_profiles, not `profiles` (that's
+  // the buyer/employer table — no headline, bio, or photo_url columns at
+  // all). Querying the wrong table here meant every real professional's
+  // profile silently fell through to the generic fallback below: no photo,
+  // no bio, no individualized title — for every single share on
+  // LinkedIn/WhatsApp/Twitter, with nothing ever erroring to show it.
   const { data: profile } = await supabase
-    .from('profiles')
-    .select('display_initials, headline, bio, photo_url, user_type')
+    .from('professional_profiles')
+    .select('display_name, headline, bio, photo_url, active_tracks')
     .eq('id', id)
-    .single()
+    .maybeSingle()
 
   if (profile) {
-    const name = profile.display_initials || 'Valoria Professional'
-    const type = profile.user_type === 'speaker' ? 'Speaker' : 'Professional'
+    const name = getInitials(profile.display_name)
+    const type = (profile.active_tracks || []).includes('speaker') ? 'Speaker' : 'Professional'
     return {
       title: `${name} — ${type} Profile`,
       description: profile.bio?.slice(0, 160) || `${name} — ${profile.headline || type} on Valoria Institute.`,
@@ -30,7 +41,7 @@ export async function generateMetadata({ params }) {
     .from('marketplace_profiles')
     .select('display_initials, headline, bio, avatar_url, section')
     .eq('id', id)
-    .single()
+    .maybeSingle()
 
   if (dummy) {
     const name = dummy.display_initials || 'Valoria Professional'

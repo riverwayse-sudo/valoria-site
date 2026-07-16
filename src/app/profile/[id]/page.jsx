@@ -55,7 +55,7 @@ export default function ProfilePage({ params }) {
         .from('professional_profiles')
         .select('id, display_name, headline, location, industry, years_experience, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability')
         .eq('id', id)
-        .single()
+        .maybeSingle()
 
       if (real) {
         setProfile({ ...real, valu_score: real.valu_index, user_type: (real.active_tracks||[])[0] || 'candidate', _source: 'real' })
@@ -67,7 +67,7 @@ export default function ProfilePage({ params }) {
         .from('marketplace_profiles')
         .select('*')
         .eq('id', id)
-        .single()
+        .maybeSingle()
 
       if (dummy) {
         setProfile({
