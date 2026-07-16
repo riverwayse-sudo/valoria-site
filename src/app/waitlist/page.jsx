@@ -5,10 +5,11 @@ import Footer from '@/components/Footer'
 import EntryPointsGrid from '@/components/EntryPointsGrid'
 import WaitlistForm from '@/components/WaitlistForm'
 import { WaitlistSocialProofToast, WaitlistLiveCountBadge } from '@/components/WaitlistSocialProof'
+import { PRIME_CLUSTERS } from '@/lib/brand'
 
 // Saturday, July 18, 2026, 10:00 AM WAT (UTC+1) = 09:00 UTC.
 const EVENT_DATE = new Date('2026-07-18T09:00:00Z')
-const MEET_LINK = 'https://meet.google.com/zmv-xjtb-iby'
+const MEET_LINK = 'https://meet.google.com/wwj-yevz-jps'
 function pad(n) { return String(n).padStart(2, '0') }
 
 function useCountdown(target) {
@@ -100,7 +101,7 @@ export default function WaitlistPage() {
                 style={{ padding:'16px 36px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor:'pointer', fontFamily:'inherit', textDecoration:'none', display:'inline-block' }}>
                 JOIN THE WAITLIST →
               </Link>
-              <Link href="/atb-connect?preview=vi2025" style={{ padding:'16px 36px', border:`1px solid ${GLINE2}`, color:PARCH, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', textDecoration:'none' }}>
+              <Link href="#how-it-works" style={{ padding:'16px 36px', border:`1px solid ${GLINE2}`, color:PARCH, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', textDecoration:'none' }}>
                 SEE HOW IT WORKS
               </Link>
             </div>
@@ -244,13 +245,16 @@ export default function WaitlistPage() {
             <div style={{ marginBottom:'48px' }}>
               <div style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'20px' }}>THE VALU INDEX MEASURES FIVE THINGS</div>
               <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
-                {[
-                  { letter:'P', color:'#1D9E75', name:'Presence',     desc:'How you show up — your visibility, credibility, and professional confidence.' },
-                  { letter:'R', color:'#378ADD', name:'Resolve',       desc:'How you handle pressure, setbacks, and difficult decisions.' },
-                  { letter:'I', color:'#7F77DD', name:'Intelligence',  desc:'How you think — your strategic thinking, problem-solving, and learning speed.' },
-                  { letter:'M', color:'#BA7517', name:'Mastery',       desc:'How good you are at your actual work — depth of expertise and craft.' },
-                  { letter:'E', color:'#D85A30', name:'Expression',    desc:'How well you communicate — written, verbal, and interpersonal.' },
-                ].map(d => (
+                {PRIME_CLUSTERS.map(c => ({
+                  ...c,
+                  desc: {
+                    Presence: 'How you show up — your visibility, credibility, and professional confidence.',
+                    Relationships: 'How you build trust and collaborate — the quality of the working relationships you create and maintain.',
+                    Intelligence: 'How you think — your strategic thinking, problem-solving, and learning speed.',
+                    Mastery: 'How good you are at your actual work — depth of expertise and craft.',
+                    Enterprise: 'How you build, not just contribute — commercial thinking and the ability to run things that outlast you.',
+                  }[c.name],
+                })).map(d => (
                   <div key={d.letter} style={{ display:'flex', alignItems:'center', gap:'20px', padding:'14px 20px', border:`1px solid ${GLINE}`, background:'rgba(255,255,255,.02)' }}>
                     <div style={{ width:'36px', height:'36px', borderRadius:'50%', border:`2px solid ${d.color}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'14px', fontWeight:700, color:d.color, flexShrink:0 }}>{d.letter}</div>
                     <div>
@@ -274,7 +278,7 @@ export default function WaitlistPage() {
         </section>
 
         {/* ── HOW IT WORKS ─────────────────────────────────────────────── */}
-        <section style={{ padding:'clamp(60px,8vw,100px) clamp(20px,5vw,80px)', borderBottom:`1px solid ${GLINE}` }}>
+        <section id="how-it-works" style={{ padding:'clamp(60px,8vw,100px) clamp(20px,5vw,80px)', borderBottom:`1px solid ${GLINE}`, scrollMarginTop:'96px' }}>
           <div style={{ maxWidth:'900px', margin:'0 auto' }}>
             <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'16px' }}>
               <div style={{ height:'1px', width:'32px', background:GLINE2 }} />

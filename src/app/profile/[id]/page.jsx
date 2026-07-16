@@ -383,8 +383,10 @@ export default function ProfilePage({ params }) {
               </Section>
             )}
 
-            {/* Introduction CTA */}
-            <div style={{ background:`linear-gradient(135deg, rgba(201,168,76,.06), rgba(26,26,46,.3))`, border:`1px solid ${GLINE2}`, padding:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', flexWrap:'wrap', marginTop:'8px' }}>
+            {/* Introduction CTA — anchor target for the REQUEST INTRO / BOOK SPEAKER
+                links on /atb-connect and /spotlight, which already point to
+                this page as #contact. scrollMarginTop accounts for the fixed nav. */}
+            <div id="contact" style={{ background:`linear-gradient(135deg, rgba(201,168,76,.06), rgba(26,26,46,.3))`, border:`1px solid ${GLINE2}`, padding:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', flexWrap:'wrap', marginTop:'8px', scrollMarginTop:'96px' }}>
               <div>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'8px' }}>
                   {isSpeaker ? 'Book This Speaker' : 'Get in Touch'}

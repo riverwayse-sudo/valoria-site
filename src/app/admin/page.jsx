@@ -30,6 +30,7 @@ export default function AdminPage() {
   // Data
   const [messages, setMessages] = useState([])
   const [profiles, setProfiles] = useState([])
+  const [buyerProfiles, setBuyerProfiles] = useState([]) // employers/organisers — live in `profiles`, not `professional_profiles`
   const [updatingId, setUpdatingId] = useState(null)
 
   // Filters
@@ -49,7 +50,7 @@ export default function AdminPage() {
         return
       }
       setAuthorized(true)
-      await Promise.all([fetchMessages(), fetchProfiles()])
+      await Promise.all([fetchMessages(), fetchProfiles(), fetchBuyerProfiles()])
       setLoading(false)
     }
     load()
@@ -72,6 +73,13 @@ export default function AdminPage() {
       .select('id, display_name, headline, active_tracks, listing_status, industry, availability, created_at')
       .order('created_at', { ascending: false })
     setProfiles(data || [])
+  }
+
+  async function fetchBuyerProfiles() {
+    const { data } = await supabase
+      .from('profiles')
+      .select('id, user_type')
+    setBuyerProfiles(data || [])
   }
 
   async function updateMessageStatus(id, status) {
@@ -119,8 +127,8 @@ export default function AdminPage() {
   const listedProfiles = profiles.filter(p => p.listing_status === 'listed').length
   const talentCount = profiles.filter(p => (p.active_tracks || []).includes('candidate')).length
   const speakerCount = profiles.filter(p => (p.active_tracks || []).includes('speaker')).length
-  const employerCount = profiles.filter(p => (p.active_tracks || []).includes('facilitator')).length
-  const organiserCount = 0 // buyers tracked separately
+  const employerCount = buyerProfiles.filter(p => p.user_type === 'employer').length
+  const organiserCount = buyerProfiles.filter(p => p.user_type === 'organiser').length
 
   return (
     <div style={{ minHeight: '100vh', background: DARK, fontFamily: "'Raleway', 'Helvetica Neue', Arial, sans-serif", color: PARCHMENT }}>
@@ -152,7 +160,7 @@ export default function AdminPage() {
           <StatCard label="Listed Profiles" value={listedProfiles} />
           <StatCard label="Talent / Speakers" value={`${talentCount} / ${speakerCount}`} />
           <StatCard label="Employers / Organisers" value={`${employerCount} / ${organiserCount}`} />
-          <StatCard label="Total Accounts" value={profiles.length} />
+          <StatCard label="Total Accounts" value={profiles.length + buyerProfiles.length} />
         </div>
 
         {/* TABS */}

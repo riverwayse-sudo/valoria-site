@@ -8,7 +8,7 @@ import { WaitlistSocialProofToast, WaitlistLiveCountBadge } from '@/components/W
 const EVENT_DATE = new Date('2026-07-18T09:00:00Z')
 
 // From the actual Google Meet invite — used once the countdown hits zero.
-const MEET_LINK = 'https://meet.google.com/zmv-xjtb-iby'
+const MEET_LINK = 'https://meet.google.com/wwj-yevz-jps'
 
 function pad(n) { return String(n).padStart(2, '0') }
 

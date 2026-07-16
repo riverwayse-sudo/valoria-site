@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import Nav from '@/components/Nav'
+import { ADMIN_EMAILS } from '@/lib/adminEmails'
 
 const GOLD  = '#C9A84C'
 const DARK  = '#0F0F1A'
@@ -10,13 +11,6 @@ const PARCH = '#F7F4EE'
 const DIM   = 'rgba(247,244,238,.5)'
 const GLINE = 'rgba(201,168,76,.12)'
 
-const ADMIN_EMAILS = [
-  'oluwafemi@riverwayse.com',
-  'admin@valoriainstitute.com',
-  'info@valoriainstitute.com',
-  'riverwayse@gmail.com',
-]
-
 const SOURCE_LABELS = {
   site_gate:     'Gate popup',
   homepage_form: 'Homepage form',
@@ -24,12 +18,16 @@ const SOURCE_LABELS = {
   standalone:    'Standalone page',
 }
 
+// Kept in sync with the actual <select> options in WaitlistForm.jsx /
+// WaitlistModal.jsx: professional, speaker, employer, event_planner, other.
+// 'facilitator' is intentionally not an option there, so it's never
+// submitted — don't build summary cards/filters around it.
 const INTEREST_LABELS = {
   professional: 'Professional / Talent',
   speaker:      'Speaker',
-  facilitator:  'Facilitator',
   employer:     'Employer',
   event_planner:'Event Organiser',
+  other:        'Other',
 }
 
 export default function AdminWaitlistPage() {
@@ -117,7 +115,7 @@ export default function AdminWaitlistPage() {
             { label:'Speakers', value: (counts.speaker || 0), color: GOLD },
             { label:'Employers', value: (counts.employer || 0), color:'#1D9E75' },
             { label:'Event Organisers', value: (counts.event_planner || 0), color:'#7F77DD' },
-            { label:'Facilitators', value: (counts.facilitator || 0), color:'#BA7517' },
+            { label:'Other', value: (counts.other || 0), color:'#BA7517' },
           ].map(s => (
             <div key={s.label} style={{ background: MID, border:`1px solid ${GLINE}`, padding:'18px' }}>
               <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.16em', textTransform:'uppercase', color:'rgba(201,168,76,.4)', marginBottom:'8px' }}>{s.label}</div>
@@ -144,7 +142,7 @@ export default function AdminWaitlistPage() {
             <option value="speaker">Speakers</option>
             <option value="employer">Employers</option>
             <option value="event_planner">Event Organisers</option>
-            <option value="facilitator">Facilitators</option>
+            <option value="other">Other</option>
           </select>
           <button onClick={fetchEntries}
             style={{ padding:'10px 18px', background:'transparent', border:`1px solid ${GLINE}`, color: DIM, fontSize:'11px', fontWeight:700, letterSpacing:'.1em', cursor:'pointer', fontFamily:'var(--font,Raleway,sans-serif)' }}>
