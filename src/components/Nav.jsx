@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import { isLaunched } from '@/lib/launchDate'
+import { useLaunchStatus } from '@/lib/useLaunchStatus'
 
 export default function Nav() {
   const [scrolled, setScrolled]       = useState(false)
@@ -12,22 +12,20 @@ export default function Nav() {
   const [userType, setUserType]       = useState(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [gateCleared, setGateCleared] = useState(false)
-  const [launched, setLaunched]       = useState(false)
+  const launched = useLaunchStatus()
 
   useEffect(() => {
     // Post-launch, the nav always shows — the full-lockdown gate is gone
     // entirely at that point (see middleware.js). Pre-launch, it still
     // shows only once the visitor has cleared the waitlist popup/page.
-    const launchedNow = isLaunched()
-    setLaunched(launchedNow)
-    if (launchedNow) {
+    if (launched) {
       setGateCleared(true)
       return
     }
     const inCookie = document.cookie.includes('vi_waitlist_v2')
     const inLocal = localStorage.getItem('vi_waitlist_gate_v2')
     setGateCleared(inCookie || !!inLocal)
-  }, [])
+  }, [launched])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -228,11 +226,7 @@ export default function Nav() {
             user ? (
               <>
                 <li>
-                  {userType === 'talent' || userType === 'speaker' ? (
-                    <Link href="/dashboard" className="nav-link">Dashboard</Link>
-                  ) : (
-                    <Link href="/dashboard" className="nav-link">Dashboard</Link>
-                  )}
+                  <Link href="/dashboard" className="nav-link">Dashboard</Link>
                 </li>
                 <li><button onClick={handleSignOut} className="nav-link-btn">Sign Out</button></li>
               </>

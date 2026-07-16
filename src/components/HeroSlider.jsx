@@ -2,10 +2,15 @@
 import { useState, useEffect, useRef } from 'react'
 import WaitlistForm from '@/components/WaitlistForm'
 import { WaitlistSocialProofToast, WaitlistLiveCountBadge } from '@/components/WaitlistSocialProof'
+import { useLaunchStatus } from '@/lib/useLaunchStatus'
 
 // Saturday, July 18, 2026, 10:00 AM WAT (UTC+1) = 09:00 UTC.
 // Update this if the event date/time changes — nothing else needs to.
 const EVENT_DATE = new Date('2026-07-18T09:00:00Z')
+// Webinar runs 10:00 AM – 1:00 PM WAT (3 hours) — used to tell "webinar is
+// live right now" apart from "webinar is over," since the site's full
+// launch (10:15 AM WAT) happens 15 minutes into it, not at the end.
+const WEBINAR_END = new Date(EVENT_DATE.getTime() + 3 * 60 * 60 * 1000)
 
 // From the actual Google Meet invite — used once the countdown hits zero.
 const MEET_LINK = 'https://meet.google.com/wwj-yevz-jps'
@@ -57,6 +62,11 @@ export default function HeroSlider() {
   const [slide, setSlide] = useState(0)
   const pausedRef = useRef(false)
   const timeLeft = useCountdown(EVENT_DATE)
+  const launched = useLaunchStatus()
+  // timeLeft ticks every second even after done:true, so this recomputes
+  // freshly on the same cadence rather than needing its own timer.
+  const webinarLive = timeLeft?.done && Date.now() < WEBINAR_END.getTime()
+  const webinarOver  = timeLeft?.done && Date.now() >= WEBINAR_END.getTime()
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -95,9 +105,15 @@ export default function HeroSlider() {
               </p>
 
               <div className="hero-actions au d4">
-                <a href="#waitlist" className="btn-gold">
-                  JOIN THE FOUNDING COHORT
-                </a>
+                {launched ? (
+                  <a href="/atb-connect" className="btn-gold">
+                    EXPLORE THE MARKETPLACE
+                  </a>
+                ) : (
+                  <a href="#waitlist" className="btn-gold">
+                    JOIN THE FOUNDING COHORT
+                  </a>
+                )}
                 <a href="#valu" className="btn-outline">
                   SEE HOW IT WORKS
                 </a>
@@ -168,9 +184,19 @@ export default function HeroSlider() {
               </div>
 
               <div className="hero-actions au d4">
-                <a href="#waitlist" className="btn-gold" onClick={markWebinarSource}>
-                  RESERVE YOUR SEAT →
-                </a>
+                {webinarOver ? (
+                  <a href="/atb-connect" className="btn-gold">
+                    EXPLORE THE MARKETPLACE →
+                  </a>
+                ) : webinarLive ? (
+                  <a href={MEET_LINK} target="_blank" rel="noopener noreferrer" className="btn-gold" onClick={markWebinarSource}>
+                    JOIN THE WEBINAR →
+                  </a>
+                ) : (
+                  <a href="#waitlist" className="btn-gold" onClick={markWebinarSource}>
+                    RESERVE YOUR SEAT →
+                  </a>
+                )}
               </div>
 
               <div className="webinar-host au d5">
@@ -181,7 +207,7 @@ export default function HeroSlider() {
 
             <div className="webinar-countdown-card au d4" aria-label="Countdown to the webinar">
               <div className="wc-label">
-                {timeLeft && timeLeft.done ? "WE'RE LIVE" : 'STARTS IN'}
+                {webinarOver ? 'WEBINAR ENDED' : timeLeft && timeLeft.done ? "WE'RE LIVE" : 'STARTS IN'}
               </div>
               {timeLeft && !timeLeft.done ? (
                 <div className="wc-grid">
@@ -193,6 +219,8 @@ export default function HeroSlider() {
                   <div className="wc-sep">:</div>
                   <div className="wc-unit"><span className="wc-num">{pad(timeLeft.seconds)}</span><span className="wc-unit-label">Sec</span></div>
                 </div>
+              ) : webinarOver ? (
+                <a href="/atb-connect" className="wc-live-link">Explore the marketplace →</a>
               ) : (
                 <a href={MEET_LINK} target="_blank" rel="noopener noreferrer" className="wc-live-link" onClick={markWebinarSource}>Join now →</a>
               )}
@@ -204,16 +232,17 @@ export default function HeroSlider() {
 
       {/* ── IN-HERO WAITLIST FORM ─────────────────────────────────────────
           Lives inside the Hero (not further down the page) so ad traffic
-          converts without scrolling. Reuses id="waitlist" — both slides'
-          CTA buttons already point to href="#waitlist", so they needed no
-          changes. This is now the ONLY waitlist form on the site; the
-          homepage's old bottom section and the standalone /waitlist page's
-          inline form were both removed to avoid duplicate forms/ids. */}
-      <div id="waitlist" className="container" style={{ padding: 'clamp(40px,6vw,72px) 0 clamp(24px,4vw,48px)', position: 'relative', zIndex: 2 }}>
-        <div style={{ maxWidth: '480px', margin: '0 auto' }}>
-          <WaitlistForm />
+          converts without scrolling. Reuses id="waitlist" for both slides'
+          pre-launch CTAs. Only rendered pre-launch — post-launch, both
+          CTAs above point at the real marketplace instead, and a founding-
+          cohort signup form has nothing left to do on a live site. */}
+      {!launched && (
+        <div id="waitlist" className="container" style={{ padding: 'clamp(40px,6vw,72px) 0 clamp(24px,4vw,48px)', position: 'relative', zIndex: 2 }}>
+          <div style={{ maxWidth: '480px', margin: '0 auto' }}>
+            <WaitlistForm />
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="hero-slide-dots" role="tablist" aria-label="Hero slides">
         <button

@@ -41,6 +41,22 @@ export function middleware(request) {
     return NextResponse.next()
   }
 
+  // ── Authenticated-user bypass ──────────────────────────────────────────
+  // signup/page.jsx and login/page.jsx both assume real accounts can reach
+  // /dashboard, /profile/setup etc. pre-launch — but this gate never
+  // actually granted that until now. Deliberately NOT checking
+  // vi_waitlist_v2: that same cookie is also set by the plain waitlist
+  // form (WaitlistForm.jsx) on simple lead capture, so trusting it here
+  // would unlock the entire site for every waitlist signup, not just real
+  // accounts. Supabase's own session cookie only exists for someone who
+  // actually authenticated, so that's the correct signal — checked as a
+  // prefix match since supabase-js can chunk large tokens into
+  // sb-<ref>-auth-token.0, .1, etc.
+  const hasSupabaseSession = request.cookies.getAll().some(c => /^sb-.*-auth-token/.test(c.name))
+  if (hasSupabaseSession) {
+    return NextResponse.next()
+  }
+
   // ── Post-launch: full lockdown lifts automatically ────────────────────────
   if (isLaunched()) {
     return NextResponse.next()

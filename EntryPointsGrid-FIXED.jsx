@@ -1,5 +1,7 @@
 'use client'
-import { useLaunchStatus } from '@/lib/useLaunchStatus'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { isLaunched } from '@/lib/launchDate'
 
 // Canonical "three entry points" card grid — the exact visual standard shown
 // on the homepage. Import and render this anywhere the same three-way
@@ -20,7 +22,7 @@ const POINTS = [
     buyer: 'For Employers & Recruiters',
     desc: 'Search pre-assessed candidates by VALU Index score, cluster strength, sector, and designation. Every profile backed by one independently assessed standard.',
     modality: 'CANDIDATE',
-    liveHref: '/atb-connect',
+    postLaunchHref: '/atb-connect',
   },
   {
     key: 'ep-2', color: '#C9A84C',
@@ -35,7 +37,7 @@ const POINTS = [
     buyer: 'For Event Planners & Organisers',
     desc: 'Discover and book speakers by expertise, PRIME cluster strength, tier designation, and VALU Index score. Every speaker assessed. No guesswork.',
     modality: 'SPEAKER',
-    liveHref: '/spotlight',
+    postLaunchHref: '/spotlight',
   },
   {
     key: 'ep-3', color: '#1D9E75',
@@ -48,16 +50,16 @@ const POINTS = [
     buyer: 'For L&D & HR Leaders',
     desc: 'Commission PRIME-certified facilitators to run development programmes. Every facilitator carries an assessed track record you can verify before you sign.',
     modality: 'FACILITATOR',
-    liveHref: '/facilitators',
+    postLaunchHref: '/facilitators',
   },
 ]
 
-// Pre-launch: every card scrolls to the waitlist form (ctaHref prop, same
-// as before). Post-launch: each card routes to its own real marketplace
-// page instead — computed client-side, same live pattern as Nav.jsx, so
-// this flips correctly the moment the gate lifts with no redeploy needed.
 export default function EntryPointsGrid({ ctaHref = '#waitlist' }) {
-  const launched = useLaunchStatus()
+  const [launched, setLaunched] = useState(false)
+
+  useEffect(() => {
+    setLaunched(isLaunched())
+  }, [])
 
   return (
     <>
@@ -71,9 +73,11 @@ export default function EntryPointsGrid({ ctaHref = '#waitlist' }) {
           <div className="ep-buyer" style={{ color: p.color }}>{p.buyer}</div>
           <p className="ep-desc-text">{p.desc}</p>
           <div className="ep-modality" style={{ background: `${p.color}1a`, color: p.color, border: `1px solid ${p.color}33` }}>{p.modality}</div>
-          <a href={launched ? p.liveHref : ctaHref} className="ep-link" style={{ color: p.color }}>
-            {launched ? 'Explore' : 'Get Early Access'} <span aria-hidden="true">→</span>
-          </a>
+          {launched ? (
+            <Link href={p.postLaunchHref} className="ep-link" style={{ color: p.color }}>Explore <span aria-hidden="true">→</span></Link>
+          ) : (
+            <a href={ctaHref} className="ep-link" style={{ color: p.color }}>Get Early Access <span aria-hidden="true">→</span></a>
+          )}
         </div>
       ))}
     </>
