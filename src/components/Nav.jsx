@@ -9,23 +9,27 @@ export default function Nav() {
   const [menuOpen, setMenuOpen]       = useState(false)
   const [dropOpen, setDropOpen]       = useState(false)
   const [user, setUser]               = useState(null)
-  const [userType, setUserType]       = useState(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [gateCleared, setGateCleared] = useState(false)
   const launched = useLaunchStatus()
 
   useEffect(() => {
     // Post-launch, the nav always shows — the full-lockdown gate is gone
-    // entirely at that point (see middleware.js). Pre-launch, it still
-    // shows only once the visitor has cleared the waitlist popup/page.
-    if (launched) {
+    // entirely at that point (see middleware.js). Pre-launch, it also
+    // shows for anyone actually authenticated — middleware.js already lets
+    // a real session straight through the gate (see its Supabase-session
+    // bypass), so the nav needs to agree, or a real logged-in professional
+    // lands on a real page with no nav bar at all. Otherwise, pre-launch,
+    // it still shows only once the visitor has cleared the waitlist
+    // popup/page.
+    if (launched || user) {
       setGateCleared(true)
       return
     }
     const inCookie = document.cookie.includes('vi_waitlist_v2')
     const inLocal = localStorage.getItem('vi_waitlist_gate_v2')
     setGateCleared(inCookie || !!inLocal)
-  }, [launched])
+  }, [launched, user])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -38,25 +42,12 @@ export default function Nav() {
   }, [menuOpen])
 
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data: { user } }) => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user)
-      if (user) {
-        const { data: profile } = await supabase
-          .from('professional_profiles').select('active_tracks').eq('id', user.id).maybeSingle()
-        setUserType((profile?.active_tracks?.[0]) || user?.user_metadata?.user_type || null)
-      }
       setAuthChecked(true)
     })
-    const { data: listener } = supabase.auth.onAuthStateChange(async (_e, session) => {
-      const u = session?.user || null
-      setUser(u)
-      if (u) {
-        const { data: profile } = await supabase
-          .from('professional_profiles').select('active_tracks').eq('id', u.id).maybeSingle()
-        setUserType((profile?.active_tracks?.[0]) || u?.user_metadata?.user_type || null)
-      } else {
-        setUserType(null)
-      }
+    const { data: listener } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUser(session?.user || null)
     })
     return () => listener.subscription.unsubscribe()
   }, [])
