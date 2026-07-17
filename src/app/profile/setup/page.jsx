@@ -117,6 +117,7 @@ export default function ProfileSetupPage() {
   const [ready, setReady] = useState(false)
   const [screenIndex, setScreenIndex] = useState(0)
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
   const [transitioning, setTransitioning] = useState(false)
   const [photoUploading, setPhotoUploading] = useState(false)
   const [photoError, setPhotoError] = useState('')
@@ -169,6 +170,15 @@ export default function ProfileSetupPage() {
         existingListingStatusRef.current = existing.listing_status || null
         setForm(f => ({
           ...f, ...existing,
+          // The DB column is experience_years, not years_experience — the
+          // form's field key. A plain `...existing` spread doesn't map one
+          // onto the other, so without this an existing value never made
+          // it back into the form on reload.
+          years_experience:    existing.experience_years != null ? String(existing.experience_years) : f.years_experience,
+          // The DB column is a text[]; the form uses a single string
+          // (single-select control). Unwrap on the way in, wrap on the way
+          // out (see saveProgress below).
+          availability:        Array.isArray(existing.availability) ? (existing.availability[0] || f.availability) : (existing.availability || f.availability),
           active_tracks:       existing.active_tracks || f.active_tracks,
           languages:           existing.languages || f.languages,
           skills:              existing.skills || f.skills,
@@ -186,6 +196,39 @@ export default function ProfileSetupPage() {
       } else if (user.user_metadata?.full_name) {
         setForm(f => ({ ...f, display_name: user.user_metadata.full_name }))
       }
+
+      // Fallback: professional_profiles.valu_index is meant to hold a copy of
+      // this person's VALU Index result, but nothing currently syncs it from
+      // the assessment platform's valu_assessments table (see the Supabase
+      // sync trigger this depends on — supabase/sync-valu-to-profile.sql).
+      // Until that trigger has run for everyone, check directly here so a
+      // completed assessment isn't shown as "Pending" just because the copy
+      // hasn't landed yet. Also self-heals professional_profiles so future
+      // loads (and the public profile page) don't need this fallback again.
+      if (existing?.valu_index == null) {
+        const { data: assessment } = await supabase
+          .from('valu_assessments')
+          .select('total_score, cluster_scores, designation, completed_at, expires_at')
+          .or(`user_id.eq.${user.id},email.eq.${user.email}`)
+          .order('completed_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+
+        if (assessment?.total_score != null) {
+          setForm(f => ({
+            ...f,
+            valu_index: assessment.total_score,
+            cluster_scores: assessment.cluster_scores,
+            designation: assessment.designation,
+            assessment_completed_at: assessment.completed_at,
+            assessment_expires_at: assessment.expires_at,
+          }))
+          if (assessment.total_score >= 35) {
+            existingListingStatusRef.current = existingListingStatusRef.current || 'listed'
+          }
+        }
+      }
+
       setReady(true)
     })
   }, [])
@@ -222,14 +265,18 @@ export default function ProfileSetupPage() {
   }
 
   async function saveProgress(overrides) {
-    if (!user) return
+    if (!user) return false
     const f = overrides || form
     setSaving(true)
-    await supabase.from('professional_profiles').upsert({
+    const { error } = await supabase.from('professional_profiles').upsert({
       id: user.id,
       display_name: f.display_name || null, headline: f.headline || null,
       location: f.location || null, industry: f.industry || null,
-      years_experience: f.years_experience ? parseInt(f.years_experience) : null,
+      // Real column is experience_years, not years_experience (that's the
+      // form field's key). Sending the wrong key doesn't just drop this one
+      // field — PostgREST rejects the entire upsert if any key doesn't
+      // match a real column, so every field below was failing to save too.
+      experience_years: f.years_experience ? parseInt(f.years_experience) : null,
       bio: f.bio || null, languages: f.languages, active_tracks: f.active_tracks,
       skills: f.skills, topics: f.topics, facilitation_topics: f.facilitation_topics,
       programme_types: f.programme_types, format_capabilities: f.format_capabilities,
@@ -240,12 +287,29 @@ export default function ProfileSetupPage() {
       certifications: f.certifications || null, photo_url: f.photo_url || null,
       youtube_links: f.youtube_links.filter(Boolean),
       linkedin_url: f.linkedin_url || null, website_url: f.website_url || null,
-      availability: f.availability, modality: f.modality,
+      // Real column is a text[]; the form is a single-select string.
+      availability: f.availability ? [f.availability] : [],
+      modality: f.modality,
       contract_preference: f.contract_preference, notice_period: f.notice_period || null,
       salary_expectation: f.salary_expectation || null, fee_range: f.fee_range || null,
+      // Carried forward from the valu_assessments fallback lookup (or a real
+      // sync) in the load effect above — only written if we actually have a
+      // value, so a save never accidentally clears an existing score.
+      ...(f.valu_index != null ? { valu_index: f.valu_index } : {}),
+      ...(f.cluster_scores != null ? { cluster_scores: f.cluster_scores } : {}),
+      ...(f.designation != null ? { designation: f.designation } : {}),
+      ...(f.assessment_completed_at != null ? { assessment_completed_at: f.assessment_completed_at } : {}),
+      ...(f.assessment_expires_at != null ? { assessment_expires_at: f.assessment_expires_at } : {}),
       listing_status: existingListingStatusRef.current || 'pending', updated_at: new Date().toISOString(),
     }, { onConflict: 'id' })
     setSaving(false)
+    if (error) {
+      console.error('Profile save failed:', error)
+      setSaveError('Your last change didn\u2019t save — check your connection and try again.')
+      return false
+    }
+    setSaveError('')
+    return true
   }
 
   // Mirrors the assessment's pattern: click an answer, brief highlight,
@@ -276,7 +340,8 @@ export default function ProfileSetupPage() {
 
   async function handleFinish() {
     setSaving(true)
-    await saveProgress()
+    const ok = await saveProgress()
+    if (!ok) { setSaving(false); return }
     // Fetch back what the database actually assigned (atb_id is set by a
     // trigger, not by this app) so we can show it — previously this just
     // redirected silently with no confirmation of any kind.
@@ -364,7 +429,7 @@ export default function ProfileSetupPage() {
 
         <ScreenBody
           screen={screen} form={form} set={set} toggleArr={toggleArr} updateListItem={updateListItem}
-          selectAndAdvance={selectAndAdvance} goNext={goNext} saving={saving}
+          selectAndAdvance={selectAndAdvance} goNext={goNext} saving={saving} saveError={saveError}
           photoUploading={photoUploading} photoError={photoError} fileRef={fileRef} uploadPhoto={uploadPhoto}
           isCandidate={isCandidate} isSpeaker={isSpeaker} isFacilitator={isFacilitator}
           tags={tags} videoLinks={videoLinks} handleFinish={handleFinish}
@@ -681,7 +746,7 @@ function ScreenBody(props) {
   }
 }
 
-function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, videoLinks, handleFinish, saving, set, onChangeTracks }) {
+function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, videoLinks, handleFinish, saving, saveError, set, onChangeTracks }) {
   return (
     <div>
       <Title>Review &amp;<br/><Em>submit.</Em></Title>
@@ -767,6 +832,10 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
           I confirm all information provided is accurate. I understand my profile will be reviewed before listing, and my full name will only be shared with buyers after a formal introduction is facilitated by Valoria Institute.
         </span>
       </label>
+
+      {saveError && (
+        <p style={{ fontSize:'12px', color:'#F09595', margin:'0 0 14px', lineHeight:1.6 }}>{saveError}</p>
+      )}
 
       <button onClick={handleFinish} disabled={!form.consent || saving}
         style={{ display:'block', width:'100%', padding:'16px', background: form.consent && !saving ? GOLD : 'rgba(201,168,76,.2)', color: form.consent && !saving ? DARK : 'rgba(201,168,76,.4)', fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor: form.consent && !saving ? 'pointer' : 'not-allowed', fontFamily:'inherit' }}>

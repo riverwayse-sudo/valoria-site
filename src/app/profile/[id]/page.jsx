@@ -51,14 +51,32 @@ export default function ProfilePage({ params }) {
 
   useEffect(() => {
     async function load() {
-      const { data: real } = await supabase
+      const { data: real, error: realError } = await supabase
         .from('professional_profiles')
-        .select('id, display_name, headline, location, industry, years_experience, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability')
+        .select('id, display_name, headline, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability')
         .eq('id', id)
         .maybeSingle()
 
+      // This used to fail silently on a bad column name — the query errored,
+      // `real` was always null, and every real profile fell through to the
+      // dummy marketplace_profiles lookup below without a trace. Logging it
+      // now so a future schema drift shows up immediately instead of
+      // masquerading as "profile not found."
+      if (realError) console.error('professional_profiles fetch failed:', realError)
+
       if (real) {
-        setProfile({ ...real, valu_score: real.valu_index, user_type: (real.active_tracks||[])[0] || 'candidate', _source: 'real' })
+        setProfile({
+          ...real,
+          // Keep the form-facing name the rest of this component already
+          // expects, while the query itself uses the real column name.
+          years_experience: real.experience_years,
+          // Real column is a text[]; the rest of this page treats
+          // availability as a single string.
+          availability: Array.isArray(real.availability) ? (real.availability[0] || null) : real.availability,
+          valu_score: real.valu_index,
+          user_type: (real.active_tracks||[])[0] || 'candidate',
+          _source: 'real',
+        })
         setLoading(false)
         return
       }
