@@ -305,7 +305,11 @@ export default function ProfileSetupPage() {
     setSaving(false)
     if (error) {
       console.error('Profile save failed:', error)
-      setSaveError('Your last change didn\u2019t save — check your connection and try again.')
+      // TEMPORARY — showing the raw error so we can diagnose the 409
+      // without needing DevTools screenshots. Revert to the generic
+      // message once this is resolved; showing raw DB errors to end
+      // users isn't something to ship long-term.
+      setSaveError(`[${error.code || '?'}] ${error.message || 'unknown'} — ${error.details || 'no details'} ${error.hint ? '(hint: ' + error.hint + ')' : ''}`)
       return false
     }
     setSaveError('')
