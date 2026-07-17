@@ -54,8 +54,9 @@ const POINTS = [
 
 // Pre-launch: every card scrolls to the waitlist form (ctaHref prop, same
 // as before). Post-launch: each card routes to its own real marketplace
-// page instead — computed client-side, same live pattern as Nav.jsx, so
-// this flips correctly the moment the gate lifts with no redeploy needed.
+// page instead — live via useLaunchStatus, so this flips correctly the
+// moment the gate lifts, even for a tab already open when it happens, with
+// no redeploy and no manual refresh needed.
 export default function EntryPointsGrid({ ctaHref = '#waitlist' }) {
   const launched = useLaunchStatus()
 
