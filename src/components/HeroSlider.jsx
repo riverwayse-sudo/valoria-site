@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import WaitlistForm from '@/components/WaitlistForm'
 import { WaitlistSocialProofToast, WaitlistLiveCountBadge } from '@/components/WaitlistSocialProof'
 import { useLaunchStatus } from '@/lib/useLaunchStatus'
+import { supabase } from '@/lib/supabase'
 
 // Saturday, July 18, 2026, 10:00 AM WAT (UTC+1) = 09:00 UTC.
 // Update this if the event date/time changes — nothing else needs to.
@@ -62,7 +63,20 @@ export default function HeroSlider() {
   const [slide, setSlide] = useState(0)
   const pausedRef = useRef(false)
   const timeLeft = useCountdown(EVENT_DATE)
-  const launched = useLaunchStatus()
+  const launchedByDate = useLaunchStatus()
+  // An authenticated session should see the site as launched even before
+  // the date-based gate flips — same bypass middleware.js already grants,
+  // and the same fix Nav.jsx got. Without this, a logged-in visitor who
+  // gets past middleware still sees the pre-launch countdown/CTAs here.
+  const [user, setUser] = useState(null)
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => setUser(user))
+    const { data: listener } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUser(session?.user || null)
+    })
+    return () => listener?.subscription?.unsubscribe()
+  }, [])
+  const launched = launchedByDate || !!user
   // timeLeft ticks every second even after done:true, so this recomputes
   // freshly on the same cadence rather than needing its own timer.
   const webinarLive = timeLeft?.done && Date.now() < WEBINAR_END.getTime()
@@ -87,7 +101,7 @@ export default function HeroSlider() {
       <div className="hero-grid" aria-hidden="true" />
 
       <div className="hero-slides">
-        {/* ── SLIDE 1 — main introduction ────────────────────────────────── */}
+        {/* ── SLIDE 1 — main introduction ──────────────────────────────── */}
         <div className={`hero-slide ${slide === 0 ? 'is-active' : ''}`} aria-hidden={slide !== 0}>
           <div className="container hero-inner">
             <div>
@@ -159,7 +173,7 @@ export default function HeroSlider() {
           </div>
         </div>
 
-        {/* ── SLIDE 2 — live webinar ─────────────────────────────────────── */}
+        {/* ── SLIDE 2 — live webinar ───────────────────────────────────── */}
         <div className={`hero-slide ${slide === 1 ? 'is-active' : ''}`} aria-hidden={slide !== 1}>
           <div className="container hero-inner">
             <div>
@@ -230,12 +244,12 @@ export default function HeroSlider() {
         </div>
       </div>
 
-      {/* ── IN-HERO WAITLIST FORM ─────────────────────────────────────────
+      {/* ── IN-HERO WAITLIST FORM ────────────────────────────────────────
           Lives inside the Hero (not further down the page) so ad traffic
           converts without scrolling. Reuses id="waitlist" for both slides'
-          pre-launch CTAs. Only rendered pre-launch — post-launch, both
-          CTAs above point at the real marketplace instead, and a founding-
-          cohort signup form has nothing left to do on a live site. */}
+          pre-launch CTAs. Only rendered pre-launch AND for a signed-out
+          visitor — a logged-in user has nothing left to sign up for, and
+          post-launch, both CTAs above point at the real marketplace instead. */}
       {!launched && (
         <div id="waitlist" className="container" style={{ padding: 'clamp(40px,6vw,72px) 0 clamp(24px,4vw,48px)', position: 'relative', zIndex: 2 }}>
           <div style={{ maxWidth: '480px', margin: '0 auto' }}>
