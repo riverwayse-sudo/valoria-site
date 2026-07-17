@@ -1,5 +1,7 @@
 'use client'
+import { useState, useEffect } from 'react'
 import { useLaunchStatus } from '@/lib/useLaunchStatus'
+import { supabase } from '@/lib/supabase'
 
 // Canonical "three entry points" card grid — the exact visual standard shown
 // on the homepage. Import and render this anywhere the same three-way
@@ -58,7 +60,22 @@ const POINTS = [
 // moment the gate lifts, even for a tab already open when it happens, with
 // no redeploy and no manual refresh needed.
 export default function EntryPointsGrid({ ctaHref = '#waitlist' }) {
-  const launched = useLaunchStatus()
+  const launchedByDate = useLaunchStatus()
+  // An authenticated session should see these as live too — same bypass
+  // middleware.js already grants (a logged-in visitor can navigate straight
+  // to /atb-connect etc. regardless of the date), and the same fix applied
+  // to Nav.jsx and HeroSlider.jsx. Without this, a signed-in visitor still
+  // sees "Get Early Access" cards pointing at the waitlist instead of the
+  // real destination they're already allowed to reach.
+  const [user, setUser] = useState(null)
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => setUser(user))
+    const { data: listener } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUser(session?.user || null)
+    })
+    return () => listener?.subscription?.unsubscribe()
+  }, [])
+  const launched = launchedByDate || !!user
 
   return (
     <>
