@@ -12,7 +12,7 @@
 //   (b) changeable from Vercel's dashboard without touching code, in
 //       case the date or time ever shifts.
 
-const DEFAULT_LAUNCH_DATE = '2026-07-18T10:15:00+01:00' // 10:15 AM WAT (Africa/Lagos, UTC+1 year-round)
+const DEFAULT_LAUNCH_DATE = '2026-07-18T10:00:00+01:00' // 10:00 AM WAT (Africa/Lagos, UTC+1 year-round)
 
 export const LAUNCH_DATE = new Date(
   process.env.NEXT_PUBLIC_LAUNCH_DATE || DEFAULT_LAUNCH_DATE
