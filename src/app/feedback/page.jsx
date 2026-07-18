@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
@@ -11,7 +11,18 @@ const PARCH = '#F7F4EE'
 const DIM = 'rgba(247,244,238,.5)'
 const GLINE2 = 'rgba(201,168,76,.28)'
 
+// useSearchParams() requires a Suspense boundary in the App Router, or the
+// production build fails outright — this default export just supplies that
+// boundary; the real component (and the useSearchParams call) lives below.
 export default function FeedbackPage() {
+  return (
+    <Suspense fallback={null}>
+      <FeedbackForm />
+    </Suspense>
+  )
+}
+
+function FeedbackForm() {
   const params = useSearchParams()
   const prefillEmail = params.get('email') || ''
   const prefillName = params.get('name') || ''
