@@ -9,7 +9,7 @@ import { PRIME_CLUSTERS } from '@/lib/brand'
 
 // Saturday, July 18, 2026, 10:00 AM WAT (UTC+1) = 09:00 UTC.
 const EVENT_DATE = new Date('2026-07-18T09:00:00Z')
-const MEET_LINK = 'https://meet.google.com/wwj-yevz-jps'
+const MEET_LINK = 'https://meet.google.com/pcc-ftwp-rsj'
 function pad(n) { return String(n).padStart(2, '0') }
 
 function useCountdown(target) {

@@ -14,7 +14,7 @@ const EVENT_DATE = new Date('2026-07-18T09:00:00Z')
 const WEBINAR_END = new Date(EVENT_DATE.getTime() + 3 * 60 * 60 * 1000)
 
 // From the actual Google Meet invite — used once the countdown hits zero.
-const MEET_LINK = 'https://meet.google.com/wwj-yevz-jps'
+const MEET_LINK = 'https://meet.google.com/pcc-ftwp-rsj'
 
 function pad(n) { return String(n).padStart(2, '0') }
 
