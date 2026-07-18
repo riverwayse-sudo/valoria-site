@@ -43,6 +43,11 @@ function getAvatarLetters(name) {
   if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
   return (words[0][0] + words[words.length - 1][0]).toUpperCase()
 }
+function getYouTubeId(url) {
+  if (!url) return null
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
+  return m ? m[1] : null
+}
 function completenessFields(isSpeaker) {
   return isSpeaker
     ? ['display_name', 'headline', 'bio', 'photo_url', 'topics', 'tier', 'fee_range']
@@ -71,6 +76,7 @@ export default function DashboardPage() {
   const [showWelcome, setShowWelcome] = useState(false)
   const [avatarError, setAvatarError] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [activeVideo, setActiveVideo] = useState(null)
 
   useEffect(() => {
     async function load() {
@@ -170,6 +176,7 @@ export default function DashboardPage() {
   const compensation = isSpeaker ? (p.fee_range || null) : (p.salary_expectation || p.fee_range || null)
   const compLabel    = isSpeaker ? 'Speaking Fee' : 'Salary Range'
   const completenessPct = isSupply ? computeCompleteness(p, isSpeaker) : null
+  const videos = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
 
   const stats = isSupply ? [
     { label:'Location',   value: p.location || '—' },
@@ -216,14 +223,16 @@ export default function DashboardPage() {
         </header>
 
         {/* COVER BANNER */}
-        <div style={{ position:'relative', height:'240px', overflow:'hidden', background:`radial-gradient(ellipse 800px 400px at 10% 30%, rgba(201,168,76,.22), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 70%, rgba(201,168,76,.1), transparent 55%), linear-gradient(155deg, ${MID} 0%, ${DARK} 70%)` }}>
-          <svg viewBox="0 0 1200 240" preserveAspectRatio="none" style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:.45 }}>
+        <div style={{ position:'relative', height:'280px', overflow:'hidden', background:`radial-gradient(ellipse 800px 400px at 10% 30%, rgba(201,168,76,.22), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 70%, rgba(201,168,76,.1), transparent 55%), linear-gradient(155deg, ${MID} 0%, ${DARK} 70%)` }}>
+          <svg viewBox="0 0 1200 280" preserveAspectRatio="none" style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:.45 }}>
             <g stroke="#C9A84C" strokeOpacity=".18" strokeWidth="1" fill="none">
-              <path d="M0,200 C300,130 500,240 800,150 S1100,200 1200,130"/>
-              <path d="M0,150 C300,80 500,190 800,100 S1100,150 1200,80"/>
-              <path d="M0,240 C200,190 400,220 600,170 S900,200 1200,170"/>
+              <path d="M0,240 C300,160 500,280 800,180 S1100,240 1200,160"/>
+              <path d="M0,180 C300,100 500,220 800,120 S1100,180 1200,100"/>
+              <path d="M0,120 C300,40 500,160 800,60 S1100,120 1200,40"/>
+              <path d="M0,280 C200,220 400,260 600,200 S900,240 1200,200"/>
             </g>
-            <polygon points="1060,40 1110,120 1060,95 1010,120" fill="rgba(201,168,76,.15)"/>
+            <polygon points="1060,50 1110,140 1060,110 1010,140" fill="rgba(201,168,76,.15)"/>
+            <polygon points="80,200 120,260 80,240 40,260" fill="rgba(201,168,76,.08)"/>
           </svg>
           {isSupply && (
             <div style={{ position:'absolute', top:'20px', right:'28px', display:'flex', alignItems:'center', gap:'7px', background:'rgba(26,26,46,.75)', border:`1px solid ${GLINE2}`, padding:'7px 16px 7px 12px', borderRadius:'999px', fontSize:'11px', letterSpacing:'.1em', textTransform:'uppercase', color: isVisible ? '#1D9E75' : GOLD, backdropFilter:'blur(8px)' }}>
@@ -236,7 +245,7 @@ export default function DashboardPage() {
 
         {/* HEADER BLOCK */}
         <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'0 clamp(20px,4vw,40px)' }}>
-          <div className="dv-header-block" style={{ display:'flex', alignItems:'flex-end', gap:'24px', marginTop:'-70px', position:'relative', zIndex:5, flexWrap:'wrap' }}>
+          <div className="dv-header-block" style={{ display:'flex', alignItems:'flex-end', gap:'24px', marginTop:'-80px', position:'relative', zIndex:5, flexWrap:'wrap' }}>
 
             {/* Avatar — individual professionals only; employer/organiser accounts are businesses, not people */}
             {isSupply && (
@@ -310,6 +319,33 @@ export default function DashboardPage() {
             })}
           </div>
         </div>
+        )}
+
+        {/* VIDEO HIGHLIGHTS ROW */}
+        {isSupply && videos.length > 0 && (
+          <div style={{ maxWidth:'1100px', margin:'32px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+            <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.45)', marginBottom:'14px' }}>Highlights</div>
+            <div style={{ display:'flex', gap:'16px', overflowX:'auto', paddingBottom:'6px' }}>
+              {videos.map((url, i) => {
+                const ytId = getYouTubeId(url)
+                const labels = ['Intro reel','Case study','Keynote clip','Panel talk']
+                const isActive = activeVideo === i
+                return (
+                  <div key={i} onClick={() => setActiveVideo(isActive ? null : i)}
+                    style={{ flexShrink:0, width:'84px', textAlign:'center', cursor:'pointer' }}>
+                    <div style={{ width:'72px', height:'72px', borderRadius:'50%', margin:'0 auto 8px', padding:'2.5px', background: isActive ? `conic-gradient(${GOLD}, rgba(201,168,76,.2) 40%, rgba(201,168,76,.05) 41%)` : 'rgba(201,168,76,.15)', border: isActive ? `none` : `1px solid ${GLINE}` }}>
+                      <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: MID, display:'flex', alignItems:'center', justifyContent:'center', color: GOLD, fontSize:'18px', border:`2px solid ${DARK}`, overflow:'hidden' }}>
+                        {ytId
+                          ? <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
+                          : '▶'}
+                      </div>
+                    </div>
+                    <div style={{ fontSize:'10px', color: DIM, letterSpacing:'.04em' }}>{labels[i] || `Video ${i+1}`}</div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
         )}
 
         {/* MAIN */}
@@ -399,6 +435,25 @@ export default function DashboardPage() {
 
             {/* MAIN CONTENT */}
             <div style={{ minWidth:0 }}>
+
+              {/* Expanded video player */}
+              {activeVideo !== null && videos[activeVideo] && (() => {
+                const ytId = getYouTubeId(videos[activeVideo])
+                return ytId ? (
+                  <div style={{ marginBottom:'32px' }}>
+                    <div style={{ position:'relative', paddingBottom:'56.25%', height:0, background:'#000', overflow:'hidden' }}>
+                      <iframe src={`https://www.youtube.com/embed/${ytId}?autoplay=1`}
+                        title="Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen
+                        style={{ position:'absolute', top:0, left:0, width:'100%', height:'100%', border:'none' }} />
+                    </div>
+                    <button onClick={() => setActiveVideo(null)}
+                      style={{ fontSize:'12px', color: DIM, background:'none', border:'none', cursor:'pointer', padding:'10px 0', fontFamily:'inherit', letterSpacing:'.04em' }}>
+                      ← Close video
+                    </button>
+                  </div>
+                ) : null
+              })()}
+
               <Section label="About">
                 {p.bio
                   ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
@@ -411,6 +466,23 @@ export default function DashboardPage() {
                     {(isSpeaker ? p.topics : p.skills).map(t => (
                       <span key={t} style={{ padding:'8px 16px', border:`1px solid ${GLINE2}`, fontSize:'12px', fontWeight:400, color: DIM, letterSpacing:'.04em' }}>{t}</span>
                     ))}
+                  </div>
+                </Section>
+              )}
+
+              {videos.length > 0 && activeVideo === null && (
+                <Section label={isSpeaker ? 'Speaker Reel & Videos' : 'Videos'}>
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:'12px' }}>
+                    {videos.slice(0,4).map((url, i) => {
+                      const ytId = getYouTubeId(url)
+                      return (
+                        <div key={i} onClick={() => setActiveVideo(i)}
+                          style={{ aspectRatio:'16/10', position:'relative', background:`linear-gradient(145deg,${MID},${DARK})`, border:`1px solid ${GLINE}`, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', overflow:'hidden' }}>
+                          {ytId && <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:.5 }} />}
+                          <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'rgba(201,168,76,.9)', display:'flex', alignItems:'center', justifyContent:'center', color: DARK, fontSize:'15px', position:'relative', zIndex:1 }}>▶</div>
+                        </div>
+                      )
+                    })}
                   </div>
                 </Section>
               )}
@@ -476,7 +548,7 @@ export default function DashboardPage() {
         }
         @media (max-width: 640px) {
           .dv-stat-strip { flex-wrap: wrap !important; }
-          .dv-header-block { margin-top: -50px !important; }
+          .dv-header-block { margin-top: -60px !important; }
         }
       `}</style>
     </>
