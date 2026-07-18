@@ -34,11 +34,11 @@ const FAINT   = 'rgba(247,244,238,.15)'
 const GLINE   = 'rgba(201,168,76,.12)'
 const GLINE2  = 'rgba(201,168,76,.28)'
 const PRIME   = [
-  { letter: 'P', color: '#1D9E75' },
-  { letter: 'R', color: '#378ADD' },
-  { letter: 'I', color: '#7F77DD' },
-  { letter: 'M', color: '#BA7517' },
-  { letter: 'E', color: '#D85A30' },
+  { letter: 'P', color: '#1D9E75', label: 'Presence' },
+  { letter: 'R', color: '#378ADD', label: 'Relationships' },
+  { letter: 'I', color: '#7F77DD', label: 'Intelligence' },
+  { letter: 'M', color: '#BA7517', label: 'Mastery' },
+  { letter: 'E', color: '#D85A30', label: 'Enterprise' },
 ]
 
 // ─── component ─────────────────────────────────────────────
@@ -48,6 +48,8 @@ export default function ProfilePage({ params }) {
   const [loading, setLoading]     = useState(true)
   const [notFound, setNotFound]   = useState(false)
   const [activeVideo, setActiveVideo] = useState(null)
+  const [avatarError, setAvatarError] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -120,6 +122,14 @@ export default function ProfilePage({ params }) {
     load()
   }, [id])
 
+  function copyLink() {
+    if (typeof window === 'undefined') return
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }).catch(() => {})
+  }
+
   if (loading) return (
     <div style={{ minHeight:'100vh', background: DARK, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font,Raleway,sans-serif)', color: DIM, fontSize:'13px', letterSpacing:'.08em' }}>
       Loading…
@@ -147,6 +157,14 @@ export default function ProfilePage({ params }) {
   const compensation = isSpeaker ? (p.fee_range || null) : (p.salary_expectation || p.fee_range || null)
   const compLabel   = isSpeaker ? 'Speaking Fee' : 'Salary Range'
   const tags        = isSpeaker ? (p.topics || []) : (p.skills || [])
+
+  const stats = [
+    { label:'Location',   value: p.location || '—' },
+    { label:'Industry',   value: p.industry || '—' },
+    { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
+    { label: compLabel,   value: compensation || '—' },
+    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} / 100` : 'Not assessed', href: p.valu_score != null ? '#valu-card' : null },
+  ]
 
   return (
     <>
@@ -183,14 +201,21 @@ export default function ProfilePage({ params }) {
 
         {/* HEADER BLOCK */}
         <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'0 clamp(20px,4vw,40px)' }}>
-          <div style={{ display:'flex', alignItems:'flex-end', gap:'24px', marginTop:'-80px', position:'relative', zIndex:5, flexWrap:'wrap' }}>
+          <div className="vi-header-block" style={{ display:'flex', alignItems:'flex-end', gap:'24px', marginTop:'-80px', position:'relative', zIndex:5, flexWrap:'wrap' }}>
 
-            {/* Rotating ring avatar */}
-            <div style={{ width:'148px', height:'148px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, animation:'vi-rotate 10s linear infinite' }}>
+            {/* Avatar — static ring, no longer spins the photo */}
+            <div style={{ width:'148px', height:'148px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
               <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
-                <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: p.photo_url ? undefined : `linear-gradient(145deg,${MID},${DARK})`, overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'36px', fontWeight:700, color: GOLD, letterSpacing:'.04em' }}>
-                  {p.photo_url
-                    ? <img src={p.photo_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: (p.photo_url && !avatarError) ? undefined : `linear-gradient(145deg,${MID},${DARK})`, overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'36px', fontWeight:700, color: GOLD, letterSpacing:'.04em' }}>
+                  {p.photo_url && !avatarError
+                    ? <img
+                        src={p.photo_url}
+                        alt={p.display_name ? `${p.display_name}'s photo` : 'Profile photo'}
+                        loading="lazy"
+                        decoding="async"
+                        onError={() => setAvatarError(true)}
+                        style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center' }}
+                      />
                     : avatarLetters}
                 </div>
               </div>
@@ -213,6 +238,10 @@ export default function ProfilePage({ params }) {
 
             {/* CTAs */}
             <div style={{ display:'flex', gap:'10px', paddingBottom:'16px', flexShrink:0, flexWrap:'wrap' }}>
+              <button onClick={copyLink}
+                style={{ padding:'12px 18px', background:'transparent', border:`1px solid ${GLINE}`, color: DIM, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', cursor:'pointer', fontFamily:'inherit' }}>
+                {copied ? 'LINK COPIED' : 'SHARE'}
+              </button>
               <Link href={isSpeaker ? '/spotlight' : '/atb-connect'}
                 style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
                 MORE {isSpeaker ? 'SPEAKERS' : 'TALENT'}
@@ -227,19 +256,25 @@ export default function ProfilePage({ params }) {
 
         {/* STAT STRIP */}
         <div style={{ maxWidth:'1100px', margin:'32px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
-          <div style={{ display:'flex', borderTop:`1px solid ${GLINE}`, borderBottom:`1px solid ${GLINE}`, flexWrap:'wrap' }}>
-            {[
-              { label:'Location',   value: p.location || '—' },
-              { label:'Industry',   value: p.industry || '—' },
-              { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
-              { label: compLabel,   value: compensation || '—' },
-              { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} / 100` : 'Not assessed' },
-            ].map((s, i, arr) => (
-              <div key={s.label} style={{ flex:'1 1 140px', padding:'16px 16px 16px 0', borderRight: i < arr.length - 1 ? `1px solid ${GLINE}` : 'none', paddingLeft: i > 0 ? '16px' : 0 }}>
-                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.16em', textTransform:'uppercase', color:'rgba(201,168,76,.45)', marginBottom:'6px' }}>{s.label}</div>
-                <div style={{ fontSize:'14px', fontWeight:500, color: PARCH, letterSpacing:'.02em' }}>{s.value}</div>
-              </div>
-            ))}
+          <div className="vi-stat-strip" style={{ display:'flex', borderTop:`1px solid ${GLINE}`, borderBottom:`1px solid ${GLINE}`, flexWrap:'wrap' }}>
+            {stats.map((s, i, arr) => {
+              const itemStyle = {
+                flex:'1 1 140px', padding:'16px 16px 16px 0',
+                borderRight: i < arr.length - 1 ? `1px solid ${GLINE}` : 'none',
+                paddingLeft: i > 0 ? '16px' : 0,
+                textDecoration:'none', display:'block',
+                transition:'background .15s ease',
+              }
+              const inner = (
+                <>
+                  <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.16em', textTransform:'uppercase', color:'rgba(201,168,76,.45)', marginBottom:'6px' }}>{s.label}</div>
+                  <div style={{ fontSize:'14px', fontWeight:500, color: PARCH, letterSpacing:'.02em' }}>{s.value}</div>
+                </>
+              )
+              return s.href
+                ? <a key={s.label} href={s.href} style={itemStyle}>{inner}</a>
+                : <div key={s.label} style={itemStyle}>{inner}</div>
+            })}
           </div>
         </div>
 
@@ -271,33 +306,56 @@ export default function ProfilePage({ params }) {
         )}
 
         {/* MAIN GRID */}
-        <div style={{ maxWidth:'1100px', margin:'36px auto 80px', padding:'0 clamp(20px,4vw,40px)', display:'grid', gridTemplateColumns:'280px 1fr', gap:'40px' }}>
+        <div className="vi-profile-grid" style={{ maxWidth:'1100px', margin:'36px auto 80px', padding:'0 clamp(20px,4vw,40px)', display:'grid', gridTemplateColumns:'280px 1fr', gap:'40px' }}>
 
           {/* SIDEBAR */}
           <div style={{ minWidth:0 }}>
 
             {/* VALU Index */}
-            <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
+            <div id="valu-card" style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px', scrollMarginTop:'96px' }}>
               <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'14px' }}>VALU Index</div>
               {p.valu_score != null ? (
                 <>
-                  <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_score}</div>
-                  <div style={{ fontSize:'9px', color: DIM, letterSpacing:'.14em', marginBottom:'16px' }}>OUT OF 100</div>
-                  {p.designation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{p.designation.replace(/_/g,' ')}</div>}
+                  {p.cluster_scores ? (
+                    <div style={{ position:'relative', width:'190px', height:'190px', margin:'0 auto 20px' }}>
+                      <svg viewBox="0 0 200 200" style={{ width:'100%', height:'100%', transform:'rotate(-90deg)' }}>
+                        {PRIME.map(({ letter, color }, i) => {
+                          const score = p.cluster_scores[letter]
+                          if (score == null) return null
+                          const r = 88 - i * 15
+                          const circ = 2 * Math.PI * r
+                          const dash = (score / 100) * circ
+                          return (
+                            <g key={letter}>
+                              <circle cx="100" cy="100" r={r} fill="none" stroke={FAINT} strokeWidth="7" />
+                              <circle cx="100" cy="100" r={r} fill="none" stroke={color} strokeWidth="7"
+                                strokeLinecap="round" strokeDasharray={`${dash} ${circ}`} />
+                            </g>
+                          )
+                        })}
+                      </svg>
+                      <div style={{ position:'absolute', inset:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' }}>
+                        <div style={{ fontSize:'44px', fontWeight:700, color: GOLD, lineHeight:1 }}>{p.valu_score}</div>
+                        <div style={{ fontSize:'9px', color: DIM, letterSpacing:'.14em', marginTop:'4px' }}>OUT OF 100</div>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_score}</div>
+                      <div style={{ fontSize:'9px', color: DIM, letterSpacing:'.14em', marginBottom:'16px' }}>OUT OF 100</div>
+                    </>
+                  )}
+                  {p.designation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'18px', letterSpacing:'.1em', textTransform:'uppercase', textAlign: p.cluster_scores ? 'center' : 'left' }}>{p.designation.replace(/_/g,' ')}</div>}
                   {p.cluster_scores && (
-                    <div>
-                      {PRIME.map(({ letter, color }) => {
+                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px 12px' }}>
+                      {PRIME.map(({ letter, color, label }) => {
                         const score = p.cluster_scores[letter]
                         if (score == null) return null
                         return (
-                          <div key={letter} style={{ marginBottom:'10px' }}>
-                            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'4px' }}>
-                              <span style={{ fontSize:'11px', color }}>{letter}</span>
-                              <span style={{ fontSize:'11px', color, fontWeight:700 }}>{score}</span>
-                            </div>
-                            <div style={{ height:'3px', background: FAINT, borderRadius:'1px' }}>
-                              <div style={{ height:'100%', width:`${score}%`, background: color, borderRadius:'1px' }} />
-                            </div>
+                          <div key={letter} style={{ display:'flex', alignItems:'center', gap:'7px' }}>
+                            <span style={{ width:'7px', height:'7px', borderRadius:'50%', background: color, flexShrink:0 }} />
+                            <span style={{ fontSize:'11px', color: DIM, flex:1 }}>{label}</span>
+                            <span style={{ fontSize:'11px', color, fontWeight:700 }}>{score}</span>
                           </div>
                         )
                       })}
@@ -325,21 +383,25 @@ export default function ProfilePage({ params }) {
             </div>
 
             {/* Links — gated */}
-            {(p.linkedin_url || p.website_url) && (
-              <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px' }}>
-                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'12px' }}>Links</div>
-                {p.linkedin_url && (
-                  <div style={{ fontSize:'13px', fontWeight:300, color: DIM, padding:'10px 0', borderTop:`1px solid ${GLINE}` }}>
-                    in&ensp;LinkedIn — visible after introduction
-                  </div>
-                )}
-                {p.website_url && (
-                  <div style={{ fontSize:'13px', fontWeight:300, color: DIM, padding:'10px 0', borderTop:`1px solid ${GLINE}` }}>
-                    ↗&ensp;Website — visible after introduction
-                  </div>
-                )}
-              </div>
-            )}
+            <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px' }}>
+              <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'12px' }}>Links</div>
+              {p.linkedin_url || p.website_url ? (
+                <>
+                  {p.linkedin_url && (
+                    <div style={{ fontSize:'13px', fontWeight:300, color: DIM, padding:'10px 0', borderTop:`1px solid ${GLINE}` }}>
+                      in&ensp;LinkedIn — visible after introduction
+                    </div>
+                  )}
+                  {p.website_url && (
+                    <div style={{ fontSize:'13px', fontWeight:300, color: DIM, padding:'10px 0', borderTop:`1px solid ${GLINE}` }}>
+                      ↗&ensp;Website — visible after introduction
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p style={{ fontSize:'12px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No links added yet.</p>
+              )}
+            </div>
           </div>
 
           {/* MAIN CONTENT */}
@@ -364,11 +426,11 @@ export default function ProfilePage({ params }) {
             })()}
 
             {/* About */}
-            {p.bio && (
-              <Section label="About">
-                <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
-              </Section>
-            )}
+            <Section label="About">
+              {p.bio
+                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
+                : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No bio added yet.</p>}
+            </Section>
 
             {/* Skills / Topics */}
             {tags.length > 0 && (
@@ -404,7 +466,7 @@ export default function ProfilePage({ params }) {
             {/* Introduction CTA — anchor target for the REQUEST INTRO / BOOK SPEAKER
                 links on /atb-connect and /spotlight, which already point to
                 this page as #contact. scrollMarginTop accounts for the fixed nav. */}
-            <div id="contact" style={{ background:`linear-gradient(135deg, rgba(201,168,76,.06), rgba(26,26,46,.3))`, border:`1px solid ${GLINE2}`, padding:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', flexWrap:'wrap', marginTop:'8px', scrollMarginTop:'96px' }}>
+            <div id="contact" className="vi-cta-intro" style={{ background:`linear-gradient(135deg, rgba(201,168,76,.06), rgba(26,26,46,.3))`, border:`1px solid ${GLINE2}`, padding:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', flexWrap:'wrap', marginTop:'8px', scrollMarginTop:'96px' }}>
               <div>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'8px' }}>
                   {isSpeaker ? 'Book This Speaker' : 'Get in Touch'}
@@ -438,7 +500,9 @@ export default function ProfilePage({ params }) {
           70%{box-shadow:0 0 0 6px rgba(29,158,117,0);}
           100%{box-shadow:0 0 0 0 rgba(29,158,117,0);}
         }
-        @keyframes vi-rotate { to { transform: rotate(360deg); } }
+        .vi-stat-strip a:hover, .vi-stat-strip div:hover {
+          background: rgba(201,168,76,.04);
+        }
         @media (max-width: 860px) {
           .vi-profile-grid { grid-template-columns: 1fr !important; }
         }
