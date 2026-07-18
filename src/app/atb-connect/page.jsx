@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { PRIME_CLUSTERS } from '@/lib/brand'
@@ -20,14 +21,34 @@ function getAvatarLetters(displayInitials) {
 }
 
 export default function ATBConnectPage() {
+  const router = useRouter()
   const [profiles, setProfiles] = useState([])
   const [loading, setLoading] = useState(true)
+  const [checkingAccess, setCheckingAccess] = useState(true)
   const [search, setSearch] = useState('')
   const [filterIndustry, setFilterIndustry] = useState('')
   const [filterAvail, setFilterAvail] = useState('')
   const [filterCluster, setFilterCluster] = useState('')
 
-  useEffect(() => { fetchProfiles() }, [])
+  useEffect(() => { checkAccess() }, [])
+
+  async function checkAccess() {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session?.user) {
+      const { data: professional } = await supabase
+        .from('professional_profiles')
+        .select('id')
+        .eq('id', session.user.id)
+        .maybeSingle()
+      if (professional) {
+        // Signed-in talent/speaker/facilitator — this marketplace isn't for them
+        router.replace('/dashboard')
+        return
+      }
+    }
+    setCheckingAccess(false)
+    fetchProfiles()
+  }
 
   async function fetchProfiles() {
     setLoading(true)
@@ -84,6 +105,10 @@ export default function ATBConnectPage() {
     const matchCluster = !filterCluster || (p.cluster_scores && p.cluster_scores[filterCluster] >= 75)
     return matchSearch && matchIndustry && matchAvail && matchCluster
   })
+
+  if (checkingAccess) {
+    return <div style={S.page}><div style={S.loadingState}>Loading…</div></div>
+  }
 
   return (
     <div style={S.page}>

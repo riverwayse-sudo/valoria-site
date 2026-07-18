@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 
-// ─── helpers ──────────────────────────────────────────────────────────────────
+// ─── helpers ─────────────────────────────────────────────
 function getInitials(name) {
   if (!name) return '??'
   const words = name.trim().split(/\s+/).filter(Boolean)
@@ -24,7 +24,7 @@ function getYouTubeId(url) {
   return m ? m[1] : null
 }
 
-// ─── brand tokens ──────────────────────────────────────────────────────────────
+// ─── brand tokens ─────────────────────────────────────────────
 const GOLD    = '#C9A84C'
 const DARK    = '#0F0F1A'
 const MID     = '#1A1A2E'
@@ -41,7 +41,7 @@ const PRIME   = [
   { letter: 'E', color: '#D85A30' },
 ]
 
-// ─── component ────────────────────────────────────────────────────────────────
+// ─── component ─────────────────────────────────────────────
 export default function ProfilePage({ params }) {
   const { id } = params
   const [profile, setProfile]     = useState(null)
@@ -53,7 +53,7 @@ export default function ProfilePage({ params }) {
     async function load() {
       const { data: real, error: realError } = await supabase
         .from('professional_profiles')
-        .select('id, display_name, headline, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability')
+        .select('id, display_name, headline, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url')
         .eq('id', id)
         .maybeSingle()
 
