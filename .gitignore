@@ -7,3 +7,4 @@ deploy*.ps1
 deploy*.bat
 install_feedback*.bat
 *.pptx
+!public/*.png
