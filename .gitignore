@@ -2,3 +2,8 @@
 .next/
 .env*
 .env.local 
+*.bak
+deploy*.ps1
+deploy*.bat
+install_feedback*.bat
+*.pptx
