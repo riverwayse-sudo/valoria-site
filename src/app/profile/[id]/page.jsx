@@ -76,7 +76,7 @@ export default function ProfilePage({ params }) {
           // availability as a single string.
           availability: Array.isArray(real.availability) ? (real.availability[0] || null) : real.availability,
           valu_score: real.valu_index,
-          user_type: (real.active_tracks||[])[0] || 'candidate',
+          active_tracks: real.active_tracks || [],
           _source: 'real',
         })
         setLoading(false)
@@ -149,14 +149,18 @@ export default function ProfilePage({ params }) {
   )
 
   const p           = profile
-  const isSpeaker   = p.user_type === 'speaker'
+  const tracks        = p.active_tracks || (p.user_type ? [p.user_type] : [])
+  const isSpeaker     = tracks.includes('speaker')
+  const isFacilitator = tracks.includes('facilitator')
+  const isCandidate   = tracks.includes('candidate') || tracks.length === 0
   const initials    = getInitials(p.display_name)
   const avatarLetters = getAvatarLetters(p.display_name)
   const atbId       = p.atb_id || '—'
   const videos      = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
-  const compensation = isSpeaker ? (p.fee_range || null) : (p.salary_expectation || p.fee_range || null)
-  const compLabel   = isSpeaker ? 'Speaking Fee' : 'Salary Range'
-  const tags        = isSpeaker ? (p.topics || []) : (p.skills || [])
+  const compensation = (isSpeaker || isFacilitator) ? (p.fee_range || p.salary_expectation || null) : (p.salary_expectation || p.fee_range || null)
+  const compLabel   = (isSpeaker || isFacilitator) ? 'Fee Range' : 'Salary Range'
+  const displayTrack = isFacilitator ? 'facilitator' : isSpeaker ? 'speaker' : 'candidate'
+  const tags        = displayTrack === 'facilitator' ? (p.programme_types || []) : displayTrack === 'speaker' ? (p.topics || []) : (p.skills || [])
 
   const stats = [
     { label:'Location',   value: p.location || '—' },
@@ -228,10 +232,10 @@ export default function ProfilePage({ params }) {
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
                 <span style={{ fontSize:'14px', fontWeight:400, color: GOLD, letterSpacing:'.04em' }}>
-                  {p.headline || (isSpeaker ? 'Valoria Speaker' : 'Valoria Professional')}
+                  {p.headline || (displayTrack === 'facilitator' ? 'Valoria Facilitator' : displayTrack === 'speaker' ? 'Valoria Speaker' : 'Valoria Professional')}
                 </span>
                 <span style={{ fontSize:'11px', letterSpacing:'.06em', background: MID, border:`1px solid ${GLINE2}`, padding:'4px 10px', borderRadius:'4px', color: DIM }}>
-                  {initials} · Verified {isSpeaker ? 'Speaker' : 'Professional'}
+                  {initials} · Verified {displayTrack === 'facilitator' ? 'Facilitator' : displayTrack === 'speaker' ? 'Speaker' : 'Professional'}
                 </span>
               </div>
             </div>
@@ -242,13 +246,13 @@ export default function ProfilePage({ params }) {
                 style={{ padding:'12px 18px', background:'transparent', border:`1px solid ${GLINE}`, color: DIM, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', cursor:'pointer', fontFamily:'inherit' }}>
                 {copied ? 'LINK COPIED' : 'SHARE'}
               </button>
-              <Link href={isSpeaker ? '/spotlight' : '/atb-connect'}
+              <Link href={displayTrack === 'facilitator' ? '/valoria-develop' : displayTrack === 'speaker' ? '/spotlight' : '/atb-connect'}
                 style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
-                MORE {isSpeaker ? 'SPEAKERS' : 'TALENT'}
+                MORE {displayTrack === 'facilitator' ? 'FACILITATORS' : displayTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}
               </Link>
-              <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent((isSpeaker ? 'Speaker Booking' : 'Introduction Request') + ' — ' + atbId)}`}
+              <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent((displayTrack === 'facilitator' ? 'Facilitator Commission' : displayTrack === 'speaker' ? 'Speaker Booking' : 'Introduction Request') + ' — ' + atbId)}`}
                 style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
-                {isSpeaker ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
+                {displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
               </a>
             </div>
           </div>
@@ -408,7 +412,7 @@ export default function ProfilePage({ params }) {
 
             {/* Skills / Topics */}
             {tags.length > 0 && (
-              <Section label={isSpeaker ? 'Speaking Topics' : 'Core Skills'}>
+              <Section label={displayTrack === 'facilitator' ? 'Programme Types' : displayTrack === 'speaker' ? 'Speaking Topics' : 'Core Skills'}>
                 <div style={{ display:'flex', flexWrap:'wrap', gap:'10px' }}>
                   {tags.map(t => (
                     <span key={t} style={{ padding:'8px 16px', border:`1px solid ${GLINE2}`, fontSize:'12px', fontWeight:400, color: DIM, letterSpacing:'.04em' }}>
@@ -421,7 +425,7 @@ export default function ProfilePage({ params }) {
 
             {/* Video grid (when no video expanded) */}
             {videos.length > 0 && activeVideo === null && (
-              <Section label={isSpeaker ? 'Speaker Reel & Videos' : 'Videos'}>
+              <Section label={(isSpeaker || isFacilitator) ? 'Speaker Reel & Videos' : 'Videos'}>
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:'12px' }}>
                   {videos.slice(0,4).map((url, i) => {
                     const ytId = getYouTubeId(url)
@@ -443,17 +447,19 @@ export default function ProfilePage({ params }) {
             <div id="contact" className="vi-cta-intro" style={{ background:`linear-gradient(135deg, rgba(201,168,76,.06), rgba(26,26,46,.3))`, border:`1px solid ${GLINE2}`, padding:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', flexWrap:'wrap', marginTop:'8px', scrollMarginTop:'96px' }}>
               <div>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'8px' }}>
-                  {isSpeaker ? 'Book This Speaker' : 'Get in Touch'}
+                  {displayTrack === 'facilitator' ? 'Commission This Facilitator' : displayTrack === 'speaker' ? 'Book This Speaker' : 'Get in Touch'}
                 </div>
                 <p style={{ fontSize:'13px', fontWeight:300, color: DIM, maxWidth:'380px', lineHeight:1.7 }}>
-                  {isSpeaker
+                  {displayTrack === 'facilitator'
+                    ? `Interested in commissioning ${initials} for a programme? Valoria Institute facilitates all introductions.`
+                    : displayTrack === 'speaker'
                     ? `Interested in booking ${initials} for your event? Valoria Institute facilitates all introductions.`
                     : `Want to connect with ${initials}? All introductions go through Valoria Institute — your details stay protected.`}
                 </p>
               </div>
-              <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent((isSpeaker ? 'Speaker Booking' : 'Introduction Request') + ' — ' + atbId)}`}
+              <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent((displayTrack === 'facilitator' ? 'Facilitator Commission' : displayTrack === 'speaker' ? 'Speaker Booking' : 'Introduction Request') + ' — ' + atbId)}`}
                 style={{ padding:'14px 28px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.14em', textDecoration:'none', flexShrink:0, whiteSpace:'nowrap' }}>
-                {isSpeaker ? 'BOOK SPEAKER' : 'SEND INTRODUCTION'}
+                {displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'SEND INTRODUCTION'}
               </a>
             </div>
 

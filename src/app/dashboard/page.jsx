@@ -48,13 +48,24 @@ function getYouTubeId(url) {
   const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
   return m ? m[1] : null
 }
-function completenessFields(isSpeaker) {
-  return isSpeaker
-    ? ['display_name', 'headline', 'bio', 'photo_url', 'topics', 'tier', 'fee_range']
-    : ['display_name', 'headline', 'bio', 'photo_url', 'skills', 'industry', 'availability']
+// FIXED: was a binary isSpeaker check. A facilitator fell into the
+// candidate branch and got graded against 'skills'/'availability' instead
+// of the fields their profile setup actually collects (programme_types,
+// fee_range). Someone with multiple tracks (e.g. speaker + facilitator)
+// also only ever got graded against one track's fields.
+function completenessFields(tracks) {
+  const sets = {
+    speaker:     ['topics', 'tier', 'fee_range'],
+    facilitator: ['programme_types', 'fee_range'],
+    candidate:   ['skills', 'industry', 'availability'],
+  }
+  const base = ['display_name', 'headline', 'bio', 'photo_url']
+  const trackFields = (tracks && tracks.length ? tracks : ['candidate'])
+    .flatMap(t => sets[t] || sets.candidate)
+  return [...new Set([...base, ...trackFields])]
 }
-function computeCompleteness(profile, isSpeaker) {
-  const fields = completenessFields(isSpeaker)
+function computeCompleteness(profile, tracks) {
+  const fields = completenessFields(tracks)
   const filled = fields.filter(f => {
     const v = profile[f]
     return Array.isArray(v) ? v.length > 0 : !!v
@@ -166,17 +177,32 @@ export default function DashboardPage() {
   )
 
   const p           = profile
-  const isSpeaker   = isSupply && (p.active_tracks || []).includes('speaker')
+  const tracks       = p.active_tracks || []
+  const hasTrack     = tracks.length > 0
+  // FIXED: was `isSpeaker = includes('speaker')` used as a stand-in for
+  // "not a candidate" everywhere below, which (a) mislabeled facilitators
+  // as candidates and gave them candidate-shaped fields, and (b) collapsed
+  // anyone with more than one track down to whichever check happened to
+  // run first. These are independent booleans now, and a profile that
+  // hasn't picked a track yet (fresh off claim-listing, before
+  // /profile/setup) is treated as genuinely incomplete rather than
+  // silently defaulting to 'candidate'.
+  const isCandidate   = isSupply && tracks.includes('candidate')
+  const isSpeaker     = isSupply && tracks.includes('speaker')
+  const isFacilitator = isSupply && tracks.includes('facilitator')
   const isOrganiser = !isSupply && p.user_type === 'organiser'
   const isVisible   = isSupply && p.listing_status === 'listed'
   const initials    = getInitials(p.display_name)
   const avatarLetters = getAvatarLetters(p.display_name)
   const firstName   = p.display_name ? p.display_name.split(' ')[0] : 'there'
   const atbId       = p.atb_id || null
-  const compensation = isSpeaker ? (p.fee_range || null) : (p.salary_expectation || p.fee_range || null)
-  const compLabel    = isSpeaker ? 'Speaking Fee' : 'Salary Range'
-  const completenessPct = isSupply ? computeCompleteness(p, isSpeaker) : null
+  // Facilitator and speaker both quote a fee_range; candidate quotes salary.
+  // With multiple tracks, prefer whichever the profile has actually filled in.
+  const compensation = (isSpeaker || isFacilitator) ? (p.fee_range || p.salary_expectation || null) : (p.salary_expectation || p.fee_range || null)
+  const compLabel    = (isSpeaker || isFacilitator) ? 'Fee Range' : 'Salary Range'
+  const completenessPct = isSupply ? computeCompleteness(p, tracks) : null
   const videos = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
+  const trackLabels = { candidate: 'Candidate', speaker: 'Speaker', facilitator: 'Facilitator' }
 
   const stats = isSupply ? [
     { label:'Location',   value: p.location || '—' },
@@ -270,8 +296,15 @@ export default function DashboardPage() {
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
                 <span style={{ fontSize:'14px', fontWeight:400, color: GOLD, letterSpacing:'.04em' }}>
-                  {p.headline || (isSupply ? (isSpeaker ? 'Valoria Speaker' : 'Valoria Professional') : (isOrganiser ? 'Event Organiser' : 'Employer'))}
+                  {p.headline || (isSupply ? (hasTrack ? (isFacilitator && !isSpeaker && !isCandidate ? 'Valoria Facilitator' : isSpeaker && !isFacilitator && !isCandidate ? 'Valoria Speaker' : 'Valoria Professional') : 'Valoria Member') : (isOrganiser ? 'Event Organiser' : 'Employer'))}
                 </span>
+                {isSupply && tracks.length > 1 && (
+                  <div style={{ display:'flex', gap:'6px' }}>
+                    {tracks.map(t => (
+                      <span key={t} style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.06em', padding:'3px 9px', borderRadius:'999px', border:`1px solid ${GLINE2}`, color: GOLD, textTransform:'uppercase' }}>{trackLabels[t] || t}</span>
+                    ))}
+                  </div>
+                )}
                 {isSupply && atbId && (
                   <span style={{ fontSize:'11px', letterSpacing:'.06em', background: MID, border:`1px solid ${GLINE2}`, padding:'4px 10px', color: DIM, fontVariantNumeric:'tabular-nums' }}>
                     {atbId} · {initials}
@@ -295,6 +328,24 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* FIXED: previously a profile with no active_tracks yet (fresh off
+            claim-listing, before /profile/setup) silently fell through
+            every isSpeaker/isFacilitator check to the candidate branch —
+            so a not-yet-configured account looked identical to a real
+            candidate instead of prompting the person to finish setup. */}
+        {isSupply && !hasTrack && (
+          <div style={{ maxWidth:'1100px', margin:'20px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'14px', background:'rgba(201,168,76,.08)', border:`1px solid ${GLINE2}`, borderRadius:'6px', padding:'14px 18px', flexWrap:'wrap' }}>
+              <span style={{ fontSize:'18px', color: GOLD }}>◈</span>
+              <div style={{ flex:1, minWidth:'200px' }}>
+                <div style={{ fontSize:'13px', fontWeight:600, color: PARCH, marginBottom:'2px' }}>Finish setting up your profile</div>
+                <div style={{ fontSize:'12px', color: DIM, fontWeight:300 }}>Choose whether you're joining as a candidate, speaker, or facilitator so buyers can find you.</div>
+              </div>
+              <Link href="/profile/setup" style={{ padding:'10px 18px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.1em', textDecoration:'none', whiteSpace:'nowrap' }}>COMPLETE SETUP</Link>
+            </div>
+          </div>
+        )}
 
         {/* STAT STRIP — professionals only */}
         {stats.length > 0 && (
@@ -460,10 +511,30 @@ export default function DashboardPage() {
                   : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No bio added yet. <Link href="/profile/edit" style={{ color: GOLD }}>Add one →</Link></p>}
               </Section>
 
-              {(isSpeaker ? p.topics : p.skills)?.length > 0 && (
-                <Section label={isSpeaker ? 'Speaking Topics' : 'Core Skills'}>
+              {isFacilitator && p.programme_types?.length > 0 && (
+                <Section label="Programme Types">
                   <div style={{ display:'flex', flexWrap:'wrap', gap:'10px' }}>
-                    {(isSpeaker ? p.topics : p.skills).map(t => (
+                    {p.programme_types.map(t => (
+                      <span key={t} style={{ padding:'8px 16px', border:`1px solid ${GLINE2}`, fontSize:'12px', fontWeight:400, color: DIM, letterSpacing:'.04em' }}>{t}</span>
+                    ))}
+                  </div>
+                </Section>
+              )}
+
+              {isSpeaker && p.topics?.length > 0 && (
+                <Section label="Speaking Topics">
+                  <div style={{ display:'flex', flexWrap:'wrap', gap:'10px' }}>
+                    {p.topics.map(t => (
+                      <span key={t} style={{ padding:'8px 16px', border:`1px solid ${GLINE2}`, fontSize:'12px', fontWeight:400, color: DIM, letterSpacing:'.04em' }}>{t}</span>
+                    ))}
+                  </div>
+                </Section>
+              )}
+
+              {(isCandidate || !hasTrack) && p.skills?.length > 0 && (
+                <Section label="Core Skills">
+                  <div style={{ display:'flex', flexWrap:'wrap', gap:'10px' }}>
+                    {p.skills.map(t => (
                       <span key={t} style={{ padding:'8px 16px', border:`1px solid ${GLINE2}`, fontSize:'12px', fontWeight:400, color: DIM, letterSpacing:'.04em' }}>{t}</span>
                     ))}
                   </div>
@@ -471,7 +542,7 @@ export default function DashboardPage() {
               )}
 
               {videos.length > 0 && activeVideo === null && (
-                <Section label={isSpeaker ? 'Speaker Reel & Videos' : 'Videos'}>
+                <Section label={(isSpeaker || isFacilitator) ? 'Speaker Reel & Videos' : 'Videos'}>
                   <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:'12px' }}>
                     {videos.slice(0,4).map((url, i) => {
                       const ytId = getYouTubeId(url)
@@ -500,7 +571,7 @@ export default function DashboardPage() {
                 />
               ) : (
                 <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
-                  {enquiries.map(msg => <EnquiryCard key={msg.id} msg={msg} isSpeaker={isSpeaker} />)}
+                  {enquiries.map(msg => <EnquiryCard key={msg.id} msg={msg} isSpeaker={isSpeaker || isFacilitator} />)}
                 </div>
               )}
             </div>
