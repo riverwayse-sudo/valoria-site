@@ -177,10 +177,7 @@ export default function DashboardPage() {
     { label:'Experience', value: p.years_experience || p.experience_years ? `${p.years_experience || p.experience_years} yrs` : '—' },
     { label: compLabel,   value: compensation || '—' },
     { label:'VALU Index', value: p.valu_index != null ? `${p.valu_index} / 100` : 'Not assessed', href: p.valu_index != null ? '#valu-card' : null },
-  ] : [
-    { label:'Account Type', value: isOrganiser ? 'Event Organiser' : 'Employer' },
-    { label:'Member Since', value: memberSince(p.created_at) },
-  ]
+  ] : []
 
   return (
     <>
@@ -241,16 +238,18 @@ export default function DashboardPage() {
         <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'0 clamp(20px,4vw,40px)' }}>
           <div className="dv-header-block" style={{ display:'flex', alignItems:'flex-end', gap:'24px', marginTop:'-70px', position:'relative', zIndex:5, flexWrap:'wrap' }}>
 
-            {/* Avatar — static, no rotation */}
-            <div style={{ width:'132px', height:'132px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
-              <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
-                <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: (p.photo_url && !avatarError) ? undefined : `linear-gradient(145deg,${MID},${DARK})`, overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'32px', fontWeight:700, color: GOLD, letterSpacing:'.04em' }}>
-                  {p.photo_url && !avatarError
-                    ? <img src={p.photo_url} alt={p.display_name ? `${p.display_name}'s photo` : 'Profile photo'} loading="lazy" decoding="async" onError={() => setAvatarError(true)} style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center' }} />
-                    : avatarLetters}
+            {/* Avatar — individual professionals only; employer/organiser accounts are businesses, not people */}
+            {isSupply && (
+              <div style={{ width:'132px', height:'132px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
+                <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
+                  <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: (p.photo_url && !avatarError) ? undefined : `linear-gradient(145deg,${MID},${DARK})`, overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'32px', fontWeight:700, color: GOLD, letterSpacing:'.04em' }}>
+                    {p.photo_url && !avatarError
+                      ? <img src={p.photo_url} alt={p.display_name ? `${p.display_name}'s photo` : 'Profile photo'} loading="lazy" decoding="async" onError={() => setAvatarError(true)} style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center' }} />
+                      : avatarLetters}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* ID block */}
             <div style={{ paddingBottom:'14px', flex:1, minWidth:'200px' }}>
@@ -288,7 +287,8 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* STAT STRIP */}
+        {/* STAT STRIP — professionals only */}
+        {stats.length > 0 && (
         <div style={{ maxWidth:'1100px', margin:'32px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
           <div className="dv-stat-strip" style={{ display:'flex', borderTop:`1px solid ${GLINE}`, borderBottom:`1px solid ${GLINE}`, flexWrap:'wrap' }}>
             {stats.map((s, i, arr) => {
@@ -310,6 +310,7 @@ export default function DashboardPage() {
             })}
           </div>
         </div>
+        )}
 
         {/* MAIN */}
         {isSupply ? (
