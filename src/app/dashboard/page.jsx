@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
@@ -11,12 +11,30 @@ const DARK_MID = '#1A1A2E'
 const DIM = 'rgba(247,244,238,.45)'
 const FAINT = 'rgba(247,244,238,.2)'
 
+// A profile created within this window is treated as "first time on the dashboard."
+// No schema change, no localStorage — just a recency check against created_at.
+const FIRST_TIME_WINDOW_HOURS = 48
+
 const STATUS_COLORS = {
   pending:    { bg: 'rgba(186,117,23,.12)',  text: '#BA7517',  label: 'Pending' },
   reviewing:  { bg: 'rgba(55,138,221,.12)',  text: '#378ADD',  label: 'Under Review' },
   introduced: { bg: 'rgba(29,158,117,.12)',  text: '#1D9E75',  label: 'Introduced' },
   declined:   { bg: 'rgba(216,90,48,.12)',   text: '#D85A30',  label: 'Declined' },
   completed:  { bg: 'rgba(201,168,76,.12)',  text: GOLD,       label: 'Completed' },
+}
+
+function completenessFields(isSpeaker) {
+  return isSpeaker
+    ? ['display_name', 'headline', 'bio', 'photo_url', 'topics', 'tier', 'fee_range']
+    : ['display_name', 'headline', 'bio', 'photo_url', 'skills', 'industry', 'availability']
+}
+function computeCompleteness(profile, isSpeaker) {
+  const fields = completenessFields(isSpeaker)
+  const filled = fields.filter(f => {
+    const v = profile[f]
+    return Array.isArray(v) ? v.length > 0 : !!v
+  }).length
+  return Math.round((filled / fields.length) * 100)
 }
 
 export default function DashboardPage() {
@@ -26,6 +44,7 @@ export default function DashboardPage() {
   const [enquiries, setEnquiries] = useState([])   // messages received (supply side)
   const [requests, setRequests] = useState([])      // messages sent (demand side)
   const [loading, setLoading] = useState(true)
+  const [showWelcome, setShowWelcome] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -58,6 +77,19 @@ export default function DashboardPage() {
       setProfile(prof)
       setIsSupply(supply)
 
+      // First-time welcome: gated purely on how recently this profile row was
+      // created, no separate flag needed. A light sessionStorage check stops it
+      // from replaying on every refresh within the same tab session — remove
+      // the sessionStorage lines below if you'd rather it show every time the
+      // window is open.
+      if (prof?.created_at) {
+        const hoursSinceCreated = (Date.now() - new Date(prof.created_at).getTime()) / 36e5
+        const seenThisSession = typeof window !== 'undefined' && sessionStorage.getItem(`valoria_welcome_${user.id}`)
+        if (hoursSinceCreated < FIRST_TIME_WINDOW_HOURS && !seenThisSession) {
+          setShowWelcome(true)
+        }
+      }
+
       if (supply) {
         // Messages/bookings this professional received
         const { data: msgs } = await supabase
@@ -80,6 +112,13 @@ export default function DashboardPage() {
     load()
   }, [])
 
+  function dismissWelcome() {
+    setShowWelcome(false)
+    if (typeof window !== 'undefined' && user) {
+      sessionStorage.setItem(`valoria_welcome_${user.id}`, '1')
+    }
+  }
+
   if (loading) return (
     <div style={{ minHeight: '100vh', background: DARK, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Raleway', color: GOLD, fontSize: '14px' }}>
       Loading your dashboard…
@@ -96,9 +135,22 @@ export default function DashboardPage() {
   const isSpeaker = isSupply && (profile.active_tracks || []).includes('speaker')
   const isOrganiser = !isSupply && profile.user_type === 'organiser'
   const isVisible = isSupply && profile.listing_status === 'listed'
+  const firstName = profile.display_name ? profile.display_name.split(' ')[0] : (isSupply ? 'there' : 'there')
+  const completenessPct = isSupply ? computeCompleteness(profile, isSpeaker) : null
 
   return (
     <div style={{ minHeight: '100vh', background: DARK, fontFamily: "'Raleway', 'Helvetica Neue', Arial, sans-serif", color: PARCHMENT }}>
+
+      {showWelcome && (
+        <WelcomeModal
+          firstName={firstName}
+          isSupply={isSupply}
+          isSpeaker={isSpeaker}
+          isOrganiser={isOrganiser}
+          pct={completenessPct}
+          onClose={dismissWelcome}
+        />
+      )}
 
       {/* HEADER */}
       <header style={styles.header}>
@@ -224,20 +276,176 @@ export default function DashboardPage() {
   )
 }
 
+// ── Welcome modal ────────────────────────────────────────────────────────────
+// Three beats, staged rather than dumped at once: achievement → belonging →
+// opportunity. Auto-advances, but every control also works by hand so it
+// never traps anyone or fights prefers-reduced-motion.
+
+function WelcomeModal({ firstName, isSupply, isSpeaker, isOrganiser, pct, onClose }) {
+  const [step, setStep] = useState(0)
+  const [visible, setVisible] = useState(false)
+  const timerRef = useRef(null)
+
+  const beats = isSupply ? [
+    {
+      eyebrow: 'PROFILE LIVE',
+      title: `You did it, ${firstName}.`,
+      body: `${pct}% complete — your profile is officially part of the Valoria marketplace.`,
+      icon: '✓',
+    },
+    {
+      eyebrow: "YOU'RE IN GOOD COMPANY",
+      title: 'Welcome to Valoria.',
+      body: 'Every professional here is independently assessed. You\'re not just listed — you\'re verified.',
+      icon: '◈',
+    },
+    {
+      eyebrow: 'WHAT HAPPENS NEXT',
+      title: 'Buyers are browsing right now.',
+      body: 'Your next introduction could land today. We\'ll let you know the moment someone reaches out.',
+      icon: '→',
+    },
+  ] : [
+    {
+      eyebrow: "YOU'RE IN",
+      title: `Welcome, ${firstName}.`,
+      body: 'Your account is set up and ready to go.',
+      icon: '✓',
+    },
+    {
+      eyebrow: 'WHAT YOU HAVE ACCESS TO',
+      title: 'Welcome to Valoria.',
+      body: `You now have access to Africa's independently verified ${isOrganiser ? 'speaker' : 'professional'} network.`,
+      icon: '◈',
+    },
+    {
+      eyebrow: 'READY WHEN YOU ARE',
+      title: 'Find your first match.',
+      body: `Search the marketplace and send your first enquiry — most ${isOrganiser ? 'speakers' : 'professionals'} respond within days.`,
+      icon: '→',
+    },
+  ]
+
+  const isLast = step === beats.length - 1
+  const reducedMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
+  useEffect(() => {
+    // mount transition
+    const t = setTimeout(() => setVisible(true), 20)
+    return () => clearTimeout(t)
+  }, [])
+
+  useEffect(() => {
+    if (isLast || reducedMotion) return
+    timerRef.current = setTimeout(() => setStep(s => Math.min(s + 1, beats.length - 1)), 3800)
+    return () => clearTimeout(timerRef.current)
+  }, [step, isLast, reducedMotion])
+
+  function handleClose() {
+    setVisible(false)
+    setTimeout(onClose, 200)
+  }
+  function next() {
+    clearTimeout(timerRef.current)
+    if (isLast) handleClose()
+    else setStep(s => s + 1)
+  }
+
+  const beat = beats[step]
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Welcome to Valoria"
+      style={{
+        position: 'fixed', inset: 0, zIndex: 300,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: 'rgba(15,15,26,.82)', backdropFilter: 'blur(6px)',
+        opacity: visible ? 1 : 0, transition: 'opacity .25s ease',
+        padding: '20px',
+      }}
+      onClick={(e) => { if (e.target === e.currentTarget) handleClose() }}
+    >
+      <div style={{
+        width: '100%', maxWidth: '420px',
+        background: `linear-gradient(160deg, ${MIDNIGHT} 0%, ${DARK} 100%)`,
+        border: '1px solid rgba(201,168,76,.22)',
+        borderRadius: '14px',
+        padding: '40px 32px 32px',
+        position: 'relative',
+        boxShadow: '0 24px 60px rgba(0,0,0,.5)',
+        transform: visible ? 'translateY(0) scale(1)' : 'translateY(8px) scale(.98)',
+        transition: 'transform .3s ease',
+      }}>
+        <button
+          onClick={handleClose}
+          aria-label="Skip"
+          style={{ position: 'absolute', top: '16px', right: '18px', background: 'none', border: 'none', color: 'rgba(247,244,238,.35)', fontSize: '11px', letterSpacing: '.08em', cursor: 'pointer', fontFamily: 'inherit' }}
+        >
+          SKIP
+        </button>
+
+        <div key={step} style={{ animation: reducedMotion ? 'none' : 'vi-welcome-in .45s ease' }}>
+          <div style={{
+            width: '52px', height: '52px', borderRadius: '50%',
+            border: `1px solid rgba(201,168,76,.35)`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '20px', color: GOLD, marginBottom: '22px',
+            background: 'rgba(201,168,76,.06)',
+          }}>
+            {beat.icon}
+          </div>
+          <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.18em', color: 'rgba(201,168,76,.6)', marginBottom: '10px' }}>
+            {beat.eyebrow}
+          </div>
+          <h2 style={{ fontSize: '24px', fontWeight: 300, color: PARCHMENT, margin: '0 0 12px', lineHeight: 1.25 }}>
+            {beat.title}
+          </h2>
+          <p style={{ fontSize: '14px', color: DIM, fontWeight: 300, lineHeight: 1.7, margin: 0 }}>
+            {beat.body}
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '32px' }}>
+          <div style={{ display: 'flex', gap: '6px' }}>
+            {beats.map((_, i) => (
+              <div key={i} style={{
+                width: i === step ? '18px' : '6px', height: '4px', borderRadius: '2px',
+                background: i === step ? GOLD : 'rgba(201,168,76,.2)',
+                transition: 'width .25s ease',
+              }} />
+            ))}
+          </div>
+          <button
+            onClick={next}
+            style={{
+              padding: '11px 22px', background: isLast ? GOLD : 'transparent',
+              color: isLast ? DARK : PARCHMENT,
+              border: isLast ? 'none' : '1px solid rgba(201,168,76,.3)',
+              borderRadius: '999px', fontSize: '11px', fontWeight: 700, letterSpacing: '.1em',
+              cursor: 'pointer', fontFamily: 'inherit',
+            }}
+          >
+            {isLast ? (isSupply ? 'EXPLORE YOUR DASHBOARD' : 'BROWSE THE MARKETPLACE') : 'CONTINUE'}
+          </button>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes vi-welcome-in {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+    </div>
+  )
+}
+
 // ── Sub-components ──────────────────────────────────────────────────────────
 
 function ProfileCompleteness({ profile, isSpeaker }) {
-  const fields = isSpeaker
-    ? ['display_name', 'headline', 'bio', 'photo_url', 'topics', 'tier', 'fee_range']
-    : ['display_name', 'headline', 'bio', 'photo_url', 'skills', 'industry', 'availability']
-
-  const filled = fields.filter(f => {
-    const v = profile[f]
-    if (Array.isArray(v)) return v.length > 0
-    return !!v
-  }).length
-
-  const pct = Math.round((filled / fields.length) * 100)
+  const pct = computeCompleteness(profile, isSpeaker)
   const isComplete = pct === 100
 
   return (
