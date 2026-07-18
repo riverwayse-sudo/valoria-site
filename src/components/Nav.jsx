@@ -11,17 +11,16 @@ export default function Nav() {
   const [user, setUser]               = useState(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [gateCleared, setGateCleared] = useState(false)
+  // Whether the signed-in user is a supply-side professional (candidate/
+  // speaker/facilitator). They shouldn't see ATB Connect/Spotlight/Develop —
+  // those are buyer-facing marketplace search tools, and a professional
+  // browsing them is either confusing (they're not who it's for) or a
+  // hard redirect anyway (see atb-connect/page.jsx's checkAccess). Signed-out
+  // visitors and signed-in employers/organisers still see the full menu.
+  const [isProfessional, setIsProfessional] = useState(false)
   const launched = useLaunchStatus()
 
   useEffect(() => {
-    // Post-launch, the nav always shows — the full-lockdown gate is gone
-    // entirely at that point (see middleware.js). Pre-launch, it also
-    // shows for anyone actually authenticated — middleware.js already lets
-    // a real session straight through the gate (see its Supabase-session
-    // bypass), so the nav needs to agree, or a real logged-in professional
-    // lands on a real page with no nav bar at all. Otherwise, pre-launch,
-    // it still shows only once the visitor has cleared the waitlist
-    // popup/page.
     if (launched || user) {
       setGateCleared(true)
       return
@@ -42,12 +41,33 @@ export default function Nav() {
   }, [menuOpen])
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       setUser(user)
       setAuthChecked(true)
+      if (user) {
+        const { data: professional } = await supabase
+          .from('professional_profiles')
+          .select('id')
+          .eq('id', user.id)
+          .maybeSingle()
+        setIsProfessional(!!professional)
+      } else {
+        setIsProfessional(false)
+      }
     })
-    const { data: listener } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user || null)
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_e, session) => {
+      const sessionUser = session?.user || null
+      setUser(sessionUser)
+      if (sessionUser) {
+        const { data: professional } = await supabase
+          .from('professional_profiles')
+          .select('id')
+          .eq('id', sessionUser.id)
+          .maybeSingle()
+        setIsProfessional(!!professional)
+      } else {
+        setIsProfessional(false)
+      }
     })
     return () => listener.subscription.unsubscribe()
   }, [])
@@ -58,9 +78,6 @@ export default function Nav() {
 
   const closeMenu = () => setMenuOpen(false)
 
-  // Pre-launch: always push toward the waitlist. Post-launch: the site is
-  // actually open, so pushing people to "JOIN THE WAITLIST" would look
-  // broken — swap to a real signup/dashboard CTA instead.
   const cta = !launched
     ? { label: 'JOIN THE WAITLIST', href: '/#waitlist' }
     : user
@@ -198,19 +215,21 @@ export default function Nav() {
         </Link>
 
         <ul className="nav-links" role="list">
-          <li className="nav-explore-wrap">
-            <button className="nav-explore-btn" onClick={() => setDropOpen(d => !d)} aria-expanded={dropOpen} aria-haspopup="true">
-              Explore
-              <span className={`nav-explore-arrow${dropOpen ? ' open' : ''}`}>▾</span>
-            </button>
-            <div className={`nav-dropdown${dropOpen ? ' open' : ''}`} role="menu">
-              <a href="/atb-connect" onClick={() => setDropOpen(false)}>ATB Connect — Find Talent</a>
-              <a href="/spotlight" onClick={() => setDropOpen(false)}>ATB Spotlight — Book a Speaker</a>
-              <a href="/facilitators" onClick={() => setDropOpen(false)}>ATB Develop — Commission Facilitators</a>
-              <div className="nav-dropdown-divider" />
-              <a href="/programmes" onClick={() => setDropOpen(false)}>Programmes</a>
-            </div>
-          </li>
+          {!isProfessional && (
+            <li className="nav-explore-wrap">
+              <button className="nav-explore-btn" onClick={() => setDropOpen(d => !d)} aria-expanded={dropOpen} aria-haspopup="true">
+                Explore
+                <span className={`nav-explore-arrow${dropOpen ? ' open' : ''}`}>▾</span>
+              </button>
+              <div className={`nav-dropdown${dropOpen ? ' open' : ''}`} role="menu">
+                <a href="/atb-connect" onClick={() => setDropOpen(false)}>ATB Connect — Find Talent</a>
+                <a href="/spotlight" onClick={() => setDropOpen(false)}>ATB Spotlight — Book a Speaker</a>
+                <a href="/facilitators" onClick={() => setDropOpen(false)}>ATB Develop — Commission Facilitators</a>
+                <div className="nav-dropdown-divider" />
+                <a href="/programmes" onClick={() => setDropOpen(false)}>Programmes</a>
+              </div>
+            </li>
+          )}
           <li><Link href="/about-us" className="nav-link">About</Link></li>
           <li><Link href="/contact-us" className="nav-link">Contact</Link></li>
           {authChecked && (
@@ -238,10 +257,14 @@ export default function Nav() {
       </nav>
 
       <nav className={`nav-mobile${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation">
-        <div className="m-section-label">Marketplace</div>
-        <Link href="/atb-connect" onClick={closeMenu}>ATB Connect — Find Talent</Link>
-        <Link href="/spotlight" onClick={closeMenu}>ATB Spotlight — Book a Speaker</Link>
-        <Link href="/facilitators" onClick={closeMenu}>ATB Develop — Facilitators</Link>
+        {!isProfessional && (
+          <>
+            <div className="m-section-label">Marketplace</div>
+            <Link href="/atb-connect" onClick={closeMenu}>ATB Connect — Find Talent</Link>
+            <Link href="/spotlight" onClick={closeMenu}>ATB Spotlight — Book a Speaker</Link>
+            <Link href="/facilitators" onClick={closeMenu}>ATB Develop — Facilitators</Link>
+          </>
+        )}
         <div className="m-section-label">Company</div>
         <Link href="/about-us" onClick={closeMenu}>About</Link>
         <Link href="/programmes" onClick={closeMenu}>Programmes</Link>
