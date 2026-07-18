@@ -316,46 +316,20 @@ export default function ProfilePage({ params }) {
               <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'14px' }}>VALU Index</div>
               {p.valu_score != null ? (
                 <>
-                  {p.cluster_scores ? (
-                    <div style={{ position:'relative', width:'190px', height:'190px', margin:'0 auto 20px' }}>
-                      <svg viewBox="0 0 200 200" style={{ width:'100%', height:'100%', transform:'rotate(-90deg)' }}>
-                        {PRIME.map(({ letter, color }, i) => {
-                          const score = p.cluster_scores[letter]
-                          if (score == null) return null
-                          const r = 88 - i * 15
-                          const circ = 2 * Math.PI * r
-                          const dash = (score / 100) * circ
-                          return (
-                            <g key={letter}>
-                              <circle cx="100" cy="100" r={r} fill="none" stroke={FAINT} strokeWidth="7" />
-                              <circle cx="100" cy="100" r={r} fill="none" stroke={color} strokeWidth="7"
-                                strokeLinecap="round" strokeDasharray={`${dash} ${circ}`} />
-                            </g>
-                          )
-                        })}
-                      </svg>
-                      <div style={{ position:'absolute', inset:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' }}>
-                        <div style={{ fontSize:'44px', fontWeight:700, color: GOLD, lineHeight:1 }}>{p.valu_score}</div>
-                        <div style={{ fontSize:'9px', color: DIM, letterSpacing:'.14em', marginTop:'4px' }}>OUT OF 100</div>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_score}</div>
-                      <div style={{ fontSize:'9px', color: DIM, letterSpacing:'.14em', marginBottom:'16px' }}>OUT OF 100</div>
-                    </>
-                  )}
-                  {p.designation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'18px', letterSpacing:'.1em', textTransform:'uppercase', textAlign: p.cluster_scores ? 'center' : 'left' }}>{p.designation.replace(/_/g,' ')}</div>}
+                  <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_score}<span style={{ fontSize:'20px', color: DIM, fontWeight:400 }}>/100</span></div>
+                  {p.designation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{p.designation.replace(/_/g,' ')}</div>}
                   {p.cluster_scores && (
-                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px 12px' }}>
-                      {PRIME.map(({ letter, color, label }) => {
+                    <div>
+                      {PRIME.map(({ letter, color }) => {
                         const score = p.cluster_scores[letter]
                         if (score == null) return null
                         return (
-                          <div key={letter} style={{ display:'flex', alignItems:'center', gap:'7px' }}>
-                            <span style={{ width:'7px', height:'7px', borderRadius:'50%', background: color, flexShrink:0 }} />
-                            <span style={{ fontSize:'11px', color: DIM, flex:1 }}>{label}</span>
-                            <span style={{ fontSize:'11px', color, fontWeight:700 }}>{score}</span>
+                          <div key={letter} style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'11px' }}>
+                            <span style={{ fontSize:'11px', fontWeight:700, color, width:'12px', flexShrink:0 }}>{letter}</span>
+                            <div style={{ flex:1, height:'4px', background: FAINT, borderRadius:'2px', overflow:'hidden' }}>
+                              <div style={{ height:'100%', width:`${score}%`, background: color, borderRadius:'2px' }} />
+                            </div>
+                            <span style={{ fontSize:'11px', color: DIM, width:'20px', textAlign:'right', flexShrink:0 }}>{score}</span>
                           </div>
                         )
                       })}
