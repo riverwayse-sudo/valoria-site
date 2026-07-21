@@ -50,9 +50,14 @@ export default function ProfilePage({ params }) {
   const [activeVideo, setActiveVideo] = useState(null)
   const [avatarError, setAvatarError] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null)
 
   useEffect(() => {
     async function load() {
+      // Check if user is logged in (for own profile detection)
+      const { data: { user } } = await supabase.auth.getUser()
+      setCurrentUser(user)
+
       const { data: real, error: realError } = await supabase
         .from('professional_profiles')
         .select('id, display_name, headline, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url')
@@ -116,6 +121,14 @@ export default function ProfilePage({ params }) {
         setLoading(false)
         return
       }
+
+      // If viewing own profile but no professional_profiles entry exists,
+      // redirect to profile setup (fresh from email confirmation flow)
+      if (user && user.id === id) {
+        window.location.href = '/profile/setup'
+        return
+      }
+
       setNotFound(true)
       setLoading(false)
     }

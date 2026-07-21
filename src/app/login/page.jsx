@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
@@ -14,6 +14,18 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [resetSent, setResetSent] = useState(false)
   const [resetting, setResetting] = useState(false)
+  const [redirecting, setRedirecting] = useState(false)
+
+  // Check for identity_hash in URL (from email confirmation redirect)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const identityHash = params.get('identity_hash')
+    
+    if (identityHash) {
+      // Store identity_hash in sessionStorage to use after login
+      sessionStorage.setItem('pending_identity_hash', identityHash)
+    }
+  }, [])
 
   async function handleLogin(e) {
     e.preventDefault()
@@ -28,6 +40,25 @@ export default function LoginPage() {
       // Authenticated users must never be blocked by the waitlist gate.
       document.cookie = `vi_waitlist_v2=submitted; path=/; max-age=31536000`
       const { data: { user } } = await supabase.auth.getUser()
+
+      // Check for pending identity_hash from email confirmation
+      const pendingIdentityHash = sessionStorage.getItem('pending_identity_hash')
+      if (pendingIdentityHash) {
+        sessionStorage.removeItem('pending_identity_hash')
+        // Link the confirmed assessment to this user
+        try {
+          await supabase
+            .from('valu_assessments')
+            .update({ user_id: user.id })
+            .eq('identity_hash', pendingIdentityHash)
+            .is('user_id', null)
+        } catch (linkErr) {
+          console.error('Failed to link assessment to user:', linkErr)
+        }
+        // Redirect to profile page which will show their VALU Index
+        window.location.href = `/profile/${user.id}?fresh=true`
+        return
+      }
 
       // Buyers (employer/organiser) live in `profiles`, professionals in
       // `professional_profiles` — these are two entirely separate tables.
