@@ -20,10 +20,22 @@ export default function LoginPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const identityHash = params.get('identity_hash')
-    
+
     if (identityHash) {
       // Store identity_hash in sessionStorage to use after login
       sessionStorage.setItem('pending_identity_hash', identityHash)
+
+      // Confirmation links used to land back on the assessment app, whose
+      // own client code fired report generation immediately on arrival.
+      // They now land here instead, so this same-origin proxy restores
+      // that instant trigger (see /api/trigger-report). Fire-and-forget —
+      // the 15-min sweep-unsent-reports cron is the safety net if this
+      // fails or the user never gets this far.
+      fetch('/api/trigger-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identity_hash: identityHash }),
+      }).catch(() => {})
     }
   }, [])
 
