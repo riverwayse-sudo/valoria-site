@@ -37,6 +37,8 @@ export default function ValoriaDevelopPage() {
   const [filterProgramme, setFilterProgramme] = useState('')
   const [filterAvail, setFilterAvail] = useState('')
   const [filterCluster, setFilterCluster] = useState('')
+  const [filterMinValu, setFilterMinValu] = useState('')
+  const [filterDesignation, setFilterDesignation] = useState('')
 
   useEffect(() => { checkAccess() }, [])
 
@@ -64,6 +66,7 @@ export default function ValoriaDevelopPage() {
       .from('professional_profiles')
       .select('id, atb_id, display_initials, headline, location, photo_url, active_tracks, industry, programme_types, fee_range, availability, bio, valu_index, cluster_scores, listing_status, designation')
       .eq('listing_status', 'listed')
+      .neq('visibility', 'private')
       .contains('active_tracks', ['facilitator'])
       .order('valu_index', { ascending: false })
 
@@ -83,7 +86,9 @@ export default function ValoriaDevelopPage() {
     const matchProgramme = !filterProgramme || (p.programme_types || []).includes(filterProgramme)
     const matchAvail = !filterAvail || p.availability === filterAvail
     const matchCluster = !filterCluster || (p.cluster_scores && p.cluster_scores[filterCluster] >= 75)
-    return matchSearch && matchProgramme && matchAvail && matchCluster
+    const matchValu = !filterMinValu || (p.valu_index != null && p.valu_index >= parseInt(filterMinValu))
+    const matchDesignation = !filterDesignation || p.designation === filterDesignation
+    return matchSearch && matchProgramme && matchAvail && matchCluster && matchValu && matchDesignation
   })
 
   if (checkingAccess) {
@@ -136,6 +141,38 @@ export default function ValoriaDevelopPage() {
             ))}
           </FilterSection>
 
+          <FilterSection label="VALU INDEX">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {[['', 'All scores'], ['35', '≥ 35 — Listed'], ['50', '≥ 50 — Achiever'], ['65', '≥ 65 — Expert'], ['80', '≥ 80 — Leader']].map(([v, l]) => (
+                <button key={v} onClick={() => setFilterMinValu(v)}
+                  style={{
+                    padding: '7px 10px',
+                    background: filterMinValu === v ? 'rgba(201,168,76,.15)' : 'rgba(255,255,255,.03)',
+                    border: `1px solid ${filterMinValu === v ? GOLD : 'rgba(201,168,76,.12)'}`,
+                    borderRadius: '6px',
+                    color: filterMinValu === v ? GOLD : 'rgba(247,244,238,.55)',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    fontFamily: "'Raleway',sans-serif",
+                    fontWeight: filterMinValu === v ? 600 : 400,
+                  }}>
+                  {l}
+                </button>
+              ))}
+            </div>
+          </FilterSection>
+
+          <FilterSection label="DESIGNATION">
+            <select value={filterDesignation} onChange={e => setFilterDesignation(e.target.value)} style={S.select}>
+              <option value="">All designations</option>
+              <option value="Builder">Builder</option>
+              <option value="Achiever">Achiever</option>
+              <option value="Expert">Expert</option>
+              <option value="Leader">Leader</option>
+            </select>
+          </FilterSection>
+
           <FilterSection label="STRONGEST IN">
             <div style={S.clusterRow}>
               {PRIME_CLUSTERS.map(c => {
@@ -152,7 +189,7 @@ export default function ValoriaDevelopPage() {
             {filterCluster && <div style={S.clusterLabel}>{PRIME_CLUSTERS.find(c => c.letter === filterCluster)?.name} ≥ 75</div>}
           </FilterSection>
 
-          <button onClick={() => { setSearch(''); setFilterProgramme(''); setFilterAvail(''); setFilterCluster('') }}
+          <button onClick={() => { setSearch(''); setFilterProgramme(''); setFilterAvail(''); setFilterCluster(''); setFilterMinValu(''); setFilterDesignation('') }}
             style={S.clearBtn}>Clear filters</button>
         </aside>
 
@@ -209,6 +246,11 @@ function FacilitatorCard({ profile: p }) {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', flexShrink: 0 }}>
           {p.valu_score != null && (
             <span style={{ fontSize: '13px', fontWeight: 700, color: GOLD }}>VALU {p.valu_score}</span>
+          )}
+          {p.designation && (
+            <span style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(29,158,117,.85)', letterSpacing: '.06em' }}>
+              {p.designation.toUpperCase()}
+            </span>
           )}
           <span style={{ fontSize: '11px', fontWeight: 600, color: availColor }}>
             ● {p.availability === 'open' ? 'Open' : p.availability === 'contract_only' ? 'Contract' : 'Unavailable'}

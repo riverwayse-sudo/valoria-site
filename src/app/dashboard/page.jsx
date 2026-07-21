@@ -613,6 +613,9 @@ export default function DashboardPage() {
                 {requests.map(msg => <SentRequestCard key={msg.id} msg={msg} />)}
               </div>
             )}
+
+            {/* Saved Searches */}
+            <SavedSearchesSection />
           </div>
         )}
       </div>
@@ -777,6 +780,83 @@ function EmptyState({ icon, message, cta }) {
       <div style={{ fontSize:'28px', color: GOLD, marginBottom:'10px' }}>{icon}</div>
       <p style={{ fontSize:'13px', color: DIM, marginBottom: cta ? '16px' : 0 }}>{message}</p>
       {cta && <Link href={cta.href} style={{ display:'inline-block', padding:'10px 24px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', borderRadius:'999px', textDecoration:'none' }}>{cta.label}</Link>}
+    </div>
+  )
+}
+
+function SavedSearchesSection() {
+  const [searches, setSearches] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [session, setSession] = useState(null)
+
+  useEffect(() => {
+    async function load() {
+      const { data } = await supabase.auth.getSession()
+      setSession(data?.session)
+      if (!data?.session) { setLoading(false); return }
+      const token = data.session.access_token
+      const res = await fetch('/api/saved-searches', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) {
+        const json = await res.json()
+        setSearches(json)
+      }
+      setLoading(false)
+    }
+    load()
+  }, [])
+
+  async function deleteSearch(id) {
+    if (!session) return
+    const res = await fetch(`/api/saved-searches?id=${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    })
+    if (res.ok) setSearches(prev => prev.filter(s => s.id !== id))
+  }
+
+  const TRACK_URL = { candidate: '/atb-connect', speaker: '/spotlight', facilitator: '/develop' }
+  const TRACK_LABEL = { candidate: 'Talent', speaker: 'Speakers', facilitator: 'Facilitators' }
+
+  if (loading) return null
+  if (!session || searches.length === 0) return null
+
+  return (
+    <div style={{ marginTop: '32px' }}>
+      <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.45)', marginBottom:'12px' }}>
+        Saved Searches
+      </div>
+      <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
+        {searches.map(s => {
+          const url = TRACK_URL[s.track]
+          const params = new URLSearchParams()
+          const f = s.filters || {}
+          if (f.search) params.set('q', f.search)
+          if (f.filterIndustry) params.set('industry', f.filterIndustry)
+          if (f.filterAvail) params.set('availability', f.filterAvail)
+          if (f.filterCluster) params.set('cluster', f.filterCluster)
+          if (f.filterMinValu) params.set('valuMin', f.filterMinValu)
+          if (f.filterDesignation) params.set('designation', f.filterDesignation)
+          const fullUrl = `${url}${params.toString() ? '?' + params.toString() : ''}`
+          return (
+            <div key={s.id} style={{ display:'flex', alignItems:'center', gap:'12px', background:'rgba(26,26,46,.3)', border:`1px solid ${GLINE}`, padding:'14px 16px', borderRadius:'8px' }}>
+              <span style={{ fontSize:'16px', color: GOLD, flexShrink:0 }}>◈</span>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontSize:'13px', fontWeight:600, color: PARCH, marginBottom:'2px' }}>{s.name}</div>
+                <div style={{ fontSize:'11px', color: DIM }}>{TRACK_LABEL[s.track]} search</div>
+              </div>
+              <Link href={fullUrl}
+                style={{ padding:'7px 16px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.08em', borderRadius:'9999px', textDecoration:'none', flexShrink:0 }}>
+                RUN
+              </Link>
+              <button onClick={() => deleteSearch(s.id)}
+                style={{ background:'none', border:'none', color:'rgba(247,244,238,.2)', cursor:'pointer', fontSize:'16px', padding:'4px', flexShrink:0 }}
+                title="Delete saved search">×</button>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

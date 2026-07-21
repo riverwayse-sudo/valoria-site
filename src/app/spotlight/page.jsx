@@ -47,6 +47,7 @@ export default function ATBSpotlightPage() {
       .from('professional_profiles')
       .select('id, atb_id, display_initials, headline, location, photo_url, active_tracks, industry, topics, speaker_tier, bio, valu_index, cluster_scores, listing_status, fee_range, youtube_links')
       .eq('listing_status', 'listed')
+      .neq('visibility', 'private')
       .contains('active_tracks', ['speaker'])
       .order('valu_index', { ascending: false })
 

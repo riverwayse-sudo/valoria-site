@@ -25,15 +25,28 @@ export default function ATBConnectPage() {
   const [profiles, setProfiles] = useState([])
   const [loading, setLoading] = useState(true)
   const [checkingAccess, setCheckingAccess] = useState(true)
+  const [session, setSession] = useState(null)
+  const [showSaveModal, setShowSaveModal] = useState(false)
+  const [saveName, setSaveName] = useState('')
+  const [saveLoading, setSaveLoading] = useState(false)
   const [search, setSearch] = useState('')
   const [filterIndustry, setFilterIndustry] = useState('')
   const [filterAvail, setFilterAvail] = useState('')
   const [filterCluster, setFilterCluster] = useState('')
+<<<<<<< HEAD
   const [filterScoreMin, setFilterScoreMin] = useState('')
   const [filterScoreMax, setFilterScoreMax] = useState('')
+=======
+  const [filterMinValu, setFilterMinValu] = useState('')
+>>>>>>> origin/feat/marketplace-visibility-search
   const [filterDesignation, setFilterDesignation] = useState('')
 
-  useEffect(() => { checkAccess() }, [])
+  useEffect(() => { checkAccess(); fetchSession() }, [])
+
+  async function fetchSession() {
+    const { data } = await supabase.auth.getSession()
+    setSession(data?.session)
+  }
 
   async function checkAccess() {
     const { data: { session } } = await supabase.auth.getSession()
@@ -61,6 +74,7 @@ export default function ATBConnectPage() {
       .from('professional_profiles')
       .select('id, atb_id, display_initials, headline, location, photo_url, active_tracks, industry, skills, availability, bio, valu_index, cluster_scores, listing_status, designation')
       .eq('listing_status', 'listed')
+      .neq('visibility', 'private')
       .contains('active_tracks', ['candidate'])
       .order('valu_index', { ascending: false })
 
@@ -106,6 +120,7 @@ export default function ATBConnectPage() {
     const matchIndustry = !filterIndustry || p.industry === filterIndustry
     const matchAvail = !filterAvail || p.availability === filterAvail
     const matchCluster = !filterCluster || (p.cluster_scores && p.cluster_scores[filterCluster] >= 75)
+<<<<<<< HEAD
     // VALU Index score range filter
     const score = p.valu_score ?? p.valu_index ?? null
     const matchScoreMin = !filterScoreMin || (score !== null && score >= Number(filterScoreMin))
@@ -113,7 +128,39 @@ export default function ATBConnectPage() {
     // Designation filter
     const matchDesignation = !filterDesignation || (p.designation || '').toLowerCase() === filterDesignation.toLowerCase()
     return matchSearch && matchIndustry && matchAvail && matchCluster && matchScoreMin && matchScoreMax && matchDesignation
+=======
+    const matchValu = !filterMinValu || (p.valu_index != null && p.valu_index >= parseInt(filterMinValu))
+    const matchDesignation = !filterDesignation || p.designation === filterDesignation
+    return matchSearch && matchIndustry && matchAvail && matchCluster && matchValu && matchDesignation
+>>>>>>> origin/feat/marketplace-visibility-search
   })
+
+  const hasActiveFilters = search || filterIndustry || filterAvail || filterCluster || filterMinValu || filterDesignation
+
+  async function saveSearch() {
+    if (!saveName.trim()) return
+    setSaveLoading(true)
+    try {
+      const res = await fetch('/api/saved-searches', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          name: saveName.trim(),
+          track: 'candidate',
+          filters: { search, filterIndustry, filterAvail, filterCluster, filterMinValu, filterDesignation },
+        }),
+      })
+      if (res.ok) {
+        setShowSaveModal(false)
+        setSaveName('')
+      }
+    } finally {
+      setSaveLoading(false)
+    }
+  }
 
   if (checkingAccess) {
     return <div style={S.page}><div style={S.loadingState}>Loading…</div></div>
@@ -196,6 +243,35 @@ export default function ATBConnectPage() {
             ))}
           </FilterSection>
 
+          <FilterSection label="VALU INDEX">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {[['', 'All scores'], ['35', '≥ 35 — Listed'], ['50', '≥ 50 — Achiever'], ['65', '≥ 65 — Expert'], ['80', '≥ 80 — Leader']].map(([v, l]) => (
+                <button key={v} onClick={() => setFilterMinValu(v)}
+                  style={{
+                    padding: '7px 10px',
+                    background: filterMinValu === v ? 'rgba(201,168,76,.15)' : 'rgba(255,255,255,.03)',
+                    border: `1px solid ${filterMinValu === v ? GOLD : 'rgba(201,168,76,.12)'}`,
+                    borderRadius: '6px',
+                    color: filterMinValu === v ? GOLD : 'rgba(247,244,238,.55)',
+                    fontSize: '12px', cursor: 'pointer', textAlign: 'left',
+                    fontFamily: "'Raleway',sans-serif", fontWeight: filterMinValu === v ? 600 : 400,
+                  }}>
+                  {l}
+                </button>
+              ))}
+            </div>
+          </FilterSection>
+
+          <FilterSection label="DESIGNATION">
+            <select value={filterDesignation} onChange={e => setFilterDesignation(e.target.value)} style={S.select}>
+              <option value="">All designations</option>
+              <option value="Builder">Builder</option>
+              <option value="Achiever">Achiever</option>
+              <option value="Expert">Expert</option>
+              <option value="Leader">Leader</option>
+            </select>
+          </FilterSection>
+
           <FilterSection label="STRONGEST IN">
             <div style={S.clusterRow}>
               {PRIME_CLUSTERS.map(c => {
@@ -212,17 +288,41 @@ export default function ATBConnectPage() {
             {filterCluster && <div style={S.clusterLabel}>{PRIME_CLUSTERS.find(c => c.letter === filterCluster)?.name} ≥ 75</div>}
           </FilterSection>
 
+<<<<<<< HEAD
           <button onClick={() => { setSearch(''); setFilterIndustry(''); setFilterAvail(''); setFilterCluster(''); setFilterScoreMin(''); setFilterScoreMax(''); setFilterDesignation('') }}
+=======
+          <button onClick={() => { setSearch(''); setFilterIndustry(''); setFilterAvail(''); setFilterCluster(''); setFilterMinValu(''); setFilterDesignation('') }}
+>>>>>>> origin/feat/marketplace-visibility-search
             style={S.clearBtn}>Clear filters</button>
         </aside>
 
         {/* RESULTS */}
         <main style={S.results}>
-          <div style={{ marginBottom: '28px' }}>
-            <h1 style={S.resultsTitle}>PRIME-assessed talent.</h1>
-            <p style={S.resultsCount}>
-              {loading ? 'Loading…' : `${filtered.length} candidate${filtered.length !== 1 ? 's' : ''} found`}
-            </p>
+          <div style={{ marginBottom: '28px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h1 style={S.resultsTitle}>PRIME-assessed talent.</h1>
+              <p style={S.resultsCount}>
+                {loading ? 'Loading…' : `${filtered.length} candidate${filtered.length !== 1 ? 's' : ''} found`}
+              </p>
+            </div>
+            {session && (
+              <button onClick={() => setShowSaveModal(true)}
+                style={{
+                  padding: '9px 16px',
+                  background: 'transparent',
+                  border: '1px solid rgba(201,168,76,.3)',
+                  borderRadius: '9999px',
+                  color: GOLD,
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  letterSpacing: '.08em',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  fontFamily: "'Raleway',sans-serif",
+                }}>
+                + SAVE SEARCH
+              </button>
+            )}
           </div>
 
           {loading ? (
@@ -239,6 +339,60 @@ export default function ATBConnectPage() {
           )}
         </main>
       </div>
+
+      {/* Save Search Modal */}
+      {showSaveModal && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 200,
+          background: 'rgba(15,15,26,.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px',
+        }} onClick={() => setShowSaveModal(false)}>
+          <div style={{
+            background: MIDNIGHT, border: '1px solid rgba(201,168,76,.2)', borderRadius: '12px',
+            padding: '32px', maxWidth: '420px', width: '100%',
+          }} onClick={e => e.stopPropagation()}>
+            <h2 style={{ fontSize: '18px', fontWeight: 300, color: PARCHMENT, marginBottom: '8px', fontFamily: "'Raleway',sans-serif" }}>
+              Save this search
+            </h2>
+            <p style={{ fontSize: '13px', color: 'rgba(247,244,238,.45)', marginBottom: '20px', lineHeight: 1.6 }}>
+              Give this filter set a name so you can run it again from your dashboard.
+            </p>
+            <input
+              type="text"
+              placeholder="e.g. Lagos fintech builders, VALU 50+"
+              value={saveName}
+              onChange={e => setSaveName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && saveSearch()}
+              autoFocus
+              style={{
+                width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,.05)',
+                border: '1px solid rgba(201,168,76,.2)', borderRadius: '8px',
+                color: PARCHMENT, fontSize: '14px', fontFamily: "'Raleway',sans-serif",
+                outline: 'none', boxSizing: 'border-box', marginBottom: '16px',
+              }}
+            />
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button onClick={() => setShowSaveModal(false)}
+                style={{
+                  flex: 1, padding: '11px', background: 'transparent',
+                  border: '1px solid rgba(201,168,76,.2)', borderRadius: '9999px',
+                  color: 'rgba(247,244,238,.5)', fontSize: '12px', fontWeight: 500, cursor: 'pointer',
+                  fontFamily: "'Raleway',sans-serif",
+                }}>
+                Cancel
+              </button>
+              <button onClick={saveSearch} disabled={!saveName.trim() || saveLoading}
+                style={{
+                  flex: 1, padding: '11px', background: GOLD, border: 'none', borderRadius: '9999px',
+                  color: MIDNIGHT, fontSize: '12px', fontWeight: 700, cursor: saveName.trim() && !saveLoading ? 'pointer' : 'not-allowed',
+                  opacity: saveName.trim() && !saveLoading ? 1 : 0.5,
+                  fontFamily: "'Raleway',sans-serif",
+                }}>
+                {saveLoading ? 'Saving…' : 'Save Search'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
