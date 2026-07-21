@@ -29,6 +29,9 @@ export default function ATBConnectPage() {
   const [filterIndustry, setFilterIndustry] = useState('')
   const [filterAvail, setFilterAvail] = useState('')
   const [filterCluster, setFilterCluster] = useState('')
+  const [filterScoreMin, setFilterScoreMin] = useState('')
+  const [filterScoreMax, setFilterScoreMax] = useState('')
+  const [filterDesignation, setFilterDesignation] = useState('')
 
   useEffect(() => { checkAccess() }, [])
 
@@ -103,7 +106,13 @@ export default function ATBConnectPage() {
     const matchIndustry = !filterIndustry || p.industry === filterIndustry
     const matchAvail = !filterAvail || p.availability === filterAvail
     const matchCluster = !filterCluster || (p.cluster_scores && p.cluster_scores[filterCluster] >= 75)
-    return matchSearch && matchIndustry && matchAvail && matchCluster
+    // VALU Index score range filter
+    const score = p.valu_score ?? p.valu_index ?? null
+    const matchScoreMin = !filterScoreMin || (score !== null && score >= Number(filterScoreMin))
+    const matchScoreMax = !filterScoreMax || (score !== null && score <= Number(filterScoreMax))
+    // Designation filter
+    const matchDesignation = !filterDesignation || (p.designation || '').toLowerCase() === filterDesignation.toLowerCase()
+    return matchSearch && matchIndustry && matchAvail && matchCluster && matchScoreMin && matchScoreMax && matchDesignation
   })
 
   if (checkingAccess) {
@@ -136,6 +145,37 @@ export default function ATBConnectPage() {
 
           <input type="search" placeholder="Search by ID, skill, topic…"
             value={search} onChange={e => setSearch(e.target.value)} style={S.searchInput} />
+
+          <FilterSection label="VALU INDEX">
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input type="number" placeholder="Min" min="0" max="100" value={filterScoreMin}
+                onChange={e => setFilterScoreMin(e.target.value)} style={{ ...S.select, width: '70px' }} />
+              <span style={{ color: DIM }}>to</span>
+              <input type="number" placeholder="Max" min="0" max="100" value={filterScoreMax}
+                onChange={e => setFilterScoreMax(e.target.value)} style={{ ...S.select, width: '70px' }} />
+            </div>
+            <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
+              {[['35+', 35, ''], ['50+', 50, ''], ['75+', 75, '']].map(([label, min, max]) => (
+                <button key={label} onClick={() => {
+                  setFilterScoreMin(filterScoreMin === String(min) ? '' : String(min))
+                  setFilterScoreMax(filterScoreMax === String(max) ? '' : String(max))
+                }}
+                  style={{ padding: '4px 10px', fontSize: '11px', background: filterScoreMin === String(min) ? GOLD : 'transparent', color: filterScoreMin === String(min) ? MIDNIGHT : GOLD, border: `1px solid ${GOLD}`, borderRadius: '999px', cursor: 'pointer' }}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </FilterSection>
+
+          <FilterSection label="DESIGNATION">
+            <select value={filterDesignation} onChange={e => setFilterDesignation(e.target.value)} style={S.select}>
+              <option value="">All designations</option>
+              <option value="Builder">Builder — Emerging talent</option>
+              <option value="Achiever">Achiever — Proven performer</option>
+              <option value="Expert">Expert — Advanced capability</option>
+              <option value="Leader">Leader — Strategic impact</option>
+            </select>
+          </FilterSection>
 
           <FilterSection label="INDUSTRY">
             <select value={filterIndustry} onChange={e => setFilterIndustry(e.target.value)} style={S.select}>
@@ -172,7 +212,7 @@ export default function ATBConnectPage() {
             {filterCluster && <div style={S.clusterLabel}>{PRIME_CLUSTERS.find(c => c.letter === filterCluster)?.name} ≥ 75</div>}
           </FilterSection>
 
-          <button onClick={() => { setSearch(''); setFilterIndustry(''); setFilterAvail(''); setFilterCluster('') }}
+          <button onClick={() => { setSearch(''); setFilterIndustry(''); setFilterAvail(''); setFilterCluster(''); setFilterScoreMin(''); setFilterScoreMax(''); setFilterDesignation('') }}
             style={S.clearBtn}>Clear filters</button>
         </aside>
 
