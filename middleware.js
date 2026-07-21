@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server'
 import { isLaunched } from '@/lib/launchDate'
+import { createClient } from '@supabase/supabase-js'
+
+const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+const SB_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 // FULL LOCKDOWN, by design, until launch: only these stay reachable.
 // Everything else — including the homepage — redirects to /waitlist.
@@ -54,6 +58,44 @@ export function middleware(request) {
   // sb-<ref>-auth-token.0, .1, etc.
   const hasSupabaseSession = request.cookies.getAll().some(c => /^sb-.*-auth-token/.test(c.name))
   if (hasSupabaseSession) {
+    // ── Profile completeness gate ──────────────────────────────────────────
+    // If they're authenticated and trying to access the dashboard (buyer side)
+    // or /profile/* (their own profile), check that their professional profile
+    // is complete. If it isn't, redirect to /profile/setup.
+    // Skip this check for /profile/setup itself, the login/signup pages, and
+    // public pages — they should always be reachable.
+    if (
+      SB_URL && SB_SERVICE_KEY &&
+      (pathname.startsWith('/dashboard') || pathname.startsWith('/profile/')) &&
+      !pathname.startsWith('/profile/setup') &&
+      !pathname.startsWith('/login') &&
+      !pathname.startsWith('/signup')
+    ) {
+      try {
+        const supabase = createClient(SB_URL, SB_SERVICE_KEY)
+        // Get the user's auth UID from the session cookie
+        const token = request.cookies.getAll()
+          .find(c => /^sb-.*-auth-token/.test(c.name))?.value
+        if (token) {
+          // Decode the JWT to get the user ID without a network call
+          const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+          const userId = payload?.sub
+          if (userId) {
+            const { data: profile } = await supabase
+              .from('professional_profiles')
+              .select('profile_complete')
+              .eq('id', userId)
+              .maybeSingle()
+            // If no profile row, or profile_complete is false, redirect to setup
+            if (!profile || !profile.profile_complete) {
+              return NextResponse.redirect(new URL('/profile/setup', request.url))
+            }
+          }
+        }
+      } catch {
+        // If anything fails, allow through — don't block on a middleware error
+      }
+    }
     return NextResponse.next()
   }
 
