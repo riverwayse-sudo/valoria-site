@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
 
 // ─── brand tokens — same system as the public profile page ─────────────────
 const GOLD    = '#C9A84C'
@@ -88,6 +89,7 @@ export default function DashboardPage() {
   const [avatarError, setAvatarError] = useState(false)
   const [copied, setCopied] = useState(false)
   const [activeVideo, setActiveVideo] = useState(null)
+  const [showMessages, setShowMessages] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -315,6 +317,13 @@ export default function DashboardPage() {
 
             {/* CTAs */}
             <div style={{ display:'flex', gap:'10px', paddingBottom:'14px', flexShrink:0, flexWrap:'wrap' }}>
+              <button onClick={() => setShowMessages(true)}
+                style={{ padding:'12px 18px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', gap:'8px' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                MESSAGES
+              </button>
               {isSupply && (
                 <button onClick={copyPublicLink}
                   style={{ padding:'12px 18px', background:'transparent', border:`1px solid ${GLINE}`, color: DIM, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', cursor:'pointer', fontFamily:'inherit' }}>
@@ -607,6 +616,15 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Messages Panel */}
+      {user && (
+        <ThreadPanel
+          userId={user.id}
+          isOpen={showMessages}
+          onClose={() => setShowMessages(false)}
+        />
+      )}
 
       <style>{`
         @keyframes dv-pulse {

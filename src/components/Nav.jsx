@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { useLaunchStatus } from '@/lib/useLaunchStatus'
+import NotificationBell from './NotificationBell'
 
 const ASSESSMENT_URL = 'https://assessment.valoriainstitute.com/'
 
@@ -257,6 +258,9 @@ export default function Nav() {
                 <li>
                   <Link href="/dashboard" className="nav-link">Dashboard</Link>
                 </li>
+                <li>
+                  <NotificationBell userId={user.id} />
+                </li>
                 <li><button onClick={handleSignOut} className="nav-link-btn">Sign Out</button></li>
               </>
             ) : (
@@ -289,6 +293,7 @@ export default function Nav() {
           user ? (
             <>
               <Link href="/dashboard" onClick={closeMenu}>Dashboard</Link>
+              <Link href="/messages" onClick={closeMenu}>Messages</Link>
               <button className="m-signout" onClick={() => { closeMenu(); handleSignOut() }}>Sign Out</button>
             </>
           ) : (
