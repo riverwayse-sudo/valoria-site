@@ -1,0 +1,90 @@
+From 062343e8720701c8e521dbd9e7cf6341a73a5e05 Mon Sep 17 00:00:00 2001
+From: Claude <claude@anthropic.com>
+Date: Wed, 22 Jul 2026 09:02:39 +0000
+Subject: [PATCH 2/4] fix: remove self-report core-skills question, replaced by
+ current/preferred industry
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- the 'What are your core skills?' multi-chip question is gone from
+  the wizard's Expertise section — skills are already assessed
+  objectively by the VALU Index, so asking candidates/facilitators to
+  self-report them again was the redundant manual entry Temitayo
+  flagged
+- profile_complete no longer requires skills.length > 0 (was
+  unreachable once the question was removed)
+- dashboard's candidate completeness checklist swaps 'skills' for
+  'preferred_industry' so it stays completable
+
+Note: the skills column/data itself is untouched — atb-connect search,
+atb-spotlight, and profile display still read it for existing profiles.
+New profiles just won't populate it going forward. If marketplace
+search should keep working for new signups, the likely next step is
+pulling tags from the VALU Index's own skill_scores instead of a
+manual field — flagging for a decision, not doing it silently.
+---
+ src/app/dashboard/page.jsx     |  6 +++++-
+ src/app/profile/setup/page.jsx | 16 +++++++++-------
+ 2 files changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/src/app/dashboard/page.jsx b/src/app/dashboard/page.jsx
+index 7b72fe6..2374a1d 100644
+--- a/src/app/dashboard/page.jsx
++++ b/src/app/dashboard/page.jsx
+@@ -54,11 +54,15 @@ function getYouTubeId(url) {
+ // of the fields their profile setup actually collects (programme_types,
+ // fee_range). Someone with multiple tracks (e.g. speaker + facilitator)
+ // also only ever got graded against one track's fields.
++// 'skills' swapped for 'preferred_industry' — the self-report skills
++// question was removed from the wizard, so grading candidates against a
++// field they're never asked would cap their profile strength below 100%
++// forever.
+ function completenessFields(tracks) {
+   const sets = {
+     speaker:     ['topics', 'tier', 'fee_range'],
+     facilitator: ['programme_types', 'fee_range'],
+-    candidate:   ['skills', 'industry', 'availability'],
++    candidate:   ['preferred_industry', 'industry', 'availability'],
+   }
+   const base = ['display_name', 'headline', 'bio', 'photo_url']
+   const trackFields = (tracks && tracks.length ? tracks : ['candidate'])
+diff --git a/src/app/profile/setup/page.jsx b/src/app/profile/setup/page.jsx
+index 5988b2a..5ef8949 100644
+--- a/src/app/profile/setup/page.jsx
++++ b/src/app/profile/setup/page.jsx
+@@ -146,7 +146,11 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
+   s.push({ key:'languages', kind:'multi-chip', section:'Profile', title:'Which languages do you speak?', sub:'Select all that apply.', options:LANGUAGES, required:false })
+   s.push({ key:'visibility', kind:'visibility', section:'Profile' })
+ 
+-  if (isCandidate || isFacilitator) s.push({ key:'skills', kind:'multi-chip', section:'Expertise', title:'What are your core skills?', sub:'Select at least 1, up to 8 — these power marketplace search.', options:SKILLS_POOL, max:8, required:true, color:'#378ADD' })
++  // The self-report "What are your core skills?" question was removed here —
++  // replaced by the current/preferred industry pair at the top of this
++  // section. Skills are assessed objectively by the VALU Index rather than
++  // self-reported in the wizard; self-reporting them again was the
++  // redundant "manual syncing" Temitayo flagged.
+   if (isSpeaker || isFacilitator) s.push({ key:'topics', kind:'multi-chip', section:'Expertise', title:'What topics do you speak on?', sub:'Select up to 6.', options:TOPICS_POOL, max:6, required:false })
+   if (isSpeaker) s.push({ key:'format_capabilities', kind:'multi-chip', section:'Expertise', title:'What speaking formats do you offer?', sub:'Select all that apply.', options:FORMAT_CAPS, required:false, color:'#7F77DD' })
+   if (isSpeaker) s.push({ key:'audience_sizes', kind:'multi-chip', section:'Expertise', title:'What audience sizes have you spoken to?', sub:'Select all that apply.', options:AUDIENCE_SIZES, required:false, color:'#1D9E75' })
+@@ -366,14 +370,12 @@ export default function ProfileSetupPage() {
+       ...(f.assessment_expires_at != null ? { assessment_expires_at: f.assessment_expires_at } : {}),
+       // profile_complete is true when all mandatory fields are filled in.
+       // This gates marketplace visibility even if listing_status = 'listed'.
+-      // industry and skills are required as of today's fix — must be
+-      // reflected here too, or the middleware gate (which reads this exact
+-      // column) would keep letting profiles through without them even
+-      // though the wizard now blocks Continue on those screens.
++      // skills is no longer a required question (removed — see screens()
++      // above), so it's dropped from this check too; requiring a field
++      // nobody is ever asked would make profile_complete permanently false.
+       profile_complete: !!(
+         f.display_name && f.headline && f.bio && f.active_tracks.length > 0 &&
+-        f.industry &&
+-        (!(isCandidate || isFacilitator) || f.skills.length > 0)
++        f.industry
+       ),
+       listing_status: existingListingStatusRef.current || 'pending', updated_at: new Date().toISOString(),
+     }, { onConflict: 'id' })
+-- 
+2.43.0
+

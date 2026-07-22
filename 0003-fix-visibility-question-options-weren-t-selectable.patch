@@ -1,0 +1,33 @@
+From 1feeed0344a66a5b05d375f3d02322c603b1b7ba Mon Sep 17 00:00:00 2001
+From: Claude <claude@anthropic.com>
+Date: Wed, 22 Jul 2026 09:05:27 +0000
+Subject: [PATCH 3/4] fix: visibility question options weren't selectable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+set() takes (key, val) everywhere else in this file, but the visibility
+screen alone called it as set(fn) with a functional updater — set()
+doesn't support that form, so every click wrote a stray property keyed
+by the function itself instead of updating 'visibility'. Selection
+never actually changed from the 'registered_only' default.
+---
+ src/app/profile/setup/page.jsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/app/profile/setup/page.jsx b/src/app/profile/setup/page.jsx
+index 5ef8949..f158f66 100644
+--- a/src/app/profile/setup/page.jsx
++++ b/src/app/profile/setup/page.jsx
+@@ -749,7 +749,7 @@ function ScreenBody(props) {
+             {OPTIONS.map(o => {
+               const selected = val === o.value
+               return (
+-                <div key={o.value} onClick={() => set(s => ({ ...s, [screen.key]: o.value }))}
++                <div key={o.value} onClick={() => set(screen.key, o.value)}
+                   style={{ padding:'14px 16px', border:`1.5px solid ${selected ? GOLD : 'rgba(201,168,76,.15)'}`, borderRadius:'8px', background: selected ? 'rgba(201,168,76,.07)' : 'rgba(255,255,255,.03)', cursor:'pointer' }}>
+                   <div style={{ fontSize:'13px', fontWeight:600, color: selected ? GOLD : PARCH, marginBottom:'4px' }}>{o.label}</div>
+                   <div style={{ fontSize:'12px', color:'rgba(247,244,238,.45)', lineHeight:1.5 }}>{o.desc}</div>
+-- 
+2.43.0
+

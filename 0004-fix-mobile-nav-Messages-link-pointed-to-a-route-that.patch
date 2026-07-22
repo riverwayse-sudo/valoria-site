@@ -1,0 +1,33 @@
+From 84ddbae9eb8681173c869293207946e5000194c2 Mon Sep 17 00:00:00 2001
+From: Claude <claude@anthropic.com>
+Date: Wed, 22 Jul 2026 09:14:37 +0000
+Subject: [PATCH 4/4] fix: mobile nav 'Messages' link pointed to a route that
+ doesn't exist
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+/messages was never built — messaging only lives inside /dashboard via
+MessagesButton + ThreadPanel. Desktop nav already correctly links signed-in
+users to /dashboard; the mobile menu alone had a stray /messages link that
+would 404 on click.
+---
+ src/components/Nav.jsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/components/Nav.jsx b/src/components/Nav.jsx
+index ea0827d..194c1af 100644
+--- a/src/components/Nav.jsx
++++ b/src/components/Nav.jsx
+@@ -293,7 +293,7 @@ export default function Nav() {
+           user ? (
+             <>
+               <Link href="/dashboard" onClick={closeMenu}>Dashboard</Link>
+-              <Link href="/messages" onClick={closeMenu}>Messages</Link>
++              <Link href="/dashboard" onClick={closeMenu}>Messages</Link>
+               <button className="m-signout" onClick={() => { closeMenu(); handleSignOut() }}>Sign Out</button>
+             </>
+           ) : (
+-- 
+2.43.0
+
