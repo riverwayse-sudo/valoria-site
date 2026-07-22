@@ -50,6 +50,40 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* ── WEBINAR REPLAY ─────────────────────────────────────────────
+            For visitors who missed the 18 July launch webinar — the
+            in-hero live/countdown version is gone (event's over), this is
+            just the recording, framed as ongoing evergreen content. */}
+        <section className="webinar-replay" id="webinar">
+          <div className="container">
+            <Reveal className="wr-inner">
+              <div className="eyebrow" style={{ justifyContent: 'center' }}>
+                <div className="eyebrow-line" />
+                <span className="eyebrow-text">WATCH THE REPLAY</span>
+                <div className="eyebrow-line" />
+              </div>
+              <h2 className="wr-title">
+                Why being good at your job<br />is no longer <em>enough.</em>
+              </h2>
+              <p className="wr-sub">
+                Missed the launch webinar? Watch the full session on the VALU Index, the PRIME framework, and what it takes to become a Force to Align With.
+              </p>
+              <div className="wr-video">
+                <iframe
+                  src="https://www.youtube.com/embed/B9dD22vTErI"
+                  title="Valoria Institute — Launch Webinar Replay"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
+              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold" style={{ marginTop: 'clamp(28px,4vw,40px)' }}>
+                TAKE THE VALU INDEX — FREE
+              </a>
+            </Reveal>
+          </div>
+        </section>
+
         {/* ── ENTRY POINTS ─────────────────────────────────────────────── */}
         <section className="entry-points" id="entry-points">
           <div className="container">
