@@ -54,11 +54,15 @@ function getYouTubeId(url) {
 // of the fields their profile setup actually collects (programme_types,
 // fee_range). Someone with multiple tracks (e.g. speaker + facilitator)
 // also only ever got graded against one track's fields.
+// 'skills' swapped for 'preferred_industry' — the self-report skills
+// question was removed from the wizard, so grading candidates against a
+// field they're never asked would cap their profile strength below 100%
+// forever.
 function completenessFields(tracks) {
   const sets = {
     speaker:     ['topics', 'tier', 'fee_range'],
     facilitator: ['programme_types', 'fee_range'],
-    candidate:   ['skills', 'industry', 'availability'],
+    candidate:   ['preferred_industry', 'industry', 'availability'],
   }
   const base = ['display_name', 'headline', 'bio', 'photo_url']
   const trackFields = (tracks && tracks.length ? tracks : ['candidate'])

@@ -146,7 +146,11 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   s.push({ key:'languages', kind:'multi-chip', section:'Profile', title:'Which languages do you speak?', sub:'Select all that apply.', options:LANGUAGES, required:false })
   s.push({ key:'visibility', kind:'visibility', section:'Profile' })
 
-  if (isCandidate || isFacilitator) s.push({ key:'skills', kind:'multi-chip', section:'Expertise', title:'What are your core skills?', sub:'Select at least 1, up to 8 — these power marketplace search.', options:SKILLS_POOL, max:8, required:true, color:'#378ADD' })
+  // The self-report "What are your core skills?" question was removed here —
+  // replaced by the current/preferred industry pair at the top of this
+  // section. Skills are assessed objectively by the VALU Index rather than
+  // self-reported in the wizard; self-reporting them again was the
+  // redundant "manual syncing" Temitayo flagged.
   if (isSpeaker || isFacilitator) s.push({ key:'topics', kind:'multi-chip', section:'Expertise', title:'What topics do you speak on?', sub:'Select up to 6.', options:TOPICS_POOL, max:6, required:false })
   if (isSpeaker) s.push({ key:'format_capabilities', kind:'multi-chip', section:'Expertise', title:'What speaking formats do you offer?', sub:'Select all that apply.', options:FORMAT_CAPS, required:false, color:'#7F77DD' })
   if (isSpeaker) s.push({ key:'audience_sizes', kind:'multi-chip', section:'Expertise', title:'What audience sizes have you spoken to?', sub:'Select all that apply.', options:AUDIENCE_SIZES, required:false, color:'#1D9E75' })
@@ -366,14 +370,12 @@ export default function ProfileSetupPage() {
       ...(f.assessment_expires_at != null ? { assessment_expires_at: f.assessment_expires_at } : {}),
       // profile_complete is true when all mandatory fields are filled in.
       // This gates marketplace visibility even if listing_status = 'listed'.
-      // industry and skills are required as of today's fix — must be
-      // reflected here too, or the middleware gate (which reads this exact
-      // column) would keep letting profiles through without them even
-      // though the wizard now blocks Continue on those screens.
+      // skills is no longer a required question (removed — see screens()
+      // above), so it's dropped from this check too; requiring a field
+      // nobody is ever asked would make profile_complete permanently false.
       profile_complete: !!(
         f.display_name && f.headline && f.bio && f.active_tracks.length > 0 &&
-        f.industry &&
-        (!(isCandidate || isFacilitator) || f.skills.length > 0)
+        f.industry
       ),
       listing_status: existingListingStatusRef.current || 'pending', updated_at: new Date().toISOString(),
     }, { onConflict: 'id' })
