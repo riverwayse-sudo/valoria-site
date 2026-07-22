@@ -7,7 +7,7 @@ export default async function sitemap() {
     { path: '', priority: 1.0, changeFrequency: 'weekly' },
     { path: '/marketplace', priority: 0.9, changeFrequency: 'daily' },
     { path: '/atb-connect', priority: 0.8, changeFrequency: 'monthly' },
-    { path: '/spotlight', priority: 0.8, changeFrequency: 'monthly' },
+    { path: '/atb-spotlight', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/facilitators', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/develop', priority: 0.7, changeFrequency: 'monthly' },
     { path: '/prime', priority: 0.7, changeFrequency: 'monthly' },

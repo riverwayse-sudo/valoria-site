@@ -67,7 +67,7 @@ export const ENTRY_POINTS = [
     color: COLORS.gold,
     modality: 'SPEAKER MODALITY',
     desc: 'Discover and book speakers by expertise, tier designation, and VALU Index. The same faces appear at every conference because there has been no better way to find the others. Until now.',
-    href: '/spotlight',
+    href: '/atb-spotlight',
     linkLabel: 'FIND A SPEAKER',
   },
   {

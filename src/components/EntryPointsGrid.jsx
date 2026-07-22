@@ -37,7 +37,7 @@ const POINTS = [
     buyer: 'For Event Planners & Organisers',
     desc: 'Discover and book speakers by expertise, PRIME cluster strength, tier designation, and VALU Index score. Every speaker assessed. No guesswork.',
     modality: 'SPEAKER',
-    liveHref: '/spotlight',
+    liveHref: '/atb-spotlight',
   },
   {
     key: 'ep-3', color: '#1D9E75',

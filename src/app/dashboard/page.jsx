@@ -816,7 +816,7 @@ function SavedSearchesSection() {
     if (res.ok) setSearches(prev => prev.filter(s => s.id !== id))
   }
 
-  const TRACK_URL = { candidate: '/atb-connect', speaker: '/spotlight', facilitator: '/develop' }
+  const TRACK_URL = { candidate: '/atb-connect', speaker: '/atb-spotlight', facilitator: '/develop' }
   const TRACK_LABEL = { candidate: 'Talent', speaker: 'Speakers', facilitator: 'Facilitators' }
 
   if (loading) return null

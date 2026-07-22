@@ -244,7 +244,7 @@ export default function Nav() {
             </button>
             <div className={`nav-dropdown${dropOpen ? ' open' : ''}`} role="menu">
               <a href="/atb-connect" onClick={() => setDropOpen(false)}>ATB Connect — Find Talent</a>
-              <a href="/spotlight" onClick={() => setDropOpen(false)}>ATB Spotlight — Book a Speaker</a>
+              <a href="/atb-spotlight" onClick={() => setDropOpen(false)}>ATB Spotlight — Book a Speaker</a>
               <a href="/facilitators" onClick={() => setDropOpen(false)}>ATB Develop — Commission Facilitators</a>
               <div className="nav-dropdown-divider" />
               <a href="/programmes" onClick={() => setDropOpen(false)}>Programmes</a>
@@ -282,7 +282,7 @@ export default function Nav() {
       <nav className={`nav-mobile${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation">
         <div className="m-section-label">Marketplace</div>
         <Link href="/atb-connect" onClick={closeMenu}>ATB Connect — Find Talent</Link>
-        <Link href="/spotlight" onClick={closeMenu}>ATB Spotlight — Book a Speaker</Link>
+        <Link href="/atb-spotlight" onClick={closeMenu}>ATB Spotlight — Book a Speaker</Link>
         <Link href="/facilitators" onClick={closeMenu}>ATB Develop — Facilitators</Link>
         <div className="m-section-label">Company</div>
         <Link href="/about-us" onClick={closeMenu}>About</Link>

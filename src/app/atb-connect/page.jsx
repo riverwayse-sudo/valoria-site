@@ -173,7 +173,7 @@ export default function ATBConnectPage() {
           <div style={S.headerSub}>Assessed Candidate Search</div>
         </div>
         <nav style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <Link href="/spotlight" style={S.navLink}>ATB Spotlight →</Link>
+          <Link href="/atb-spotlight" style={S.navLink}>ATB Spotlight →</Link>
           <Link href="/login" style={S.navLink}>Sign In</Link>
         </nav>
       </header>

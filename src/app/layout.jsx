@@ -105,7 +105,7 @@ const organizationSchema = {
       '@type': 'Offer',
       name: 'ATB Spotlight — Speaker Booking',
       description: 'Discover and book speakers by expertise, tier designation, and VALU Index score.',
-      url: `${SITE_URL}/spotlight`,
+      url: `${SITE_URL}/atb-spotlight`,
     },
     {
       '@type': 'Offer',

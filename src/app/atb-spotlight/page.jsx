@@ -5,22 +5,22 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { PRIME_CLUSTERS } from '@/lib/brand'
 
-// Live listings for the 'facilitator' track — the third leg of the
-// marketplace alongside /atb-connect (candidate) and /atb-spotlight (speaker).
-// Built from the atb-connect page as a template. Previously there was no
-// query-backed listings page for facilitators at all: facilitators/page.jsx
-// is pure static marketing with no Supabase query, so anyone who completed
-// their profile as a facilitator had nowhere to actually show up. This page
-// fills that gap; the marketing page at /facilitators should link here.
-
 const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
 const PARCHMENT = '#F7F4EE'
 const DARK = '#0F0F1A'
 const LINEN = '#EDE8DC'
-const TEAL = '#1D9E75'
+const DIM = 'rgba(247,244,238,.4)'
 
-const AVAIL_COLORS = { open: '#1D9E75', contract_only: GOLD, not_available: '#888' }
+const TIER_BADGES = {
+  tier_1: { label: '✦✦✦ Tier I',   bg: GOLD,     text: MIDNIGHT },
+  tier_2: { label: '✦✦ Tier II',   bg: MIDNIGHT, text: GOLD },
+  tier_3: { label: '✦ Tier III',   bg: LINEN,    text: '#2E2E4A' },
+}
+
+const TOPICS = ['Leadership','Strategy','Innovation','Diversity & Inclusion','Finance',
+  'Technology & AI','Communication','Entrepreneurship','Governance','People Development',
+  'Mental Health at Work','Global Affairs','Sustainability','Future of Work']
 
 function getAvatarLetters(displayInitials) {
   if (!displayInitials) return '?'
@@ -28,16 +28,17 @@ function getAvatarLetters(displayInitials) {
   return letters ? letters.toUpperCase() : '?'
 }
 
-export default function ValoriaDevelopPage() {
+export default function ATBSpotlightPage() {
   const router = useRouter()
   const [profiles, setProfiles] = useState([])
   const [loading, setLoading] = useState(true)
   const [checkingAccess, setCheckingAccess] = useState(true)
   const [search, setSearch] = useState('')
-  const [filterProgramme, setFilterProgramme] = useState('')
-  const [filterAvail, setFilterAvail] = useState('')
+  const [filterTier, setFilterTier] = useState('')
+  const [filterTopic, setFilterTopic] = useState('')
   const [filterCluster, setFilterCluster] = useState('')
-  const [filterMinValu, setFilterMinValu] = useState('')
+  const [filterScoreMin, setFilterScoreMin] = useState('')
+  const [filterScoreMax, setFilterScoreMax] = useState('')
   const [filterDesignation, setFilterDesignation] = useState('')
 
   useEffect(() => { checkAccess() }, [])
@@ -62,17 +63,47 @@ export default function ValoriaDevelopPage() {
 
   async function fetchProfiles() {
     setLoading(true)
-    const { data: real, error } = await supabase
+
+    // Try real assessed speakers first
+    const { data: real } = await supabase
       .from('professional_profiles')
-      .select('id, atb_id, display_initials, headline, location, photo_url, active_tracks, industry, programme_types, fee_range, availability, bio, valu_index, cluster_scores, listing_status, designation')
+      .select('id, atb_id, display_initials, headline, location, photo_url, active_tracks, industry, topics, speaker_tier, bio, valu_index, cluster_scores, listing_status, fee_range, youtube_links')
       .eq('listing_status', 'listed')
       .neq('visibility', 'private')
-      .contains('active_tracks', ['facilitator'])
+      .contains('active_tracks', ['speaker'])
       .order('valu_index', { ascending: false })
 
-    if (error) console.error('valoria-develop: facilitator fetch failed:', error)
+    if (real && real.length > 0) {
+      setProfiles(real.map(p => ({ ...p, valu_score: p.valu_index })))
+      setLoading(false)
+      return
+    }
 
-    setProfiles((real || []).map(p => ({ ...p, valu_score: p.valu_index })))
+    // Fallback: dummy speaker profiles
+    const { data: dummy } = await supabase
+      .from('marketplace_profiles')
+      .select('id, atb_id, display_initials, headline, location, avatar_url, industry, skills, bio, fee_range, featured, video_url, years_experience')
+      .eq('section', 'speaker')
+      .eq('status', 'active')
+      .order('featured', { ascending: false })
+
+    setProfiles((dummy || []).map(p => ({
+      id: p.id,
+      atb_id: p.atb_id,
+      display_initials: p.display_initials,
+      headline: p.headline,
+      location: p.location,
+      photo_url: p.avatar_url,
+      industry: p.industry,
+      topics: p.skills || [],
+      speaker_tier: p.featured ? 'tier_2' : 'tier_3',
+      bio: p.bio,
+      fee_range: p.fee_range,
+      valu_score: null,
+      cluster_scores: null,
+      youtube_links: p.video_url ? [p.video_url] : [],
+      is_dummy: true,
+    })))
     setLoading(false)
   }
 
@@ -82,13 +113,17 @@ export default function ValoriaDevelopPage() {
       (p.atb_id || '').toLowerCase().includes(q) ||
       (p.headline || '').toLowerCase().includes(q) ||
       (p.bio || '').toLowerCase().includes(q) ||
-      (p.programme_types || []).some(s => s.toLowerCase().includes(q))
-    const matchProgramme = !filterProgramme || (p.programme_types || []).includes(filterProgramme)
-    const matchAvail = !filterAvail || p.availability === filterAvail
+      (p.topics || []).some(t => t.toLowerCase().includes(q))
+    const matchTier = !filterTier || p.speaker_tier === filterTier
+    const matchTopic = !filterTopic || (p.topics || []).includes(filterTopic)
     const matchCluster = !filterCluster || (p.cluster_scores && p.cluster_scores[filterCluster] >= 75)
-    const matchValu = !filterMinValu || (p.valu_index != null && p.valu_index >= parseInt(filterMinValu))
-    const matchDesignation = !filterDesignation || p.designation === filterDesignation
-    return matchSearch && matchProgramme && matchAvail && matchCluster && matchValu && matchDesignation
+    // VALU Index score range filter
+    const score = p.valu_score ?? p.valu_index ?? null
+    const matchScoreMin = !filterScoreMin || (score !== null && score >= Number(filterScoreMin))
+    const matchScoreMax = !filterScoreMax || (score !== null && score <= Number(filterScoreMax))
+    // Designation filter
+    const matchDesignation = !filterDesignation || (p.designation || '').toLowerCase() === filterDesignation.toLowerCase()
+    return matchSearch && matchTier && matchTopic && matchCluster && matchScoreMin && matchScoreMax && matchDesignation
   })
 
   if (checkingAccess) {
@@ -104,12 +139,11 @@ export default function ValoriaDevelopPage() {
           <img src="/logo.png" alt="Valoria Institute" style={{ height: '44px', width: 'auto' }} />
         </Link>
         <div style={S.headerCenter}>
-          <div style={S.headerLabel}>VALORIA DEVELOP</div>
-          <div style={S.headerSub}>Certified Facilitator Search</div>
+          <div style={S.headerLabel}>ATB SPOTLIGHT</div>
+          <div style={S.headerSub}>Speaker Discovery & Booking</div>
         </div>
         <nav style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
           <Link href="/atb-connect" style={S.navLink}>ATB Connect →</Link>
-          <Link href="/atb-spotlight" style={S.navLink}>ATB Spotlight →</Link>
           <Link href="/login" style={S.navLink}>Sign In</Link>
         </nav>
       </header>
@@ -120,44 +154,25 @@ export default function ValoriaDevelopPage() {
         <aside style={S.filters}>
           <div style={S.eyebrow}><div style={S.eyebrowLine} /><span style={S.eyebrowText}>FILTER</span></div>
 
-          <input type="search" placeholder="Search by ID, programme, topic…"
+          <input type="search" placeholder="Search by name, topic…"
             value={search} onChange={e => setSearch(e.target.value)} style={S.searchInput} />
 
-          <FilterSection label="PROGRAMME TYPE">
-            <select value={filterProgramme} onChange={e => setFilterProgramme(e.target.value)} style={S.select}>
-              <option value="">All programme types</option>
-              {['Leadership Development','Team Effectiveness','Strategic Thinking','DEI & Belonging',
-                'Communication Skills','Sales Enablement','Executive Coaching','Change Management',
-                'Culture & Values','Finance for Non-Finance'].map(i => <option key={i} value={i}>{i}</option>)}
-            </select>
-          </FilterSection>
-
-          <FilterSection label="AVAILABILITY">
-            {[['', 'All'], ['open', 'Open to opportunities'], ['contract_only', 'Contract only']].map(([v, l]) => (
-              <label key={v} style={S.radioLabel}>
-                <input type="radio" name="avail" value={v} checked={filterAvail === v}
-                  onChange={() => setFilterAvail(v)} style={{ accentColor: GOLD }} /> {l}
-              </label>
-            ))}
-          </FilterSection>
-
           <FilterSection label="VALU INDEX">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {[['', 'All scores'], ['35', '≥ 35 — Listed'], ['50', '≥ 50 — Achiever'], ['65', '≥ 65 — Expert'], ['80', '≥ 80 — Leader']].map(([v, l]) => (
-                <button key={v} onClick={() => setFilterMinValu(v)}
-                  style={{
-                    padding: '7px 10px',
-                    background: filterMinValu === v ? 'rgba(201,168,76,.15)' : 'rgba(255,255,255,.03)',
-                    border: `1px solid ${filterMinValu === v ? GOLD : 'rgba(201,168,76,.12)'}`,
-                    borderRadius: '6px',
-                    color: filterMinValu === v ? GOLD : 'rgba(247,244,238,.55)',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    fontFamily: "'Raleway',sans-serif",
-                    fontWeight: filterMinValu === v ? 600 : 400,
-                  }}>
-                  {l}
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input type="number" placeholder="Min" min="0" max="100" value={filterScoreMin}
+                onChange={e => setFilterScoreMin(e.target.value)} style={{ ...S.select, width: '70px' }} />
+              <span style={{ color: DIM }}>to</span>
+              <input type="number" placeholder="Max" min="0" max="100" value={filterScoreMax}
+                onChange={e => setFilterScoreMax(e.target.value)} style={{ ...S.select, width: '70px' }} />
+            </div>
+            <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
+              {[['35+', 35, ''], ['50+', 50, ''], ['75+', 75, '']].map(([label, min, max]) => (
+                <button key={label} onClick={() => {
+                  setFilterScoreMin(filterScoreMin === String(min) ? '' : String(min))
+                  setFilterScoreMax(filterScoreMax === String(max) ? '' : String(max))
+                }}
+                  style={{ padding: '4px 10px', fontSize: '11px', background: filterScoreMin === String(min) ? GOLD : 'transparent', color: filterScoreMin === String(min) ? MIDNIGHT : GOLD, border: `1px solid ${GOLD}`, borderRadius: '999px', cursor: 'pointer' }}>
+                  {label}
                 </button>
               ))}
             </div>
@@ -166,10 +181,26 @@ export default function ValoriaDevelopPage() {
           <FilterSection label="DESIGNATION">
             <select value={filterDesignation} onChange={e => setFilterDesignation(e.target.value)} style={S.select}>
               <option value="">All designations</option>
-              <option value="Builder">Builder</option>
-              <option value="Achiever">Achiever</option>
-              <option value="Expert">Expert</option>
-              <option value="Leader">Leader</option>
+              <option value="Builder">Builder — Emerging talent</option>
+              <option value="Achiever">Achiever — Proven performer</option>
+              <option value="Expert">Expert — Advanced capability</option>
+              <option value="Leader">Leader — Strategic impact</option>
+            </select>
+          </FilterSection>
+
+          <FilterSection label="TIER">
+            {[['', 'All tiers'], ['tier_1', '✦✦✦ Tier I'], ['tier_2', '✦✦ Tier II'], ['tier_3', '✦ Tier III']].map(([v, l]) => (
+              <label key={v} style={S.radioLabel}>
+                <input type="radio" name="tier" value={v} checked={filterTier === v}
+                  onChange={() => setFilterTier(v)} style={{ accentColor: GOLD }} /> {l}
+              </label>
+            ))}
+          </FilterSection>
+
+          <FilterSection label="TOPIC">
+            <select value={filterTopic} onChange={e => setFilterTopic(e.target.value)} style={S.select}>
+              <option value="">All topics</option>
+              {TOPICS.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </FilterSection>
 
@@ -189,29 +220,29 @@ export default function ValoriaDevelopPage() {
             {filterCluster && <div style={S.clusterLabel}>{PRIME_CLUSTERS.find(c => c.letter === filterCluster)?.name} ≥ 75</div>}
           </FilterSection>
 
-          <button onClick={() => { setSearch(''); setFilterProgramme(''); setFilterAvail(''); setFilterCluster(''); setFilterMinValu(''); setFilterDesignation('') }}
+          <button onClick={() => { setSearch(''); setFilterTier(''); setFilterTopic(''); setFilterCluster(''); setFilterScoreMin(''); setFilterScoreMax(''); setFilterDesignation('') }}
             style={S.clearBtn}>Clear filters</button>
         </aside>
 
         {/* RESULTS */}
         <main style={S.results}>
           <div style={{ marginBottom: '28px' }}>
-            <h1 style={S.resultsTitle}>PRIME-certified facilitators.</h1>
+            <h1 style={S.resultsTitle}>Verified speakers.</h1>
             <p style={S.resultsCount}>
-              {loading ? 'Loading…' : `${filtered.length} facilitator${filtered.length !== 1 ? 's' : ''} found`}
+              {loading ? 'Loading…' : `${filtered.length} speaker${filtered.length !== 1 ? 's' : ''} found`}
             </p>
           </div>
 
           {loading ? (
-            <div style={S.loadingState}>Loading profiles…</div>
+            <div style={S.loadingState}>Loading speakers…</div>
           ) : filtered.length === 0 ? (
             <div style={S.emptyState}>
               <div style={{ fontSize: '32px', color: GOLD, marginBottom: '12px' }}>◈</div>
-              <p style={{ color: 'rgba(247,244,238,.4)', fontSize: '14px' }}>No facilitators match your current filters.</p>
+              <p style={{ color: 'rgba(247,244,238,.4)', fontSize: '14px' }}>No speakers match your current filters.</p>
             </div>
           ) : (
             <div style={S.grid}>
-              {filtered.map(p => <FacilitatorCard key={p.id} profile={p} />)}
+              {filtered.map(p => <SpeakerCard key={p.id} profile={p} />)}
             </div>
           )}
         </main>
@@ -220,9 +251,10 @@ export default function ValoriaDevelopPage() {
   )
 }
 
-function FacilitatorCard({ profile: p }) {
-  const tags = (p.programme_types || []).slice(0, 3)
-  const availColor = AVAIL_COLORS[p.availability] || '#888'
+function SpeakerCard({ profile: p }) {
+  const tier = TIER_BADGES[p.speaker_tier] || TIER_BADGES.tier_3
+  const topics = (p.topics || []).slice(0, 3)
+  const hasReel = p.youtube_links && p.youtube_links.length > 0 && p.youtube_links[0]
   const initials = p.display_initials || '—'
   const avatarLetters = getAvatarLetters(p.display_initials)
   const atbId = p.atb_id || '—'
@@ -238,29 +270,25 @@ function FacilitatorCard({ profile: p }) {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={S.cardName}>{atbId}</div>
           <div style={S.cardInitials}>{initials} · Verified</div>
-          <div style={S.cardHeadline}>{p.headline || 'Valoria Facilitator'}</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
-            {p.location && <div style={S.cardLocation}>📍 {p.location}</div>}
-          </div>
+          <div style={S.cardHeadline}>{p.headline || 'Valoria Speaker'}</div>
+          {p.location && <div style={S.cardLocation}>📍 {p.location}</div>}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', flexShrink: 0 }}>
-          {p.valu_score != null && (
-            <span style={{ fontSize: '13px', fontWeight: 700, color: GOLD }}>VALU {p.valu_score}</span>
-          )}
-          {p.designation && (
-            <span style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(29,158,117,.85)', letterSpacing: '.06em' }}>
-              {p.designation.toUpperCase()}
-            </span>
-          )}
-          <span style={{ fontSize: '11px', fontWeight: 600, color: availColor }}>
-            ● {p.availability === 'open' ? 'Open' : p.availability === 'contract_only' ? 'Contract' : 'Unavailable'}
-          </span>
+          <span style={{ ...S.tierBadge, background: tier.bg, color: tier.text }}>{tier.label}</span>
+          {p.valu_score != null && <span style={{ fontSize: '11px', fontWeight: 700, color: GOLD }}>VALU {p.valu_score}</span>}
         </div>
       </div>
 
-      {tags.length > 0 && (
+      {topics.length > 0 && (
         <div style={S.tagRow}>
-          {tags.map(t => <span key={t} style={S.tag}>{t}</span>)}
+          {topics.map(t => <span key={t} style={S.tag}>{t}</span>)}
+          {p.fee_range && <span style={{ ...S.tag, borderColor: 'rgba(201,168,76,.3)', color: GOLD }}>{p.fee_range}</span>}
+        </div>
+      )}
+
+      {hasReel && (
+        <div style={{ fontSize: '11px', color: GOLD, display: 'flex', alignItems: 'center', gap: '4px' }}>
+          ▶ Speaker reel available
         </div>
       )}
 
@@ -285,7 +313,7 @@ function FacilitatorCard({ profile: p }) {
 
       <div style={S.cardActions}>
         <Link href={`/profile/${p.id}`} style={S.btnView}>VIEW PROFILE</Link>
-        <Link href={`/profile/${p.id}#contact`} style={S.btnAction}>REQUEST FACILITATOR</Link>
+        <Link href={`/profile/${p.id}#contact`} style={S.btnAction}>BOOK SPEAKER</Link>
       </div>
     </div>
   )
@@ -302,9 +330,9 @@ function FilterSection({ label, children }) {
 
 const S = {
   page: { minHeight: '100vh', background: DARK, fontFamily: "'Raleway','Helvetica Neue',Arial,sans-serif", color: PARCHMENT },
-  header: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: '64px', background: MIDNIGHT, borderBottom: '1px solid rgba(29,158,117,.2)', position: 'sticky', top: 0, zIndex: 100, gap: '24px' },
+  header: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: '64px', background: MIDNIGHT, borderBottom: `1px solid rgba(201,168,76,.2)`, position: 'sticky', top: 0, zIndex: 100, gap: '24px' },
   headerCenter: { textAlign: 'center' },
-  headerLabel: { fontSize: '13px', fontWeight: 700, letterSpacing: '.12em', color: TEAL },
+  headerLabel: { fontSize: '13px', fontWeight: 700, letterSpacing: '.12em', color: GOLD },
   headerSub: { fontSize: '10px', color: 'rgba(247,244,238,.35)', letterSpacing: '.06em' },
   navLink: { fontSize: '12px', color: 'rgba(247,244,238,.4)', textDecoration: 'none' },
   body: { display: 'grid', gridTemplateColumns: '240px 1fr', minHeight: 'calc(100vh - 64px)' },
@@ -330,8 +358,9 @@ const S = {
   avatar: { width: '52px', height: '52px', flexShrink: 0, borderRadius: '50%', border: `2px solid ${GOLD}`, background: MIDNIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   cardName: { fontSize: '13px', fontWeight: 700, color: MIDNIGHT, lineHeight: 1.2, marginBottom: '2px', fontFamily: "'JetBrains Mono',monospace", letterSpacing: '.01em' },
   cardInitials: { fontSize: '10.5px', color: '#8A8578', fontWeight: 600, marginBottom: '4px', letterSpacing: '.03em' },
-  cardHeadline: { fontSize: '12px', color: TEAL, fontWeight: 500, marginBottom: '2px' },
+  cardHeadline: { fontSize: '12px', color: GOLD, fontWeight: 500, marginBottom: '2px' },
   cardLocation: { fontSize: '11px', color: '#5F5E5A' },
+  tierBadge: { display: 'inline-block', padding: '4px 10px', borderRadius: '999px', fontSize: '10px', fontWeight: 700, whiteSpace: 'nowrap' },
   tagRow: { display: 'flex', flexWrap: 'wrap', gap: '6px' },
   tag: { padding: '4px 10px', borderRadius: '999px', border: '1px solid #D4C9A8', fontSize: '11px', color: '#2E2E4A', fontWeight: 500, background: LINEN },
   clusterStrip: { display: 'flex', gap: '6px', alignItems: 'flex-end', padding: '10px 4px 2px', borderTop: '1px solid #EDE8DC' },
@@ -342,5 +371,5 @@ const S = {
   cardBio: { fontSize: '12px', color: '#444441', lineHeight: 1.6, margin: 0 },
   cardActions: { display: 'flex', gap: '8px', marginTop: '4px' },
   btnView: { flex: 1, padding: '9px', border: `1px solid ${MIDNIGHT}`, borderRadius: '999px', color: MIDNIGHT, fontSize: '10px', fontWeight: 700, letterSpacing: '.1em', textAlign: 'center', textDecoration: 'none', background: 'transparent' },
-  btnAction: { flex: 1, padding: '9px', background: TEAL, borderRadius: '999px', color: '#fff', fontSize: '10px', fontWeight: 700, letterSpacing: '.1em', textAlign: 'center', textDecoration: 'none', border: 'none' },
+  btnAction: { flex: 1, padding: '9px', background: GOLD, borderRadius: '999px', color: MIDNIGHT, fontSize: '10px', fontWeight: 700, letterSpacing: '.1em', textAlign: 'center', textDecoration: 'none', border: 'none' },
 }

@@ -78,7 +78,7 @@ export default function Footer() {
                 <li><Link href="/marketplace">Marketplace</Link></li>
                 <li><Link href="/prime">PRIME Framework</Link></li>
                 <li><Link href="/atb-connect">ATB Connect</Link></li>
-                <li><Link href="/spotlight">ATB Spotlight</Link></li>
+                <li><Link href="/atb-spotlight">ATB Spotlight</Link></li>
                 <li><Link href="/facilitators">Facilitators</Link></li>
               </ul>
             </div>

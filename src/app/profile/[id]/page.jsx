@@ -259,7 +259,7 @@ export default function ProfilePage({ params }) {
                 style={{ padding:'12px 18px', background:'transparent', border:`1px solid ${GLINE}`, color: DIM, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', cursor:'pointer', fontFamily:'inherit' }}>
                 {copied ? 'LINK COPIED' : 'SHARE'}
               </button>
-              <Link href={displayTrack === 'facilitator' ? '/valoria-develop' : displayTrack === 'speaker' ? '/spotlight' : '/atb-connect'}
+              <Link href={displayTrack === 'facilitator' ? '/valoria-develop' : displayTrack === 'speaker' ? '/atb-spotlight' : '/atb-connect'}
                 style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
                 MORE {displayTrack === 'facilitator' ? 'FACILITATORS' : displayTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}
               </Link>
@@ -455,7 +455,7 @@ export default function ProfilePage({ params }) {
             )}
 
             {/* Introduction CTA — anchor target for the REQUEST INTRO / BOOK SPEAKER
-                links on /atb-connect and /spotlight, which already point to
+                links on /atb-connect and /atb-spotlight, which already point to
                 this page as #contact. scrollMarginTop accounts for the fixed nav. */}
             <div id="contact" className="vi-cta-intro" style={{ background:`linear-gradient(135deg, rgba(201,168,76,.06), rgba(26,26,46,.3))`, border:`1px solid ${GLINE2}`, padding:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', flexWrap:'wrap', marginTop:'8px', scrollMarginTop:'96px' }}>
               <div>
