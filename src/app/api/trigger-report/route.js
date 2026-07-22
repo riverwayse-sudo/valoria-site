@@ -1,83 +1,45 @@
-// src/app/api/notifications/route.js
+// src/app/api/trigger-report/route.js
 //
-// GET  /api/notifications         → this user's notifications, newest first
-// PATCH /api/notifications        → { id } marks one read, or { all: true } marks all read
+// Since 0edcf21 (valoria-platform), confirmation links redirect here
+// (valoriainstitute.com/login) instead of back to the assessment app, so
+// PRIMEAssessment.jsx's client-side "fire generate-and-send-report the
+// moment the identity_hash lands" effect no longer runs — that code lives
+// on assessment.valoriainstitute.com and never sees this redirect.
 //
-// Uses the caller's own session (via the sb-*-auth-token cookie, same
-// pattern middleware.js already reads) so RLS enforces "only your own
-// notifications" — this route does not use the service-role key, unlike
-// submit-assessment.js / claim-listing.js, because it only ever reads or
-// updates rows the signed-in user is already allowed to touch under the
-// policies in 002_events_and_notifications.sql.
+// The 15-min sweep-unsent-reports cron still catches this eventually, but
+// this route restores the instant path: it's a thin server-to-server relay
+// so the browser calls same-origin (no CORS/preflight issues) and this
+// route does the actual cross-origin call to the assessment app, where
+// CORS doesn't apply.
+//
+// Fire-and-forget by design from the caller's side — errors here just mean
+// the 15-min sweep picks it up instead, so we don't want the login flow to
+// hang or fail waiting on this.
 
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
-import { NextResponse } from 'next/server'
+const ASSESSMENT_ORIGIN = 'https://assessment.valoriainstitute.com'
 
-function getSupabase() {
-  const cookieStore = cookies()
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        get: (name) => cookieStore.get(name)?.value,
-      },
-    }
-  )
-}
-
-export async function GET(request) {
-  const supabase = getSupabase()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    return NextResponse.json({ error: 'Not signed in.' }, { status: 401 })
+export async function POST(request) {
+  let identity_hash
+  try {
+    const body = await request.json()
+    identity_hash = body?.identity_hash
+  } catch {
+    return Response.json({ ok: false, error: 'Invalid request body' }, { status: 400 })
   }
 
-  const { searchParams } = new URL(request.url)
-  const limit = Math.min(Number(searchParams.get('limit')) || 20, 50)
-
-  const { data, error } = await supabase
-    .from('notifications')
-    .select('id, type, title, body, action_url, read_at, created_at')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
-    .limit(limit)
-
-  if (error) {
-    console.error('GET /api/notifications:', error)
-    return NextResponse.json({ error: 'Could not load notifications.' }, { status: 500 })
+  if (!identity_hash) {
+    return Response.json({ ok: false, error: 'identity_hash is required' }, { status: 400 })
   }
 
-  const unreadCount = data.filter((n) => !n.read_at).length
-  return NextResponse.json({ notifications: data, unreadCount })
-}
-
-export async function PATCH(request) {
-  const supabase = getSupabase()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    return NextResponse.json({ error: 'Not signed in.' }, { status: 401 })
+  try {
+    const res = await fetch(`${ASSESSMENT_ORIGIN}/api/generate-and-send-report`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identity_hash }),
+    })
+    const data = await res.json().catch(() => null)
+    return Response.json({ ok: res.ok, upstream: data }, { status: res.ok ? 200 : 502 })
+  } catch (err) {
+    return Response.json({ ok: false, error: 'Could not reach assessment app', detail: String(err) }, { status: 502 })
   }
-
-  const body = await request.json().catch(() => ({}))
-  const now = new Date().toISOString()
-
-  let query = supabase.from('notifications').update({ read_at: now }).eq('user_id', user.id)
-
-  if (body.all) {
-    query = query.is('read_at', null)
-  } else if (body.id) {
-    query = query.eq('id', body.id)
-  } else {
-    return NextResponse.json({ error: 'Provide { id } or { all: true }.' }, { status: 400 })
-  }
-
-  const { error } = await query
-  if (error) {
-    console.error('PATCH /api/notifications:', error)
-    return NextResponse.json({ error: 'Could not update notifications.' }, { status: 500 })
-  }
-
-  return NextResponse.json({ ok: true })
 }
