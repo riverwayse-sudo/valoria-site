@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { PRIME_CLUSTERS } from '@/lib/brand'
@@ -9,6 +10,7 @@ const MIDNIGHT = '#1A1A2E'
 const PARCHMENT = '#F7F4EE'
 const DARK = '#0F0F1A'
 const LINEN = '#EDE8DC'
+const DIM = 'rgba(247,244,238,.4)'
 
 const TIER_BADGES = {
   tier_1: { label: '✦✦✦ Tier I',   bg: GOLD,     text: MIDNIGHT },
@@ -27,8 +29,10 @@ function getAvatarLetters(displayInitials) {
 }
 
 export default function ATBSpotlightPage() {
+  const router = useRouter()
   const [profiles, setProfiles] = useState([])
   const [loading, setLoading] = useState(true)
+  const [checkingAccess, setCheckingAccess] = useState(true)
   const [search, setSearch] = useState('')
   const [filterTier, setFilterTier] = useState('')
   const [filterTopic, setFilterTopic] = useState('')
@@ -37,7 +41,25 @@ export default function ATBSpotlightPage() {
   const [filterScoreMax, setFilterScoreMax] = useState('')
   const [filterDesignation, setFilterDesignation] = useState('')
 
-  useEffect(() => { fetchProfiles() }, [])
+  useEffect(() => { checkAccess() }, [])
+
+  async function checkAccess() {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session?.user) {
+      const { data: professional } = await supabase
+        .from('professional_profiles')
+        .select('id')
+        .eq('id', session.user.id)
+        .maybeSingle()
+      if (professional) {
+        // Signed-in talent/speaker/facilitator — this marketplace isn't for them
+        router.replace('/dashboard')
+        return
+      }
+    }
+    setCheckingAccess(false)
+    fetchProfiles()
+  }
 
   async function fetchProfiles() {
     setLoading(true)
@@ -103,6 +125,10 @@ export default function ATBSpotlightPage() {
     const matchDesignation = !filterDesignation || (p.designation || '').toLowerCase() === filterDesignation.toLowerCase()
     return matchSearch && matchTier && matchTopic && matchCluster && matchScoreMin && matchScoreMax && matchDesignation
   })
+
+  if (checkingAccess) {
+    return <div style={S.page}><div style={S.loadingState}>Loading…</div></div>
+  }
 
   return (
     <div style={S.page}>
