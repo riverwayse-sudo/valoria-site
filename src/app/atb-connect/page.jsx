@@ -1,233 +1,509 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { PRIME_CLUSTERS } from '@/lib/brand'
 
 const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
 const PARCHMENT = '#F7F4EE'
 const DARK = '#0F0F1A'
+const LINEN = '#EDE8DC'
+const BLUE = '#378ADD'
+const DIM = 'rgba(247,244,238,.4)'
 
-export default function LoginPage() {
-  const [form, setForm] = useState({ email: '', password: '' })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [resetSent, setResetSent] = useState(false)
-  const [resetting, setResetting] = useState(false)
-  const [redirecting, setRedirecting] = useState(false)
+const AVAIL_COLORS = { open: '#1D9E75', contract_only: GOLD, not_available: '#888' }
 
-  // Check for identity_hash in URL (from email confirmation redirect)
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const identityHash = params.get('identity_hash')
+function getAvatarLetters(displayInitials) {
+  if (!displayInitials) return '?'
+  const letters = displayInitials.replace(/\./g, '')
+  return letters ? letters.toUpperCase() : '?'
+}
 
-    if (identityHash) {
-      // Store identity_hash in sessionStorage to use after login
-      sessionStorage.setItem('pending_identity_hash', identityHash)
+export default function ATBConnectPage() {
+  const router = useRouter()
+  const [profiles, setProfiles] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [checkingAccess, setCheckingAccess] = useState(true)
+  const [session, setSession] = useState(null)
+  const [showSaveModal, setShowSaveModal] = useState(false)
+  const [saveName, setSaveName] = useState('')
+  const [saveLoading, setSaveLoading] = useState(false)
+  const [search, setSearch] = useState('')
+  const [filterIndustry, setFilterIndustry] = useState('')
+  const [filterAvail, setFilterAvail] = useState('')
+  const [filterCluster, setFilterCluster] = useState('')
+  const [filterScoreMin, setFilterScoreMin] = useState('')
+  const [filterScoreMax, setFilterScoreMax] = useState('')
+  const [filterMinValu, setFilterMinValu] = useState('')
+  const [filterDesignation, setFilterDesignation] = useState('')
 
-      // Confirmation links used to land back on the assessment app, whose
-      // own client code fired report generation immediately on arrival.
-      // They now land here instead, so this same-origin proxy restores
-      // that instant trigger (see /api/trigger-report). Fire-and-forget —
-      // the 15-min sweep-unsent-reports cron is the safety net if this
-      // fails or the user never gets this far.
-      fetch('/api/trigger-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identity_hash: identityHash }),
-      }).catch(() => {})
-    }
-  }, [])
+  useEffect(() => { checkAccess(); fetchSession() }, [])
 
-  async function handleLogin(e) {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-    try {
-      const { error: loginError } = await supabase.auth.signInWithPassword({
-        email: form.email,
-        password: form.password,
-      })
-      if (loginError) throw loginError
-      // Authenticated users must never be blocked by the waitlist gate.
-      document.cookie = `vi_waitlist_v2=submitted; path=/; max-age=31536000`
-      const { data: { user } } = await supabase.auth.getUser()
+  async function fetchSession() {
+    const { data } = await supabase.auth.getSession()
+    setSession(data?.session)
+  }
 
-      // Check for pending identity_hash from email confirmation
-      const pendingIdentityHash = sessionStorage.getItem('pending_identity_hash')
-      if (pendingIdentityHash) {
-        sessionStorage.removeItem('pending_identity_hash')
-        // Link the confirmed assessment to this user
-        try {
-          await supabase
-            .from('valu_assessments')
-            .update({ user_id: user.id })
-            .eq('identity_hash', pendingIdentityHash)
-            .is('user_id', null)
-        } catch (linkErr) {
-          console.error('Failed to link assessment to user:', linkErr)
-        }
-        // Redirect to profile page which will show their VALU Index
-        window.location.href = `/profile/${user.id}?fresh=true`
-        return
-      }
-
-      // Buyers (employer/organiser) live in `profiles`, professionals in
-      // `professional_profiles` — these are two entirely separate tables.
-      // Checking only professional_profiles meant every buyer account (zero
-      // rows there, always) got misrouted into the professional setup
-      // wizard on every login after their first session.
-      const { data: buyerProfile } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', user.id)
-        .maybeSingle()
-
-      if (buyerProfile) {
-        window.location.href = '/dashboard'
-        return
-      }
-
-      const { data: profile } = await supabase
+  async function checkAccess() {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session?.user) {
+      const { data: professional } = await supabase
         .from('professional_profiles')
-        .select('id, display_name, listing_status, active_tracks')
-        .eq('id', user.id)
+        .select('id')
+        .eq('id', session.user.id)
         .maybeSingle()
-
-      if (!profile || !profile.display_name) {
-        // First time — go to setup wizard
-        window.location.href = '/profile/setup'
-      } else {
-        // Returning user — go to dashboard
-        window.location.href = '/dashboard'
+      if (professional) {
+        // Signed-in talent/speaker/facilitator — this marketplace isn't for them
+        router.replace('/dashboard')
+        return
       }
-    } catch (err) {
-      setError(
-        err.message === 'Invalid login credentials'
-          ? 'Incorrect email or password. Try again, or reset your password below.'
-          : (err.message || 'Something went wrong. Please try again.')
-      )
-    } finally {
+    }
+    setCheckingAccess(false)
+    fetchProfiles()
+  }
+
+  async function fetchProfiles() {
+    setLoading(true)
+
+    // Try real assessed candidates first
+    const { data: real } = await supabase
+      .from('professional_profiles')
+      .select('id, atb_id, display_initials, headline, location, photo_url, active_tracks, industry, skills, availability, bio, valu_index, cluster_scores, listing_status, designation')
+      .eq('listing_status', 'listed')
+      .neq('visibility', 'private')
+      .contains('active_tracks', ['candidate'])
+      .order('valu_index', { ascending: false })
+
+    if (real && real.length > 0) {
+      setProfiles(real.map(p => ({ ...p, valu_score: p.valu_index })))
       setLoading(false)
+      return
+    }
+
+    // Fallback: dummy talent profiles
+    const { data: dummy } = await supabase
+      .from('marketplace_profiles')
+      .select('id, atb_id, display_initials, headline, location, avatar_url, industry, skills, bio, fee_range, featured, years_experience')
+      .eq('section', 'talent')
+      .eq('status', 'active')
+      .order('featured', { ascending: false })
+
+    setProfiles((dummy || []).map(p => ({
+      id: p.id,
+      atb_id: p.atb_id,
+      display_initials: p.display_initials,
+      headline: p.headline,
+      location: p.location,
+      photo_url: p.avatar_url,
+      industry: p.industry,
+      skills: p.skills || [],
+      availability: 'open',
+      bio: p.bio,
+      valu_score: null,
+      cluster_scores: null,
+      is_dummy: true,
+    })))
+    setLoading(false)
+  }
+
+  const filtered = profiles.filter(p => {
+    const q = search.toLowerCase()
+    const matchSearch = !q ||
+      (p.atb_id || '').toLowerCase().includes(q) ||
+      (p.headline || '').toLowerCase().includes(q) ||
+      (p.bio || '').toLowerCase().includes(q) ||
+      (p.skills || []).some(s => s.toLowerCase().includes(q))
+    const matchIndustry = !filterIndustry || p.industry === filterIndustry
+    const matchAvail = !filterAvail || p.availability === filterAvail
+    const matchCluster = !filterCluster || (p.cluster_scores && p.cluster_scores[filterCluster] >= 75)
+    // VALU Index score range filter
+    const score = p.valu_score ?? p.valu_index ?? null
+    const matchScoreMin = !filterScoreMin || (score !== null && score >= Number(filterScoreMin))
+    const matchScoreMax = !filterScoreMax || (score !== null && score <= Number(filterScoreMax))
+    // VALU Index quick-threshold chip filter (separate control, same underlying score)
+    const matchValu = !filterMinValu || (p.valu_index != null && p.valu_index >= parseInt(filterMinValu))
+    // Designation filter
+    const matchDesignation = !filterDesignation || (p.designation || '').toLowerCase() === filterDesignation.toLowerCase()
+    return matchSearch && matchIndustry && matchAvail && matchCluster && matchScoreMin && matchScoreMax && matchValu && matchDesignation
+  })
+
+  const hasActiveFilters = search || filterIndustry || filterAvail || filterCluster || filterScoreMin || filterScoreMax || filterMinValu || filterDesignation
+
+  async function saveSearch() {
+    if (!saveName.trim()) return
+    setSaveLoading(true)
+    try {
+      const res = await fetch('/api/saved-searches', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          name: saveName.trim(),
+          track: 'candidate',
+          filters: { search, filterIndustry, filterAvail, filterCluster, filterMinValu, filterDesignation },
+        }),
+      })
+      if (res.ok) {
+        setShowSaveModal(false)
+        setSaveName('')
+      }
+    } finally {
+      setSaveLoading(false)
     }
   }
 
-  async function handleReset() {
-    if (!form.email) { setError('Enter your email above first, then click "Forgot password."'); return }
-    setResetting(true)
-    setError('')
-    try {
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(form.email, {
-        redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/reset-password` : 'https://valoriainstitute.com/reset-password',
-      })
-      if (resetError) throw resetError
-      setResetSent(true)
-    } catch (err) {
-      setError(err.message || 'Could not send reset email. Please try again.')
-    } finally {
-      setResetting(false)
-    }
+  if (checkingAccess) {
+    return <div style={S.page}><div style={S.loadingState}>Loading…</div></div>
   }
 
   return (
-    <div style={styles.page}>
-      <div style={styles.card}>
-        <div style={styles.eyebrow}>
-          <div style={styles.eyebrowLine} />
-          <span style={styles.eyebrowText}>SIGN IN</span>
-          <div style={styles.eyebrowLine} />
+    <div style={S.page}>
+
+      {/* HEADER */}
+      <header style={S.header}>
+        <Link href="/" style={{ lineHeight: 0 }}>
+          <img src="/logo.png" alt="Valoria Institute" style={{ height: '44px', width: 'auto' }} />
+        </Link>
+        <div style={S.headerCenter}>
+          <div style={S.headerLabel}>ATB CONNECT</div>
+          <div style={S.headerSub}>Assessed Candidate Search</div>
         </div>
+        <nav style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          <Link href="/spotlight" style={S.navLink}>ATB Spotlight →</Link>
+          <Link href="/login" style={S.navLink}>Sign In</Link>
+        </nav>
+      </header>
 
-        <h1 style={styles.title}>
-          Welcome<br /><em style={{ color: GOLD, fontStyle: 'italic' }}>back.</em>
-        </h1>
-        <p style={styles.sub}>Sign in to your Valoria Institute account.</p>
+      <div style={S.body}>
 
-        <form onSubmit={handleLogin} style={styles.form}>
-          <div style={styles.field}>
-            <label style={styles.label}>Email Address</label>
-            <input
-              type="email"
-              placeholder="you@example.com"
-              value={form.email}
-              onChange={e => setForm({ ...form, email: e.target.value })}
-              required
-              style={styles.input}
-            />
+        {/* FILTERS */}
+        <aside style={S.filters}>
+          <div style={S.eyebrow}><div style={S.eyebrowLine} /><span style={S.eyebrowText}>FILTER</span></div>
+
+          <input type="search" placeholder="Search by ID, skill, topic…"
+            value={search} onChange={e => setSearch(e.target.value)} style={S.searchInput} />
+
+          <FilterSection label="VALU INDEX">
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input type="number" placeholder="Min" min="0" max="100" value={filterScoreMin}
+                onChange={e => setFilterScoreMin(e.target.value)} style={{ ...S.select, width: '70px' }} />
+              <span style={{ color: DIM }}>to</span>
+              <input type="number" placeholder="Max" min="0" max="100" value={filterScoreMax}
+                onChange={e => setFilterScoreMax(e.target.value)} style={{ ...S.select, width: '70px' }} />
+            </div>
+            <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
+              {[['35+', 35, ''], ['50+', 50, ''], ['75+', 75, '']].map(([label, min, max]) => (
+                <button key={label} onClick={() => {
+                  setFilterScoreMin(filterScoreMin === String(min) ? '' : String(min))
+                  setFilterScoreMax(filterScoreMax === String(max) ? '' : String(max))
+                }}
+                  style={{ padding: '4px 10px', fontSize: '11px', background: filterScoreMin === String(min) ? GOLD : 'transparent', color: filterScoreMin === String(min) ? MIDNIGHT : GOLD, border: `1px solid ${GOLD}`, borderRadius: '999px', cursor: 'pointer' }}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </FilterSection>
+
+          <FilterSection label="DESIGNATION">
+            <select value={filterDesignation} onChange={e => setFilterDesignation(e.target.value)} style={S.select}>
+              <option value="">All designations</option>
+              <option value="Builder">Builder — Emerging talent</option>
+              <option value="Achiever">Achiever — Proven performer</option>
+              <option value="Expert">Expert — Advanced capability</option>
+              <option value="Leader">Leader — Strategic impact</option>
+            </select>
+          </FilterSection>
+
+          <FilterSection label="INDUSTRY">
+            <select value={filterIndustry} onChange={e => setFilterIndustry(e.target.value)} style={S.select}>
+              <option value="">All industries</option>
+              {['Fintech','Real Estate','Healthcare','Education','Marketing & Advertising','Law',
+                'Entertainment & Media','Sports & Wellness','Technology & SaaS','Consulting & Strategy',
+                'Energy & Sustainability','Nonprofit & Development','Government & Public Policy',
+                'Logistics & Supply Chain','Telecommunications'].map(i => <option key={i} value={i}>{i}</option>)}
+            </select>
+          </FilterSection>
+
+          <FilterSection label="AVAILABILITY">
+            {[['', 'All'], ['open', 'Open to opportunities'], ['contract_only', 'Contract only']].map(([v, l]) => (
+              <label key={v} style={S.radioLabel}>
+                <input type="radio" name="avail" value={v} checked={filterAvail === v}
+                  onChange={() => setFilterAvail(v)} style={{ accentColor: GOLD }} /> {l}
+              </label>
+            ))}
+          </FilterSection>
+
+          <FilterSection label="VALU INDEX">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {[['', 'All scores'], ['35', '≥ 35 — Listed'], ['50', '≥ 50 — Achiever'], ['65', '≥ 65 — Expert'], ['80', '≥ 80 — Leader']].map(([v, l]) => (
+                <button key={v} onClick={() => setFilterMinValu(v)}
+                  style={{
+                    padding: '7px 10px',
+                    background: filterMinValu === v ? 'rgba(201,168,76,.15)' : 'rgba(255,255,255,.03)',
+                    border: `1px solid ${filterMinValu === v ? GOLD : 'rgba(201,168,76,.12)'}`,
+                    borderRadius: '6px',
+                    color: filterMinValu === v ? GOLD : 'rgba(247,244,238,.55)',
+                    fontSize: '12px', cursor: 'pointer', textAlign: 'left',
+                    fontFamily: "'Raleway',sans-serif", fontWeight: filterMinValu === v ? 600 : 400,
+                  }}>
+                  {l}
+                </button>
+              ))}
+            </div>
+          </FilterSection>
+
+          <FilterSection label="DESIGNATION">
+            <select value={filterDesignation} onChange={e => setFilterDesignation(e.target.value)} style={S.select}>
+              <option value="">All designations</option>
+              <option value="Builder">Builder</option>
+              <option value="Achiever">Achiever</option>
+              <option value="Expert">Expert</option>
+              <option value="Leader">Leader</option>
+            </select>
+          </FilterSection>
+
+          <FilterSection label="STRONGEST IN">
+            <div style={S.clusterRow}>
+              {PRIME_CLUSTERS.map(c => {
+                const active = filterCluster === c.letter
+                return (
+                  <button key={c.letter} onClick={() => setFilterCluster(active ? '' : c.letter)}
+                    title={c.name}
+                    style={{ ...S.clusterChip, background: active ? c.color : 'transparent', borderColor: c.color, color: active ? MIDNIGHT : c.color }}>
+                    {c.letter}
+                  </button>
+                )
+              })}
+            </div>
+            {filterCluster && <div style={S.clusterLabel}>{PRIME_CLUSTERS.find(c => c.letter === filterCluster)?.name} ≥ 75</div>}
+          </FilterSection>
+
+          <button onClick={() => { setSearch(''); setFilterIndustry(''); setFilterAvail(''); setFilterCluster(''); setFilterScoreMin(''); setFilterScoreMax(''); setFilterMinValu(''); setFilterDesignation('') }}
+            style={S.clearBtn}>Clear filters</button>
+        </aside>
+
+        {/* RESULTS */}
+        <main style={S.results}>
+          <div style={{ marginBottom: '28px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h1 style={S.resultsTitle}>PRIME-assessed talent.</h1>
+              <p style={S.resultsCount}>
+                {loading ? 'Loading…' : `${filtered.length} candidate${filtered.length !== 1 ? 's' : ''} found`}
+              </p>
+            </div>
+            {session && (
+              <button onClick={() => setShowSaveModal(true)}
+                style={{
+                  padding: '9px 16px',
+                  background: 'transparent',
+                  border: '1px solid rgba(201,168,76,.3)',
+                  borderRadius: '9999px',
+                  color: GOLD,
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  letterSpacing: '.08em',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  fontFamily: "'Raleway',sans-serif",
+                }}>
+                + SAVE SEARCH
+              </button>
+            )}
           </div>
-          <div style={styles.field}>
-            <label style={styles.label}>Password</label>
-            <input
-              type="password"
-              placeholder="Your password"
-              value={form.password}
-              onChange={e => setForm({ ...form, password: e.target.value })}
-              required
-              style={styles.input}
-            />
-          </div>
 
-          {error && <div style={styles.errorBox}>{error}</div>}
-          {resetSent && (
-            <div style={styles.successBox}>
-              Check your email for a password reset link.
+          {loading ? (
+            <div style={S.loadingState}>Loading profiles…</div>
+          ) : filtered.length === 0 ? (
+            <div style={S.emptyState}>
+              <div style={{ fontSize: '32px', color: GOLD, marginBottom: '12px' }}>◈</div>
+              <p style={{ color: 'rgba(247,244,238,.4)', fontSize: '14px' }}>No profiles match your current filters.</p>
+            </div>
+          ) : (
+            <div style={S.grid}>
+              {filtered.map(p => <CandidateCard key={p.id} profile={p} />)}
             </div>
           )}
+        </main>
+      </div>
 
-          <button type="submit" disabled={loading} style={{ ...styles.btnGold, opacity: loading ? 0.7 : 1 }}>
-            {loading ? 'SIGNING IN...' : 'SIGN IN'}
-          </button>
-
-          <button type="button" onClick={handleReset} disabled={resetting} style={styles.forgotBtn}>
-            {resetting ? 'Sending reset link...' : 'Forgot password?'}
-          </button>
-        </form>
-
-        <div style={{ marginTop: '24px', fontSize: '13px', color: 'rgba(247,244,238,.4)', textAlign: 'center', lineHeight: 1.8 }}>
-          <p style={{ margin: '0 0 4px' }}>
-            Employer or organiser?{' '}
-            <Link href="/signup" style={{ color: GOLD }}>Create account</Link>
-          </p>
-          <p style={{ margin: 0 }}>
-            Talent or speaker?{' '}
-            <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer" style={{ color: GOLD }}>Take the VALU Index</a>
-          </p>
+      {/* Save Search Modal */}
+      {showSaveModal && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 200,
+          background: 'rgba(15,15,26,.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px',
+        }} onClick={() => setShowSaveModal(false)}>
+          <div style={{
+            background: MIDNIGHT, border: '1px solid rgba(201,168,76,.2)', borderRadius: '12px',
+            padding: '32px', maxWidth: '420px', width: '100%',
+          }} onClick={e => e.stopPropagation()}>
+            <h2 style={{ fontSize: '18px', fontWeight: 300, color: PARCHMENT, marginBottom: '8px', fontFamily: "'Raleway',sans-serif" }}>
+              Save this search
+            </h2>
+            <p style={{ fontSize: '13px', color: 'rgba(247,244,238,.45)', marginBottom: '20px', lineHeight: 1.6 }}>
+              Give this filter set a name so you can run it again from your dashboard.
+            </p>
+            <input
+              type="text"
+              placeholder="e.g. Lagos fintech builders, VALU 50+"
+              value={saveName}
+              onChange={e => setSaveName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && saveSearch()}
+              autoFocus
+              style={{
+                width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,.05)',
+                border: '1px solid rgba(201,168,76,.2)', borderRadius: '8px',
+                color: PARCHMENT, fontSize: '14px', fontFamily: "'Raleway',sans-serif",
+                outline: 'none', boxSizing: 'border-box', marginBottom: '16px',
+              }}
+            />
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button onClick={() => setShowSaveModal(false)}
+                style={{
+                  flex: 1, padding: '11px', background: 'transparent',
+                  border: '1px solid rgba(201,168,76,.2)', borderRadius: '9999px',
+                  color: 'rgba(247,244,238,.5)', fontSize: '12px', fontWeight: 500, cursor: 'pointer',
+                  fontFamily: "'Raleway',sans-serif",
+                }}>
+                Cancel
+              </button>
+              <button onClick={saveSearch} disabled={!saveName.trim() || saveLoading}
+                style={{
+                  flex: 1, padding: '11px', background: GOLD, border: 'none', borderRadius: '9999px',
+                  color: MIDNIGHT, fontSize: '12px', fontWeight: 700, cursor: saveName.trim() && !saveLoading ? 'pointer' : 'not-allowed',
+                  opacity: saveName.trim() && !saveLoading ? 1 : 0.5,
+                  fontFamily: "'Raleway',sans-serif",
+                }}>
+                {saveLoading ? 'Saving…' : 'Save Search'}
+              </button>
+            </div>
+          </div>
         </div>
+      )}
+    </div>
+  )
+}
+
+function CandidateCard({ profile: p }) {
+  const tags = (p.skills || []).slice(0, 3)
+  const availColor = AVAIL_COLORS[p.availability] || '#888'
+  const initials = p.display_initials || '—'
+  const avatarLetters = getAvatarLetters(p.display_initials)
+  const atbId = p.atb_id || '—'
+
+  return (
+    <div style={S.card}>
+      <div style={S.cardHeader}>
+        <div style={S.avatar}>
+          {p.photo_url
+            ? <img src={p.photo_url} alt={`${initials} profile photo`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+            : <span style={{ color: MIDNIGHT, fontSize: '15px', fontWeight: 700 }}>{avatarLetters}</span>}
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={S.cardName}>{atbId}</div>
+          <div style={S.cardInitials}>{initials} · Verified</div>
+          <div style={S.cardHeadline}>{p.headline || 'Valoria Professional'}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
+            {p.location && <div style={S.cardLocation}>📍 {p.location}</div>}
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', flexShrink: 0 }}>
+          {p.valu_score != null && (
+            <span style={{ fontSize: '13px', fontWeight: 700, color: GOLD }}>VALU {p.valu_score}</span>
+          )}
+          <span style={{ fontSize: '11px', fontWeight: 600, color: availColor }}>
+            ● {p.availability === 'open' ? 'Open' : p.availability === 'contract_only' ? 'Contract' : 'Unavailable'}
+          </span>
+        </div>
+      </div>
+
+      {tags.length > 0 && (
+        <div style={S.tagRow}>
+          {tags.map(t => <span key={t} style={S.tag}>{t}</span>)}
+          {p.industry && <span style={{ ...S.tag, borderColor: `rgba(55,138,221,.3)`, color: BLUE }}>{p.industry}</span>}
+        </div>
+      )}
+
+      {p.cluster_scores && (
+        <div style={S.clusterStrip}>
+          {PRIME_CLUSTERS.map(c => {
+            const score = p.cluster_scores[c.letter]
+            if (score == null) return null
+            return (
+              <div key={c.letter} style={S.clusterSeg}>
+                <div style={S.clusterTrack}>
+                  <div style={{ ...S.clusterFill, height: `${score}%`, background: c.color }} />
+                </div>
+                <span style={{ ...S.clusterLetter, color: c.color }}>{c.letter}</span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {p.bio && <p style={S.cardBio}>{p.bio.slice(0, 110)}{p.bio.length > 110 ? '…' : ''}</p>}
+
+      <div style={S.cardActions}>
+        <Link href={`/profile/${p.id}`} style={S.btnView}>VIEW PROFILE</Link>
+        <Link href={`/profile/${p.id}#contact`} style={S.btnAction}>REQUEST INTRO</Link>
       </div>
     </div>
   )
 }
 
-const styles = {
-  page: {
-    minHeight: '100vh',
-    background: DARK,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '80px 20px',
-    fontFamily: "'Raleway', 'Helvetica Neue', Arial, sans-serif",
-  },
-  card: {
-    width: '100%',
-    maxWidth: '460px',
-    background: 'rgba(26,26,46,.6)',
-    border: '1px solid rgba(201,168,76,.15)',
-    borderRadius: '12px',
-    padding: 'clamp(32px, 5vw, 56px)',
-  },
-  eyebrow: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' },
-  eyebrowLine: { flex: 1, height: '1px', background: 'rgba(201,168,76,.3)' },
-  eyebrowText: { fontSize: '10px', fontWeight: 700, letterSpacing: '.16em', color: GOLD },
-  title: { fontSize: 'clamp(28px,4vw,42px)', fontWeight: 200, color: PARCHMENT, lineHeight: 1.1, marginBottom: '12px', letterSpacing: '-.02em' },
-  sub: { fontSize: '14px', fontWeight: 300, color: 'rgba(247,244,238,.5)', marginBottom: '28px', lineHeight: 1.6 },
-  form: { display: 'flex', flexDirection: 'column', gap: '16px' },
-  field: { display: 'flex', flexDirection: 'column', gap: '6px' },
-  label: { fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(247,244,238,.5)', textTransform: 'uppercase' },
-  input: { padding: '12px 14px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.2)', borderRadius: '6px', color: PARCHMENT, fontSize: '14px', fontFamily: "'Raleway', sans-serif", outline: 'none' },
-  btnGold: { display: 'block', width: '100%', padding: '16px', background: GOLD, color: MIDNIGHT, fontSize: '12px', fontWeight: 700, letterSpacing: '.14em', borderRadius: '999px', border: 'none', cursor: 'pointer', textAlign: 'center', textDecoration: 'none', fontFamily: "'Raleway', sans-serif", marginTop: '8px' },
-  forgotBtn: { background: 'none', border: 'none', color: 'rgba(247,244,238,.4)', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline', textAlign: 'center', padding: '4px' },
-  errorBox: { padding: '12px 14px', background: 'rgba(216,90,48,.12)', border: '1px solid rgba(216,90,48,.3)', borderRadius: '6px', fontSize: '13px', color: '#F09595' },
-  successBox: { padding: '12px 14px', background: 'rgba(29,158,117,.12)', border: '1px solid rgba(29,158,117,.3)', borderRadius: '6px', fontSize: '13px', color: '#7FD9B8' },
-  loginLink: { marginTop: '24px', fontSize: '13px', color: 'rgba(247,244,238,.4)', textAlign: 'center' },
+function FilterSection({ label, children }) {
+  return (
+    <div style={{ marginBottom: '24px' }}>
+      <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '.14em', color: 'rgba(201,168,76,.6)', marginBottom: '10px', textTransform: 'uppercase' }}>{label}</div>
+      {children}
+    </div>
+  )
+}
+
+const S = {
+  page: { minHeight: '100vh', background: DARK, fontFamily: "'Raleway','Helvetica Neue',Arial,sans-serif", color: PARCHMENT },
+  header: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: '64px', background: MIDNIGHT, borderBottom: '1px solid rgba(55,138,221,.2)', position: 'sticky', top: 0, zIndex: 100, gap: '24px' },
+  headerCenter: { textAlign: 'center' },
+  headerLabel: { fontSize: '13px', fontWeight: 700, letterSpacing: '.12em', color: BLUE },
+  headerSub: { fontSize: '10px', color: 'rgba(247,244,238,.35)', letterSpacing: '.06em' },
+  navLink: { fontSize: '12px', color: 'rgba(247,244,238,.4)', textDecoration: 'none' },
+  body: { display: 'grid', gridTemplateColumns: '240px 1fr', minHeight: 'calc(100vh - 64px)' },
+  filters: { padding: '32px 20px', borderRight: '1px solid rgba(201,168,76,.08)', background: 'rgba(26,26,46,.4)' },
+  eyebrow: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' },
+  eyebrowLine: { flex: 1, height: '1px', background: 'rgba(201,168,76,.2)' },
+  eyebrowText: { fontSize: '9px', fontWeight: 700, letterSpacing: '.16em', color: GOLD },
+  searchInput: { width: '100%', padding: '10px 12px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.15)', borderRadius: '6px', color: PARCHMENT, fontSize: '13px', fontFamily: "'Raleway',sans-serif", outline: 'none', marginBottom: '24px', boxSizing: 'border-box' },
+  select: { width: '100%', padding: '9px 12px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.15)', borderRadius: '6px', color: PARCHMENT, fontSize: '13px', fontFamily: "'Raleway',sans-serif", outline: 'none' },
+  radioLabel: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'rgba(247,244,238,.55)', cursor: 'pointer', marginBottom: '8px' },
+  clearBtn: { width: '100%', padding: '8px', background: 'transparent', border: '1px solid rgba(201,168,76,.15)', borderRadius: '6px', color: 'rgba(247,244,238,.35)', fontSize: '11px', cursor: 'pointer', fontFamily: "'Raleway',sans-serif", marginTop: '8px' },
+  clusterRow: { display: 'flex', gap: '6px' },
+  clusterChip: { flex: 1, padding: '8px 0', borderRadius: '6px', border: '1.5px solid', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Raleway',sans-serif", transition: 'all .15s' },
+  clusterLabel: { fontSize: '10px', color: 'rgba(247,244,238,.4)', marginTop: '8px', textAlign: 'center' },
+  results: { padding: '32px' },
+  resultsTitle: { fontSize: 'clamp(20px,2.5vw,30px)', fontWeight: 200, letterSpacing: '-.02em', marginBottom: '4px' },
+  resultsCount: { fontSize: '13px', color: 'rgba(247,244,238,.35)', fontWeight: 300 },
+  loadingState: { textAlign: 'center', color: 'rgba(247,244,238,.3)', padding: '80px', fontSize: '14px' },
+  emptyState: { textAlign: 'center', padding: '80px 20px' },
+  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' },
+  card: { background: PARCHMENT, border: '0.5px solid #D4C9A8', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' },
+  cardHeader: { display: 'flex', alignItems: 'flex-start', gap: '12px' },
+  avatar: { width: '52px', height: '52px', flexShrink: 0, borderRadius: '50%', border: `2px solid ${GOLD}`, background: MIDNIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  cardName: { fontSize: '13px', fontWeight: 700, color: MIDNIGHT, lineHeight: 1.2, marginBottom: '2px', fontFamily: "'JetBrains Mono',monospace", letterSpacing: '.01em' },
+  cardInitials: { fontSize: '10.5px', color: '#8A8578', fontWeight: 600, marginBottom: '4px', letterSpacing: '.03em' },
+  cardHeadline: { fontSize: '12px', color: GOLD, fontWeight: 500, marginBottom: '2px' },
+  cardLocation: { fontSize: '11px', color: '#5F5E5A' },
+  tagRow: { display: 'flex', flexWrap: 'wrap', gap: '6px' },
+  tag: { padding: '4px 10px', borderRadius: '999px', border: '1px solid #D4C9A8', fontSize: '11px', color: '#2E2E4A', fontWeight: 500, background: LINEN },
+  clusterStrip: { display: 'flex', gap: '6px', alignItems: 'flex-end', padding: '10px 4px 2px', borderTop: '1px solid #EDE8DC' },
+  clusterSeg: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', flex: 1 },
+  clusterTrack: { width: '100%', height: '28px', background: '#EDE8DC', borderRadius: '2px', display: 'flex', alignItems: 'flex-end', overflow: 'hidden' },
+  clusterFill: { width: '100%', borderRadius: '2px', transition: 'height .3s' },
+  clusterLetter: { fontSize: '9px', fontWeight: 700, letterSpacing: '.04em' },
+  cardBio: { fontSize: '12px', color: '#444441', lineHeight: 1.6, margin: 0 },
+  cardActions: { display: 'flex', gap: '8px', marginTop: '4px' },
+  btnView: { flex: 1, padding: '9px', border: `1px solid ${MIDNIGHT}`, borderRadius: '999px', color: MIDNIGHT, fontSize: '10px', fontWeight: 700, letterSpacing: '.1em', textAlign: 'center', textDecoration: 'none', background: 'transparent' },
+  btnAction: { flex: 1, padding: '9px', background: BLUE, borderRadius: '999px', color: '#fff', fontSize: '10px', fontWeight: 700, letterSpacing: '.1em', textAlign: 'center', textDecoration: 'none', border: 'none' },
 }
