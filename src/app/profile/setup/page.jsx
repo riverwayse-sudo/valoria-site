@@ -94,7 +94,7 @@ function getInitials(name) {
 
 const EMPTY_FORM = {
   active_tracks: [],
-  display_name: '', headline: '', location: '', industry: '',
+  display_name: '', headline: '', location: '', industry: '', preferred_industry: '',
   years_experience: '', bio: '', languages: [],
   visibility: 'registered_only',
   skills: [], topics: [], facilitation_topics: [],
@@ -132,11 +132,16 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
     // row anyway, not the "independently-listed profile" the copy implied.
     if (allowAddTrack && form.active_tracks.length > 0) s.push({ key:'active_tracks', kind:'add-track', section:'Track' })
   }
+  // Current industry leads the Profile section per Temitayo's request — it's
+  // asked before name/headline/etc. Title is explicit about "currently"
+  // since a bare "which industry do you know best" reads as ambiguous next
+  // to the preferred-industry question right after it.
+  s.push({ key:'industry', kind:'single-chip', section:'Profile', title:'Which industry are you currently in?', sub:'Pick the closest fit to your current role — this powers marketplace search.', options:INDUSTRIES, required:true })
+  s.push({ key:'preferred_industry', kind:'single-chip', section:'Profile', title:'Which industry would you like to work in?', sub:'If different from your current industry — pick the closest fit. Leave blank if you\\u2019re not looking to switch.', options:INDUSTRIES, required:false })
   s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your name is hidden from buyers until Valoria facilitates an introduction.', placeholder:'Your full professional name', required:true })
   s.push({ key:'headline', kind:'text', section:'Profile', title:'Sum up what you do in one line.', sub:'This is the first thing buyers see on your profile.', placeholder: isSpeaker ? 'e.g. Executive Coach & Leadership Speaker' : 'e.g. Head of Strategy — Fintech & Payments', maxLength:100, required:true })
   s.push({ key:'location', kind:'text', section:'Profile', title:'Where are you based?', sub:'Optional, but helps buyers searching by region.', placeholder:'e.g. Lagos, Nigeria', required:false, validator:'place' })
   s.push({ key:'years_experience', kind:'text', section:'Profile', inputType:'number', title:'How many years of experience?', sub:'A rough number is fine.', placeholder:'e.g. 12', required:false, validator:'number' })
-  s.push({ key:'industry', kind:'single-chip', section:'Profile', title:'Which industry do you know best?', sub:'Pick the closest fit — this powers marketplace search.', options:INDUSTRIES, required:true })
   s.push({ key:'bio', kind:'textarea', section:'Profile', title:'Write a short bio.', sub:'Third person, 2–4 sentences. What you do, who you serve, what makes you distinct.', placeholder:'Chioma Adeyemi is a fintech growth strategist with 12 years of experience...', maxLength:600, required:true })
   s.push({ key:'languages', kind:'multi-chip', section:'Profile', title:'Which languages do you speak?', sub:'Select all that apply.', options:LANGUAGES, required:false })
   s.push({ key:'visibility', kind:'visibility', section:'Profile' })
@@ -329,7 +334,7 @@ export default function ProfileSetupPage() {
     const { error } = await supabase.from('professional_profiles').upsert({
       id: user.id,
       display_name: f.display_name || null, headline: f.headline || null,
-      location: f.location || null, industry: f.industry || null,
+      location: f.location || null, industry: f.industry || null, preferred_industry: f.preferred_industry || null,
       // Real column is experience_years, not years_experience (that's the
       // form field's key). Sending the wrong key doesn't just drop this one
       // field — PostgREST rejects the entire upsert if any key doesn't
@@ -882,7 +887,8 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
         <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'16px' }}>PROFILE SUMMARY</div>
         {[
           { label:'Tracks', value: form.active_tracks.map(t => t.charAt(0).toUpperCase()+t.slice(1)).join(', ') || '—' },
-          { label:'Industry', value: form.industry || '—' },
+          { label:'Current industry', value: form.industry || '—' },
+          { label:'Preferred industry', value: form.preferred_industry || '—' },
           { label:'Experience', value: form.years_experience ? `${form.years_experience} yrs` : '—' },
           { label:'Languages', value: form.languages.length > 0 ? form.languages.join(', ') : '—' },
           { label:'Skills / topics', value: tags.length > 0 ? `${tags.length} selected` : '—' },
