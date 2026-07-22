@@ -4,6 +4,7 @@ import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
 import EntryPointsGrid from '@/components/EntryPointsGrid'
 import WaitlistGate from '@/components/WaitlistGate'
+import { BRAND } from '@/lib/brand'
 import './home.css'
 
 export const metadata = {
@@ -19,8 +20,8 @@ export default function HomePage() {
 
       <main id="main-content">
         {/* ── HERO ──────────────────────────────────────────────────────
-            The waitlist form now lives inside HeroSlider itself
-            (id="waitlist" is rendered there). */}
+            Post-launch, assessment-first: primary CTA is the VALU Index,
+            not the waitlist (that form/anchor no longer exists here). */}
         <HeroSlider />
 
         {/* ── ALIGNMENT PRINCIPLE ──────────────────────────────────────── */}
@@ -38,7 +39,7 @@ export default function HomePage() {
               <p className="alignment-sub">
                 Valoria Institute exists to move African professionals from category two — used, deployed as a resource without development — to category three. Every profile, every assessment, every programme is an act of infrastructure toward that one outcome.
               </p>
-              <a href="#waitlist" className="btn-gold">JOIN THE FOUNDING COHORT</a>
+              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">TAKE THE VALU INDEX — FREE</a>
               <div className="alignment-cats" aria-label="The four categories">
                 <div className="cat-item"><div className="cat-num">01</div><div className="cat-name">Forgotten</div></div>
                 <div className="cat-item"><div className="cat-num">02</div><div className="cat-name">Used</div></div>
@@ -101,8 +102,8 @@ export default function HomePage() {
                   </li>
                 ))}
               </ul>
-              <a href="#waitlist" className="btn-gold">
-                JOIN THE FOUNDING COHORT →
+              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">
+                BEGIN THE VALU INDEX →
               </a>
             </Reveal>
 
