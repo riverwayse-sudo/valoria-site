@@ -749,7 +749,7 @@ function ScreenBody(props) {
             {OPTIONS.map(o => {
               const selected = val === o.value
               return (
-                <div key={o.value} onClick={() => set(s => ({ ...s, [screen.key]: o.value }))}
+                <div key={o.value} onClick={() => set(screen.key, o.value)}
                   style={{ padding:'14px 16px', border:`1.5px solid ${selected ? GOLD : 'rgba(201,168,76,.15)'}`, borderRadius:'8px', background: selected ? 'rgba(201,168,76,.07)' : 'rgba(255,255,255,.03)', cursor:'pointer' }}>
                   <div style={{ fontSize:'13px', fontWeight:600, color: selected ? GOLD : PARCH, marginBottom:'4px' }}>{o.label}</div>
                   <div style={{ fontSize:'12px', color:'rgba(247,244,238,.45)', lineHeight:1.5 }}>{o.desc}</div>
