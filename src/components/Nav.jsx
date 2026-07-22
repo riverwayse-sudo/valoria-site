@@ -293,7 +293,7 @@ export default function Nav() {
           user ? (
             <>
               <Link href="/dashboard" onClick={closeMenu}>Dashboard</Link>
-              <Link href="/messages" onClick={closeMenu}>Messages</Link>
+              <Link href="/dashboard" onClick={closeMenu}>Messages</Link>
               <button className="m-signout" onClick={() => { closeMenu(); handleSignOut() }}>Sign Out</button>
             </>
           ) : (
