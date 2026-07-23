@@ -31,6 +31,8 @@ export default function AdminPage() {
   const [messages, setMessages] = useState([])
   const [profiles, setProfiles] = useState([])
   const [buyerProfiles, setBuyerProfiles] = useState([]) // employers/organisers — live in `profiles`, not `professional_profiles`
+  const [waitlistEntries, setWaitlistEntries] = useState([])
+  const [assessments, setAssessments] = useState([]) // valu_assessments — separate table from professional_profiles.valu_index
   const [updatingId, setUpdatingId] = useState(null)
 
   // Filters
@@ -50,7 +52,7 @@ export default function AdminPage() {
         return
       }
       setAuthorized(true)
-      await Promise.all([fetchMessages(), fetchProfiles(), fetchBuyerProfiles()])
+      await Promise.all([fetchMessages(), fetchProfiles(), fetchBuyerProfiles(), fetchWaitlist(), fetchAssessments()])
       setLoading(false)
     }
     load()
@@ -70,7 +72,7 @@ export default function AdminPage() {
   async function fetchProfiles() {
     const { data } = await supabase
       .from('professional_profiles')
-      .select('id, display_name, headline, active_tracks, listing_status, industry, availability, created_at')
+      .select('id, display_name, headline, active_tracks, listing_status, industry, availability, created_at, profile_complete, valu_index')
       .order('created_at', { ascending: false })
     setProfiles(data || [])
   }
@@ -80,6 +82,26 @@ export default function AdminPage() {
       .from('profiles')
       .select('id, user_type')
     setBuyerProfiles(data || [])
+  }
+
+  async function fetchWaitlist() {
+    const { data } = await supabase
+      .from('waitlist')
+      .select('created_at, interest, role')
+      .order('created_at', { ascending: false })
+    setWaitlistEntries(data || [])
+  }
+
+  async function fetchAssessments() {
+    // Same columns the profile setup wizard reads when copying a score onto
+    // professional_profiles — see FIELD_LABELS / valu_assessments fallback
+    // in profile/setup/page.jsx. total_score is 0-100; 35+ unlocks listing.
+    const { data } = await supabase
+      .from('valu_assessments')
+      .select('total_score, completed_at')
+      .not('completed_at', 'is', null)
+      .order('completed_at', { ascending: false })
+    setAssessments(data || [])
   }
 
   async function updateMessageStatus(id, status) {
@@ -130,6 +152,54 @@ export default function AdminPage() {
   const employerCount = buyerProfiles.filter(p => p.user_type === 'employer').length
   const organiserCount = buyerProfiles.filter(p => p.user_type === 'organiser').length
 
+  // ── Reports tab computations ──────────────────────────────────────────────
+  // Funnel: waitlist -> assessment completed -> profile complete -> listed.
+  // Each stage is an independent count, not a strict subset of the previous
+  // one (e.g. someone can complete an assessment without ever joining the
+  // waitlist first) — shown as a funnel because that's the intended path,
+  // not because the data enforces it.
+  const facilitatorCount = profiles.filter(p => (p.active_tracks || []).includes('facilitator')).length
+  const profileCompleteCount = profiles.filter(p => p.profile_complete).length
+  const funnelStages = [
+    { label: 'Waitlist signups', value: waitlistEntries.length },
+    { label: 'Assessments completed', value: assessments.length },
+    { label: 'Profiles complete', value: profileCompleteCount },
+    { label: 'Listed on marketplace', value: listedProfiles },
+  ]
+  const funnelMax = Math.max(1, ...funnelStages.map(s => s.value))
+
+  // Score distribution — 35 is the listing threshold, called out separately.
+  const SCORE_BUCKETS = [[0,19],[20,34],[35,49],[50,64],[65,79],[80,100]]
+  const scoreDistribution = SCORE_BUCKETS.map(([lo,hi]) => ({
+    label: `${lo}–${hi}`,
+    count: assessments.filter(a => a.total_score >= lo && a.total_score <= hi).length,
+    unlocksListing: lo >= 35,
+  }))
+  const scoreMax = Math.max(1, ...scoreDistribution.map(b => b.count))
+
+  // Industry breakdown — top 6, rest folded into "Other"
+  const industryCounts = profiles.reduce((acc, p) => {
+    const key = p.industry || 'Not specified'
+    acc[key] = (acc[key] || 0) + 1
+    return acc
+  }, {})
+  const industryEntries = Object.entries(industryCounts).sort((a,b) => b[1]-a[1])
+  const topIndustries = industryEntries.slice(0, 6)
+  const otherIndustryCount = industryEntries.slice(6).reduce((sum, [,c]) => sum + c, 0)
+  const industryMax = Math.max(1, ...topIndustries.map(([,c]) => c), otherIndustryCount)
+
+  // Signups by day, last 14 days
+  const last14Days = Array.from({ length: 14 }, (_, i) => {
+    const d = new Date()
+    d.setDate(d.getDate() - (13 - i))
+    return d.toISOString().slice(0, 10)
+  })
+  const signupsByDay = last14Days.map(day => ({
+    day,
+    count: waitlistEntries.filter(e => (e.created_at || '').slice(0, 10) === day).length,
+  }))
+  const signupsMax = Math.max(1, ...signupsByDay.map(d => d.count))
+
   return (
     <div style={{ minHeight: '100vh', background: DARK, fontFamily: "'Raleway', 'Helvetica Neue', Arial, sans-serif", color: PARCHMENT }}>
 
@@ -165,7 +235,7 @@ export default function AdminPage() {
 
         {/* TABS */}
         <div style={styles.tabs}>
-          {[['queue', 'Enquiry Queue'], ['profiles', 'All Profiles']].map(([id, label]) => (
+          {[['queue', 'Enquiry Queue'], ['profiles', 'All Profiles'], ['stats', 'Reports']].map(([id, label]) => (
             <button key={id} onClick={() => setActiveTab(id)}
               style={{ ...styles.tab, ...(activeTab === id ? styles.tabActive : {}) }}>
               {label}
@@ -245,6 +315,116 @@ export default function AdminPage() {
             ))}
           </div>
         )}
+
+        {/* ── REPORTS TAB ── */}
+        {activeTab === 'stats' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '36px' }}>
+
+            {/* Funnel */}
+            <ReportSection title="Funnel">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {funnelStages.map(stage => (
+                  <div key={stage.label}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: DIM, marginBottom: '4px' }}>
+                      <span>{stage.label}</span>
+                      <strong style={{ color: PARCHMENT }}>{stage.value}</strong>
+                    </div>
+                    <div style={styles.barTrack}>
+                      <div style={{ ...styles.barFill, width: `${(stage.value / funnelMax) * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p style={{ fontSize: '11px', color: FAINT, marginTop: '12px', marginBottom: 0 }}>
+                Each stage is counted independently — someone can complete an assessment without ever joining the waitlist, for example — so this shows relative volume at each step, not a strict drop-off.
+              </p>
+            </ReportSection>
+
+            {/* Score distribution */}
+            <ReportSection title="VALU Index score distribution" subtitle={`${assessments.length} completed assessments · 35+ unlocks marketplace listing`}>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end', height: '140px' }}>
+                {scoreDistribution.map(b => (
+                  <div key={b.label} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', height: '100%', justifyContent: 'flex-end' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: b.unlocksListing ? '#1D9E75' : DIM }}>{b.count}</span>
+                    <div style={{
+                      width: '100%', borderRadius: '4px 4px 0 0',
+                      height: `${(b.count / scoreMax) * 100}%`, minHeight: b.count > 0 ? '4px' : 0,
+                      background: b.unlocksListing ? 'rgba(29,158,117,.35)' : 'rgba(201,168,76,.25)',
+                      border: `1px solid ${b.unlocksListing ? 'rgba(29,158,117,.6)' : 'rgba(201,168,76,.4)'}`,
+                    }} />
+                    <span style={{ fontSize: '10px', color: FAINT }}>{b.label}</span>
+                  </div>
+                ))}
+              </div>
+            </ReportSection>
+
+            {/* Track + industry breakdown */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
+              <ReportSection title="By track">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <BreakdownRow label="Talent / Candidate" count={talentCount} max={Math.max(1, talentCount, speakerCount, facilitatorCount)} color="#378ADD" />
+                  <BreakdownRow label="Speaker" count={speakerCount} max={Math.max(1, talentCount, speakerCount, facilitatorCount)} color="#7F77DD" />
+                  <BreakdownRow label="Facilitator" count={facilitatorCount} max={Math.max(1, talentCount, speakerCount, facilitatorCount)} color="#1D9E75" />
+                </div>
+              </ReportSection>
+
+              <ReportSection title="By industry" subtitle={industryEntries.length > 6 ? `Top 6 of ${industryEntries.length}` : null}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {topIndustries.map(([name, count]) => (
+                    <BreakdownRow key={name} label={name} count={count} max={industryMax} color={GOLD} />
+                  ))}
+                  {otherIndustryCount > 0 && (
+                    <BreakdownRow label="Other" count={otherIndustryCount} max={industryMax} color={FAINT} />
+                  )}
+                </div>
+              </ReportSection>
+            </div>
+
+            {/* Signups over time */}
+            <ReportSection title="Waitlist signups — last 14 days">
+              <div style={{ display: 'flex', gap: '4px', alignItems: 'flex-end', height: '100px' }}>
+                {signupsByDay.map(d => (
+                  <div key={d.day} title={`${d.day}: ${d.count}`} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', height: '100%', justifyContent: 'flex-end' }}>
+                    <div style={{
+                      width: '100%', borderRadius: '3px 3px 0 0',
+                      height: `${(d.count / signupsMax) * 100}%`, minHeight: d.count > 0 ? '3px' : 0,
+                      background: 'rgba(201,168,76,.4)', border: '1px solid rgba(201,168,76,.5)',
+                    }} />
+                    <span style={{ fontSize: '9px', color: FAINT, writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+                      {new Date(d.day).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </ReportSection>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function ReportSection({ title, subtitle, children }) {
+  return (
+    <div style={styles.reportSection}>
+      <div style={{ marginBottom: '18px' }}>
+        <h3 style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '.06em', color: PARCHMENT, margin: 0, textTransform: 'uppercase' }}>{title}</h3>
+        {subtitle && <p style={{ fontSize: '11px', color: DIM, margin: '4px 0 0' }}>{subtitle}</p>}
+      </div>
+      {children}
+    </div>
+  )
+}
+
+function BreakdownRow({ label, count, max, color }) {
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: DIM, marginBottom: '4px' }}>
+        <span>{label}</span>
+        <strong style={{ color: PARCHMENT }}>{count}</strong>
+      </div>
+      <div style={styles.barTrack}>
+        <div style={{ ...styles.barFill, width: `${(count / max) * 100}%`, background: color }} />
       </div>
     </div>
   )
@@ -411,4 +591,7 @@ const styles = {
   tableRow: { display: 'grid', gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr', gap: '12px', padding: '14px 20px', background: 'rgba(26,26,46,.4)', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,.03)' },
   emptyState: { textAlign: 'center', padding: '48px', background: 'rgba(26,26,46,.3)', borderRadius: '10px' },
   btnGold: { display: 'inline-block', padding: '10px 24px', background: GOLD, color: MIDNIGHT, fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', borderRadius: '999px', textDecoration: 'none' },
+  reportSection: { background: 'rgba(26,26,46,.5)', border: '1px solid rgba(201,168,76,.1)', borderRadius: '10px', padding: '20px 24px' },
+  barTrack: { height: '8px', background: 'rgba(255,255,255,.05)', borderRadius: '4px', overflow: 'hidden' },
+  barFill: { height: '100%', background: GOLD, borderRadius: '4px', transition: 'width .3s ease' },
 }
