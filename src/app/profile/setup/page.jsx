@@ -1,6 +1,6 @@
 'use client'
-import { useState, useEffect, useRef, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
@@ -30,6 +30,14 @@ const CURRENCIES = [
 ]
 const NOTICE_PERIODS = ['Immediately','2 weeks','1 month','2 months','3+ months']
 const WORK_DURATIONS = ['Less than 1 year','1–2 years','2–3 years','3–5 years','5–10 years','10+ years']
+
+// Human-readable names for the profile_complete fields, used only to explain
+// a middleware redirect (see ?incomplete= banner below) — keep in sync with
+// the field list in middleware.js and the profile_complete check further down.
+const FIELD_LABELS = {
+  display_name: 'your name', headline: 'your headline', bio: 'your bio',
+  active_tracks: 'your track (Candidate / Speaker / Facilitator)', industry: 'your industry',
+}
 
 // ── Answer-format validators ────────────────────────────────────────────
 // Being "optional" or "required" only governs whether an empty answer is
@@ -177,8 +185,30 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   return s
 }
 
+// useSearchParams() requires a Suspense boundary in the App Router, or the
+// route fails to build — see src/app/feedback/page.jsx for the same
+// pattern. This wrapper is the actual default export; the real component
+// (and the useSearchParams call) is ProfileSetupForm below.
 export default function ProfileSetupPage() {
+  return (
+    <Suspense fallback={null}>
+      <ProfileSetupForm />
+    </Suspense>
+  )
+}
+
+function ProfileSetupForm() {
   const router = useRouter()
+  // Set by middleware.js when it bounces a signed-in user back here because
+  // professional_profiles.profile_complete is false — tells us which fields
+  // are still missing so we can explain the redirect instead of it looking
+  // like a broken link (see valoria-site middleware.js "profile completeness
+  // gate"). Read once on mount; not kept in sync with navigation afterward.
+  const searchParams = useSearchParams()
+  const incompleteFields = useMemo(() => {
+    const raw = searchParams.get('incomplete')
+    return raw ? raw.split(',').filter(Boolean) : []
+  }, [searchParams])
   const [user, setUser] = useState(null)
   const [ready, setReady] = useState(false)
   const [screenIndex, setScreenIndex] = useState(0)
@@ -500,6 +530,15 @@ export default function ProfileSetupPage() {
       </div>
 
       <div style={{ maxWidth:'640px', margin:'0 auto', padding:'clamp(40px,8vh,80px) 20px 60px', minHeight:'calc(100vh - 66px)', display:'flex', flexDirection:'column', justifyContent:'center' }}>
+        {incompleteFields.length > 0 && (
+          <div style={{ background:'rgba(216,90,48,.08)', border:'1px solid rgba(216,90,48,.3)', padding:'16px 18px', marginBottom:'24px' }}>
+            <p style={{ fontSize:'13px', fontWeight:300, color:PARCH, lineHeight:1.7, margin:0 }}>
+              You were brought back here because your profile isn&apos;t finished yet — still missing{' '}
+              <strong style={{ color:'#D85A30' }}>{incompleteFields.map(f => FIELD_LABELS[f] || f).join(', ')}</strong>.
+              Fill in the rest and hit Finish to unlock the rest of the site.
+            </p>
+          </div>
+        )}
         <div style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.2em', color:'rgba(201,168,76,.4)', marginBottom:'16px' }}>
           {screenIndex + 1} OF {screens.length}
         </div>
