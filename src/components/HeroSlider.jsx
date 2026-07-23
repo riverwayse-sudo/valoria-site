@@ -1,5 +1,6 @@
 'use client'
 import { BRAND } from '@/lib/brand'
+import MarketplaceCTA from './MarketplaceCTA'
 
 // Webinar slide (18 July launch event) and the in-hero waitlist form have
 // been removed now that focus is back on the assessment as the primary CTA
@@ -35,9 +36,9 @@ export default function HeroSlider() {
                 <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">
                   TAKE THE VALU INDEX — FREE
                 </a>
-                <a href="/atb-connect" className="btn-outline">
+                <MarketplaceCTA className="btn-outline">
                   EXPLORE THE MARKETPLACE
-                </a>
+                </MarketplaceCTA>
               </div>
 
               <div className="hero-mobile-card au d5" aria-hidden="true">

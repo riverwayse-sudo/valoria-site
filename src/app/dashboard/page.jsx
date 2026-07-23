@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
+import MarketplaceCTA from '@/components/MarketplaceCTA'
 
 // ─── brand tokens — same system as the public profile page ─────────────────
 const GOLD    = '#C9A84C'
@@ -245,7 +246,7 @@ export default function DashboardPage() {
             <img src="/logo.png" alt="Valoria Institute" style={{ height:'40px', width:'auto' }} />
           </Link>
           <nav style={{ display:'flex', gap:'22px', alignItems:'center' }}>
-            <Link href="/marketplace" style={{ fontSize:'12px', color: DIM, textDecoration:'none' }}>Marketplace</Link>
+            <MarketplaceCTA style={{ fontSize:'12px', color: DIM, textDecoration:'none' }}>Marketplace</MarketplaceCTA>
             {isSupply && <Link href="/profile/edit" style={{ fontSize:'12px', color: DIM, textDecoration:'none' }}>Edit Profile</Link>}
             <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')}
               style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.1em', color:'rgba(201,168,76,.7)', background:'transparent', border:`1px solid ${GLINE2}`, borderRadius:'999px', padding:'7px 16px', cursor:'pointer', fontFamily:'inherit' }}>
@@ -592,7 +593,7 @@ export default function DashboardPage() {
         ) : (
           /* DEMAND SIDE — single column */
           <div style={{ maxWidth:'1100px', margin:'36px auto 80px', padding:'0 clamp(20px,4vw,40px)' }}>
-            <Link href="/marketplace" style={{ display:'flex', alignItems:'center', gap:'16px', background: MID, border:`1px solid ${GLINE}`, padding:'18px 20px', textDecoration:'none', color: PARCH, marginBottom:'32px' }}>
+            <Link href={isOrganiser ? '/atb-spotlight' : '/atb-connect'} style={{ display:'flex', alignItems:'center', gap:'16px', background: MID, border:`1px solid ${GLINE}`, padding:'18px 20px', textDecoration:'none', color: PARCH, marginBottom:'32px' }}>
               <span style={{ fontSize:'22px', color: GOLD, flexShrink:0 }}>{isOrganiser ? '◉' : '◈'}</span>
               <div>
                 <div style={{ fontSize:'14px', fontWeight:600, marginBottom:'2px' }}>{isOrganiser ? 'Find Speakers' : 'Search Talent'}</div>

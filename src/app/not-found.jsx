@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import MarketplaceCTA from '@/components/MarketplaceCTA'
 
 export const metadata = {
   title: '404 — Page Not Found | Valoria Institute',
@@ -46,7 +47,7 @@ export default function NotFound() {
         }}>
           GO HOME
         </Link>
-        <Link href="/marketplace" style={{
+        <MarketplaceCTA style={{
           padding: '14px 28px',
           border: '1px solid rgba(201,168,76,.25)',
           color: '#C9A84C',
@@ -57,7 +58,7 @@ export default function NotFound() {
           textDecoration: 'none',
         }}>
           MARKETPLACE
-        </Link>
+        </MarketplaceCTA>
       </div>
 
       <Link href="/" style={{ lineHeight: 0, marginTop: '60px', opacity: 0.4 }}>

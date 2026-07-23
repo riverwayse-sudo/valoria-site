@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { ADMIN_EMAILS } from '@/lib/adminEmails'
+import MarketplaceCTA from '@/components/MarketplaceCTA'
 
 const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
@@ -213,7 +214,7 @@ export default function AdminPage() {
           <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.18em', color: 'rgba(201,168,76,.6)' }}>ADMIN</span>
         </div>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <Link href="/marketplace" style={styles.navLink}>Marketplace</Link>
+          <MarketplaceCTA style={styles.navLink}>Marketplace</MarketplaceCTA>
           <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')}
             style={styles.signOutBtn}>Sign Out</button>
         </div>

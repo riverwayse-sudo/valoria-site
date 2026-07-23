@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { BRAND } from '@/lib/brand'
 import { supabase } from '@/lib/supabase'
+import MarketplaceCTA from './MarketplaceCTA'
 
 export default function Footer() {
   const [user, setUser] = useState(null)
@@ -75,7 +76,7 @@ export default function Footer() {
               <div className="uf-col-title">Platform</div>
               <ul className="uf-links">
                 <li><a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer">VALU Index</a></li>
-                <li><Link href="/marketplace">Marketplace</Link></li>
+                <li><MarketplaceCTA>Marketplace</MarketplaceCTA></li>
                 <li><Link href="/prime">PRIME Framework</Link></li>
                 <li><Link href="/atb-connect">ATB Connect</Link></li>
                 <li><Link href="/atb-spotlight">ATB Spotlight</Link></li>

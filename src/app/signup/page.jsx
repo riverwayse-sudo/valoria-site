@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import MarketplaceCTA from '@/components/MarketplaceCTA'
 
 const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
@@ -81,7 +82,7 @@ export default function SignupPage() {
           <p style={S.sub}>
             Check your email and click the confirmation link to activate your account. Then start searching the marketplace.
           </p>
-          <a href="/marketplace" style={S.btnGold}>BROWSE THE MARKETPLACE →</a>
+          <MarketplaceCTA style={S.btnGold}>BROWSE THE MARKETPLACE →</MarketplaceCTA>
           <a href="/dashboard" style={{ ...S.btnGold, background: 'transparent', border: '1px solid rgba(201,168,76,.3)', color: GOLD, marginTop: '10px', display: 'block', textAlign: 'center' }}>
             GO TO DASHBOARD
           </a>
