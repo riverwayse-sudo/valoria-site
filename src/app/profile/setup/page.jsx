@@ -272,6 +272,9 @@ function ProfileSetupForm() {
           // it back into the form on reload.
           years_experience:    existing.experience_years != null ? String(existing.experience_years) : f.years_experience,
           visibility:          existing.visibility || f.visibility,
+          // DB column is preferred_industries (text[]); the form is a
+          // single-select string, same mismatch pattern as availability below.
+          preferred_industry:  Array.isArray(existing.preferred_industries) ? (existing.preferred_industries[0] || f.preferred_industry) : f.preferred_industry,
           // The DB column is a text[]; the form uses a single string
           // (single-select control). Unwrap on the way in, wrap on the way
           // out (see saveProgress below).
@@ -368,7 +371,8 @@ function ProfileSetupForm() {
     const { error } = await supabase.from('professional_profiles').upsert({
       id: user.id,
       display_name: f.display_name || null, headline: f.headline || null,
-      location: f.location || null, industry: f.industry || null, preferred_industry: f.preferred_industry || null,
+      location: f.location || null, industry: f.industry || null,
+      preferred_industries: f.preferred_industry ? [f.preferred_industry] : [],
       // Real column is experience_years, not years_experience (that's the
       // form field's key). Sending the wrong key doesn't just drop this one
       // field — PostgREST rejects the entire upsert if any key doesn't

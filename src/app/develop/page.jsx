@@ -43,19 +43,10 @@ export default function ValoriaDevelopPage() {
   useEffect(() => { checkAccess() }, [])
 
   async function checkAccess() {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (session?.user) {
-      const { data: professional } = await supabase
-        .from('professional_profiles')
-        .select('id')
-        .eq('id', session.user.id)
-        .maybeSingle()
-      if (professional) {
-        // Signed-in talent/speaker/facilitator — this marketplace isn't for them
-        router.replace('/dashboard')
-        return
-      }
-    }
+    // Previously redirected any signed-in professional straight to /dashboard,
+    // assuming they'd never want to browse the marketplace themselves. That
+    // silently blocked legitimate use (e.g. a listed professional checking how
+    // the marketplace looks, or browsing as a stakeholder) — removed.
     setCheckingAccess(false)
     fetchProfiles()
   }

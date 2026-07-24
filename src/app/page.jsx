@@ -3,6 +3,7 @@ import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
 import EntryPointsGrid from '@/components/EntryPointsGrid'
+import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import WaitlistGate from '@/components/WaitlistGate'
 import { BRAND } from '@/lib/brand'
 import './home.css'
@@ -23,6 +24,8 @@ export default function HomePage() {
             Post-launch, assessment-first: primary CTA is the VALU Index,
             not the waitlist (that form/anchor no longer exists here). */}
         <HeroSlider />
+
+        <LiveProfilesScroll />
 
         {/* ── ALIGNMENT PRINCIPLE ──────────────────────────────────────── */}
         <section className="alignment" id="alignment">

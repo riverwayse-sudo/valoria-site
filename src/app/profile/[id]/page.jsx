@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import EnquiryForm from '@/components/EnquiryForm'
 
 // ─── helpers ─────────────────────────────────────────────
 function getInitials(name) {
@@ -457,6 +458,11 @@ export default function ProfilePage({ params }) {
             {/* Introduction CTA — anchor target for the REQUEST INTRO / BOOK SPEAKER
                 links on /atb-connect and /atb-spotlight, which already point to
                 this page as #contact. scrollMarginTop accounts for the fixed nav. */}
+            {p.is_dummy && (
+              <div style={{ padding:'14px 18px', background:'rgba(154,106,0,.1)', border:'1px solid rgba(154,106,0,.35)', borderRadius:'6px', fontSize:'12px', fontWeight:600, color:'#D9A441', marginBottom:'12px', letterSpacing:'.02em' }}>
+                ⚠ Sample profile — not a real person. Real professionals are still joining; this placeholder can't receive introductions.
+              </div>
+            )}
             <div id="contact" className="vi-cta-intro" style={{ background:`linear-gradient(135deg, rgba(201,168,76,.06), rgba(26,26,46,.3))`, border:`1px solid ${GLINE2}`, padding:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', flexWrap:'wrap', marginTop:'8px', scrollMarginTop:'96px' }}>
               <div>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'8px' }}>
@@ -470,17 +476,21 @@ export default function ProfilePage({ params }) {
                     : `Want to connect with ${initials}? All introductions go through Valoria Institute — your details stay protected.`}
                 </p>
               </div>
-              <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent((displayTrack === 'facilitator' ? 'Facilitator Commission' : displayTrack === 'speaker' ? 'Speaker Booking' : 'Introduction Request') + ' — ' + atbId)}`}
-                style={{ padding:'14px 28px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.14em', textDecoration:'none', flexShrink:0, whiteSpace:'nowrap' }}>
-                {displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'SEND INTRODUCTION'}
-              </a>
+              {p.is_dummy ? (
+                <button type="button" disabled
+                  style={{ padding:'14px 28px', background:'rgba(255,255,255,.06)', color:'rgba(247,244,238,.3)', fontSize:'11px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor:'not-allowed', flexShrink:0, whiteSpace:'nowrap' }}>
+                  SAMPLE — NOT AVAILABLE
+                </button>
+              ) : (
+                <EnquiryForm
+                  professionalProfileId={p.id}
+                  atbId={atbId}
+                  enquiryType={displayTrack === 'facilitator' ? 'facilitator_commission' : displayTrack === 'speaker' ? 'speaker_booking' : 'candidate'}
+                  ctaLabel={displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'SEND INTRODUCTION'}
+                  currentUser={currentUser}
+                />
+              )}
             </div>
-
-            {p.is_dummy && (
-              <div style={{ textAlign:'center', fontSize:'11px', fontWeight:300, color:'rgba(201,168,76,.25)', marginTop:'24px', letterSpacing:'.06em' }}>
-                Sample profile — real professionals launching soon.
-              </div>
-            )}
           </div>
         </div>
       </div>

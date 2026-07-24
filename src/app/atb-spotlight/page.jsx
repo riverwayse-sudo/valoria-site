@@ -44,19 +44,10 @@ export default function ATBSpotlightPage() {
   useEffect(() => { checkAccess() }, [])
 
   async function checkAccess() {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (session?.user) {
-      const { data: professional } = await supabase
-        .from('professional_profiles')
-        .select('id')
-        .eq('id', session.user.id)
-        .maybeSingle()
-      if (professional) {
-        // Signed-in talent/speaker/facilitator — this marketplace isn't for them
-        router.replace('/dashboard')
-        return
-      }
-    }
+    // Previously redirected any signed-in professional straight to /dashboard,
+    // assuming they'd never want to browse the marketplace themselves. That
+    // silently blocked legitimate use (e.g. a listed professional checking how
+    // the marketplace looks, or browsing as a stakeholder) — removed.
     setCheckingAccess(false)
     fetchProfiles()
   }
@@ -65,7 +56,7 @@ export default function ATBSpotlightPage() {
     setLoading(true)
 
     // Try real assessed speakers first
-    const { data: real } = await supabase
+    const { data: real, error: realErr } = await supabase
       .from('professional_profiles')
       .select('id, atb_id, display_initials, headline, location, photo_url, active_tracks, industry, topics, speaker_tier, bio, valu_index, cluster_scores, listing_status, fee_range, youtube_links')
       .eq('listing_status', 'listed')
@@ -73,21 +64,31 @@ export default function ATBSpotlightPage() {
       .contains('active_tracks', ['speaker'])
       .order('valu_index', { ascending: false })
 
-    if (real && real.length > 0) {
-      setProfiles(real.map(p => ({ ...p, valu_score: p.valu_index })))
+    if (realErr) console.error('ATB Spotlight: real profiles query failed, falling back to samples:', realErr)
+
+    const realList = (real || []).map(p => ({ ...p, valu_score: p.valu_index, is_dummy: false }))
+
+    // Samples only pad the grid out to a minimum size — they don't replace
+    // real listings wholesale. As more real speakers get listed, they
+    // naturally displace samples one at a time.
+    const MIN_DISPLAY = 9
+    const dummyNeeded = Math.max(0, MIN_DISPLAY - realList.length)
+
+    if (dummyNeeded === 0) {
+      setProfiles(realList)
       setLoading(false)
       return
     }
 
-    // Fallback: dummy speaker profiles
     const { data: dummy } = await supabase
       .from('marketplace_profiles')
       .select('id, atb_id, display_initials, headline, location, avatar_url, industry, skills, bio, fee_range, featured, video_url, years_experience')
       .eq('section', 'speaker')
       .eq('status', 'active')
       .order('featured', { ascending: false })
+      .limit(dummyNeeded)
 
-    setProfiles((dummy || []).map(p => ({
+    const dummyList = (dummy || []).map(p => ({
       id: p.id,
       atb_id: p.atb_id,
       display_initials: p.display_initials,
@@ -103,7 +104,9 @@ export default function ATBSpotlightPage() {
       cluster_scores: null,
       youtube_links: p.video_url ? [p.video_url] : [],
       is_dummy: true,
-    })))
+    }))
+
+    setProfiles([...realList, ...dummyList])
     setLoading(false)
   }
 
@@ -269,12 +272,14 @@ function SpeakerCard({ profile: p }) {
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={S.cardName}>{atbId}</div>
-          <div style={S.cardInitials}>{initials} · Verified</div>
+          <div style={S.cardInitials}>{initials}{!p.is_dummy && ' · Verified'}</div>
           <div style={S.cardHeadline}>{p.headline || 'Valoria Speaker'}</div>
           {p.location && <div style={S.cardLocation}>📍 {p.location}</div>}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', flexShrink: 0 }}>
-          <span style={{ ...S.tierBadge, background: tier.bg, color: tier.text }}>{tier.label}</span>
+          {p.is_dummy
+            ? <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '.08em', color: '#9A6A00', border: '1px solid rgba(154,106,0,.4)', borderRadius: '999px', padding: '2px 8px' }}>SAMPLE</span>
+            : <span style={{ ...S.tierBadge, background: tier.bg, color: tier.text }}>{tier.label}</span>}
           {p.valu_score != null && <span style={{ fontSize: '11px', fontWeight: 700, color: GOLD }}>VALU {p.valu_score}</span>}
         </div>
       </div>
