@@ -38,10 +38,12 @@ export default async function sitemap() {
     if (supabaseUrl && supabaseKey) {
       const { createClient } = await import('@supabase/supabase-js')
       const client = createClient(supabaseUrl, supabaseKey)
-      const { data } = await client
-        .from('profiles')
+      const { data, error } = await client
+        .from('professional_profiles')
         .select('id, updated_at')
-        .eq('is_visible', true)
+        .eq('listing_status', 'listed')
+        .neq('visibility', 'private')
+      if (error) console.error('sitemap: profile fetch failed:', error)
       profileEntries = (data || []).map((p) => ({
         url: `${SITE_URL}/profile/${p.id}`,
         lastModified: p.updated_at ? new Date(p.updated_at) : now,

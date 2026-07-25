@@ -3,12 +3,12 @@
 // GET  /api/notifications         → this user's notifications, newest first
 // PATCH /api/notifications        → { id } marks one read, or { all: true } marks all read
 //
-// NOTE: table name assumed to be `notifications` below — double-check this
-// against the live Supabase schema before trusting it. There's an earlier,
-// unconfirmed note that the real table may have been renamed to
-// `platform_notifications` to avoid colliding with a different pre-existing
-// `notifications` table. If so, change the two `.from('notifications')`
-// calls below to match.
+// Confirmed 24 July 2026: the real table is `platform_notifications`
+// (renamed from a colliding pre-existing `notifications` table with a
+// different schema). This file was still querying the old `notifications`
+// table with the new schema's column names (action_url, read_at) — every
+// call has been failing with a column-not-found error since this route was
+// introduced, meaning the notification bell has never actually worked.
 //
 // Originally written against @supabase/ssr's createServerClient, which
 // isn't a dependency of this project (only @supabase/supabase-js is) — that
@@ -59,7 +59,7 @@ export async function GET(request) {
   const limit = Math.min(Number(searchParams.get('limit')) || 20, 50)
 
   const { data, error } = await supabase
-    .from('notifications')
+    .from('platform_notifications')
     .select('id, type, title, body, action_url, read_at, created_at')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
@@ -83,7 +83,7 @@ export async function PATCH(request) {
   const body = await request.json().catch(() => ({}))
   const now = new Date().toISOString()
 
-  let query = supabase.from('notifications').update({ read_at: now }).eq('user_id', user.id)
+  let query = supabase.from('platform_notifications').update({ read_at: now }).eq('user_id', user.id)
 
   if (body.all) {
     query = query.is('read_at', null)
