@@ -123,7 +123,7 @@ export default function ATBConnectPage() {
       (p.bio || '').toLowerCase().includes(q) ||
       (p.skills || []).some(s => s.toLowerCase().includes(q))
     const matchIndustry = !filterIndustry || p.industry === filterIndustry
-    const matchAvail = !filterAvail || p.availability === filterAvail
+    const matchAvail = !filterAvail || (Array.isArray(p.availability) ? p.availability.includes(filterAvail) : p.availability === filterAvail)
     const matchCluster = !filterCluster || (p.cluster_scores && p.cluster_scores[filterCluster] >= 75)
     // VALU Index score range filter
     const score = p.valu_score ?? p.valu_index ?? null
@@ -396,7 +396,14 @@ export default function ATBConnectPage() {
 
 function CandidateCard({ profile: p }) {
   const tags = (p.skills || []).slice(0, 3)
-  const availColor = AVAIL_COLORS[p.availability] || '#888'
+  // availability is a text[] column (e.g. ["open"]) — unwrap to a plain
+  // string once. The color lookup below happened to work by accident
+  // (JS coerces a single-element array to its bare value via toString()
+  // on object-key access), but the strict === checks for the label text
+  // did not, so every real profile showed "Unavailable" regardless of
+  // their actual availability.
+  const availability = Array.isArray(p.availability) ? p.availability[0] : p.availability
+  const availColor = AVAIL_COLORS[availability] || '#888'
   const initials = p.display_initials || '—'
   const avatarLetters = getAvatarLetters(p.display_initials)
   const atbId = p.atb_id || '—'
@@ -425,7 +432,7 @@ function CandidateCard({ profile: p }) {
             <span style={{ fontSize: '13px', fontWeight: 700, color: GOLD }}>VALU {p.valu_score}</span>
           )}
           <span style={{ fontSize: '11px', fontWeight: 600, color: availColor }}>
-            ● {p.availability === 'open' ? 'Open' : p.availability === 'contract_only' ? 'Contract' : 'Unavailable'}
+            ● {availability === 'open' ? 'Open' : availability === 'contract_only' ? 'Contract' : 'Unavailable'}
           </span>
         </div>
       </div>

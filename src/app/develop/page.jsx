@@ -75,7 +75,7 @@ export default function ValoriaDevelopPage() {
       (p.bio || '').toLowerCase().includes(q) ||
       (p.programme_types || []).some(s => s.toLowerCase().includes(q))
     const matchProgramme = !filterProgramme || (p.programme_types || []).includes(filterProgramme)
-    const matchAvail = !filterAvail || p.availability === filterAvail
+    const matchAvail = !filterAvail || (Array.isArray(p.availability) ? p.availability.includes(filterAvail) : p.availability === filterAvail)
     const matchCluster = !filterCluster || (p.cluster_scores && p.cluster_scores[filterCluster] >= 75)
     const matchValu = !filterMinValu || (p.valu_index != null && p.valu_index >= parseInt(filterMinValu))
     const matchDesignation = !filterDesignation || p.designation === filterDesignation
@@ -213,7 +213,8 @@ export default function ValoriaDevelopPage() {
 
 function FacilitatorCard({ profile: p }) {
   const tags = (p.programme_types || []).slice(0, 3)
-  const availColor = AVAIL_COLORS[p.availability] || '#888'
+  const availability = Array.isArray(p.availability) ? p.availability[0] : p.availability
+  const availColor = AVAIL_COLORS[availability] || '#888'
   const initials = p.display_initials || '—'
   const avatarLetters = getAvatarLetters(p.display_initials)
   const atbId = p.atb_id || '—'
@@ -244,7 +245,7 @@ function FacilitatorCard({ profile: p }) {
             </span>
           )}
           <span style={{ fontSize: '11px', fontWeight: 600, color: availColor }}>
-            ● {p.availability === 'open' ? 'Open' : p.availability === 'contract_only' ? 'Contract' : 'Unavailable'}
+            ● {availability === 'open' ? 'Open' : availability === 'contract_only' ? 'Contract' : 'Unavailable'}
           </span>
         </div>
       </div>
