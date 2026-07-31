@@ -36,7 +36,8 @@ const WORK_DURATIONS = ['Less than 1 year','1–2 years','2–3 years','3–5 ye
 // the field list in middleware.js and the profile_complete check further down.
 const FIELD_LABELS = {
   display_name: 'your name', headline: 'your headline', bio: 'your bio',
-  active_tracks: 'your track (Candidate / Speaker / Facilitator)', industry: 'your industry',
+  active_tracks: 'your path (Talent / Speaker / Facilitator)', industry: 'your industry',
+  username: 'your username',
 }
 
 // ── Answer-format validators ────────────────────────────────────────────
@@ -81,6 +82,11 @@ const VALIDATORS = {
     if (!t) return true
     return VALIDATORS.url(t) && /(youtube\.com|youtu\.be)/i.test(t)
   },
+  username: (v) => {
+    const t = (v || '').trim()
+    if (!t) return true
+    return /^[a-zA-Z0-9_.-]{3,30}$/.test(t)
+  },
 }
 
 function validatorError(kind) {
@@ -90,6 +96,7 @@ function validatorError(kind) {
     case 'linkedin': return 'Enter a valid LinkedIn URL, e.g. https://linkedin.com/in/yourname'
     case 'youtube':  return 'Enter a valid YouTube URL.'
     case 'url':      return 'Enter a valid URL, e.g. https://yoursite.com'
+    case 'username': return '3-30 characters — letters, numbers, dots, underscores or hyphens only, no spaces.'
     default:         return 'That doesn\u2019t look right — please check your answer.'
   }
 }
@@ -102,6 +109,7 @@ function getInitials(name) {
 
 const EMPTY_FORM = {
   active_tracks: [],
+  username: '',
   display_name: '', headline: '', location: '', industry: '', preferred_industry: '',
   years_experience: '', bio: '', languages: [],
   visibility: 'registered_only',
@@ -114,8 +122,11 @@ const EMPTY_FORM = {
   certifications: '',
   photo_url: '', youtube_links: [''],
   linkedin_url: '', website_url: '',
-  availability: 'open', modality: [],
-  contract_preference: 'both', notice_period: '',
+  // availability + contract_preference are no longer asked during onboarding
+  // (removed at the owner's request, 31 Jul 2026) — columns still exist in
+  // the DB, just not collected here for now.
+  modality: [],
+  notice_period: '',
   salary_expectation: '', fee_range: '',
   consent: false,
 }
@@ -130,15 +141,12 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   const isFacilitator = form.active_tracks.includes('facilitator')
   const s = []
 
+  // Track selection is a single upfront multi-select — pick any combination
+  // of Talent, Speaker and Facilitator (all 7 combinations: the 3 singles,
+  // the 3 pairs, and all three together) in one step, rather than the old
+  // "pick one now, optionally add a second later" sequence.
   if (showTrackScreens) {
     s.push({ key:'active_tracks', kind:'primary-track', section:'Track' })
-    // A second track is only ever offered when someone explicitly returns
-    // to change their paths after their first profile already exists —
-    // never during initial signup. Previously this showed right after
-    // picking the first track, in the same session, before that profile
-    // was even submitted — and the two tracks were saved onto a single
-    // row anyway, not the "independently-listed profile" the copy implied.
-    if (allowAddTrack && form.active_tracks.length > 0) s.push({ key:'active_tracks', kind:'add-track', section:'Track' })
   }
   // Current industry leads the Profile section per Temitayo's request — it's
   // asked before name/headline/etc. Title is explicit about "currently"
@@ -146,9 +154,10 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   // to the preferred-industry question right after it.
   s.push({ key:'industry', kind:'single-chip', section:'Profile', title:'Which industry are you currently in?', sub:'Pick the closest fit to your current role — this powers marketplace search.', options:INDUSTRIES, required:true })
   s.push({ key:'preferred_industry', kind:'single-chip', section:'Profile', title:'Which industry would you like to work in?', sub:'If different from your current industry — pick the closest fit. Leave blank if you\\u2019re not looking to switch.', options:INDUSTRIES, required:false })
-  s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your name is hidden from buyers until Valoria facilitates an introduction.', placeholder:'Your full professional name', required:true })
-  s.push({ key:'headline', kind:'text', section:'Profile', title:'Sum up what you do in one line.', sub:'This is the first thing buyers see on your profile.', placeholder: isSpeaker ? 'e.g. Executive Coach & Leadership Speaker' : 'e.g. Head of Strategy — Fintech & Payments', maxLength:100, required:true })
-  s.push({ key:'location', kind:'text', section:'Profile', title:'Where are you based?', sub:'Optional, but helps buyers searching by region.', placeholder:'e.g. Lagos, Nigeria', required:false, validator:'place' })
+  s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your name stays private — it\u2019s only shared once Valoria facilitates an introduction.', placeholder:'Your full professional name', required:true })
+  s.push({ key:'username', kind:'text', section:'Profile', title:'Choose a username.', sub:'This is how you\u2019ll be identified on Valoria. Letters, numbers, dots, underscores or hyphens — no spaces.', placeholder:'e.g. chioma_adeyemi', required:true, validator:'username' })
+  s.push({ key:'headline', kind:'text', section:'Profile', title:'Sum up what you do in one line.', sub:'This is the first thing people see on your profile.', placeholder: isSpeaker ? 'e.g. Executive Coach & Leadership Speaker' : 'e.g. Head of Strategy — Fintech & Payments', maxLength:100, required:true })
+  s.push({ key:'location', kind:'text', section:'Profile', title:'Where are you based?', sub:'Optional, but helps people searching by region.', placeholder:'e.g. Lagos, Nigeria', required:false, validator:'place' })
   s.push({ key:'years_experience', kind:'text', section:'Profile', inputType:'number', title:'How many years of experience?', sub:'A rough number is fine.', placeholder:'e.g. 12', required:false, validator:'number' })
   s.push({ key:'bio', kind:'textarea', section:'Profile', title:'Write a short bio.', sub:'Third person, 2–4 sentences. What you do, who you serve, what makes you distinct.', placeholder:'Chioma Adeyemi is a fintech growth strategist with 12 years of experience...', maxLength:600, required:true })
   s.push({ key:'languages', kind:'multi-chip', section:'Profile', title:'Which languages do you speak?', sub:'Select all that apply.', options:LANGUAGES, required:false })
@@ -162,11 +171,11 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   if (isSpeaker || isFacilitator) s.push({ key:'topics', kind:'multi-chip', section:'Expertise', title:'What topics do you speak on?', sub:'Select up to 6.', options:TOPICS_POOL, max:6, required:false })
   if (isSpeaker) s.push({ key:'format_capabilities', kind:'multi-chip', section:'Expertise', title:'What speaking formats do you offer?', sub:'Select all that apply.', options:FORMAT_CAPS, required:false, color:'#7F77DD' })
   if (isSpeaker) s.push({ key:'audience_sizes', kind:'multi-chip', section:'Expertise', title:'What audience sizes have you spoken to?', sub:'Select all that apply.', options:AUDIENCE_SIZES, required:false, color:'#1D9E75' })
-  if (isSpeaker) s.push({ key:'past_events', kind:'list', section:'Expertise', title:'Any past speaking engagements?', sub:'Optional — up to 3. These build buyer trust.', fields:[{ key:'name', placeholder:'Event name' }, { key:'role', placeholder:'Your role' }], max:3, addLabel:'+ Add event', required:false })
+  if (isSpeaker) s.push({ key:'past_events', kind:'list', section:'Expertise', title:'Any past speaking engagements?', sub:'Optional — up to 3. These build trust with people viewing your profile.', fields:[{ key:'name', placeholder:'Event name' }, { key:'role', placeholder:'Your role' }], max:3, addLabel:'+ Add event', required:false })
   if (isFacilitator) s.push({ key:'programme_types', kind:'multi-chip', section:'Expertise', title:'What programme types do you run?', sub:'Select all that apply.', options:PROGRAMME_TYPES, required:false, color:'#1D9E75' })
   if (isFacilitator) s.push({ key:'past_clients', kind:'list', section:'Expertise', title:'Any past clients or programmes?', sub:'Optional — up to 3.', fields:[{ key:'name', placeholder:'Organisation' }, { key:'programme', placeholder:'Programme delivered' }], max:3, addLabel:'+ Add client', required:false })
   if (isFacilitator) s.push({ key:'pcp_certified', kind:'boolean', section:'Expertise', title:'Do you hold a Valoria PCP certification?', sub:'PRIME-Certified Practitioner.' })
-  if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Optional — up to 3 roles. Buyers use this to understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organisation' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:false })
+  if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Optional — up to 3 roles. Helps people understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organisation' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:false })
   if (isCandidate) s.push({ key:'certifications', kind:'text', section:'Expertise', title:'Any certifications or credentials?', sub:'Optional — comma separated.', placeholder:'PMP, Google Analytics, HubSpot Marketing', required:false })
 
   s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'Profiles with a photo receive significantly more introduction requests.' })
@@ -174,11 +183,9 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   s.push({ key:'linkedin_url', kind:'text', section:'Media', inputType:'url', title:'Your LinkedIn profile?', sub:'Optional.', placeholder:'https://linkedin.com/in/yourname', required:false, validator:'linkedin' })
   s.push({ key:'website_url', kind:'text', section:'Media', inputType:'url', title:'A personal website or portfolio?', sub:'Optional.', placeholder:'https://yourwebsite.com', required:false, validator:'url' })
 
-  s.push({ key:'availability', kind:'single-radio', section:'Terms', title:'What\u2019s your current availability?', options:AVAILABILITY })
-  if (isCandidate) s.push({ key:'contract_preference', kind:'single-radio', section:'Terms', title:'What kind of work are you open to?', options:CONTRACT_PREFS })
   if (isCandidate) s.push({ key:'notice_period', kind:'select', section:'Terms', title:'How quickly could you start a new role?', sub:'Optional.', options:NOTICE_PERIODS, required:false })
   if (isCandidate) s.push({ key:'salary_expectation', kind:'currency-range', section:'Terms', title:'What\u2019s your salary expectation?', sub:'Optional — helps match you to relevant opportunities. Pick your currency.', period:'year', required:false })
-  if (isSpeaker || isFacilitator) s.push({ key:'fee_range', kind:'currency-range', section:'Terms', title: isFacilitator && isSpeaker ? 'Your speaking / facilitation fee?' : isSpeaker ? 'Your speaking fee?' : 'Your facilitation day rate?', sub:'Optional — visible to buyers on your profile. Pick your currency.', period:'engagement', required:false })
+  if (isSpeaker || isFacilitator) s.push({ key:'fee_range', kind:'currency-range', section:'Terms', title: isFacilitator && isSpeaker ? 'Your speaking / facilitation fee?' : isSpeaker ? 'Your speaking fee?' : 'Your facilitation day rate?', sub:'Optional — visible on your profile. Pick your currency.', period:'engagement', required:false })
   s.push({ key:'modality', kind:'multi-chip', section:'Terms', title:'What work modality do you prefer?', sub:'Select all that apply.', options:MODALITY, required:false })
 
   s.push({ key:'review', kind:'review', section:'Review' })
@@ -275,10 +282,7 @@ function ProfileSetupForm() {
           // DB column is preferred_industries (text[]); the form is a
           // single-select string, same mismatch pattern as availability below.
           preferred_industry:  Array.isArray(existing.preferred_industries) ? (existing.preferred_industries[0] || f.preferred_industry) : f.preferred_industry,
-          // The DB column is a text[]; the form uses a single string
-          // (single-select control). Unwrap on the way in, wrap on the way
-          // out (see saveProgress below).
-          availability:        Array.isArray(existing.availability) ? (existing.availability[0] || f.availability) : (existing.availability || f.availability),
+          username:            existing.username || f.username,
           active_tracks:       existing.active_tracks || f.active_tracks,
           languages:           existing.languages || f.languages,
           skills:              existing.skills || f.skills,
@@ -389,10 +393,12 @@ function ProfileSetupForm() {
       certifications: f.certifications || null, photo_url: f.photo_url || null,
       youtube_links: f.youtube_links.filter(Boolean),
       linkedin_url: f.linkedin_url || null, website_url: f.website_url || null,
-      // Real column is a text[]; the form is a single-select string.
-      availability: f.availability ? [f.availability] : [],
+      username: f.username ? f.username.trim() : null,
+      // availability + contract_preference are no longer collected here —
+      // omitted from the upsert entirely so an existing saved value (from
+      // before this change) is left untouched rather than being wiped.
       modality: f.modality,
-      contract_preference: f.contract_preference, notice_period: f.notice_period || null,
+      notice_period: f.notice_period || null,
       salary_expectation: f.salary_expectation || null, fee_range: f.fee_range || null,
       // Carried forward from the valu_assessments fallback lookup (or a real
       // sync) in the load effect above — only written if we actually have a
@@ -409,14 +415,18 @@ function ProfileSetupForm() {
       // nobody is ever asked would make profile_complete permanently false.
       profile_complete: !!(
         f.display_name && f.headline && f.bio && f.active_tracks.length > 0 &&
-        f.industry
+        f.industry && f.username
       ),
       listing_status: existingListingStatusRef.current || 'pending', updated_at: new Date().toISOString(),
     }, { onConflict: 'id' })
     setSaving(false)
     if (error) {
       console.error('Profile save failed:', error)
-      setSaveError('Your last change didn\u2019t save — check your connection and try again.')
+      setSaveError(
+        error.code === '23505' && /username/i.test(error.message || '')
+          ? 'That username is already taken — please choose another.'
+          : 'Your last change didn\u2019t save — check your connection and try again.'
+      )
       return false
     }
     setSaveError('')
@@ -578,60 +588,38 @@ function ScreenBody(props) {
   switch (screen.kind) {
 
     case 'primary-track': {
+      // Multi-select — any combination of the 3 paths is valid (the 3
+      // singles, the 3 pairs, and all three together: 7 combinations total).
+      // Picking more than one here gives a single profile listed across each
+      // chosen marketplace, decided upfront rather than added later.
       const options = [
-        { id:'candidate',   label:'Candidate / Talent', desc:'I want employers and recruiters to find me through ATB Connect.', color:'#378ADD' },
-        { id:'speaker',     label:'Speaker',            desc:'I want to be booked for events and conferences through ATB Spotlight.', color:GOLD },
-        { id:'facilitator', label:'Facilitator',        desc:'I want to be commissioned for L&D programmes through ATB Develop.', color:'#1D9E75' },
+        { id:'candidate',   label:'Talent',      desc:'I want employers and recruiters to find me through ATB Connect.', color:'#378ADD' },
+        { id:'speaker',     label:'Speaker',     desc:'I want to be booked for events and conferences through ATB Spotlight.', color:GOLD },
+        { id:'facilitator', label:'Facilitator', desc:'I want to be commissioned for L&D programmes through ATB Develop.', color:'#1D9E75' },
       ]
-      const current = form.active_tracks[0] || null
+      const selected = form.active_tracks || []
       return (
         <div>
           <Title>How are you joining<br/><Em>Valoria?</Em></Title>
-          <Sub>Pick the path that fits best. Once your profile is live, you can add a second path from your dashboard.</Sub>
+          <Sub>Pick any that fit — you can select more than one.</Sub>
           <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginBottom:'8px' }}>
             {options.map(t => {
-              const active = current === t.id
-              return (
-                <div key={t.id}
-                  onClick={() => selectAndAdvance('active_tracks', [t.id, ...form.active_tracks.filter(x => x !== t.id)])}
-                  style={{ padding:'20px', border:`1.5px solid ${active ? t.color : GLINE}`, cursor:'pointer', background: active ? `${t.color}0f` : `${MID}66`, transition:'all .15s' }}>
-                  <div style={{ fontSize:'15px', fontWeight:600, color: active ? t.color : PARCH, marginBottom:'6px' }}>{t.label}</div>
-                  <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.65, margin:0 }}>{t.desc}</p>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      )
-    }
-
-    case 'add-track': {
-      const allTracks = [
-        { id:'candidate',   label:'Candidate / Talent', color:'#378ADD' },
-        { id:'speaker',     label:'Speaker',            color:GOLD },
-        { id:'facilitator', label:'Facilitator',        color:'#1D9E75' },
-      ]
-      const primary = form.active_tracks[0]
-      const others  = allTracks.filter(t => t.id !== primary)
-      return (
-        <div>
-          <Title>Want to add a<br/><Em>second path?</Em></Title>
-          <Sub>Optional — this gives you a second, independently-listed profile in that marketplace too. You can also do this later from your dashboard.</Sub>
-          <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginBottom:'28px' }}>
-            {others.map(t => {
-              const active = form.active_tracks.includes(t.id)
+              const active = selected.includes(t.id)
               return (
                 <div key={t.id} onClick={() => toggleArr('active_tracks', t.id)}
-                  style={{ padding:'18px 20px', border:`1.5px solid ${active ? t.color : GLINE}`, cursor:'pointer', background: active ? `${t.color}0f` : `${MID}66`, display:'flex', alignItems:'center', gap:'12px' }}>
-                  <div style={{ width:'18px', height:'18px', border:`2px solid ${active ? t.color : 'rgba(247,244,238,.25)'}`, borderRadius:'4px', background: active ? t.color : 'transparent', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                  style={{ padding:'20px', border:`1.5px solid ${active ? t.color : GLINE}`, cursor:'pointer', background: active ? `${t.color}0f` : `${MID}66`, display:'flex', alignItems:'flex-start', gap:'14px', transition:'all .15s' }}>
+                  <div style={{ width:'18px', height:'18px', marginTop:'2px', border:`2px solid ${active ? t.color : 'rgba(247,244,238,.25)'}`, borderRadius:'4px', background: active ? t.color : 'transparent', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                     {active && <span style={{ color: t.id === 'speaker' ? DARK : '#fff', fontSize:'11px', fontWeight:700 }}>✓</span>}
                   </div>
-                  <span style={{ fontSize:'15px', fontWeight:600, color: active ? t.color : PARCH }}>{t.label}</span>
+                  <div>
+                    <div style={{ fontSize:'15px', fontWeight:600, color: active ? t.color : PARCH, marginBottom:'6px' }}>{t.label}</div>
+                    <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.65, margin:0 }}>{t.desc}</p>
+                  </div>
                 </div>
               )
             })}
           </div>
-          <ContinueBar onNext={goNext} nextDisabled={false} saving={saving} showSkip />
+          <ContinueBar onNext={goNext} nextDisabled={selected.length === 0} saving={saving} />
         </div>
       )
     }
@@ -939,7 +927,6 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
           { label:'Skills / topics', value: tags.length > 0 ? `${tags.length} selected` : '—' },
           { label:'Photo', value: form.photo_url ? 'Uploaded ✓' : 'Not uploaded' },
           { label:'Videos', value: videoLinks.length > 0 ? `${videoLinks.length} link(s)` : 'None' },
-          { label:'Availability', value: AVAILABILITY.find(a=>a.value===form.availability)?.label || '—' },
           ...(isCandidate ? [{ label:'Salary range', value: form.salary_expectation || '—' }] : []),
           ...(isSpeaker || isFacilitator ? [{ label:'Fee range', value: form.fee_range || '—' }] : []),
         ].map(row => (
@@ -987,7 +974,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
       <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'28px' }}>
         <input type="checkbox" checked={form.consent} onChange={e => set('consent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
         <span style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7 }}>
-          I confirm all information provided is accurate. I understand my profile will be reviewed before listing, and my full name will only be shared with buyers after a formal introduction is facilitated by Valoria Institute.
+          I confirm all information provided is accurate. I understand my profile will be reviewed before listing, and my full name stays private until Valoria facilitates a formal introduction.
         </span>
       </label>
 
