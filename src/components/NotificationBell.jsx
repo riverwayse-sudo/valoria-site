@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 // ─── brand tokens ─────────────────────────────────────────────────────────────
@@ -10,7 +11,17 @@ const PARCH   = '#F7F4EE'
 const DIM     = 'rgba(247,244,238,.5)'
 const GLINE   = 'rgba(201,168,76,.12)'
 
+// This used to query a `notifications` table directly with the client SDK —
+// that table was renamed to `platform_notifications` with different column
+// names (action_url/read_at instead of link/read) on 24 Jul 2026 (see
+// src/app/api/notifications/route.js), but this component was never updated
+// to match. Every read/write here was silently failing (or reading columns
+// that don't exist), so the bell never showed accurate unread counts and
+// clicking a notification never navigated anywhere. Now goes through the
+// already-correct /api/notifications route instead of querying the table
+// directly, so auth and column names can't drift apart again.
 export default function NotificationBell({ userId }) {
+  const router = useRouter()
   const [notifications, setNotifications] = useState([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
@@ -19,16 +30,11 @@ export default function NotificationBell({ userId }) {
   const fetchNotifications = useCallback(async () => {
     if (!userId) return
     try {
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(20)
-
-      if (error && error.code !== 'PGRST116') throw error // Ignore "no rows" for RLS-blocked
-      setNotifications(data || [])
-      setUnreadCount((data || []).filter(n => !n.read_at).length)
+      const res = await fetch('/api/notifications?limit=20')
+      if (!res.ok) throw new Error(`status ${res.status}`)
+      const data = await res.json()
+      setNotifications(data.notifications || [])
+      setUnreadCount(data.unreadCount || 0)
     } catch (err) {
       console.error('Error fetching notifications:', err.message)
     } finally {
@@ -38,16 +44,16 @@ export default function NotificationBell({ userId }) {
 
   useEffect(() => {
     fetchNotifications()
-    
+
     // Subscribe to real-time notification inserts
     const channel = supabase
-      .channel('notifications')
+      .channel('platform_notifications')
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'notifications',
+          table: 'platform_notifications',
           filter: `user_id=eq.${userId}`,
         },
         (payload) => {
@@ -64,11 +70,11 @@ export default function NotificationBell({ userId }) {
 
   const markAsRead = async (notificationId) => {
     try {
-      await supabase
-        .from('notifications')
-        .update({ read_at: new Date().toISOString() })
-        .eq('id', notificationId)
-      
+      await fetch('/api/notifications', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: notificationId }),
+      })
       setNotifications(prev =>
         prev.map(n => n.id === notificationId ? { ...n, read_at: new Date().toISOString() } : n)
       )
@@ -81,16 +87,23 @@ export default function NotificationBell({ userId }) {
   const markAllAsRead = async () => {
     if (!userId || unreadCount === 0) return
     try {
-      await supabase
-        .from('notifications')
-        .update({ read_at: new Date().toISOString() })
-        .eq('user_id', userId)
-        .is('read_at', null)
-      
+      await fetch('/api/notifications', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ all: true }),
+      })
       setNotifications(prev => prev.map(n => ({ ...n, read_at: n.read_at || new Date().toISOString() })))
       setUnreadCount(0)
     } catch (err) {
       console.error('Error marking all as read:', err.message)
+    }
+  }
+
+  function openNotification(notif) {
+    if (!notif.read_at) markAsRead(notif.id)
+    if (notif.action_url) {
+      setIsOpen(false)
+      router.push(notif.action_url)
     }
   }
 
@@ -227,11 +240,11 @@ export default function NotificationBell({ userId }) {
                 notifications.map((notif) => (
                   <div
                     key={notif.id}
-                    onClick={() => !notif.read_at && markAsRead(notif.id)}
+                    onClick={() => openNotification(notif)}
                     style={{
                       padding: '14px 16px',
                       borderBottom: `1px solid ${GLINE}`,
-                      cursor: notif.link ? 'pointer' : 'default',
+                      cursor: notif.action_url ? 'pointer' : (notif.read_at ? 'default' : 'pointer'),
                       background: notif.read_at ? 'transparent' : 'rgba(201,168,76,.04)',
                       transition: 'background .15s',
                     }}

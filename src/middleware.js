@@ -54,7 +54,7 @@ export async function middleware(request) {
         if (userId) {
           const { data: profile } = await supabase
             .from('professional_profiles')
-            .select('profile_complete, display_name, headline, bio, active_tracks, industry')
+            .select('profile_complete, display_name, headline, bio, active_tracks, industry, username, phone')
             .eq('id', userId)
             .maybeSingle()
           // If no profile row, or profile_complete is false, redirect to setup.
@@ -64,8 +64,8 @@ export async function middleware(request) {
           // back — previously this looked indistinguishable from a broken link.
           if (!profile || !profile.profile_complete) {
             const missing = !profile
-              ? ['display_name', 'headline', 'bio', 'active_tracks', 'industry']
-              : ['display_name', 'headline', 'bio', 'industry']
+              ? ['display_name', 'headline', 'bio', 'active_tracks', 'industry', 'username', 'phone']
+              : ['display_name', 'headline', 'bio', 'industry', 'username', 'phone']
                   .filter(f => !profile[f])
                   .concat(!profile.active_tracks?.length ? ['active_tracks'] : [])
             const redirectUrl = new URL('/profile/setup', request.url)

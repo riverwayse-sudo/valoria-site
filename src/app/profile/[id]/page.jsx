@@ -61,7 +61,7 @@ export default function ProfilePage({ params, searchParams }) {
 
       const { data: real, error: realError } = await supabase
         .from('professional_profiles')
-        .select('id, display_name, headline, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url')
+        .select('id, display_name, headline, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone')
         .eq('id', id)
         .maybeSingle()
 
@@ -392,9 +392,14 @@ export default function ProfilePage({ params, searchParams }) {
 
             {/* Links — gated */}
             <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px' }}>
-              <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'12px' }}>Links</div>
-              {p.linkedin_url || p.website_url ? (
+              <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'12px' }}>Contact & Links</div>
+              {p.phone || p.linkedin_url || p.website_url ? (
                 <>
+                  {p.phone && (
+                    <div style={{ fontSize:'13px', fontWeight:300, color: DIM, padding:'10px 0', borderTop:`1px solid ${GLINE}` }}>
+                      ☎&ensp;Phone — visible after introduction
+                    </div>
+                  )}
                   {p.linkedin_url && (
                     <div style={{ fontSize:'13px', fontWeight:300, color: DIM, padding:'10px 0', borderTop:`1px solid ${GLINE}` }}>
                       in&ensp;LinkedIn — visible after introduction

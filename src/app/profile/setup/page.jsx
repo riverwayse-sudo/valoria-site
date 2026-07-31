@@ -17,7 +17,7 @@ const INDUSTRIES = ['Agriculture & Agritech','Architecture & Design','Consulting
 const SKILLS_POOL = ['Strategy','Leadership','Public Speaking','Negotiation','Branding','Operations','Data Analysis','Fundraising','Policy Design','Product Management','Stakeholder Management','Storytelling','Market Research','Change Management','Innovation','Project Management','Financial Modelling','People Management','Business Development','Digital Marketing']
 const TOPICS_POOL = ['Leadership & Management','Strategy & Innovation','Diversity & Inclusion','Finance & Investment','Technology & AI','Entrepreneurship','Sustainability','Future of Work','Communication','Governance','Mental Health at Work','Global Affairs','People Development','Brand & Marketing','Education Reform']
 const PROGRAMME_TYPES = ['Leadership Development','Team Effectiveness','Strategic Thinking','DEI & Belonging','Communication Skills','Sales Enablement','Executive Coaching','Change Management','Culture & Values','Finance for Non-Finance']
-const LANGUAGES = ['English','French','Swahili','Hausa','Yoruba','Igbo','Zulu','Amharic','Arabic','Portuguese','Wolof','Twi','Shona']
+const LANGUAGES = ['English','French','Swahili','Hausa','Yoruba','Igbo','Zulu','Amharic','Arabic','Portuguese','Wolof','Twi','Shona','Afrikaans','Xhosa','Somali','Oromo','Tigrinya','Kinyarwanda','Chichewa','Fulani (Fulfulde)','Lingala','Kikuyu','Ndebele','Berber (Tamazight)','Krio','Sesotho']
 const CONTRACT_PREFS = [{ value:'permanent', label:'Permanent / full-time' }, { value:'contract', label:'Contract / freelance' }, { value:'both', label:'Open to both' }]
 const AVAILABILITY = [{ value:'open', label:'Open to opportunities' }, { value:'contract_only', label:'Contract / project only' }, { value:'not_available', label:'Not currently available' }]
 const MODALITY = ['In-person','Virtual','Hybrid','Open to relocation']
@@ -37,7 +37,7 @@ const WORK_DURATIONS = ['Less than 1 year','1–2 years','2–3 years','3–5 ye
 const FIELD_LABELS = {
   display_name: 'your name', headline: 'your headline', bio: 'your bio',
   active_tracks: 'your path (Talent / Speaker / Facilitator)', industry: 'your industry',
-  username: 'your username',
+  username: 'your username', phone: 'your phone number',
 }
 
 // ── Answer-format validators ────────────────────────────────────────────
@@ -87,6 +87,11 @@ const VALIDATORS = {
     if (!t) return true
     return /^[a-zA-Z0-9_.-]{3,30}$/.test(t)
   },
+  phone: (v) => {
+    const t = (v || '').trim()
+    if (!t) return true
+    return /^\+?[0-9\s-]{7,17}$/.test(t)
+  },
 }
 
 function validatorError(kind) {
@@ -97,6 +102,7 @@ function validatorError(kind) {
     case 'youtube':  return 'Enter a valid YouTube URL.'
     case 'url':      return 'Enter a valid URL, e.g. https://yoursite.com'
     case 'username': return '3-30 characters — letters, numbers, dots, underscores or hyphens only, no spaces.'
+    case 'phone':    return 'Enter a valid phone number, e.g. +234 801 234 5678.'
     default:         return 'That doesn\u2019t look right — please check your answer.'
   }
 }
@@ -109,7 +115,7 @@ function getInitials(name) {
 
 const EMPTY_FORM = {
   active_tracks: [],
-  username: '',
+  username: '', phone: '',
   display_name: '', headline: '', location: '', industry: '', preferred_industry: '',
   years_experience: '', bio: '', languages: [],
   visibility: 'registered_only',
@@ -156,6 +162,7 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   s.push({ key:'preferred_industry', kind:'single-chip', section:'Profile', title:'Which industry would you like to work in?', sub:'If different from your current industry — pick the closest fit. Leave blank if you\\u2019re not looking to switch.', options:INDUSTRIES, required:false })
   s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your name stays private — it\u2019s only shared once Valoria facilitates an introduction.', placeholder:'Your full professional name', required:true })
   s.push({ key:'username', kind:'text', section:'Profile', title:'Choose a username.', sub:'This is how you\u2019ll be identified on Valoria. Letters, numbers, dots, underscores or hyphens — no spaces.', placeholder:'e.g. chioma_adeyemi', required:true, validator:'username' })
+  s.push({ key:'phone', kind:'text', section:'Profile', inputType:'tel', title:'What\u2019s your phone number?', sub:'Kept private — only shared once Valoria facilitates an introduction.', placeholder:'+234 801 234 5678', required:true, validator:'phone' })
   s.push({ key:'headline', kind:'text', section:'Profile', title:'Sum up what you do in one line.', sub:'This is the first thing people see on your profile.', placeholder: isSpeaker ? 'e.g. Executive Coach & Leadership Speaker' : 'e.g. Head of Strategy — Fintech & Payments', maxLength:100, required:true })
   s.push({ key:'location', kind:'text', section:'Profile', title:'Where are you based?', sub:'Optional, but helps people searching by region.', placeholder:'e.g. Lagos, Nigeria', required:false, validator:'place' })
   s.push({ key:'years_experience', kind:'text', section:'Profile', inputType:'number', title:'How many years of experience?', sub:'A rough number is fine.', placeholder:'e.g. 12', required:false, validator:'number' })
@@ -283,6 +290,7 @@ function ProfileSetupForm() {
           // single-select string, same mismatch pattern as availability below.
           preferred_industry:  Array.isArray(existing.preferred_industries) ? (existing.preferred_industries[0] || f.preferred_industry) : f.preferred_industry,
           username:            existing.username || f.username,
+          phone:               existing.phone || f.phone,
           active_tracks:       existing.active_tracks || f.active_tracks,
           languages:           existing.languages || f.languages,
           skills:              existing.skills || f.skills,
@@ -394,6 +402,7 @@ function ProfileSetupForm() {
       youtube_links: f.youtube_links.filter(Boolean),
       linkedin_url: f.linkedin_url || null, website_url: f.website_url || null,
       username: f.username ? f.username.trim() : null,
+      phone: f.phone ? f.phone.trim() : null,
       // availability + contract_preference are no longer collected here —
       // omitted from the upsert entirely so an existing saved value (from
       // before this change) is left untouched rather than being wiped.
@@ -415,7 +424,7 @@ function ProfileSetupForm() {
       // nobody is ever asked would make profile_complete permanently false.
       profile_complete: !!(
         f.display_name && f.headline && f.bio && f.active_tracks.length > 0 &&
-        f.industry && f.username
+        f.industry && f.username && f.phone
       ),
       listing_status: existingListingStatusRef.current || 'pending', updated_at: new Date().toISOString(),
     }, { onConflict: 'id' })

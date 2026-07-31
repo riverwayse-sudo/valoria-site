@@ -73,6 +73,47 @@ async function confirmToBuyer({ enquiryType, atbId, buyerName, buyerEmail }) {
   if (!res.ok) console.error('Enquiry buyer confirm failed:', res.status, await res.text().catch(() => ''))
 }
 
+async function notifyProfessional({ professionalProfileId, enquiryType, atbId, buyerName, buyerCompany, actionUrl }) {
+  // In-app bell notification — goes in platform_notifications, the table
+  // NotificationBell.jsx actually reads (see that file's fix note).
+  const label = TYPE_LABELS[enquiryType] || 'Enquiry'
+  const { error: notifError } = await supabase.from('platform_notifications').insert([{
+    user_id: professionalProfileId,
+    type: 'enquiry',
+    title: `New ${label.toLowerCase()}`,
+    body: `${buyerName}${buyerCompany ? ` (${buyerCompany})` : ''} wants to connect with you.`,
+    action_url: actionUrl,
+  }])
+  if (notifError) console.error('Enquiry professional in-app notify failed:', notifError)
+
+  if (!BREVO_KEY) return
+  // The professional's email lives on auth.users, not professional_profiles.
+  const { data: userRow, error: userErr } = await supabase.auth.admin.getUserById(professionalProfileId)
+  if (userErr || !userRow?.user?.email) {
+    console.error('Enquiry professional email lookup failed:', userErr)
+    return
+  }
+  const html = `
+    <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;">
+      <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">NEW ${label.toUpperCase()}</p>
+      <p>${buyerName}${buyerCompany ? ` from ${buyerCompany}` : ''} has requested an introduction through Valoria Institute.</p>
+      <p>Valoria will review and be in touch with next steps — no action needed from you right now.</p>
+      <p style="margin-top:20px;"><a href="https://valoriainstitute.com${actionUrl}">View your profile</a></p>
+    </div>`
+  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: { 'api-key': BREVO_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      sender: { name: FROM_NAME, email: FROM_EMAIL },
+      to: [{ email: userRow.user.email }],
+      subject: `New ${label.toLowerCase()} — ${atbId}`,
+      htmlContent: html,
+      tags: ['enquiry-professional-notify', enquiryType],
+    }),
+  })
+  if (!res.ok) console.error('Enquiry professional email notify failed:', res.status, await res.text().catch(() => ''))
+}
+
 export async function POST(request) {
   try {
     const body = await request.json()
@@ -116,6 +157,7 @@ export async function POST(request) {
     const atbId = atb_id || 'a Valoria professional'
     notifyAdmin({ enquiryType: enquiry_type, atbId, buyerName: buyer_name.trim(), buyerEmail: buyer_email.trim(), buyerCompany: buyer_company?.trim(), subject, body: message }).catch(e => console.error('notifyAdmin error:', e))
     confirmToBuyer({ enquiryType: enquiry_type, atbId, buyerName: buyer_name.trim(), buyerEmail: buyer_email.trim() }).catch(e => console.error('confirmToBuyer error:', e))
+    notifyProfessional({ professionalProfileId: professional_profile_id, enquiryType: enquiry_type, atbId, buyerName: buyer_name.trim(), buyerCompany: buyer_company?.trim(), actionUrl: `/profile/${professional_profile_id}` }).catch(e => console.error('notifyProfessional error:', e))
 
     return Response.json({ message: 'Enquiry sent.' }, { status: 200 })
   } catch (err) {
