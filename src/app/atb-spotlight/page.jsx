@@ -317,8 +317,8 @@ function SpeakerCard({ profile: p }) {
       {p.bio && <p style={S.cardBio}>{p.bio.slice(0, 110)}{p.bio.length > 110 ? '…' : ''}</p>}
 
       <div style={S.cardActions}>
-        <Link href={`/profile/${p.id}`} style={S.btnView}>VIEW PROFILE</Link>
-        <Link href={`/profile/${p.id}#contact`} style={S.btnAction}>BOOK SPEAKER</Link>
+        <Link href={`/profile/${p.id}?track=speaker`} style={S.btnView}>VIEW PROFILE</Link>
+        <Link href={`/profile/${p.id}?track=speaker#contact`} style={S.btnAction}>BOOK SPEAKER</Link>
       </div>
     </div>
   )

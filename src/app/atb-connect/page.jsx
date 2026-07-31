@@ -464,8 +464,8 @@ function CandidateCard({ profile: p }) {
       {p.bio && <p style={S.cardBio}>{p.bio.slice(0, 110)}{p.bio.length > 110 ? '…' : ''}</p>}
 
       <div style={S.cardActions}>
-        <Link href={`/profile/${p.id}`} style={S.btnView}>VIEW PROFILE</Link>
-        <Link href={`/profile/${p.id}#contact`} style={S.btnAction}>REQUEST INTRO</Link>
+        <Link href={`/profile/${p.id}?track=candidate`} style={S.btnView}>VIEW PROFILE</Link>
+        <Link href={`/profile/${p.id}?track=candidate#contact`} style={S.btnAction}>REQUEST INTRO</Link>
       </div>
     </div>
   )

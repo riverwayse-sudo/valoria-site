@@ -43,7 +43,7 @@ const PRIME   = [
 ]
 
 // ─── component ─────────────────────────────────────────────
-export default function ProfilePage({ params }) {
+export default function ProfilePage({ params, searchParams }) {
   const { id } = params
   const [profile, setProfile]     = useState(null)
   const [loading, setLoading]     = useState(true)
@@ -173,8 +173,19 @@ export default function ProfilePage({ params }) {
   const videos      = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
   const compensation = (isSpeaker || isFacilitator) ? (p.fee_range || p.salary_expectation || null) : (p.salary_expectation || p.fee_range || null)
   const compLabel   = (isSpeaker || isFacilitator) ? 'Fee Range' : 'Salary Range'
-  const displayTrack = isFacilitator ? 'facilitator' : isSpeaker ? 'speaker' : 'candidate'
+  // Which track's framing (headline placeholder, CTA copy, tags shown) to
+  // display. If the marketplace page someone clicked in from tells us which
+  // track they were browsing (?track=speaker etc.), honour that — otherwise
+  // fall back to a fixed priority. Previously this always showed
+  // facilitator-first for anyone with multiple tracks, so a profile that was
+  // both Speaker and Facilitator showed "Request Facilitator" even when
+  // reached from the Speaker marketplace.
+  const requestedTrack = searchParams?.track
+  const displayTrack = (requestedTrack && tracks.includes(requestedTrack))
+    ? requestedTrack
+    : (isFacilitator ? 'facilitator' : isSpeaker ? 'speaker' : 'candidate')
   const tags        = displayTrack === 'facilitator' ? (p.programme_types || []) : displayTrack === 'speaker' ? (p.topics || []) : (p.skills || [])
+  const isOwnProfile = !!(currentUser && currentUser.id === p.id)
 
   const stats = [
     { label:'Location',   value: p.location || '—' },
@@ -209,11 +220,16 @@ export default function ProfilePage({ params }) {
             <polygon points="1060,50 1110,140 1060,110 1010,140" fill="rgba(201,168,76,.15)"/>
             <polygon points="80,200 120,260 80,240 40,260" fill="rgba(201,168,76,.08)"/>
           </svg>
-          {/* availability chip */}
-          <div style={{ position:'absolute', top:'20px', right:'28px', display:'flex', alignItems:'center', gap:'7px', background:'rgba(26,26,46,.75)', border:`1px solid ${GLINE2}`, padding:'7px 16px 7px 12px', borderRadius:'999px', fontSize:'11px', letterSpacing:'.1em', textTransform:'uppercase', color: GOLD, backdropFilter:'blur(8px)' }}>
-            <div style={{ width:'7px', height:'7px', borderRadius:'50%', background:'#1D9E75', boxShadow:'0 0 0 0 rgba(29,158,117,.6)', animation:'vi-pulse 2s infinite' }} />
-            {p.availability === 'open' ? 'Open to Introductions' : p.availability === 'contract_only' ? 'Contract Only' : 'Not Available'}
-          </div>
+          {/* availability chip — only shown when the person actually has a
+              value saved. The onboarding question was removed 31 Jul 2026,
+              so most profiles now have none; showing "Not Available" for
+              everyone by default would misrepresent them. */}
+          {p.availability && (
+            <div style={{ position:'absolute', top:'20px', right:'28px', display:'flex', alignItems:'center', gap:'7px', background:'rgba(26,26,46,.75)', border:`1px solid ${GLINE2}`, padding:'7px 16px 7px 12px', borderRadius:'999px', fontSize:'11px', letterSpacing:'.1em', textTransform:'uppercase', color: GOLD, backdropFilter:'blur(8px)' }}>
+              <div style={{ width:'7px', height:'7px', borderRadius:'50%', background:'#1D9E75', boxShadow:'0 0 0 0 rgba(29,158,117,.6)', animation:'vi-pulse 2s infinite' }} />
+              {p.availability === 'open' ? 'Open to Introductions' : p.availability === 'contract_only' ? 'Contract Only' : 'Not Available'}
+            </div>
+          )}
           <div style={{ position:'absolute', inset:0, background:`linear-gradient(180deg, transparent 35%, ${DARK} 100%)` }} />
         </div>
 
@@ -466,10 +482,12 @@ export default function ProfilePage({ params }) {
             <div id="contact" className="vi-cta-intro" style={{ background:`linear-gradient(135deg, rgba(201,168,76,.06), rgba(26,26,46,.3))`, border:`1px solid ${GLINE2}`, padding:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', flexWrap:'wrap', marginTop:'8px', scrollMarginTop:'96px' }}>
               <div>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'8px' }}>
-                  {displayTrack === 'facilitator' ? 'Commission This Facilitator' : displayTrack === 'speaker' ? 'Book This Speaker' : 'Get in Touch'}
+                  {isOwnProfile ? 'This Is Your Profile' : displayTrack === 'facilitator' ? 'Commission This Facilitator' : displayTrack === 'speaker' ? 'Book This Speaker' : 'Get in Touch'}
                 </div>
                 <p style={{ fontSize:'13px', fontWeight:300, color: DIM, maxWidth:'380px', lineHeight:1.7 }}>
-                  {displayTrack === 'facilitator'
+                  {isOwnProfile
+                    ? 'This is what others see when they view your profile. Keep it up to date so the right people can reach you.'
+                    : displayTrack === 'facilitator'
                     ? `Interested in commissioning ${initials} for a programme? Valoria Institute facilitates all introductions.`
                     : displayTrack === 'speaker'
                     ? `Interested in booking ${initials} for your event? Valoria Institute facilitates all introductions.`
@@ -481,6 +499,10 @@ export default function ProfilePage({ params }) {
                   style={{ padding:'14px 28px', background:'rgba(255,255,255,.06)', color:'rgba(247,244,238,.3)', fontSize:'11px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor:'not-allowed', flexShrink:0, whiteSpace:'nowrap' }}>
                   SAMPLE — NOT AVAILABLE
                 </button>
+              ) : isOwnProfile ? (
+                <Link href="/profile/setup" style={{ padding:'14px 28px', background:GOLD, color:DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.14em', textDecoration:'none', flexShrink:0, whiteSpace:'nowrap' }}>
+                  EDIT YOUR PROFILE
+                </Link>
               ) : (
                 <EnquiryForm
                   professionalProfileId={p.id}
