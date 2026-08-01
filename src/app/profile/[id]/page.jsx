@@ -531,7 +531,7 @@ export default function ProfilePage({ params, searchParams }) {
                   SAMPLE — NOT AVAILABLE
                 </button>
               ) : isOwnProfile ? (
-                <Link href="/profile/setup" style={{ padding:'14px 28px', background:GOLD, color:DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.14em', textDecoration:'none', flexShrink:0, whiteSpace:'nowrap' }}>
+                <Link href="/profile/edit" style={{ padding:'14px 28px', background:GOLD, color:DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.14em', textDecoration:'none', flexShrink:0, whiteSpace:'nowrap' }}>
                   EDIT YOUR PROFILE
                 </Link>
               ) : (
