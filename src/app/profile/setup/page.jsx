@@ -159,14 +159,15 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   // asked before name/headline/etc. Title is explicit about "currently"
   // since a bare "which industry do you know best" reads as ambiguous next
   // to the preferred-industry question right after it.
-  s.push({ key:'industry', kind:'single-chip', section:'Profile', title:'Which industry are you currently in?', sub:'Pick the closest fit to your current role — this powers marketplace search.', options:INDUSTRIES, required:true })
-  s.push({ key:'preferred_industry', kind:'single-chip', section:'Profile', title:'Which industry would you like to work in?', sub:'If different from your current industry — pick the closest fit. Leave blank if you\\u2019re not looking to switch.', options:INDUSTRIES, required:false })
+  s.push({ key:'industry', kind:'industry-pair', section:'Profile', title:'Which industry are you in?', options:INDUSTRIES, required:true })
   s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your name stays private — it\u2019s only shared once Valoria facilitates an introduction.', placeholder:'Your full professional name', required:true })
   s.push({ key:'username', kind:'text', section:'Profile', title:'Choose a username.', sub:'This is how you\u2019ll be identified on Valoria. Letters, numbers, dots, underscores or hyphens — no spaces.', placeholder:'e.g. chioma_adeyemi', required:true, validator:'username' })
   s.push({ key:'phone', kind:'text', section:'Profile', inputType:'tel', title:'What\u2019s your phone number?', sub:'Kept private — only shared once Valoria facilitates an introduction.', placeholder:'+234 801 234 5678', required:true, validator:'phone' })
   s.push({ key:'headline', kind:'text', section:'Profile', title:'Sum up what you do in one line.', sub:'This is the first thing people see on your profile.', placeholder: isSpeaker ? 'e.g. Executive Coach & Leadership Speaker' : 'e.g. Head of Strategy — Fintech & Payments', maxLength:100, required:true })
-  s.push({ key:'location', kind:'text', section:'Profile', title:'Where are you based?', sub:'Optional, but helps people searching by region.', placeholder:'e.g. Lagos, Nigeria', required:false, validator:'place' })
-  s.push({ key:'years_experience', kind:'text', section:'Profile', inputType:'number', title:'How many years of experience?', sub:'A rough number is fine.', placeholder:'e.g. 12', required:false, validator:'number' })
+  s.push({ key:'location', kind:'field-pair', section:'Profile', title:'Where are you based, and for how long have you worked?', fields:[
+    { key:'location', placeholder:'City, country', validator:'place' },
+    { key:'years_experience', placeholder:'Years of experience', inputType:'number', validator:'number' },
+  ], required:false })
   s.push({ key:'bio', kind:'textarea', section:'Profile', title:'Write a short bio.', sub:'Third person, 2–4 sentences. What you do, who you serve, what makes you distinct.', placeholder:'Chioma Adeyemi is a fintech growth strategist with 12 years of experience...', maxLength:600, required:true })
   s.push({ key:'languages', kind:'multi-chip', section:'Profile', title:'Which languages do you speak?', sub:'Select all that apply.', options:LANGUAGES, required:false })
   s.push({ key:'visibility', kind:'visibility', section:'Profile' })
@@ -189,8 +190,10 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'Profiles with a photo receive significantly more introduction requests.' })
   s.push({ key:'cv_url', kind:'cv', section:'Media', title:'Upload your CV.', sub:'PDF or Word. We use this to auto-summarise your background on your profile.', required:false })
   s.push({ key:'youtube_links', kind:'link-list', section:'Media', title: isSpeaker ? 'Add your speaker reel.' : 'Add a video link.', sub:'Optional — YouTube URLs, up to 4.', max:4, required:false, validator:'youtube' })
-  s.push({ key:'linkedin_url', kind:'text', section:'Media', inputType:'url', title:'Your LinkedIn profile?', sub:'Optional.', placeholder:'https://linkedin.com/in/yourname', required:false, validator:'linkedin' })
-  s.push({ key:'website_url', kind:'text', section:'Media', inputType:'url', title:'A personal website or portfolio?', sub:'Optional.', placeholder:'https://yourwebsite.com', required:false, validator:'url' })
+  s.push({ key:'linkedin_url', kind:'field-pair', section:'Media', title:'LinkedIn, and a personal site or portfolio?', sub:'Both optional.', fields:[
+    { key:'linkedin_url', placeholder:'https://linkedin.com/in/yourname', inputType:'url', validator:'linkedin' },
+    { key:'website_url', placeholder:'https://yourwebsite.com', inputType:'url', validator:'url' },
+  ], required:false })
 
   if (isCandidate) s.push({ key:'notice_period', kind:'select', section:'Terms', title:'How quickly could you start a new role?', sub:'Optional.', options:NOTICE_PERIODS, required:false })
   if (isCandidate) s.push({ key:'salary_expectation', kind:'currency-range', section:'Terms', title:'What\u2019s your salary expectation?', sub:'Optional — helps match you to relevant opportunities. Pick your currency.', period:'year', required:false })
@@ -672,6 +675,40 @@ function ScreenBody(props) {
       )
     }
 
+    case 'field-pair': {
+      const allValid = screen.fields.every(fld => {
+        const v = (form[fld.key] || '').toString().trim()
+        const formatOk = !fld.validator || VALIDATORS[fld.validator](form[fld.key])
+        return (!screen.required || v) && formatOk
+      })
+      return (
+        <div>
+          <Title>{screen.title}</Title>
+          {screen.sub && <Sub>{screen.sub}</Sub>}
+          <div style={{ display:'flex', flexDirection:'column', gap:'14px', marginBottom:'8px' }}>
+            {screen.fields.map(fld => {
+              const v = form[fld.key] || ''
+              const trimmed = v.toString().trim()
+              const formatOk = !fld.validator || VALIDATORS[fld.validator](v)
+              const showError = trimmed && !formatOk
+              return (
+                <div key={fld.key}>
+                  <input
+                    type={fld.inputType || 'text'}
+                    style={{ ...inputStyle, ...(showError ? { border:'1px solid #D85A30' } : {}) }}
+                    value={v} placeholder={fld.placeholder}
+                    onChange={e => set(fld.key, e.target.value)}
+                  />
+                  {showError && <ErrorText>{validatorError(fld.validator)}</ErrorText>}
+                </div>
+              )
+            })}
+          </div>
+          <ContinueBar onNext={goNext} nextDisabled={!allValid} saving={saving} showSkip={!screen.required} />
+        </div>
+      )
+    }
+
     case 'text': {
       const trimmed = (val || '').trim()
       const formatOk = !screen.validator || VALIDATORS[screen.validator](val)
@@ -738,6 +775,29 @@ function ScreenBody(props) {
           {screen.sub && <Sub>{screen.sub}</Sub>}
           <CurrencyRangeInput value={val} onChange={v => set(screen.key, v)} periodLabel={screen.period} />
           <ContinueBar onNext={goNext} nextDisabled={false} saving={saving} showSkip={!screen.required && !val} />
+        </div>
+      )
+    }
+
+    case 'industry-pair': {
+      const current = form.industry
+      const preferred = form.preferred_industry
+      return (
+        <div>
+          <Title>{screen.title}</Title>
+          <Sub>Pick the closest fit to your current role — this powers marketplace search.</Sub>
+          <div style={{ display:'flex', flexWrap:'wrap', gap:'8px', marginBottom:'28px' }}>
+            {screen.options.map(o => (
+              <Chip key={o} label={o} on={current === o} onClick={() => set('industry', o)} color={GOLD} />
+            ))}
+          </div>
+          <Sub>Looking to move into a different industry? Optional — pick a second one, or skip.</Sub>
+          <div style={{ display:'flex', flexWrap:'wrap', gap:'8px', marginBottom:'8px' }}>
+            {screen.options.map(o => (
+              <Chip key={o} label={o} on={preferred === o} onClick={() => set('preferred_industry', preferred === o ? '' : o)} color="#7F77DD" />
+            ))}
+          </div>
+          <ContinueBar onNext={goNext} nextDisabled={!current} saving={saving} showSkip={false} />
         </div>
       )
     }
