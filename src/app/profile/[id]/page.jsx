@@ -24,6 +24,27 @@ function getYouTubeId(url) {
   const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
   return m ? m[1] : null
 }
+const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Mastery', E:'Enterprise' }
+// Builds the "About" copy from the VALU Index result (designation + top
+// clusters) rather than a free-text bio — a positive-framed summary of
+// what the assessment found strong, not a self-written blurb. Falls back
+// to the cv_summary (once CV upload/summarisation ships) or the bio field
+// if no assessment has been completed yet, so nobody's About section goes
+// empty just because this ships ahead of that.
+function buildAssessmentSummary(p) {
+  if (p.cv_summary) return p.cv_summary
+  if (p.valu_score == null || !p.cluster_scores) return null
+  const ranked = Object.entries(p.cluster_scores)
+    .filter(([, v]) => v != null)
+    .sort((a, b) => b[1] - a[1])
+  const top = ranked.slice(0, 2).map(([letter]) => CLUSTER_NAMES[letter]).filter(Boolean)
+  const designationText = p.designation ? p.designation.replace(/_/g, ' ').toLowerCase() : null
+  const strengths = top.length === 2 ? `${top[0]} and ${top[1]}` : top[0]
+  const parts = []
+  parts.push(`Scored ${p.valu_score}/100 on the VALU Index${designationText ? `, assessed as ${designationText}` : ''}.`)
+  if (strengths) parts.push(`Strongest in ${strengths}.`)
+  return parts.join(' ')
+}
 
 // ─── brand tokens ─────────────────────────────────────────────
 const GOLD    = '#C9A84C'
@@ -61,7 +82,7 @@ export default function ProfilePage({ params, searchParams }) {
 
       const { data: real, error: realError } = await supabase
         .from('professional_profiles')
-        .select('id, display_name, headline, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone')
+        .select('id, display_name, headline, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, cv_summary')
         .eq('id', id)
         .maybeSingle()
 
@@ -438,11 +459,16 @@ export default function ProfilePage({ params, searchParams }) {
               ) : null
             })()}
 
-            {/* About */}
+            {/* About — leads with the VALU Index summary (positive-framed
+                strengths, not a self-written blurb) once assessed; falls
+                back to bio until then so this section is never empty. */}
             <Section label="About">
-              {p.bio
-                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
-                : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No bio added yet.</p>}
+              {(() => {
+                const summary = buildAssessmentSummary(p)
+                if (summary) return <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{summary}</p>
+                if (p.bio) return <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
+                return <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No bio added yet.</p>
+              })()}
             </Section>
 
             {/* Skills / Topics */}

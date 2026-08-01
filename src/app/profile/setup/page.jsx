@@ -127,6 +127,7 @@ const EMPTY_FORM = {
   past_clients: [{ name:'', programme:'' }],
   certifications: '',
   photo_url: '', youtube_links: [''],
+  cv_url: '', cv_filename: '',
   linkedin_url: '', website_url: '',
   // availability + contract_preference are no longer asked during onboarding
   // (removed at the owner's request, 31 Jul 2026) — columns still exist in
@@ -186,6 +187,7 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   if (isCandidate) s.push({ key:'certifications', kind:'text', section:'Expertise', title:'Any certifications or credentials?', sub:'Optional — comma separated.', placeholder:'PMP, Google Analytics, HubSpot Marketing', required:false })
 
   s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'Profiles with a photo receive significantly more introduction requests.' })
+  s.push({ key:'cv_url', kind:'cv', section:'Media', title:'Upload your CV.', sub:'PDF or Word. We use this to auto-summarise your background on your profile.', required:false })
   s.push({ key:'youtube_links', kind:'link-list', section:'Media', title: isSpeaker ? 'Add your speaker reel.' : 'Add a video link.', sub:'Optional — YouTube URLs, up to 4.', max:4, required:false, validator:'youtube' })
   s.push({ key:'linkedin_url', kind:'text', section:'Media', inputType:'url', title:'Your LinkedIn profile?', sub:'Optional.', placeholder:'https://linkedin.com/in/yourname', required:false, validator:'linkedin' })
   s.push({ key:'website_url', kind:'text', section:'Media', inputType:'url', title:'A personal website or portfolio?', sub:'Optional.', placeholder:'https://yourwebsite.com', required:false, validator:'url' })
@@ -231,9 +233,12 @@ function ProfileSetupForm() {
   const [transitioning, setTransitioning] = useState(false)
   const [photoUploading, setPhotoUploading] = useState(false)
   const [photoError, setPhotoError] = useState('')
+  const [cvUploading, setCvUploading] = useState(false)
+  const [cvError, setCvError] = useState('')
   const [editingTracks, setEditingTracks] = useState(false)
   const [submittedInfo, setSubmittedInfo] = useState(null)
   const fileRef = useRef(null)
+  const cvFileRef = useRef(null)
   // Captured once on load — whether this person already had tracks set
   // before this session touched anything. A returning multi-track profile
   // must never have its second track silently wiped just because they
@@ -376,6 +381,36 @@ function ProfileSetupForm() {
     }
   }
 
+  async function uploadCV(file) {
+    if (!file || !user) return
+    setCvUploading(true)
+    setCvError('')
+    try {
+      const ext  = file.name.split('.').pop()
+      const path = `profiles/${user.id}/cv.${ext}`
+      // 'cvs' is a private bucket (unlike 'avatars') — CVs contain personal
+      // data that shouldn't be publicly fetchable by URL. We store the
+      // storage path here, not a public URL, and resolve a short-lived
+      // signed URL only when something needs to actually read the file
+      // (download, or a future summarisation job).
+      const { error } = await supabase.storage.from('cvs').upload(path, file, { upsert: true })
+      if (error) throw error
+      setForm(f => ({ ...f, cv_url: path, cv_filename: file.name }))
+    } catch (err) {
+      console.error('CV upload failed:', err)
+      setCvError(err?.message || 'Upload failed. Please try a different file.')
+    } finally {
+      setCvUploading(false)
+    }
+  }
+
+  async function downloadExistingCV() {
+    if (!form.cv_url) return
+    const { data, error } = await supabase.storage.from('cvs').createSignedUrl(form.cv_url, 300)
+    if (error) { console.error('CV signed URL failed:', error); return }
+    if (data?.signedUrl) window.open(data.signedUrl, '_blank')
+  }
+
   async function saveProgress(overrides) {
     if (!user) return false
     const f = overrides || form
@@ -399,6 +434,7 @@ function ProfileSetupForm() {
       past_events: f.past_events.filter(e => e.name),
       past_clients: f.past_clients.filter(c => c.name),
       certifications: f.certifications || null, photo_url: f.photo_url || null,
+      cv_url: f.cv_url || null,
       youtube_links: f.youtube_links.filter(Boolean),
       linkedin_url: f.linkedin_url || null, website_url: f.website_url || null,
       username: f.username ? f.username.trim() : null,
@@ -570,6 +606,7 @@ function ProfileSetupForm() {
           screen={screen} form={form} set={set} toggleArr={toggleArr} updateListItem={updateListItem}
           selectAndAdvance={selectAndAdvance} goNext={goNext} saving={saving} saveError={saveError}
           photoUploading={photoUploading} photoError={photoError} fileRef={fileRef} uploadPhoto={uploadPhoto}
+          cvUploading={cvUploading} cvError={cvError} cvFileRef={cvFileRef} uploadCV={uploadCV} downloadExistingCV={downloadExistingCV}
           isCandidate={isCandidate} isSpeaker={isSpeaker} isFacilitator={isFacilitator}
           tags={tags} videoLinks={videoLinks} handleFinish={handleFinish}
           onChangeTracks={() => { setEditingTracks(true); setScreenIndex(0) }}
@@ -590,7 +627,9 @@ function ProfileSetupForm() {
 // ── Generic single-screen renderer — one question, one job ──────────────
 function ScreenBody(props) {
   const { screen, form, set, toggleArr, updateListItem, selectAndAdvance, goNext, saving,
-          photoUploading, photoError, fileRef, uploadPhoto, isSpeaker, tags, videoLinks, handleFinish, onChangeTracks } = props
+          photoUploading, photoError, fileRef, uploadPhoto,
+          cvUploading, cvError, cvFileRef, uploadCV, downloadExistingCV,
+          isSpeaker, tags, videoLinks, handleFinish, onChangeTracks } = props
 
   const val = form[screen.key]
 
@@ -887,6 +926,30 @@ function ScreenBody(props) {
             </div>
           </div>
           <ContinueBar onNext={goNext} nextDisabled={photoUploading} saving={saving} showSkip={!form.photo_url} />
+        </div>
+      )
+    }
+
+    case 'cv': {
+      const fileLabel = form.cv_filename || (form.cv_url ? 'CV on file' : null)
+      return (
+        <div>
+          <Title>{screen.title}</Title>
+          {screen.sub && <Sub>{screen.sub}</Sub>}
+          <div style={{ display:'flex', alignItems:'center', gap:'16px', marginBottom:'8px', flexWrap:'wrap' }}>
+            <button onClick={() => cvFileRef.current?.click()} disabled={cvUploading} style={ghostBtnStyle}>
+              {cvUploading ? 'Uploading…' : form.cv_url ? 'Replace CV' : 'Upload CV'}
+            </button>
+            {fileLabel && (
+              <button onClick={downloadExistingCV} style={{ ...ghostBtnStyle, borderColor:'rgba(29,158,117,.4)', color:'#1D9E75' }}>
+                ✓ {fileLabel}
+              </button>
+            )}
+            <input ref={cvFileRef} type="file" accept="application/pdf,.doc,.docx" style={{ display:'none' }} onChange={e => e.target.files[0] && uploadCV(e.target.files[0])} />
+          </div>
+          <p style={{ fontSize:'11px', color:DIM, margin:0, lineHeight:1.6 }}>PDF or Word, up to 10MB. Kept private — never shown to anyone directly.</p>
+          {cvError && <p style={{ fontSize:'11px', color:'#F09595', margin:'6px 0 0', lineHeight:1.5 }}>{cvError}</p>}
+          <ContinueBar onNext={goNext} nextDisabled={cvUploading} saving={saving} showSkip={!form.cv_url} />
         </div>
       )
     }
