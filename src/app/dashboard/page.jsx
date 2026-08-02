@@ -70,6 +70,18 @@ function completenessFields(tracks) {
     .flatMap(t => sets[t] || sets.candidate)
   return [...new Set([...base, ...trackFields])]
 }
+const COMPLETENESS_LABELS = {
+  display_name: 'Name', headline: 'Headline', bio: 'Bio', photo_url: 'Profile photo',
+  username: 'Username', phone: 'Phone number', topics: 'Topics', tier: 'Speaking tier',
+  fee_range: 'Fee range', programme_types: 'Programme types', preferred_industry: 'Preferred industry',
+  industry: 'Industry', notice_period: 'Notice period',
+}
+function missingFields(profile, tracks) {
+  return completenessFields(tracks).filter(f => {
+    const v = profile[f]
+    return Array.isArray(v) ? v.length === 0 : !v
+  })
+}
 function computeCompleteness(profile, tracks) {
   const fields = completenessFields(tracks)
   const filled = fields.filter(f => {
@@ -468,11 +480,29 @@ export default function DashboardPage() {
                   <div style={{ height:'100%', width:`${completenessPct}%`, background: completenessPct === 100 ? '#1D9E75' : GOLD, borderRadius:'2px', transition:'width .4s' }} />
                 </div>
                 {completenessPct < 100 && (
-                  <Link href="/profile/edit" style={{ fontSize:'11px', color: GOLD, marginTop:'12px', display:'block' }}>
-                    Complete your profile to improve visibility →
-                  </Link>
+                  <>
+                    <div style={{ fontSize:'11px', color: DIM, marginTop:'12px', lineHeight:1.6 }}>
+                      Still missing: {missingFields(p, tracks).map(f => COMPLETENESS_LABELS[f] || f).join(', ')}
+                    </div>
+                    <Link href="/profile/edit" style={{ fontSize:'11px', color: GOLD, marginTop:'6px', display:'block' }}>
+                      Complete your profile to improve visibility →
+                    </Link>
+                  </>
                 )}
               </div>
+
+              {/* CV nudge — CV upload is optional so it isn't part of the
+                  required-completeness score above, but it powers the
+                  About-section summary on the public profile, so it's
+                  worth surfacing separately for anyone who onboarded
+                  before this shipped (1 Aug 2026) and hasn't added one. */}
+              {isSupply && !p.cv_url && (
+                <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
+                  <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'8px' }}>Add Your CV</div>
+                  <div style={{ fontSize:'11px', fontWeight:300, color: DIM, lineHeight:1.6, marginBottom:'12px' }}>Powers the summary shown on your public profile.</div>
+                  <Link href="/profile/edit" style={{ fontSize:'11px', color: GOLD }}>Upload now →</Link>
+                </div>
+              )}
 
               {/* Profile ID */}
               {atbId && (
