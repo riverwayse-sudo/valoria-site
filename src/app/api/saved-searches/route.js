@@ -85,7 +85,7 @@ export async function POST(req) {
       status: 400, headers: { 'Content-Type': 'application/json' },
     })
   }
-  if (!['candidate', 'speaker', 'facilitator'].includes(track)) {
+  if (!['all', 'candidate', 'speaker', 'facilitator'].includes(track)) {
     return new Response(JSON.stringify({ error: 'Invalid track.' }), {
       status: 400, headers: { 'Content-Type': 'application/json' },
     })

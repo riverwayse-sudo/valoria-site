@@ -62,6 +62,12 @@ export default function MarketplacePage() {
   const [filterIndustry, setFilterIndustry] = useState('')
   const [filterAvail, setFilterAvail] = useState('')
   const [filterCluster, setFilterCluster] = useState('')
+  const [session, setSession] = useState(null)
+  const [savedSearches, setSavedSearches] = useState([])
+  const [showSaveModal, setShowSaveModal] = useState(false)
+  const [showSavedList, setShowSavedList] = useState(false)
+  const [saveName, setSaveName] = useState('')
+  const [saveLoading, setSaveLoading] = useState(false)
 
   useEffect(() => {
     // Respect a ?track= hint from an old bookmark/link (e.g. someone with
@@ -70,7 +76,64 @@ export default function MarketplacePage() {
     const t = params.get('track')
     if (t && TABS.some(x => x.id === t)) setTab(t)
     fetchProfiles()
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session)
+      if (data.session) fetchSavedSearches(data.session)
+    })
   }, [])
+
+  async function fetchSavedSearches(sess) {
+    try {
+      const res = await fetch('/api/saved-searches', {
+        headers: { Authorization: `Bearer ${sess.access_token}` },
+      })
+      if (res.ok) setSavedSearches(await res.json())
+    } catch (err) {
+      console.error('Fetching saved searches failed:', err)
+    }
+  }
+
+  async function saveCurrentSearch() {
+    if (!saveName.trim() || !session) return
+    setSaveLoading(true)
+    try {
+      const res = await fetch('/api/saved-searches', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({
+          name: saveName.trim(),
+          track: tab,
+          filters: { search, filterIndustry, filterAvail, filterCluster },
+        }),
+      })
+      if (res.ok) {
+        const created = await res.json()
+        setSavedSearches(s => [created, ...s])
+        setShowSaveModal(false)
+        setSaveName('')
+      }
+    } finally {
+      setSaveLoading(false)
+    }
+  }
+
+  function applySavedSearch(s) {
+    setTab(s.track)
+    setSearch(s.filters?.search || '')
+    setFilterIndustry(s.filters?.filterIndustry || '')
+    setFilterAvail(s.filters?.filterAvail || '')
+    setFilterCluster(s.filters?.filterCluster || '')
+    setShowSavedList(false)
+  }
+
+  async function deleteSavedSearch(id) {
+    if (!session) return
+    await fetch(`/api/saved-searches?id=${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    })
+    setSavedSearches(s => s.filter(x => x.id !== id))
+  }
 
   async function fetchProfiles() {
     setLoading(true)
@@ -212,6 +275,29 @@ export default function MarketplacePage() {
           {hasActiveFilters && (
             <button style={S.clearBtn} onClick={() => { setSearch(''); setFilterIndustry(''); setFilterAvail(''); setFilterCluster('') }}>Clear filters</button>
           )}
+
+          {session && (
+            <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(201,168,76,.1)' }}>
+              {hasActiveFilters && (
+                <button style={S.savedSearchBtn} onClick={() => setShowSaveModal(true)}>💾 Save this search</button>
+              )}
+              <button style={{ ...S.savedSearchBtn, marginTop: hasActiveFilters ? '8px' : 0 }} onClick={() => setShowSavedList(v => !v)}>
+                My Saved Searches {savedSearches.length > 0 && `(${savedSearches.length})`}
+              </button>
+              {showSavedList && (
+                <div style={S.savedList}>
+                  {savedSearches.length === 0 ? (
+                    <div style={{ fontSize: '11px', color: DIM, padding: '8px 0' }}>No saved searches yet.</div>
+                  ) : savedSearches.map(s => (
+                    <div key={s.id} style={S.savedItem}>
+                      <button style={S.savedItemName} onClick={() => applySavedSearch(s)}>{s.name}</button>
+                      <button style={S.savedItemDelete} onClick={() => deleteSavedSearch(s.id)}>✕</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </aside>
 
         <main style={S.results}>
@@ -233,6 +319,28 @@ export default function MarketplacePage() {
           )}
         </main>
       </div>
+
+      {showSaveModal && (
+        <div style={S.modalOverlay} onClick={() => setShowSaveModal(false)}>
+          <div style={S.modal} onClick={e => e.stopPropagation()}>
+            <div style={S.modalTitle}>Save this search</div>
+            <input
+              autoFocus
+              style={S.searchInput}
+              placeholder="Name this search, e.g. 'Lagos fintech talent'"
+              value={saveName}
+              onChange={e => setSaveName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && saveCurrentSearch()}
+            />
+            <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+              <button style={S.clearBtn} onClick={() => setShowSaveModal(false)}>Cancel</button>
+              <button style={{ ...S.tabBtnActive, ...S.tabBtn, flex: 1 }} disabled={!saveName.trim() || saveLoading} onClick={saveCurrentSearch}>
+                {saveLoading ? 'Saving…' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -343,6 +451,14 @@ const S = {
   searchInput: { width: '100%', padding: '10px 12px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.15)', borderRadius: '6px', color: PARCHMENT, fontSize: '13px', fontFamily: "'Raleway',sans-serif", outline: 'none', boxSizing: 'border-box' },
   select: { width: '100%', padding: '9px 12px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.15)', borderRadius: '6px', color: PARCHMENT, fontSize: '13px', fontFamily: "'Raleway',sans-serif", outline: 'none' },
   clearBtn: { width: '100%', padding: '8px', background: 'transparent', border: '1px solid rgba(201,168,76,.15)', borderRadius: '6px', color: 'rgba(247,244,238,.35)', fontSize: '11px', cursor: 'pointer', fontFamily: "'Raleway',sans-serif", marginTop: '8px' },
+  savedSearchBtn: { width: '100%', padding: '9px', background: 'transparent', border: '1px solid rgba(201,168,76,.2)', borderRadius: '6px', color: GOLD, fontSize: '11px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Raleway',sans-serif" },
+  savedList: { marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '4px' },
+  savedItem: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', padding: '6px 8px', borderRadius: '4px', background: 'rgba(255,255,255,.03)' },
+  savedItemName: { flex: 1, textAlign: 'left', background: 'transparent', border: 'none', color: 'rgba(247,244,238,.7)', fontSize: '11px', cursor: 'pointer', fontFamily: "'Raleway',sans-serif", padding: 0 },
+  savedItemDelete: { background: 'transparent', border: 'none', color: 'rgba(247,244,238,.25)', cursor: 'pointer', fontSize: '11px', padding: '0 4px' },
+  modalOverlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 },
+  modal: { background: MIDNIGHT, border: '1px solid rgba(201,168,76,.3)', borderRadius: '8px', padding: '24px', width: '360px', maxWidth: '90vw' },
+  modalTitle: { fontSize: '14px', fontWeight: 600, color: PARCHMENT, marginBottom: '14px' },
   clusterRow: { display: 'flex', gap: '6px' },
   clusterChip: { flex: 1, padding: '8px 0', borderRadius: '6px', border: '1.5px solid', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Raleway',sans-serif", transition: 'all .15s' },
   clusterLabel: { fontSize: '10px', color: 'rgba(247,244,238,.4)', marginTop: '8px', textAlign: 'center' },
