@@ -63,9 +63,9 @@ function completenessFields(tracks) {
   const sets = {
     speaker:     ['topics', 'tier', 'fee_range'],
     facilitator: ['programme_types', 'fee_range'],
-    candidate:   ['preferred_industry', 'industry', 'availability'],
+    candidate:   ['preferred_industry', 'industry', 'notice_period'],
   }
-  const base = ['display_name', 'headline', 'bio', 'photo_url']
+  const base = ['display_name', 'headline', 'bio', 'photo_url', 'username', 'phone']
   const trackFields = (tracks && tracks.length ? tracks : ['candidate'])
     .flatMap(t => sets[t] || sets.candidate)
   return [...new Set([...base, ...trackFields])]
