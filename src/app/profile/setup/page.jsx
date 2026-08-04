@@ -68,9 +68,9 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   s.push({ key:'location', kind:'field-pair', section:'Profile', title:'Where are you based, and for how long have you worked?', fields:[
     { key:'location', placeholder:'City, country', validator:'place' },
     { key:'years_experience', placeholder:'Years of experience', inputType:'number', validator:'number' },
-  ], required:false })
+  ], required:true })
   s.push({ key:'bio', kind:'textarea', section:'Profile', title:'Write a short bio.', sub:'Third person, 2–4 sentences. What you do, who you serve, what makes you distinct.', placeholder:'Chioma Adeyemi is a fintech growth strategist with 12 years of experience...', maxLength:600, required:true })
-  s.push({ key:'languages', kind:'multi-chip', section:'Profile', title:'Which languages do you speak?', sub:'Select all that apply.', options:LANGUAGES, required:false })
+  s.push({ key:'languages', kind:'multi-chip', section:'Profile', title:'Which languages do you speak?', sub:'Select all that apply.', options:LANGUAGES, required:true })
   s.push({ key:'visibility', kind:'visibility', section:'Profile' })
 
   // The self-report "What are your core skills?" question was removed here —
@@ -78,28 +78,28 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   // section. Skills are assessed objectively by the VALU Index rather than
   // self-reported in the wizard; self-reporting them again was the
   // redundant "manual syncing" Temitayo flagged.
-  if (isSpeaker || isFacilitator) s.push({ key:'topics', kind:'multi-chip', section:'Expertise', title:'What topics do you speak on?', sub:'Select up to 6.', options:TOPICS_POOL, max:6, required:false })
-  if (isSpeaker) s.push({ key:'format_capabilities', kind:'multi-chip', section:'Expertise', title:'What speaking formats do you offer?', sub:'Select all that apply.', options:FORMAT_CAPS, required:false, color:'#7F77DD' })
-  if (isSpeaker) s.push({ key:'audience_sizes', kind:'multi-chip', section:'Expertise', title:'What audience sizes have you spoken to?', sub:'Select all that apply.', options:AUDIENCE_SIZES, required:false, color:'#1D9E75' })
-  if (isSpeaker) s.push({ key:'past_events', kind:'list', section:'Expertise', title:'Any past speaking engagements?', sub:'Optional — up to 3. These build trust with people viewing your profile.', fields:[{ key:'name', placeholder:'Event name' }, { key:'role', placeholder:'Your role' }], max:3, addLabel:'+ Add event', required:false })
-  if (isFacilitator) s.push({ key:'programme_types', kind:'multi-chip', section:'Expertise', title:'What programme types do you run?', sub:'Select all that apply.', options:PROGRAMME_TYPES, required:false, color:'#1D9E75' })
-  if (isFacilitator) s.push({ key:'past_clients', kind:'list', section:'Expertise', title:'Any past clients or programmes?', sub:'Optional — up to 3.', fields:[{ key:'name', placeholder:'Organisation' }, { key:'programme', placeholder:'Programme delivered' }], max:3, addLabel:'+ Add client', required:false })
+  if (isSpeaker || isFacilitator) s.push({ key:'topics', kind:'multi-chip', section:'Expertise', title:'What topics do you speak on?', sub:'Select up to 6.', options:TOPICS_POOL, max:6, required:true })
+  if (isSpeaker) s.push({ key:'format_capabilities', kind:'multi-chip', section:'Expertise', title:'What speaking formats do you offer?', sub:'Select all that apply.', options:FORMAT_CAPS, required:true, color:'#7F77DD' })
+  if (isSpeaker) s.push({ key:'audience_sizes', kind:'multi-chip', section:'Expertise', title:'What audience sizes have you spoken to?', sub:'Select all that apply.', options:AUDIENCE_SIZES, required:true, color:'#1D9E75' })
+  if (isSpeaker) s.push({ key:'past_events', kind:'list', section:'Expertise', title:'Any past speaking engagements?', sub:'Up to 3. These build trust with people viewing your profile.', fields:[{ key:'name', placeholder:'Event name' }, { key:'role', placeholder:'Your role' }], max:3, addLabel:'+ Add event', required:true })
+  if (isFacilitator) s.push({ key:'programme_types', kind:'multi-chip', section:'Expertise', title:'What programme types do you run?', sub:'Select all that apply.', options:PROGRAMME_TYPES, required:true, color:'#1D9E75' })
+  if (isFacilitator) s.push({ key:'past_clients', kind:'list', section:'Expertise', title:'Any past clients or programmes?', sub:'Up to 3.', fields:[{ key:'name', placeholder:'Organisation' }, { key:'programme', placeholder:'Programme delivered' }], max:3, addLabel:'+ Add client', required:true })
   if (isFacilitator) s.push({ key:'pcp_certified', kind:'boolean', section:'Expertise', title:'Do you hold a Valoria PCP certification?', sub:'PRIME-Certified Practitioner.' })
-  if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Optional — up to 3 roles. Helps people understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organisation' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:false })
-  if (isCandidate) s.push({ key:'certifications', kind:'text', section:'Expertise', title:'Any certifications or credentials?', sub:'Optional — comma separated.', placeholder:'PMP, Google Analytics, HubSpot Marketing', required:false })
+  if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Up to 3 roles. Helps people understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organisation' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:true })
+  if (isCandidate) s.push({ key:'certifications', kind:'text', section:'Expertise', title:'Any certifications or credentials?', sub:'Comma separated.', placeholder:'PMP, Google Analytics, HubSpot Marketing', required:true })
 
-  s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'Profiles with a photo receive significantly more introduction requests.' })
-  s.push({ key:'cv_url', kind:'cv', section:'Media', title:'Upload your CV.', sub:'PDF or Word. We use this to auto-summarise your background on your profile.', required:false })
-  s.push({ key:'youtube_links', kind:'link-list', section:'Media', title: isSpeaker ? 'Add your speaker reel.' : 'Add a video link.', sub:'Optional — YouTube URLs, up to 4.', max:4, required:false, validator:'youtube' })
-  s.push({ key:'linkedin_url', kind:'field-pair', section:'Media', title:'LinkedIn, and a personal site or portfolio?', sub:'Both optional.', fields:[
+  s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'Profiles with a photo receive significantly more introduction requests.', required:true })
+  s.push({ key:'cv_url', kind:'cv', section:'Media', title:'Upload your CV.', sub:'PDF or Word. We use this to auto-summarise your background on your profile.', required:true })
+  s.push({ key:'youtube_links', kind:'link-list', section:'Media', title: isSpeaker ? 'Add your speaker reel.' : 'Add a video link.', sub:'YouTube URLs, up to 4.', max:4, required:true, validator:'youtube' })
+  s.push({ key:'linkedin_url', kind:'field-pair', section:'Media', title:'LinkedIn, and a personal site or portfolio?', fields:[
     { key:'linkedin_url', placeholder:'https://linkedin.com/in/yourname', inputType:'url', validator:'linkedin' },
     { key:'website_url', placeholder:'https://yourwebsite.com', inputType:'url', validator:'url' },
-  ], required:false })
+  ], required:true })
 
-  if (isCandidate) s.push({ key:'notice_period', kind:'select', section:'Terms', title:'How quickly could you start a new role?', sub:'Optional.', options:NOTICE_PERIODS, required:false })
-  if (isCandidate) s.push({ key:'salary_expectation', kind:'currency-range', section:'Terms', title:'What\u2019s your salary expectation?', sub:'Optional — helps match you to relevant opportunities. Pick your currency.', period:'year', required:false })
-  if (isSpeaker || isFacilitator) s.push({ key:'fee_range', kind:'currency-range', section:'Terms', title: isFacilitator && isSpeaker ? 'Your speaking / facilitation fee?' : isSpeaker ? 'Your speaking fee?' : 'Your facilitation day rate?', sub:'Optional — visible on your profile. Pick your currency.', period:'engagement', required:false })
-  s.push({ key:'modality', kind:'multi-chip', section:'Terms', title:'What work modality do you prefer?', sub:'Select all that apply.', options:MODALITY, required:false })
+  if (isCandidate) s.push({ key:'notice_period', kind:'select', section:'Terms', title:'How quickly could you start a new role?', sub:'This helps match you to relevant opportunities.', options:NOTICE_PERIODS, required:true })
+  if (isCandidate) s.push({ key:'salary_expectation', kind:'currency-range', section:'Terms', title:'What\u2019s your salary expectation?', sub:'Helps match you to relevant opportunities. Pick your currency.', period:'year', required:true })
+  if (isSpeaker || isFacilitator) s.push({ key:'fee_range', kind:'currency-range', section:'Terms', title: isFacilitator && isSpeaker ? 'Your speaking / facilitation fee?' : isSpeaker ? 'Your speaking fee?' : 'Your facilitation day rate?', sub:'Visible on your profile. Pick your currency.', period:'engagement', required:true })
+  s.push({ key:'modality', kind:'multi-chip', section:'Terms', title:'What work modality do you prefer?', sub:'Select all that apply.', options:MODALITY, required:true })
 
   s.push({ key:'review', kind:'review', section:'Review' })
   return s
@@ -605,7 +605,7 @@ function ScreenBody(props) {
               )
             })}
           </div>
-          <ContinueBar onNext={goNext} nextDisabled={!allValid} saving={saving} showSkip={!screen.required} />
+          <ContinueBar onNext={goNext} nextDisabled={!allValid} saving={saving} />
         </div>
       )
     }
@@ -628,7 +628,7 @@ function ScreenBody(props) {
           />
           {showError && <ErrorText>{validatorError(screen.validator)}</ErrorText>}
           {screen.maxLength && <CharCount val={val} max={screen.maxLength} />}
-          <ContinueBar onNext={goNext} nextDisabled={!isValid} saving={saving} showSkip={!screen.required && !val} />
+          <ContinueBar onNext={goNext} nextDisabled={!isValid} saving={saving} />
         </div>
       )
     }
@@ -664,7 +664,7 @@ function ScreenBody(props) {
                 : <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
-          <ContinueBar onNext={goNext} nextDisabled={!isValid} saving={saving} showSkip={!screen.required && !val} />
+          <ContinueBar onNext={goNext} nextDisabled={!isValid} saving={saving} />
         </div>
       )
     }
@@ -675,7 +675,7 @@ function ScreenBody(props) {
           <Title>{screen.title}</Title>
           {screen.sub && <Sub>{screen.sub}</Sub>}
           <CurrencyRangeInput value={val} onChange={v => set(screen.key, v)} periodLabel={screen.period} />
-          <ContinueBar onNext={goNext} nextDisabled={false} saving={saving} showSkip={!screen.required && !val} />
+          <ContinueBar onNext={goNext} nextDisabled={screen.required && !val} saving={saving} />
         </div>
       )
     }
@@ -692,13 +692,13 @@ function ScreenBody(props) {
               <Chip key={o} label={o} on={current === o} onClick={() => set('industry', o)} color={GOLD} />
             ))}
           </div>
-          <Sub>Looking to move into a different industry? Optional — pick a second one, or skip.</Sub>
+          <Sub>Which industry would you like to move into?</Sub>
           <div style={{ display:'flex', flexWrap:'wrap', gap:'8px', marginBottom:'8px' }}>
             {screen.options.map(o => (
-              <Chip key={o} label={o} on={preferred === o} onClick={() => set('preferred_industry', preferred === o ? '' : o)} color="#7F77DD" />
+              <Chip key={o} label={o} on={preferred === o} onClick={() => set('preferred_industry', o)} color="#7F77DD" />
             ))}
           </div>
-          <ContinueBar onNext={goNext} nextDisabled={!current} saving={saving} showSkip={false} />
+          <ContinueBar onNext={goNext} nextDisabled={!current || !preferred} saving={saving} />
         </div>
       )
     }
@@ -713,7 +713,6 @@ function ScreenBody(props) {
               <Chip key={o} label={o} on={val === o} onClick={() => selectAndAdvance(screen.key, o)} color={GOLD} />
             ))}
           </div>
-          {!screen.required && <SkipLink onSkip={goNext} />}
         </div>
       )
     }
@@ -770,7 +769,7 @@ function ScreenBody(props) {
                 onClick={() => { if (!on && atMax) return; toggleArr(screen.key, o) }} />
             })}
           </div>
-          <ContinueBar onNext={goNext} nextDisabled={screen.required && arr.length === 0} saving={saving} showSkip={!screen.required && arr.length === 0} />
+          <ContinueBar onNext={goNext} nextDisabled={screen.required && arr.length === 0} saving={saving} />
         </div>
       )
     }
@@ -831,7 +830,7 @@ function ScreenBody(props) {
               </button>
             )}
           </div>
-          <ContinueBar onNext={goNext} nextDisabled={false} saving={saving} showSkip />
+          <ContinueBar onNext={goNext} nextDisabled={screen.required && rows.length === 0} saving={saving} />
         </div>
       )
     }
@@ -840,6 +839,7 @@ function ScreenBody(props) {
       const links = val || ['']
       const checks = links.map(url => !url.trim() || !screen.validator || VALIDATORS[screen.validator](url))
       const allValid = checks.every(Boolean)
+      const hasOne = links.some(u => u.trim())
       return (
         <div>
           <Title>{screen.title}</Title>
@@ -863,7 +863,7 @@ function ScreenBody(props) {
               <button onClick={() => set(screen.key, [...links, ''])} style={ghostBtnStyle}>+ Add video</button>
             )}
           </div>
-          <ContinueBar onNext={goNext} nextDisabled={!allValid} saving={saving} showSkip />
+          <ContinueBar onNext={goNext} nextDisabled={!allValid || (screen.required && !hasOne)} saving={saving} />
         </div>
       )
     }
@@ -886,7 +886,7 @@ function ScreenBody(props) {
               <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display:'none' }} onChange={e => e.target.files[0] && uploadPhoto(e.target.files[0])} />
             </div>
           </div>
-          <ContinueBar onNext={goNext} nextDisabled={photoUploading} saving={saving} showSkip={!form.photo_url} />
+          <ContinueBar onNext={goNext} nextDisabled={photoUploading || (screen.required && !form.photo_url)} saving={saving} />
         </div>
       )
     }
@@ -910,7 +910,7 @@ function ScreenBody(props) {
           </div>
           <p style={{ fontSize:'11px', color:DIM, margin:0, lineHeight:1.6 }}>PDF or Word, up to 10MB. Kept private — never shown to anyone directly.</p>
           {cvError && <p style={{ fontSize:'11px', color:'#F09595', margin:'6px 0 0', lineHeight:1.5 }}>{cvError}</p>}
-          <ContinueBar onNext={goNext} nextDisabled={cvUploading} saving={saving} showSkip={!form.cv_url} />
+          <ContinueBar onNext={goNext} nextDisabled={cvUploading || (screen.required && !form.cv_url)} saving={saving} />
         </div>
       )
     }
@@ -1045,18 +1045,13 @@ function Chip({ label, on, onClick, color, disabled }) {
   )
 }
 
-function SkipLink({ onSkip }) {
-  return <button onClick={onSkip} style={{ background:'none', border:'none', color:DIM, fontSize:'12px', cursor:'pointer', fontFamily:'inherit', textDecoration:'underline', padding:0 }}>Skip this question →</button>
-}
-
-function ContinueBar({ onNext, nextDisabled, saving, showSkip }) {
+function ContinueBar({ onNext, nextDisabled, saving }) {
   return (
-    <div style={{ display:'flex', alignItems:'center', gap:'16px', marginTop: showSkip ? '4px' : '8px' }}>
+    <div style={{ display:'flex', alignItems:'center', gap:'16px', marginTop:'8px' }}>
       <button onClick={onNext} disabled={nextDisabled || saving}
         style={{ padding:'14px 32px', background: !nextDisabled && !saving ? GOLD : 'rgba(201,168,76,.2)', color: !nextDisabled && !saving ? DARK : 'rgba(201,168,76,.4)', fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor: !nextDisabled && !saving ? 'pointer' : 'not-allowed', fontFamily:'inherit' }}>
         {saving ? 'SAVING…' : 'CONTINUE →'}
       </button>
-      {showSkip && <SkipLink onSkip={onNext} />}
     </div>
   )
 }
