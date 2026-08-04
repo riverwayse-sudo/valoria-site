@@ -69,7 +69,7 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
     { key:'location', placeholder:'City, country', validator:'place' },
     { key:'years_experience', placeholder:'Years of experience', inputType:'number', validator:'number' },
   ], required:true })
-  s.push({ key:'bio', kind:'textarea', section:'Profile', title:'Write a short bio.', sub:'Third person, 2–4 sentences. What you do, who you serve, what makes you distinct.', placeholder:'Chioma Adeyemi is a fintech growth strategist with 12 years of experience...', maxLength:600, required:true })
+  s.push({ key:'bio', kind:'textarea', section:'Profile', title:'Write a short bio.', sub:'First person, 3–4 sentences. What you do, who you serve, what makes you distinct.', placeholder:'I\u2019m a fintech growth strategist with 12 years of experience...', maxLength:600, required:true })
   s.push({ key:'languages', kind:'multi-chip', section:'Profile', title:'Which languages do you speak?', sub:'Select all that apply.', options:LANGUAGES, required:true })
   s.push({ key:'visibility', kind:'visibility', section:'Profile' })
 
@@ -90,7 +90,12 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
 
   s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'Profiles with a photo receive significantly more introduction requests.', required:true })
   s.push({ key:'cv_url', kind:'cv', section:'Media', title:'Upload your CV.', sub:'PDF or Word. We use this to auto-summarise your background on your profile.', required:true })
-  s.push({ key:'youtube_links', kind:'link-list', section:'Media', title: isSpeaker ? 'Add your speaker reel.' : 'Add a video link.', sub:'YouTube URLs, up to 4.', max:4, required:true, validator:'youtube' })
+  // Candidates don't get asked for this — video links are a Speaker/
+  // Facilitator thing (per the owner's 31 Jul note: "candidates don't get
+  // to upload youtube videos"). Today's blanket required:true sweep
+  // briefly made this show to everyone; gating it back to non-candidate
+  // tracks only.
+  if (isSpeaker || isFacilitator) s.push({ key:'youtube_links', kind:'link-list', section:'Media', title: isSpeaker ? 'Add your speaker reel.' : 'Add a video link.', sub:'YouTube URLs, up to 4.', max:4, required:true, validator:'youtube' })
   s.push({ key:'linkedin_url', kind:'field-pair', section:'Media', title:'LinkedIn, and a personal site or portfolio?', fields:[
     { key:'linkedin_url', placeholder:'https://linkedin.com/in/yourname', inputType:'url', validator:'linkedin' },
     { key:'website_url', placeholder:'https://yourwebsite.com', inputType:'url', validator:'url' },
