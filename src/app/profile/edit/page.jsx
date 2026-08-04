@@ -230,7 +230,7 @@ function EditPageInner() {
         {errorMsg && <div style={S.errorBanner}>{errorMsg}</div>}
 
         <Section title="Basics" dirty={dirty.basics} saving={saving.basics} saved={saved.basics}
-          onSave={() => saveSection('basics', ['display_name','username','phone','headline','industry','preferred_industry','location','years_experience'])}>
+          onSave={() => saveSection('basics', ['display_name','username','phone','current_job_title','headline','industry','preferred_industry','location','years_experience'])}>
           <div style={S.grid2}>
             <Field label="Name"><TextInput value={form.display_name} onChange={v => setField('basics','display_name',v)} /></Field>
             <Field label="Username" error={form.username && !VALIDATORS.username(form.username) ? validatorError('username') : null}>
@@ -239,6 +239,7 @@ function EditPageInner() {
             <Field label="Phone" error={form.phone && !VALIDATORS.phone(form.phone) ? validatorError('phone') : null}>
               <TextInput value={form.phone} onChange={v => setField('basics','phone',v)} />
             </Field>
+            <Field label="Current job title"><TextInput value={form.current_job_title} onChange={v => setField('basics','current_job_title',v)} /></Field>
             <Field label="Headline"><TextInput value={form.headline} onChange={v => setField('basics','headline',v)} /></Field>
             <Field label="Location" error={form.location && !VALIDATORS.place(form.location) ? validatorError('place') : null}>
               <TextInput value={form.location} onChange={v => setField('basics','location',v)} placeholder="City, country" />

@@ -17,7 +17,7 @@ const PRIME_COLORS = { P:'#1D9E75', R:'#378ADD', I:'#7F77DD', M:'#BA7517', E:'#D
 const EMPTY_FORM = {
   active_tracks: [],
   username: '', phone: '',
-  display_name: '', headline: '', location: '', industry: '', preferred_industry: '',
+  display_name: '', current_job_title: '', headline: '', location: '', industry: '', preferred_industry: '',
   years_experience: '', bio: '', languages: [],
   visibility: 'registered_only',
   skills: [], topics: [], facilitation_topics: [],
@@ -64,6 +64,7 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your name stays private — it\u2019s only shared once Valoria facilitates an introduction.', placeholder:'Your full professional name', required:true })
   s.push({ key:'username', kind:'text', section:'Profile', title:'Choose a username.', sub:'This is how you\u2019ll be identified on Valoria. Letters, numbers, dots, underscores or hyphens — no spaces.', placeholder:'e.g. chioma_adeyemi', required:true, validator:'username' })
   s.push({ key:'phone', kind:'text', section:'Profile', inputType:'tel', title:'What\u2019s your phone number?', sub:'Kept private — only shared once Valoria facilitates an introduction.', placeholder:'+234 801 234 5678', required:true, validator:'phone' })
+  s.push({ key:'current_job_title', kind:'text', section:'Profile', title:'What\u2019s your current job title?', sub:'Your actual title — this stays factual and separate from your headline below.', placeholder:'e.g. Senior Product Manager', required:true })
   s.push({ key:'headline', kind:'text', section:'Profile', title:'Sum up what you do in one line.', sub:'This is the first thing people see on your profile.', placeholder: isSpeaker ? 'e.g. Executive Coach & Leadership Speaker' : 'e.g. Head of Strategy — Fintech & Payments', maxLength:100, required:true })
   s.push({ key:'location', kind:'field-pair', section:'Profile', title:'Where are you based, and for how long have you worked?', fields:[
     { key:'location', placeholder:'City, country', validator:'place' },
@@ -207,6 +208,7 @@ function ProfileSetupForm() {
           // single-select string, same mismatch pattern as availability below.
           preferred_industry:  Array.isArray(existing.preferred_industries) ? (existing.preferred_industries[0] || f.preferred_industry) : f.preferred_industry,
           username:            existing.username || f.username,
+          current_job_title:   existing.current_job_title || f.current_job_title,
           phone:               existing.phone || f.phone,
           active_tracks:       existing.active_tracks || f.active_tracks,
           languages:           existing.languages || f.languages,
@@ -350,6 +352,7 @@ function ProfileSetupForm() {
       youtube_links: f.youtube_links.filter(Boolean),
       linkedin_url: f.linkedin_url || null, website_url: f.website_url || null,
       username: f.username ? f.username.trim() : null,
+      current_job_title: f.current_job_title ? f.current_job_title.trim() : null,
       phone: f.phone ? f.phone.trim() : null,
       // availability + contract_preference are no longer collected here —
       // omitted from the upsert entirely so an existing saved value (from
@@ -372,7 +375,7 @@ function ProfileSetupForm() {
       // nobody is ever asked would make profile_complete permanently false.
       profile_complete: !!(
         f.display_name && f.headline && f.bio && f.active_tracks.length > 0 &&
-        f.industry && f.username && f.phone
+        f.industry && f.username && f.phone && f.current_job_title
       ),
       listing_status: existingListingStatusRef.current || 'pending', updated_at: new Date().toISOString(),
     }, { onConflict: 'id' })

@@ -25,7 +25,7 @@ export const WORK_DURATIONS = ['Less than 1 year','1–2 years','2–3 years','3
 export const FIELD_LABELS = {
   display_name: 'your name', headline: 'your headline', bio: 'your bio',
   active_tracks: 'your path (Talent / Speaker / Facilitator)', industry: 'your industry',
-  username: 'your username', phone: 'your phone number',
+  username: 'your username', phone: 'your phone number', current_job_title: 'your current job title',
 }
 
 export const VALIDATORS = {

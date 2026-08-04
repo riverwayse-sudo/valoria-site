@@ -82,7 +82,7 @@ export default function ProfilePage({ params, searchParams }) {
 
       const { data: real, error: realError } = await supabase
         .from('professional_profiles')
-        .select('id, display_name, headline, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, cv_summary')
+        .select('id, display_name, headline, current_job_title, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, cv_summary')
         .eq('id', id)
         .maybeSingle()
 
@@ -289,6 +289,9 @@ export default function ProfilePage({ params, searchParams }) {
                   {initials} · Verified {displayTrack === 'facilitator' ? 'Facilitator' : displayTrack === 'speaker' ? 'Speaker' : 'Professional'}
                 </span>
               </div>
+              {p.current_job_title && (
+                <div style={{ fontSize:'12px', fontWeight:300, color: DIM, marginTop:'4px' }}>{p.current_job_title}</div>
+              )}
             </div>
 
             {/* CTAs */}
