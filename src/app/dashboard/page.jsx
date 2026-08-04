@@ -282,7 +282,7 @@ export default function DashboardPage() {
           {isSupply && (
             <div style={{ position:'absolute', top:'20px', right:'28px', display:'flex', alignItems:'center', gap:'7px', background:'rgba(26,26,46,.75)', border:`1px solid ${GLINE2}`, padding:'7px 16px 7px 12px', borderRadius:'999px', fontSize:'11px', letterSpacing:'.1em', textTransform:'uppercase', color: isVisible ? '#1D9E75' : GOLD, backdropFilter:'blur(8px)' }}>
               <div style={{ width:'7px', height:'7px', borderRadius:'50%', background: isVisible ? '#1D9E75' : '#888', boxShadow: isVisible ? '0 0 0 0 rgba(29,158,117,.6)' : 'none', animation: isVisible ? 'dv-pulse 2s infinite' : 'none' }} />
-              {isVisible ? 'Listed — Visible to Buyers' : 'Not Listed'}
+              {isVisible ? 'Green Listed' : 'Not Listed'}
             </div>
           )}
           <div style={{ position:'absolute', inset:0, background:`linear-gradient(180deg, transparent 35%, ${DARK} 100%)` }} />
