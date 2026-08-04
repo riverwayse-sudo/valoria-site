@@ -205,6 +205,14 @@ function EditPageInner() {
       const { error } = await supabase.storage.from('cvs').upload(path, file, { upsert: true })
       if (error) throw error
       setField('media', 'cv_url', path)
+      // Fire-and-forget, same as onboarding — see api/cv-summary/route.js.
+      supabase.auth.getSession().then(({ data }) => {
+        if (!data.session) return
+        fetch('/api/cv-summary', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${data.session.access_token}` },
+        }).catch(err => console.error('CV summarization request failed:', err))
+      })
     } catch (err) {
       console.error('CV upload failed:', err)
       setErrorMsg(err?.message || 'CV upload failed.')

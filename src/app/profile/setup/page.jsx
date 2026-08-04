@@ -310,6 +310,17 @@ function ProfileSetupForm() {
       const { error } = await supabase.storage.from('cvs').upload(path, file, { upsert: true })
       if (error) throw error
       setForm(f => ({ ...f, cv_url: path, cv_filename: file.name }))
+      // Fire-and-forget — summarization takes a few seconds and shouldn't
+      // block onboarding. If it fails (e.g. missing API key, scanned PDF),
+      // the About section on the profile page already falls back to the
+      // VALU Index summary or bio, so there's nothing to surface here.
+      supabase.auth.getSession().then(({ data }) => {
+        if (!data.session) return
+        fetch('/api/cv-summary', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${data.session.access_token}` },
+        }).catch(err => console.error('CV summarization request failed:', err))
+      })
     } catch (err) {
       console.error('CV upload failed:', err)
       setCvError(err?.message || 'Upload failed. Please try a different file.')
