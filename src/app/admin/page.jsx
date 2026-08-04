@@ -60,14 +60,19 @@ export default function AdminPage() {
   }, [])
 
   async function fetchMessages() {
+    // Was querying 'messages' — a stale table nothing writes to anymore.
+    // The real Request Intro feature (EnquiryForm -> /api/enquiries) has
+    // written to 'enquiries' since 24 Jul; this admin view was never
+    // updated to match, so it would have silently shown nothing the
+    // moment real enquiries started coming in.
     const { data } = await supabase
-      .from('messages')
+      .from('enquiries')
       .select(`
         *,
-        recipient:recipient_profile_id ( id, display_name, headline, active_tracks, photo_url )
+        recipient:professional_profile_id ( id, display_name, headline, active_tracks, photo_url )
       `)
       .order('created_at', { ascending: false })
-    setMessages(data || [])
+    setMessages((data || []).map(d => ({ ...d, recipient_profile_id: d.professional_profile_id })))
   }
 
   async function fetchProfiles() {
@@ -107,7 +112,7 @@ export default function AdminPage() {
 
   async function updateMessageStatus(id, status) {
     setUpdatingId(id)
-    await supabase.from('messages').update({ status }).eq('id', id)
+    await supabase.from('enquiries').update({ status }).eq('id', id)
     setMessages(prev => prev.map(m => m.id === id ? { ...m, status } : m))
     setUpdatingId(null)
   }

@@ -99,7 +99,7 @@ export default function Nav() {
   //  - logged in, professional  -> straight to their own profile
   //  - logged in, buyer/none    -> dashboard (no profile page to send them to)
   const cta = !launched
-    ? { label: 'JOIN THE WAITLIST', href: '/#waitlist' }
+    ? { label: 'JOIN THE WAITLIST', href: '/waitlist' }
     : user
       ? (accountType === 'professional'
           ? { label: 'MY PROFILE', href: `/profile/${user.id}` }

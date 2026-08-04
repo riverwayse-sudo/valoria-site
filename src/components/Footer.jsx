@@ -78,8 +78,8 @@ export default function Footer() {
                 <li><a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer">VALU Index</a></li>
                 <li><MarketplaceCTA>Marketplace</MarketplaceCTA></li>
                 <li><Link href="/prime">PRIME Framework</Link></li>
-                <li><Link href="/atb-connect">ATB Connect</Link></li>
-                <li><Link href="/atb-spotlight">ATB Spotlight</Link></li>
+                <li><Link href="/marketplace?track=candidate">ATB Connect</Link></li>
+                <li><Link href="/marketplace?track=speaker">ATB Spotlight</Link></li>
                 <li><Link href="/facilitators">Facilitators</Link></li>
               </ul>
             </div>
@@ -89,7 +89,7 @@ export default function Footer() {
               <ul className="uf-links">
                 <li><Link href="/about-us">About Us</Link></li>
                 <li><Link href="/programmes">Programmes</Link></li>
-                <li><Link href="/develop">Develop</Link></li>
+                <li><Link href="/marketplace?track=facilitator">Develop</Link></li>
                 <li><Link href="/contact-us">Contact</Link></li>
                 <li><Link href="/waitlist">Founding Cohort</Link></li>
               </ul>

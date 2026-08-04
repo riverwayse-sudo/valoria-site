@@ -56,7 +56,7 @@ export const ENTRY_POINTS = [
     color: COLORS.blue,
     modality: 'CANDIDATE MODALITY',
     desc: "Search pre-assessed candidates by VALU Index score, cluster strength, sector, and designation. Every professional in the pool has been independently assessed. Hire with intelligence, not with hope.",
-    href: '/atb-connect',
+    href: '/marketplace?track=candidate',
     linkLabel: 'SEARCH TALENT',
   },
   {
@@ -67,7 +67,7 @@ export const ENTRY_POINTS = [
     color: COLORS.gold,
     modality: 'SPEAKER MODALITY',
     desc: 'Discover and book speakers by expertise, tier designation, and VALU Index. The same faces appear at every conference because there has been no better way to find the others. Until now.',
-    href: '/atb-spotlight',
+    href: '/marketplace?track=speaker',
     linkLabel: 'FIND A SPEAKER',
   },
   {

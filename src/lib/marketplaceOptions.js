@@ -1,6 +1,7 @@
 // Single source of truth for the three marketplace entry points.
-// Used by MarketplaceModal (popup) and the /marketplace page (direct-visit
-// fallback) so the copy, colors, and links never drift apart.
+// Used by MarketplaceModal (popup) so the copy, colors, and links never
+// drift apart. (/marketplace itself is now a real unified listing with its
+// own tabs, not a fallback that reads this file.)
 
 export const MARKETPLACE_OPTIONS = [
   {
@@ -10,7 +11,7 @@ export const MARKETPLACE_OPTIONS = [
     desc: 'Search pre-assessed candidates by score, strength, and sector.',
     cta: 'Find Talent',
     color: '#378ADD',
-    href: '/atb-connect',
+    href: '/marketplace?track=candidate',
   },
   {
     key: 'spotlight',
@@ -19,7 +20,7 @@ export const MARKETPLACE_OPTIONS = [
     desc: 'Discover and book speakers whose capability you can actually verify.',
     cta: 'Book a Speaker',
     color: '#C9A84C',
-    href: '/atb-spotlight',
+    href: '/marketplace?track=speaker',
   },
   {
     key: 'develop',
@@ -28,6 +29,6 @@ export const MARKETPLACE_OPTIONS = [
     desc: 'Commission PRIME-certified facilitators with an assessed track record.',
     cta: 'Commission a Facilitator',
     color: '#1D9E75',
-    href: '/develop',
+    href: '/marketplace?track=facilitator',
   },
 ]
