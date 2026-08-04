@@ -351,13 +351,6 @@ function EditPageInner() {
             <Field label="Certifications"><TextInput value={form.certifications} onChange={v => setField('facilitator','certifications',v)} /></Field>
           </Section>
         )}
-
-        <Section title="Visibility" dirty={dirty.visibility} saving={saving.visibility} saved={saved.visibility}
-          onSave={() => saveSection('visibility', ['visibility'])}>
-          <ChipGroup multi={false} selected={form.visibility}
-            options={[{value:'registered_only',label:'Visible to registered buyers'},{value:'private',label:'Hidden from the marketplace'}]}
-            onToggle={v => setField('visibility','visibility',v)} />
-        </Section>
       </div>
     </div>
   )

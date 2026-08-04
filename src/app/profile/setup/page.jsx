@@ -71,7 +71,10 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   ], required:true })
   s.push({ key:'bio', kind:'textarea', section:'Profile', title:'Write a short bio.', sub:'First person, 3–4 sentences. What you do, who you serve, what makes you distinct.', placeholder:'I\u2019m a fintech growth strategist with 12 years of experience...', maxLength:600, required:true })
   s.push({ key:'languages', kind:'multi-chip', section:'Profile', title:'Which languages do you speak?', sub:'Select all that apply.', options:LANGUAGES, required:true })
-  s.push({ key:'visibility', kind:'visibility', section:'Profile' })
+  // Visibility choice removed (1 Aug 2026) — every profile must be
+  // available in the marketplace, so this is no longer a decision the
+  // person makes; visibility is hardcoded to 'registered_only' in
+  // saveProgress below instead.
 
   // The self-report "What are your core skills?" question was removed here —
   // replaced by the current/preferred industry pair at the top of this
@@ -335,7 +338,7 @@ function ProfileSetupForm() {
       // match a real column, so every field below was failing to save too.
       experience_years: f.years_experience ? parseInt(f.years_experience) : null,
       bio: f.bio || null, languages: f.languages, active_tracks: f.active_tracks,
-      visibility: f.visibility || 'registered_only',
+      visibility: 'registered_only',
       skills: f.skills, topics: f.topics, facilitation_topics: f.facilitation_topics,
       programme_types: f.programme_types, format_capabilities: f.format_capabilities,
       audience_sizes: f.audience_sizes, pcp_certified: f.pcp_certified,
@@ -775,33 +778,6 @@ function ScreenBody(props) {
             })}
           </div>
           <ContinueBar onNext={goNext} nextDisabled={screen.required && arr.length === 0} saving={saving} />
-        </div>
-      )
-    }
-
-    case 'visibility': {
-      const OPTIONS = [
-        { value: 'public',      label: 'Public — Anyone', desc: 'Visible to all visitors, including those without a Valoria account. Search engines may index your profile.' },
-        { value: 'registered_only', label: 'Registered only', desc: 'Visible to signed-in Valoria members only. Recommended — keeps your profile in the marketplace while limiting exposure.' },
-        { value: 'private',     label: 'Private — Hidden', desc: 'Hidden from the marketplace entirely. Useful if you\'re not actively seeking opportunities.' },
-      ]
-      return (
-        <div>
-          <Title>Who should be able to see your profile?</Title>
-          <Sub>You can change this at any time from your profile settings.</Sub>
-          <div style={{ display:'flex', flexDirection:'column', gap:'10px', margin:'24px 0 28px' }}>
-            {OPTIONS.map(o => {
-              const selected = val === o.value
-              return (
-                <div key={o.value} onClick={() => set(screen.key, o.value)}
-                  style={{ padding:'14px 16px', border:`1.5px solid ${selected ? GOLD : 'rgba(201,168,76,.15)'}`, borderRadius:'8px', background: selected ? 'rgba(201,168,76,.07)' : 'rgba(255,255,255,.03)', cursor:'pointer' }}>
-                  <div style={{ fontSize:'13px', fontWeight:600, color: selected ? GOLD : PARCH, marginBottom:'4px' }}>{o.label}</div>
-                  <div style={{ fontSize:'12px', color:'rgba(247,244,238,.45)', lineHeight:1.5 }}>{o.desc}</div>
-                </div>
-              )
-            })}
-          </div>
-          <ContinueBar onNext={goNext} nextDisabled={false} saving={saving} />
         </div>
       )
     }
