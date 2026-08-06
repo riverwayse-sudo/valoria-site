@@ -63,6 +63,58 @@ const PRIME   = [
   { letter: 'E', color: '#D85A30', label: 'Enterprise' },
 ]
 
+// Spider/radar chart of the 5 PRIME cluster scores — same visualization
+// shown on the VALU Index "Find My Report" results page (assessment app),
+// requested here so a profile's PRIME breakdown reads the same way in
+// both places instead of the old plain bar list.
+function PrimeRadarChart({ scores, size = 260 }) {
+  const center = size / 2
+  const maxR = size * 0.36
+  const n = PRIME.length
+  const angleFor = i => (-90 + i * (360 / n)) * (Math.PI / 180)
+  const pointAt = (i, frac) => {
+    const a = angleFor(i)
+    return [center + maxR * frac * Math.cos(a), center + maxR * frac * Math.sin(a)]
+  }
+  const ringLevels = [0.25, 0.5, 0.75, 1]
+  const dataPoints = PRIME.map((c, i) => pointAt(i, (scores[c.letter] ?? 0) / 100))
+  const dataPath = dataPoints.map(p => p.join(',')).join(' ')
+
+  return (
+    <svg viewBox={`0 0 ${size} ${size}`} width="100%" style={{ maxWidth: `${size}px`, display: 'block', margin: '0 auto' }}>
+      {/* concentric grid rings */}
+      {ringLevels.map(level => (
+        <polygon key={level}
+          points={PRIME.map((_, i) => pointAt(i, level).join(',')).join(' ')}
+          fill="none" stroke="rgba(201,168,76,.14)" strokeWidth="1" />
+      ))}
+      {/* axis spokes */}
+      {PRIME.map((c, i) => {
+        const [x, y] = pointAt(i, 1)
+        return <line key={c.letter} x1={center} y1={center} x2={x} y2={y} stroke="rgba(201,168,76,.14)" strokeWidth="1" />
+      })}
+      {/* data shape */}
+      <polygon points={dataPath} fill="rgba(201,168,76,.18)" stroke={GOLD} strokeWidth="1.5" strokeLinejoin="round" />
+      {dataPoints.map((p, i) => (
+        <circle key={i} cx={p[0]} cy={p[1]} r="3.5" fill={PRIME[i].color} stroke={DARK} strokeWidth="1.5" />
+      ))}
+      {/* axis labels + scores */}
+      {PRIME.map((c, i) => {
+        const [lx, ly] = pointAt(i, 1.24)
+        const score = scores[c.letter]
+        return (
+          <g key={c.letter}>
+            <text x={lx} y={ly - 4} textAnchor="middle" fontSize="11" fontWeight="700" fill={c.color} fontFamily="inherit">{c.letter}</text>
+            {score != null && (
+              <text x={lx} y={ly + 9} textAnchor="middle" fontSize="9" fill="rgba(247,244,238,.5)" fontFamily="inherit">{score}</text>
+            )}
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
 // ─── component ─────────────────────────────────────────────
 export default function ProfilePage({ params, searchParams }) {
   const { id } = params
@@ -377,20 +429,8 @@ export default function ProfilePage({ params, searchParams }) {
                   <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_score}<span style={{ fontSize:'20px', color: DIM, fontWeight:400 }}>/100</span></div>
                   {p.designation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{p.designation.replace(/_/g,' ')}</div>}
                   {p.cluster_scores && (
-                    <div>
-                      {PRIME.map(({ letter, color }) => {
-                        const score = p.cluster_scores[letter]
-                        if (score == null) return null
-                        return (
-                          <div key={letter} style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'11px' }}>
-                            <span style={{ fontSize:'11px', fontWeight:700, color, width:'12px', flexShrink:0 }}>{letter}</span>
-                            <div style={{ flex:1, height:'4px', background: FAINT, borderRadius:'2px', overflow:'hidden' }}>
-                              <div style={{ height:'100%', width:`${score}%`, background: color, borderRadius:'2px' }} />
-                            </div>
-                            <span style={{ fontSize:'11px', color: DIM, width:'20px', textAlign:'right', flexShrink:0 }}>{score}</span>
-                          </div>
-                        )
-                      })}
+                    <div style={{ marginTop:'8px' }}>
+                      <PrimeRadarChart scores={p.cluster_scores} />
                     </div>
                   )}
                 </>
