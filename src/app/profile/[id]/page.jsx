@@ -29,31 +29,11 @@ const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Ma
 // Strengths" card to turn a raw cluster score into something a buyer can
 // actually read as a strength, rather than just a number on the radar chart.
 const CLUSTER_STRENGTH_COPY = {
-  P: 'Projects strong executive presence and personal brand — the kind of professional people remember and refer.',
-  R: 'Builds trust quickly and manages relationships with genuine skill — a natural collaborator and connector.',
-  I: 'Thinks clearly under pressure and applies sound judgement to complex, ambiguous situations.',
-  M: 'Demonstrates strong command of their craft, with consistent follow-through on high standards.',
-  E: 'Shows real ownership and initiative — spots opportunities and acts on them rather than waiting to be asked.',
-}
-// Builds the "About" copy from the VALU Index result (designation + top
-// clusters) rather than a free-text bio — a positive-framed summary of
-// what the assessment found strong, not a self-written blurb. Falls back
-// to the cv_summary (once CV upload/summarisation ships) or the bio field
-// if no assessment has been completed yet, so nobody's About section goes
-// empty just because this ships ahead of that.
-function buildAssessmentSummary(p) {
-  if (p.cv_summary) return p.cv_summary
-  if (p.valu_score == null || !p.cluster_scores) return null
-  const ranked = Object.entries(p.cluster_scores)
-    .filter(([, v]) => v != null)
-    .sort((a, b) => b[1] - a[1])
-  const top = ranked.slice(0, 2).map(([letter]) => CLUSTER_NAMES[letter]).filter(Boolean)
-  const designationText = p.designation ? p.designation.replace(/_/g, ' ').toLowerCase() : null
-  const strengths = top.length === 2 ? `${top[0]} and ${top[1]}` : top[0]
-  const parts = []
-  parts.push(`Scored ${p.valu_score}/100 on the VALU Index${designationText ? `, assessed as ${designationText}` : ''}.`)
-  if (strengths) parts.push(`Strongest in ${strengths}.`)
-  return parts.join(' ')
+  P: 'Comes across with real executive presence and a strong personal brand. People remember them and are quick to refer them.',
+  R: 'Builds trust quickly and handles relationships with genuine skill. A natural collaborator that people enjoy working with.',
+  I: 'Thinks clearly under pressure and brings sound judgement to complex, uncertain situations.',
+  M: 'Has a strong command of their craft, with consistent follow through on high standards.',
+  E: 'Shows real ownership and initiative. Spots opportunities and acts on them instead of waiting to be asked.',
 }
 
 // ─── brand tokens ─────────────────────────────────────────────
@@ -543,37 +523,37 @@ export default function ProfilePage({ params, searchParams }) {
               ) : null
             })()}
 
-            {/* About — leads with the VALU Index summary (positive-framed
-                strengths, not a self-written blurb) once assessed; falls
-                back to bio until then so this section is never empty. */}
+            {/* About — a brief introduction in the professional's own words.
+                The VALU Index summary used to live here, but that's now
+                covered by the Key Strengths card below, so this section
+                is free to just be the bio. */}
             <Section label="About">
-              {(() => {
-                const summary = buildAssessmentSummary(p)
-                if (summary) return <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{summary}</p>
-                if (p.bio) return <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
-                return <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No bio added yet.</p>
-              })()}
+              {p.bio
+                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
+                : p.cv_summary
+                  ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.cv_summary}</p>
+                  : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No bio added yet.</p>}
             </Section>
 
-            {/* Key Strengths — rectangular card surfacing the top-scoring
-                PRIME clusters as concrete, positive-framed points, rather
-                than making a buyer read the radar chart to figure out what
-                the assessment actually found strong. Only shows once the
-                VALU Index has been completed. */}
+            {/* Key Strengths — rectangular card, gold background per brand,
+                surfacing the top-scoring PRIME clusters as concrete points
+                rather than making a buyer read the radar chart to figure out
+                what the assessment actually found strong. Only shows once
+                the VALU Index has been completed. */}
             {p.cluster_scores && (
-              <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'32px' }}>
-                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'16px' }}>Key Strengths</div>
+              <div style={{ background: GOLD, padding:'22px', marginBottom:'32px' }}>
+                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(15,15,26,.55)', marginBottom:'16px' }}>Key Strengths</div>
                 <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
-                  {rankedClusterStrengths(p.cluster_scores).map(({ letter, name, score, color, blurb }) => (
+                  {rankedClusterStrengths(p.cluster_scores).map(({ letter, name, score, blurb }) => (
                     <div key={letter} style={{ display:'flex', gap:'14px', alignItems:'flex-start' }}>
-                      <div style={{ width:'32px', height:'32px', borderRadius:'50%', border:`1px solid ${color}`, color, fontSize:'12px', fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                      <div style={{ width:'32px', height:'32px', borderRadius:'50%', border:`1.5px solid ${DARK}`, color: DARK, fontSize:'12px', fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                         {letter}
                       </div>
                       <div>
-                        <div style={{ fontSize:'13px', fontWeight:600, color: PARCH, marginBottom:'4px' }}>
-                          {name} <span style={{ color: DIM, fontWeight:400 }}>· {score}/100</span>
+                        <div style={{ fontSize:'13px', fontWeight:600, color: DARK, marginBottom:'4px' }}>
+                          {name} <span style={{ color:'rgba(15,15,26,.6)', fontWeight:400 }}>· {score}/100</span>
                         </div>
-                        <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, margin:0 }}>{blurb}</p>
+                        <p style={{ fontSize:'13px', fontWeight:400, color:'rgba(15,15,26,.75)', lineHeight:1.7, margin:0 }}>{blurb}</p>
                       </div>
                     </div>
                   ))}
