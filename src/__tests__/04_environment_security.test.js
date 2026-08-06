@@ -114,10 +114,27 @@ describe("Secret scanning — no credentials in source files", () => {
   const DANGEROUS_PATTERNS = [
     { name: "GitHub PAT (ghp_)",         pattern: /ghp_[A-Za-z0-9]{36}/ },
     { name: "GitHub PAT (github_pat_)",  pattern: /github_pat_[A-Za-z0-9_]{82}/ },
-    { name: "Supabase service_role key", pattern: /eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[^.]+\.[^.]+/ },
     { name: "ANTHROPIC_API_KEY value",   pattern: /sk-ant-api[0-9]+-[A-Za-z0-9_-]{86}/ },
     { name: ".env file committed",        pattern: /^\.env$/ },
   ];
+  // Supabase JWTs need their own check, separate from the simple patterns
+  // above: the anon key and the service_role key share the exact same
+  // header/shape (both are plain HS256 JWTs), so a shape-only regex can't
+  // tell a safe, meant-to-be-public anon key from an actually dangerous
+  // service_role key — it flags both identically. That's worse than no
+  // check at all, since a real leak just gets lost in constant false
+  // alarms (this test flagged its own anon-key test fixtures for months).
+  // Decode the payload and only flag it when role is actually service_role.
+  const JWT_PATTERN = /eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[^.\s"'`]+\.[^.\s"'`]+/g;
+  function decodeJwtRole(token) {
+    try {
+      const payload = token.split(".")[1];
+      const json = Buffer.from(payload, "base64").toString("utf8");
+      return JSON.parse(json).role;
+    } catch {
+      return null;
+    }
+  }
 
   // Extensions to scan in source files
   const SCAN_EXTENSIONS = [".js", ".jsx", ".ts", ".tsx", ".json"];
@@ -130,6 +147,10 @@ describe("Secret scanning — no credentials in source files", () => {
         hits.push(name);
       }
     });
+    const jwtMatches = content.match(JWT_PATTERN) || [];
+    if (jwtMatches.some(token => decodeJwtRole(token) === "service_role")) {
+      hits.push("Supabase service_role key");
+    }
     return hits;
   }
 
