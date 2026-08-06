@@ -25,6 +25,16 @@ function getYouTubeId(url) {
   return m ? m[1] : null
 }
 const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Mastery', E:'Enterprise' }
+// Short, positive-framed line per PRIME cluster — used by the "Key
+// Strengths" card to turn a raw cluster score into something a buyer can
+// actually read as a strength, rather than just a number on the radar chart.
+const CLUSTER_STRENGTH_COPY = {
+  P: 'Projects strong executive presence and personal brand — the kind of professional people remember and refer.',
+  R: 'Builds trust quickly and manages relationships with genuine skill — a natural collaborator and connector.',
+  I: 'Thinks clearly under pressure and applies sound judgement to complex, ambiguous situations.',
+  M: 'Demonstrates strong command of their craft, with consistent follow-through on high standards.',
+  E: 'Shows real ownership and initiative — spots opportunities and acts on them rather than waiting to be asked.',
+}
 // Builds the "About" copy from the VALU Index result (designation + top
 // clusters) rather than a free-text bio — a positive-framed summary of
 // what the assessment found strong, not a self-written blurb. Falls back
@@ -62,6 +72,23 @@ const PRIME   = [
   { letter: 'M', color: '#BA7517', label: 'Mastery' },
   { letter: 'E', color: '#D85A30', label: 'Enterprise' },
 ]
+
+// Returns the top-scoring PRIME clusters (highest first), capped at 3, for
+// the "Key Strengths" card under About. Capped so the card only ever shows
+// genuine standouts, not a padded list of all five.
+function rankedClusterStrengths(clusterScores) {
+  if (!clusterScores) return []
+  return Object.entries(clusterScores)
+    .filter(([, v]) => v != null)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([letter, score]) => ({
+      letter, score,
+      name: CLUSTER_NAMES[letter] || letter,
+      color: PRIME.find(c => c.letter === letter)?.color || GOLD,
+      blurb: CLUSTER_STRENGTH_COPY[letter] || '',
+    }))
+}
 
 // Spider/radar chart of the 5 PRIME cluster scores — same visualization
 // shown on the VALU Index "Find My Report" results page (assessment app),
@@ -527,6 +554,32 @@ export default function ProfilePage({ params, searchParams }) {
                 return <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No bio added yet.</p>
               })()}
             </Section>
+
+            {/* Key Strengths — rectangular card surfacing the top-scoring
+                PRIME clusters as concrete, positive-framed points, rather
+                than making a buyer read the radar chart to figure out what
+                the assessment actually found strong. Only shows once the
+                VALU Index has been completed. */}
+            {p.cluster_scores && (
+              <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'32px' }}>
+                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'16px' }}>Key Strengths</div>
+                <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
+                  {rankedClusterStrengths(p.cluster_scores).map(({ letter, name, score, color, blurb }) => (
+                    <div key={letter} style={{ display:'flex', gap:'14px', alignItems:'flex-start' }}>
+                      <div style={{ width:'32px', height:'32px', borderRadius:'50%', border:`1px solid ${color}`, color, fontSize:'12px', fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                        {letter}
+                      </div>
+                      <div>
+                        <div style={{ fontSize:'13px', fontWeight:600, color: PARCH, marginBottom:'4px' }}>
+                          {name} <span style={{ color: DIM, fontWeight:400 }}>· {score}/100</span>
+                        </div>
+                        <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, margin:0 }}>{blurb}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Skills / Topics */}
             {tags.length > 0 && (
