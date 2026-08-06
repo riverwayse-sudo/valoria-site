@@ -1,11 +1,13 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Footer from '@/components/Footer'
 import EntryPointsGrid from '@/components/EntryPointsGrid'
 import WaitlistForm from '@/components/WaitlistForm'
 import { WaitlistSocialProofToast, WaitlistLiveCountBadge } from '@/components/WaitlistSocialProof'
 import { PRIME_CLUSTERS } from '@/lib/brand'
+import { useLaunchStatus } from '@/lib/useLaunchStatus'
 
 // Saturday, July 18, 2026, 10:00 AM WAT (UTC+1) = 09:00 UTC.
 const EVENT_DATE = new Date('2026-07-18T09:00:00Z')
@@ -73,6 +75,21 @@ const WEBINAR_DETAILS = [
 // ─── component ──────────────────────────────────────────────────────────
 export default function WaitlistPage() {
   const timeLeft = useCountdown(EVENT_DATE)
+  const router = useRouter()
+  const launched = useLaunchStatus()
+
+  // Post-launch this page has nothing left to do — the founding-cohort
+  // pitch, the countdown, and the signup form all refer to a webinar that
+  // already happened. Same launch-awareness every other pre-launch surface
+  // (Nav, WaitlistGate, EntryPointsGrid) already got; this route was the
+  // one gap left, which is why it kept surfacing as a live page after
+  // launch. Send visitors to the real entry point instead.
+  useEffect(() => {
+    if (launched) router.replace('/')
+  }, [launched, router])
+
+  if (launched) return null
+
   return (
     <>
       <main style={{ background: DARK, color: PARCH, fontFamily: "var(--font,'Raleway','Helvetica Neue',Arial,sans-serif)", overflow: 'hidden' }}>

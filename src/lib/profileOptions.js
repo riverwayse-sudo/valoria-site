@@ -22,6 +22,19 @@ export const AUDIENCE_SIZES = ['Under 50','50–200','200–500','500–1,000','
 export const NOTICE_PERIODS = ['Immediately','2 weeks','1 month','2 months','3+ months']
 export const WORK_DURATIONS = ['Less than 1 year','1–2 years','2–3 years','3–5 years','5–10 years','10+ years']
 
+// Used by the salary/fee-range currency picker (profile/setup's
+// CurrencyRangeInput). Codes must match the ones parseCurrencyRange() in
+// that file expects: NGN|USD|GBP|EUR|KES|GHS|ZAR.
+export const CURRENCIES = [
+  { code: 'NGN', symbol: '\u20a6' },
+  { code: 'USD', symbol: '$' },
+  { code: 'GBP', symbol: '\u00a3' },
+  { code: 'EUR', symbol: '\u20ac' },
+  { code: 'KES', symbol: 'KSh' },
+  { code: 'GHS', symbol: 'GH\u20b5' },
+  { code: 'ZAR', symbol: 'R' },
+]
+
 export const FIELD_LABELS = {
   display_name: 'your name', headline: 'your headline', bio: 'your bio',
   active_tracks: 'your path (Talent / Speaker / Facilitator)', industry: 'your industry',
