@@ -146,20 +146,27 @@ export default function DashboardPage() {
         }
       }
 
+      // Was querying 'messages' — a stale table nothing has written to
+      // since the real Request Intro feature switched to 'enquiries' on
+      // 24 Jul (same bug already found and fixed in admin/page.jsx's
+      // Messages tab — missed here on first pass). This meant a
+      // professional who received a real intro request saw nothing on
+      // their own dashboard, despite the notification email/bell already
+      // correctly firing.
       if (supply) {
         const { data: msgs } = await supabase
-          .from('messages')
+          .from('enquiries')
           .select('*')
-          .eq('recipient_profile_id', user.id)
+          .eq('professional_profile_id', user.id)
           .order('created_at', { ascending: false })
-        setEnquiries(msgs || [])
+        setEnquiries((msgs || []).map(m => ({ ...m, recipient_profile_id: m.professional_profile_id })))
       } else {
         const { data: msgs } = await supabase
-          .from('messages')
-          .select('*, professional_profiles:recipient_profile_id(display_name, headline, photo_url, active_tracks)')
-          .eq('sender_id', user.id)
+          .from('enquiries')
+          .select('*, professional_profiles:professional_profile_id(display_name, headline, photo_url, active_tracks)')
+          .eq('buyer_user_id', user.id)
           .order('created_at', { ascending: false })
-        setRequests(msgs || [])
+        setRequests((msgs || []).map(m => ({ ...m, recipient_profile_id: m.professional_profile_id })))
       }
       setLoading(false)
     }
@@ -758,15 +765,12 @@ function Section({ label, children }) {
 function EnquiryCard({ msg, isSpeaker }) {
   const date = new Date(msg.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
   const status = STATUS_COLORS[msg.status] || STATUS_COLORS.pending
-  const lines = (msg.body || '').split('\n')
-  const fromLine = lines[0] || ''
-  const orgLine = lines[1] || ''
   return (
     <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'18px 20px' }}>
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:'16px', marginBottom:'8px' }}>
         <div>
           <div style={{ fontSize:'14px', fontWeight:600, color: PARCH, marginBottom:'3px' }}>{msg.subject || (isSpeaker ? 'Booking enquiry' : 'Talent enquiry')}</div>
-          <div style={{ fontSize:'12px', color: DIM, fontWeight:300 }}>{fromLine} · {orgLine}</div>
+          <div style={{ fontSize:'12px', color: DIM, fontWeight:300 }}>{msg.buyer_name}{msg.buyer_company ? ` · ${msg.buyer_company}` : ''}</div>
         </div>
         <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'6px' }}>
           <span style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.08em', padding:'3px 10px', borderRadius:'999px', background: status.bg, color: status.text, whiteSpace:'nowrap' }}>{status.label}</span>
@@ -775,7 +779,7 @@ function EnquiryCard({ msg, isSpeaker }) {
       </div>
       {msg.body && (
         <p style={{ fontSize:'13px', color: DIM, fontWeight:300, lineHeight:1.6, margin:0 }}>
-          {lines.slice(isSpeaker ? 3 : 2).join(' ').trim().slice(0, 180)}{msg.body.length > 180 ? '…' : ''}
+          {msg.body.slice(0, 180)}{msg.body.length > 180 ? '…' : ''}
         </p>
       )}
     </div>
