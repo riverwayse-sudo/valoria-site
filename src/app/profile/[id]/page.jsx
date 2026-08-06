@@ -346,20 +346,34 @@ export default function ProfilePage({ params, searchParams }) {
               )}
             </div>
 
-            {/* CTAs */}
+            {/* CTAs — the "request an intro to yourself" bug: this row never
+                checked isOwnProfile, so a professional viewing their own
+                public listing saw MORE TALENT / REQUEST INTRO (a mailto
+                addressed to their own ATB ID) instead of an edit action.
+                The isOwnProfile branch below is the fix; the buyer-facing
+                branch is unchanged. */}
             <div style={{ display:'flex', gap:'10px', paddingBottom:'16px', flexShrink:0, flexWrap:'wrap' }}>
               <button onClick={copyLink}
                 style={{ padding:'12px 18px', background:'transparent', border:`1px solid ${GLINE}`, color: DIM, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', cursor:'pointer', fontFamily:'inherit' }}>
                 {copied ? 'LINK COPIED' : 'SHARE'}
               </button>
-              <Link href={displayTrack === 'facilitator' ? '/valoria-develop' : displayTrack === 'speaker' ? '/atb-spotlight' : '/atb-connect'}
-                style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
-                MORE {displayTrack === 'facilitator' ? 'FACILITATORS' : displayTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}
-              </Link>
-              <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent((displayTrack === 'facilitator' ? 'Facilitator Commission' : displayTrack === 'speaker' ? 'Speaker Booking' : 'Introduction Request') + ' — ' + atbId)}`}
-                style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
-                {displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
-              </a>
+              {isOwnProfile ? (
+                <Link href="/profile/edit"
+                  style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
+                  EDIT PROFILE
+                </Link>
+              ) : (
+                <>
+                  <Link href={displayTrack === 'facilitator' ? '/valoria-develop' : displayTrack === 'speaker' ? '/atb-spotlight' : '/atb-connect'}
+                    style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
+                    MORE {displayTrack === 'facilitator' ? 'FACILITATORS' : displayTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}
+                  </Link>
+                  <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent((displayTrack === 'facilitator' ? 'Facilitator Commission' : displayTrack === 'speaker' ? 'Speaker Booking' : 'Introduction Request') + ' — ' + atbId)}`}
+                    style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
+                    {displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
+                  </a>
+                </>
+              )}
             </div>
           </div>
         </div>
