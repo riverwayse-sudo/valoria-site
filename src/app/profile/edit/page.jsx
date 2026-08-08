@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase'
 import {
   GOLD, DARK, MID, PARCH, DIM, GLINE,
   INDUSTRIES, SKILLS_POOL, TOPICS_POOL, PROGRAMME_TYPES, LANGUAGES,
-  FORMAT_CAPS, AUDIENCE_SIZES, NOTICE_PERIODS,
+  FORMAT_CAPS, AUDIENCE_SIZES, NOTICE_PERIODS, MODALITY,
   VALIDATORS, validatorError,
 } from '@/lib/profileOptions'
 
@@ -360,6 +360,16 @@ function EditPageInner() {
             <Field label="Certifications"><TextInput value={form.certifications} onChange={v => setField('facilitator','certifications',v)} /></Field>
           </Section>
         )}
+
+        <Section title="Work Preferences" dirty={dirty.modality} saving={saving.modality} saved={saved.modality}
+          onSave={() => saveSection('modality', ['modality'])}>
+          <Field label="Work modality">
+            <ChipGroup options={MODALITY} selected={form.modality} onToggle={v => {
+              const cur = form.modality || []
+              setField('modality','modality', cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v])
+            }} />
+          </Field>
+        </Section>
       </div>
     </div>
   )

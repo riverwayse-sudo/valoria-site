@@ -21,6 +21,7 @@ export const FORMAT_CAPS = ['Keynote','Panel speaker','Workshop facilitator','Ma
 export const AUDIENCE_SIZES = ['Under 50','50–200','200–500','500–1,000','1,000–5,000','5,000+']
 export const NOTICE_PERIODS = ['Immediately','2 weeks','1 month','2 months','3+ months']
 export const WORK_DURATIONS = ['Less than 1 year','1–2 years','2–3 years','3–5 years','5–10 years','10+ years']
+export const MODALITY = ['Remote', 'Hybrid', 'In-person']
 
 export const FIELD_LABELS = {
   display_name: 'your name', headline: 'your headline', bio: 'your bio',
