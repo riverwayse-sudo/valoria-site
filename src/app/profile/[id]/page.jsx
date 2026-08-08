@@ -25,25 +25,15 @@ function getYouTubeId(url) {
   return m ? m[1] : null
 }
 const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Mastery', E:'Enterprise' }
-// Builds the "About" copy from the VALU Index result (designation + top
-// clusters) rather than a free-text bio — a positive-framed summary of
-// what the assessment found strong, not a self-written blurb. Falls back
-// to the cv_summary (once CV upload/summarisation ships) or the bio field
-// if no assessment has been completed yet, so nobody's About section goes
-// empty just because this ships ahead of that.
-function buildAssessmentSummary(p) {
-  if (p.cv_summary) return p.cv_summary
-  if (p.valu_score == null || !p.cluster_scores) return null
-  const ranked = Object.entries(p.cluster_scores)
-    .filter(([, v]) => v != null)
-    .sort((a, b) => b[1] - a[1])
-  const top = ranked.slice(0, 2).map(([letter]) => CLUSTER_NAMES[letter]).filter(Boolean)
-  const designationText = p.designation ? p.designation.replace(/_/g, ' ').toLowerCase() : null
-  const strengths = top.length === 2 ? `${top[0]} and ${top[1]}` : top[0]
-  const parts = []
-  parts.push(`Scored ${p.valu_score}/100 on the VALU Index${designationText ? `, assessed as ${designationText}` : ''}.`)
-  if (strengths) parts.push(`Strongest in ${strengths}.`)
-  return parts.join(' ')
+// Short, positive-framed line per PRIME cluster — used by the "Key
+// Strengths" card to turn a raw cluster score into something a buyer can
+// actually read as a strength, rather than just a number on the radar chart.
+const CLUSTER_STRENGTH_COPY = {
+  P: 'Comes across with real executive presence and a strong personal brand. People remember them and are quick to refer them.',
+  R: 'Builds trust quickly and handles relationships with genuine skill. A natural collaborator that people enjoy working with.',
+  I: 'Thinks clearly under pressure and brings sound judgement to complex, uncertain situations.',
+  M: 'Has a strong command of their craft, with consistent follow through on high standards.',
+  E: 'Shows real ownership and initiative. Spots opportunities and acts on them instead of waiting to be asked.',
 }
 
 // ─── brand tokens ─────────────────────────────────────────────
@@ -62,6 +52,23 @@ const PRIME   = [
   { letter: 'M', color: '#BA7517', label: 'Mastery' },
   { letter: 'E', color: '#D85A30', label: 'Enterprise' },
 ]
+
+// Returns the top-scoring PRIME clusters (highest first), capped at 3, for
+// the "Key Strengths" card under About. Capped so the card only ever shows
+// genuine standouts, not a padded list of all five.
+function rankedClusterStrengths(clusterScores) {
+  if (!clusterScores) return []
+  return Object.entries(clusterScores)
+    .filter(([, v]) => v != null)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([letter, score]) => ({
+      letter, score,
+      name: CLUSTER_NAMES[letter] || letter,
+      color: PRIME.find(c => c.letter === letter)?.color || GOLD,
+      blurb: CLUSTER_STRENGTH_COPY[letter] || '',
+    }))
+}
 
 // Spider/radar chart of the 5 PRIME cluster scores — same visualization
 // shown on the VALU Index "Find My Report" results page (assessment app),
@@ -346,20 +353,34 @@ export default function ProfilePage({ params, searchParams }) {
               )}
             </div>
 
-            {/* CTAs */}
+            {/* CTAs — the "request an intro to yourself" bug: this row never
+                checked isOwnProfile, so a professional viewing their own
+                public listing saw MORE TALENT / REQUEST INTRO (a mailto
+                addressed to their own ATB ID) instead of an edit action.
+                The isOwnProfile branch below is the fix; the buyer-facing
+                branch is unchanged. */}
             <div style={{ display:'flex', gap:'10px', paddingBottom:'16px', flexShrink:0, flexWrap:'wrap' }}>
               <button onClick={copyLink}
                 style={{ padding:'12px 18px', background:'transparent', border:`1px solid ${GLINE}`, color: DIM, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', cursor:'pointer', fontFamily:'inherit' }}>
                 {copied ? 'LINK COPIED' : 'SHARE'}
               </button>
-              <Link href={displayTrack === 'facilitator' ? '/valoria-develop' : displayTrack === 'speaker' ? '/atb-spotlight' : '/atb-connect'}
-                style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
-                MORE {displayTrack === 'facilitator' ? 'FACILITATORS' : displayTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}
-              </Link>
-              <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent((displayTrack === 'facilitator' ? 'Facilitator Commission' : displayTrack === 'speaker' ? 'Speaker Booking' : 'Introduction Request') + ' — ' + atbId)}`}
-                style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
-                {displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
-              </a>
+              {isOwnProfile ? (
+                <Link href="/profile/edit"
+                  style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
+                  EDIT PROFILE
+                </Link>
+              ) : (
+                <>
+                  <Link href={displayTrack === 'facilitator' ? '/valoria-develop' : displayTrack === 'speaker' ? '/atb-spotlight' : '/atb-connect'}
+                    style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
+                    MORE {displayTrack === 'facilitator' ? 'FACILITATORS' : displayTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}
+                  </Link>
+                  <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent((displayTrack === 'facilitator' ? 'Facilitator Commission' : displayTrack === 'speaker' ? 'Speaker Booking' : 'Introduction Request') + ' — ' + atbId)}`}
+                    style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
+                    {displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
+                  </a>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -502,17 +523,43 @@ export default function ProfilePage({ params, searchParams }) {
               ) : null
             })()}
 
-            {/* About — leads with the VALU Index summary (positive-framed
-                strengths, not a self-written blurb) once assessed; falls
-                back to bio until then so this section is never empty. */}
+            {/* About — a brief introduction in the professional's own words.
+                The VALU Index summary used to live here, but that's now
+                covered by the Key Strengths card below, so this section
+                is free to just be the bio. */}
             <Section label="About">
-              {(() => {
-                const summary = buildAssessmentSummary(p)
-                if (summary) return <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{summary}</p>
-                if (p.bio) return <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
-                return <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No bio added yet.</p>
-              })()}
+              {p.bio
+                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
+                : p.cv_summary
+                  ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.cv_summary}</p>
+                  : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No bio added yet.</p>}
             </Section>
+
+            {/* Key Strengths — rectangular card, gold background per brand,
+                surfacing the top-scoring PRIME clusters as concrete points
+                rather than making a buyer read the radar chart to figure out
+                what the assessment actually found strong. Only shows once
+                the VALU Index has been completed. */}
+            {p.cluster_scores && (
+              <div style={{ background: GOLD, padding:'22px', marginBottom:'32px' }}>
+                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(15,15,26,.55)', marginBottom:'16px' }}>Key Strengths</div>
+                <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
+                  {rankedClusterStrengths(p.cluster_scores).map(({ letter, name, score, blurb }) => (
+                    <div key={letter} style={{ display:'flex', gap:'14px', alignItems:'flex-start' }}>
+                      <div style={{ width:'32px', height:'32px', borderRadius:'50%', border:`1.5px solid ${DARK}`, color: DARK, fontSize:'12px', fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                        {letter}
+                      </div>
+                      <div>
+                        <div style={{ fontSize:'13px', fontWeight:600, color: DARK, marginBottom:'4px' }}>
+                          {name} <span style={{ color:'rgba(15,15,26,.6)', fontWeight:400 }}>· {score}/100</span>
+                        </div>
+                        <p style={{ fontSize:'13px', fontWeight:400, color:'rgba(15,15,26,.75)', lineHeight:1.7, margin:0 }}>{blurb}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Skills / Topics */}
             {tags.length > 0 && (
