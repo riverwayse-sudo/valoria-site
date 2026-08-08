@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import EnquiryForm from '@/components/EnquiryForm'
 import { PRIME_CLUSTERS } from '@/lib/brand'
 
 // The real, unified marketplace — one listing showing everyone regardless
@@ -314,7 +315,7 @@ export default function MarketplacePage() {
             </div>
           ) : (
             <div style={S.grid}>
-              {filtered.map(p => <ProfileCard key={p.id} profile={p} activeTab={tab} />)}
+              {filtered.map(p => <ProfileCard key={p.id} profile={p} activeTab={tab} currentUser={session?.user} />)}
             </div>
           )}
         </main>
@@ -345,7 +346,7 @@ export default function MarketplacePage() {
   )
 }
 
-function ProfileCard({ profile: p, activeTab }) {
+function ProfileCard({ profile: p, activeTab, currentUser }) {
   const tracks = p.active_tracks || []
   const trackForLink = activeTab !== 'all' && tracks.includes(activeTab) ? activeTab : primaryTrack(tracks)
   const allTags = [...new Set([...(p.skills || []), ...(p.topics || []), ...(p.programme_types || [])])].slice(0, 3)
@@ -415,9 +416,15 @@ function ProfileCard({ profile: p, activeTab }) {
 
       <div style={S.cardActions}>
         <Link href={`/profile/${p.id}?track=${trackForLink}`} style={S.btnView}>VIEW PROFILE</Link>
-        <Link href={`/profile/${p.id}?track=${trackForLink}#contact`} style={S.btnAction}>
-          {trackForLink === 'facilitator' ? 'REQUEST FACILITATOR' : trackForLink === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
-        </Link>
+        <EnquiryForm
+          professionalProfileId={p.id}
+          atbId={p.atb_id}
+          enquiryType={trackForLink === 'facilitator' ? 'facilitator_commission' : trackForLink === 'speaker' ? 'speaker_booking' : 'candidate'}
+          ctaLabel={trackForLink === 'facilitator' ? 'REQUEST FACILITATOR' : trackForLink === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
+          currentUser={currentUser}
+          disabled={p.is_dummy}
+          triggerStyle={{ ...S.btnAction, letterSpacing: '.1em' }}
+        />
       </div>
     </div>
   )

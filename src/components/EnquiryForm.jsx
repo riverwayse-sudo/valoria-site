@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 const GOLD  = '#C9A84C'
 const DARK  = '#0F0F1A'
+const MIDNIGHT = '#1A1A2E'
 const PARCH = '#F7F4EE'
 const DIM   = 'rgba(247,244,238,.5)'
 const GLINE = 'rgba(201,168,76,.28)'
@@ -10,7 +11,13 @@ const GLINE = 'rgba(201,168,76,.28)'
 // Replaces the old mailto: CTA. Writes a real row to `enquiries` (via
 // /api/enquiries) instead of firing a client-side email with no record,
 // then still sends the same email notification server-side.
-export default function EnquiryForm({ professionalProfileId, atbId, enquiryType, ctaLabel, currentUser }) {
+//
+// Renders as a real popup/modal now (1 Aug 2026) — Temitayo flagged that
+// clicking Request Intro navigated away to the profile page and expanded
+// inline there, when the agreed design was a popup like a standard
+// "Contact Us" widget, usable right from wherever the button is (a
+// marketplace card, the profile page, anywhere) without leaving the page.
+export default function EnquiryForm({ professionalProfileId, atbId, enquiryType, ctaLabel, currentUser, disabled, disabledLabel, triggerStyle }) {
   const [open, setOpen] = useState(false)
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
@@ -23,6 +30,13 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
   })
 
   function set(key, val) { setForm(f => ({ ...f, [key]: val })) }
+
+  function closeAndReset() {
+    setOpen(false)
+    // Reset a moment after the close animation-equivalent so a reopened
+    // form doesn't flash the previous submission's state.
+    setTimeout(() => { setSent(false); setError('') }, 200)
+  }
 
   async function submit(e) {
     e.preventDefault()
@@ -57,45 +71,76 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
     }
   }
 
-  if (sent) {
+  if (disabled) {
     return (
-      <div style={{ padding: '18px 22px', background: 'rgba(29,158,117,.08)', border: '1px solid rgba(29,158,117,.3)', borderRadius: '6px', fontSize: '13px', color: PARCH, flexShrink: 0, maxWidth: '340px' }}>
-        Sent — Valoria Institute will be in touch shortly.
-      </div>
-    )
-  }
-
-  if (!open) {
-    return (
-      <button type="button" onClick={() => setOpen(true)}
-        style={{ padding: '14px 28px', background: GOLD, color: DARK, fontSize: '11px', fontWeight: 700, letterSpacing: '.14em', border: 'none', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap' }}>
-        {ctaLabel}
+      <button type="button" disabled
+        style={{ padding: '14px 28px', background: 'rgba(255,255,255,.06)', color: 'rgba(247,244,238,.3)', fontSize: '11px', fontWeight: 700, letterSpacing: '.14em', border: 'none', cursor: 'not-allowed', flexShrink: 0, whiteSpace: 'nowrap', ...triggerStyle }}>
+        {disabledLabel || 'SAMPLE — NOT AVAILABLE'}
       </button>
     )
   }
 
   return (
-    <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%', maxWidth: '380px' }}>
-      <input required value={form.buyer_name} onChange={e => set('buyer_name', e.target.value)}
-        placeholder="Your name" style={inputStyle} />
-      <input required type="email" value={form.buyer_email} onChange={e => set('buyer_email', e.target.value)}
-        placeholder="Your email" style={inputStyle} />
-      <input value={form.buyer_company} onChange={e => set('buyer_company', e.target.value)}
-        placeholder="Company / organisation (optional)" style={inputStyle} />
-      <textarea required value={form.message} onChange={e => set('message', e.target.value)}
-        placeholder="What would you like to discuss?" rows={3} style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }} />
-      {error && <div style={{ fontSize: '12px', color: '#D85A30' }}>{error}</div>}
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <button type="submit" disabled={sending}
-          style={{ padding: '12px 24px', background: GOLD, color: DARK, fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', border: 'none', cursor: sending ? 'default' : 'pointer', opacity: sending ? 0.6 : 1 }}>
-          {sending ? 'SENDING…' : 'SEND'}
-        </button>
-        <button type="button" onClick={() => setOpen(false)}
-          style={{ padding: '12px 20px', background: 'none', color: DIM, fontSize: '11px', border: `1px solid ${GLINE}`, cursor: 'pointer' }}>
-          Cancel
-        </button>
-      </div>
-    </form>
+    <>
+      <button type="button" onClick={() => setOpen(true)}
+        style={{ padding: '14px 28px', background: GOLD, color: DARK, fontSize: '11px', fontWeight: 700, letterSpacing: '.14em', border: 'none', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap', ...triggerStyle }}>
+        {ctaLabel}
+      </button>
+
+      {open && (
+        <div onClick={closeAndReset}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.65)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+          <div onClick={e => e.stopPropagation()}
+            style={{ background: MIDNIGHT, border: `1px solid ${GLINE}`, borderRadius: '10px', padding: '28px', width: '420px', maxWidth: '100%', position: 'relative' }}>
+            <button type="button" onClick={closeAndReset} aria-label="Close"
+              style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', color: DIM, fontSize: '18px', cursor: 'pointer', lineHeight: 1, padding: '4px' }}>
+              ✕
+            </button>
+
+            {sent ? (
+              <div style={{ padding: '12px 0 4px' }}>
+                <div style={{ fontSize: '15px', fontWeight: 600, color: PARCH, marginBottom: '8px' }}>Sent</div>
+                <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.6, margin: 0 }}>
+                  Valoria Institute will review and be in touch shortly.
+                </p>
+                <button type="button" onClick={closeAndReset}
+                  style={{ marginTop: '20px', padding: '10px 20px', background: GOLD, color: DARK, fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', border: 'none', cursor: 'pointer' }}>
+                  CLOSE
+                </button>
+              </div>
+            ) : (
+              <>
+                <div style={{ fontSize: '15px', fontWeight: 600, color: GOLD, marginBottom: '4px' }}>{ctaLabel}</div>
+                <p style={{ fontSize: '12px', color: DIM, marginBottom: '18px', lineHeight: 1.5 }}>
+                  Valoria Institute facilitates all introductions — your details stay protected.
+                </p>
+                <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <input required value={form.buyer_name} onChange={e => set('buyer_name', e.target.value)}
+                    placeholder="Your name" style={inputStyle} />
+                  <input required type="email" value={form.buyer_email} onChange={e => set('buyer_email', e.target.value)}
+                    placeholder="Your email" style={inputStyle} />
+                  <input value={form.buyer_company} onChange={e => set('buyer_company', e.target.value)}
+                    placeholder="Company / organisation (optional)" style={inputStyle} />
+                  <textarea required value={form.message} onChange={e => set('message', e.target.value)}
+                    placeholder="What would you like to discuss?" rows={3} style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }} />
+                  {error && <div style={{ fontSize: '12px', color: '#D85A30' }}>{error}</div>}
+                  <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
+                    <button type="submit" disabled={sending}
+                      style={{ flex: 1, padding: '12px 24px', background: GOLD, color: DARK, fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', border: 'none', cursor: sending ? 'default' : 'pointer', opacity: sending ? 0.6 : 1 }}>
+                      {sending ? 'SENDING…' : 'SEND'}
+                    </button>
+                    <button type="button" onClick={closeAndReset}
+                      style={{ padding: '12px 20px', background: 'none', color: DIM, fontSize: '11px', border: `1px solid ${GLINE}`, cursor: 'pointer' }}>
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 
