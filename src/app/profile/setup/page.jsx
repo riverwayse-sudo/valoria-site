@@ -310,10 +310,10 @@ function ProfileSetupForm() {
       const { error } = await supabase.storage.from('cvs').upload(path, file, { upsert: true })
       if (error) throw error
       setForm(f => ({ ...f, cv_url: path, cv_filename: file.name }))
-      // Fire-and-forget — summarization takes a few seconds and shouldn't
-      // block onboarding. If it fails (e.g. missing API key, scanned PDF),
-      // the About section on the profile page already falls back to the
-      // VALU Index summary or bio, so there's nothing to surface here.
+      // Fire-and-forget — generates the About-section summary from the
+      // person's already-collected profile fields (see cv-summary/route.js
+      // — no AI call, no CV text parsing, just template composition, so
+      // this is fast and has no external failure modes to speak of).
       supabase.auth.getSession().then(({ data }) => {
         if (!data.session) return
         fetch('/api/cv-summary', {
