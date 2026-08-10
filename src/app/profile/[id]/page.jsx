@@ -271,7 +271,6 @@ export default function ProfilePage({ params, searchParams }) {
     { label:'Location',   value: p.location || '—' },
     { label:'Industry',   value: p.industry || '—' },
     { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
-    { label: compLabel,   value: compensation || '—' },
     { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} / 100` : 'Not assessed', href: p.valu_score != null ? '#valu-card' : null },
   ]
 
@@ -478,8 +477,13 @@ export default function ProfilePage({ params, searchParams }) {
             {/* Links — gated */}
             <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px' }}>
               <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'12px' }}>Contact & Links</div>
-              {p.phone || p.linkedin_url || p.website_url ? (
+              {p.phone || p.linkedin_url || p.website_url || compensation ? (
                 <>
+                  {compensation && (
+                    <div style={{ fontSize:'13px', fontWeight:300, color: DIM, padding:'10px 0', borderTop:`1px solid ${GLINE}` }}>
+                      💰&ensp;{compLabel} — visible after introduction
+                    </div>
+                  )}
                   {p.phone && (
                     <div style={{ fontSize:'13px', fontWeight:300, color: DIM, padding:'10px 0', borderTop:`1px solid ${GLINE}` }}>
                       ☎&ensp;Phone — visible after introduction

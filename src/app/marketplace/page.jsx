@@ -412,7 +412,7 @@ function ProfileCard({ profile: p, activeTab, currentUser }) {
       )}
 
       {p.bio && <p style={S.cardBio}>{p.bio.slice(0, 110)}{p.bio.length > 110 ? '…' : ''}</p>}
-      {compensation && <p style={{ fontSize: '11px', color: '#8A8578', margin: 0 }}>{compLabel}: {compensation}</p>}
+      {compensation && <p style={{ fontSize: '11px', color: '#8A8578', margin: 0 }}>{compLabel} — visible after introduction</p>}
 
       <div style={S.cardActions}>
         <Link href={`/profile/${p.id}?track=${trackForLink}`} style={S.btnView}>VIEW PROFILE</Link>
