@@ -374,10 +374,21 @@ export default function ProfilePage({ params, searchParams }) {
                     style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
                     MORE {displayTrack === 'facilitator' ? 'FACILITATORS' : displayTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}
                   </Link>
-                  <a href={`mailto:info@valoriainstitute.com?subject=${encodeURIComponent((displayTrack === 'facilitator' ? 'Facilitator Commission' : displayTrack === 'speaker' ? 'Speaker Booking' : 'Introduction Request') + ' — ' + atbId)}`}
-                    style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
-                    {displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
-                  </a>
+                  {p.is_dummy ? (
+                    <button type="button" disabled
+                      style={{ padding:'12px 22px', background:'rgba(255,255,255,.06)', color:'rgba(247,244,238,.3)', fontSize:'11px', fontWeight:700, letterSpacing:'.12em', border:'none', cursor:'not-allowed' }}>
+                      SAMPLE — NOT AVAILABLE
+                    </button>
+                  ) : (
+                    <EnquiryForm
+                      professionalProfileId={p.id}
+                      atbId={atbId}
+                      enquiryType={displayTrack === 'facilitator' ? 'facilitator_commission' : displayTrack === 'speaker' ? 'speaker_booking' : 'candidate'}
+                      ctaLabel={displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
+                      currentUser={currentUser}
+                      triggerStyle={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', border:'none', textDecoration:'none' }}
+                    />
+                  )}
                 </>
               )}
             </div>
