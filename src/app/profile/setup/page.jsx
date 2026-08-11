@@ -551,6 +551,56 @@ function ProfileSetupForm() {
 }
 
 // ── Generic single-screen renderer — one question, one job ──────────────
+// Debounced real verification (not just format checking) that a submitted
+// video link is an actual playable video — via /api/verify-video-link,
+// which calls YouTube's public oEmbed endpoint. Its own component (rather
+// than inline in the link-list case) because it needs its own hooks —
+// can't call useState/useEffect conditionally inside a switch case.
+function VerifiedVideoInput({ url, onChange, onRemove, placeholder, removable, formatError }) {
+  const [status, setStatus] = useState(null) // null | 'checking' | 'valid' | 'invalid'
+  const [info, setInfo] = useState(null)
+
+  useEffect(() => {
+    const trimmed = url.trim()
+    if (!trimmed || formatError) { setStatus(null); setInfo(null); return }
+    setStatus('checking')
+    const t = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/verify-video-link?url=${encodeURIComponent(trimmed)}`)
+        const data = await res.json()
+        setStatus(data.valid ? 'valid' : 'invalid')
+        setInfo(data)
+      } catch {
+        setStatus(null)
+      }
+    }, 700)
+    return () => clearTimeout(t)
+  }, [url, formatError])
+
+  return (
+    <div>
+      <div style={{ display:'flex', gap:'8px', marginBottom: formatError ? '4px' : '6px', alignItems:'center' }}>
+        <input style={{ ...inputStyle, flex:1, marginBottom:0, ...(formatError ? { border:'1px solid #D85A30' } : {}) }} value={url}
+          placeholder={placeholder}
+          onChange={e => onChange(e.target.value)} />
+        {removable && (
+          <button onClick={onRemove} style={{ ...ghostBtnStyle, padding:'0 12px', color:'#D85A30', borderColor:'rgba(216,90,48,.3)' }}>✕</button>
+        )}
+      </div>
+      {formatError && <ErrorText>{validatorError('youtube')}</ErrorText>}
+      {!formatError && status === 'checking' && (
+        <p style={{ fontSize:'11px', color:DIM, margin:'0 0 10px' }}>Checking link…</p>
+      )}
+      {!formatError && status === 'valid' && (
+        <p style={{ fontSize:'11px', color:'#1D9E75', margin:'0 0 10px' }}>✓ Verified{info?.title ? ` — "${info.title}"` : ''}</p>
+      )}
+      {!formatError && status === 'invalid' && (
+        <p style={{ fontSize:'11px', color:'#D85A30', margin:'0 0 10px' }}>{info?.error || 'Couldn\u2019t verify this video.'}</p>
+      )}
+    </div>
+  )
+}
+
 function ScreenBody(props) {
   const { screen, form, set, toggleArr, updateListItem, selectAndAdvance, goNext, saving,
           photoUploading, photoError, fileRef, uploadPhoto,
@@ -841,18 +891,15 @@ function ScreenBody(props) {
           {screen.sub && <Sub>{screen.sub}</Sub>}
           <div style={{ marginBottom:'16px' }}>
             {links.map((url, i) => (
-              <div key={i}>
-                <div style={{ display:'flex', gap:'8px', marginBottom: checks[i] ? '10px' : '4px' }}>
-                  <input style={{ ...inputStyle, flex:1, marginBottom:0, ...(checks[i] ? {} : { border:'1px solid #D85A30' }) }} value={url}
-                    placeholder={i === 0 ? (isSpeaker ? 'Intro / speaker reel URL' : 'YouTube link') : 'Additional video'}
-                    onChange={e => { const l = [...links]; l[i] = e.target.value; set(screen.key, l) }} />
-                  {links.length > 1 && (
-                    <button onClick={() => set(screen.key, links.filter((_,j) => j !== i))}
-                      style={{ ...ghostBtnStyle, padding:'0 12px', color:'#D85A30', borderColor:'rgba(216,90,48,.3)' }}>✕</button>
-                  )}
-                </div>
-                {!checks[i] && <ErrorText>{validatorError(screen.validator)}</ErrorText>}
-              </div>
+              <VerifiedVideoInput
+                key={i}
+                url={url}
+                formatError={!checks[i]}
+                removable={links.length > 1}
+                placeholder={i === 0 ? (isSpeaker ? 'Intro / speaker reel URL' : 'YouTube link') : 'Additional video'}
+                onChange={v => { const l = [...links]; l[i] = v; set(screen.key, l) }}
+                onRemove={() => set(screen.key, links.filter((_,j) => j !== i))}
+              />
             ))}
             {links.length < screen.max && (
               <button onClick={() => set(screen.key, [...links, ''])} style={ghostBtnStyle}>+ Add video</button>

@@ -65,6 +65,12 @@ export default function SignupPage() {
           company_name: form.company,
         })
       }
+      // Fire-and-forget — shouldn't block the success screen from showing.
+      fetch('/api/welcome-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email, name: form.name }),
+      }).catch(err => console.error('Welcome email request failed:', err))
       setSuccess(true)
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.')
