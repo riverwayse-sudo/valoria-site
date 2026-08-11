@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import Nav from '@/components/Nav'
-import { ADMIN_EMAILS } from '@/lib/adminEmails'
 
 const GOLD  = '#C9A84C'
 const DARK  = '#0F0F1A'
@@ -38,13 +37,11 @@ export default function AdminWaitlistPage() {
   const [search,   setSearch]   = useState('')
   const [filter,   setFilter]   = useState('')
 
-  // Auth check
+  // Middleware.js already checked admin_users before this page loaded —
+  // this just fetches the data, no client-side authorization check needed.
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user && ADMIN_EMAILS.includes(user.email)) {
-        setAuthed(true)
-        fetchEntries()
-      }
+      if (user) { setAuthed(true); fetchEntries() }
       setChecking(false)
     })
   }, [])

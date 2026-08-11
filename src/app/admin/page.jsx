@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import { ADMIN_EMAILS } from '@/lib/adminEmails'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
 
 const GOLD = '#C9A84C'
@@ -44,14 +43,12 @@ export default function AdminPage() {
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { window.location.href = '/login'; return }
+      // Under normal operation this never fires — middleware.js already
+      // checked admin_users and redirected before this page loaded at all.
+      // This is a defense-in-depth fallback only (e.g. local dev without
+      // middleware running), not the real authorization boundary anymore.
+      if (!user) { window.location.href = '/admin/login'; return }
       setUser(user)
-
-      if (!ADMIN_EMAILS.includes(user.email)) {
-        setAuthorized(false)
-        setLoading(false)
-        return
-      }
       setAuthorized(true)
       await Promise.all([fetchMessages(), fetchProfiles(), fetchBuyerProfiles(), fetchWaitlist(), fetchAssessments()])
       setLoading(false)
@@ -240,16 +237,21 @@ export default function AdminPage() {
         </div>
 
         {/* TABS */}
-        <div style={styles.tabs}>
-          {[['queue', 'Enquiry Queue'], ['profiles', 'All Profiles'], ['stats', 'Reports']].map(([id, label]) => (
-            <button key={id} onClick={() => setActiveTab(id)}
-              style={{ ...styles.tab, ...(activeTab === id ? styles.tabActive : {}) }}>
-              {label}
-              {id === 'queue' && pendingCount > 0 && (
-                <span style={styles.tabBadge}>{pendingCount}</span>
-              )}
-            </button>
-          ))}
+        <div style={{ ...styles.tabs, width: 'auto', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '4px' }}>
+            {[['queue', 'Enquiry Queue'], ['profiles', 'All Profiles'], ['stats', 'Reports']].map(([id, label]) => (
+              <button key={id} onClick={() => setActiveTab(id)}
+                style={{ ...styles.tab, ...(activeTab === id ? styles.tabActive : {}) }}>
+                {label}
+                {id === 'queue' && pendingCount > 0 && (
+                  <span style={styles.tabBadge}>{pendingCount}</span>
+                )}
+              </button>
+            ))}
+          </div>
+          <Link href="/admin/signup" style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '.08em', color: 'rgba(201,168,76,.6)', textDecoration: 'none' }}>
+            + INVITE ADMIN
+          </Link>
         </div>
 
         {/* ── QUEUE TAB ── */}
