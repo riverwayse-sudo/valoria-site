@@ -114,6 +114,32 @@ export default function AdminPage() {
     setUpdatingId(null)
   }
 
+  // The real "make the introduction available" action — sends both parties
+  // a formatted email with each other's contact details, then marks the
+  // enquiry introduced. Server-gated (see api/admin/introduce/route.js);
+  // distinct from the other status pills, which are label-only.
+  async function sendIntroduction(id) {
+    setUpdatingId(id)
+    const { data: { session } } = await supabase.auth.getSession()
+    try {
+      const res = await fetch('/api/admin/introduce', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session?.access_token || ''}` },
+        body: JSON.stringify({ enquiryId: id }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        alert(data?.error || 'Could not send the introduction — please try again.')
+        setUpdatingId(null)
+        return
+      }
+      setMessages(prev => prev.map(m => m.id === id ? { ...m, status: 'introduced' } : m))
+    } catch (err) {
+      alert('Could not send the introduction — check your connection and try again.')
+    }
+    setUpdatingId(null)
+  }
+
   async function toggleVisibility(profileId, current) {
     const next = current === 'listed' ? 'unlisted' : 'listed'
     await supabase.from('professional_profiles').update({ listing_status: next }).eq('id', profileId)
@@ -297,6 +323,7 @@ export default function AdminPage() {
                     msg={msg}
                     updating={updatingId === msg.id}
                     onStatusChange={updateMessageStatus}
+                    onIntroduce={sendIntroduction}
                   />
                 ))}
               </div>
@@ -449,7 +476,7 @@ function StatCard({ label, value, accent }) {
   )
 }
 
-function MessageRow({ msg, updating, onStatusChange }) {
+function MessageRow({ msg, updating, onStatusChange, onIntroduce }) {
   const [expanded, setExpanded] = useState(false)
   const status = msg.status || 'pending'
   const sc = STATUS_COLORS[status] || STATUS_COLORS.pending
@@ -494,6 +521,9 @@ function MessageRow({ msg, updating, onStatusChange }) {
 
           <div style={styles.statusControls}>
             <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.12em', color: 'rgba(201,168,76,.5)' }}>UPDATE STATUS:</span>
+            <p style={{ fontSize: '10px', color: DIM, margin: '2px 0 8px' }}>
+              "Introduced" sends both sides a real email with each other's contact details — this is the actual introduction, not just a label.
+            </p>
             <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
               {STATUS_OPTIONS.map(s => {
                 const sc2 = STATUS_COLORS[s]
@@ -502,7 +532,7 @@ function MessageRow({ msg, updating, onStatusChange }) {
                   <button
                     key={s}
                     disabled={updating || isActive}
-                    onClick={() => onStatusChange(msg.id, s)}
+                    onClick={() => s === 'introduced' ? onIntroduce(msg.id) : onStatusChange(msg.id, s)}
                     style={{
                       padding: '5px 12px', borderRadius: '999px', fontSize: '10px', fontWeight: 700,
                       letterSpacing: '.08em', cursor: isActive || updating ? 'default' : 'pointer',
