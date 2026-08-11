@@ -89,7 +89,7 @@ export default function Footer() {
               <ul className="uf-links">
                 <li><Link href="/about-us">About Us</Link></li>
                 <li><Link href="/programmes">Programmes</Link></li>
-                <li><Link href="/marketplace?track=facilitator">Develop</Link></li>
+                <li><Link href="/programmes">Develop</Link></li>
                 <li><Link href="/contact-us">Contact</Link></li>
                 <li><Link href="/waitlist">Founding Cohort</Link></li>
               </ul>

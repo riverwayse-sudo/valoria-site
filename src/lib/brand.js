@@ -77,8 +77,8 @@ export const ENTRY_POINTS = [
     buyer: 'FOR TRAINING BUYERS',
     color: COLORS.teal,
     modality: 'FACILITATOR MODALITY',
-    desc: 'Commission PRIME-certified facilitators to run development programmes for your teams. PRIME is the capability architecture — Valoria-certified facilitators are its delivery engine.',
-    href: '/facilitators',
-    linkLabel: 'COMMISSION FACILITATORS',
+    desc: 'PRIME-mapped training programmes delivered by Valoria-certified facilitators — development that closes the exact gaps your VALU Index assessment surfaced.',
+    href: '/programmes',
+    linkLabel: 'EXPLORE PROGRAMMES',
   },
 ]
