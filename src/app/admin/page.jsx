@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import { ADMIN_EMAILS } from '@/lib/adminEmails'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
 
 const GOLD = '#C9A84C'
@@ -45,14 +44,12 @@ export default function AdminPage() {
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { window.location.href = '/login'; return }
+      // Under normal operation this never fires — middleware.js already
+      // checked admin_users and redirected before this page loaded at all.
+      // This is a defense-in-depth fallback only (e.g. local dev without
+      // middleware running), not the real authorization boundary anymore.
+      if (!user) { window.location.href = '/admin/login'; return }
       setUser(user)
-
-      if (!ADMIN_EMAILS.includes(user.email)) {
-        setAuthorized(false)
-        setLoading(false)
-        return
-      }
       setAuthorized(true)
       await Promise.all([fetchMessages(), fetchProfiles(), fetchBuyerProfiles(), fetchWaitlist(), fetchAssessments()])
       setLoading(false)
@@ -118,31 +115,33 @@ export default function AdminPage() {
     setUpdatingId(null)
   }
 
-  // The actual "make the introduction available" action — sends both
-  // parties each other's real contact details by email and marks the
-  // enquiry introduced, in one step. Previously clicking the 'introduced'
-  // status pill just changed a label and told nobody anything.
-  async function facilitateIntroduction(id) {
+  // The real "make the introduction available" action — sends both parties
+  // a formatted email with each other's contact details, then marks the
+  // enquiry introduced. Server-gated (see api/admin/introduce/route.js);
+  // distinct from the other status pills, which are label-only.
+  async function sendIntroduction(id) {
     setUpdatingId(id)
     setFacilitateError(prev => ({ ...prev, [id]: null }))
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      const res = await fetch('/api/facilitate-introduction', {
+      const res = await fetch('/api/admin/introduce', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session?.access_token}` },
-        body: JSON.stringify({ enquiry_id: id }),
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session?.access_token || ''}` },
+        body: JSON.stringify({ enquiryId: id }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        setFacilitateError(prev => ({ ...prev, [id]: data?.error || 'Failed to send the introduction.' }))
-      } else {
-        setMessages(prev => prev.map(m => m.id === id ? { ...m, status: 'introduced' } : m))
+        setFacilitateError(prev => ({ ...prev, [id]: data?.error || 'Could not send the introduction — please try again.' }))
+        setUpdatingId(null)
+        return
       }
+      setMessages(prev => prev.map(m => m.id === id ? { ...m, status: 'introduced' } : m))
     } catch (err) {
-      setFacilitateError(prev => ({ ...prev, [id]: 'Failed to send the introduction.' }))
+      setFacilitateError(prev => ({ ...prev, [id]: 'Could not send the introduction — check your connection and try again.' }))
     }
     setUpdatingId(null)
   }
+
 
   async function toggleVisibility(profileId, current) {
     const next = current === 'listed' ? 'unlisted' : 'listed'
@@ -267,16 +266,21 @@ export default function AdminPage() {
         </div>
 
         {/* TABS */}
-        <div style={styles.tabs}>
-          {[['queue', 'Enquiry Queue'], ['profiles', 'All Profiles'], ['stats', 'Reports']].map(([id, label]) => (
-            <button key={id} onClick={() => setActiveTab(id)}
-              style={{ ...styles.tab, ...(activeTab === id ? styles.tabActive : {}) }}>
-              {label}
-              {id === 'queue' && pendingCount > 0 && (
-                <span style={styles.tabBadge}>{pendingCount}</span>
-              )}
-            </button>
-          ))}
+        <div style={{ ...styles.tabs, width: 'auto', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '4px' }}>
+            {[['queue', 'Enquiry Queue'], ['profiles', 'All Profiles'], ['stats', 'Reports']].map(([id, label]) => (
+              <button key={id} onClick={() => setActiveTab(id)}
+                style={{ ...styles.tab, ...(activeTab === id ? styles.tabActive : {}) }}>
+                {label}
+                {id === 'queue' && pendingCount > 0 && (
+                  <span style={styles.tabBadge}>{pendingCount}</span>
+                )}
+              </button>
+            ))}
+          </div>
+          <Link href="/admin/signup" style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '.08em', color: 'rgba(201,168,76,.6)', textDecoration: 'none' }}>
+            + INVITE ADMIN
+          </Link>
         </div>
 
         {/* ── QUEUE TAB ── */}
@@ -322,7 +326,7 @@ export default function AdminPage() {
                     msg={msg}
                     updating={updatingId === msg.id}
                     onStatusChange={updateMessageStatus}
-                    onFacilitate={facilitateIntroduction}
+                    onIntroduce={sendIntroduction}
                     facilitateError={facilitateError[msg.id]}
                   />
                 ))}
@@ -476,7 +480,7 @@ function StatCard({ label, value, accent }) {
   )
 }
 
-function MessageRow({ msg, updating, onStatusChange, onFacilitate, facilitateError }) {
+function MessageRow({ msg, updating, onStatusChange, onIntroduce, facilitateError }) {
   const [expanded, setExpanded] = useState(false)
   const status = msg.status || 'pending'
   const sc = STATUS_COLORS[status] || STATUS_COLORS.pending
@@ -524,7 +528,7 @@ function MessageRow({ msg, updating, onStatusChange, onFacilitate, facilitateErr
             <div style={{ marginBottom: '14px' }}>
               <button
                 disabled={updating}
-                onClick={() => onFacilitate(msg.id)}
+                onClick={() => onIntroduce(msg.id)}
                 style={{
                   padding: '9px 18px', borderRadius: '4px', fontSize: '11px', fontWeight: 700,
                   letterSpacing: '.08em', border: 'none', cursor: updating ? 'default' : 'pointer',

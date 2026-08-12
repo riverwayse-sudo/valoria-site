@@ -25,6 +25,35 @@ export async function middleware(request) {
     return NextResponse.next()
   }
 
+  const hasSupabaseSession = request.cookies.getAll().some(c => /^sb-.*-auth-token/.test(c.name))
+
+  // ── Admin authorization ────────────────────────────────────────────────
+  // Previously /admin had NO server-side check at all — the ADMIN_EMAILS
+  // allowlist ran client-side, in the browser, after the page and its
+  // Supabase queries had already loaded. This is the real fix: check the
+  // dedicated admin_users table (see pending-migrations/010_add_admin_users.sql)
+  // before an /admin request is ever allowed through. /admin/login is the
+  // one exception — it has to be reachable by a signed-out visitor.
+  if (pathname.startsWith('/admin') && pathname !== '/admin/login' && SB_URL && SB_SERVICE_KEY) {
+    const loginUrl = new URL('/admin/login', request.url)
+    if (!hasSupabaseSession) return NextResponse.redirect(loginUrl)
+    try {
+      const token = request.cookies.getAll().find(c => /^sb-.*-auth-token/.test(c.name))?.value
+      const payload = token && JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+      const userId = payload?.sub
+      if (!userId) return NextResponse.redirect(loginUrl)
+      const supabase = createClient(SB_URL, SB_SERVICE_KEY)
+      const { data: admin } = await supabase.from('admin_users').select('id').eq('id', userId).maybeSingle()
+      if (!admin) return NextResponse.redirect(loginUrl)
+    } catch {
+      // Fail closed here, unlike the profile-completeness gate below — this
+      // is an authorization check, not a UX nicety, so an error should
+      // never silently grant access to /admin.
+      return NextResponse.redirect(loginUrl)
+    }
+    return NextResponse.next()
+  }
+
   // ── Profile completeness gate ──────────────────────────────────────────
   // If a signed-in user is trying to access the dashboard (buyer side) or
   // /profile/* (their own profile), check that their professional profile
@@ -32,8 +61,6 @@ export async function middleware(request) {
   // Skip this check for /profile/setup itself, the login/signup pages, and
   // requests with no Supabase session at all — those pages/routes handle
   // their own auth requirements and should always be reachable here.
-  const hasSupabaseSession = request.cookies.getAll().some(c => /^sb-.*-auth-token/.test(c.name))
-
   if (
     hasSupabaseSession &&
     SB_URL && SB_SERVICE_KEY &&
