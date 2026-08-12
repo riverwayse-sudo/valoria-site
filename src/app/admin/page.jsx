@@ -35,6 +35,7 @@ export default function AdminPage() {
   const [waitlistEntries, setWaitlistEntries] = useState([])
   const [assessments, setAssessments] = useState([]) // valu_assessments — separate table from professional_profiles.valu_index
   const [updatingId, setUpdatingId] = useState(null)
+  const [facilitateError, setFacilitateError] = useState({})
 
   // Filters
   const [filterStatus, setFilterStatus] = useState('')
@@ -114,6 +115,32 @@ export default function AdminPage() {
     setUpdatingId(id)
     await supabase.from('enquiries').update({ status }).eq('id', id)
     setMessages(prev => prev.map(m => m.id === id ? { ...m, status } : m))
+    setUpdatingId(null)
+  }
+
+  // The actual "make the introduction available" action — sends both
+  // parties each other's real contact details by email and marks the
+  // enquiry introduced, in one step. Previously clicking the 'introduced'
+  // status pill just changed a label and told nobody anything.
+  async function facilitateIntroduction(id) {
+    setUpdatingId(id)
+    setFacilitateError(prev => ({ ...prev, [id]: null }))
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/facilitate-introduction', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session?.access_token}` },
+        body: JSON.stringify({ enquiry_id: id }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setFacilitateError(prev => ({ ...prev, [id]: data?.error || 'Failed to send the introduction.' }))
+      } else {
+        setMessages(prev => prev.map(m => m.id === id ? { ...m, status: 'introduced' } : m))
+      }
+    } catch (err) {
+      setFacilitateError(prev => ({ ...prev, [id]: 'Failed to send the introduction.' }))
+    }
     setUpdatingId(null)
   }
 
@@ -295,6 +322,8 @@ export default function AdminPage() {
                     msg={msg}
                     updating={updatingId === msg.id}
                     onStatusChange={updateMessageStatus}
+                    onFacilitate={facilitateIntroduction}
+                    facilitateError={facilitateError[msg.id]}
                   />
                 ))}
               </div>
@@ -447,12 +476,13 @@ function StatCard({ label, value, accent }) {
   )
 }
 
-function MessageRow({ msg, updating, onStatusChange }) {
+function MessageRow({ msg, updating, onStatusChange, onFacilitate, facilitateError }) {
   const [expanded, setExpanded] = useState(false)
   const status = msg.status || 'pending'
   const sc = STATUS_COLORS[status] || STATUS_COLORS.pending
   const date = new Date(msg.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
   const prof = msg.recipient
+  const canFacilitate = status !== 'introduced' && status !== 'completed'
 
   return (
     <div style={styles.messageRow}>
@@ -490,8 +520,30 @@ function MessageRow({ msg, updating, onStatusChange }) {
         <div style={styles.messageExpanded}>
           <pre style={styles.messageBody}>{msg.body}</pre>
 
+          {canFacilitate && (
+            <div style={{ marginBottom: '14px' }}>
+              <button
+                disabled={updating}
+                onClick={() => onFacilitate(msg.id)}
+                style={{
+                  padding: '9px 18px', borderRadius: '4px', fontSize: '11px', fontWeight: 700,
+                  letterSpacing: '.08em', border: 'none', cursor: updating ? 'default' : 'pointer',
+                  background: GOLD, color: '#0F0F1A', fontFamily: 'Raleway', opacity: updating ? 0.6 : 1,
+                }}
+              >
+                {updating ? 'SENDING…' : 'FACILITATE INTRODUCTION →'}
+              </button>
+              <p style={{ fontSize: '11px', color: DIM, margin: '8px 0 0' }}>
+                Emails both sides their contact details and marks this introduced. This is the actual "make it available" action — the status pills below only change a label.
+              </p>
+              {facilitateError && (
+                <p style={{ fontSize: '11px', color: '#D85A30', margin: '6px 0 0' }}>{facilitateError}</p>
+              )}
+            </div>
+          )}
+
           <div style={styles.statusControls}>
-            <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.12em', color: 'rgba(201,168,76,.5)' }}>UPDATE STATUS:</span>
+            <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.12em', color: 'rgba(201,168,76,.5)' }}>UPDATE STATUS (label only, no email sent):</span>
             <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
               {STATUS_OPTIONS.map(s => {
                 const sc2 = STATUS_COLORS[s]
