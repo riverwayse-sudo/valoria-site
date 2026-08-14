@@ -35,6 +35,20 @@ export default function AdminPage() {
   const [assessments, setAssessments] = useState([]) // valu_assessments — separate table from professional_profiles.valu_index
   const [updatingId, setUpdatingId] = useState(null)
   const [facilitateError, setFacilitateError] = useState({})
+  const [analytics, setAnalytics] = useState(null)
+
+  async function fetchAnalytics() {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) return
+      const res = await fetch('/api/admin/analytics', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      if (res.ok) setAnalytics(await res.json())
+    } catch (err) {
+      console.error('Fetching admin analytics failed:', err)
+    }
+  }
 
   // Filters
   const [filterStatus, setFilterStatus] = useState('')
@@ -51,10 +65,19 @@ export default function AdminPage() {
       if (!user) { window.location.href = '/admin/login'; return }
       setUser(user)
       setAuthorized(true)
-      await Promise.all([fetchMessages(), fetchProfiles(), fetchBuyerProfiles(), fetchWaitlist(), fetchAssessments()])
+      await Promise.all([fetchMessages(), fetchProfiles(), fetchBuyerProfiles(), fetchWaitlist(), fetchAssessments(), fetchAnalytics()])
       setLoading(false)
     }
     load()
+    // Polling rather than a realtime subscription — valu_assessments has
+    // RLS enabled with zero SELECT policies (correctly, it holds names/
+    // emails/raw answers), which would block a client-side realtime
+    // channel the same way it blocks a direct query. A 45s poll on this
+    // one aggregate route keeps career-type/training numbers current as
+    // new assessments complete without needing a page reload, without the
+    // added complexity of a service-role-backed realtime bridge.
+    const interval = setInterval(fetchAnalytics, 45000)
+    return () => clearInterval(interval)
   }, [])
 
   async function fetchMessages() {
@@ -194,15 +217,20 @@ export default function AdminPage() {
   const profileCompleteCount = profiles.filter(p => p.profile_complete).length
   const funnelStages = [
     { label: 'Waitlist signups', value: waitlistEntries.length },
-    { label: 'Assessments completed', value: assessments.length },
+    { label: 'Assessments completed', value: analytics?.totalAssessments ?? assessments.length },
     { label: 'Profiles complete', value: profileCompleteCount },
     { label: 'Listed on marketplace', value: listedProfiles },
   ]
   const funnelMax = Math.max(1, ...funnelStages.map(s => s.value))
 
   // Score distribution — 35 is the listing threshold, called out separately.
+  // Sourced from /api/admin/analytics (server-side, service role) rather
+  // than the client-side `assessments` fetch above — valu_assessments has
+  // RLS enabled with zero SELECT policies, so that client query has always
+  // silently returned nothing. Falls back to the (empty) client-side
+  // computation only if the analytics route hasn't loaded yet.
   const SCORE_BUCKETS = [[0,19],[20,34],[35,49],[50,64],[65,79],[80,100]]
-  const scoreDistribution = SCORE_BUCKETS.map(([lo,hi]) => ({
+  const scoreDistribution = analytics?.scoreDistribution || SCORE_BUCKETS.map(([lo,hi]) => ({
     label: `${lo}–${hi}`,
     count: assessments.filter(a => a.total_score >= lo && a.total_score <= hi).length,
     unlocksListing: lo >= 35,
@@ -380,7 +408,7 @@ export default function AdminPage() {
             </ReportSection>
 
             {/* Score distribution */}
-            <ReportSection title="VALU Index score distribution" subtitle={`${assessments.length} completed assessments · 35+ unlocks marketplace listing`}>
+            <ReportSection title="VALU Index score distribution" subtitle={`${analytics?.totalAssessments ?? assessments.length} completed assessments · 35+ unlocks marketplace listing`}>
               <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end', height: '140px' }}>
                 {scoreDistribution.map(b => (
                   <div key={b.label} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', height: '100%', justifyContent: 'flex-end' }}>
@@ -416,6 +444,48 @@ export default function AdminPage() {
                     <BreakdownRow label="Other" count={otherIndustryCount} max={industryMax} color={FAINT} />
                   )}
                 </div>
+              </ReportSection>
+            </div>
+
+            {/* Career types + training priorities — from every completed
+                assessment (not just the smaller set who go on to finish a
+                full listing), refreshed every 45s. This is the data meant
+                to inform employers, event organisers, and what training
+                content Valoria itself should build next. */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
+              <ReportSection title="Career types" subtitle={analytics ? `From ${analytics.totalAssessments} completed assessments` : 'Loading…'}>
+                {analytics?.careerTypes?.length ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {analytics.careerTypes.map(c => (
+                      <BreakdownRow key={c.label} label={c.label} count={c.count} max={analytics.careerTypes[0].count} color="#378ADD" />
+                    ))}
+                  </div>
+                ) : (
+                  <p style={{ fontSize: '12px', color: FAINT }}>No data yet.</p>
+                )}
+              </ReportSection>
+
+              <ReportSection title="Training priorities" subtitle="Lowest average PRIME score = highest training need">
+                {analytics?.trainingPriorities?.length ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {analytics.trainingPriorities.map((t, i) => (
+                      <div key={t.cluster}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: DIM, marginBottom: '4px' }}>
+                          <span>{i === 0 && <span style={{ color: '#D85A30', fontWeight: 700 }}>● </span>}{t.label}</span>
+                          <strong style={{ color: PARCHMENT }}>{t.average} / 100</strong>
+                        </div>
+                        <div style={styles.barTrack}>
+                          <div style={{ ...styles.barFill, width: `${t.average}%`, background: i === 0 ? 'rgba(216,90,48,.6)' : undefined }} />
+                        </div>
+                      </div>
+                    ))}
+                    <p style={{ fontSize: '11px', color: FAINT, marginTop: '4px', marginBottom: 0 }}>
+                      {analytics.trainingPriorities[0].label} is currently the weakest cluster across the assessed pool — the strongest signal for what Valoria Develop content to prioritise next.
+                    </p>
+                  </div>
+                ) : (
+                  <p style={{ fontSize: '12px', color: FAINT }}>No data yet.</p>
+                )}
               </ReportSection>
             </div>
 
