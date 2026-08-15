@@ -166,6 +166,22 @@ export default function ProfilePage({ params, searchParams }) {
           _source: 'real',
         })
         setLoading(false)
+        // Fire-and-forget, never blocks rendering. Skip the profile owner
+        // viewing their own page — that's not a real "someone looked at
+        // me" signal. sessionStorage dedupe means refreshing or navigating
+        // back within the same tab doesn't inflate the count; a genuinely
+        // new visit (new tab, new session) does count again, which is the
+        // right granularity for "views" rather than "unique visitors."
+        if (!user || user.id !== real.id) {
+          const dedupeKey = `viewed_${real.id}`
+          if (!sessionStorage.getItem(dedupeKey)) {
+            sessionStorage.setItem(dedupeKey, '1')
+            supabase.from('profile_views').insert({
+              professional_profile_id: real.id,
+              viewer_id: user?.id || null,
+            }).then(({ error }) => { if (error) console.error('profile_views insert failed:', error) })
+          }
+        }
         return
       }
 

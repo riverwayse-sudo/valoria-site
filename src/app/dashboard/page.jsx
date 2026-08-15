@@ -107,6 +107,7 @@ export default function DashboardPage() {
   const [copied, setCopied] = useState(false)
   const [activeVideo, setActiveVideo] = useState(null)
   const [showMessages, setShowMessages] = useState(false)
+  const [profileViewCount, setProfileViewCount] = useState(null)
 
   useEffect(() => {
     async function load() {
@@ -122,6 +123,18 @@ export default function DashboardPage() {
 
       let prof = proProfile
       let supply = !!proProfile
+
+      if (prof) {
+        // head:true — only need the count header, not the rows themselves.
+        // RLS (see pending-migrations/012_add_profile_views.sql) already
+        // restricts this to the signed-in owner's own views, so no
+        // additional filtering needed beyond the eq itself.
+        const { count } = await supabase
+          .from('profile_views')
+          .select('id', { count: 'exact', head: true })
+          .eq('professional_profile_id', user.id)
+        setProfileViewCount(count ?? 0)
+      }
 
       if (!prof) {
         const { data: buyerProfile } = await supabase
@@ -236,6 +249,7 @@ export default function DashboardPage() {
     { label:'Experience', value: p.years_experience || p.experience_years ? `${p.years_experience || p.experience_years} yrs` : '—' },
     { label: compLabel,   value: compensation || '—' },
     { label:'VALU Index', value: p.valu_index != null ? `${p.valu_index} / 100` : 'Not assessed', href: p.valu_index != null ? '#valu-card' : null },
+    { label:'Profile Views', value: profileViewCount != null ? String(profileViewCount) : '—' },
   ] : []
 
   return (
