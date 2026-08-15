@@ -266,6 +266,16 @@ export async function POST(request) {
       return Response.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     }
 
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || request.headers.get('x-real-ip') || 'unknown'
+    const { data: allowed, error: rateLimitError } = await supabase.rpc('check_rate_limit', {
+      p_key: `waitlist:${ip}`, p_max_count: 5, p_window_seconds: 3600,
+    })
+    if (rateLimitError) {
+      console.error('Rate limit check failed:', rateLimitError)
+    } else if (!allowed) {
+      return Response.json({ error: 'Too many requests from this connection — please try again later.' }, { status: 429 })
+    }
+
     const baseSource = source || 'waitlist_page'
     // Fold UTM into the existing `source` text column instead of adding new
     // Supabase columns — avoids a schema migration while still keeping full

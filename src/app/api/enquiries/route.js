@@ -137,6 +137,22 @@ export async function POST(request) {
       return Response.json({ error: 'Invalid enquiry type.' }, { status: 400 })
     }
 
+    // Rate limiting — this is a public, unauthenticated form (anyone can
+    // submit an enquiry without an account), and had zero abuse protection
+    // until now. Keyed by IP, not email, since buyer_email is
+    // self-reported and trivially spoofable per-request.
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || request.headers.get('x-real-ip') || 'unknown'
+    const { data: allowed, error: rateLimitError } = await supabase.rpc('check_rate_limit', {
+      p_key: `enquiry:${ip}`, p_max_count: 5, p_window_seconds: 3600,
+    })
+    if (rateLimitError) {
+      // Fail open — a broken rate limiter should never be the reason a
+      // real buyer's enquiry gets silently dropped.
+      console.error('Rate limit check failed:', rateLimitError)
+    } else if (!allowed) {
+      return Response.json({ error: 'Too many requests from this connection — please try again later.' }, { status: 429 })
+    }
+
     const { error } = await supabase.from('enquiries').insert([{
       buyer_user_id: buyer_user_id || null,
       buyer_name: buyer_name.trim(),
