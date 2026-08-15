@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
@@ -19,6 +19,44 @@ export default function AdminSignupPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [result, setResult] = useState(null)
+  const [admins, setAdmins] = useState([])
+  const [selfId, setSelfId] = useState(null)
+  const [revokingId, setRevokingId] = useState(null)
+
+  useEffect(() => { fetchAdmins() }, [])
+
+  async function fetchAdmins() {
+    const { data: { session } } = await supabase.auth.getSession()
+    try {
+      const res = await fetch('/api/admin/create-admin', {
+        headers: { Authorization: `Bearer ${session?.access_token || ''}` },
+      })
+      const data = await res.json()
+      if (res.ok) { setAdmins(data.admins); setSelfId(data.selfId) }
+    } catch (err) {
+      console.error('Fetching admin list failed:', err)
+    }
+  }
+
+  async function handleRevoke(adminId, email) {
+    if (!confirm(`Remove admin access for ${email}? Their account stays active for the rest of the platform — this only removes /admin access.`)) return
+    setRevokingId(adminId)
+    const { data: { session } } = await supabase.auth.getSession()
+    try {
+      const res = await fetch('/api/admin/revoke-admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session?.access_token || ''}` },
+        body: JSON.stringify({ adminId }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Could not revoke access.')
+      setAdmins(prev => prev.filter(a => a.id !== adminId))
+    } catch (err) {
+      alert(err.message)
+    } finally {
+      setRevokingId(null)
+    }
+  }
 
   async function handleInvite(e) {
     e.preventDefault()
@@ -36,6 +74,7 @@ export default function AdminSignupPage() {
       if (!res.ok) throw new Error(data.error || 'Could not send invite.')
       setResult(data)
       setForm({ email: '', fullName: '' })
+      fetchAdmins()
     } catch (err) {
       setError(err.message)
     } finally {
@@ -76,6 +115,32 @@ export default function AdminSignupPage() {
             {loading ? 'SENDING...' : 'SEND INVITE'}
           </button>
         </form>
+
+        {admins.length > 0 && (
+          <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid rgba(201,168,76,.12)' }}>
+            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(247,244,238,.4)', textTransform: 'uppercase', marginBottom: '14px' }}>
+              Current Admins ({admins.length})
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {admins.map(a => (
+                <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: PARCHMENT, padding: '8px 0' }}>
+                  <div>
+                    <div>{a.full_name || a.email}</div>
+                    {a.full_name && <div style={{ fontSize: '11px', color: 'rgba(247,244,238,.4)' }}>{a.email}</div>}
+                  </div>
+                  {a.id === selfId ? (
+                    <span style={{ fontSize: '11px', color: 'rgba(247,244,238,.3)' }}>You</span>
+                  ) : (
+                    <button onClick={() => handleRevoke(a.id, a.email)} disabled={revokingId === a.id}
+                      style={{ background: 'none', border: 'none', color: '#F09595', fontSize: '11px', fontWeight: 700, letterSpacing: '.06em', cursor: 'pointer', opacity: revokingId === a.id ? 0.5 : 1 }}>
+                      {revokingId === a.id ? 'REMOVING...' : 'REVOKE'}
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -18,6 +18,26 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 )
 
+export async function GET(request) {
+  const authHeader = request.headers.get('authorization') || ''
+  const token = authHeader.replace(/^Bearer\s+/i, '')
+  if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
+
+  const { data: callerData, error: callerErr } = await supabase.auth.getUser(token)
+  if (callerErr || !callerData?.user) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
+
+  const { data: callerAdmin } = await supabase.from('admin_users').select('id').eq('id', callerData.user.id).maybeSingle()
+  if (!callerAdmin) return Response.json({ error: 'Admin access required.' }, { status: 403 })
+
+  const { data: admins, error } = await supabase
+    .from('admin_users')
+    .select('id, email, full_name, created_at')
+    .order('created_at', { ascending: true })
+  if (error) return Response.json({ error: error.message }, { status: 500 })
+
+  return Response.json({ admins: admins || [], selfId: callerData.user.id })
+}
+
 export async function POST(request) {
   try {
     const authHeader = request.headers.get('authorization') || ''
