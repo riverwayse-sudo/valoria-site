@@ -4,18 +4,16 @@ import { createClient } from '@supabase/supabase-js'
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-// Pre-launch waitlist lockdown (isLaunched()/PUBLIC allow-list/preview-bypass
-// cookie) has been removed — launch happened 18 July 2026 and isLaunched()
-// has returned true ever since, so that branch was permanently a no-op.
-// This file's only remaining job is the post-launch profile-completeness
-// gate below. If a pre-launch-style lockdown is ever needed again (e.g. for
-// a future re-launch or maintenance window), reintroduce it as its own
-// explicit check rather than reviving this dead code.
+// Post-launch middleware responsibilities:
+// 1. enforce server-side admin authorization before /admin is rendered
+// 2. enforce profile completeness for authenticated dashboard/profile journeys
+// API routes remain responsible for their own authorization.
 
 export async function middleware(request) {
   const { pathname } = request.nextUrl
 
-  // Static assets and API routes — never gate.
+  // Static assets and API routes — never gate here. API routes perform their
+  // own authentication/authorization checks at the server boundary.
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
@@ -25,44 +23,55 @@ export async function middleware(request) {
     return NextResponse.next()
   }
 
-  const hasSupabaseSession = request.cookies.getAll().some(c => /^sb-.*-auth-token/.test(c.name))
+  const authCookie = request.cookies.getAll().find(c => /^sb-.*-auth-token/.test(c.name))
+  const hasSupabaseSession = Boolean(authCookie)
+
+  // Use Supabase's server-side token verification rather than decoding the
+  // JWT payload ourselves. A decoded JWT is not proof that its signature is
+  // valid and therefore must never be used as the authorization decision.
+  let userId = null
+  let verifiedUser = null
+  if (hasSupabaseSession && SB_URL && SB_SERVICE_KEY) {
+    try {
+      const supabase = createClient(SB_URL, SB_SERVICE_KEY)
+      const token = authCookie.value
+      const { data, error } = await supabase.auth.getUser(token)
+      if (!error && data?.user?.id) {
+        verifiedUser = data.user
+        userId = data.user.id
+      }
+    } catch {
+      userId = null
+    }
+  }
 
   // ── Admin authorization ────────────────────────────────────────────────
-  // Previously /admin had NO server-side check at all — the ADMIN_EMAILS
-  // allowlist ran client-side, in the browser, after the page and its
-  // Supabase queries had already loaded. This is the real fix: check the
-  // dedicated admin_users table (see pending-migrations/010_add_admin_users.sql)
-  // before an /admin request is ever allowed through. /admin/login is the
-  // one exception — it has to be reachable by a signed-out visitor.
-  if (pathname.startsWith('/admin') && pathname !== '/admin/login' && SB_URL && SB_SERVICE_KEY) {
+  // /admin must fail closed. The dedicated admin_users table is the source
+  // of truth; client-side email allowlists are not authorization controls.
+  if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
     const loginUrl = new URL('/admin/login', request.url)
-    if (!hasSupabaseSession) return NextResponse.redirect(loginUrl)
+    if (!userId || !SB_URL || !SB_SERVICE_KEY) return NextResponse.redirect(loginUrl)
+
     try {
-      const token = request.cookies.getAll().find(c => /^sb-.*-auth-token/.test(c.name))?.value
-      const payload = token && JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
-      const userId = payload?.sub
-      if (!userId) return NextResponse.redirect(loginUrl)
       const supabase = createClient(SB_URL, SB_SERVICE_KEY)
-      const { data: admin } = await supabase.from('admin_users').select('id').eq('id', userId).maybeSingle()
+      const { data: admin } = await supabase
+        .from('admin_users')
+        .select('id')
+        .eq('id', userId)
+        .maybeSingle()
       if (!admin) return NextResponse.redirect(loginUrl)
     } catch {
-      // Fail closed here, unlike the profile-completeness gate below — this
-      // is an authorization check, not a UX nicety, so an error should
-      // never silently grant access to /admin.
       return NextResponse.redirect(loginUrl)
     }
     return NextResponse.next()
   }
 
   // ── Profile completeness gate ──────────────────────────────────────────
-  // If a signed-in user is trying to access the dashboard (buyer side) or
-  // /profile/* (their own profile), check that their professional profile
-  // is complete. If it isn't, redirect to /profile/setup.
-  // Skip this check for /profile/setup itself, the login/signup pages, and
-  // requests with no Supabase session at all — those pages/routes handle
-  // their own auth requirements and should always be reachable here.
+  // Only apply this to a verified authenticated user. If verification fails,
+  // leave the request to the page-level auth handling rather than treating an
+  // unverified JWT payload as an authenticated identity.
   if (
-    hasSupabaseSession &&
+    verifiedUser &&
     SB_URL && SB_SERVICE_KEY &&
     (pathname.startsWith('/dashboard') || pathname.startsWith('/profile/')) &&
     !pathname.startsWith('/profile/setup') &&
@@ -71,38 +80,25 @@ export async function middleware(request) {
   ) {
     try {
       const supabase = createClient(SB_URL, SB_SERVICE_KEY)
-      // Get the user's auth UID from the session cookie
-      const token = request.cookies.getAll()
-        .find(c => /^sb-.*-auth-token/.test(c.name))?.value
-      if (token) {
-        // Decode the JWT to get the user ID without a network call
-        const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
-        const userId = payload?.sub
-        if (userId) {
-          const { data: profile } = await supabase
-            .from('professional_profiles')
-            .select('profile_complete, display_name, headline, bio, active_tracks, industry, username, phone, current_job_title')
-            .eq('id', userId)
-            .maybeSingle()
-          // If no profile row, or profile_complete is false, redirect to setup.
-          // Also tell the setup page which required fields are still missing
-          // (mirrors the profile_complete check in profile/setup/page.jsx) so
-          // it can explain the redirect instead of silently bouncing the user
-          // back — previously this looked indistinguishable from a broken link.
-          if (!profile || !profile.profile_complete) {
-            const missing = !profile
-              ? ['display_name', 'headline', 'bio', 'active_tracks', 'industry', 'username', 'phone', 'current_job_title']
-              : ['display_name', 'headline', 'bio', 'industry', 'username', 'phone', 'current_job_title']
-                  .filter(f => !profile[f])
-                  .concat(!profile.active_tracks?.length ? ['active_tracks'] : [])
-            const redirectUrl = new URL('/profile/setup', request.url)
-            if (missing.length) redirectUrl.searchParams.set('incomplete', missing.join(','))
-            return NextResponse.redirect(redirectUrl)
-          }
-        }
+      const { data: profile } = await supabase
+        .from('professional_profiles')
+        .select('profile_complete, display_name, headline, bio, active_tracks, industry, username, phone, current_job_title')
+        .eq('id', userId)
+        .maybeSingle()
+
+      if (!profile || !profile.profile_complete) {
+        const missing = !profile
+          ? ['display_name', 'headline', 'bio', 'active_tracks', 'industry', 'username', 'phone', 'current_job_title']
+          : ['display_name', 'headline', 'bio', 'industry', 'username', 'phone', 'current_job_title']
+              .filter(f => !profile[f])
+              .concat(!profile.active_tracks?.length ? ['active_tracks'] : [])
+        const redirectUrl = new URL('/profile/setup', request.url)
+        if (missing.length) redirectUrl.searchParams.set('incomplete', missing.join(','))
+        return NextResponse.redirect(redirectUrl)
       }
     } catch {
-      // If anything fails, allow through — don't block on a middleware error
+      // Middleware failure is not an authorization grant. The page-level
+      // auth checks remain responsible for denying unauthorized data access.
     }
   }
 
