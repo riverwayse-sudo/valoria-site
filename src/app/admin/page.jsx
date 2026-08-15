@@ -223,6 +223,20 @@ export default function AdminPage() {
   ]
   const funnelMax = Math.max(1, ...funnelStages.map(s => s.value))
 
+  // Enquiry conversion — pending/reviewing are still "in flight" (not a
+  // conversion outcome yet), so shown separately from the three outcomes
+  // (introduced, completed, declined) that actually answer "did this turn
+  // into anything." Conversion rate is introduced+completed as a share of
+  // every enquiry that's been resolved one way or the other — pending ones
+  // are excluded from the rate itself since they haven't resolved yet.
+  const enquiryStatusCounts = STATUS_OPTIONS.reduce((acc, s) => {
+    acc[s] = messages.filter(m => (m.status || 'pending') === s).length
+    return acc
+  }, {})
+  const resolvedCount = enquiryStatusCounts.introduced + enquiryStatusCounts.completed + enquiryStatusCounts.declined
+  const convertedCount = enquiryStatusCounts.introduced + enquiryStatusCounts.completed
+  const conversionRate = resolvedCount > 0 ? Math.round((convertedCount / resolvedCount) * 100) : null
+
   // Score distribution — 35 is the listing threshold, called out separately.
   // Sourced from /api/admin/analytics (server-side, service role) rather
   // than the client-side `assessments` fetch above — valu_assessments has
@@ -404,6 +418,21 @@ export default function AdminPage() {
               </div>
               <p style={{ fontSize: '11px', color: FAINT, marginTop: '12px', marginBottom: 0 }}>
                 Each stage is counted independently — someone can complete an assessment without ever joining the waitlist, for example — so this shows relative volume at each step, not a strict drop-off.
+              </p>
+            </ReportSection>
+
+            {/* Enquiry conversion */}
+            <ReportSection
+              title="Enquiry conversion"
+              subtitle={conversionRate != null ? `${conversionRate}% of resolved enquiries became an introduction` : `${messages.length} total enquiries — none resolved yet`}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {STATUS_OPTIONS.map(s => (
+                  <BreakdownRow key={s} label={STATUS_COLORS[s].label} count={enquiryStatusCounts[s]} max={Math.max(1, ...STATUS_OPTIONS.map(k => enquiryStatusCounts[k]))} color={STATUS_COLORS[s].text || GOLD} />
+                ))}
+              </div>
+              <p style={{ fontSize: '11px', color: FAINT, marginTop: '12px', marginBottom: 0 }}>
+                Conversion rate counts Introduced + Completed against every enquiry that's been resolved one way or another (excludes Pending/Reviewing, which haven't resolved yet).
               </p>
             </ReportSection>
 
