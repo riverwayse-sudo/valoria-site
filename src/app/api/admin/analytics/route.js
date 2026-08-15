@@ -62,7 +62,7 @@ export async function GET(request) {
 
   const { data: assessments, error: assessmentsError } = await supabase
     .from('valu_assessments')
-    .select('user_id, role, industry, p_score, r_score, i_score, m_score, e_score, total_score, completed_at')
+    .select('user_id, name, email, role, industry, designation, p_score, r_score, i_score, m_score, e_score, total_score, completed_at')
     .not('completed_at', 'is', null)
     .order('completed_at', { ascending: false })
 
@@ -94,12 +94,33 @@ export async function GET(request) {
     unlocksListing: lo >= 35,
   }))
 
+  // Signed up and finished the assessment, but never completed their
+  // profile — the exact population send-profile-reminder.js (valoria-
+  // platform) nudges by email. Surfacing it here too so admin can see who
+  // it is, not just trust the automated email fired. Excludes rows with no
+  // user_id (assessment taken but no account created yet at all — that's
+  // a different, earlier funnel stage, not "signed up but incomplete").
+  const withAccounts = clean.filter(a => a.user_id)
+  let incompleteProfiles = []
+  if (withAccounts.length) {
+    const { data: profiles } = await supabase
+      .from('professional_profiles')
+      .select('id, profile_complete')
+      .in('id', withAccounts.map(a => a.user_id))
+    const completeIds = new Set((profiles || []).filter(p => p.profile_complete).map(p => p.id))
+    incompleteProfiles = withAccounts
+      .filter(a => !completeIds.has(a.user_id))
+      .map(a => ({ name: a.name, email: a.email, designation: a.designation, totalScore: a.total_score, completedAt: a.completed_at }))
+  }
+
   return Response.json({
     totalAssessments: clean.length,
     careerTypes,
     industries,
     trainingPriorities,
     scoreDistribution,
+    incompleteProfiles,
+    incompleteProfilesCount: incompleteProfiles.length,
     generatedAt: new Date().toISOString(),
   })
 }

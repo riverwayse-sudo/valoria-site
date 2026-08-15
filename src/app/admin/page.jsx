@@ -489,7 +489,33 @@ export default function AdminPage() {
               </ReportSection>
             </div>
 
-            {/* Signups over time */}
+            {/* Signed up, finished the assessment, never completed their
+                profile — the exact population send-profile-reminder.js
+                (valoria-platform) nudges by email 24h after completion.
+                Shown here so admin can see who it actually is, not just
+                trust that the automated email fired correctly. */}
+            <ReportSection
+              title="Signed up, assessment done, profile incomplete"
+              subtitle={analytics ? `${analytics.incompleteProfilesCount} ${analytics.incompleteProfilesCount === 1 ? 'person' : 'people'} — reminder email goes out automatically 24h after their assessment` : 'Loading…'}
+            >
+              {analytics?.incompleteProfiles?.length ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', maxHeight: '360px', overflowY: 'auto' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1fr 1fr', gap: '12px', padding: '6px 10px', fontSize: '10px', fontWeight: 700, letterSpacing: '.08em', color: 'rgba(201,168,76,.5)', textTransform: 'uppercase' }}>
+                    <span>Name</span><span>Email</span><span>Score</span><span>Completed</span>
+                  </div>
+                  {analytics.incompleteProfiles.map((p, i) => (
+                    <div key={p.email || i} style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1fr 1fr', gap: '12px', padding: '8px 10px', fontSize: '12px', color: DIM, background: i % 2 ? 'rgba(255,255,255,.015)' : 'transparent', borderRadius: '4px' }}>
+                      <span style={{ color: PARCHMENT }}>{p.name || '—'}</span>
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.email || '—'}</span>
+                      <span>{p.totalScore != null ? p.totalScore : '—'}</span>
+                      <span>{p.completedAt ? new Date(p.completedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '—'}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p style={{ fontSize: '12px', color: FAINT }}>Nobody in this state right now — everyone who's finished the assessment has either completed their profile or hasn't created an account yet.</p>
+              )}
+            </ReportSection>
             <ReportSection title="Waitlist signups — last 14 days">
               <div style={{ display: 'flex', gap: '4px', alignItems: 'flex-end', height: '100px' }}>
                 {signupsByDay.map(d => (
