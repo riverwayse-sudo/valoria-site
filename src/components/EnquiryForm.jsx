@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import './PremiumInteractions.module.css'
+import styles from './PremiumInteractions.module.css'
 
 const GOLD  = '#C9A84C'
 const DARK  = '#0F0F1A'
@@ -63,7 +63,7 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
 
   if (disabled) {
     return (
-      <button type="button" disabled className="premium-trigger"
+      <button type="button" disabled className={styles.premiumTrigger}
         style={{ padding: '14px 28px', background: 'rgba(255,255,255,.06)', color: 'rgba(247,244,238,.3)', fontSize: '11px', fontWeight: 700, letterSpacing: '.14em', border: 'none', cursor: 'not-allowed', flexShrink: 0, whiteSpace: 'nowrap', ...triggerStyle }}>
         {disabledLabel || 'SAMPLE — NOT AVAILABLE'}
       </button>
@@ -72,7 +72,7 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
 
   return (
     <>
-      <button type="button" className="premium-trigger" onClick={() => setOpen(true)}
+      <button type="button" className={styles.premiumTrigger} onClick={() => setOpen(true)}
         style={{ padding: '14px 28px', background: GOLD, color: DARK, fontSize: '11px', fontWeight: 700, letterSpacing: '.14em', border: 'none', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap', ...triggerStyle }}>
         {ctaLabel}
       </button>
@@ -111,7 +111,7 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
                   <textarea required value={form.message} onChange={e => set('message', e.target.value)} placeholder="What would you like to discuss?" rows={3} style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }} />
                   {error && <div style={{ fontSize: '12px', color: '#D85A30' }}>{error}</div>}
                   <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
-                    <button type="submit" disabled={sending} className="premium-trigger" style={{ flex: 1, padding: '12px 24px', background: GOLD, color: DARK, fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', border: 'none', cursor: sending ? 'default' : 'pointer', opacity: sending ? 0.6 : 1 }}>
+                    <button type="submit" disabled={sending} className={styles.premiumTrigger} style={{ flex: 1, padding: '12px 24px', background: GOLD, color: DARK, fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', border: 'none', cursor: sending ? 'default' : 'pointer', opacity: sending ? 0.6 : 1 }}>
                       {sending ? 'SENDING…' : 'SEND'}
                     </button>
                     <button type="button" onClick={closeAndReset} style={{ padding: '12px 20px', background: 'none', color: DIM, fontSize: '11px', border: `1px solid ${GLINE}`, cursor: 'pointer' }}>
