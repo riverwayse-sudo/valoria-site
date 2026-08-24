@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import premium from './PremiumInteractions.module.css'
 
 const GOLD  = '#C9A84C'
 const DARK  = '#0F0F1A'
@@ -8,15 +9,6 @@ const PARCH = '#F7F4EE'
 const DIM   = 'rgba(247,244,238,.5)'
 const GLINE = 'rgba(201,168,76,.28)'
 
-// Replaces the old mailto: CTA. Writes a real row to `enquiries` (via
-// /api/enquiries) instead of firing a client-side email with no record,
-// then still sends the same email notification server-side.
-//
-// Renders as a real popup/modal now (1 Aug 2026) — Temitayo flagged that
-// clicking Request Intro navigated away to the profile page and expanded
-// inline there, when the agreed design was a popup like a standard
-// "Contact Us" widget, usable right from wherever the button is (a
-// marketplace card, the profile page, anywhere) without leaving the page.
 export default function EnquiryForm({ professionalProfileId, atbId, enquiryType, ctaLabel, currentUser, disabled, disabledLabel, triggerStyle }) {
   const [open, setOpen] = useState(false)
   const [sending, setSending] = useState(false)
@@ -33,8 +25,6 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
 
   function closeAndReset() {
     setOpen(false)
-    // Reset a moment after the close animation-equivalent so a reopened
-    // form doesn't flash the previous submission's state.
     setTimeout(() => { setSent(false); setError('') }, 200)
   }
 
@@ -115,22 +105,16 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
                   Valoria Institute facilitates all introductions — your details stay protected.
                 </p>
                 <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <input required value={form.buyer_name} onChange={e => set('buyer_name', e.target.value)}
-                    placeholder="Your name" style={inputStyle} />
-                  <input required type="email" value={form.buyer_email} onChange={e => set('buyer_email', e.target.value)}
-                    placeholder="Your email" style={inputStyle} />
-                  <input value={form.buyer_company} onChange={e => set('buyer_company', e.target.value)}
-                    placeholder="Company / organisation (optional)" style={inputStyle} />
-                  <textarea required value={form.message} onChange={e => set('message', e.target.value)}
-                    placeholder="What would you like to discuss?" rows={3} style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }} />
+                  <input required value={form.buyer_name} onChange={e => set('buyer_name', e.target.value)} placeholder="Your name" style={inputStyle} />
+                  <input required type="email" value={form.buyer_email} onChange={e => set('buyer_email', e.target.value)} placeholder="Your email" style={inputStyle} />
+                  <input value={form.buyer_company} onChange={e => set('buyer_company', e.target.value)} placeholder="Company / organisation (optional)" style={inputStyle} />
+                  <textarea required value={form.message} onChange={e => set('message', e.target.value)} placeholder="What would you like to discuss?" rows={3} style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }} />
                   {error && <div style={{ fontSize: '12px', color: '#D85A30' }}>{error}</div>}
                   <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
-                    <button type="submit" disabled={sending}
-                      style={{ flex: 1, padding: '12px 24px', background: GOLD, color: DARK, fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', border: 'none', cursor: sending ? 'default' : 'pointer', opacity: sending ? 0.6 : 1 }}>
+                    <button type="submit" disabled={sending} style={{ flex: 1, padding: '12px 24px', background: GOLD, color: DARK, fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', border: 'none', cursor: sending ? 'default' : 'pointer', opacity: sending ? 0.6 : 1 }}>
                       {sending ? 'SENDING…' : 'SEND'}
                     </button>
-                    <button type="button" onClick={closeAndReset}
-                      style={{ padding: '12px 20px', background: 'none', color: DIM, fontSize: '11px', border: `1px solid ${GLINE}`, cursor: 'pointer' }}>
+                    <button type="button" onClick={closeAndReset} style={{ padding: '12px 20px', background: 'none', color: DIM, fontSize: '11px', border: `1px solid ${GLINE}`, cursor: 'pointer' }}>
                       Cancel
                     </button>
                   </div>
