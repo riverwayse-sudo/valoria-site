@@ -1,3 +1,18 @@
+:global(.premium-trigger) {
+  transition: filter .2s ease, transform .2s ease, box-shadow .2s ease !important;
+}
+
+:global(.premium-trigger:hover:not(:disabled)) {
+  filter: brightness(1.08) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 9px 22px -9px rgba(201,168,76,.55) !important;
+}
+
+:global(.premium-trigger:focus-visible) {
+  outline: 2px solid #C9A84C !important;
+  outline-offset: 3px !important;
+}
+
 :global(div:has(> div > a[href^="/profile/"])) {
   transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease, border-color .22s ease !important;
 }
@@ -27,16 +42,6 @@
   transform: scale(1.035) !important;
 }
 
-:global(div:has(> div > a[href^="/profile/"]) button) {
-  transition: filter .2s ease, transform .2s ease, box-shadow .2s ease !important;
-}
-
-:global(div:has(> div > a[href^="/profile/"]) button:hover:not(:disabled)) {
-  filter: brightness(1.08) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 7px 16px -7px rgba(55,138,221,.5) !important;
-}
-
 :global(div:has(> div > a[href^="/profile/"]) a:focus-visible),
 :global(div:has(> div > a[href^="/profile/"]) button:focus-visible) {
   outline: 2px solid #C9A84C !important;
@@ -50,6 +55,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  :global(.premium-trigger),
   :global(div:has(> div > a[href^="/profile/"])),
   :global(div:has(> div > a[href^="/profile/"]) *) {
     transition: none !important;
