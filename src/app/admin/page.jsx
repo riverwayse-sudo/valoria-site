@@ -278,7 +278,7 @@ export default function AdminPage() {
     <div style={{ minHeight: '100vh', background: DARK, fontFamily: "'Raleway', 'Helvetica Neue', Arial, sans-serif", color: PARCHMENT }}>
 
       {/* HEADER */}
-      <header style={styles.header}>
+      <header className="vi-admin-header" style={styles.header}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <Link href="/" style={{ lineHeight: 0 }}>
             <img src="/logo.png" alt="Valoria Institute" style={{ height: '40px', width: 'auto' }} />
@@ -288,15 +288,15 @@ export default function AdminPage() {
         </div>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
           <MarketplaceCTA style={styles.navLink}>Marketplace</MarketplaceCTA>
-          <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')}
+          <button className="vi-admin-control" onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')}
             style={styles.signOutBtn}>Sign Out</button>
         </div>
       </header>
 
-      <div style={styles.page}>
+      <div className="vi-admin-page" style={styles.page}>
 
         {/* STAT CARDS */}
-        <div style={styles.statGrid}>
+        <div className="vi-admin-stats" style={styles.statGrid}>
           <StatCard label="Total Enquiries" value={totalMessages} />
           <StatCard label="Pending Action" value={pendingCount} accent="#BA7517" />
           <StatCard label="Introduced" value={introducedCount} accent="#1D9E75" />
@@ -335,17 +335,17 @@ export default function AdminPage() {
                 value={searchQ} onChange={e => setSearchQ(e.target.value)}
                 style={styles.searchInput}
               />
-              <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={styles.select}>
+              <select className="vi-admin-control" value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={styles.select}>
                 <option value="">All statuses</option>
                 {STATUS_OPTIONS.map(s => <option key={s} value={s}>{STATUS_COLORS[s].label}</option>)}
               </select>
-              <select value={filterType} onChange={e => setFilterType(e.target.value)} style={styles.select}>
+              <select className="vi-admin-control" value={filterType} onChange={e => setFilterType(e.target.value)} style={styles.select}>
                 <option value="">All types</option>
                 <option value="candidate">Talent enquiries</option>
                 <option value="speaker">Speaker bookings</option>
               </select>
               {(filterStatus || filterType || searchQ) && (
-                <button onClick={() => { setFilterStatus(''); setFilterType(''); setSearchQ('') }} style={styles.clearBtn}>
+                <button className="vi-admin-control" onClick={() => { setFilterStatus(''); setFilterType(''); setSearchQ('') }} style={styles.clearBtn}>
                   Clear
                 </button>
               )}
@@ -380,7 +380,7 @@ export default function AdminPage() {
         {/* ── PROFILES TAB ── */}
         {activeTab === 'profiles' && (
           <div style={styles.profileTable}>
-            <div style={styles.tableHeader}>
+            <div className="vi-admin-table-header" style={styles.tableHeader}>
               <span>Name / Type</span>
               <span>Headline</span>
               <span>Listed</span>
@@ -598,7 +598,7 @@ function BreakdownRow({ label, count, max, color }) {
 
 function StatCard({ label, value, accent }) {
   return (
-    <div style={styles.statCard}>
+    <div className="vi-admin-stat" style={styles.statCard}>
       <div style={{ fontSize: 'clamp(22px,2.5vw,30px)', fontWeight: 700, color: accent || PARCHMENT, lineHeight: 1 }}>{value}</div>
       <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(201,168,76,.5)', marginTop: '6px', textTransform: 'uppercase' }}>{label}</div>
     </div>
@@ -614,7 +614,7 @@ function MessageRow({ msg, updating, onStatusChange, onIntroduce, facilitateErro
   const canFacilitate = status !== 'introduced' && status !== 'completed'
 
   return (
-    <div style={styles.messageRow}>
+    <div className="vi-admin-row" style={styles.messageRow}>
       <div style={styles.messageTop} onClick={() => setExpanded(e => !e)}>
         {/* Left: recipient info */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
@@ -716,7 +716,7 @@ function ProfileRow({ profile: p, onToggle }) {
   const isListed = p.listing_status === 'listed'
 
   return (
-    <div style={styles.tableRow}>
+    <div className="vi-admin-table-row vi-admin-row" style={styles.tableRow}>
       <div>
         <div style={{ fontSize: '13px', fontWeight: 600, color: PARCHMENT, marginBottom: '2px' }}>{p.display_name || '—'}</div>
         <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.08em', color: typeColors[tracks[0]] || DIM, textTransform: 'uppercase' }}>
