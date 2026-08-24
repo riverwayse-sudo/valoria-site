@@ -1,21 +1,14 @@
 import { NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
 
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+const SB_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const SB_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-// Pre-launch waitlist lockdown (isLaunched()/PUBLIC allow-list/preview-bypass
-// cookie) has been removed — launch happened 18 July 2026 and isLaunched()
-// has returned true ever since, so that branch was permanently a no-op.
-// This file's only remaining job is the post-launch profile-completeness
-// gate below. If a pre-launch-style lockdown is ever needed again (e.g. for
-// a future re-launch or maintenance window), reintroduce it as its own
-// explicit check rather than reviving this dead code.
 
 export async function middleware(request) {
   const { pathname } = request.nextUrl
 
-  // Static assets and API routes — never gate.
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
@@ -25,88 +18,119 @@ export async function middleware(request) {
     return NextResponse.next()
   }
 
-  const hasSupabaseSession = request.cookies.getAll().some(c => /^sb-.*-auth-token/.test(c.name))
+  if (!SB_URL || !SB_ANON_KEY) return NextResponse.next()
 
-  // ── Admin authorization ────────────────────────────────────────────────
-  // Previously /admin had NO server-side check at all — the ADMIN_EMAILS
-  // allowlist ran client-side, in the browser, after the page and its
-  // Supabase queries had already loaded. This is the real fix: check the
-  // dedicated admin_users table (see pending-migrations/010_add_admin_users.sql)
-  // before an /admin request is ever allowed through. /admin/login is the
-  // one exception — it has to be reachable by a signed-out visitor.
-  if (pathname.startsWith('/admin') && pathname !== '/admin/login' && SB_URL && SB_SERVICE_KEY) {
+  let response = NextResponse.next({
+    request: { headers: request.headers },
+  })
+
+  // Always let Supabase validate/refresh the browser session. Do not decode
+  // the auth JWT manually: cookie formats can change and a decoded payload
+  // is not, by itself, proof that the session is still valid.
+  const supabase = createServerClient(SB_URL, SB_ANON_KEY, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll()
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          request.cookies.set(name, value)
+          response.cookies.set(name, value, options)
+        })
+      },
+    },
+  })
+
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // ── Admin authorization ───────────────────────────────────────────────
+  // /admin/login must remain public. Every other /admin route requires a
+  // valid Supabase user AND a matching row in the server-only admin_users
+  // table. The service-role client is used only for this authorization
+  // lookup; the service key never reaches the browser.
+  if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
     const loginUrl = new URL('/admin/login', request.url)
-    if (!hasSupabaseSession) return NextResponse.redirect(loginUrl)
-    try {
-      const token = request.cookies.getAll().find(c => /^sb-.*-auth-token/.test(c.name))?.value
-      const payload = token && JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
-      const userId = payload?.sub
-      if (!userId) return NextResponse.redirect(loginUrl)
-      const supabase = createClient(SB_URL, SB_SERVICE_KEY)
-      const { data: admin } = await supabase.from('admin_users').select('id').eq('id', userId).maybeSingle()
-      if (!admin) return NextResponse.redirect(loginUrl)
-    } catch {
-      // Fail closed here, unlike the profile-completeness gate below — this
-      // is an authorization check, not a UX nicety, so an error should
-      // never silently grant access to /admin.
-      return NextResponse.redirect(loginUrl)
-    }
-    return NextResponse.next()
-  }
 
-  // ── Profile completeness gate ──────────────────────────────────────────
-  // If a signed-in user is trying to access the dashboard (buyer side) or
-  // /profile/* (their own profile), check that their professional profile
-  // is complete. If it isn't, redirect to /profile/setup.
-  // Skip this check for /profile/setup itself, the login/signup pages, and
-  // requests with no Supabase session at all — those pages/routes handle
-  // their own auth requirements and should always be reachable here.
-  if (
-    hasSupabaseSession &&
-    SB_URL && SB_SERVICE_KEY &&
-    (pathname.startsWith('/dashboard') || pathname.startsWith('/profile/')) &&
-    !pathname.startsWith('/profile/setup') &&
-    !pathname.startsWith('/login') &&
-    !pathname.startsWith('/signup')
-  ) {
+    if (!user) return NextResponse.redirect(loginUrl)
+    if (!SB_SERVICE_KEY) return NextResponse.redirect(loginUrl)
+
     try {
-      const supabase = createClient(SB_URL, SB_SERVICE_KEY)
-      // Get the user's auth UID from the session cookie
-      const token = request.cookies.getAll()
-        .find(c => /^sb-.*-auth-token/.test(c.name))?.value
-      if (token) {
-        // Decode the JWT to get the user ID without a network call
-        const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
-        const userId = payload?.sub
-        if (userId) {
-          const { data: profile } = await supabase
-            .from('professional_profiles')
-            .select('profile_complete, display_name, headline, bio, active_tracks, industry, username, phone, current_job_title')
-            .eq('id', userId)
-            .maybeSingle()
-          // If no profile row, or profile_complete is false, redirect to setup.
-          // Also tell the setup page which required fields are still missing
-          // (mirrors the profile_complete check in profile/setup/page.jsx) so
-          // it can explain the redirect instead of silently bouncing the user
-          // back — previously this looked indistinguishable from a broken link.
-          if (!profile || !profile.profile_complete) {
-            const missing = !profile
-              ? ['display_name', 'headline', 'bio', 'active_tracks', 'industry', 'username', 'phone', 'current_job_title']
-              : ['display_name', 'headline', 'bio', 'industry', 'username', 'phone', 'current_job_title']
-                  .filter(f => !profile[f])
-                  .concat(!profile.active_tracks?.length ? ['active_tracks'] : [])
-            const redirectUrl = new URL('/profile/setup', request.url)
-            if (missing.length) redirectUrl.searchParams.set('incomplete', missing.join(','))
-            return NextResponse.redirect(redirectUrl)
-          }
-        }
+      const adminClient = createClient(SB_URL, SB_SERVICE_KEY, {
+        auth: { autoRefreshToken: false, persistSession: false },
+      })
+
+      const { data: admin, error } = await adminClient
+        .from('admin_users')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      if (error || !admin) {
+        const unauthorizedUrl = new URL('/admin/login', request.url)
+        unauthorizedUrl.searchParams.set('error', 'unauthorized')
+        return NextResponse.redirect(unauthorizedUrl)
       }
     } catch {
-      // If anything fails, allow through — don't block on a middleware error
+      return NextResponse.redirect(loginUrl)
+    }
+
+    return response
+  }
+
+  // ── Profile completeness gate ─────────────────────────────────────────
+  // Buyers have `profiles` rows and should be able to use /dashboard even
+  // though they intentionally do not have professional_profiles rows.
+  // Professionals are checked against professional_profiles only when they
+  // are accessing their profile area.
+  if (
+    user &&
+    SB_SERVICE_KEY &&
+    (
+      pathname.startsWith('/dashboard') ||
+      pathname.startsWith('/profile/')
+    ) &&
+    !pathname.startsWith('/profile/setup')
+  ) {
+    try {
+      const adminClient = createClient(SB_URL, SB_SERVICE_KEY, {
+        auth: { autoRefreshToken: false, persistSession: false },
+      })
+
+      const { data: buyerProfile } = await adminClient
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      // Buyers are intentionally not subject to the professional profile
+      // completeness gate.
+      if (buyerProfile) return response
+
+      // Only professionals need professional profile completion.
+      const { data: profile } = await adminClient
+        .from('professional_profiles')
+        .select('profile_complete, display_name, headline, bio, active_tracks, industry, username, phone, current_job_title')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      if (!profile || !profile.profile_complete) {
+        const missing = !profile
+          ? ['display_name', 'headline', 'bio', 'active_tracks', 'industry', 'username', 'phone', 'current_job_title']
+          : ['display_name', 'headline', 'bio', 'industry', 'username', 'phone', 'current_job_title']
+              .filter(field => !profile[field])
+              .concat(!profile.active_tracks?.length ? ['active_tracks'] : [])
+
+        const redirectUrl = new URL('/profile/setup', request.url)
+        if (missing.length) redirectUrl.searchParams.set('incomplete', missing.join(','))
+        return NextResponse.redirect(redirectUrl)
+      }
+    } catch {
+      // Do not turn a transient middleware/database error into a site-wide
+      // lockout. Admin authorization above intentionally fails closed.
     }
   }
 
-  return NextResponse.next()
+  return response
 }
 
 export const config = {
