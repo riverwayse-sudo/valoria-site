@@ -74,9 +74,7 @@ export default function LiveProfilesScroll() {
             {count === null ? 'The Valoria professional community' : `${count.toLocaleString()} assessed professional${count === 1 ? '' : 's'}`}
           </h2>
           <p className="live-profiles-subtitle">
-            {profiles.length > 0
-              ? 'Assessed professionals, moving from capability to opportunity.'
-              : 'The professional directory is being prepared for public discovery.'}
+            Assessed professionals with live VALU Index scores — capability made visible.
           </p>
         </div>
       </div>
@@ -88,7 +86,7 @@ export default function LiveProfilesScroll() {
               const track = TRACK_META[primaryTrack(profile.active_tracks)] || TRACK_META.candidate
               return (
                 <Link href={`/profile/${profile.id}`} key={`${profile.id}-${index}`} className="vi-scroll-card">
-                  <div className="vi-scroll-avatar">
+                  <div className="vi-scroll-avatar" aria-hidden="true">
                     {profile.photo_url ? (
                       <img src={profile.photo_url} alt="" loading="lazy" />
                     ) : (
@@ -100,7 +98,11 @@ export default function LiveProfilesScroll() {
                     <div className="vi-scroll-headline">{profile.headline || 'Valoria Professional'}</div>
                     <div className="vi-scroll-track-label" style={{ color: track.color }}>{track.label}</div>
                   </div>
-                  {profile.valu_index != null && <div className="vi-scroll-score">{profile.valu_index}</div>}
+                  <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'}`}>
+                    <span className="vi-scroll-score-label">VALU</span>
+                    <strong>{profile.valu_index ?? '—'}</strong>
+                    <span className="vi-scroll-score-max">/100</span>
+                  </div>
                 </Link>
               )
             })}
@@ -109,7 +111,7 @@ export default function LiveProfilesScroll() {
       ) : (
         <div className="live-profiles-public-state">
           <span className="live-profiles-dot" />
-          Public profiles will appear here as professionals are approved for marketplace discovery.
+          Professional profiles will appear here as soon as profile data is available.
         </div>
       )}
 
@@ -123,22 +125,25 @@ export default function LiveProfilesScroll() {
         .vi-scroll-mask{width:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
         .vi-scroll-track{display:flex;gap:14px;width:max-content;animation:vi-scroll-x 40s linear infinite;will-change:transform}
         .vi-scroll-track:hover{animation-play-state:paused}
-        .vi-scroll-card{display:flex;align-items:center;gap:10px;flex-shrink:0;min-width:260px;padding:10px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(247,244,238,.08);border-radius:10px;text-decoration:none;transition:border-color .2s,background .2s,transform .2s}
-        .vi-scroll-card:hover{border-color:rgba(201,168,76,.35);background:rgba(255,255,255,.05);transform:translateY(-2px)}
-        .vi-scroll-avatar{width:38px;height:38px;border-radius:50%;flex-shrink:0;background:${GOLD};display:flex;align-items:center;justify-content:center;overflow:hidden}
-        .vi-scroll-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-        .vi-scroll-avatar span{color:${MID};font-size:14px;font-weight:700}
-        .vi-scroll-copy{min-width:0}
-        .vi-scroll-id{font-size:12px;font-weight:700;color:${PARCH};white-space:nowrap}
-        .vi-scroll-headline{font-size:11px;color:${DIM};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
-        .vi-scroll-track-label{font-size:9px;font-weight:700;letter-spacing:.06em;margin-top:2px}
-        .vi-scroll-score{font-size:11px;font-weight:700;color:${GOLD};flex-shrink:0;margin-left:auto}
+        .vi-scroll-card{display:flex;align-items:center;gap:12px;flex-shrink:0;min-width:310px;padding:12px 14px;background:rgba(255,255,255,.035);border:1px solid rgba(247,244,238,.09);border-radius:12px;text-decoration:none;transition:border-color .2s,background .2s,transform .2s}
+        .vi-scroll-card:hover{border-color:rgba(201,168,76,.38);background:rgba(255,255,255,.06);transform:translateY(-2px)}
+        .vi-scroll-avatar{width:52px;height:52px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,${GOLD},#8e7330);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(247,244,238,.2);box-shadow:0 0 0 3px rgba(201,168,76,.06)}
+        .vi-scroll-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+        .vi-scroll-avatar span{color:${MID};font-size:15px;font-weight:700}
+        .vi-scroll-copy{min-width:0;flex:1}
+        .vi-scroll-id{font-size:11px;font-weight:700;letter-spacing:.04em;color:${PARCH};white-space:nowrap}
+        .vi-scroll-headline{font-size:10px;color:${DIM};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:175px;margin-top:2px}
+        .vi-scroll-track-label{font-size:8px;font-weight:700;letter-spacing:.06em;margin-top:3px;text-transform:uppercase}
+        .vi-scroll-score{min-width:58px;text-align:right;line-height:1;flex-shrink:0;border-left:1px solid rgba(201,168,76,.16);padding-left:12px}
+        .vi-scroll-score-label{display:block;font-size:7px;font-weight:700;letter-spacing:.15em;color:rgba(247,244,238,.4);margin-bottom:3px}
+        .vi-scroll-score strong{font-family:var(--font);font-size:27px;font-weight:300;color:${GOLD};letter-spacing:-.04em}
+        .vi-scroll-score-max{font-size:8px;color:rgba(247,244,238,.35);margin-left:2px}
         .live-profiles-public-state{max-width:1200px;margin:0 auto;padding:16px 24px 0;color:rgba(247,244,238,.38);font-size:11px;line-height:1.6;display:flex;align-items:center;gap:8px}
         .live-profiles-dot{width:5px;height:5px;border-radius:50%;background:${GOLD};flex-shrink:0}
         @keyframes vi-scroll-x{from{transform:translateX(0)}to{transform:translateX(-50%)}}
         @keyframes vi-pulse{0%,100%{opacity:.35}50%{opacity:1}}
         @media (prefers-reduced-motion:reduce){.vi-scroll-track{animation:none}.live-profiles-loading-line{animation:none}}
-        @media (max-width:640px){.live-profiles{padding:36px 0}.live-profiles-inner{padding-bottom:20px}.vi-scroll-card{min-width:230px;padding:9px 12px}.vi-scroll-headline{max-width:130px}}
+        @media (max-width:640px){.live-profiles{padding:36px 0}.live-profiles-inner{padding-bottom:20px}.vi-scroll-card{min-width:270px;padding:10px 12px}.vi-scroll-avatar{width:46px;height:46px}.vi-scroll-headline{max-width:135px}.vi-scroll-score strong{font-size:24px}}
       `}</style>
     </section>
   )
