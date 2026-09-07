@@ -11,10 +11,11 @@ function letters(v){return v?v.replace(/\./g,'').toUpperCase():'?'}
 export default function LiveProfilesScroll(){
  const [profiles,setProfiles]=useState(null),[count,setCount]=useState(null)
  useEffect(()=>{let cancelled=false;Promise.all([
-  supabase.from('professional_profiles').select('id, atb_id, display_initials, headline, photo_url, active_tracks, valu_index').eq('listing_status','listed').neq('visibility','private').order('valu_index',{ascending:false}).limit(24),
-  supabase.from('professional_profiles').select('*',{count:'exact',head:true}).eq('listing_status','listed').neq('visibility','private')
+  supabase.from('professional_profiles').select('id, atb_id, display_initials, headline, photo_url, active_tracks, valu_index').order('valu_index',{ascending:false}).limit(24),
+  supabase.from('professional_profiles').select('*',{count:'exact',head:true})
  ]).then(([list,total])=>{if(list.error)console.error('LiveProfilesScroll fetch failed:',list.error);if(!cancelled){setProfiles(list.data||[]);setCount(total.count??0)}});return()=>{cancelled=true}},[])
- if(!profiles||profiles.length===0)return null
+ if(!profiles)return null
+ if(profiles.length===0)return <section style={{padding:'32px 24px',borderTop:'1px solid rgba(201,168,76,.1)',borderBottom:'1px solid rgba(201,168,76,.1)'}}><div style={{maxWidth:'1200px',margin:'0 auto',color:PARCH}}><div style={{fontSize:'9px',fontWeight:700,letterSpacing:'.2em',color:'rgba(201,168,76,.5)',textTransform:'uppercase',marginBottom:'8px'}}>THE VALORIA COMMUNITY</div><h2 style={{fontFamily:'var(--font)',fontWeight:200,margin:0}}>No professional profiles available yet.</h2></div></section>
  const loop=[...profiles,...profiles]
  return <section style={{padding:'48px 0',borderTop:'1px solid rgba(201,168,76,.1)',borderBottom:'1px solid rgba(201,168,76,.1)',overflow:'hidden'}}>
   <div style={{maxWidth:'1200px',margin:'0 auto',padding:'0 24px 28px'}}><div style={{fontSize:'9px',fontWeight:700,letterSpacing:'.2em',color:'rgba(201,168,76,.5)',textTransform:'uppercase',marginBottom:'8px'}}>ALREADY ON THE PLATFORM</div><h2 style={{fontFamily:'var(--font)',fontSize:'clamp(20px,3vw,26px)',fontWeight:200,color:PARCH,margin:0}}>{count===null?'Loading assessed professionals…':count.toLocaleString()+' assessed professional'+(count===1?'':'s')+', live right now'}</h2></div>
