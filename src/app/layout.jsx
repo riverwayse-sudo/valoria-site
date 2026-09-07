@@ -1,5 +1,6 @@
 import '../styles/globals.css'
 import Script from 'next/script'
+import SmoothScroll from '../components/SmoothScroll'
 
 const SITE_URL = 'https://valoriainstitute.com'
 const SITE_NAME = 'Valoria Institute'
@@ -127,6 +128,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
+        <SmoothScroll />
         {GA_MEASUREMENT_ID && (
           <>
             <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
