@@ -9,7 +9,7 @@ const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID
 // (valoriainstitute.com) — override via env var if this ever changes.
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-63M4SRXQKM'
 const DESCRIPTION =
-  "One marketplace. Three ways to engage Africa's best professionals. Search candidates, book speakers, commission facilitators — every profile underwritten by one independently assessed standard."
+  "Valoria Institute builds the infrastructure that develops, surfaces and connects African professional merit."
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
