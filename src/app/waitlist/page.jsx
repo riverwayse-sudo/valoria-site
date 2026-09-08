@@ -391,10 +391,10 @@ export default function WaitlistPage() {
               <div style={{ height:'1px', width:'32px', background:GLINE2 }} />
             </div>
             <blockquote style={{ fontSize:'clamp(18px,2.5vw,28px)', fontWeight:200, fontStyle:'italic', lineHeight:1.5, color:PARCH, margin:'0 0 24px', letterSpacing:'-.01em' }}>
-              "When people encounter a person or institution, they place them in one of four categories. Forgotten. Used. <span style={{ color:GOLD }}>A force to align with.</span> Or one they submit to."
+              "Talent is not the problem. Infrastructure is."
             </blockquote>
             <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.75, maxWidth:'560px', margin:'0 auto' }}>
-              Valoria Institute exists to move African professionals from category two — used, deployed as a resource without development — to category three.
+              Valoria Institute builds the infrastructure through which African professional merit is developed, surfaced and connected to opportunity.
               Every profile, every assessment, every programme is an act of infrastructure toward that one outcome.
             </p>
           </div>
