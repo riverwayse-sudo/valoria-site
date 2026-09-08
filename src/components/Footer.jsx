@@ -68,19 +68,19 @@ export default function Footer() {
           <div className="uf-grid">
             <div className="uf-brand">
               <img src={BRAND.logo} alt="Valoria Institute" style={{ height: '52px', width: 'auto', display: 'block', marginBottom: '16px' }} />
-              <p className="uf-desc">The marketplace where African professionals rise. One assessed standard. Three ways to engage.</p>
+              <p className="uf-desc">The institution building the infrastructure through which African professional merit is developed, surfaced and connected to opportunity.</p>
               <div className="uf-tagline">Worth. Built.</div>
             </div>
 
             <div>
-              <div className="uf-col-title">Platform</div>
+              <div className="uf-col-title">Institution</div>
               <ul className="uf-links">
                 <li><a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer">VALU Index</a></li>
-                <li><MarketplaceCTA>Marketplace</MarketplaceCTA></li>
+                <li><MarketplaceCTA>African Talent Bureau</MarketplaceCTA></li>
                 <li><Link href="/prime">PRIME Framework</Link></li>
                 <li><Link href="/marketplace?track=candidate">ATB Connect</Link></li>
                 <li><Link href="/marketplace?track=speaker">ATB Spotlight</Link></li>
-                <li><Link href="/facilitators">Facilitators</Link></li>
+                <li><Link href="/programmes">Valoria Develop</Link></li>
               </ul>
             </div>
 
