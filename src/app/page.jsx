@@ -9,8 +9,8 @@ import { BRAND } from '@/lib/brand'
 import './home.css'
 
 export const metadata = {
-  title: 'Valoria Institute — Where African Professionals Rise',
-  description: "One marketplace. Three ways to engage Africa's best professionals. Search candidates, book speakers, commission facilitators — every profile underwritten by one assessed standard.",
+  title: 'Valoria Institute — Worth. Built.',
+  description: "Valoria Institute builds the infrastructure that develops, surfaces and connects African professional merit.",
 }
 
 export default function HomePage() {
@@ -33,16 +33,16 @@ export default function HomePage() {
             <Reveal className="alignment-inner">
               <div className="eyebrow" style={{ justifyContent: 'center' }}>
                 <div className="eyebrow-line" />
-                <span className="eyebrow-text">THE ALIGNMENT PRINCIPLE</span>
+                <span className="eyebrow-text">THE VALORIA PROMISE</span>
                 <div className="eyebrow-line" />
               </div>
               <blockquote className="alignment-quote">
-                &ldquo;When people encounter a person or institution, they place them in one of four categories. Forgotten. Used. <span className="highlight">A force to align with.</span> Or one they submit to.&rdquo;
+                &ldquo;We will <span className="highlight">develop you, surface you, and connect you</span> to the opportunity you have earned.&rdquo;
               </blockquote>
               <p className="alignment-sub">
-                Valoria Institute exists to move African professionals from category two — used, deployed as a resource without development — to category three. Every profile, every assessment, every programme is an act of infrastructure toward that one outcome.
+                Valoria Institute builds the infrastructure through which capability is developed, merit becomes visible and opportunity can be matched with precision.
               </p>
-              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">TAKE THE VALU INDEX — FREE</a>
+              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">BEGIN THE VALU SNAPSHOT</a>
               <div className="alignment-cats" aria-label="The four categories">
                 <div className="cat-item"><div className="cat-num">01</div><div className="cat-name">Forgotten</div></div>
                 <div className="cat-item"><div className="cat-num">02</div><div className="cat-name">Used</div></div>
@@ -69,7 +69,7 @@ export default function HomePage() {
                 Why being good at your job<br />is no longer <em>enough.</em>
               </h2>
               <p className="wr-sub">
-                Missed the launch webinar? Watch the full session on the VALU Index, the PRIME framework, and what it takes to become a Force to Align With.
+                Watch the full session on the VALU Index, the PRIME framework and Valoria’s belief that talent is not the problem— infrastructure is.
               </p>
               <div className="wr-video">
                 <iframe
@@ -81,7 +81,7 @@ export default function HomePage() {
                 />
               </div>
               <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold" style={{ marginTop: 'clamp(28px,4vw,40px)' }}>
-                TAKE THE VALU INDEX — FREE
+                BEGIN THE VALU SNAPSHOT
               </a>
             </Reveal>
           </div>
@@ -94,14 +94,14 @@ export default function HomePage() {
               <div>
                 <div className="eyebrow">
                   <div className="eyebrow-line" />
-                  <span className="eyebrow-text">ONE MARKETPLACE &nbsp;&middot;&nbsp; THREE ENTRY POINTS</span>
+                  <span className="eyebrow-text">ONE INSTITUTION &nbsp;&middot;&nbsp; MULTIPLE PATHWAYS</span>
                 </div>
                 <h2 style={{ fontFamily: 'var(--font)', fontSize: 'clamp(36px,5vw,64px)', fontWeight: 200, lineHeight: 1.05, letterSpacing: '-.02em' }}>
-                  One professional.<br /><em style={{ fontStyle: 'italic', color: 'var(--gold)', fontWeight: 300 }}>Three ways to engage.</em>
+                  One institution.<br /><em style={{ fontStyle: 'italic', color: 'var(--gold)', fontWeight: 300 }}>Develop. Surface. Connect.</em>
                 </h2>
               </div>
               <p className="ep-desc">
-                A professional on Valoria holds whichever modalities are true for them — candidate, speaker, facilitator, or any combination. Three types of buyer search through three entry points. Every search is underwritten by the same assessed standard.
+                Valoria Develop builds capability. The African Talent Bureau surfaces professionals through structured pathways for employers and event organisers. Every pathway is connected by the same institutional standard.
               </p>
             </Reveal>
 
@@ -121,15 +121,15 @@ export default function HomePage() {
               </div>
               <h2 className="valu-title">Know exactly<br />where you <em>stand.</em></h2>
               <p className="valu-desc">
-                55 questions across five clusters. Designed to surface your genuine capability, not your best impression of it. The only verifiable professional credential of its kind on the African continent. Free to take. Valid for 12 months.
+                Begin with a 15-question directional capability snapshot across the five PRIME clusters. It provides an early signal and a starting point for your Valoria journey.
               </p>
               <ul className="valu-checklist" role="list">
                 {[
                   'Score across all five PRIME clusters with full radar chart',
-                  'Profile designation from Force to Align With to At the Starting Point',
+                  'Directional insight across all five PRIME clusters',
                   'Declare your active modalities — candidate, speaker, facilitator, or any combination',
-                  'Listed on the platform and searchable by the right buyers if your score qualifies',
-                  '18 to 28 minutes — always free',
+                  'A clear starting point for development, professional identity and discovery',
+                  '15 questions — directional and immediate',
                 ].map((text, i) => (
                   <li className="vc-item" key={i}>
                     <div className="vc-dot" aria-hidden="true">
@@ -140,7 +140,7 @@ export default function HomePage() {
                 ))}
               </ul>
               <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">
-                BEGIN THE VALU INDEX →
+                BEGIN THE VALU SNAPSHOT →
               </a>
             </Reveal>
 
