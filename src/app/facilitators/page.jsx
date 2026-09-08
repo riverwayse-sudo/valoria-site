@@ -5,8 +5,8 @@ import { COLORS } from '@/lib/brand'
 import '../pages.css'
 
 export const metadata = {
-  title: 'Commission Facilitators — Valoria Develop',
-  description: 'Commission PRIME-certified facilitators to run development programmes for your teams. Every programme maps to the same five clusters your team\'s VALU Index is measured against.',
+  title: 'Development Programmes — Valoria Develop',
+  description: 'Explore PRIME-mapped development to run development programmes for your teams. Every programme maps to the same five clusters your team\'s VALU Index is measured against.',
   keywords: ['commission facilitators Nigeria', 'corporate training Africa', 'PRIME certified trainers', 'team development Lagos', 'Valoria Develop', 'capability development Africa'],
   openGraph: {
     title: 'Commission Facilitators — Valoria Develop | Valoria Institute',
@@ -44,7 +44,7 @@ export default function FacilitatorsPage() {
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text" style={{ color }}>03 &nbsp;&middot;&nbsp; FOR TRAINING BUYERS</span></div>
             <h1 className="page-title">Don&apos;t train on theory.<br /><em>Train on the framework.</em></h1>
             <p className="page-sub">
-              Valoria Develop is the facilitator modality of the marketplace. Commission PRIME-certified facilitators to run development programmes built directly on the same five-cluster standard your team&apos;s VALU Index is measured against — so training closes real gaps, not hypothetical ones.
+              Valoria Develop is Valoria Institute’s development pathway. Programmes are mapped to the PRIME capability architecture and designed to close defined development gaps with intention.
             </p>
             <div className="page-hero-actions">
               <a href="/contact-us" className="btn-gold">COMMISSION A PROGRAMME</a>
