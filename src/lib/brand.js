@@ -1,9 +1,11 @@
 // Single source of truth for brand constants across the Valoria Institute site.
-// Update here, not in individual pages.
+// Governed by Valoria Institute Brand Guidelines VI-BG-2026-001.
 
 export const BRAND = {
   name: 'Valoria Institute',
   tagline: 'Worth. Built.',
+  belief: 'Talent is not the problem. Infrastructure is.',
+  promise: ['Develop', 'Surface', 'Connect'],
   email: 'info@valoriainstitute.com',
   copyrightEntity: 'African Talent Bureau Ltd',
   location: 'Lagos, Nigeria',
@@ -15,36 +17,31 @@ export const BRAND = {
 export const COLORS = {
   gold: '#C9A84C',
   goldLight: '#E2C97E',
-  dark: '#0F0F1A',
+  dark: '#1A1A2E',
   darkMid: '#1A1A2E',
-  darkCard: '#161624',
-  slateIndigo: '#2E2E4A',   // ATB sub-brand surfaces, hover states
-  antiqueLinen: '#EDE8DC',  // accent backgrounds, card fills
-  subtleBrass: '#D4C9A8',   // borders/dividers only — never background, never text
+  darkCard: '#2E2E4A',
+  slateIndigo: '#2E2E4A',
+  antiqueLinen: '#EDE8DC',
+  subtleBrass: '#D4C9A8',
   parchment: '#F7F4EE',
-  ivoryWhite: '#FAFAF7',    // body copy on dark surfaces
-  teal: '#1D9E75',
-  blue: '#378ADD',
-  purple: '#7F77DD',
-  amber: '#BA7517',
-  coral: '#D85A30',
+  ivoryWhite: '#FAFAF7',
 }
 
-// PRIME Framework — five clusters, in order, with the radar chart color mapping
-// used consistently across the homepage and assessment platform.
+// PRIME Framework — the approved five clusters and seventeen skills.
 export const PRIME_CLUSTERS = [
-  { letter: 'P', name: 'Presence', color: COLORS.teal },
-  { letter: 'R', name: 'Relationships', color: COLORS.blue },
-  { letter: 'I', name: 'Intelligence', color: COLORS.purple },
-  { letter: 'M', name: 'Mastery', color: COLORS.amber },
-  { letter: 'E', name: 'Enterprise', color: COLORS.coral },
+  { letter: 'P', name: 'Presence', color: COLORS.gold, subtitle: 'How you show up', skills: ['Communication', 'Executive Presence', 'Composure Under Scrutiny'] },
+  { letter: 'R', name: 'Relationships', color: COLORS.gold, subtitle: 'How you connect', skills: ['Trust-Building', 'Collaborative Intelligence', 'Network Quality'] },
+  { letter: 'I', name: 'Intelligence', color: COLORS.gold, subtitle: 'How you think', skills: ['Critical Thinking', 'Analytical Depth', 'Decision-Making', 'Cognitive Agility'] },
+  { letter: 'M', name: 'Mastery', color: COLORS.gold, subtitle: 'How you deliver', skills: ['Execution Discipline', 'Accountability', 'Resilience', 'Adaptability'] },
+  { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you build', skills: ['Commercial Thinking', 'Systems Building', 'Venture Mindset'] },
 ]
 
-// VALU Index tier designations, in descending order
+// Score-based merit bands. These are credentials, never paid upgrades.
 export const TIER_DESIGNATIONS = [
-  'Force to Align With',
-  'At the Starting Point',
-  // additional tiers TBD — confirm full list before launch
+  { min: 90, name: 'Elite', stars: '✦✦✦' },
+  { min: 75, name: 'Distinguished', stars: '✦✦' },
+  { min: 55, name: 'Proficient', stars: '✦' },
+  { min: 35, name: 'Standard', stars: '' },
 ]
 
 export const ENTRY_POINTS = [
@@ -53,9 +50,9 @@ export const ENTRY_POINTS = [
     num: '01',
     name: 'ATB Connect',
     buyer: 'FOR EMPLOYERS',
-    color: COLORS.blue,
-    modality: 'CANDIDATE MODALITY',
-    desc: "Search pre-assessed candidates by VALU Index score, cluster strength, sector, and designation. Every professional in the pool has been independently assessed. Hire with intelligence, not with hope.",
+    color: COLORS.gold,
+    modality: 'PRECISION TALENT SOURCING',
+    desc: 'Search assessed professionals through structured capability data, experience and role fit. Make hiring decisions with more clarity and confidence.',
     href: '/marketplace?track=candidate',
     linkLabel: 'SEARCH TALENT',
   },
@@ -65,20 +62,20 @@ export const ENTRY_POINTS = [
     name: 'ATB Spotlight',
     buyer: 'FOR EVENT ORGANISERS',
     color: COLORS.gold,
-    modality: 'SPEAKER MODALITY',
-    desc: 'Discover and book speakers by expertise, tier designation, and VALU Index. The same faces appear at every conference because there has been no better way to find the others. Until now.',
+    modality: 'MERIT-BASED VISIBILITY',
+    desc: 'Discover voices by expertise, demonstrated capability and professional merit — not familiarity or network proximity.',
     href: '/marketplace?track=speaker',
-    linkLabel: 'FIND A SPEAKER',
+    linkLabel: 'DISCOVER SPEAKERS',
   },
   {
     id: 'develop',
     num: '03',
     name: 'Valoria Develop',
-    buyer: 'FOR TRAINING BUYERS',
-    color: COLORS.teal,
-    modality: 'FACILITATOR MODALITY',
-    desc: 'PRIME-mapped training programmes delivered by Valoria-certified facilitators — development that closes the exact gaps your VALU Index assessment surfaced.',
+    buyer: 'FOR PROFESSIONALS & ORGANISATIONS',
+    color: COLORS.gold,
+    modality: 'CAPABILITY DEVELOPMENT',
+    desc: 'PRIME-mapped development designed around the capability gaps that matter most, with clear pathways for professional growth.',
     href: '/programmes',
-    linkLabel: 'EXPLORE PROGRAMMES',
+    linkLabel: 'EXPLORE DEVELOPMENT',
   },
 ]
