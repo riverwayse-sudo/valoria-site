@@ -5,78 +5,39 @@ import { PRIME_CLUSTERS } from '@/lib/brand'
 import '../pages.css'
 
 export const metadata = {
-  title: 'The PRIME Framework — Five Clusters. One Assessed Standard.',
-  description: 'PRIME defines what professional capability actually means across five dimensions: Presence, Relationships, Intelligence, Mastery, Enterprise. It is the architecture beneath the VALU Index and every Valoria programme.',
-  keywords: ['PRIME framework', 'professional capability assessment', 'VALU Index clusters', 'African professional standard', 'Presence Relationships Intelligence Mastery Enterprise'],
-  openGraph: {
-    title: 'The PRIME Framework | Valoria Institute',
-    description: 'Five clusters. One assessed standard. PRIME is the architecture beneath the VALU Index.',
-    url: 'https://valoriainstitute.com/prime',
-  },
+  title: 'The PRIME Framework — Valoria Institute',
+  description: 'PRIME is Valoria Institute’s proprietary capability architecture: Presence, Relationships, Intelligence, Mastery and Enterprise.',
+  keywords: ['PRIME framework', 'VALU Index', 'African professional capability', 'Presence Relationships Intelligence Mastery Enterprise'],
   alternates: { canonical: 'https://valoriainstitute.com/prime' },
 }
 
 const CLUSTER_DATA = {
-  P: {
-    subtitle: 'How a professional shows up.',
-    body: 'Presence is the cluster that determines whether capability lands. Composure under scrutiny, clarity of communication, and the ability to carry your own expertise into a room without losing it to nerves, noise, or hierarchy. A high Presence score means your thinking gets heard — not just submitted.',
-    signals: ['Communicates with clarity and intention', 'Maintains composure under scrutiny', 'Projects credibility in high-stakes environments', 'Carries personal expertise without overstatement'],
-    weight: 'High-weight for speakers, senior hires, and client-facing roles.',
-  },
-  R: {
-    subtitle: 'How a professional works with others.',
-    body: 'Relationships is the cluster that determines whether a professional can build the conditions for other people to do their best work. Trust-building, collaborative intelligence, and the quality of the networks a professional both maintains and creates. A high Relationships score means people choose to work with you again.',
-    signals: ['Builds genuine trust across working relationships', 'Collaborates without losing individual accountability', 'Sustains networks that generate mutual value', 'Navigates conflict without destroying the relationship'],
-    weight: 'High-weight for team leads, partnership roles, and collaborative environments.',
-  },
-  I: {
-    subtitle: 'How you think.',
-    body: 'Intelligence is the cluster that separates professionals who consume information from those who deploy it. Critical thinking, analytical depth, and the ability to synthesise complexity into decisions that hold under scrutiny. A high Intelligence score means your thinking is both rigorous and usable — not just impressive in a meeting.',
-    signals: ['Thinks critically rather than reactively', 'Analyses complexity without losing the thread', 'Synthesises information into clear, defensible positions', 'Challenges assumptions — including their own'],
-    weight: 'High-weight for consulting, advisory, research, and senior decision-making roles.',
-  },
-  M: {
-    subtitle: 'How a professional delivers.',
-    body: 'Mastery is the cluster that determines whether things actually get done. Execution discipline, accountability, resilience under pressure, and the ability to adapt without losing direction. A high Mastery score means you finish what you start — and you improve while doing it.',
-    signals: ['Executes with discipline, not just intention', 'Holds accountability without externalising failure', 'Adapts under pressure without losing direction', 'Continuously builds depth within their domain'],
-    weight: 'High-weight for operators, delivery leads, and roles where output is the primary measure.',
-  },
-  E: {
-    subtitle: 'How a professional builds and operates.',
-    body: 'Enterprise is the cluster that separates professionals who work inside systems from those who build them. Commercial thinking, venture mindset, and the ability to stand up and run structures — teams, products, or entire functions — that outlast the individual. A high Enterprise score means you can build something, not just contribute to one.',
-    signals: ['Applies commercial logic to professional decisions', 'Builds systems and structures that scale', 'Identifies and pursues value creation opportunities', 'Operates effectively with incomplete information'],
-    weight: 'High-weight for founders, senior operators, and entrepreneurs in residence.',
-  },
+  P: { body: 'How you show up. Presence measures whether professional capability is communicated with clarity, credibility and composure when the stakes are real.', signals: ['Communication', 'Executive Presence', 'Composure Under Scrutiny'] },
+  R: { body: 'How you connect. Relationships measures the ability to build trust, work intelligently with others and sustain networks that create mutual value.', signals: ['Trust-Building', 'Collaborative Intelligence', 'Network Quality'] },
+  I: { body: 'How you think. Intelligence measures the quality of professional judgment: critical thinking, analytical depth, decision-making and cognitive agility.', signals: ['Critical Thinking', 'Analytical Depth', 'Decision-Making', 'Cognitive Agility'] },
+  M: { body: 'How you deliver. Mastery measures disciplined execution, ownership, resilience and adaptability in the work itself.', signals: ['Execution Discipline', 'Accountability', 'Resilience', 'Adaptability'] },
+  E: { body: 'How you build. Enterprise measures the capacity to create value beyond a task: commercial thinking, systems building and venture mindset.', signals: ['Commercial Thinking', 'Systems Building', 'Venture Mindset'] },
 }
-
-const HOW_IT_WORKS = [
-  { step: '01', title: 'You take the VALU Index.', body: '18 to 28 minutes of scenario-based questions, free. No self-reporting. No skill checklists. Situational responses that the framework scores against defined behavioural anchors.' },
-  { step: '02', title: 'Your PRIME profile is generated.', body: 'A score across all five clusters, a total VALU Index score, and a tier designation (Standard, Proficient, Distinguished, or Elite) based on where your profile sits against the full assessed cohort.' },
-  { step: '03', title: 'Your profile becomes your signal.', body: 'Employers, event organisers, and training buyers on the platform search against your PRIME profile — not your CV, not your job title, not who they already know.' },
-]
 
 export default function PrimePage() {
   return (
     <>
       <Nav />
       <main id="main-content">
-
-        {/* HERO */}
         <section className="page-hero">
           <div className="page-hero-inner">
-            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE CAPABILITY ARCHITECTURE</span></div>
-            <h1 className="page-title">Five clusters.<br />One <em>assessed standard.</em></h1>
+            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE PROPRIETARY CAPABILITY ARCHITECTURE</span></div>
+            <h1 className="page-title">Five clusters.<br />Seventeen <em>skills.</em></h1>
             <p className="page-sub">
-              PRIME is the framework underneath the VALU Index and every Valoria Develop programme. It defines what &ldquo;capable&rdquo; actually means across five dimensions — so assessments can be consistent, comparable, and impossible to game with a well-formatted résumé.
+              PRIME is the intellectual architecture beneath Valoria Institute. It powers professional assessment, development and structured talent visibility across the ecosystem.
             </p>
             <div className="page-hero-actions">
-              <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">SEE YOUR OWN PRIME PROFILE — FREE</a>
-              <a href="/programmes" className="btn-outline">SEE PROGRAMMES BY CLUSTER</a>
+              <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">BEGIN THE VALU SNAPSHOT</a>
+              <a href="/programmes" className="btn-outline">EXPLORE DEVELOPMENT</a>
             </div>
           </div>
         </section>
 
-        {/* THE FIVE CLUSTERS — expanded */}
         <section className="page-section">
           <div className="page-section-inner" style={{ maxWidth: '820px' }}>
             <Reveal>
@@ -87,25 +48,15 @@ export default function PrimePage() {
               const data = CLUSTER_DATA[c.letter]
               return (
                 <Reveal key={c.letter}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '72px 1fr', gap: '32px', padding: '40px 0', borderBottom: '1px solid rgba(201,168,76,.08)', alignItems: 'start' }}>
-                    <div>
-                      <div className="cluster-letter" style={{ color: c.color, fontSize: '40px', lineHeight: 1 }}>{c.letter}</div>
-                    </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '72px 1fr', gap: '32px', padding: '40px 0', borderBottom: '1px solid rgba(201,168,76,.12)', alignItems: 'start' }}>
+                    <div className="cluster-letter" style={{ color: 'var(--gold)', fontSize: '40px', lineHeight: 1 }}>{c.letter}</div>
                     <div>
                       <div className="cluster-name" style={{ color: 'var(--parchment)', marginBottom: '4px' }}>{c.name}</div>
-                      <div style={{ fontSize: '12px', fontWeight: 600, color: c.color, letterSpacing: '.06em', marginBottom: '16px' }}>{data?.subtitle}</div>
-                      <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px', marginBottom: '20px' }}>{data?.body}</p>
-                      <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {data?.signals.map((s, i) => (
-                          <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'var(--dim)', fontSize: '13px', fontWeight: 300 }}>
-                            <span style={{ color: c.color, marginTop: '2px', flexShrink: 0 }}>
-                              <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke={c.color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                            </span>
-                            {s}
-                          </li>
-                        ))}
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--gold)', letterSpacing: '.08em', marginBottom: '16px', textTransform: 'uppercase' }}>{c.subtitle}</div>
+                      <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px', marginBottom: '20px' }}>{data.body}</p>
+                      <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {data.signals.map((s) => <li key={s} style={{ display: 'flex', gap: '10px', color: 'var(--dim)', fontSize: '13px' }}><span style={{ color: 'var(--gold)' }}>✦</span>{s}</li>)}
                       </ul>
-                      <div style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '.1em', color: 'rgba(201,168,76,.4)', textTransform: 'uppercase' }}>{data?.weight}</div>
                     </div>
                   </div>
                 </Reveal>
@@ -114,71 +65,39 @@ export default function PrimePage() {
           </div>
         </section>
 
-        {/* HOW SCORING WORKS */}
         <section className="page-section alt">
           <div className="page-section-inner">
             <Reveal>
-              <div className="eyebrow" style={{ justifyContent: 'center' }}><div className="eyebrow-line" /><span className="eyebrow-text">HOW THE SCORING WORKS</span><div className="eyebrow-line" /></div>
-              <h2 className="section-title" style={{ textAlign: 'center', marginBottom: '48px' }}>From assessment<br /><em>to marketplace signal.</em></h2>
+              <div className="eyebrow" style={{ justifyContent: 'center' }}><div className="eyebrow-line" /><span className="eyebrow-text">THE VALU INDEX</span><div className="eyebrow-line" /></div>
+              <h2 className="section-title" style={{ textAlign: 'center' }}>One architecture.<br /><em>One standard.</em></h2>
+              <p className="page-sub" style={{ margin: '0 auto', textAlign: 'center' }}>
+                The current public entry experience is a 15-question directional capability snapshot across all five PRIME clusters. It is an entry signal—not a substitute for the full controlled assessment methodology.
+              </p>
             </Reveal>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
-              {HOW_IT_WORKS.map(s => (
-                <Reveal key={s.step}>
-                  <div className="card-gold">
-                    <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '.16em', color: 'rgba(201,168,76,.45)', marginBottom: '12px' }}>{s.step}</div>
-                    <div className="cluster-name" style={{ marginBottom: '10px' }}>{s.title}</div>
-                    <p className="cluster-desc">{s.body}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
           </div>
         </section>
 
-        {/* TIER DESIGNATIONS */}
         <section className="page-section">
           <div className="page-section-inner two-col">
             <Reveal>
-              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">TIER DESIGNATIONS</span></div>
-              <h2 className="section-title">Four tiers.<br /><em>One standard.</em></h2>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">MERIT MADE VISIBLE</span></div>
+              <h2 className="section-title">Advancement is<br /><em>earned.</em></h2>
               <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px' }}>
-                PRIME scores roll up into a total VALU Index score and a tier designation that buyers use to filter the marketplace. Tiers are not permanent — professionals can reassess after 90 days, and scores update as the cohort grows.
+                The Valoria tier system is score-based. It is a trust credential, never a subscription tier or a paid upgrade.
               </p>
             </Reveal>
             <Reveal>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {[
-                  { tier: 'Elite', range: '90–100', desc: 'Top-percentile performance across all five clusters. Prioritised in search results.', color: '#C9A84C' },
-                  { tier: 'Distinguished', range: '75–89', desc: 'Strong performance with clear cluster strengths. Visible across all three marketplace entry points.', color: '#7F77DD' },
-                  { tier: 'Proficient', range: '55–74', desc: 'Solid assessed baseline. Listed and searchable, eligible for development through Valoria Develop.', color: '#378ADD' },
-                  { tier: 'Standard', range: '35–54', desc: 'Assessed and on-platform. Eligible for cluster development to move up to Proficient.', color: '#1D9E75' },
-                ].map(t => (
-                  <div key={t.tier} className="card-gold" style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                    <div style={{ flexShrink: 0, minWidth: '90px' }}>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: t.color }}>{t.tier}</div>
-                      <div style={{ fontSize: '11px', color: 'var(--faint)', marginTop: '2px' }}>{t.range}</div>
-                    </div>
-                    <p style={{ fontSize: '13px', color: 'var(--dim)', fontWeight: 300, lineHeight: 1.6, margin: 0 }}>{t.desc}</p>
-                  </div>
-                ))}
+                  { tier: 'Elite', range: '90–100', desc: 'Top-percentile performance across all five PRIME clusters.', stars: '✦✦✦' },
+                  { tier: 'Distinguished', range: '75–89', desc: 'Strong performance with clear cluster strengths.', stars: '✦✦' },
+                  { tier: 'Proficient', range: '55–74', desc: 'Solid assessed baseline and eligible for continued development.', stars: '✦' },
+                  { tier: 'Standard', range: '35–54', desc: 'Assessed baseline with a clear development pathway.', stars: '' },
+                ].map(t => <div key={t.tier} className="card-gold" style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}><div style={{ minWidth: '110px', color: 'var(--gold)', fontWeight: 700 }}>{t.stars && <div>{t.stars}</div>}<div>{t.tier}</div><small style={{ color: 'var(--faint)' }}>{t.range}</small></div><p className="cluster-desc" style={{ margin: 0 }}>{t.desc}</p></div>)}
               </div>
             </Reveal>
           </div>
         </section>
-
-        {/* CTA */}
-        <section className="page-section alt cta-banner">
-          <Reveal>
-            <div className="eyebrow" style={{ justifyContent: 'center' }}><div className="eyebrow-line" /><span className="eyebrow-text">SEE WHERE YOU SCORE</span><div className="eyebrow-line" /></div>
-            <h2 className="section-title">Find out your<br /><em>own PRIME profile.</em></h2>
-            <p className="page-sub">The VALU Index scores you across all five clusters in 18 to 28 minutes. Free, and valid for 12 months.</p>
-            <div className="page-hero-actions" style={{ justifyContent: 'center' }}>
-              <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">BEGIN THE VALU INDEX — FREE</a>
-              <a href="/programmes" className="btn-outline">SEE DEVELOPMENT PROGRAMMES</a>
-            </div>
-          </Reveal>
-        </section>
-
       </main>
       <Footer />
     </>
