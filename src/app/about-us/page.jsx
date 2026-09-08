@@ -4,8 +4,8 @@ import Reveal from '@/components/Reveal'
 import '../pages.css'
 
 export const metadata = {
-  title: 'About Valoria Institute — Where African Professionals Rise',
-  description: 'Valoria Institute is the professional marketplace built on Africa\'s first independently assessed talent standard. One VALU Index score. Three ways to engage the continent\'s best professionals.',
+  title: 'About Valoria Institute — Worth. Built.',
+  description: 'Valoria Institute builds the infrastructure that develops, surfaces and connects African professional talent through a merit-based standard.',
   keywords: ['about Valoria Institute', 'African talent bureau', 'VALU Index', 'professional assessment Africa', 'Lagos talent marketplace'],
   openGraph: {
     title: 'About Valoria Institute',
@@ -18,26 +18,26 @@ export const metadata = {
 const PRINCIPLES = [
   {
     num: '01',
-    title: 'Assessment over assertion.',
-    body: 'Every professional on the platform has been independently measured. Not self-reported. Not endorsed. Measured — across five defined capability clusters that don\'t change depending on who\'s reading the CV.',
+    title: 'Merit over familiarity.',
+    body: 'Capability should be developed and assessed against a consistent standard. Visibility should follow merit rather than familiarity, network proximity or a polished presentation.',
   },
   {
     num: '02',
-    title: 'Visibility is infrastructure.',
-    body: 'The problem for most capable African professionals isn\'t capability — it\'s that their capability has no consistent, trusted signal attached to it. The VALU Index is that signal. One score, readable by anyone, regardless of where the professional studied or worked.',
+    title: 'Development before visibility.',
+    body: 'Valoria is development-first. The institution exists to help professionals build capability with architecture before that capability is surfaced and connected to opportunity.',
   },
   {
     num: '03',
-    title: 'One standard, three markets.',
-    body: 'The same PRIME-assessed profile that makes a professional findable to an employer also makes them bookable as a speaker and commissionable as a facilitator. One assessment. Every commercial context.',
+    title: 'One institution. Multiple pathways.',
+    body: 'PRIME is the shared intellectual architecture beneath development, professional visibility and precision matching across the Valoria ecosystem.',
   },
 ]
 
 const TIMELINE = [
   { year: 'The problem', label: 'The same names recirculate across hiring, speaking, and training — not because they\'re the most capable, but because they\'re the most visible. Genuinely capable professionals get passed over for lack of a recognisable signal.' },
   { year: 'The hypothesis', label: 'If capability could be independently assessed and consistently signalled — the same way a credit score makes creditworthiness readable — the market would move toward the most capable, not the most visible.' },
-  { year: 'The build', label: 'Valoria Institute was built to test that hypothesis at scale. The VALU Index is the assessment. PRIME is the framework underneath it. ATB Connect, Spotlight, and Develop are the three market entry points it powers.' },
-  { year: 'The standard', label: 'Every professional assessed through the VALU Index gets a score, a cluster breakdown, and a tier designation — and every buyer on the platform searches against that standard, not against a résumé.' },
+  { year: 'The build', label: 'Valoria Institute was built as infrastructure. PRIME is the proprietary capability architecture beneath development and assessment. Valoria Develop builds capability; the African Talent Bureau creates structured visibility and precision connection.' },
+  { year: 'The standard', label: 'The institution uses structured capability signals to make professional merit more legible. Score-based tiers are credentials, never paid upgrades.' },
 ]
 
 export default function AboutPage() {
@@ -50,9 +50,9 @@ export default function AboutPage() {
         <section className="page-hero">
           <div className="page-hero-inner">
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">ABOUT VALORIA INSTITUTE</span></div>
-            <h1 className="page-title">Worth, made<br /><em>impossible to miss.</em></h1>
+            <h1 className="page-title">Worth.<br /><em>Built.</em></h1>
             <p className="page-sub">
-              Valoria Institute is an African Talent Bureau Ltd initiative. We build the infrastructure that lets African professionals prove what they can do — and lets the people hiring, booking, and commissioning them see it clearly, without having to already know their name.
+              Valoria Institute builds and operates human capital infrastructure for African professional talent. We develop capability with architecture, surface merit with clarity and connect professionals to opportunity with precision.
             </p>
           </div>
         </section>
@@ -72,12 +72,12 @@ export default function AboutPage() {
             </Reveal>
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WHAT WE BUILT</span></div>
-              <h2 className="section-title">One standard.<br /><em>Three ways in.</em></h2>
+              <h2 className="section-title">Develop.<br /><em>Surface. Connect.</em></h2>
               <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px' }}>
-                The VALU Index assesses every professional across five PRIME clusters — Presence, Relationships, Intelligence, Mastery, Enterprise. That single assessed score then powers three distinct entry points into the professional market: ATB Connect for employers searching assessed candidates, ATB Spotlight for event organisers booking assessed speakers, and Valoria Develop for training buyers commissioning PRIME-certified facilitators.
+                PRIME provides the capability architecture. Valoria Develop builds capability. The African Talent Bureau surfaces assessed professionals through ATB Connect and ATB Spotlight. These are institutional pathways—not separate identities competing for the definition of Valoria.
               </p>
               <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px', marginTop: '16px' }}>
-                One assessment. One standard. Every professional context it serves.
+                One institution. One standard. Multiple pathways for professional merit.
               </p>
             </Reveal>
           </div>
@@ -128,12 +128,12 @@ export default function AboutPage() {
         <section className="page-section alt cta-banner">
           <Reveal>
             <div className="eyebrow" style={{ justifyContent: 'center' }}><div className="eyebrow-line" /><span className="eyebrow-text">WHO WE ARE</span><div className="eyebrow-line" /></div>
-            <h2 className="section-title">African Talent Bureau Ltd.<br /><em>Lagos, Nigeria.</em></h2>
+            <h2 className="section-title">Valoria Institute.<br /><em>African in foundation. Global in ambition.</em></h2>
             <p className="page-sub" style={{ margin: '0 auto 32px', maxWidth: '560px' }}>
-              Valoria Institute is an initiative of African Talent Bureau Ltd, operating out of Lagos and building toward a continent-wide professional standard. We are NDPA 2023 compliant in how we handle every professional&apos;s assessment data.
+              Valoria Institute is building toward a continent-wide human capital standard while remaining proudly African in its point of view and globally ambitious in its operating standard. African Talent Bureau Ltd remains the legal operating entity where applicable.
             </p>
             <div className="page-hero-actions" style={{ justifyContent: 'center' }}>
-              <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">BEGIN THE VALU INDEX — FREE</a>
+              <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">BEGIN THE VALU SNAPSHOT</a>
               <a href="/contact-us" className="btn-outline">GET IN TOUCH</a>
             </div>
           </Reveal>
