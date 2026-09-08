@@ -20,7 +20,7 @@ export async function GET(request) {
 
   const { data: rows, error } = await admin
     .from('taster_sessions')
-    .select('id,user_id,name,role,linked_at,reminder_count,last_reminder_at')
+    .select('id,user_id,name,role,experience,linked_at,reminder_count,last_reminder_at')
     .not('user_id', 'is', null)
     .not('linked_at', 'is', null)
     .order('linked_at', { ascending: true })
@@ -38,7 +38,7 @@ export async function GET(request) {
     const email = userData?.user?.email
     if (!email) continue
     const firstName = String(row.name || 'there').trim().split(/\s+/)[0] || 'there'
-    const assessmentUrl = `https://assessment.valoriainstitute.com/?full=1&taster_id=${encodeURIComponent(row.id)}&name=${encodeURIComponent(row.name || '')}&role=${encodeURIComponent(row.role || '')}&experience=${encodeURIComponent('')}`
+    const assessmentUrl = `https://assessment.valoriainstitute.com/?full=1&taster_id=${encodeURIComponent(row.id)}&name=${encodeURIComponent(row.name || '')}&role=${encodeURIComponent(row.role || '')}&experience=${encodeURIComponent(row.experience || '')}`
     const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#1A1A2E;line-height:1.65"><p style="font-size:11px;font-weight:700;letter-spacing:.14em;color:#C9A84C">VALORIA INSTITUTE</p><h2 style="font-weight:400">Your VALU journey is not finished.</h2><p>Hi ${firstName}, your 15-question snapshot gave you a directional read. Your Valoria profile is currently <strong>Basic · Incomplete</strong>.</p><p>Complete the full VALU assessment to establish your official score and unlock the completed professional profile.</p><a href="${assessmentUrl}" style="display:inline-block;padding:13px 22px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-weight:700;font-size:12px;letter-spacing:.08em">COMPLETE THE FULL ASSESSMENT →</a><p style="font-size:11px;color:#8A8578;margin-top:26px">You can complete your professional profile after the assessment.</p></div>`
     try {
       const send = await fetch('https://api.brevo.com/v3/smtp/email', { method:'POST', headers:{'api-key':BREVO_KEY,'Content-Type':'application/json'}, body:JSON.stringify({sender:{name:'Valoria Institute',email:'info@valoriainstitute.com'},to:[{email,name:row.name}],subject:'Complete your VALU Index',htmlContent:html,tags:['valu-reminder','assessment-completion']}) })
