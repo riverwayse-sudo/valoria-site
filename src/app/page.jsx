@@ -43,11 +43,10 @@ export default function HomePage() {
                 Valoria Institute builds the infrastructure through which capability is developed, merit becomes visible and opportunity can be matched with precision.
               </p>
               <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">BEGIN THE VALU SNAPSHOT</a>
-              <div className="alignment-cats" aria-label="The four categories">
-                <div className="cat-item"><div className="cat-num">01</div><div className="cat-name">Forgotten</div></div>
-                <div className="cat-item"><div className="cat-num">02</div><div className="cat-name">Used</div></div>
-                <div className="cat-item cat-highlight"><div className="cat-num">03</div><div className="cat-name">Force to Align With</div></div>
-                <div className="cat-item"><div className="cat-num">04</div><div className="cat-name">Submit to</div></div>
+              <div className="alignment-cats" aria-label="The Valoria promise">
+                <div className="cat-item"><div className="cat-num">01</div><div className="cat-name">Develop</div></div>
+                <div className="cat-item cat-highlight"><div className="cat-num">02</div><div className="cat-name">Surface</div></div>
+                <div className="cat-item"><div className="cat-num">03</div><div className="cat-name">Connect</div></div>
               </div>
             </Reveal>
           </div>
