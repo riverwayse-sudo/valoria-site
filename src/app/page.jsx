@@ -4,7 +4,6 @@ import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
 import EntryPointsGrid from '@/components/EntryPointsGrid'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
-import WaitlistGate from '@/components/WaitlistGate'
 import { BRAND } from '@/lib/brand'
 import './home.css'
 
@@ -16,7 +15,6 @@ export const metadata = {
 export default function HomePage() {
   return (
     <>
-      <WaitlistGate />
       <Nav />
 
       <main id="main-content">
@@ -100,14 +98,14 @@ export default function HomePage() {
               </div>
               <h2 className="valu-title">Know exactly<br />where you <em>stand.</em></h2>
               <p className="valu-desc">
-                Begin with a 15-question directional capability snapshot across the five PRIME clusters. It provides an early signal and a starting point for your Valoria journey.
+                Start with a 15-question directional capability snapshot across the five PRIME clusters. After you sign up, complete the remaining assessment to establish your official VALU Index and become eligible for marketplace listing where your score qualifies.
               </p>
               <ul className="valu-checklist" role="list">
                 {[
-                  'Score across all five PRIME clusters with full radar chart',
                   'Directional insight across all five PRIME clusters',
+                  'A five-cluster snapshot that shows where your capability is strongest',
                   'Declare your active modalities — candidate, speaker, facilitator, or any combination',
-                  'A clear starting point for development, professional identity and discovery',
+                  'Complete the full assessment to establish your official VALU Index',
                   '15 questions — directional and immediate',
                 ].map((text, i) => (
                   <li className="vc-item" key={i}>
@@ -119,8 +117,8 @@ export default function HomePage() {
               <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">BEGIN THE VALU SNAPSHOT →</a>
             </Reveal>
 
-            <Reveal className="radar-card" aria-label="Sample radar chart output from VALU Index">
-              <div className="rc-label">SAMPLE VALU INDEX RESULT</div>
+            <Reveal className="radar-card" aria-label="Illustrative radar chart for the VALU Index">
+              <div className="rc-label">ILLUSTRATIVE VALU PROFILE</div>
               <svg className="rc-radar" viewBox="0 0 260 260" aria-hidden="true">
                 <g opacity=".35" stroke="#D4C9A8" strokeWidth=".5" fill="none">
                   <polygon points="130,22 222,80 192,188 68,188 38,80" />
@@ -147,12 +145,12 @@ export default function HomePage() {
               </svg>
               <div className="rc-bottom">
                 <div>
-                  <div className="rc-b-label">VALU INDEX</div>
+                  <div className="rc-b-label">EXAMPLE ONLY</div>
                   <div style={{ fontFamily: 'var(--font)', fontSize: '40px', fontWeight: 800, color: 'var(--gold)', lineHeight: 1 }}>84</div>
                 </div>
                 <div>
                   <div className="rc-b-label">DESIGNATION</div>
-                  <div className="rc-desig">DISTINGUISHED · ✦✦</div>
+                  <div className="rc-desig">ILLUSTRATIVE · NOT AN ASSESSMENT</div>
                 </div>
               </div>
             </Reveal>

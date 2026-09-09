@@ -10,9 +10,9 @@ const PARCH = '#F7F4EE'
 const DIM = 'rgba(247,244,238,.45)'
 
 const TRACK_META = {
-  candidate: { label: 'ATB Connect', color: '#378ADD' },
-  speaker: { label: 'ATB Spotlight', color: '#C9A84C' },
-  facilitator: { label: 'ATB Develop', color: '#1D9E75' },
+  candidate: { label: 'ATB Connect' },
+  speaker: { label: 'ATB Spotlight' },
+  facilitator: { label: 'ATB Develop' },
 }
 
 function primaryTrack(tracks) {
@@ -101,7 +101,7 @@ export default function LiveProfilesScroll() {
                   <div className="vi-scroll-copy">
                     <div className="vi-scroll-id">{profile.atb_id || letters(profile.display_initials)}</div>
                     <div className="vi-scroll-headline">{profile.headline || 'Valoria Professional'}</div>
-                    <div className="vi-scroll-track-label" style={{ color: meta.color }}>{meta.label}</div>
+                    <div className="vi-scroll-track-label">{meta.label}</div>
                   </div>
                   <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'}`}>
                     <span className="vi-scroll-score-label">VALU</span>
@@ -130,15 +130,15 @@ export default function LiveProfilesScroll() {
         .vi-scroll-mask{width:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
         .vi-scroll-track{display:flex;gap:14px;width:max-content;animation:vi-scroll-x 40s linear infinite;will-change:transform}
         .vi-scroll-track:hover{animation-play-state:paused}
-        .vi-scroll-card{display:flex;align-items:center;gap:12px;flex-shrink:0;min-width:310px;padding:12px 14px;background:rgba(255,255,255,.035);border:1px solid rgba(247,244,238,.09);border-radius:12px;text-decoration:none;transition:border-color .2s,background .2s,transform .2s}
+        .vi-scroll-card{display:flex;align-items:center;gap:12px;flex-shrink:0;min-width:310px;padding:12px 14px;background:rgba(255,255,255,.035);border:1px solid rgba(247,244,238,.09);border-radius:8px;text-decoration:none;transition:border-color .2s,background .2s,transform .2s}
         .vi-scroll-card:hover{border-color:rgba(201,168,76,.38);background:rgba(255,255,255,.06);transform:translateY(-2px)}
-        .vi-scroll-avatar{width:52px;height:52px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,${GOLD},#8e7330);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(247,244,238,.2);box-shadow:0 0 0 3px rgba(201,168,76,.06)}
+        .vi-scroll-avatar{width:52px;height:52px;border-radius:50%;flex-shrink:0;background:${GOLD};display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid ${GOLD};box-shadow:none}
         .vi-scroll-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
         .vi-scroll-avatar span{color:${MID};font-size:15px;font-weight:700}
         .vi-scroll-copy{min-width:0;flex:1}
         .vi-scroll-id{font-size:11px;font-weight:700;letter-spacing:.04em;color:${PARCH};white-space:nowrap}
         .vi-scroll-headline{font-size:10px;color:${DIM};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:175px;margin-top:2px}
-        .vi-scroll-track-label{font-size:8px;font-weight:700;letter-spacing:.06em;margin-top:3px;text-transform:uppercase}
+        .vi-scroll-track-label{font-size:8px;font-weight:700;letter-spacing:.06em;margin-top:3px;text-transform:uppercase;color:${GOLD}}
         .vi-scroll-score{min-width:58px;text-align:right;line-height:1;flex-shrink:0;border-left:1px solid rgba(201,168,76,.16);padding-left:12px}
         .vi-scroll-score-label{display:block;font-size:7px;font-weight:700;letter-spacing:.15em;color:rgba(247,244,238,.4);margin-bottom:3px}
         .vi-scroll-score strong{font-family:var(--font);font-size:27px;font-weight:300;color:${GOLD};letter-spacing:-.04em}

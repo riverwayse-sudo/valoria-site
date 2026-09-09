@@ -1,59 +1,75 @@
-# Valoria Institute — Marketing Site (Next.js)
+# Valoria Institute — Public Site
 
-Converted from the Webflow homepage export to Next.js 14 (App Router), ready to deploy on Vercel directly from GitHub.
+The public Valoria Institute marketing and marketplace-entry site, built with Next.js 14 and deployed to Vercel.
 
-## What's in this build
+## Production architecture
 
-- **`/`** — Homepage, converted 1:1 from the Webflow export, with brand fixes applied (see below).
-- **`src/components/Nav.jsx`** and **`Footer.jsx`** — Shared, locked nav/footer used across all pages. Single source of truth — edit here, not per-page.
-- **`src/lib/brand.js`** — Single source of truth for brand constants (email, tagline, colors, entry points, PRIME clusters). Update here when copy or routing changes.
-- **`src/styles/globals.css`** — Brand tokens (colors, font, spacing) as CSS variables.
+- **`/`** — Institutional homepage with live professional count/profile rail, VALU snapshot entry point, marketplace pathways and webinar replay.
+- **`/marketplace`** — Public African Talent Bureau marketplace and track-specific discovery.
+- **`/profile/[id]`** — Public professional profile surface using the platform's public profile identifiers.
+- **`/profile/setup`** — Authenticated professional profile completion flow.
+- **`/dashboard`** — Authenticated account dashboard.
+- **`/login`** — Authentication entry point.
+- **`/about-us`**, **`/prime`**, **`/programmes`**, **`/develop`**, **`/facilitators`**, **`/atb-connect`**, **`/atb-spotlight`**, **`/contact-us`** — Institutional and pathway pages.
+- **`/privacypolicy`**, **`/terms-of-use`** — Legal pages.
 
-## Fixes applied during conversion (from the live-site audit)
+## Brand source of truth
 
-| Issue | Status |
-|---|---|
-| "Worth, Built." comma error | ✅ Fixed → "Worth. Built." |
-| Hero CTA "Explore the Platform" routing to `/about-us` | ✅ Fixed → routes to assessment platform |
-| `/wailtlist` typo | ✅ Fixed → `/waitlist` |
-| Inconsistent nav across pages | ✅ Fixed → single shared `Nav` component |
-| Inconsistent footer (3 variants found) | ✅ Fixed → single shared `Footer` component |
-| Logo pulled from Webflow CDN | ✅ Fixed → served from `valoriainstitute.com/logo.png` |
-| Privacy/Terms linking to `#` | ✅ Fixed → linked to real routes (pages still need to be built — see below) |
+`src/lib/brand.js` is governed by Valoria Institute Brand Guidelines **VI-BG-2026-001**.
 
-## ⚠️ Outstanding — not yet built
+Approved PRIME architecture:
 
-This conversion only covers the **homepage**. The following pages are linked from nav/footer but **do not exist yet** in this codebase and will currently 404 on Vercel:
+- **P — Presence** — How you show up
+- **R — Relationships** — How you connect
+- **I — Intelligence** — How you think
+- **M — Mastery** — How you deliver
+- **E — Enterprise** — How you build
 
-- `/about-us`, `/prime`, `/atb-connect`, `/spotlight`, `/facilitators`
-- `/programmes`, `/develop`, `/contact-us`
-- `/register`, `/login`, `/waitlist`
-- `/privacypolicy`, `/terms-of-use`
+The site uses the approved institutional palette and Raleway typography. Merit tiers are score-based credentials and are never paid upgrades.
 
-Recommend rebuilding these from the live site content next, using this same Nav/Footer/brand.js setup so they stay consistent — that was the core problem with the current live site.
+## VALU funnel
 
-## ⚠️ PRIME Framework — incomplete
+The public entry point is the **15-question directional VALU snapshot**. It is a teaser/acquisition experience and does **not** establish the official VALU Index.
 
-`src/lib/brand.js` has the PRIME cluster list with **P (Presence), R (Relationships)** confirmed and **I, M, E placeholders** — only "Influence" and "Enterprise" are guesses carried over from an earlier (incorrect) framework name. **Confirm the full five PRIME cluster names before launch** — they appear on the homepage radar chart and checklist copy.
+After signup, a professional completes the remaining authoritative assessment. The official VALU Index and marketplace eligibility are established only by the authoritative assessment lifecycle in the platform application.
 
-## Local development
+## Marketplace model
+
+A professional account may hold multiple active modalities/profiles. Candidate, speaker and facilitator discovery are distinct marketplace pathways while remaining connected to the same account and authoritative VALU record.
+
+Public profile surfaces use the approved public profile/ATB identifier and do not expose private email addresses.
+
+## Motion
+
+The site uses restrained interaction rather than decorative animation:
+
+- Lenis smooth scrolling where enabled.
+- Intersection-based editorial reveals.
+- Hover and navigation micro-interactions.
+- Continuous profile rail motion with reduced-motion support.
+
+All motion should preserve hierarchy, performance and accessibility.
+
+## Development
 
 ```bash
 npm install
 npm run dev
 ```
 
-Visit `http://localhost:3000`.
+Then visit `http://localhost:3000`.
 
-## Deploying to Vercel
+## Build and test
 
-1. Push this repo to GitHub.
-2. In Vercel: **New Project → Import** the repo. Framework preset auto-detects as Next.js.
-3. No environment variables are required for this homepage-only build.
-4. Deploy. Vercel will build with `next build` and serve automatically.
+```bash
+npm run build
+npm test
+```
 
-To point `valoriainstitute.com` at this instead of Webflow: add the domain in Vercel's project settings and update your DNS (A/CNAME records) per Vercel's instructions — this will be the cutover step once more pages are built.
+## Deployment
 
-## Security note
+Production is deployed through Vercel from the `main` branch. Environment variables are configured in Vercel; public browser code must never contain a Supabase service-role secret.
 
-Pinned to `next@14.2.35`, which contains the patches for the December 2025 critical RSC vulnerabilities (CVE-2025-66478, CVE-2025-55183/55184/67779). Run `npm audit` periodically and keep Next.js patched.
+## Security
+
+Keep dependencies patched and review authentication, RLS, API routes and public profile data before shipping changes. Never use user-editable metadata as an authorization source.

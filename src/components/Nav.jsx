@@ -12,7 +12,6 @@ export default function Nav() {
   const [dropOpen, setDropOpen]       = useState(false)
   const [user, setUser]               = useState(null)
   const [authChecked, setAuthChecked] = useState(false)
-  // 'professional' | 'buyer' | 'none' | null (still checking)
   const [accountType, setAccountType] = useState(null)
 
   useEffect(() => {
@@ -23,6 +22,7 @@ export default function Nav() {
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
   }, [menuOpen])
 
   useEffect(() => {
@@ -36,11 +36,6 @@ export default function Nav() {
     return () => listener.subscription.unsubscribe()
   }, [])
 
-  // Figures out where "GET STARTED" should actually send a logged-in
-  // person: their own public profile if they're a professional/speaker,
-  // the dashboard otherwise (employers/organisers have no profile page to
-  // send them to — see dashboard build notes). Re-runs whenever the
-  // session changes so sign-out clears it back to null.
   useEffect(() => {
     if (!user) { setAccountType(null); return }
     let cancelled = false
@@ -71,12 +66,6 @@ export default function Nav() {
 
   const closeMenu = () => setMenuOpen(false)
 
-  // Pre-launch: always push toward the waitlist. Post-launch, the CTA
-  // reflects where someone actually is in the funnel:
-  //  - not logged in            -> the assessment is the real entry point,
-  //                                 not a bare signup form
-  //  - logged in, professional  -> straight to their own profile
-  //  - logged in, buyer/none    -> dashboard (no profile page to send them to)
   const cta = user
     ? (accountType === 'professional'
         ? { label: 'MY PROFILE', href: `/profile/${user.id}` }
@@ -87,10 +76,10 @@ export default function Nav() {
     <>
       <style>{`
         nav.vi-nav {
-          position: fixed; top: 3px; left: 0; right: 0; z-index: 200;
+          position: fixed; top: 0; left: 0; right: 0; z-index: 200;
           padding: 0 var(--pad);
           display: flex; align-items: center; justify-content: space-between;
-          height: 64px;
+          height: 68px;
           transition: background .3s, border-color .3s;
           background: var(--nav-bg);
           border-bottom: 1px solid rgba(201,168,76,0.08);
@@ -200,13 +189,7 @@ export default function Nav() {
           style={{ position: 'fixed', inset: 0, zIndex: 199 }} aria-hidden="true" />
       )}
 
-      <div aria-hidden="true" style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '3px', display: 'flex', zIndex: 201, pointerEvents: 'none' }}>
-        {[['#1D9E75',20],['#378ADD',25],['#7F77DD',25],['#BA7517',20],['#D85A30',10]].map(([color, pct], i) => (
-          <div key={i} style={{ flex: pct, background: color, opacity: 0.85 }} />
-        ))}
-      </div>
-
-      <nav className={`vi-nav${scrolled ? ' scrolled' : ''}`} style={{ top: '3px' }}>
+      <nav className={`vi-nav${scrolled ? ' scrolled' : ''}`}>
         <Link href="/" className="nav-logo" aria-label="Valoria Institute home">
           <img src="/logo.png" alt="Valoria Institute" />
         </Link>
@@ -230,23 +213,15 @@ export default function Nav() {
           {authChecked && (
             user ? (
               <>
-                <li>
-                  <Link href="/dashboard" className="nav-link">Dashboard</Link>
-                </li>
-                <li>
-                  <NotificationBell userId={user.id} />
-                </li>
+                <li><Link href="/dashboard" className="nav-link">Dashboard</Link></li>
+                <li><NotificationBell userId={user.id} /></li>
                 <li><button onClick={handleSignOut} className="nav-link-btn">Sign Out</button></li>
               </>
             ) : (
               <li><Link href="/login" className="nav-link">Sign In</Link></li>
             )
           )}
-          <li>
-            <a href={cta.href} className="nav-cta">
-              {cta.label}
-            </a>
-          </li>
+          <li><a href={cta.href} className="nav-cta">{cta.label}</a></li>
         </ul>
 
         <button className={`nav-burger${menuOpen ? ' open' : ''}`} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
@@ -275,9 +250,7 @@ export default function Nav() {
             <Link href="/login" onClick={closeMenu}>Sign In</Link>
           )
         )}
-        <a href={cta.href} className="m-cta" onClick={closeMenu}>
-          {cta.label}
-        </a>
+        <a href={cta.href} className="m-cta" onClick={closeMenu}>{cta.label}</a>
       </nav>
     </>
   )
