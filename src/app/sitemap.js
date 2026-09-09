@@ -16,24 +16,27 @@ export default async function sitemap() {
     { path: '/programmes', priority: 0.6, changeFrequency: 'monthly' },
     { path: '/about-us', priority: 0.6, changeFrequency: 'monthly' },
     { path: '/contact-us', priority: 0.5, changeFrequency: 'yearly' },
-    { path: '/waitlist', priority: 0.5, changeFrequency: 'yearly' },
     { path: '/signup', priority: 0.6, changeFrequency: 'yearly' },
     { path: '/login', priority: 0.3, changeFrequency: 'yearly' },
     { path: '/privacypolicy', priority: 0.3, changeFrequency: 'yearly' },
     { path: '/terms-of-use', priority: 0.3, changeFrequency: 'yearly' },
   ]
-  const staticEntries = pages.map(p => ({url:`${SITE_URL}${p.path}`,lastModified:now,changeFrequency:p.changeFrequency,priority:p.priority}))
-  let profileEntries=[]
+  const staticEntries = pages.map(p => ({ url: `${SITE_URL}${p.path}`, lastModified: now, changeFrequency: p.changeFrequency, priority: p.priority }))
+  let profileEntries = []
   try {
-    const supabaseUrl=process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    if(supabaseUrl&&supabaseKey){
-      const {createClient}=await import('@supabase/supabase-js')
-      const client=createClient(supabaseUrl,supabaseKey)
-      const {data,error}=await client.from('professional_profiles').select('id,updated_at').eq('listing_status','listed').neq('visibility','private')
-      if(error)console.error('sitemap: profile fetch failed:',error)
-      profileEntries=(data||[]).map(p=>({url:`${SITE_URL}/profile/${p.id}`,lastModified:p.updated_at?new Date(p.updated_at):now,changeFrequency:'weekly',priority:.6}))
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (supabaseUrl && supabaseKey) {
+      const { createClient } = await import('@supabase/supabase-js')
+      const client = createClient(supabaseUrl, supabaseKey)
+      const { data, error } = await client
+        .from('professional_profiles')
+        .select('id,updated_at')
+        .eq('listing_status', 'listed')
+        .neq('visibility', 'private')
+      if (error) console.error('sitemap: profile fetch failed:', error)
+      profileEntries = (data || []).map(p => ({ url: `${SITE_URL}/profile/${p.id}`, lastModified: p.updated_at ? new Date(p.updated_at) : now, changeFrequency: 'weekly', priority: .6 }))
     }
   } catch { /* Build-time Supabase failure must not break sitemap generation. */ }
-  return [...staticEntries,...profileEntries]
+  return [...staticEntries, ...profileEntries]
 }
