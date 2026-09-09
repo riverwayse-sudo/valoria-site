@@ -1,3 +1,4 @@
+import '@/styles/premium-marketplace.css'
 import MarketplaceExperienceV2 from '@/components/MarketplaceExperienceV2'
 
 export const metadata = {
