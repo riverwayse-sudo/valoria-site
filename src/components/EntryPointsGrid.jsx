@@ -1,7 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
 import { useLaunchStatus } from '@/lib/useLaunchStatus'
-import { supabase } from '@/lib/supabase'
 
 const POINTS = [
   { key:'ep-1', name:<>ATB<br/>Connect</>, buyer:'For Employers & Recruiters', desc:'Search assessed professionals through structured capability data and relevant professional context. Precision hiring begins with a clearer signal.', modality:'PRECISION TALENT SOURCING', liveHref:'/marketplace/talent' },
@@ -10,10 +8,8 @@ const POINTS = [
 ]
 
 export default function EntryPointsGrid({ ctaHref='#waitlist' }) {
-  const launchedByDate=useLaunchStatus()
-  const [user,setUser]=useState(null)
-  useEffect(()=>{supabase.auth.getUser().then(({data:{user}})=>setUser(user));const {data:listener}=supabase.auth.onAuthStateChange((_e,s)=>setUser(s?.user||null));return()=>listener?.subscription?.unsubscribe()},[])
-  const launched=launchedByDate||!!user
+  useLaunchStatus()
+  const launched=true
   return <>{POINTS.map(p=><div key={p.key} className={'ep-card '+p.key} style={{'--ep-color':'#C9A84C'}}>
     <style>{'.'+p.key+'::before { background:#C9A84C; }'}</style>
     <div className="ep-icon" style={{background:'rgba(201,168,76,.08)',border:'1px solid rgba(201,168,76,.25)',color:'#C9A84C'}}>✦</div>
