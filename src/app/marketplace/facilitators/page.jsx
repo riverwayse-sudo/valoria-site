@@ -1,4 +1,4 @@
-import MarketplaceExperience from '@/components/MarketplaceExperience'
+import MarketplaceExperienceV2 from '@/components/MarketplaceExperienceV2'
 
 export const metadata = {
   title: 'Facilitator Marketplace — Valoria Institute',
@@ -6,5 +6,5 @@ export const metadata = {
 }
 
 export default function FacilitatorMarketplacePage() {
-  return <MarketplaceExperience forcedTrack="facilitator" />
+  return <MarketplaceExperienceV2 forcedTrack="facilitator" />
 }
