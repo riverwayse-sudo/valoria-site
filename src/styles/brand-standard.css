@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800;900&display=swap');
+
+/* VALORIA BRAND STANDARD — Brand Manual compliance layer */
+:root {
+  --valoria-midnight: #1A1A2E;
+  --valoria-gold: #C9A84C;
+  --valoria-slate: #2E2E4A;
+  --valoria-parchment: #F7F4EE;
+  --valoria-linen: #EDE8DC;
+  --valoria-brass: #D4C9A8;
+  --valoria-ivory: #FAFAF7;
+  --dark: var(--valoria-midnight);
+  --dark-mid: var(--valoria-slate);
+  --dark-card: var(--valoria-parchment);
+  --parchment: var(--valoria-parchment);
+  --gold: var(--valoria-gold);
+  --gold-light: var(--valoria-brass);
+  --nav-bg: var(--valoria-midnight);
+  --card-color: var(--valoria-gold);
+  --btn-radius: 9999px;
+  --font: 'Raleway', sans-serif;
+  --font-display: 'Raleway', sans-serif;
+}
+
+html, body { background: var(--valoria-midnight); color: var(--valoria-parchment); }
+body { font-family: 'Raleway', sans-serif; }
+h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif; }
+
+/* Manual: digital cards = Warm Parchment, 8px, Brass border, no shadow */
+.card, .vi-card, .card-gold, .waitlist-card {
+  background: var(--valoria-parchment) !important;
+  color: var(--valoria-slate) !important;
+  border: 1px solid var(--valoria-brass) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+.card:hover, .vi-card:hover, .card-gold:hover, .waitlist-card:hover {
+  background: var(--valoria-parchment) !important;
+  border-color: var(--valoria-gold) !important;
+  box-shadow: none !important;
+  transform: none;
+}
+.card h1, .card h2, .card h3, .card h4, .card h5, .card h6,
+.vi-card h1, .vi-card h2, .vi-card h3, .vi-card h4, .vi-card h5, .vi-card h6,
+.card-gold h1, .card-gold h2, .card-gold h3, .card-gold h4, .card-gold h5, .card-gold h6,
+.waitlist-card h1, .waitlist-card h2, .waitlist-card h3, .waitlist-card h4, .waitlist-card h5, .waitlist-card h6 {
+  color: var(--valoria-midnight) !important;
+}
+.card p, .card li, .vi-card p, .vi-card li, .card-gold p, .card-gold li,
+.waitlist-card p, .waitlist-card li { color: var(--valoria-slate) !important; }
+.vi-card::before, .card-gold::before { background: var(--valoria-gold) !important; }
+.vi-card-grid { background: var(--valoria-brass) !important; border-color: var(--valoria-brass) !important; }
+.vi-card-num { color: var(--valoria-slate) !important; }
+.vi-card-name { color: var(--valoria-midnight) !important; font-weight: 700 !important; }
+.vi-card-label, .vi-card-link { color: var(--valoria-gold) !important; }
+.vi-card-body { color: var(--valoria-slate) !important; }
+
+/* Manual button system */
+.btn-gold, .wl-btn {
+  background: var(--valoria-gold) !important;
+  color: var(--valoria-midnight) !important;
+  border: 0 !important;
+  border-radius: 9999px !important;
+  font-weight: 700;
+}
+.btn-outline, .btn-ghost {
+  background: transparent !important;
+  color: var(--valoria-gold) !important;
+  border: 1px solid var(--valoria-gold) !important;
+  border-radius: 9999px !important;
+}
+.btn-secondary {
+  background: var(--valoria-midnight) !important;
+  color: var(--valoria-ivory) !important;
+  border: 0 !important;
+  border-radius: 9999px !important;
+}
+.btn-tertiary {
+  background: var(--valoria-linen) !important;
+  color: var(--valoria-slate) !important;
+  border: 0 !important;
+  border-radius: 9999px !important;
+}
+
+/* Manual avatar system: circular with 2pt Gold ring */
+.avatar, .avatar img, .vi-avatar, .vi-avatar img, .profile-avatar, .profile-avatar img { border-radius: 50% !important; }
+.avatar img, .vi-avatar img, .profile-avatar img { border: 2px solid var(--valoria-gold) !important; }
+
+input, textarea, select { font-family: 'Raleway', sans-serif !important; }
+:focus-visible { outline: 2px solid var(--valoria-gold); outline-offset: 3px; }
+
+@media (max-width: 767px) { .container { padding-left: 24px; padding-right: 24px; } }
