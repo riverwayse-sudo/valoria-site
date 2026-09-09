@@ -1,77 +1,339 @@
-/* Valoria premium marketplace interaction layer */
+/* Valoria Marketplace — restored pre-profile-ID visual treatment.
+   IMPORTANT: profile IDs remain the card identity; this stylesheet only restores
+   the typography, spacing, colors, surfaces and card treatment. */
 
-/* Cards are identified by their profile CTA link. Modern :has() keeps this
-   page-scoped without forcing a structural rewrite of the existing JSX. */
-.vi-marketplace-card,
-div:has(> div > a[href^="/profile/"]) {
-  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease, border-color .22s ease !important;
+main:has(.marketplace-header) {
+  background: #0F0F1A !important;
+  color: #F7F4EE !important;
+  font-family: 'Raleway','Helvetica Neue',Arial,sans-serif !important;
 }
 
-div:has(> div > a[href^="/profile/"]):hover {
-  transform: translateY(-5px) !important;
-  box-shadow: 0 22px 45px -18px rgba(15,15,26,.28), 0 8px 18px -8px rgba(201,168,76,.18) !important;
-  border-color: rgba(201,168,76,.55) !important;
+main:has(.marketplace-header) .marketplace-header {
+  height: 72px !important;
+  padding: 0 32px !important;
+  background: #1A1A2E !important;
+  border-bottom: 1px solid rgba(201,168,76,.2) !important;
 }
 
-div:has(> div > a[href^="/profile/"]) a[href^="/profile/"] {
-  transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease !important;
+main:has(.marketplace-header) .marketplace-header a:last-child {
+  color: rgba(247,244,238,.58) !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
 }
 
-div:has(> div > a[href^="/profile/"]) a[href^="/profile/"]:hover {
+main:has(.marketplace-header) .marketplace-hero-inner {
+  max-width: 1180px !important;
+  padding: 70px 28px 34px !important;
+}
+
+main:has(.marketplace-header) .marketplace-header + section {
+  background: radial-gradient(circle at 50% 0%,rgba(201,168,76,.10),transparent 52%) !important;
+  border-bottom: 1px solid rgba(201,168,76,.12) !important;
+}
+
+main:has(.marketplace-header) .marketplace-hero-inner h1 {
+  font-size: clamp(42px,6vw,76px) !important;
+  font-weight: 200 !important;
+  line-height: 1.02 !important;
+  letter-spacing: -.035em !important;
+  color: #F7F4EE !important;
+}
+
+main:has(.marketplace-header) .marketplace-hero-inner h1 em {
+  color: #C9A84C !important;
+}
+
+main:has(.marketplace-header) .marketplace-hero-inner > p {
+  color: rgba(247,244,238,.58) !important;
+  font-size: 14px !important;
+  line-height: 1.8 !important;
+}
+
+main:has(.marketplace-header) .marketplace-hero-inner nav a {
+  color: rgba(247,244,238,.58) !important;
+  border-color: rgba(247,244,238,.12) !important;
+  font-size: 10px !important;
+}
+
+main:has(.marketplace-header) .marketplace-hero-inner nav a span {
+  color: inherit !important;
+}
+
+main:has(.marketplace-header) .marketplace-hero-inner nav a[style*="background"] {
+  color: #1A1A2E !important;
+}
+
+main:has(.marketplace-header) .marketplace-toolbar {
+  max-width: 1180px !important;
+  padding: 18px 28px !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(247,244,238,.08) !important;
+}
+
+main:has(.marketplace-header) .marketplace-toolbar input {
+  background: rgba(255,255,255,.035) !important;
+  color: #F7F4EE !important;
+  border-color: rgba(201,168,76,.2) !important;
+  font-family: inherit !important;
+}
+
+main:has(.marketplace-header) .marketplace-toolbar input::placeholder {
+  color: rgba(247,244,238,.58) !important;
+  opacity: 1 !important;
+}
+
+main:has(.marketplace-header) .marketplace-toolbar label {
+  color: rgba(247,244,238,.58) !important;
+  font-size: 9px !important;
+}
+
+main:has(.marketplace-header) .marketplace-toolbar select {
   background: #1A1A2E !important;
   color: #F7F4EE !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 7px 16px -7px rgba(15,15,26,.35) !important;
+  border-color: rgba(201,168,76,.2) !important;
 }
 
-div:has(> div > a[href^="/profile/"]) img {
-  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease !important;
+main:has(.marketplace-header) .marketplace-workspace {
+  background: transparent !important;
 }
 
-div:has(> div > a[href^="/profile/"]):hover img {
-  transform: scale(1.035) !important;
+main:has(.marketplace-header) .marketplace-filters {
+  border-right-color: rgba(201,168,76,.08) !important;
 }
 
-/* PRIME score bars become more tactile without changing the data model. */
-div:has(> div > a[href^="/profile/"]) > div > div[style*="height"] {
-  transition: height .35s cubic-bezier(.2,.8,.2,1), filter .25s ease !important;
+main:has(.marketplace-header) .marketplace-filters label {
+  color: rgba(247,244,238,.58) !important;
 }
 
-div:has(> div > a[href^="/profile/"]):hover > div > div[style*="height"] {
-  filter: brightness(1.12) !important;
+main:has(.marketplace-header) .marketplace-filters select {
+  background: rgba(255,255,255,.04) !important;
+  color: #F7F4EE !important;
+  border-color: rgba(201,168,76,.16) !important;
 }
 
-/* CTA buttons generated by EnquiryForm. */
-div:has(> div > a[href^="/profile/"]) button {
-  transition: filter .2s ease, transform .2s ease, box-shadow .2s ease !important;
+main:has(.marketplace-header) .marketplace-filters .marketplace-prime-row button,
+main:has(.marketplace-header) .marketplace-filters button {
+  font-family: inherit !important;
 }
 
-div:has(> div > a[href^="/profile/"]) button:hover:not(:disabled) {
-  filter: brightness(1.08) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 7px 16px -7px rgba(55,138,221,.5) !important;
+main:has(.marketplace-header) .marketplace-results {
+  background: transparent !important;
 }
 
-/* Better focus visibility for keyboard users. */
-div:has(> div > a[href^="/profile/"]) a:focus-visible,
-div:has(> div > a[href^="/profile/"]) button:focus-visible,
-div:has(> div > a[href^="/profile/"]) input:focus-visible,
-div:has(> div > a[href^="/profile/"]) select:focus-visible {
-  outline: 2px solid #C9A84C !important;
-  outline-offset: 3px !important;
+main:has(.marketplace-header) .marketplace-results-head h2 {
+  color: #F7F4EE !important;
+  font-size: clamp(30px,4vw,48px) !important;
+  font-weight: 200 !important;
 }
 
-/* Marketplace responsive polish. */
-@media (max-width: 760px) {
-  div:has(> div > a[href^="/profile/"]) {
-    padding: 16px !important;
-  }
+main:has(.marketplace-header) .marketplace-results-head > div > p {
+  color: rgba(247,244,238,.58) !important;
+}
+
+/* Cards: restore the original pre-ID card surface, typography and hierarchy. */
+main:has(.marketplace-header) article.capability-card {
+  position: relative !important;
+  background: #F7F4EE !important;
+  color: #1A1A2E !important;
+  padding: 22px !important;
+  border: 1px solid rgba(201,168,76,.16) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+  min-height: 375px !important;
+  font-family: 'Raleway','Helvetica Neue',Arial,sans-serif !important;
+  transition: box-shadow .28s ease, border-color .22s ease !important;
+}
+
+main:has(.marketplace-header) article.capability-card:hover {
+  transform: none !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,.24) !important;
+  border-color: rgba(201,168,76,.35) !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:first-child {
+  background: #C9A84C !important;
+  transform: scaleX(0) !important;
+  transition: transform .35s !important;
+}
+
+main:has(.marketplace-header) article.capability-card:hover > div:first-child {
+  transform: scaleX(1) !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-child(2) {
+  display: flex !important;
+  gap: 13px !important;
+  align-items: flex-start !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-child(2) > div:first-child {
+  width: 62px !important;
+  height: 62px !important;
+  flex-shrink: 0 !important;
+  background: #1A1A2E !important;
+  color: #C9A84C !important;
+  border-radius: 4px !important;
+  border: 0 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+/* Keep the ID, but make it occupy the same visual role as the old name line. */
+main:has(.marketplace-header) article.capability-card > div:nth-child(2) > div:nth-child(2) > div:first-child {
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  color: #1A1A2E !important;
+  letter-spacing: normal !important;
+  margin: 0 !important;
+  text-transform: none !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) {
+  font-size: 8px !important;
+  color: #8A6D25 !important;
+  font-weight: 700 !important;
+  letter-spacing: .12em !important;
+  margin-top: 5px !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-child(2) > div:nth-child(2) > div:nth-child(3) {
+  font-size: 11px !important;
+  color: #4E4A43 !important;
+  margin-top: 5px !important;
+  line-height: 1.4 !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-child(2) > div:nth-child(2) > div:nth-child(4) {
+  font-size: 10px !important;
+  color: #77736B !important;
+  margin-top: 3px !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-child(2) > div:last-child {
+  color: #1A1A2E !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-child(2) > div:last-child strong {
+  color: #1A1A2E !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-child(3) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-top: 18px !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-child(3) > span:first-child {
+  display: inline-flex !important;
+  padding: 5px 8px !important;
+  border: 1px solid !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: .1em !important;
+  text-transform: uppercase !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-child(3) > span:last-child {
+  font-size: 9px !important;
+  color: #54735E !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-child(4) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin-top: 14px !important;
+  font-size: 8px !important;
+  color: #77736B !important;
+  text-transform: uppercase !important;
+  letter-spacing: .08em !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-child(5) {
+  display: flex !important;
+  gap: 5px !important;
+  flex-wrap: wrap !important;
+  margin-top: 13px !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-child(5) span {
+  font-size: 9px !important;
+  padding: 4px 7px !important;
+  background: rgba(26,26,46,.07) !important;
+  color: #4E4A43 !important;
+  border-radius: 0 !important;
+}
+
+main:has(.marketplace-header) article.capability-card > p {
+  font-size: 11px !important;
+  color: #625E57 !important;
+  line-height: 1.6 !important;
+  margin: 14px 0 16px !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-last-child(2) {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin-top: auto !important;
+  padding-top: 14px !important;
+  border-top: 1px solid rgba(26,26,46,.10) !important;
+}
+
+main:has(.marketplace-header) article.capability-card a[href^="/profile/"] {
+  color: #1A1A2E !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: .1em !important;
+}
+
+main:has(.marketplace-header) article.capability-card button {
+  font-family: inherit !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-last-child(2) button {
+  background: transparent !important;
+  border: 0 !important;
+  color: #77736B !important;
+  font-size: 9px !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:last-child button {
+  width: 100% !important;
+  padding: 10px 12px !important;
+  background: #1A1A2E !important;
+  color: #F7F4EE !important;
+  border: 0 !important;
+  border-radius: 2px !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: .1em !important;
+}
+
+main:has(.marketplace-header) article.capability-card img {
+  transition: none !important;
+}
+
+@media (max-width:760px) {
+  main:has(.marketplace-header) .marketplace-header { padding: 0 16px !important; }
+  main:has(.marketplace-header) .marketplace-hero-inner { padding: 52px 20px 30px !important; }
+  main:has(.marketplace-header) .marketplace-hero-inner h1 { font-size: clamp(38px,12vw,58px) !important; }
+  main:has(.marketplace-header) .marketplace-toolbar { padding: 14px 16px !important; flex-wrap: wrap; }
+  main:has(.marketplace-header) .marketplace-search { flex-basis: 100%; }
+  main:has(.marketplace-header) .marketplace-workspace { display: block !important; }
+  main:has(.marketplace-header) .marketplace-filters { display: none; }
+  main:has(.marketplace-header) .marketplace-results { padding: 28px 16px !important; }
+  main:has(.marketplace-header) .marketplace-results-head { align-items: flex-start !important; flex-direction: column; }
+  main:has(.marketplace-header) article.capability-card { padding: 16px !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  div:has(> div > a[href^="/profile/"]),
-  div:has(> div > a[href^="/profile/"]) * {
-    transition: none !important;
-    animation: none !important;
-  }
+  main:has(.marketplace-header) article.capability-card,
+  main:has(.marketplace-header) article.capability-card * { transition: none !important; animation: none !important; }
 }
