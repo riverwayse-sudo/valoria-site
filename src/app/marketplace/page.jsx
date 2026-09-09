@@ -1,4 +1,4 @@
-import MarketplaceView from '@/components/MarketplaceView'
+import MarketplaceExperience from '@/components/MarketplaceExperience'
 
 export const metadata = {
   title: 'Marketplace — Valoria Institute',
@@ -6,5 +6,5 @@ export const metadata = {
 }
 
 export default function MarketplacePage() {
-  return <MarketplaceView forcedTrack="all" />
+  return <MarketplaceExperience forcedTrack="all" />
 }
