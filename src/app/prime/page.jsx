@@ -28,9 +28,7 @@ export default function PrimePage() {
           <div className="page-hero-inner">
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE PROPRIETARY CAPABILITY ARCHITECTURE</span></div>
             <h1 className="page-title">Five clusters.<br />Seventeen <em>skills.</em></h1>
-            <p className="page-sub">
-              PRIME is the intellectual architecture beneath Valoria Institute. It powers professional assessment, development and structured talent visibility across the ecosystem.
-            </p>
+            <p className="page-sub">PRIME is the intellectual architecture beneath Valoria Institute. It powers professional assessment, development and structured talent visibility across the ecosystem.</p>
             <div className="page-hero-actions">
               <a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">BEGIN THE VALU SNAPSHOT</a>
               <a href="/programmes" className="btn-outline">EXPLORE DEVELOPMENT</a>
@@ -48,7 +46,7 @@ export default function PrimePage() {
               const data = CLUSTER_DATA[c.letter]
               return (
                 <Reveal key={c.letter}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '72px 1fr', gap: '32px', padding: '40px 0', borderBottom: '1px solid rgba(201,168,76,.12)', alignItems: 'start' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '72px 1fr', gap: '32px', padding: '40px 0', borderBottom: '1px solid rgba(212,201,168,.5)', alignItems: 'start' }}>
                     <div className="cluster-letter" style={{ color: 'var(--gold)', fontSize: '40px', lineHeight: 1 }}>{c.letter}</div>
                     <div>
                       <div className="cluster-name" style={{ color: 'var(--parchment)', marginBottom: '4px' }}>{c.name}</div>
@@ -70,9 +68,7 @@ export default function PrimePage() {
             <Reveal>
               <div className="eyebrow" style={{ justifyContent: 'center' }}><div className="eyebrow-line" /><span className="eyebrow-text">THE VALU INDEX</span><div className="eyebrow-line" /></div>
               <h2 className="section-title" style={{ textAlign: 'center' }}>One architecture.<br /><em>One standard.</em></h2>
-              <p className="page-sub" style={{ margin: '0 auto', textAlign: 'center' }}>
-                The current public entry experience is a 15-question directional capability snapshot across all five PRIME clusters. It is an entry signal—not a substitute for the full controlled assessment methodology.
-              </p>
+              <p className="page-sub" style={{ margin: '0 auto', textAlign: 'center' }}>The current public entry experience is a 15-question directional capability snapshot across all five PRIME clusters. It is an entry signal—not a substitute for the full controlled assessment methodology.</p>
             </Reveal>
           </div>
         </section>
@@ -82,9 +78,7 @@ export default function PrimePage() {
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">MERIT MADE VISIBLE</span></div>
               <h2 className="section-title">Advancement is<br /><em>earned.</em></h2>
-              <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px' }}>
-                The Valoria tier system is score-based. It is a trust credential, never a subscription tier or a paid upgrade.
-              </p>
+              <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px' }}>The Valoria tier system is score-based. It is a trust credential, never a subscription tier or a paid upgrade.</p>
             </Reveal>
             <Reveal>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -92,8 +86,7 @@ export default function PrimePage() {
                   { tier: 'Elite', range: '90–100', desc: 'Top-percentile performance across all five PRIME clusters.', stars: '✦✦✦' },
                   { tier: 'Distinguished', range: '75–89', desc: 'Strong performance with clear cluster strengths.', stars: '✦✦' },
                   { tier: 'Proficient', range: '55–74', desc: 'Solid assessed baseline and eligible for continued development.', stars: '✦' },
-                  { tier: 'Standard', range: '35–54', desc: 'Assessed baseline with a clear development pathway.', stars: '' },
-                ].map(t => <div key={t.tier} className="card-gold" style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}><div style={{ minWidth: '110px', color: 'var(--gold)', fontWeight: 700 }}>{t.stars && <div>{t.stars}</div>}<div>{t.tier}</div><small style={{ color: 'var(--faint)' }}>{t.range}</small></div><p className="cluster-desc" style={{ margin: 0 }}>{t.desc}</p></div>)}
+                ].map(t => <div key={t.tier} className="card-gold" style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}><div style={{ minWidth: '110px', color: 'var(--gold)', fontWeight: 700 }}><div>{t.stars}</div><div>{t.tier}</div><small style={{ color: 'var(--faint)' }}>{t.range}</small></div><p className="cluster-desc" style={{ margin: 0 }}>{t.desc}</p></div>)}
               </div>
             </Reveal>
           </div>
