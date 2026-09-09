@@ -83,9 +83,14 @@ export default function LiveProfilesScroll() {
         <div className="vi-scroll-mask">
           <div className="vi-scroll-track">
             {loop.map((profile, index) => {
-              const track = TRACK_META[primaryTrack(profile.active_tracks)] || TRACK_META.candidate
+              const track = primaryTrack(profile.active_tracks)
+              const meta = TRACK_META[track] || TRACK_META.candidate
+              const marketplaceHref = track && ['candidate', 'speaker', 'facilitator'].includes(track)
+                ? `/marketplace?track=${track}`
+                : '/marketplace'
+
               return (
-                <Link href={`/profile/${profile.id}`} key={`${profile.id}-${index}`} className="vi-scroll-card">
+                <Link href={marketplaceHref} key={`${profile.id}-${index}`} className="vi-scroll-card" aria-label={`View ${profile.atb_id || 'professional'} in the Valoria Marketplace`}>
                   <div className="vi-scroll-avatar" aria-hidden="true">
                     {profile.photo_url ? (
                       <img src={profile.photo_url} alt="" loading="lazy" />
@@ -96,7 +101,7 @@ export default function LiveProfilesScroll() {
                   <div className="vi-scroll-copy">
                     <div className="vi-scroll-id">{profile.atb_id || letters(profile.display_initials)}</div>
                     <div className="vi-scroll-headline">{profile.headline || 'Valoria Professional'}</div>
-                    <div className="vi-scroll-track-label" style={{ color: track.color }}>{track.label}</div>
+                    <div className="vi-scroll-track-label" style={{ color: meta.color }}>{meta.label}</div>
                   </div>
                   <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'}`}>
                     <span className="vi-scroll-score-label">VALU</span>
