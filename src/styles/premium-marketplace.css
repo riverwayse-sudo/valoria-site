@@ -1,4 +1,4 @@
-/* Valoria Marketplace — premium brand hierarchy */
+/* Valoria Marketplace — premium brand hierarchy + high-contrast typography */
 
 main:has(.marketplace-header) {
   background: #F7F4EE !important;
@@ -9,15 +9,17 @@ main:has(.marketplace-header) {
   perspective: none !important;
 }
 
-/* Header / hero */
+/* The marketplace should read as a premium editorial/paper experience.
+   Never use pale blue/translucent text on the dark institutional surfaces. */
 main:has(.marketplace-header) .marketplace-header {
   background: #1A1A2E !important;
   color: #F7F4EE !important;
-  border-bottom: 1px solid rgba(201,168,76,.28) !important;
+  border-bottom: 1px solid rgba(201,168,76,.32) !important;
 }
 
 main:has(.marketplace-header) .marketplace-header * {
   color: #F7F4EE !important;
+  opacity: 1 !important;
 }
 
 main:has(.marketplace-header) .marketplace-header b {
@@ -25,21 +27,49 @@ main:has(.marketplace-header) .marketplace-header b {
   letter-spacing: .12em !important;
 }
 
-main:has(.marketplace-header) .marketplace-hero-inner {
-  color: #F7F4EE !important;
+main:has(.marketplace-header) .marketplace-header span {
+  color: rgba(247,244,238,.82) !important;
 }
 
+/* Hero: dark institutional field with warm-white, fully opaque type. */
+main:has(.marketplace-header) .marketplace-hero-inner,
 main:has(.marketplace-header) .marketplace-hero-inner * {
   opacity: 1 !important;
 }
 
-/* Keep hero copy warm-white and readable; gold is reserved for emphasis. */
-main:has(.marketplace-header) .marketplace-hero-inner h1,
-main:has(.marketplace-header) .marketplace-hero-inner p {
+main:has(.marketplace-header) .marketplace-hero-inner {
   color: #F7F4EE !important;
 }
 
+main:has(.marketplace-header) .marketplace-hero-inner h1,
+main:has(.marketplace-header) .marketplace-hero-inner p,
+main:has(.marketplace-header) .marketplace-hero-inner .marketplace-hero-copy {
+  color: #F7F4EE !important;
+  text-shadow: none !important;
+}
+
+main:has(.marketplace-header) .marketplace-hero-inner h1 {
+  font-weight: 600 !important;
+  letter-spacing: -.025em !important;
+}
+
 main:has(.marketplace-header) .marketplace-hero-inner h1 em {
+  color: #C9A84C !important;
+  font-style: normal !important;
+}
+
+main:has(.marketplace-header) .marketplace-hero-inner .marketplace-hero-copy {
+  color: rgba(247,244,238,.88) !important;
+  max-width: 700px !important;
+}
+
+main:has(.marketplace-header) .marketplace-hero-inner .marketplace-route,
+main:has(.marketplace-header) .marketplace-hero-inner nav a {
+  color: #F7F4EE !important;
+  opacity: 1 !important;
+}
+
+main:has(.marketplace-header) .marketplace-hero-inner nav a span {
   color: #C9A84C !important;
 }
 
@@ -52,14 +82,15 @@ main:has(.marketplace-header) .marketplace-toolbar {
 
 main:has(.marketplace-header) .marketplace-toolbar input,
 main:has(.marketplace-header) .marketplace-toolbar select,
-main:has(.marketplace-header) .marketplace-toolbar label {
+main:has(.marketplace-header) .marketplace-toolbar label,
+main:has(.marketplace-header) .marketplace-toolbar span {
   color: #1A1A2E !important;
   background: #FAFAF7 !important;
   opacity: 1 !important;
 }
 
 main:has(.marketplace-header) .marketplace-toolbar input::placeholder {
-  color: #6B6B7D !important;
+  color: #5C5C72 !important;
   opacity: 1 !important;
 }
 
@@ -77,14 +108,25 @@ main:has(.marketplace-header) .marketplace-filters {
 
 main:has(.marketplace-header) .marketplace-filters * {
   color: #2E2E4A !important;
+  opacity: 1 !important;
+}
+
+main:has(.marketplace-header) .marketplace-filters .prime button {
+  color: #2E2E4A !important;
 }
 
 main:has(.marketplace-header) .marketplace-results-head,
 main:has(.marketplace-header) .marketplace-results-head * {
   color: #1A1A2E !important;
+  opacity: 1 !important;
 }
 
-/* Listing cards: force a true paper/editorial treatment. */
+main:has(.marketplace-header) .marketplace-results-head .kicker,
+main:has(.marketplace-header) .marketplace-results-head small {
+  color: #6B5A2A !important;
+}
+
+/* Listing cards — high contrast, paper/editorial treatment. */
 main:has(.marketplace-header) article.capability-card {
   background: #FAFAF7 !important;
   color: #1A1A2E !important;
@@ -102,107 +144,96 @@ main:has(.marketplace-header) article.capability-card:hover {
   box-shadow: 0 22px 44px rgba(15,15,26,.13), 0 4px 16px rgba(201,168,76,.10) !important;
 }
 
-/* Inline text colors in the component are deliberately overridden here so
-   the approved brand palette wins over legacy translucent values. */
-main:has(.marketplace-header) article.capability-card * {
+/* Critical rule: all card descendants inherit readable navy/slate text instead
+   of legacy pale-blue or translucent values. */
+main:has(.marketplace-header) article.capability-card,
+main:has(.marketplace-header) article.capability-card div,
+main:has(.marketplace-header) article.capability-card p,
+main:has(.marketplace-header) article.capability-card span,
+main:has(.marketplace-header) article.capability-card b,
+main:has(.marketplace-header) article.capability-card small,
+main:has(.marketplace-header) article.capability-card label {
   opacity: 1 !important;
   text-shadow: none !important;
 }
 
-main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-child(1) {
-  color: #6B6B7D !important;
+main:has(.marketplace-header) article.capability-card .idLabel,
+main:has(.marketplace-header) article.capability-card [style*="letterSpacing"] {
+  color: #6B5A2A !important;
 }
 
-main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-child(2) {
+main:has(.marketplace-header) article.capability-card .name,
+main:has(.marketplace-header) article.capability-card .headline,
+main:has(.marketplace-header) article.capability-card .location,
+main:has(.marketplace-header) article.capability-card .valu,
+main:has(.marketplace-header) article.capability-card .valu * {
   color: #1A1A2E !important;
-  font-weight: 750 !important;
-  letter-spacing: .03em !important;
 }
 
-main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-child(3) {
+main:has(.marketplace-header) article.capability-card .name {
+  font-weight: 750 !important;
+  letter-spacing: .025em !important;
+}
+
+main:has(.marketplace-header) article.capability-card .headline {
+  font-weight: 600 !important;
+}
+
+main:has(.marketplace-header) article.capability-card .location,
+main:has(.marketplace-header) article.capability-card .bio {
+  color: #3F3F56 !important;
+}
+
+main:has(.marketplace-header) article.capability-card .verified {
   color: #8C6D20 !important;
   font-weight: 700 !important;
 }
 
-main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-child(4) {
+main:has(.marketplace-header) article.capability-card .track {
+  background: #1A1A2E !important;
+  color: #F7F4EE !important;
+}
+
+main:has(.marketplace-header) article.capability-card .status {
   color: #2E2E4A !important;
-  font-weight: 600 !important;
+  font-weight: 650 !important;
 }
 
-main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-child(5) {
-  color: #5C5C72 !important;
+main:has(.marketplace-header) article.capability-card .valu span {
+  color: #6B5A2A !important;
+  letter-spacing: .12em !important;
 }
 
-/* VALU score */
-main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(3),
-main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(3) * {
-  color: #1A1A2E !important;
-}
-
-main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(3) strong {
+main:has(.marketplace-header) article.capability-card .valu strong {
   color: #1A1A2E !important;
   font-size: 30px !important;
   font-weight: 750 !important;
 }
 
+main:has(.marketplace-header) article.capability-card .valu small {
+  color: #6B6B7D !important;
+}
+
+/* Fallback structural targeting for inline-styled elements. */
 main:has(.marketplace-header) article.capability-card > p {
   color: #3F3F56 !important;
   font-size: 13px !important;
   line-height: 1.7 !important;
 }
 
-/* Metadata, PRIME, tags */
-main:has(.marketplace-header) article.capability-card span,
-main:has(.marketplace-header) article.capability-card b,
-main:has(.marketplace-header) article.capability-card small {
-  color: #2E2E4A !important;
-}
-
-main:has(.marketplace-header) article.capability-card > div:nth-of-type(3) span:first-child {
-  background: #1A1A2E !important;
-  color: #F7F4EE !important;
-  border-color: #1A1A2E !important;
-}
-
-main:has(.marketplace-header) article.capability-card > div:nth-of-type(3) span:nth-child(2) {
-  color: #6B5A2A !important;
-}
-
-main:has(.marketplace-header) article.capability-card > div:nth-of-type(4) span:first-child {
-  color: #8C6D20 !important;
-}
-
-main:has(.marketplace-header) article.capability-card > div:nth-of-type(4) b {
+main:has(.marketplace-header) article.capability-card a {
   color: #1A1A2E !important;
-  border-color: #C9A84C !important;
-  background: #F7F4EE !important;
-}
-
-main:has(.marketplace-header) article.capability-card > div:nth-of-type(5) span {
-  color: #2E2E4A !important;
-  background: #EDE8DC !important;
-  border-color: #D4C9A8 !important;
-}
-
-/* Card actions */
-main:has(.marketplace-header) article.capability-card > div:last-child,
-main:has(.marketplace-header) article.capability-card a,
-main:has(.marketplace-header) article.capability-card button {
   opacity: 1 !important;
 }
 
-main:has(.marketplace-header) article.capability-card a {
+main:has(.marketplace-header) article.capability-card button {
   color: #1A1A2E !important;
+  opacity: 1 !important;
 }
 
 main:has(.marketplace-header) article.capability-card a:hover {
   background: #1A1A2E !important;
   color: #F7F4EE !important;
-}
-
-main:has(.marketplace-header) article.capability-card button {
-  color: #1A1A2E !important;
-  border-color: #D4C9A8 !important;
 }
 
 main:has(.marketplace-header) article.capability-card button:hover:not(:disabled) {
@@ -211,17 +242,25 @@ main:has(.marketplace-header) article.capability-card button:hover:not(:disabled
   transform: translateY(-2px) !important;
 }
 
-/* Focus states */
-main:has(.marketplace-header) a:focus-visible,
-main:has(.marketplace-header) button:focus-visible,
-main:has(.marketplace-header) input:focus-visible,
-main:has(.marketplace-header) select:focus-visible {
-  outline: 2px solid #C9A84C !important;
-  outline-offset: 3px !important;
+/* PRIME and tags */
+main:has(.marketplace-header) article.capability-card .strengths span,
+main:has(.marketplace-header) article.capability-card .strengths b {
+  color: #1A1A2E !important;
 }
 
-/* Existing compare bar has inline fixed positioning. Target it by its inline
-   style rather than relying on a missing class name. */
+main:has(.marketplace-header) article.capability-card .strengths b {
+  border-color: #C9A84C !important;
+  background: #F7F4EE !important;
+}
+
+main:has(.marketplace-header) article.capability-card .tags span,
+main:has(.marketplace-header) article.capability-card .tag {
+  color: #2E2E4A !important;
+  background: #EDE8DC !important;
+  border-color: #D4C9A8 !important;
+}
+
+/* Compare bar */
 main:has(.marketplace-header) div[style*="position: fixed"] {
   position: sticky !important;
   left: auto !important;
@@ -237,6 +276,15 @@ main:has(.marketplace-header) div[style*="position: fixed"] {
   box-shadow: 0 18px 45px rgba(15,15,26,.25) !important;
 }
 
+main:has(.marketplace-header) div[style*="position: fixed"] * {
+  opacity: 1 !important;
+}
+
+main:has(.marketplace-header) div[style*="position: fixed"] span,
+main:has(.marketplace-header) div[style*="position: fixed"] b {
+  color: #F7F4EE !important;
+}
+
 @media (max-width: 760px) {
   main:has(.marketplace-header) div[style*="position: fixed"] {
     width: calc(100% - 24px) !important;
@@ -244,6 +292,15 @@ main:has(.marketplace-header) div[style*="position: fixed"] {
     bottom: 12px !important;
     border-radius: 18px !important;
   }
+}
+
+/* Focus states */
+main:has(.marketplace-header) a:focus-visible,
+main:has(.marketplace-header) button:focus-visible,
+main:has(.marketplace-header) input:focus-visible,
+main:has(.marketplace-header) select:focus-visible {
+  outline: 2px solid #C9A84C !important;
+  outline-offset: 3px !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
