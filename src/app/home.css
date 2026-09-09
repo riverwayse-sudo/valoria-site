@@ -8,8 +8,8 @@
   position: relative;
   /* FIX: was padding clamp(120px,...) — reduced top padding so content
      sits closer to nav and all hero content fits in one viewport */
-  padding: clamp(32px, 5vw, 56px) var(--pad) clamp(40px, 6vw, 72px);
-  min-height: min(100vh, 760px);
+  padding: clamp(56px, 8vw, 104px) var(--pad) clamp(64px, 9vw, 120px);
+  min-height: min(92vh, 900px);
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -175,9 +175,9 @@
    Reduced to clamp(36px,5vw,62px) so all hero content fits in viewport */
 .hero-title {
   font-family: var(--font);
-  font-size: clamp(36px, 5vw, 62px);
+  font-size: clamp(46px, 6vw, 82px);
   font-weight: 200;
-  line-height: 1.08;
+  line-height: 1.02;
   letter-spacing: -.025em;
   color: var(--parchment);
   margin: 0 0 16px;
