@@ -68,6 +68,92 @@ div:has(> div > a[href^="/profile/"]) select:focus-visible {
   }
 }
 
+/* --------------------------------------------------------------------------
+   Production visual correction layer
+   --------------------------------------------------------------------------
+   Keep the premium treatment, but never let a global animation/loading rule
+   make loaded marketplace content appear disabled. The marketplace owns its
+   hierarchy and should remain fully readable after Supabase resolves.
+*/
+
+main:has(.marketplace-header) .capability-card,
+main:has(.marketplace-header) .capability-card > *,
+main:has(.marketplace-header) .capability-card .identity,
+main:has(.marketplace-header) .capability-card .idLabel,
+main:has(.marketplace-header) .capability-card .name,
+main:has(.marketplace-header) .capability-card .verified,
+main:has(.marketplace-header) .capability-card .headline,
+main:has(.marketplace-header) .capability-card .location,
+main:has(.marketplace-header) .capability-card .bio,
+main:has(.marketplace-header) .capability-card .valu,
+main:has(.marketplace-header) .capability-card .metaRow,
+main:has(.marketplace-header) .capability-card .strengths,
+main:has(.marketplace-header) .capability-card .tags,
+main:has(.marketplace-header) .capability-card .actions,
+main:has(.marketplace-header) .capability-card .engage {
+  opacity: 1 !important;
+}
+
+main:has(.marketplace-header) .capability-card {
+  color: #2E2E4A !important;
+  filter: none !important;
+}
+
+main:has(.marketplace-header) .capability-card .name,
+main:has(.marketplace-header) .capability-card .headline,
+main:has(.marketplace-header) .capability-card .bio {
+  color: #2E2E4A !important;
+}
+
+main:has(.marketplace-header) .capability-card .idLabel,
+main:has(.marketplace-header) .capability-card .location {
+  color: #5C5C72 !important;
+}
+
+main:has(.marketplace-header) .capability-card .verified {
+  color: #1D9E75 !important;
+}
+
+main:has(.marketplace-header) .capability-card .valu strong {
+  color: #1A1A2E !important;
+}
+
+/* The compare bar is deliberately fixed by the component. If an ancestor has
+   been transformed by a page-level animation, fixed positioning can become
+   relative to that ancestor and appear halfway down the page. Remove the
+   accidental containing block on the marketplace root/workspace. */
+main:has(.marketplace-header) {
+  transform: none !important;
+  filter: none !important;
+  perspective: none !important;
+}
+
+main:has(.marketplace-header) .marketplace-workspace,
+main:has(.marketplace-header) .marketplace-results,
+main:has(.marketplace-header) .marketplace-results > * {
+  transform: none;
+}
+
+main:has(.marketplace-header) .compareBar {
+  position: fixed !important;
+  left: 24px !important;
+  right: 24px !important;
+  bottom: max(20px, env(safe-area-inset-bottom)) !important;
+  top: auto !important;
+  z-index: 1000 !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+@media (max-width: 760px) {
+  main:has(.marketplace-header) .compareBar {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   div:has(> div > a[href^="/profile/"]),
   div:has(> div > a[href^="/profile/"]) * {
