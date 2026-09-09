@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import { useLaunchStatus } from '@/lib/useLaunchStatus'
 import NotificationBell from './NotificationBell'
 
 const ASSESSMENT_URL = 'https://assessment.valoriainstitute.com/'
@@ -13,28 +12,8 @@ export default function Nav() {
   const [dropOpen, setDropOpen]       = useState(false)
   const [user, setUser]               = useState(null)
   const [authChecked, setAuthChecked] = useState(false)
-  const [gateCleared, setGateCleared] = useState(false)
   // 'professional' | 'buyer' | 'none' | null (still checking)
   const [accountType, setAccountType] = useState(null)
-  const launched = useLaunchStatus()
-
-  useEffect(() => {
-    // Post-launch, the nav always shows — the full-lockdown gate is gone
-    // entirely at that point (see middleware.js). Pre-launch, it also
-    // shows for anyone actually authenticated — middleware.js already lets
-    // a real session straight through the gate (see its Supabase-session
-    // bypass), so the nav needs to agree, or a real logged-in professional
-    // lands on a real page with no nav bar at all. Otherwise, pre-launch,
-    // it still shows only once the visitor has cleared the waitlist
-    // popup/page.
-    if (launched || user) {
-      setGateCleared(true)
-      return
-    }
-    const inCookie = document.cookie.includes('vi_waitlist_v2')
-    const inLocal = localStorage.getItem('vi_waitlist_gate_v2')
-    setGateCleared(inCookie || !!inLocal)
-  }, [launched, user])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -98,15 +77,11 @@ export default function Nav() {
   //                                 not a bare signup form
   //  - logged in, professional  -> straight to their own profile
   //  - logged in, buyer/none    -> dashboard (no profile page to send them to)
-  const cta = !launched
-    ? { label: 'JOIN THE WAITLIST', href: '/waitlist' }
-    : user
-      ? (accountType === 'professional'
-          ? { label: 'MY PROFILE', href: `/profile/${user.id}` }
-          : { label: 'GET STARTED', href: '/dashboard' })
-      : { label: 'TAKE ASSESSMENT', href: ASSESSMENT_URL }
-
-  if (!gateCleared) return null
+  const cta = user
+    ? (accountType === 'professional'
+        ? { label: 'MY PROFILE', href: `/profile/${user.id}` }
+        : { label: 'GET STARTED', href: '/dashboard' })
+    : { label: 'TAKE ASSESSMENT', href: ASSESSMENT_URL }
 
   return (
     <>
