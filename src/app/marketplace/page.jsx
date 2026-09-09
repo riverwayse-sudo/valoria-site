@@ -5,6 +5,12 @@ export const metadata = {
   description: 'Discover assessed African professionals across Talent, Speakers and Facilitators through the Valoria Marketplace.',
 }
 
-export default function MarketplacePage() {
-  return <MarketplaceExperienceV2 forcedTrack="all" />
+const VALID_TRACKS = new Set(['all', 'candidate', 'speaker', 'facilitator'])
+
+export default async function MarketplacePage({ searchParams }) {
+  const params = await searchParams
+  const requestedTrack = typeof params?.track === 'string' ? params.track : 'all'
+  const forcedTrack = VALID_TRACKS.has(requestedTrack) ? requestedTrack : 'all'
+
+  return <MarketplaceExperienceV2 forcedTrack={forcedTrack} />
 }
