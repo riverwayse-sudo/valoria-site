@@ -71,10 +71,10 @@ export default function LiveProfilesScroll() {
         <div>
           <div className="live-profiles-kicker">ALREADY ON THE PLATFORM</div>
           <h2 className="live-profiles-title">
-            {count === null ? 'The Valoria professional community' : `${count.toLocaleString()} assessed professional${count === 1 ? '' : 's'}`}
+            {count === null ? 'The Valoria professional community' : `${count.toLocaleString()} listed professional${count === 1 ? '' : 's'}`}
           </h2>
           <p className="live-profiles-subtitle">
-            Assessed professionals with live VALU Index scores — capability made visible.
+            Verified marketplace listings with live VALU Index scores — capability made visible.
           </p>
         </div>
       </div>
@@ -83,14 +83,14 @@ export default function LiveProfilesScroll() {
         <div className="vi-scroll-mask">
           <div className="vi-scroll-track">
             {loop.map((profile, index) => {
-              const track = primaryTrack(profile.active_tracks)
+              const track = profile.listing_track || primaryTrack(profile.active_tracks)
               const meta = TRACK_META[track] || TRACK_META.candidate
               const marketplaceHref = track && ['candidate', 'speaker', 'facilitator'].includes(track)
                 ? `/marketplace?track=${track}`
                 : '/marketplace'
 
               return (
-                <Link href={marketplaceHref} key={`${profile.id}-${index}`} className="vi-scroll-card" aria-label={`View ${profile.atb_id || 'professional'} in the Valoria Marketplace`}>
+                <Link href={marketplaceHref} key={`${profile.id}-${track}-${index}`} className="vi-scroll-card" aria-label={`View ${profile.atb_id || 'professional'} in the Valoria Marketplace`}>
                   <div className="vi-scroll-avatar" aria-hidden="true">
                     {profile.photo_url ? (
                       <img src={profile.photo_url} alt="" loading="lazy" />
