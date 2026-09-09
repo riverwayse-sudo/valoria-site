@@ -54,7 +54,7 @@ export default function LiveProfilesScroll() {
 
   if (!loaded) {
     return (
-      <section className="live-profiles live-profiles-loading" aria-label="Valoria professional community">
+      <section className="live-profiles live-profiles-loading" aria-label="Valoria professional capabilities">
         <div className="live-profiles-inner">
           <div className="live-profiles-kicker">THE VALORIA COMMUNITY</div>
           <div className="live-profiles-loading-line" aria-hidden="true" />
@@ -66,15 +66,15 @@ export default function LiveProfilesScroll() {
   const loop = [...profiles, ...profiles]
 
   return (
-    <section className="live-profiles" aria-label="Valoria professional community">
+    <section className="live-profiles" aria-label="Valoria professional capabilities">
       <div className="live-profiles-inner">
         <div>
           <div className="live-profiles-kicker">ALREADY ON THE PLATFORM</div>
           <h2 className="live-profiles-title">
-            {count === null ? 'The Valoria professional community' : `${count.toLocaleString()} listed professional${count === 1 ? '' : 's'}`}
+            {count === null ? 'The Valoria professional community' : `${count.toLocaleString()} marketplace capabilities`}
           </h2>
           <p className="live-profiles-subtitle">
-            Verified marketplace listings with live VALU Index scores — capability made visible.
+            One professional identity can appear across multiple capabilities — Talent, Speaking and Facilitation — with each capability represented independently in the marketplace.
           </p>
         </div>
       </div>
@@ -116,7 +116,7 @@ export default function LiveProfilesScroll() {
       ) : (
         <div className="live-profiles-public-state">
           <span className="live-profiles-dot" />
-          Professional profiles will appear here as soon as profile data is available.
+          Professional capabilities will appear here as soon as profile data is available.
         </div>
       )}
 
@@ -125,7 +125,7 @@ export default function LiveProfilesScroll() {
         .live-profiles-inner{max-width:1200px;margin:0 auto;padding:0 24px 26px}
         .live-profiles-kicker{font-size:9px;font-weight:700;letter-spacing:.2em;color:rgba(201,168,76,.62);text-transform:uppercase;margin-bottom:8px}
         .live-profiles-title{font-family:var(--font);font-size:clamp(22px,3vw,30px);font-weight:200;color:${PARCH};line-height:1.15;margin:0}
-        .live-profiles-subtitle{font-size:12px;line-height:1.6;color:${DIM};margin:8px 0 0;max-width:620px}
+        .live-profiles-subtitle{font-size:12px;line-height:1.6;color:${DIM};margin:8px 0 0;max-width:720px}
         .live-profiles-loading-line{height:1px;width:min(360px,70vw);margin-top:18px;background:linear-gradient(90deg,rgba(201,168,76,.45),rgba(201,168,76,0));animation:vi-pulse 1.4s ease-in-out infinite}
         .vi-scroll-mask{width:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
         .vi-scroll-track{display:flex;gap:14px;width:max-content;animation:vi-scroll-x 40s linear infinite;will-change:transform}
