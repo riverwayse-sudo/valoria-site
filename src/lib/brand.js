@@ -16,10 +16,10 @@ export const BRAND = {
 
 export const COLORS = {
   gold: '#C9A84C',
-  goldLight: '#E2C97E',
+  goldLight: '#D4C9A8',
   dark: '#1A1A2E',
-  darkMid: '#1A1A2E',
-  darkCard: '#2E2E4A',
+  darkMid: '#2E2E4A',
+  darkCard: '#F7F4EE',
   slateIndigo: '#2E2E4A',
   antiqueLinen: '#EDE8DC',
   subtleBrass: '#D4C9A8',
@@ -27,7 +27,7 @@ export const COLORS = {
   ivoryWhite: '#FAFAF7',
 }
 
-// PRIME Framework — the approved five clusters and seventeen skills.
+// PRIME Framework — approved five clusters and their manual definitions.
 export const PRIME_CLUSTERS = [
   { letter: 'P', name: 'Presence', color: COLORS.gold, subtitle: 'How you show up', skills: ['Communication', 'Executive Presence', 'Composure Under Scrutiny'] },
   { letter: 'R', name: 'Relationships', color: COLORS.gold, subtitle: 'How you connect', skills: ['Trust-Building', 'Collaborative Intelligence', 'Network Quality'] },
@@ -41,41 +41,26 @@ export const TIER_DESIGNATIONS = [
   { min: 90, name: 'Elite', stars: '✦✦✦' },
   { min: 75, name: 'Distinguished', stars: '✦✦' },
   { min: 55, name: 'Proficient', stars: '✦' },
-  { min: 35, name: 'Standard', stars: '' },
+  // Scores below 55 are not a manual-defined tier.
 ]
 
 export const ENTRY_POINTS = [
   {
-    id: 'atb-connect',
-    num: '01',
-    name: 'ATB Connect',
-    buyer: 'FOR EMPLOYERS',
-    color: COLORS.gold,
+    id: 'atb-connect', num: '01', name: 'ATB Connect', buyer: 'FOR EMPLOYERS', color: COLORS.gold,
     modality: 'PRECISION TALENT SOURCING',
     desc: 'Search assessed professionals through structured capability data, experience and role fit. Make hiring decisions with more clarity and confidence.',
-    href: '/marketplace?track=candidate',
-    linkLabel: 'SEARCH TALENT',
+    href: '/marketplace?track=candidate', linkLabel: 'SEARCH TALENT',
   },
   {
-    id: 'spotlight',
-    num: '02',
-    name: 'ATB Spotlight',
-    buyer: 'FOR EVENT ORGANISERS',
-    color: COLORS.gold,
+    id: 'spotlight', num: '02', name: 'ATB Spotlight', buyer: 'FOR EVENT ORGANISERS', color: COLORS.gold,
     modality: 'MERIT-BASED VISIBILITY',
     desc: 'Discover voices by expertise, demonstrated capability and professional merit — not familiarity or network proximity.',
-    href: '/marketplace?track=speaker',
-    linkLabel: 'DISCOVER SPEAKERS',
+    href: '/marketplace?track=speaker', linkLabel: 'DISCOVER SPEAKERS',
   },
   {
-    id: 'develop',
-    num: '03',
-    name: 'Valoria Develop',
-    buyer: 'FOR PROFESSIONALS & ORGANISATIONS',
-    color: COLORS.gold,
+    id: 'develop', num: '03', name: 'Valoria Develop', buyer: 'FOR PROFESSIONALS & ORGANISATIONS', color: COLORS.gold,
     modality: 'CAPABILITY DEVELOPMENT',
     desc: 'PRIME-mapped development designed around the capability gaps that matter most, with clear pathways for professional growth.',
-    href: '/programmes',
-    linkLabel: 'EXPLORE DEVELOPMENT',
+    href: '/programmes', linkLabel: 'EXPLORE DEVELOPMENT',
   },
 ]
