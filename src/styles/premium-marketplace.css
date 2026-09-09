@@ -1,169 +1,233 @@
-/* Valoria premium marketplace interaction layer */
+/* Valoria Marketplace — premium brand hierarchy */
 
-.vi-marketplace-card,
-div:has(> div > a[href^="/profile/"]) {
-  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease, border-color .22s ease !important;
-}
-
-div:has(> div > a[href^="/profile/"]):hover {
-  transform: translateY(-5px) !important;
-  box-shadow: 0 22px 45px -18px rgba(15,15,26,.28), 0 8px 18px -8px rgba(201,168,76,.18) !important;
-  border-color: rgba(201,168,76,.55) !important;
-}
-
-div:has(> div > a[href^="/profile/"]) a[href^="/profile/"] {
-  transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease !important;
-}
-
-div:has(> div > a[href^="/profile/"]) a[href^="/profile/"]:hover {
-  background: #1A1A2E !important;
-  color: #F7F4EE !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 7px 16px -7px rgba(15,15,26,.35) !important;
-}
-
-div:has(> div > a[href^="/profile/"]) img {
-  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease !important;
-}
-
-div:has(> div > a[href^="/profile/"]):hover img {
-  transform: scale(1.035) !important;
-}
-
-div:has(> div > a[href^="/profile/"]) > div > div[style*="height"] {
-  transition: height .35s cubic-bezier(.2,.8,.2,1), filter .25s ease !important;
-}
-
-div:has(> div > a[href^="/profile/"]):hover > div > div[style*="height"] {
-  filter: brightness(1.12) !important;
-}
-
-div:has(> div > a[href^="/profile/"]) button {
-  transition: filter .2s ease, transform .2s ease, box-shadow .2s ease !important;
-}
-
-div:has(> div > a[href^="/profile/"]) button:hover:not(:disabled) {
-  filter: brightness(1.08) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 7px 16px -7px rgba(55,138,221,.5) !important;
-}
-
-div:has(> div > a[href^="/profile/"]) a:focus-visible,
-div:has(> div > a[href^="/profile/"]) button:focus-visible,
-div:has(> div > a[href^="/profile/"]) input:focus-visible,
-div:has(> div > a[href^="/profile/"]) select:focus-visible {
-  outline: 2px solid #C9A84C !important;
-  outline-offset: 3px !important;
-}
-
-@media (max-width: 760px) {
-  div:has(> div > a[href^="/profile/"]) {
-    padding: 16px !important;
-  }
-}
-
-/* Loaded marketplace content must never inherit disabled/loading opacity. */
-main:has(.marketplace-header) .capability-card,
-main:has(.marketplace-header) .capability-card > * {
-  opacity: 1 !important;
-  filter: none !important;
-}
-
-main:has(.marketplace-header) .capability-card {
-  color: #2E2E4A !important;
-  background: #FAFAF7 !important;
-  border-color: #D4C9A8 !important;
-  box-shadow: 0 10px 28px rgba(15,15,26,.07) !important;
-}
-
-main:has(.marketplace-header) .capability-card:hover {
-  transform: translateY(-6px) !important;
-  border-color: #C9A84C !important;
-  box-shadow: 0 20px 42px rgba(15,15,26,.12), 0 4px 14px rgba(201,168,76,.10) !important;
-}
-
-main:has(.marketplace-header) .capability-card .name,
-main:has(.marketplace-header) .capability-card .headline,
-main:has(.marketplace-header) .capability-card .bio {
-  color: #2E2E4A !important;
-  opacity: 1 !important;
-}
-
-main:has(.marketplace-header) .capability-card .idLabel,
-main:has(.marketplace-header) .capability-card .location,
-main:has(.marketplace-header) .capability-card .status,
-main:has(.marketplace-header) .capability-card .strengths {
-  color: #5C5C72 !important;
-  opacity: 1 !important;
-}
-
-main:has(.marketplace-header) .capability-card .verified {
-  color: #8C6D20 !important;
-  opacity: 1 !important;
-}
-
-main:has(.marketplace-header) .capability-card .valu {
-  color: #1A1A2E !important;
-  opacity: 1 !important;
-}
-
-main:has(.marketplace-header) .capability-card .valu strong {
-  color: #1A1A2E !important;
-  font-size: 28px !important;
-  line-height: 1 !important;
-}
-
-main:has(.marketplace-header) .capability-card .tag,
-main:has(.marketplace-header) .capability-card .track {
-  opacity: 1 !important;
-  color: #2E2E4A !important;
-  background: #EDE8DC !important;
-  border-color: #D4C9A8 !important;
-}
-
-main:has(.marketplace-header) .capability-card .actions {
-  opacity: 1 !important;
-  border-top-color: #D4C9A8 !important;
-}
-
-main:has(.marketplace-header) .capability-card .view {
-  color: #1A1A2E !important;
-}
-
-main:has(.marketplace-header) .capability-card .engage {
-  opacity: 1 !important;
-}
-
-/* Restore a premium editorial canvas instead of a flat wall of parchment. */
-main:has(.marketplace-header) .marketplace-workspace {
-  background: #F7F4EE !important;
-}
-
-main:has(.marketplace-header) .marketplace-results {
-  background: #F7F4EE !important;
-}
-
-main:has(.marketplace-header) .marketplace-toolbar {
-  background: #FAFAF7 !important;
-  border-bottom-color: #D4C9A8 !important;
-}
-
-/* Do not allow transformed page ancestors to trap the comparison control. */
 main:has(.marketplace-header) {
+  background: #F7F4EE !important;
+  color: #1A1A2E !important;
+  font-family: 'Raleway', 'Helvetica Neue', Arial, sans-serif !important;
   transform: none !important;
   filter: none !important;
   perspective: none !important;
 }
 
-/* The comparison control is intentionally in document flow and sticky at the
-   viewport edge. This avoids fixed-position containing-block bugs caused by
-   animated/transformed ancestors while keeping it visible during discovery. */
-main:has(.marketplace-header) .compareBar {
+/* Header / hero */
+main:has(.marketplace-header) .marketplace-header {
+  background: #1A1A2E !important;
+  color: #F7F4EE !important;
+  border-bottom: 1px solid rgba(201,168,76,.28) !important;
+}
+
+main:has(.marketplace-header) .marketplace-header * {
+  color: #F7F4EE !important;
+}
+
+main:has(.marketplace-header) .marketplace-header b {
+  color: #C9A84C !important;
+  letter-spacing: .12em !important;
+}
+
+main:has(.marketplace-header) .marketplace-hero-inner {
+  color: #F7F4EE !important;
+}
+
+main:has(.marketplace-header) .marketplace-hero-inner * {
+  opacity: 1 !important;
+}
+
+/* Keep hero copy warm-white and readable; gold is reserved for emphasis. */
+main:has(.marketplace-header) .marketplace-hero-inner h1,
+main:has(.marketplace-header) .marketplace-hero-inner p {
+  color: #F7F4EE !important;
+}
+
+main:has(.marketplace-header) .marketplace-hero-inner h1 em {
+  color: #C9A84C !important;
+}
+
+/* Toolbar */
+main:has(.marketplace-header) .marketplace-toolbar {
+  background: #FAFAF7 !important;
+  color: #1A1A2E !important;
+  border-bottom: 1px solid #D4C9A8 !important;
+}
+
+main:has(.marketplace-header) .marketplace-toolbar input,
+main:has(.marketplace-header) .marketplace-toolbar select,
+main:has(.marketplace-header) .marketplace-toolbar label {
+  color: #1A1A2E !important;
+  background: #FAFAF7 !important;
+  opacity: 1 !important;
+}
+
+main:has(.marketplace-header) .marketplace-toolbar input::placeholder {
+  color: #6B6B7D !important;
+  opacity: 1 !important;
+}
+
+/* Workspace */
+main:has(.marketplace-header) .marketplace-workspace,
+main:has(.marketplace-header) .marketplace-results {
+  background: #F7F4EE !important;
+  color: #1A1A2E !important;
+}
+
+main:has(.marketplace-header) .marketplace-filters {
+  color: #1A1A2E !important;
+  border-right-color: #D4C9A8 !important;
+}
+
+main:has(.marketplace-header) .marketplace-filters * {
+  color: #2E2E4A !important;
+}
+
+main:has(.marketplace-header) .marketplace-results-head,
+main:has(.marketplace-header) .marketplace-results-head * {
+  color: #1A1A2E !important;
+}
+
+/* Listing cards: force a true paper/editorial treatment. */
+main:has(.marketplace-header) article.capability-card {
+  background: #FAFAF7 !important;
+  color: #1A1A2E !important;
+  border: 1px solid #D4C9A8 !important;
+  border-radius: 2px !important;
+  box-shadow: 0 12px 30px rgba(15,15,26,.08) !important;
+  opacity: 1 !important;
+  filter: none !important;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease, border-color .22s ease !important;
+}
+
+main:has(.marketplace-header) article.capability-card:hover {
+  transform: translateY(-6px) !important;
+  border-color: #C9A84C !important;
+  box-shadow: 0 22px 44px rgba(15,15,26,.13), 0 4px 16px rgba(201,168,76,.10) !important;
+}
+
+/* Inline text colors in the component are deliberately overridden here so
+   the approved brand palette wins over legacy translucent values. */
+main:has(.marketplace-header) article.capability-card * {
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-child(1) {
+  color: #6B6B7D !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-child(2) {
+  color: #1A1A2E !important;
+  font-weight: 750 !important;
+  letter-spacing: .03em !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-child(3) {
+  color: #8C6D20 !important;
+  font-weight: 700 !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-child(4) {
+  color: #2E2E4A !important;
+  font-weight: 600 !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-child(5) {
+  color: #5C5C72 !important;
+}
+
+/* VALU score */
+main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(3),
+main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(3) * {
+  color: #1A1A2E !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-of-type(2) > div:nth-of-type(3) strong {
+  color: #1A1A2E !important;
+  font-size: 30px !important;
+  font-weight: 750 !important;
+}
+
+main:has(.marketplace-header) article.capability-card > p {
+  color: #3F3F56 !important;
+  font-size: 13px !important;
+  line-height: 1.7 !important;
+}
+
+/* Metadata, PRIME, tags */
+main:has(.marketplace-header) article.capability-card span,
+main:has(.marketplace-header) article.capability-card b,
+main:has(.marketplace-header) article.capability-card small {
+  color: #2E2E4A !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-of-type(3) span:first-child {
+  background: #1A1A2E !important;
+  color: #F7F4EE !important;
+  border-color: #1A1A2E !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-of-type(3) span:nth-child(2) {
+  color: #6B5A2A !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-of-type(4) span:first-child {
+  color: #8C6D20 !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-of-type(4) b {
+  color: #1A1A2E !important;
+  border-color: #C9A84C !important;
+  background: #F7F4EE !important;
+}
+
+main:has(.marketplace-header) article.capability-card > div:nth-of-type(5) span {
+  color: #2E2E4A !important;
+  background: #EDE8DC !important;
+  border-color: #D4C9A8 !important;
+}
+
+/* Card actions */
+main:has(.marketplace-header) article.capability-card > div:last-child,
+main:has(.marketplace-header) article.capability-card a,
+main:has(.marketplace-header) article.capability-card button {
+  opacity: 1 !important;
+}
+
+main:has(.marketplace-header) article.capability-card a {
+  color: #1A1A2E !important;
+}
+
+main:has(.marketplace-header) article.capability-card a:hover {
+  background: #1A1A2E !important;
+  color: #F7F4EE !important;
+}
+
+main:has(.marketplace-header) article.capability-card button {
+  color: #1A1A2E !important;
+  border-color: #D4C9A8 !important;
+}
+
+main:has(.marketplace-header) article.capability-card button:hover:not(:disabled) {
+  background: #F7F4EE !important;
+  border-color: #C9A84C !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Focus states */
+main:has(.marketplace-header) a:focus-visible,
+main:has(.marketplace-header) button:focus-visible,
+main:has(.marketplace-header) input:focus-visible,
+main:has(.marketplace-header) select:focus-visible {
+  outline: 2px solid #C9A84C !important;
+  outline-offset: 3px !important;
+}
+
+/* Existing compare bar has inline fixed positioning. Target it by its inline
+   style rather than relying on a missing class name. */
+main:has(.marketplace-header) div[style*="position: fixed"] {
   position: sticky !important;
   left: auto !important;
   right: auto !important;
-  top: auto !important;
   bottom: 18px !important;
+  top: auto !important;
   z-index: 1000 !important;
   width: min(calc(100% - 48px), 1132px) !important;
   max-width: 1132px !important;
@@ -174,7 +238,7 @@ main:has(.marketplace-header) .compareBar {
 }
 
 @media (max-width: 760px) {
-  main:has(.marketplace-header) .compareBar {
+  main:has(.marketplace-header) div[style*="position: fixed"] {
     width: calc(100% - 24px) !important;
     margin: 12px auto 0 !important;
     bottom: 12px !important;
@@ -183,9 +247,9 @@ main:has(.marketplace-header) .compareBar {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  div:has(> div > a[href^="/profile/"]),
-  div:has(> div > a[href^="/profile/"]) * {
-    transition: none !important;
+  main:has(.marketplace-header) *,
+  main:has(.marketplace-header) article.capability-card {
     animation: none !important;
+    transition: none !important;
   }
 }
