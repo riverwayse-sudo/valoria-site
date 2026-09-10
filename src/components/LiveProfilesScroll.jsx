@@ -1,8 +1,6 @@
-'use client'
+'use server'
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
 
 const GOLD = '#C9A84C'
 const MID = '#1A1A2E'
@@ -24,45 +22,53 @@ function letters(value) {
   return value ? value.replace(/\./g, '').toUpperCase() : 'V'
 }
 
-export default function LiveProfilesScroll() {
-  const [profiles, setProfiles] = useState([])
-  const [count, setCount] = useState(null)
-  const [loaded, setLoaded] = useState(false)
+async function getHomepageProfiles() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadHomepageProfiles() {
-      const [{ data: publicProfiles, error: profilesError }, { data: profileCount, error: countError }] = await Promise.all([
-        supabase.rpc('get_homepage_professional_previews'),
-        supabase.rpc('get_homepage_professional_count'),
-      ])
-
-      if (profilesError) console.error('Homepage profile preview fetch failed:', profilesError)
-      if (countError) console.error('Homepage professional count fetch failed:', countError)
-
-      if (!cancelled) {
-        setProfiles(Array.isArray(publicProfiles) ? publicProfiles : [])
-        setCount(typeof profileCount === 'number' ? profileCount : null)
-        setLoaded(true)
-      }
-    }
-
-    loadHomepageProfiles()
-    return () => { cancelled = true }
-  }, [])
-
-  if (!loaded) {
-    return (
-      <section className="live-profiles live-profiles-loading" aria-label="Valoria professional capabilities">
-        <div className="live-profiles-inner">
-          <div className="live-profiles-kicker">THE VALORIA COMMUNITY</div>
-          <div className="live-profiles-loading-line" aria-hidden="true" />
-        </div>
-      </section>
-    )
+  if (!url || !key) {
+    console.error('Homepage profile data unavailable: Supabase public environment variables are missing.')
+    return { profiles: [], count: null }
   }
 
+  const headers = {
+    apikey: key,
+    Authorization: `Bearer ${key}`,
+    'Content-Type': 'application/json',
+  }
+
+  try {
+    const [profilesResponse, countResponse] = await Promise.all([
+      fetch(`${url}/rest/v1/rpc/get_homepage_professional_previews`, {
+        method: 'POST',
+        headers,
+        next: { revalidate: 60 },
+      }),
+      fetch(`${url}/rest/v1/rpc/get_homepage_professional_count`, {
+        method: 'POST',
+        headers,
+        next: { revalidate: 60 },
+      }),
+    ])
+
+    const profilesPayload = profilesResponse.ok ? await profilesResponse.json() : null
+    const countPayload = countResponse.ok ? await countResponse.json() : null
+
+    if (!profilesResponse.ok) console.error('Homepage profile preview fetch failed:', profilesResponse.status, profilesPayload)
+    if (!countResponse.ok) console.error('Homepage professional count fetch failed:', countResponse.status, countPayload)
+
+    return {
+      profiles: Array.isArray(profilesPayload) ? profilesPayload : [],
+      count: typeof countPayload === 'number' ? countPayload : null,
+    }
+  } catch (error) {
+    console.error('Homepage profile data fetch failed:', error)
+    return { profiles: [], count: null }
+  }
+}
+
+export default async function LiveProfilesScroll() {
+  const { profiles, count } = await getHomepageProfiles()
   const loop = [...profiles, ...profiles]
 
   return (
@@ -126,7 +132,6 @@ export default function LiveProfilesScroll() {
         .live-profiles-kicker{font-size:9px;font-weight:700;letter-spacing:.2em;color:rgba(201,168,76,.62);text-transform:uppercase;margin-bottom:8px}
         .live-profiles-title{font-family:var(--font);font-size:clamp(22px,3vw,30px);font-weight:200;color:${PARCH};line-height:1.15;margin:0}
         .live-profiles-subtitle{font-size:12px;line-height:1.6;color:${DIM};margin:8px 0 0;max-width:720px}
-        .live-profiles-loading-line{height:1px;width:min(360px,70vw);margin-top:18px;background:linear-gradient(90deg,rgba(201,168,76,.45),rgba(201,168,76,0));animation:vi-pulse 1.4s ease-in-out infinite}
         .vi-scroll-mask{width:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
         .vi-scroll-track{display:flex;gap:14px;width:max-content;animation:vi-scroll-x 40s linear infinite;will-change:transform}
         .vi-scroll-track:hover{animation-play-state:paused}
@@ -146,8 +151,7 @@ export default function LiveProfilesScroll() {
         .live-profiles-public-state{max-width:1200px;margin:0 auto;padding:16px 24px 0;color:rgba(247,244,238,.38);font-size:11px;line-height:1.6;display:flex;align-items:center;gap:8px}
         .live-profiles-dot{width:5px;height:5px;border-radius:50%;background:${GOLD};flex-shrink:0}
         @keyframes vi-scroll-x{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-        @keyframes vi-pulse{0%,100%{opacity:.35}50%{opacity:1}}
-        @media (prefers-reduced-motion:reduce){.vi-scroll-track{animation:none}.live-profiles-loading-line{animation:none}}
+        @media (prefers-reduced-motion:reduce){.vi-scroll-track{animation:none}}
         @media (max-width:640px){.live-profiles{padding:36px 0}.live-profiles-inner{padding-bottom:20px}.vi-scroll-card{min-width:270px;padding:10px 12px}.vi-scroll-avatar{width:46px;height:46px}.vi-scroll-headline{max-width:135px}.vi-scroll-score strong{font-size:24px}}
       `}</style>
     </section>
