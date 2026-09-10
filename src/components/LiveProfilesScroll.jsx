@@ -41,13 +41,13 @@ async function getHomepageProfiles() {
         method: 'POST',
         headers,
         body: '{}',
-        next: { revalidate: 60 },
+        cache: 'no-store',
       }),
       fetch(`${url}/rest/v1/rpc/get_homepage_professional_count`, {
         method: 'POST',
         headers,
         body: '{}',
-        next: { revalidate: 60 },
+        cache: 'no-store',
       }),
     ])
 
