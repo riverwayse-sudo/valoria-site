@@ -18,27 +18,27 @@ export default function SessionSeriesGrid() {
         .session-series-head{display:flex;align-items:flex-end;justify-content:space-between;gap:56px;margin-bottom:58px}
         .session-series-kicker{display:flex;align-items:center;gap:12px;font-size:12px;font-weight:800;letter-spacing:.18em;color:#535366;text-transform:uppercase}
         .session-series-kicker:before{content:'';width:38px;height:2px;background:var(--gold)}
-        .session-series-title{font-family:var(--font);font-size:clamp(48px,6vw,82px);font-weight:300;line-height:1.02;letter-spacing:-.035em;color:var(--navy);margin:20px 0 0;max-width:850px}
-        .session-series-title em{font-style:italic;color:#a77f2c;font-weight:400}
-        .session-series-intro{max-width:410px;font-size:18px;line-height:1.7;font-weight:450;color:#4a4a5a;margin:0}
-        .session-series-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid rgba(26,26,46,.2);border-left:1px solid rgba(26,26,46,.2)}
-        .session-series-card{min-height:540px;padding:34px 28px 30px;border-right:1px solid rgba(26,26,46,.2);border-bottom:1px solid rgba(26,26,46,.2);display:flex;flex-direction:column;position:relative;transition:transform .35s ease,background .35s ease}
+        .session-series-title{font-family:var(--font);font-size:clamp(48px,6vw,82px);font-weight:400;line-height:1.02;letter-spacing:-.035em;color:#1A1A2E;margin:20px 0 0;max-width:850px}
+        .session-series-title em{font-style:italic;color:#9a7428;font-weight:500}
+        .session-series-intro{max-width:410px;font-size:clamp(17px,1.25vw,19px);line-height:1.7;font-weight:400;color:#343447;margin:0}
+        .session-series-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid rgba(26,26,46,.24);border-left:1px solid rgba(26,26,46,.24)}
+        .session-series-card{min-height:540px;padding:34px 28px 30px;border-right:1px solid rgba(26,26,46,.24);border-bottom:1px solid rgba(26,26,46,.24);display:flex;flex-direction:column;position:relative;transition:transform .35s ease,background .35s ease}
         .session-series-card:hover{background:rgba(255,255,255,.58);transform:translateY(-5px)}
         .session-series-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:42px}
-        .session-series-number{font-family:var(--font);font-size:14px;font-weight:800;letter-spacing:.12em;color:#a77f2c}
-        .session-series-status{font-size:10px;font-weight:800;letter-spacing:.11em;color:#555566;text-transform:uppercase;text-align:right}
-        .session-series-cluster{font-size:10px;font-weight:800;letter-spacing:.18em;color:#555566;text-transform:uppercase;margin-bottom:20px}
-        .session-series-card h3{font-family:var(--font);font-size:clamp(27px,2.15vw,36px);font-weight:500;line-height:1.12;letter-spacing:-.025em;color:var(--navy);margin:0}
-        .session-series-description{font-size:16px;line-height:1.72;color:#4d4d5d;margin:22px 0 0}
+        .session-series-number{font-family:var(--font);font-size:13px;font-weight:800;letter-spacing:.12em;color:#8f6c25}
+        .session-series-status{font-size:10px;font-weight:800;letter-spacing:.11em;color:#414152;text-transform:uppercase;text-align:right}
+        .session-series-cluster{font-size:11px;font-weight:800;letter-spacing:.18em;color:#4a4a5a;text-transform:uppercase;margin-bottom:20px}
+        .session-series-card h3{font-family:var(--font);font-size:clamp(28px,2.2vw,38px);font-weight:500;line-height:1.12;letter-spacing:-.025em;color:#1A1A2E;margin:0}
+        .session-series-description{font-size:17px;line-height:1.72;font-weight:400;color:#343447;margin:22px 0 0}
         .session-series-bottom{margin-top:auto;padding-top:34px}
-        .session-series-date{font-size:10px;font-weight:800;letter-spacing:.1em;color:#5a5a68;text-transform:uppercase;margin-bottom:18px;line-height:1.55}
+        .session-series-date{font-size:11px;font-weight:800;letter-spacing:.1em;color:#4b4b5b;text-transform:uppercase;margin-bottom:18px;line-height:1.55}
         .session-series-actions{display:flex;gap:10px;align-items:center}
-        .session-series-primary,.session-series-secondary{min-height:50px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;text-transform:uppercase;letter-spacing:.09em;font-size:10px;font-weight:800;border-radius:2px;transition:all .2s ease}
-        .session-series-primary{background:var(--navy);color:var(--parchment);border:1px solid var(--navy);flex:1}
-        .session-series-primary:hover{background:var(--gold);border-color:var(--gold);color:var(--navy)}
-        .session-series-secondary{border:1px solid rgba(26,26,46,.3);color:var(--navy);background:transparent;flex:1}
-        .session-series-secondary:hover{border-color:var(--gold);color:#8c6822}
-        .session-series-footer{margin-top:24px;font-size:14px;line-height:1.7;color:#5a5a68;max-width:760px}
+        .session-series-primary,.session-series-secondary{min-height:50px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;text-transform:uppercase;letter-spacing:.09em;font-size:11px;font-weight:800;border-radius:2px;transition:all .2s ease}
+        .session-series-primary{background:#1A1A2E;color:#F7F4EE;border:1px solid #1A1A2E;flex:1}
+        .session-series-primary:hover{background:var(--gold);border-color:var(--gold);color:#1A1A2E}
+        .session-series-secondary{border:1px solid rgba(26,26,46,.32);color:#1A1A2E;background:transparent;flex:1}
+        .session-series-secondary:hover{border-color:var(--gold);color:#76591c}
+        .session-series-footer{margin-top:24px;font-size:14px;line-height:1.7;color:#4b4b5b;max-width:760px}
         @media(max-width:1000px){.session-series-head{align-items:flex-start;flex-direction:column;gap:24px}.session-series-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.session-series-card{min-height:470px}.session-series-title{font-size:clamp(44px,8vw,68px)}}
         @media(max-width:680px){.session-series{padding-top:78px;padding-bottom:90px}.session-series-intro{font-size:17px}.session-series-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.session-series-grid::-webkit-scrollbar{display:none}.session-series-card{min-width:min(84vw,350px);scroll-snap-align:start;padding:30px 24px}.session-series-card h3{font-size:30px}.session-series-description{font-size:16px}}
         @media(prefers-reduced-motion:reduce){.session-series-card{transition:none}}
