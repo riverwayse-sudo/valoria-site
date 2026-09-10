@@ -3,6 +3,7 @@ import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
 import SessionShowcase from '@/components/SessionShowcase'
+import SessionSeriesGrid from '@/components/SessionSeriesGrid'
 import EntryPointsGrid from '@/components/EntryPointsGrid'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import { BRAND } from '@/lib/brand'
@@ -50,6 +51,7 @@ export default function HomePage() {
         </section>
 
         <SessionShowcase />
+        <SessionSeriesGrid />
 
         <section className="webinar-replay" id="webinar">
           <div className="container">
