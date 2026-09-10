@@ -1,5 +1,3 @@
-'use server'
-
 import Link from 'next/link'
 
 const GOLD = '#C9A84C'
@@ -24,9 +22,6 @@ function letters(value) {
 
 async function getHomepageProfiles() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  // This component is server-rendered. Prefer the server-only service credential
-  // so the public homepage is not dependent on the publishable/anon JWT being
-  // valid for server-to-server RPC calls.
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!url || !key) {
