@@ -15,6 +15,49 @@ export const metadata = {
   description: "Valoria Institute builds the infrastructure that develops, surfaces and connects African professional merit.",
 }
 
+const professionalSessions = [
+  {
+    session: 'SESSION 02',
+    date: 'SEPTEMBER 26, 2026',
+    cluster: 'INTELLIGENCE',
+    title: 'Strategic Thinking: You Are Solving the Wrong Problems',
+    description: 'A focused conversation on the difference between solving problems and selecting the problems worth solving — and why strategic trade-offs are a discipline, not a compromise.',
+    speaker: 'Temi Adetokunbo',
+    objectives: ['Distinguish problem-solving from problem-selection', 'Treat the trade-off as a strategic discipline', 'Apply a three-question diagnostic and trade-off audit'],
+    status: 'COMING SOON',
+  },
+  {
+    session: 'SESSION 03',
+    date: 'OCTOBER 17, 2026',
+    cluster: 'MASTERY',
+    title: 'Execution Without Burnout: Why High Performers Plateau',
+    description: 'A practical examination of the gap between being busy and creating impact, including the indispensability trap and how high performers can build a more sustainable operating model.',
+    speaker: 'Temi Adetokunbo',
+    objectives: ['Distinguish output from impact', 'Name the indispensability trap and how to exit it', 'Apply a personal impact audit to the last three months'],
+    status: 'COMING SOON',
+  },
+  {
+    session: 'SESSION 04',
+    date: 'NOVEMBER 14, 2026',
+    cluster: 'RELATIONSHIPS',
+    title: 'Emotional Intelligence Is Not About Being Nice',
+    description: 'A sharper look at emotional intelligence as a precision instrument for perception, regulation and strategic application — grounded in the African professional and organisational context.',
+    speaker: 'Guest Speaker',
+    objectives: ['Reframe EI as a precision instrument, not a personality trait', 'Cover perception, regulation and strategic application', 'Address EI in the African professional and organisational context'],
+    status: 'COMING SOON',
+  },
+  {
+    session: 'SESSION 05',
+    date: 'DECEMBER 05, 2026',
+    cluster: 'ENTERPRISE',
+    title: 'Influence Without Authority: The Real Currency of Organisational Power',
+    description: 'The closing conversation examines how influence is built when formal authority is absent, why influence fails, and how professionals can deliberately map the relationships that move work forward.',
+    speaker: 'Guest Speaker',
+    objectives: ['Define the difference between authority and influence', 'Cover the three failure modes of influence', 'Introduce the 90-day stakeholder influence map'],
+    status: 'COMING SOON',
+  },
+]
+
 export default function HomePage() {
   return (
     <>
@@ -48,41 +91,59 @@ export default function HomePage() {
           </div>
         </section>
 
-
         <section className="professional-series" id="events">
           <div className="container">
             <Reveal className="ps-header">
               <div>
                 <div className="eyebrow">
                   <div className="eyebrow-line" />
-                  <span className="eyebrow-text">UPCOMING EVENTS · 2026</span>
+                  <span className="eyebrow-text">THE PROFESSIONAL STANDARD SERIES · 2026</span>
                 </div>
-                <h2 className="ps-title">The Professional<br /><em>Standard Series.</em></h2>
+                <h2 className="ps-title">Conversations that define the<br /><em>professional standard.</em></h2>
               </div>
               <div className="ps-intro">
-                <p>Four focused virtual sessions examining the professional capabilities that determine how African professionals think, execute, relate and influence.</p>
+                <p>Five focused virtual sessions examining the professional capabilities that determine how African professionals think, execute, relate and influence.</p>
                 <div className="ps-meta">90 MINUTES &nbsp;·&nbsp; VIRTUAL &nbsp;·&nbsp; RECORDED</div>
               </div>
             </Reveal>
+
             <Reveal className="ps-grid">
-              {[
-                {session:'SESSION 2', date:'SEPTEMBER 26', cluster:'INTELLIGENCE', title:'Strategic Thinking: You Are Solving the Wrong Problems', speaker:'Temi Adetokunbo', objectives:['Distinguish problem-solving from problem-selection','Treat the trade-off as a strategic discipline','Apply a three-question diagnostic and trade-off audit']},
-                {session:'SESSION 3', date:'OCTOBER 17', cluster:'MASTERY', title:'Execution Without Burnout: Why High Performers Plateau', speaker:'Temi Adetokunbo', objectives:['Distinguish output from impact','Name the indispensability trap and how to exit it','Apply a personal impact audit to the last three months']},
-                {session:'SESSION 4', date:'NOVEMBER 14', cluster:'RELATIONSHIPS', title:'Emotional Intelligence Is Not About Being Nice', speaker:'Guest Speaker', objectives:['Reframe EI as a precision instrument, not a personality trait','Cover perception, regulation and strategic application','Address EI in the African professional and organisational context']},
-                {session:'SESSION 5', date:'DECEMBER 05', cluster:'ENTERPRISE', title:'Influence Without Authority: The Real Currency of Organisational Power', speaker:'Guest Speaker', objectives:['Define the difference between authority and influence','Cover the three failure modes of influence','Introduce the 90-day stakeholder influence map']},
-              ].map((event) => (
-                <article className="ps-card" key={event.session}>
-                  <div className="ps-card-top"><span>{event.session}</span><time>{event.date}</time></div>
-                  <div className="ps-cluster">{event.cluster}</div>
-                  <h3>{event.title}</h3>
-                  <ul>{event.objectives.map((objective) => <li key={objective}>{objective}</li>)}</ul>
-                  <div className="ps-card-foot"><span>WITH {event.speaker.toUpperCase()}</span><span>VALU INDEX →</span></div>
+              {professionalSessions.map((event, index) => (
+                <article className={`ps-card ${index === 0 ? 'ps-card-featured' : ''}`} key={event.session}>
+                  <div className="ps-card-visual" aria-hidden="true">
+                    <span className="ps-card-number">0{index + 2}</span>
+                    <span className="ps-card-status">{event.status}</span>
+                  </div>
+                  <div className="ps-card-content">
+                    <div className="ps-card-top">
+                      <span>{event.session}</span>
+                      <time dateTime={event.date}>{event.date}</time>
+                    </div>
+                    <div className="ps-cluster">{event.cluster}</div>
+                    <h3>{event.title}</h3>
+                    <p className="ps-description">{event.description}</p>
+                    <div className="ps-details" aria-label={`${event.session} details`}>
+                      <span>90 MIN</span>
+                      <span>VIRTUAL</span>
+                      <span>RECORDED</span>
+                    </div>
+                    <div className="ps-objectives-label">SESSION FOCUS</div>
+                    <ul>{event.objectives.map((objective) => <li key={objective}>{objective}</li>)}</ul>
+                    <div className="ps-card-foot">
+                      <span>WITH {event.speaker.toUpperCase()}</span>
+                      <span>VALU INDEX</span>
+                    </div>
+                    <button type="button" className="ps-card-cta" aria-label={`Get notified about ${event.title}`}>
+                      <span>NOTIFY ME</span><span aria-hidden="true">→</span>
+                    </button>
+                  </div>
                 </article>
               ))}
             </Reveal>
+
             <Reveal className="ps-footer">
-              <div><strong>THE PROFESSIONAL STANDARD SERIES</strong><span>Part of Valoria Institute's professional development programme.</span></div>
-              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">BEGIN THE VALU SNAPSHOT</a>
+              <div><strong>SESSION 01 · AVAILABLE NOW</strong><span>Watch the opening conversation on why being good at your job is no longer enough.</span></div>
+              <a href="#webinar" className="btn-gold">WATCH SESSION 01 →</a>
             </Reveal>
           </div>
         </section>
@@ -92,7 +153,7 @@ export default function HomePage() {
             <Reveal className="wr-inner">
               <div className="eyebrow" style={{ justifyContent: 'center' }}>
                 <div className="eyebrow-line" />
-                <span className="eyebrow-text">WATCH THE REPLAY</span>
+                <span className="eyebrow-text">SESSION 01 · WATCH THE REPLAY</span>
                 <div className="eyebrow-line" />
               </div>
               <h2 className="wr-title">
