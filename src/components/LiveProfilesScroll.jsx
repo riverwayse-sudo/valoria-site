@@ -24,10 +24,13 @@ function letters(value) {
 
 async function getHomepageProfiles() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  // This component is server-rendered. Prefer the server-only service credential
+  // so the public homepage is not dependent on the publishable/anon JWT being
+  // valid for server-to-server RPC calls.
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!url || !key) {
-    console.error('Homepage profile data unavailable: Supabase public environment variables are missing.')
+    console.error('Homepage profile data unavailable: Supabase environment variables are missing.')
     return { profiles: [], count: null }
   }
 
@@ -42,11 +45,13 @@ async function getHomepageProfiles() {
       fetch(`${url}/rest/v1/rpc/get_homepage_professional_previews`, {
         method: 'POST',
         headers,
+        body: '{}',
         next: { revalidate: 60 },
       }),
       fetch(`${url}/rest/v1/rpc/get_homepage_professional_count`, {
         method: 'POST',
         headers,
+        body: '{}',
         next: { revalidate: 60 },
       }),
     ])
