@@ -7,6 +7,9 @@ import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import { BRAND } from '@/lib/brand'
 import './home.css'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata = {
   title: 'Valoria Institute — Worth. Built.',
   description: "Valoria Institute builds the infrastructure that develops, surfaces and connects African professional merit.",
