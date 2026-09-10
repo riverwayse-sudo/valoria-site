@@ -48,6 +48,45 @@ export default function HomePage() {
           </div>
         </section>
 
+
+        <section className="professional-series" id="events">
+          <div className="container">
+            <Reveal className="ps-header">
+              <div>
+                <div className="eyebrow">
+                  <div className="eyebrow-line" />
+                  <span className="eyebrow-text">UPCOMING EVENTS · 2026</span>
+                </div>
+                <h2 className="ps-title">The Professional<br /><em>Standard Series.</em></h2>
+              </div>
+              <div className="ps-intro">
+                <p>Four focused virtual sessions examining the professional capabilities that determine how African professionals think, execute, relate and influence.</p>
+                <div className="ps-meta">90 MINUTES &nbsp;·&nbsp; VIRTUAL &nbsp;·&nbsp; RECORDED</div>
+              </div>
+            </Reveal>
+            <Reveal className="ps-grid">
+              {[
+                {session:'SESSION 2', date:'SEPTEMBER 26', cluster:'INTELLIGENCE', title:'Strategic Thinking: You Are Solving the Wrong Problems', speaker:'Temi Adetokunbo', objectives:['Distinguish problem-solving from problem-selection','Treat the trade-off as a strategic discipline','Apply a three-question diagnostic and trade-off audit']},
+                {session:'SESSION 3', date:'OCTOBER 17', cluster:'MASTERY', title:'Execution Without Burnout: Why High Performers Plateau', speaker:'Temi Adetokunbo', objectives:['Distinguish output from impact','Name the indispensability trap and how to exit it','Apply a personal impact audit to the last three months']},
+                {session:'SESSION 4', date:'NOVEMBER 14', cluster:'RELATIONSHIPS', title:'Emotional Intelligence Is Not About Being Nice', speaker:'Guest Speaker', objectives:['Reframe EI as a precision instrument, not a personality trait','Cover perception, regulation and strategic application','Address EI in the African professional and organisational context']},
+                {session:'SESSION 5', date:'DECEMBER 05', cluster:'ENTERPRISE', title:'Influence Without Authority: The Real Currency of Organisational Power', speaker:'Guest Speaker', objectives:['Define the difference between authority and influence','Cover the three failure modes of influence','Introduce the 90-day stakeholder influence map']},
+              ].map((event) => (
+                <article className="ps-card" key={event.session}>
+                  <div className="ps-card-top"><span>{event.session}</span><time>{event.date}</time></div>
+                  <div className="ps-cluster">{event.cluster}</div>
+                  <h3>{event.title}</h3>
+                  <ul>{event.objectives.map((objective) => <li key={objective}>{objective}</li>)}</ul>
+                  <div className="ps-card-foot"><span>WITH {event.speaker.toUpperCase()}</span><span>VALU INDEX →</span></div>
+                </article>
+              ))}
+            </Reveal>
+            <Reveal className="ps-footer">
+              <div><strong>THE PROFESSIONAL STANDARD SERIES</strong><span>Part of Valoria Institute's professional development programme.</span></div>
+              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">BEGIN THE VALU SNAPSHOT</a>
+            </Reveal>
+          </div>
+        </section>
+
         <section className="webinar-replay" id="webinar">
           <div className="container">
             <Reveal className="wr-inner">
