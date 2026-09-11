@@ -1,12 +1,11 @@
-/* Homepage UX refinement layer — approved Valoria hierarchy + connected-card geometry. */
+/* Homepage UX refinement layer — approved Valoria hierarchy + canonical card geometry. */
 .home-pathways{padding:clamp(72px,9vw,112px) var(--pad);background:#F7F4EE;color:#1A1A2E;border-top:1px solid rgba(26,26,46,.08)}
 .home-section-heading{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:clamp(28px,6vw,88px);align-items:end;margin-bottom:42px}
-/* Editorial hierarchy: H1 is restrained; section headings carry more visual weight. */
 .home-section-heading h2,.home-featured-event h2,.home-insights h2{font-family:var(--font);font-size:clamp(38px,4.1vw,56px);font-weight:400;line-height:1.06;letter-spacing:-.03em;margin:14px 0 0;color:#1A1A2E}
 .home-section-heading h2 em,.home-featured-event h2 em,.home-insights h2 em{font-style:italic;color:#9A7428;font-weight:450}
 .home-section-heading>p{font-size:17px;line-height:1.72;color:#555565;max-width:520px;margin:0 0 3px}
 
-/* Connected-card system: zero gaps, shared joins, curved outer boundary. */
+/* CANONICAL CONNECTED CARD SYSTEM — do not create one-off card geometry. */
 .home-pathway-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;background:rgba(26,26,46,.12);border:1px solid rgba(26,26,46,.12);border-radius:24px;overflow:hidden}
 .home-pathway-card{position:relative;min-height:320px;padding:30px 30px 28px;display:flex;flex-direction:column;text-decoration:none;color:#1A1A2E;background:#fff;border:0;border-right:1px solid rgba(26,26,46,.12);transition:background .25s ease,box-shadow .25s ease;overflow:hidden;border-radius:0}
 .home-pathway-card:last-child{border-right:0}
@@ -23,25 +22,28 @@
 .home-pathway-cta span,.text-link span{color:#9A7428;margin-left:5px}
 .live-profiles{margin-top:0}
 
-/* Institutional pathways: give the section room to breathe instead of squeezing title, copy and cards into one band. */
+/* INSTITUTIONAL PATHWAYS — approved ep-card visual language restored. */
+/* Variant: CONNECTED DARK. Parent owns the outer radius; cells never do. */
 .entry-points{padding:clamp(84px,10vw,128px) var(--pad);background:var(--dark);border-top:1px solid rgba(255,255,255,.04)}
 .ep-header{display:block;margin-bottom:clamp(40px,5vw,60px);max-width:980px}
 .ep-header .eyebrow{margin-bottom:18px}
 .home-entry-title{font-family:var(--font);font-size:clamp(42px,5vw,64px);font-weight:400;line-height:1.04;letter-spacing:-.035em;color:var(--parchment);margin:0;max-width:760px}
 .home-entry-title em{font-style:italic;color:var(--gold);font-weight:450}
 .ep-desc{font-size:clamp(17px,1.5vw,19px);font-weight:300;color:rgba(247,244,238,.58);line-height:1.7;max-width:680px;margin:24px 0 0}
-.ep-grid{width:100%}
-.ep-grid .ep-card{min-height:390px;padding:clamp(32px,3.2vw,48px) clamp(28px,3vw,42px);border-radius:0;margin:0;border-top:1px solid rgba(201,168,76,.14);border-bottom:1px solid rgba(201,168,76,.14);border-left:1px solid rgba(201,168,76,.14);border-right:0;background:rgba(247,244,238,.035);display:flex;flex-direction:column}
-.ep-grid .ep-card:first-child{border-radius:24px 0 0 24px}
-.ep-grid .ep-card:last-child{border-right:1px solid rgba(201,168,76,.14);border-radius:0 24px 24px 0}
-.ep-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-radius:24px;overflow:hidden}
-.ep-grid .ep-card:hover{background:rgba(247,244,238,.055);z-index:1}
-.ep-grid .ep-icon{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;margin-bottom:30px}
-.ep-grid .ep-name{font-size:clamp(27px,2.5vw,36px);line-height:1.04;letter-spacing:-.025em;margin:0 0 12px}
-.ep-grid .ep-buyer{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:22px}
-.ep-grid .ep-desc-text{font-size:16px;line-height:1.72;color:rgba(247,244,238,.58);margin:0;max-width:410px}
-.ep-grid .ep-modality{margin-top:auto;margin-bottom:22px;width:max-content;max-width:100%;font-size:9px;font-weight:800;letter-spacing:.13em;padding:7px 10px;border-radius:999px}
-.ep-grid .ep-link{font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;gap:5px}
+.ep-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;width:100%;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.12);border-radius:var(--card-radius);overflow:hidden}
+.ep-grid .ep-card{position:relative;min-height:340px;margin:0;padding:clamp(28px,3.5vw,44px) clamp(24px,3vw,36px);display:flex;flex-direction:column;overflow:hidden;background:var(--dark-card);border:0;border-right:1px solid rgba(201,168,76,.12);border-radius:0;transition:background .3s ease,box-shadow .3s ease,transform .3s ease;cursor:default}
+.ep-grid .ep-card:last-child{border-right:0}
+.ep-grid .ep-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ep-color,var(--gold));transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.ep-grid .ep-card:hover{background:rgba(18,18,28,.98);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.3);z-index:1}
+.ep-grid .ep-card:hover::before,.ep-grid .ep-card:focus-within::before{transform:scaleX(1)}
+.ep-grid .ep-icon{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;margin-bottom:20px;flex-shrink:0}
+.ep-grid .ep-name{font-family:var(--font);font-size:clamp(20px,2.2vw,26px);font-weight:400;line-height:1.18;letter-spacing:-.02em;margin:0 0 7px;color:var(--parchment)!important}
+.ep-grid .ep-buyer{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px;color:var(--gold)!important;opacity:.72}
+.ep-grid .ep-desc-text{font-size:14px;font-weight:300;line-height:1.7;color:var(--dim);margin:0;max-width:410px}
+.ep-grid .ep-modality{margin-top:auto;margin-bottom:20px;width:max-content;max-width:100%;font-size:11px;font-weight:600;letter-spacing:.1em;padding:5px 12px;border-radius:999px}
+.ep-grid .ep-link{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;gap:5px;color:var(--gold)!important;width:max-content}
+.ep-grid .ep-link:hover{color:var(--gold-light)!important}
+
 .home-dual-actions,.home-event-actions{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
 .text-link{display:inline-flex;align-items:center;text-decoration:none;font:800 11px var(--font);letter-spacing:.13em;color:inherit;min-height:44px}
 .home-featured-event{padding:clamp(76px,9vw,112px) var(--pad);background:#F7F4EE;color:#1A1A2E;border-top:1px solid rgba(26,26,46,.1)}
@@ -54,11 +56,11 @@
 .home-pathways .eyebrow-line,.home-featured-event .eyebrow-line,.home-insights .eyebrow-line{background:#C9A84C}
 .home-pathways .eyebrow-text,.home-featured-event .eyebrow-text,.home-insights .eyebrow-text{color:#9A7428}
 .hero-actions .btn-gold,.home-dual-actions .btn-gold,.home-event-actions .btn-gold{min-height:50px;display:inline-flex;align-items:center;justify-content:center;gap:4px}
-.btn-gold:focus-visible,.btn-outline:focus-visible,.text-link:focus-visible,.home-pathway-card:focus-visible{outline:3px solid rgba(201,168,76,.45);outline-offset:3px}
+.btn-gold:focus-visible,.btn-outline:focus-visible,.text-link:focus-visible,.home-pathway-card:focus-visible,.ep-link:focus-visible{outline:3px solid rgba(201,168,76,.45);outline-offset:3px}
 
-/* All homepage hero titles use the same restrained scale on both slider states. */
-.hero-slider .hero-title{font-size:clamp(52px,6vw,72px);line-height:1.02;letter-spacing:-.035em}
-.hero-slider .hero-event-slide .hero-title{font-size:clamp(48px,5.3vw,66px)}
+/* Hero hierarchy: keep the statement dominant without turning the homepage into a poster. */
+.hero-slider .hero-title{font-size:clamp(50px,5.2vw,64px);line-height:1.04;letter-spacing:-.035em}
+.hero-slider .hero-event-slide .hero-title{font-size:clamp(46px,4.8vw,60px)}
 .hero-slider .hero-event-panel{border-radius:24px}
 
 @media(max-width:900px){
@@ -71,10 +73,9 @@
  .home-section-heading{margin-bottom:28px}
  .home-event-grid,.home-insights-grid{gap:28px}
  .ep-grid{grid-template-columns:1fr}
- .ep-grid .ep-card{min-height:0;border-left:1px solid rgba(201,168,76,.14);border-right:1px solid rgba(201,168,76,.14);border-bottom:0}
- .ep-grid .ep-card:first-child{border-radius:24px 24px 0 0}
- .ep-grid .ep-card:last-child{border-radius:0 0 24px 24px;border-bottom:1px solid rgba(201,168,76,.14)}
- .hero-slider .hero-title,.hero-slider .hero-event-slide .hero-title{font-size:clamp(46px,7vw,60px)}
+ .ep-grid .ep-card{min-height:0;border-right:0;border-bottom:1px solid rgba(201,168,76,.12)}
+ .ep-grid .ep-card:last-child{border-bottom:0}
+ .hero-slider .hero-title,.hero-slider .hero-event-slide .hero-title{font-size:clamp(44px,7vw,56px)}
 }
 @media(max-width:640px){
  .home-pathways,.home-featured-event,.home-insights{padding-top:64px;padding-bottom:64px}
@@ -86,10 +87,10 @@
  .home-entry-title{font-size:clamp(36px,10vw,48px)}
  .ep-desc{font-size:16px;line-height:1.65;margin-top:18px}
  .ep-grid .ep-card{padding:28px 24px}
- .ep-grid .ep-name{font-size:30px}
+ .ep-grid .ep-name{font-size:26px}
  .home-dual-actions,.home-event-actions{align-items:stretch;flex-direction:column;gap:10px}
  .home-dual-actions .btn-gold,.home-event-actions .btn-gold,.home-dual-actions .text-link,.home-event-actions .text-link{width:100%}
  .home-dual-actions .text-link,.home-event-actions .text-link{justify-content:center}
  .hero-slider .hero-title,.hero-slider .hero-event-slide .hero-title{font-size:clamp(38px,10.5vw,48px);line-height:1.04}
 }
-@media(prefers-reduced-motion:reduce){.home-pathway-card{transition:none}}
+@media(prefers-reduced-motion:reduce){.home-pathway-card,.ep-grid .ep-card{transition:none}}
