@@ -1,0 +1,90 @@
+/* HOMEPAGE CTA SYSTEM
+   Every homepage action is rendered as a button treatment.
+   One action = one button. Two actions = primary + secondary button.
+*/
+.home-dual-actions,
+.home-event-actions { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+
+/* Text links used as homepage actions are intentionally promoted to the same control language. */
+.home-dual-actions .text-link,
+.home-event-actions .text-link,
+.home-insights-copy .text-link {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+  min-height:48px !important;
+  padding:14px 28px !important;
+  border:1px solid var(--valoria-gold) !important;
+  border-radius:9999px !important;
+  background:transparent !important;
+  color:var(--valoria-gold) !important;
+  font-family:'Raleway',sans-serif !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  letter-spacing:.14em !important;
+  text-transform:uppercase !important;
+  text-decoration:none !important;
+  white-space:nowrap !important;
+  transition:background .25s ease,color .25s ease,border-color .25s ease,transform .25s ease,box-shadow .25s ease !important;
+}
+.home-dual-actions .text-link:hover,
+.home-event-actions .text-link:hover,
+.home-insights-copy .text-link:hover {
+  background:var(--valoria-gold) !important;
+  border-color:var(--valoria-gold) !important;
+  color:var(--valoria-midnight) !important;
+  transform:translateY(-1px) !important;
+}
+
+/* The pathway-card CTA is always a button-shaped control, never a bare text link. */
+.home-pathway-cta {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+  width:max-content !important;
+  min-height:48px !important;
+  margin-top:auto !important;
+  padding:14px 24px !important;
+  border:1px solid var(--valoria-gold) !important;
+  border-radius:9999px !important;
+  background:var(--valoria-gold) !important;
+  color:var(--valoria-midnight) !important;
+  font-family:'Raleway',sans-serif !important;
+  font-size:11px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  letter-spacing:.13em !important;
+  text-transform:uppercase !important;
+  text-decoration:none !important;
+  transition:background .25s ease,color .25s ease,border-color .25s ease,transform .25s ease,box-shadow .25s ease !important;
+}
+.home-pathway-cta span { color:currentColor !important; margin-left:0 !important; }
+.home-pathway-card:hover .home-pathway-cta,
+.home-pathway-card:focus-visible .home-pathway-cta {
+  background:var(--valoria-gold-light) !important;
+  border-color:var(--valoria-gold-light) !important;
+  color:var(--valoria-midnight) !important;
+}
+
+.home-dual-actions .btn-gold,
+.home-event-actions .btn-gold,
+.home-insights-copy .text-link,
+.home-dual-actions .text-link,
+.home-event-actions .text-link { flex:0 0 auto; }
+
+@media(max-width:640px){
+  .home-dual-actions,.home-event-actions { align-items:stretch !important; flex-direction:column !important; gap:10px !important; }
+  .home-dual-actions .btn-gold,
+  .home-dual-actions .text-link,
+  .home-event-actions .btn-gold,
+  .home-event-actions .text-link,
+  .home-insights-copy .text-link,
+  .home-pathway-cta { width:100% !important; }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .home-dual-actions .text-link,.home-event-actions .text-link,.home-insights-copy .text-link,.home-pathway-cta { transition:none !important; }
+}
