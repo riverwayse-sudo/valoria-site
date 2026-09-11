@@ -15,5 +15,5 @@ export default function EntryPointsGrid() {
     <p className="ep-desc-text">{p.desc}</p>
     <div className="ep-modality" style={{background:'rgba(201,168,76,.08)',color:'#C9A84C',border:'1px solid rgba(201,168,76,.22)'}}>{p.modality}</div>
     <a href={p.liveHref} className="ep-link" style={{color:'#C9A84C'}}>Explore <span>→</span></a>
-  </div>)}</>
+  </div>)} </>
 }
