@@ -108,6 +108,7 @@ export default function DashboardPage() {
   const [activeVideo, setActiveVideo] = useState(null)
   const [showMessages, setShowMessages] = useState(false)
   const [profileViewCount, setProfileViewCount] = useState(null)
+  const [capabilities, setCapabilities] = useState([])
 
   useEffect(() => {
     async function load() {
@@ -125,6 +126,13 @@ export default function DashboardPage() {
       let supply = !!proProfile
 
       if (prof) {
+        const { data: capabilityRows, error: capabilityError } = await supabase
+          .from('professional_capabilities')
+          .select('id,capability,is_active,eligibility_status,eligible_for_listing')
+          .eq('professional_id', user.id)
+        if (capabilityError) console.error('Dashboard capability status load failed:', capabilityError)
+        setCapabilities(capabilityRows || [])
+
         // head:true — only need the count header, not the rows themselves.
         // RLS (see pending-migrations/012_add_profile_views.sql) already
         // restricts this to the signed-in owner's own views, so no
@@ -230,7 +238,14 @@ export default function DashboardPage() {
   const isSpeaker     = isSupply && tracks.includes('speaker')
   const isFacilitator = isSupply && tracks.includes('facilitator')
   const isOrganiser = !isSupply && p.user_type === 'organiser'
-  const isVisible   = isSupply && p.listing_status === 'listed'
+  // Marketplace visibility is capability-level. A multi-capability professional
+  // must not be labelled "Not Listed" simply because the legacy profile-level
+  // listing_status is stale or represents a different governance layer.
+  const listedCapabilities = capabilities.filter(c => c.is_active && (c.eligibility_status === 'listed' || c.eligible_for_listing === true))
+  const isVisible   = isSupply && listedCapabilities.length > 0
+  const listingLabel = listedCapabilities.length
+    ? `LISTED IN ${listedCapabilities.length} ${listedCapabilities.length === 1 ? 'PATH' : 'PATHS'}`
+    : 'PROFILE IN DEVELOPMENT'
   const initials    = getInitials(p.display_name)
   const avatarLetters = getAvatarLetters(p.display_name)
   const firstName   = p.display_name ? p.display_name.split(' ')[0] : 'there'
@@ -303,7 +318,7 @@ export default function DashboardPage() {
           {isSupply && (
             <div style={{ position:'absolute', top:'20px', right:'28px', display:'flex', alignItems:'center', gap:'7px', background:'rgba(26,26,46,.75)', border:`1px solid ${GLINE2}`, padding:'7px 16px 7px 12px', borderRadius:'999px', fontSize:'11px', letterSpacing:'.1em', textTransform:'uppercase', color: isVisible ? '#1D9E75' : GOLD, backdropFilter:'blur(8px)' }}>
               <div style={{ width:'7px', height:'7px', borderRadius:'50%', background: isVisible ? '#1D9E75' : '#888', boxShadow: isVisible ? '0 0 0 0 rgba(29,158,117,.6)' : 'none', animation: isVisible ? 'dv-pulse 2s infinite' : 'none' }} />
-              {isVisible ? 'Green Listed' : 'Not Listed'}
+              {listingLabel}
             </div>
           )}
           <div style={{ position:'absolute', inset:0, background:`linear-gradient(180deg, transparent 35%, ${DARK} 100%)` }} />
