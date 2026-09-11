@@ -135,8 +135,13 @@ function EditPageInner() {
         router.push('/profile/setup')
         return
       }
-      setForm(existing)
-      setOriginal(existing)
+      const normalised = {
+        ...existing,
+        years_experience: existing.experience_years ?? existing.years_experience ?? null,
+        preferred_industry: Array.isArray(existing.preferred_industries) ? (existing.preferred_industries[0] || '') : (existing.preferred_industry || ''),
+      }
+      setForm(normalised)
+      setOriginal(normalised)
       setLoading(false)
     })()
   }, [router])
@@ -156,12 +161,25 @@ function EditPageInner() {
     set(key, val)
     markDirty(section)
   }
+  // UI uses years_experience in a few places, but the database column is
+  // experience_years. Normalise section payloads so one invalid field never
+  // causes the entire profile update to fail.
+  function databaseValue(key) {
+    if (key === 'experience_years') return form.experience_years ?? form.years_experience ?? null
+    return form[key]
+  }
 
   async function saveSection(section, keys) {
     setSaving(s => ({ ...s, [section]: true }))
     setErrorMsg('')
     const payload = {}
-    keys.forEach(k => { payload[k] = form[k] })
+    keys.forEach(k => {
+      if (k === 'preferred_industry') {
+        payload.preferred_industries = form.preferred_industry ? [form.preferred_industry] : []
+        return
+      }
+      payload[k] = databaseValue(k)
+    })
     const { error } = await supabase.from('professional_profiles').update(payload).eq('id', user.id)
     setSaving(s => ({ ...s, [section]: false }))
     if (error) {
@@ -238,7 +256,7 @@ function EditPageInner() {
         {errorMsg && <div style={S.errorBanner}>{errorMsg}</div>}
 
         <Section title="Basics" dirty={dirty.basics} saving={saving.basics} saved={saved.basics}
-          onSave={() => saveSection('basics', ['display_name','username','phone','current_job_title','headline','industry','preferred_industry','location','years_experience'])}>
+          onSave={() => saveSection('basics', ['display_name','username','phone','current_job_title','headline','industry','preferred_industry','location','experience_years'])}>
           <div style={S.grid2}>
             <Field label="Name"><TextInput value={form.display_name} onChange={v => setField('basics','display_name',v)} /></Field>
             <Field label="Username" error={form.username && !VALIDATORS.username(form.username) ? validatorError('username') : null}>
@@ -253,7 +271,7 @@ function EditPageInner() {
               <TextInput value={form.location} onChange={v => setField('basics','location',v)} placeholder="City, country" />
             </Field>
             <Field label="Years of experience" error={form.years_experience && !VALIDATORS.number(form.years_experience) ? validatorError('number') : null}>
-              <TextInput type="number" value={form.years_experience} onChange={v => setField('basics','years_experience',v)} />
+              <TextInput type="number" value={form.experience_years ?? form.years_experience} onChange={v => setField('basics','experience_years',v === '' ? null : Number(v))} />
             </Field>
           </div>
           <Field label="Current industry"><ChipGroup options={INDUSTRIES} selected={form.industry} multi={false} onToggle={v => setField('basics','industry',v)} /></Field>
