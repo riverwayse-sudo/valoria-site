@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { animate } from 'animejs'
+import anime from 'animejs/lib/anime.es.js'
 import { motion, useReducedMotion } from 'motion/react'
 
 export default function ValuMotion({ children, className = '' }) {
@@ -11,10 +11,11 @@ export default function ValuMotion({ children, className = '' }) {
   useEffect(() => {
     if (!radar.current || reduced) return
     const points = radar.current.querySelectorAll('[data-valu-point]')
-    const animation = animate(points, {
+    const animation = anime({
+      targets: points,
       scale: [0.75, 1],
       opacity: [0.25, 1],
-      delay: (_el, index) => index * 110,
+      delay: anime.stagger(110),
       duration: 700,
       easing: 'easeOutElastic(1, .7)',
     })
