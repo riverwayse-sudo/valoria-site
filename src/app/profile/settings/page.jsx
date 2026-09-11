@@ -99,10 +99,12 @@ export default function ProfileSettingsPage() {
       .from('professional_profiles')
       .update({ active_tracks: draftPaths })
       .eq('id', user.id)
+      .select('id,active_tracks')
+      .maybeSingle()
 
     if (updateError) {
       console.error('Capability path save failed:', updateError)
-      setError('Your capability paths could not be saved. Please try again.')
+      setError(updateError.message || 'Your capability paths could not be saved. Please try again.')
       setSaving(false)
       return
     }
