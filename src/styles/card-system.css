@@ -1,0 +1,114 @@
+/* VALORIA GLOBAL CARD SYSTEM
+   One geometry, one radius language, one coordinated color transition.
+   Connected grids remain the only exception: their child cards use zero radius.
+*/
+:root {
+  --vi-card-radius: 22px;
+  --vi-card-pad-y: clamp(28px, 3.5vw, 44px);
+  --vi-card-pad-x: clamp(24px, 3vw, 36px);
+  --vi-card-hover: #C9A84C;
+  --vi-card-hover-text: #0F0F1A;
+  --vi-card-transition: .42s cubic-bezier(.22,1,.36,1);
+}
+
+/* Standard standalone cards */
+.card,
+.card-gold,
+.waitlist-card {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: var(--vi-card-radius) !important;
+  padding: var(--vi-card-pad-y) var(--vi-card-pad-x) !important;
+  transition: background var(--vi-card-transition), color .32s ease, border-color .32s ease, box-shadow .35s ease, transform .35s cubic-bezier(.22,1,.36,1) !important;
+}
+
+/* Canonical connected card cells: outer grid owns the radius. */
+.vi-card {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: var(--vi-card-radius) !important;
+  padding: var(--vi-card-pad-y) var(--vi-card-pad-x) !important;
+  transition: background var(--vi-card-transition), color .32s ease, border-color .32s ease, box-shadow .35s ease, transform .35s cubic-bezier(.22,1,.36,1) !important;
+}
+.vi-card-grid > .vi-card { border-radius: 0 !important; }
+.vi-card-grid { border-radius: var(--vi-card-radius) !important; overflow: hidden !important; }
+
+/* Coordinated color state: surface + typography move together. */
+.card:hover,
+.card:focus-within,
+.card-gold:hover,
+.card-gold:focus-within,
+.waitlist-card:hover,
+.waitlist-card:focus-within,
+.vi-card:hover,
+.vi-card:focus-within {
+  background: var(--card-color, var(--vi-card-hover)) !important;
+  color: var(--vi-card-hover-text) !important;
+  border-color: var(--card-color, var(--vi-card-hover)) !important;
+  box-shadow: 0 14px 42px rgba(15,15,26,.16) !important;
+  transform: translateY(-2px);
+}
+
+.card:hover h1,.card:hover h2,.card:hover h3,.card:hover h4,.card:hover h5,.card:hover h6,
+.card-gold:hover h1,.card-gold:hover h2,.card-gold:hover h3,.card-gold:hover h4,.card-gold:hover h5,.card-gold:hover h6,
+.waitlist-card:hover h1,.waitlist-card:hover h2,.waitlist-card:hover h3,.waitlist-card:hover h4,.waitlist-card:hover h5,.waitlist-card:hover h6,
+.vi-card:hover h1,.vi-card:hover h2,.vi-card:hover h3,.vi-card:hover h4,.vi-card:hover h5,.vi-card:hover h6,
+.card:focus-within h1,.card:focus-within h2,.card:focus-within h3,.card:focus-within h4,.card:focus-within h5,.card:focus-within h6,
+.card-gold:focus-within h1,.card-gold:focus-within h2,.card-gold:focus-within h3,.card-gold:focus-within h4,.card-gold:focus-within h5,.card-gold:focus-within h6,
+.waitlist-card:focus-within h1,.waitlist-card:focus-within h2,.waitlist-card:focus-within h3,.waitlist-card:focus-within h4,.waitlist-card:focus-within h5,.waitlist-card:focus-within h6,
+.vi-card:focus-within h1,.vi-card:focus-within h2,.vi-card:focus-within h3,.vi-card:focus-within h4,.vi-card:focus-within h5,.vi-card:focus-within h6 {
+  color: var(--vi-card-hover-text) !important;
+}
+
+.card:hover p,.card:hover li,
+.card-gold:hover p,.card-gold:hover li,
+.waitlist-card:hover p,.waitlist-card:hover li,
+.vi-card:hover p,.vi-card:hover li,
+.card:focus-within p,.card:focus-within li,
+.card-gold:focus-within p,.card-gold:focus-within li,
+.waitlist-card:focus-within p,.waitlist-card:focus-within li,
+.vi-card:focus-within p,.vi-card:focus-within li {
+  color: rgba(15,15,26,.72) !important;
+}
+
+.card:hover a,.card:hover .vi-card-link,
+.card-gold:hover a,.card-gold:hover .vi-card-link,
+.waitlist-card:hover a,.waitlist-card:hover .vi-card-link,
+.vi-card:hover a,.vi-card:hover .vi-card-link,
+.card:focus-within a,.card-gold:focus-within a,.waitlist-card:focus-within a,.vi-card:focus-within a {
+  color: var(--vi-card-hover-text) !important;
+}
+
+/* Gold accent line is part of the same transition. */
+.card::before,.card-gold::before,.waitlist-card::before,.vi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--card-color, var(--gold)) !important;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .42s cubic-bezier(.22,1,.36,1), background .32s ease;
+  z-index: 2;
+}
+.card:hover::before,.card-gold:hover::before,.waitlist-card:hover::before,.vi-card:hover::before,
+.card:focus-within::before,.card-gold:focus-within::before,.waitlist-card:focus-within::before,.vi-card:focus-within::before {
+  transform: scaleX(1);
+  background: var(--vi-card-hover-text) !important;
+}
+
+/* Standard card responsive sizing rules. */
+@media (max-width: 767px) {
+  .card,.card-gold,.waitlist-card,.vi-card {
+    border-radius: 18px !important;
+    padding: 28px 24px !important;
+  }
+  .vi-card-grid > .vi-card { border-radius: 0 !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,.card-gold,.waitlist-card,.vi-card { transition: none !important; }
+  .card::before,.card-gold::before,.waitlist-card::before,.vi-card::before { transition: none !important; }
+}
