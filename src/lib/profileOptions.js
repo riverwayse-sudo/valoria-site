@@ -1,8 +1,5 @@
 // Shared option lists, brand tokens, and answer-format validators used by
-// both the onboarding wizard (profile/setup) and the profile edit page
-// (profile/edit) — pulled out into one place on 1 Aug 2026 when the edit
-// page was split out of the wizard, so the two can't drift out of sync on
-// what counts as a valid industry, a valid phone number, etc.
+// both the onboarding wizard (profile/setup) and the profile edit page.
 
 export const GOLD  = '#C9A84C'
 export const DARK  = '#0F0F1A'
@@ -22,18 +19,9 @@ export const AUDIENCE_SIZES = ['Under 50','50–200','200–500','500–1,000','
 export const NOTICE_PERIODS = ['Immediately','2 weeks','1 month','2 months','3+ months']
 export const WORK_DURATIONS = ['Less than 1 year','1–2 years','2–3 years','3–5 years','5–10 years','10+ years']
 export const MODALITY = ['Remote', 'Hybrid', 'In-person']
-
-// Used by the salary/fee-range currency picker (profile/setup's
-// CurrencyRangeInput). Codes must match the ones parseCurrencyRange() in
-// that file expects: NGN|USD|GBP|EUR|KES|GHS|ZAR.
 export const CURRENCIES = [
-  { code: 'NGN', symbol: '\u20a6' },
-  { code: 'USD', symbol: '$' },
-  { code: 'GBP', symbol: '\u00a3' },
-  { code: 'EUR', symbol: '\u20ac' },
-  { code: 'KES', symbol: 'KSh' },
-  { code: 'GHS', symbol: 'GH\u20b5' },
-  { code: 'ZAR', symbol: 'R' },
+  { code: 'NGN', symbol: '\u20a6' }, { code: 'USD', symbol: '$' }, { code: 'GBP', symbol: '\u00a3' },
+  { code: 'EUR', symbol: '\u20ac' }, { code: 'KES', symbol: 'KSh' }, { code: 'GHS', symbol: 'GH\u20b5' }, { code: 'ZAR', symbol: 'R' },
 ]
 
 export const FIELD_LABELS = {
@@ -44,61 +32,43 @@ export const FIELD_LABELS = {
 
 export const VALIDATORS = {
   place: (v) => {
-    const t = (v || '').trim()
+    const t = String(v ?? '').trim()
     if (!t) return true
-    if (t.length < 2) return false
-    if (/\d/.test(t)) return false
+    if (t.length < 2 || /\d/.test(t)) return false
     if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s,.'-]+$/.test(t)) return false
-    if (!/[aeiouAEIOU]/.test(t)) return false
-    return true
+    return /[aeiouAEIOU]/.test(t)
   },
   number: (v) => {
-    const t = (v || '').trim()
+    const t = String(v ?? '').trim()
     if (!t) return true
     if (!/^\d{1,2}$/.test(t)) return false
     const n = Number(t)
     return n >= 0 && n <= 70
   },
   url: (v) => {
-    const t = (v || '').trim()
+    const t = String(v ?? '').trim()
     if (!t) return true
     try {
       const u = new URL(/^https?:\/\//i.test(t) ? t : `https://${t}`)
       return !!u.hostname && u.hostname.includes('.')
     } catch { return false }
   },
-  linkedin: (v) => {
-    const t = (v || '').trim()
-    if (!t) return true
-    return VALIDATORS.url(t) && /linkedin\.com/i.test(t)
-  },
-  youtube: (v) => {
-    const t = (v || '').trim()
-    if (!t) return true
-    return VALIDATORS.url(t) && /(youtube\.com|youtu\.be)/i.test(t)
-  },
-  username: (v) => {
-    const t = (v || '').trim()
-    if (!t) return true
-    return /^[a-zA-Z0-9_.-]{3,30}$/.test(t)
-  },
-  phone: (v) => {
-    const t = (v || '').trim()
-    if (!t) return true
-    return /^\+?[0-9\s-]{7,17}$/.test(t)
-  },
+  linkedin: (v) => { const t = String(v ?? '').trim(); return !t || (VALIDATORS.url(t) && /linkedin\.com/i.test(t)) },
+  youtube: (v) => { const t = String(v ?? '').trim(); return !t || (VALIDATORS.url(t) && /(youtube\.com|youtu\.be)/i.test(t)) },
+  username: (v) => { const t = String(v ?? '').trim(); return !t || /^[a-zA-Z0-9_.-]{3,30}$/.test(t) },
+  phone: (v) => { const t = String(v ?? '').trim(); return !t || /^\+?[0-9\s-]{7,17}$/.test(t) },
 }
 
 export function validatorError(kind) {
   switch (kind) {
-    case 'place':    return 'That doesn\u2019t look like a location — letters only, e.g. Lagos, Nigeria.'
-    case 'number':    return 'Numbers only, please (e.g. 12).'
+    case 'place': return 'That doesn\u2019t look like a location — letters only, e.g. Lagos, Nigeria.'
+    case 'number': return 'Numbers only, please (e.g. 12).'
     case 'linkedin': return 'Enter a valid LinkedIn URL, e.g. https://linkedin.com/in/yourname'
-    case 'youtube':  return 'Enter a valid YouTube URL.'
-    case 'url':      return 'Enter a valid URL, e.g. https://yoursite.com'
+    case 'youtube': return 'Enter a valid YouTube URL.'
+    case 'url': return 'Enter a valid URL, e.g. https://yoursite.com'
     case 'username': return '3-30 characters — letters, numbers, dots, underscores or hyphens only, no spaces.'
-    case 'phone':    return 'Enter a valid phone number, e.g. +234 801 234 5678.'
-    default:         return 'That doesn\u2019t look right — please check your answer.'
+    case 'phone': return 'Enter a valid phone number, e.g. +234 801 234 5678.'
+    default: return 'That doesn\u2019t look right — please check your answer.'
   }
 }
 
