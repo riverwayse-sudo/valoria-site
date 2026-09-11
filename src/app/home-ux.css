@@ -44,6 +44,11 @@
 .ep-grid .ep-link{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;gap:5px;color:var(--gold)!important;width:max-content}
 .ep-grid .ep-link:hover{color:var(--gold-light)!important}
 
+/* BACKLIT UI PRINCIPLE — localized light follows the pointer without changing card geometry. */
+.backlit-surface::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(220px circle at var(--light-x,50%) var(--light-y,20%),rgba(201,168,76,.085),transparent 68%);opacity:0;transition:opacity .35s ease}
+.backlit-surface:hover::after,.backlit-surface:focus-within::after{opacity:1}
+.backlit-surface>*{position:relative;z-index:1}
+
 .home-dual-actions,.home-event-actions{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
 .text-link{display:inline-flex;align-items:center;text-decoration:none;font:800 11px var(--font);letter-spacing:.13em;color:inherit;min-height:44px}
 .home-featured-event{padding:clamp(76px,9vw,112px) var(--pad);background:#F7F4EE;color:#1A1A2E;border-top:1px solid rgba(26,26,46,.1)}
@@ -58,10 +63,12 @@
 .hero-actions .btn-gold,.home-dual-actions .btn-gold,.home-event-actions .btn-gold{min-height:50px;display:inline-flex;align-items:center;justify-content:center;gap:4px}
 .btn-gold:focus-visible,.btn-outline:focus-visible,.text-link:focus-visible,.home-pathway-card:focus-visible,.ep-link:focus-visible{outline:3px solid rgba(201,168,76,.45);outline-offset:3px}
 
-/* Hero hierarchy: keep the statement dominant without turning the homepage into a poster. */
+/* Hero hierarchy + navigation clearance: the fixed 68px nav must never crowd slide 01. */
 .hero-slider .hero-title{font-size:clamp(50px,5.2vw,64px);line-height:1.04;letter-spacing:-.035em}
 .hero-slider .hero-event-slide .hero-title{font-size:clamp(46px,4.8vw,60px)}
 .hero-slider .hero-event-panel{border-radius:24px}
+.hero-slider .hero-slide:first-child .hero-inner{padding-top:clamp(56px,7vw,92px)}
+.hero-slider .hero-slide:first-child .hero-eyebrow{margin-top:8px}
 
 @media(max-width:900px){
  .home-section-heading,.home-event-grid,.home-insights-grid{grid-template-columns:1fr;gap:22px;align-items:start}
@@ -76,6 +83,7 @@
  .ep-grid .ep-card{min-height:0;border-right:0;border-bottom:1px solid rgba(201,168,76,.12)}
  .ep-grid .ep-card:last-child{border-bottom:0}
  .hero-slider .hero-title,.hero-slider .hero-event-slide .hero-title{font-size:clamp(44px,7vw,56px)}
+ .hero-slider .hero-slide:first-child .hero-inner{padding-top:48px}
 }
 @media(max-width:640px){
  .home-pathways,.home-featured-event,.home-insights{padding-top:64px;padding-bottom:64px}
@@ -92,5 +100,6 @@
  .home-dual-actions .btn-gold,.home-event-actions .btn-gold,.home-dual-actions .text-link,.home-event-actions .text-link{width:100%}
  .home-dual-actions .text-link,.home-event-actions .text-link{justify-content:center}
  .hero-slider .hero-title,.hero-slider .hero-event-slide .hero-title{font-size:clamp(38px,10.5vw,48px);line-height:1.04}
+ .hero-slider .hero-slide:first-child .hero-inner{padding-top:30px}
 }
-@media(prefers-reduced-motion:reduce){.home-pathway-card,.ep-grid .ep-card{transition:none}}
+@media(prefers-reduced-motion:reduce){.home-pathway-card,.ep-grid .ep-card,.backlit-surface::after{transition:none}.hero-slider .hero-slide:first-child .hero-inner{padding-top:clamp(30px,5vw,56px)}}
