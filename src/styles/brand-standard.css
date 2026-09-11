@@ -4,6 +4,7 @@
 :root {
   --valoria-midnight: #1A1A2E;
   --valoria-gold: #C9A84C;
+  --valoria-gold-light: #E2C97E;
   --valoria-slate: #2E2E4A;
   --valoria-parchment: #F7F4EE;
   --valoria-linen: #EDE8DC;
@@ -14,7 +15,7 @@
   --dark-card: var(--valoria-parchment);
   --parchment: var(--valoria-parchment);
   --gold: var(--valoria-gold);
-  --gold-light: var(--valoria-brass);
+  --gold-light: var(--valoria-gold-light);
   --nav-bg: var(--valoria-midnight);
   --card-color: var(--valoria-gold);
   --btn-radius: 9999px;
@@ -62,31 +63,139 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif; }
 .vi-card-label, .vi-card-link { color: var(--valoria-gold) !important; }
 .vi-card-body { color: var(--valoria-slate) !important; }
 
-/* Manual button system */
-.btn-gold, .wl-btn {
+/*
+ * MANUAL BUTTON SYSTEM
+ * Primary  = Gold fill / Midnight text
+ * Secondary = Midnight fill / Ivory text
+ * Tertiary = Linen fill / Slate text
+ * Ghost    = Transparent / Gold border + Gold text
+ * All controls use the approved full-pill silhouette.
+ */
+.btn-gold, .btn-primary, .wl-btn, .nav-cta, .valu-btn-gold {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-height: 48px !important;
+  padding: 14px 28px !important;
   background: var(--valoria-gold) !important;
   color: var(--valoria-midnight) !important;
   border: 0 !important;
   border-radius: 9999px !important;
-  font-weight: 700;
+  font-family: 'Raleway', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  letter-spacing: .14em !important;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease, box-shadow .2s ease !important;
 }
-.btn-outline, .btn-ghost {
-  background: transparent !important;
-  color: var(--valoria-gold) !important;
-  border: 1px solid var(--valoria-gold) !important;
-  border-radius: 9999px !important;
+
+.btn-gold:hover, .btn-primary:hover, .wl-btn:hover, .nav-cta:hover, .valu-btn-gold:hover {
+  background: var(--valoria-gold-light) !important;
+  color: var(--valoria-midnight) !important;
+  transform: translateY(-1px) !important;
 }
+
+.btn-gold:active, .btn-primary:active, .wl-btn:active, .nav-cta:active, .valu-btn-gold:active {
+  transform: translateY(0) !important;
+  box-shadow: inset 0 2px 4px rgba(26,26,46,.22) !important;
+}
+
 .btn-secondary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-height: 48px !important;
+  padding: 14px 28px !important;
   background: var(--valoria-midnight) !important;
   color: var(--valoria-ivory) !important;
   border: 0 !important;
   border-radius: 9999px !important;
+  font-family: 'Raleway', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  letter-spacing: .14em !important;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease, box-shadow .2s ease !important;
 }
+.btn-secondary:hover {
+  background: var(--valoria-slate) !important;
+  color: var(--valoria-ivory) !important;
+  transform: translateY(-1px) !important;
+}
+.btn-secondary:active { transform: translateY(0) !important; box-shadow: inset 0 2px 4px rgba(0,0,0,.25) !important; }
+
 .btn-tertiary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-height: 48px !important;
+  padding: 14px 28px !important;
   background: var(--valoria-linen) !important;
   color: var(--valoria-slate) !important;
   border: 0 !important;
   border-radius: 9999px !important;
+  font-family: 'Raleway', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  letter-spacing: .14em !important;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease, box-shadow .2s ease !important;
+}
+.btn-tertiary:hover { background: #E3DDCF !important; color: var(--valoria-slate) !important; transform: translateY(-1px) !important; }
+.btn-tertiary:active { transform: translateY(0) !important; box-shadow: inset 0 2px 4px rgba(46,46,74,.15) !important; }
+
+/* Existing .btn-outline/.btn-ghost are retained as the manual's Ghost variant. */
+.btn-outline, .btn-ghost, .valu-btn-ghost {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-height: 48px !important;
+  padding: 13px 28px !important;
+  background: transparent !important;
+  color: var(--valoria-gold) !important;
+  border: 1px solid var(--valoria-gold) !important;
+  border-radius: 9999px !important;
+  font-family: 'Raleway', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  letter-spacing: .14em !important;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease !important;
+}
+.btn-outline:hover, .btn-ghost:hover, .valu-btn-ghost:hover {
+  background: rgba(201,168,76,.10) !important;
+  color: var(--valoria-gold-light) !important;
+  border-color: var(--valoria-gold-light) !important;
+  transform: translateY(-1px) !important;
+}
+.btn-outline:active, .btn-ghost:active, .valu-btn-ghost:active { transform: translateY(0) !important; box-shadow: inset 0 2px 4px rgba(26,26,46,.2) !important; }
+
+/* All manual button states: disabled = 40% opacity, no pointer. */
+.btn-gold:disabled, .btn-primary:disabled, .btn-secondary:disabled, .btn-tertiary:disabled, .btn-outline:disabled, .btn-ghost:disabled,
+.btn-gold[aria-disabled="true"], .btn-primary[aria-disabled="true"], .btn-secondary[aria-disabled="true"], .btn-tertiary[aria-disabled="true"], .btn-outline[aria-disabled="true"], .btn-ghost[aria-disabled="true"] {
+  opacity: .4 !important;
+  pointer-events: none !important;
+  transform: none !important;
+}
+
+/* Preserve the approved keyboard focus treatment across every button variant. */
+.btn-gold:focus-visible, .btn-primary:focus-visible, .btn-secondary:focus-visible, .btn-tertiary:focus-visible,
+.btn-outline:focus-visible, .btn-ghost:focus-visible, .wl-btn:focus-visible, .nav-cta:focus-visible,
+.valu-btn-gold:focus-visible, .valu-btn-ghost:focus-visible {
+  outline: 2px solid var(--valoria-gold) !important;
+  outline-offset: 3px !important;
 }
 
 /* Manual avatar system: circular with 2pt Gold ring */
