@@ -135,8 +135,13 @@ function EditPageInner() {
         router.push('/profile/setup')
         return
       }
-      setForm(existing)
-      setOriginal(existing)
+      const normalised = {
+        ...existing,
+        years_experience: existing.experience_years ?? existing.years_experience ?? null,
+        preferred_industry: Array.isArray(existing.preferred_industries) ? (existing.preferred_industries[0] || '') : (existing.preferred_industry || ''),
+      }
+      setForm(normalised)
+      setOriginal(normalised)
       setLoading(false)
     })()
   }, [router])
@@ -168,7 +173,13 @@ function EditPageInner() {
     setSaving(s => ({ ...s, [section]: true }))
     setErrorMsg('')
     const payload = {}
-    keys.forEach(k => { payload[k] = databaseValue(k) })
+    keys.forEach(k => {
+      if (k === 'preferred_industry') {
+        payload.preferred_industries = form.preferred_industry ? [form.preferred_industry] : []
+        return
+      }
+      payload[k] = databaseValue(k)
+    })
     const { error } = await supabase.from('professional_profiles').update(payload).eq('id', user.id)
     setSaving(s => ({ ...s, [section]: false }))
     if (error) {
