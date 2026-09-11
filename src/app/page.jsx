@@ -6,6 +6,7 @@ import EntryPointsGrid from '@/components/EntryPointsGrid'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import { BRAND } from '@/lib/brand'
 import './home.css'
+import './home-ux.css'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -48,18 +49,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="home-marketplace" aria-labelledby="marketplace-title">
-        <div className="container">
-          <Reveal className="home-marketplace-heading">
-            <div>
-              <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">THE AFRICAN TALENT BUREAU</span></div>
-              <h2 id="marketplace-title">Capability you can<br/><em>actually discover.</em></h2>
-            </div>
-            <div className="home-marketplace-side"><p>Explore real professionals across talent, speaking and facilitation pathways. One person. One professional profile. Multiple capabilities.</p><a className="text-link" href="/marketplace">EXPLORE THE MARKETPLACE <span aria-hidden="true">→</span></a></div>
-          </Reveal>
-          <Reveal className="home-profiles-wrap" as="div"><LiveProfilesScroll /></Reveal>
-        </div>
-      </section>
+      <LiveProfilesScroll />
 
       <section className="alignment" id="alignment">
         <div className="container"><Reveal className="alignment-inner">
@@ -68,6 +58,13 @@ export default function HomePage() {
           <p className="alignment-sub">Valoria builds the infrastructure through which capability is developed, merit becomes visible and opportunity can be matched with precision.</p>
           <div className="alignment-cats" aria-label="The Valoria promise"><div className="cat-item"><div className="cat-num">01</div><div className="cat-name">Develop</div></div><div className="cat-item cat-highlight"><div className="cat-num">02</div><div className="cat-name">Surface</div></div><div className="cat-item"><div className="cat-num">03</div><div className="cat-name">Connect</div></div></div>
         </Reveal></div>
+      </section>
+
+      <section className="entry-points" id="entry-points">
+        <div className="container">
+          <Reveal className="ep-header"><div><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">ONE INSTITUTION · MULTIPLE PATHWAYS</span></div><h2 className="home-entry-title">One institution.<br/><em>Multiple ways in.</em></h2></div><p className="ep-desc">Whether you are developing your career, hiring capability or sourcing a speaker, the same institutional standard connects the experience.</p></Reveal>
+          <Reveal className="ep-grid" as="div"><EntryPointsGrid/></Reveal>
+        </div>
       </section>
 
       <section className="valu-section" id="valu">
