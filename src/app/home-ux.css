@@ -22,8 +22,7 @@
 .home-pathway-cta span,.text-link span{color:#9A7428;margin-left:5px}
 .live-profiles{margin-top:0}
 
-/* INSTITUTIONAL PATHWAYS — approved ep-card visual language restored. */
-/* Variant: CONNECTED DARK. Parent owns the outer radius; cells never do. */
+/* INSTITUTIONAL PATHWAYS — approved connected dark card geometry. */
 .entry-points{padding:clamp(84px,10vw,128px) var(--pad);background:var(--dark);border-top:1px solid rgba(255,255,255,.04)}
 .ep-header{display:block;margin-bottom:clamp(40px,5vw,60px);max-width:980px}
 .ep-header .eyebrow{margin-bottom:18px}
@@ -31,21 +30,23 @@
 .home-entry-title em{font-style:italic;color:var(--gold);font-weight:450}
 .ep-desc{font-size:clamp(17px,1.5vw,19px);font-weight:300;color:rgba(247,244,238,.58);line-height:1.7;max-width:680px;margin:24px 0 0}
 .ep-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;width:100%;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.12);border-radius:var(--card-radius);overflow:hidden}
-.ep-grid .ep-card{position:relative;min-height:340px;margin:0;padding:clamp(28px,3.5vw,44px) clamp(24px,3vw,36px);display:flex;flex-direction:column;overflow:hidden;background:var(--dark-card);border:0;border-right:1px solid rgba(201,168,76,.12);border-radius:0;transition:background .3s ease,box-shadow .3s ease,transform .3s ease;cursor:default}
+.ep-grid .ep-card{--card-bg:#161624;--card-fg:#F7F4EE;--card-muted:rgba(247,244,238,.58);--card-accent:#C9A84C;position:relative;min-height:340px;margin:0;padding:clamp(28px,3.5vw,44px) clamp(24px,3vw,36px);display:flex;flex-direction:column;overflow:hidden;background:var(--card-bg);color:var(--card-fg);border:0;border-right:1px solid rgba(201,168,76,.12);border-radius:0;transition:background .45s cubic-bezier(.22,1,.36,1),color .35s ease,box-shadow .35s ease,transform .35s cubic-bezier(.22,1,.36,1);cursor:default}
 .ep-grid .ep-card:last-child{border-right:0}
-.ep-grid .ep-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ep-color,var(--gold));transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.22,1,.36,1)}
-.ep-grid .ep-card:hover{background:rgba(18,18,28,.98);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.3);z-index:1}
+.ep-grid .ep-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-accent);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.ep-grid .ep-card:hover,.ep-grid .ep-card:focus-within{--card-bg:#C9A84C;--card-fg:#0F0F1A;--card-muted:rgba(15,15,26,.72);--card-accent:#0F0F1A;background:var(--card-bg);color:var(--card-fg);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.3);z-index:1}
 .ep-grid .ep-card:hover::before,.ep-grid .ep-card:focus-within::before{transform:scaleX(1)}
-.ep-grid .ep-icon{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;margin-bottom:20px;flex-shrink:0}
-.ep-grid .ep-name{font-family:var(--font);font-size:clamp(20px,2.2vw,26px);font-weight:400;line-height:1.18;letter-spacing:-.02em;margin:0 0 7px;color:var(--parchment)!important}
-.ep-grid .ep-buyer{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px;color:var(--gold)!important;opacity:.72}
-.ep-grid .ep-desc-text{font-size:14px;font-weight:300;line-height:1.7;color:var(--dim);margin:0;max-width:410px}
-.ep-grid .ep-modality{margin-top:auto;margin-bottom:20px;width:max-content;max-width:100%;font-size:11px;font-weight:600;letter-spacing:.1em;padding:5px 12px;border-radius:999px}
-.ep-grid .ep-link{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;gap:5px;color:var(--gold)!important;width:max-content}
-.ep-grid .ep-link:hover{color:var(--gold-light)!important}
+.ep-grid .ep-icon{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;margin-bottom:20px;flex-shrink:0;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);color:var(--card-accent);transition:background .35s ease,border-color .35s ease,color .35s ease}
+.ep-grid .ep-card:hover .ep-icon,.ep-grid .ep-card:focus-within .ep-icon{background:rgba(15,15,26,.1);border-color:rgba(15,15,26,.24)}
+.ep-grid .ep-name{font-family:var(--font);font-size:clamp(20px,2.2vw,26px);font-weight:400;line-height:1.18;letter-spacing:-.02em;margin:0 0 7px;color:var(--card-fg)!important;transition:color .35s ease}
+.ep-grid .ep-buyer{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px;color:var(--card-accent)!important;opacity:.9;transition:color .35s ease}
+.ep-grid .ep-desc-text{font-size:14px;font-weight:300;line-height:1.7;color:var(--card-muted);margin:0;max-width:410px;transition:color .35s ease}
+.ep-grid .ep-modality{margin-top:auto;margin-bottom:20px;width:max-content;max-width:100%;font-size:11px;font-weight:600;letter-spacing:.1em;padding:5px 12px;border-radius:999px;background:rgba(201,168,76,.08);color:var(--card-accent);border:1px solid rgba(201,168,76,.22);transition:background .35s ease,border-color .35s ease,color .35s ease}
+.ep-grid .ep-card:hover .ep-modality,.ep-grid .ep-card:focus-within .ep-modality{background:rgba(15,15,26,.08);border-color:rgba(15,15,26,.18)}
+.ep-grid .ep-link{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;gap:5px;color:var(--card-accent)!important;width:max-content;transition:color .35s ease}
+.ep-grid .ep-link:hover{color:var(--card-fg)!important}
 
-/* BACKLIT UI PRINCIPLE — localized light follows the pointer without changing card geometry. */
-.backlit-surface::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(220px circle at var(--light-x,50%) var(--light-y,20%),rgba(201,168,76,.085),transparent 68%);opacity:0;transition:opacity .35s ease}
+/* BACKLIT UI — the pointer glow follows the card accent while all foreground colors stay contrast-safe. */
+.backlit-surface::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(220px circle at var(--light-x,50%) var(--light-y,20%),rgba(201,168,76,.12),transparent 68%);opacity:0;transition:opacity .35s ease}
 .backlit-surface:hover::after,.backlit-surface:focus-within::after{opacity:1}
 .backlit-surface>*{position:relative;z-index:1}
 
