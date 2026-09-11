@@ -63,12 +63,16 @@
 .hero-actions .btn-gold,.home-dual-actions .btn-gold,.home-event-actions .btn-gold{min-height:50px;display:inline-flex;align-items:center;justify-content:center;gap:4px}
 .btn-gold:focus-visible,.btn-outline:focus-visible,.text-link:focus-visible,.home-pathway-card:focus-visible,.ep-link:focus-visible{outline:3px solid rgba(201,168,76,.45);outline-offset:3px}
 
-/* Hero hierarchy + navigation clearance: the fixed 68px nav must never crowd slide 01. */
+/* HERO — navigation-aware viewport composition. The fixed 68px nav is treated as chrome,
+   not as empty hero space. The content is centered in the usable viewport below it. */
+.hero-slider{box-sizing:border-box;height:100svh;min-height:680px;max-height:900px;padding:68px var(--pad) 36px;display:flex;align-items:stretch}
+.hero-slider .hero-slides{width:100%;height:100%;min-height:0;flex:1}
+.hero-slider .hero-slide .hero-inner{height:100%;box-sizing:border-box;padding-top:0!important;padding-bottom:0;align-items:center}
+.hero-slider .hero-slide:first-child .hero-inner{padding-top:0!important}
+.hero-slider .hero-slide:first-child .hero-eyebrow{margin-top:0}
 .hero-slider .hero-title{font-size:clamp(50px,5.2vw,64px);line-height:1.04;letter-spacing:-.035em}
 .hero-slider .hero-event-slide .hero-title{font-size:clamp(46px,4.8vw,60px)}
 .hero-slider .hero-event-panel{border-radius:24px}
-.hero-slider .hero-slide:first-child .hero-inner{padding-top:clamp(56px,7vw,92px)}
-.hero-slider .hero-slide:first-child .hero-eyebrow{margin-top:8px}
 
 @media(max-width:900px){
  .home-section-heading,.home-event-grid,.home-insights-grid{grid-template-columns:1fr;gap:22px;align-items:start}
@@ -82,8 +86,9 @@
  .ep-grid{grid-template-columns:1fr}
  .ep-grid .ep-card{min-height:0;border-right:0;border-bottom:1px solid rgba(201,168,76,.12)}
  .ep-grid .ep-card:last-child{border-bottom:0}
+ .hero-slider{height:100svh;min-height:680px;max-height:none;padding:68px var(--pad) 32px}
  .hero-slider .hero-title,.hero-slider .hero-event-slide .hero-title{font-size:clamp(44px,7vw,56px)}
- .hero-slider .hero-slide:first-child .hero-inner{padding-top:48px}
+ .hero-slider .hero-slide .hero-inner{height:100%;padding-top:0!important}
 }
 @media(max-width:640px){
  .home-pathways,.home-featured-event,.home-insights{padding-top:64px;padding-bottom:64px}
@@ -99,7 +104,7 @@
  .home-dual-actions,.home-event-actions{align-items:stretch;flex-direction:column;gap:10px}
  .home-dual-actions .btn-gold,.home-event-actions .btn-gold,.home-dual-actions .text-link,.home-event-actions .text-link{width:100%}
  .home-dual-actions .text-link,.home-event-actions .text-link{justify-content:center}
+ .hero-slider{min-height:640px;padding:68px var(--pad) 24px}
  .hero-slider .hero-title,.hero-slider .hero-event-slide .hero-title{font-size:clamp(38px,10.5vw,48px);line-height:1.04}
- .hero-slider .hero-slide:first-child .hero-inner{padding-top:30px}
 }
-@media(prefers-reduced-motion:reduce){.home-pathway-card,.ep-grid .ep-card,.backlit-surface::after{transition:none}.hero-slider .hero-slide:first-child .hero-inner{padding-top:clamp(30px,5vw,56px)}}
+@media(prefers-reduced-motion:reduce){.home-pathway-card,.ep-grid .ep-card,.backlit-surface::after{transition:none}.hero-slider .hero-slide:first-child .hero-inner{padding-top:0!important}}
