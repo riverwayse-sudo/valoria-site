@@ -2,7 +2,6 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { PROFESSIONAL_STANDARD_SERIES } from '@/lib/professionalStandardSeries'
 import { BRAND } from '@/lib/brand'
-import './events.css'
 
 export const metadata = {
   title: 'Events — Valoria Institute',
