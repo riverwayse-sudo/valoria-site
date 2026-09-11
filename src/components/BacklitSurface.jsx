@@ -2,7 +2,7 @@
 
 import { useRef } from 'react'
 
-export default function BacklitSurface({ children, className = '', as: Tag = 'div' }) {
+export default function BacklitSurface({ children, className = '', as: Tag = 'div', ...props }) {
   const ref = useRef(null)
 
   function move(event) {
@@ -13,5 +13,5 @@ export default function BacklitSurface({ children, className = '', as: Tag = 'di
     el.style.setProperty('--light-y', `${event.clientY - rect.top}px`)
   }
 
-  return <Tag ref={ref} className={`backlit-surface ${className}`} onPointerMove={move}>{children}</Tag>
+  return <Tag ref={ref} className={`backlit-surface ${className}`} onPointerMove={move} {...props}>{children}</Tag>
 }
