@@ -4,12 +4,17 @@ import { useEffect, useMemo, useState } from 'react'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState } from '@/lib/professionalStandardSeries'
 
 function Countdown({ target, label }) {
-  const [now, setNow] = useState(() => Date.now())
+  const [now, setNow] = useState(null)
 
   useEffect(() => {
+    setNow(Date.now())
     const timer = window.setInterval(() => setNow(Date.now()), 1000)
     return () => window.clearInterval(timer)
   }, [])
+
+  if (!target || now === null) {
+    return <div className="event-countdown" aria-live="polite"><span className="event-countdown-label">{label || 'COUNTDOWN'}</span><div className="event-countdown-units"><div className="event-countdown-unit"><strong>--</strong><span>DAYS</span></div><div className="event-countdown-unit"><strong>--</strong><span>HRS</span></div><div className="event-countdown-unit"><strong>--</strong><span>MIN</span></div><div className="event-countdown-unit"><strong>--</strong><span>SEC</span></div></div></div>
+  }
 
   const remaining = Math.max(0, target - now)
   const totalSeconds = Math.floor(remaining / 1000)
@@ -20,7 +25,7 @@ function Countdown({ target, label }) {
 
   return (
     <div className="event-countdown" aria-live="polite">
-      <span className="event-countdown-label">{label}</span>
+      {label && <span className="event-countdown-label">{label}</span>}
       <div className="event-countdown-units">
         {[[days, 'DAYS'], [hours, 'HRS'], [minutes, 'MIN'], [seconds, 'SEC']].map(([value, unit]) => (
           <div className="event-countdown-unit" key={unit}>
@@ -105,22 +110,29 @@ export default function EventRegistrationModal({ session, onClose }) {
 }
 
 export function SessionTimer({ session }) {
-  const [now, setNow] = useState(() => Date.now())
+  const [now, setNow] = useState(null)
+
   useEffect(() => {
+    setNow(Date.now())
     const timer = window.setInterval(() => setNow(Date.now()), 1000)
     return () => window.clearInterval(timer)
   }, [])
 
+  if (now === null) return <div className="session-timer session-timer-open"><Countdown target={null} label="COUNTDOWN" /></div>
+
   const state = getSessionState(session, now)
-  const target = state === 'locked'
-    ? new Date(PROFESSIONAL_STANDARD_SERIES[PROFESSIONAL_STANDARD_SERIES.findIndex((item) => item.id === session.id) - 1].end).getTime()
+  const index = PROFESSIONAL_STANDARD_SERIES.findIndex((item) => item.id === session.id)
+  const previous = index > 0 ? PROFESSIONAL_STANDARD_SERIES[index - 1] : null
+  const target = state === 'locked' && previous
+    ? new Date(previous.end).getTime()
     : state === 'registration-open'
       ? new Date(session.start).getTime()
       : state === 'live'
         ? new Date(session.end).getTime()
         : null
 
+  if (state === 'coming-soon') return <div className="session-timer session-timer-open"><span className="session-timer-coming">COMING SOON · DATE TO BE CONFIRMED</span></div>
   if (state === 'ended') return <div className="session-timer session-timer-ended">SESSION ENDED</div>
-  if (state === 'live') return <div className="session-timer session-timer-live">● LIVE NOW · ENDS IN <Countdown target={target} label="" /></div>
+  if (state === 'live') return <div className="session-timer session-timer-live">● LIVE NOW <Countdown target={target} label="ENDS IN" /></div>
   return <div className={`session-timer ${state === 'locked' ? 'session-timer-locked' : 'session-timer-open'}`}><Countdown target={target} label={state === 'locked' ? 'REGISTRATION OPENS IN' : 'SESSION STARTS IN'} /></div>
 }
