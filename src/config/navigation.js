@@ -24,7 +24,18 @@ export const NAVIGATION = {
         },
       ],
     },
-    { label: 'VALU Index', href: '/valu' },
+    {
+      label: 'VALU Index',
+      groups: [
+        {
+          label: 'Understand',
+          items: [
+            { label: 'What is VALU?', href: '/valu', description: 'Understand the index and the journey.' },
+            { label: 'Start Assessment', href: BRAND.assessmentUrl, external: true, description: 'Begin your VALU Index assessment.' },
+          ],
+        },
+      ],
+    },
     { label: 'Events', href: '/events' },
     { label: 'Insights', href: '/insights' },
     {
