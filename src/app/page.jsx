@@ -5,6 +5,7 @@ import ValuMotion from '@/components/ValuMotion'
 import HeroSlider from '@/components/HeroSlider'
 import EntryPointsGrid from '@/components/EntryPointsGrid'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
+import HomeWaitlistSection from '@/components/HomeWaitlistSection'
 import { BRAND } from '@/lib/brand'
 import './home.css'
 import './home-ux.css'
@@ -50,6 +51,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      <HomeWaitlistSection />
       <LiveProfilesScroll />
 
       <section className="alignment" id="alignment">
