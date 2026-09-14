@@ -11,13 +11,15 @@ export const PROFESSIONAL_STANDARD_SERIES = [
     id: '02', cluster: 'INTELLIGENCE',
     title: 'Strategic Thinking: You Are Solving the Wrong Problems',
     description: 'A focused conversation on the difference between solving problems and selecting the problems worth solving — and why strategic trade-offs are a discipline, not a compromise.',
-    start: '2026-09-26T10:00:00+01:00', end: '2026-09-26T11:30:00+01:00', dateApproved: false,
+    start: '2026-09-26T10:00:00+01:00', end: '2026-09-26T11:30:00+01:00', dateApproved: true,
+    speaker: 'Temi Adetokunbo', flyerPosition: 'left',
   },
   {
     id: '03', cluster: 'MASTERY',
     title: 'Execution Without Burnout: Why High Performers Plateau',
     description: 'A practical examination of the gap between being busy and creating impact, including the indispensability trap and how high performers can build a more sustainable operating model.',
-    start: '2026-10-17T10:00:00+01:00', end: '2026-10-17T11:30:00+01:00', dateApproved: false,
+    start: '2026-10-17T10:00:00+01:00', end: '2026-10-17T11:30:00+01:00', dateApproved: true,
+    speaker: 'Temi Adetokunbo', flyerPosition: 'right',
   },
   {
     id: '04', cluster: 'RELATIONSHIPS',
