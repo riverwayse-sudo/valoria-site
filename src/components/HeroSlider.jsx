@@ -15,6 +15,7 @@ export default function HeroSlider() {
 
   const upcomingSession = PROFESSIONAL_STANDARD_SERIES.find((session) => getSessionState(session) !== 'ended' && session.id !== '01') || PROFESSIONAL_STANDARD_SERIES[1]
   const upcomingState = getSessionState(upcomingSession)
+  const canRegister = upcomingState === 'registration-open'
 
   useEffect(() => {
     if (paused || selectedSession) return undefined
@@ -23,6 +24,9 @@ export default function HeroSlider() {
   }, [paused, selectedSession])
 
   const goTo = (index) => setActive(index)
+  const openRegistration = () => {
+    if (canRegister) setSelectedSession(upcomingSession)
+  }
 
   return (
     <section className="hero hero-slider" id="hero" aria-label="Valoria Institute introduction">
@@ -61,6 +65,8 @@ export default function HeroSlider() {
         .hero-event-actions{display:flex;flex-wrap:wrap;gap:10px}
         .hero-event-panel .hero-event-actions{margin-top:auto;padding-top:24px}
         .hero-event-actions .btn-gold,.hero-event-actions .btn-outline{min-height:48px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+        .hero-event-actions .hero-register-cta{cursor:pointer;border:0}
+        .hero-event-actions .hero-register-cta[disabled]{cursor:not-allowed;opacity:.45}
         .hero-slider-controls{position:absolute;z-index:10;left:max(var(--pad),calc((100vw - 1240px)/2));bottom:28px;display:flex;align-items:center;gap:12px}
         .hero-slider-dot{width:48px;height:3px;padding:0;border:0;background:rgba(247,244,238,.22);cursor:pointer;transition:width .25s ease,background .25s ease}
         .hero-slider-dot.is-active{width:82px;background:#C9A84C}
@@ -99,8 +105,11 @@ export default function HeroSlider() {
               <div className="hero-event-kicker">UPCOMING AT VALORIA</div>
               <h1 className="hero-title">The next conversation<br />on the <em>professional standard.</em></h1>
               <p className="hero-event-copy">The Professional Standard Series brings practical conversations on the capabilities that turn professional performance into recognised opportunity.</p>
-              <div className="hero-event-meta">2026 · VIRTUAL · 90 MINUTES · REGISTRATION OPENS WHEN THE DATE IS CONFIRMED</div>
-              <div className="hero-actions"><a href="/events" className="btn-gold">VIEW EVENTS</a><a href="/insights" className="btn-outline">EXPLORE INSIGHTS</a></div>
+              <div className="hero-event-meta">{formatSessionDate(upcomingSession)} · 10:00 AM WAT · VIRTUAL · 90 MINUTES</div>
+              <div className="hero-actions">
+                <button type="button" className="btn-gold hero-register-cta" onClick={openRegistration} disabled={!canRegister}>REGISTER FOR THIS SESSION →</button>
+                <a href="/events" className="btn-outline">VIEW ALL EVENTS →</a>
+              </div>
             </div>
             <aside className="hero-event-panel" aria-label={`Upcoming event: ${upcomingSession.title}`}>
               <div className="hero-event-number">{upcomingSession.id}</div>
@@ -109,7 +118,9 @@ export default function HeroSlider() {
               <p>{upcomingSession.description}</p>
               <div className="hero-event-status">{upcomingState === 'coming-soon' ? 'COMING SOON · DATE TO BE CONFIRMED' : formatSessionDate(upcomingSession)}</div>
               {upcomingState !== 'coming-soon' && <SessionTimer session={upcomingSession} />}
-              <div className="hero-event-actions"><a href="/events" className="btn-gold">EVENT DETAILS →</a></div>
+              <div className="hero-event-actions">
+                <button type="button" className="btn-gold hero-register-cta" onClick={openRegistration} disabled={!canRegister}>{canRegister ? 'REGISTER FOR THIS SESSION →' : upcomingState === 'live' ? 'SESSION IS LIVE' : 'REGISTRATION UNAVAILABLE'}</button>
+              </div>
             </aside>
           </div>
         </div>
