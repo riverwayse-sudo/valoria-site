@@ -5,7 +5,9 @@ import ValuMotion from '@/components/ValuMotion'
 import HeroSlider from '@/components/HeroSlider'
 import EntryPointsGrid from '@/components/EntryPointsGrid'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
+import EventRegistrationTrigger from '@/components/EventRegistrationTrigger'
 import { BRAND } from '@/lib/brand'
+import { PROFESSIONAL_STANDARD_SERIES, formatSessionDate } from '@/lib/professionalStandardSeries'
 import './home.css'
 import './home-ux.css'
 
@@ -23,7 +25,14 @@ const pathwayCards = [
   { label: 'FOR EVENT ORGANISERS', title: 'Find speakers and facilitators.', body: 'Access professionals with relevant expertise for conversations, programmes and organisational moments.', href: '/marketplace?track=speaker', cta: 'FIND PROFESSIONALS' }
 ]
 
+function getUpcomingEvent() {
+  const now = Date.now()
+  return PROFESSIONAL_STANDARD_SERIES.find(session => session.dateApproved && !session.replay && new Date(session.end).getTime() > now) || null
+}
+
 export default function HomePage() {
+  const upcomingEvent = getUpcomingEvent()
+
   return <>
     <Nav />
     <main id="main-content">
@@ -83,8 +92,30 @@ export default function HomePage() {
 
       <section className="home-featured-event" aria-labelledby="event-title">
         <div className="container home-event-grid">
-          <Reveal><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">COMING SOON</span></div><h2 id="event-title">The professional<br/><em>standard series.</em></h2></Reveal>
-          <Reveal className="home-event-copy"><p>Live conversations on capability, leadership, influence, relationships and enterprise. New sessions are announced as registration opens.</p><div className="home-event-actions"><a href="/events" className="btn-gold">VIEW EVENTS <span aria-hidden="true">→</span></a><a href="/insights" className="text-link">READ INSIGHTS <span aria-hidden="true">→</span></a></div></Reveal>
+          {upcomingEvent ? <>
+            <Reveal>
+              <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">UPCOMING SESSION · {upcomingEvent.cluster}</span></div>
+              <div className="home-event-number">SESSION {upcomingEvent.id}</div>
+              <h2 id="event-title">{upcomingEvent.title}</h2>
+            </Reveal>
+            <Reveal className="home-event-copy">
+              <p>{upcomingEvent.description}</p>
+              <div className="home-event-details">
+                <span>{formatSessionDate(upcomingEvent)}</span>
+                <span>10:00 AM WAT</span>
+                <span>VIRTUAL · 90 MINUTES</span>
+                {upcomingEvent.speaker && <span>WITH {upcomingEvent.speaker}</span>}
+              </div>
+              <div className="home-event-countdown-note">Registration opens ahead of the conversation. Your place is confirmed through the Valoria event registration system.</div>
+              <div className="home-event-actions">
+                <EventRegistrationTrigger session={upcomingEvent} className="btn-gold">REGISTER FOR THIS SESSION <span aria-hidden="true">→</span></EventRegistrationTrigger>
+                <a href="/events" className="text-link">VIEW ALL EVENTS <span aria-hidden="true">→</span></a>
+              </div>
+            </Reveal>
+          </> : <>
+            <Reveal><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">COMING SOON</span></div><h2 id="event-title">The professional<br/><em>standard series.</em></h2></Reveal>
+            <Reveal className="home-event-copy"><p>Live conversations on capability, leadership, influence, relationships and enterprise. New sessions are announced as registration opens.</p><div className="home-event-actions"><a href="/events" className="btn-gold">VIEW EVENTS <span aria-hidden="true">→</span></a><a href="/insights" className="text-link">READ INSIGHTS <span aria-hidden="true">→</span></a></div></Reveal>
+          </>}
         </div>
       </section>
 
