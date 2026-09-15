@@ -123,7 +123,7 @@ function PrimeRadarChart({ scores, size = 260 }) {
 }
 
 // ─── component ─────────────────────────────────────────────
-export default function ProfileClient({ id, searchParams, initialProfile = null })
+export default function ProfileClient({ id, searchParams, initialProfile = null }) {
   const [profile, setProfile]     = useState(initialProfile)
   const [loading, setLoading]     = useState(!initialProfile)
   const [notFound, setNotFound]   = useState(false)
@@ -155,7 +155,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
 
       const { data: real, error: realError } = await supabase
         .from('professional_profiles')
-        .select('id, display_name, headline, current_job_title, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, cv_summary')
+        .select('id, display_name, headline, current_job_title, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, cv_summary, programme_types')
         .eq('id', id)
         .maybeSingle()
 
