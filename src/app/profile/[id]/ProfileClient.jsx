@@ -366,7 +366,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                 </Link>
               ) : (
                 <>
-                  <Link href={displayTrack === 'facilitator' ? '/valoria-develop' : displayTrack === 'speaker' ? '/atb-spotlight' : '/atb-connect'}
+                  <Link href={displayTrack === 'facilitator' ? '/valoria-develop' : displayTrack === 'speaker' ? '/marketplace/speakers' : '/marketplace/talent'}
                     style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
                     MORE {displayTrack === 'facilitator' ? 'FACILITATORS' : displayTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}
                   </Link>
@@ -604,7 +604,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
             )}
 
             {/* Introduction CTA — anchor target for the REQUEST INTRO / BOOK SPEAKER
-                links on /atb-connect and /atb-spotlight, which already point to
+                links on /marketplace/talent and /marketplace/speakers, which already point to
                 this page as #contact. scrollMarginTop accounts for the fixed nav. */}
             {p.is_dummy && (
               <div style={{ padding:'14px 18px', background:'rgba(154,106,0,.1)', border:'1px solid rgba(154,106,0,.35)', borderRadius:'6px', fontSize:'12px', fontWeight:600, color:'#D9A441', marginBottom:'12px', letterSpacing:'.02em' }}>
