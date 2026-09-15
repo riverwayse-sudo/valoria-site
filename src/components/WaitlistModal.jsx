@@ -4,12 +4,11 @@ import { useEffect, useState } from 'react'
 const GATE_KEY = 'vi_waitlist_gate_v2'
 const COOKIE_KEY = 'vi_waitlist_v2'
 
-// Shared popup. eventMode is used by the homepage to promote the next approved event
-// while preserving the existing Brevo-connected /api/waitlist submission flow.
 export default function WaitlistModal({ open, onClose, source = 'site_gate', autoOpen = false, eventMode = false }) {
   const [internalOpen, setInternalOpen] = useState(Boolean(open))
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [role, setRole] = useState('')
   const [interest, setInterest] = useState('')
   const [status, setStatus] = useState('idle')
@@ -32,8 +31,8 @@ export default function WaitlistModal({ open, onClose, source = 'site_gate', aut
 
   async function handleSubmit(e) {
     e.preventDefault()
-    if (!name.trim() || !email.trim()) {
-      setError('Please enter your name and email.')
+    if (!name.trim() || !email.trim() || (eventMode && !phone.trim())) {
+      setError(eventMode ? 'Please enter your name, email and contact number.' : 'Please enter your name and email.')
       return
     }
     setStatus('submitting')
@@ -45,6 +44,7 @@ export default function WaitlistModal({ open, onClose, source = 'site_gate', aut
         body: JSON.stringify({
           full_name: name.trim(),
           email: email.trim().toLowerCase(),
+          phone: phone.trim() || null,
           role: role.trim() || null,
           interest: interest || null,
           type: eventMode ? 'event' : 'gate',
@@ -113,7 +113,8 @@ export default function WaitlistModal({ open, onClose, source = 'site_gate', aut
               <p className="vi-event-note">A Valoria Professional Standard Series session. Register your interest below and receive the event details.</p>
               <form onSubmit={handleSubmit} noValidate>
                 <div className="vi-gate-row"><div className="vi-gate-field"><label className="vi-gate-label" htmlFor="gate-name">Full Name</label><input id="gate-name" className="vi-gate-input" type="text" placeholder="Your name" value={name} onChange={e => setName(e.target.value)} required /></div><div className="vi-gate-field"><label className="vi-gate-label" htmlFor="gate-email">Email Address</label><input id="gate-email" className="vi-gate-input" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required /></div></div>
-                <div className="vi-gate-row"><div className="vi-gate-field"><label className="vi-gate-label" htmlFor="gate-role">Your Role / Title</label><input id="gate-role" className="vi-gate-input" type="text" placeholder="e.g. Head of People" value={role} onChange={e => setRole(e.target.value)} /></div><div className="vi-gate-field"><label className="vi-gate-label" htmlFor="gate-interest">I am a...</label><select id="gate-interest" className="vi-gate-select" value={interest} onChange={e => setInterest(e.target.value)}><option value="">Select one</option><option value="professional">Professional / Talent</option><option value="speaker">Speaker / Facilitator</option><option value="employer">Employer / Recruiter</option><option value="event_planner">Event Planner / Organiser</option><option value="other">Other</option></select></div></div>
+                <div className="vi-gate-row"><div className="vi-gate-field"><label className="vi-gate-label" htmlFor="gate-phone">Contact Number</label><input id="gate-phone" className="vi-gate-input" type="tel" inputMode="tel" autoComplete="tel" placeholder="+234 801 234 5678" value={phone} onChange={e => setPhone(e.target.value)} required /></div><div className="vi-gate-field"><label className="vi-gate-label" htmlFor="gate-role">Your Role / Title</label><input id="gate-role" className="vi-gate-input" type="text" placeholder="e.g. Head of People" value={role} onChange={e => setRole(e.target.value)} /></div></div>
+                <div className="vi-gate-field"><label className="vi-gate-label" htmlFor="gate-interest">I am a...</label><select id="gate-interest" className="vi-gate-select" value={interest} onChange={e => setInterest(e.target.value)}><option value="">Select one</option><option value="professional">Professional / Talent</option><option value="speaker">Speaker / Facilitator</option><option value="employer">Employer / Recruiter</option><option value="event_planner">Event Planner / Organiser</option><option value="other">Other</option></select></div>
                 {error && <div className="vi-gate-error">{error}</div>}
                 <button type="submit" className="vi-gate-btn" disabled={status === 'submitting'}>{status === 'submitting' ? 'REGISTERING...' : 'RESERVE MY PLACE →'}</button>
               </form>
