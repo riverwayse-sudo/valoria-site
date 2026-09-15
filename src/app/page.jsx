@@ -91,30 +91,29 @@ export default function HomePage() {
       </section>
 
       <section className="home-featured-event" aria-labelledby="event-title">
-        <div className="container home-event-grid">
+        <div className="container home-event-shell">
           {upcomingEvent ? <>
-            <Reveal>
-              <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">UPCOMING SESSION · {upcomingEvent.cluster}</span></div>
-              <div className="home-event-number">SESSION {upcomingEvent.id}</div>
+            <Reveal className="home-event-header">
+              <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">UPCOMING SESSION</span></div>
+              <div className="home-event-meta-top">SESSION {upcomingEvent.id} <span aria-hidden="true">·</span> {upcomingEvent.cluster}</div>
               <h2 id="event-title">{upcomingEvent.title}</h2>
+              <p className="home-event-description">{upcomingEvent.description}</p>
             </Reveal>
-            <Reveal className="home-event-copy">
-              <p>{upcomingEvent.description}</p>
-              <div className="home-event-details">
-                <span>{formatSessionDate(upcomingEvent)}</span>
-                <span>10:00 AM WAT</span>
-                <span>VIRTUAL · 90 MINUTES</span>
-                {upcomingEvent.speaker && <span>WITH {upcomingEvent.speaker}</span>}
+            <Reveal className="home-event-footer">
+              <div className="home-event-facts" aria-label="Session details">
+                <div><span className="home-event-fact-label">DATE</span><strong>{formatSessionDate(upcomingEvent)}</strong></div>
+                <div><span className="home-event-fact-label">TIME</span><strong>10:00 AM WAT</strong></div>
+                <div><span className="home-event-fact-label">FORMAT</span><strong>VIRTUAL · 90 MINUTES</strong></div>
+                {upcomingEvent.speaker && <div><span className="home-event-fact-label">WITH</span><strong>{upcomingEvent.speaker}</strong></div>}
               </div>
-              <div className="home-event-countdown-note">Registration opens ahead of the conversation. Your place is confirmed through the Valoria event registration system.</div>
               <div className="home-event-actions">
                 <EventRegistrationTrigger session={upcomingEvent} className="btn-gold">REGISTER FOR THIS SESSION <span aria-hidden="true">→</span></EventRegistrationTrigger>
                 <a href="/events" className="text-link">VIEW ALL EVENTS <span aria-hidden="true">→</span></a>
               </div>
             </Reveal>
           </> : <>
-            <Reveal><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">COMING SOON</span></div><h2 id="event-title">The professional<br/><em>standard series.</em></h2></Reveal>
-            <Reveal className="home-event-copy"><p>Live conversations on capability, leadership, influence, relationships and enterprise. New sessions are announced as registration opens.</p><div className="home-event-actions"><a href="/events" className="btn-gold">VIEW EVENTS <span aria-hidden="true">→</span></a><a href="/insights" className="text-link">READ INSIGHTS <span aria-hidden="true">→</span></a></div></Reveal>
+            <Reveal className="home-event-header"><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">COMING SOON</span></div><h2 id="event-title">The professional<br/><em>standard series.</em></h2><p className="home-event-description">Live conversations on capability, leadership, influence, relationships and enterprise. New sessions are announced as registration opens.</p></Reveal>
+            <Reveal className="home-event-footer"><div/><div className="home-event-actions"><a href="/events" className="btn-gold">VIEW EVENTS <span aria-hidden="true">→</span></a><a href="/insights" className="text-link">READ INSIGHTS <span aria-hidden="true">→</span></a></div></Reveal>
           </>}
         </div>
       </section>
