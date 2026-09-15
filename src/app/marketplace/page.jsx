@@ -1,4 +1,5 @@
 import '@/styles/premium-marketplace.css'
+import { redirect } from 'next/navigation'
 import MarketplaceExperienceV3 from '@/components/MarketplaceExperienceV3'
 import { getMarketplaceRows } from '@/lib/marketplace-data'
 
@@ -10,11 +11,13 @@ export const metadata = {
 }
 
 const VALID_TRACKS = new Set(['all','candidate','speaker','facilitator'])
+const CANONICAL = { candidate:'/marketplace/talent', speaker:'/marketplace/speakers', facilitator:'/marketplace/facilitators' }
 
 export default async function MarketplacePage({ searchParams }) {
   const params = await searchParams
   const requestedTrack = typeof params?.track === 'string' ? params.track : 'all'
   const forcedTrack = VALID_TRACKS.has(requestedTrack) ? requestedTrack : 'all'
-  const initialRows = await getMarketplaceRows(forcedTrack)
-  return <MarketplaceExperienceV3 forcedTrack={forcedTrack} initialRows={initialRows} />
+  if (forcedTrack !== 'all') redirect(CANONICAL[forcedTrack])
+  const initialRows = await getMarketplaceRows('all')
+  return <MarketplaceExperienceV3 forcedTrack="all" initialRows={initialRows} />
 }
