@@ -16,12 +16,13 @@
 
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-)
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) throw new Error('Supabase service role configuration is missing.')
+  return createClient(url, key)
+}
 
-const BREVO_KEY = process.env.BREVO_API_KEY
 const FROM_EMAIL = 'info@valoriainstitute.com'
 const FROM_NAME  = 'Valoria Institute'
 
@@ -32,10 +33,14 @@ const TYPE_LABELS = {
 }
 
 async function sendEmail({ to, toName, subject, html, tags }) {
-  if (!BREVO_KEY) { console.error('admin/introduce: BREVO_API_KEY not set, skipping send.'); return false }
+  const brevoKey = process.env.BREVO_API_KEY
+  if (!brevoKey) {
+    console.error('admin/introduce: BREVO_API_KEY not set, skipping send.')
+    return false
+  }
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
-    headers: { 'api-key': BREVO_KEY, 'Content-Type': 'application/json' },
+    headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       sender: { name: FROM_NAME, email: FROM_EMAIL },
       to: [{ email: to, name: toName || undefined }],
@@ -48,6 +53,7 @@ async function sendEmail({ to, toName, subject, html, tags }) {
 
 export async function POST(request) {
   try {
+    const supabase = getSupabase()
     const authHeader = request.headers.get('authorization') || ''
     const token = authHeader.replace(/^Bearer\s+/i, '')
     if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
