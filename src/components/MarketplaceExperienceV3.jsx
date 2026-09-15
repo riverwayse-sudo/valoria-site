@@ -39,8 +39,11 @@ export default function MarketplaceExperienceV3({ forcedTrack='all', initialRows
   },[query,industry,availability,prime,sort])
 
   const counts=useMemo(() => {
-    const count={all:new Set(rows.map(r=>r.professional_id)).size,candidate:0,speaker:0,facilitator:0}
-    rows.forEach(r=>{if(count[r.track] !== undefined) count[r.track] += 1})
+    const count={all:rows.length,candidate:0,speaker:0,facilitator:0}
+    rows.forEach(r=>{
+      const tracks=Array.isArray(r.tracks) ? r.tracks : [r.track]
+      tracks.forEach(track=>{ if(count[track] !== undefined) count[track] += 1 })
+    })
     return count
   },[rows])
   const industries=useMemo(() => [...new Set(rows.map(r=>r.industry).filter(Boolean))].sort(),[rows])

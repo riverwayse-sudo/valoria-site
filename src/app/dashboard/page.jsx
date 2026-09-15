@@ -659,7 +659,7 @@ export default function DashboardPage() {
         ) : (
           /* DEMAND SIDE — single column */
           <div style={{ maxWidth:'1100px', margin:'36px auto 80px', padding:'0 clamp(20px,4vw,40px)' }}>
-            <Link href={isOrganiser ? '/marketplace?track=speaker' : '/marketplace?track=candidate'} style={{ display:'flex', alignItems:'center', gap:'16px', background: MID, border:`1px solid ${GLINE}`, padding:'18px 20px', textDecoration:'none', color: PARCH, marginBottom:'32px' }}>
+            <Link href={isOrganiser ? '/marketplace/speakers' : '/marketplace/talent'} style={{ display:'flex', alignItems:'center', gap:'16px', background: MID, border:`1px solid ${GLINE}`, padding:'18px 20px', textDecoration:'none', color: PARCH, marginBottom:'32px' }}>
               <span style={{ fontSize:'22px', color: GOLD, flexShrink:0 }}>{isOrganiser ? '◉' : '◈'}</span>
               <div>
                 <div style={{ fontSize:'14px', fontWeight:600, marginBottom:'2px' }}>{isOrganiser ? 'Find Speakers' : 'Search Talent'}</div>
@@ -884,7 +884,7 @@ function SavedSearchesSection() {
     if (res.ok) setSearches(prev => prev.filter(s => s.id !== id))
   }
 
-  const TRACK_URL = { candidate: '/marketplace?track=candidate', speaker: '/marketplace?track=speaker', facilitator: '/marketplace?track=facilitator' }
+  const TRACK_URL = { candidate: '/marketplace/talent', speaker: '/marketplace/speakers', facilitator: '/marketplace/facilitators' }
   const TRACK_LABEL = { candidate: 'Talent', speaker: 'Speakers', facilitator: 'Facilitators' }
 
   if (loading) return null

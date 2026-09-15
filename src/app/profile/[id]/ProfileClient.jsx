@@ -1,0 +1,683 @@
+'use client'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
+import Nav from '@/components/Nav'
+import Footer from '@/components/Footer'
+import EnquiryForm from '@/components/EnquiryForm'
+
+// ─── helpers ─────────────────────────────────────────────
+function getInitials(name) {
+  if (!name) return '??'
+  const words = name.trim().split(/\s+/).filter(Boolean)
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
+  return words.slice(0, 3).map(w => w[0].toUpperCase()).join('.') + '.'
+}
+function getAvatarLetters(name) {
+  if (!name) return '?'
+  const words = name.trim().split(/\s+/).filter(Boolean)
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
+  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
+}
+function getYouTubeId(url) {
+  if (!url) return null
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
+  return m ? m[1] : null
+}
+const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Mastery', E:'Enterprise' }
+// Short, positive-framed line per PRIME cluster — used by the "Key
+// Strengths" card to turn a raw cluster score into something a buyer can
+// actually read as a strength, rather than just a number on the radar chart.
+const CLUSTER_STRENGTH_COPY = {
+  P: 'Comes across with real executive presence and a strong personal brand. People remember them and are quick to refer them.',
+  R: 'Builds trust quickly and handles relationships with genuine skill. A natural collaborator that people enjoy working with.',
+  I: 'Thinks clearly under pressure and brings sound judgement to complex, uncertain situations.',
+  M: 'Has a strong command of their craft, with consistent follow through on high standards.',
+  E: 'Shows real ownership and initiative. Spots opportunities and acts on them instead of waiting to be asked.',
+}
+
+// ─── brand tokens ─────────────────────────────────────────────
+const GOLD    = '#C9A84C'
+const DARK    = '#0F0F1A'
+const MID     = '#1A1A2E'
+const PARCH   = '#F7F4EE'
+const DIM     = 'rgba(247,244,238,.5)'
+const FAINT   = 'rgba(247,244,238,.15)'
+const GLINE   = 'rgba(201,168,76,.12)'
+const GLINE2  = 'rgba(201,168,76,.28)'
+const PRIME   = [
+  { letter: 'P', color: '#1D9E75', label: 'Presence' },
+  { letter: 'R', color: '#378ADD', label: 'Relationships' },
+  { letter: 'I', color: '#7F77DD', label: 'Intelligence' },
+  { letter: 'M', color: '#BA7517', label: 'Mastery' },
+  { letter: 'E', color: '#D85A30', label: 'Enterprise' },
+]
+
+// Returns the top-scoring PRIME clusters (highest first), capped at 3, for
+// the "Key Strengths" card under About. Capped so the card only ever shows
+// genuine standouts, not a padded list of all five.
+function rankedClusterStrengths(clusterScores) {
+  if (!clusterScores) return []
+  return Object.entries(clusterScores)
+    .filter(([, v]) => v != null)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([letter, score]) => ({
+      letter, score,
+      name: CLUSTER_NAMES[letter] || letter,
+      color: PRIME.find(c => c.letter === letter)?.color || GOLD,
+      blurb: CLUSTER_STRENGTH_COPY[letter] || '',
+    }))
+}
+
+// Spider/radar chart of the 5 PRIME cluster scores — same visualization
+// shown on the VALU Index "Find My Report" results page (assessment app),
+// requested here so a profile's PRIME breakdown reads the same way in
+// both places instead of the old plain bar list.
+function PrimeRadarChart({ scores, size = 260 }) {
+  const center = size / 2
+  const maxR = size * 0.36
+  const n = PRIME.length
+  const angleFor = i => (-90 + i * (360 / n)) * (Math.PI / 180)
+  const pointAt = (i, frac) => {
+    const a = angleFor(i)
+    return [center + maxR * frac * Math.cos(a), center + maxR * frac * Math.sin(a)]
+  }
+  const ringLevels = [0.25, 0.5, 0.75, 1]
+  const dataPoints = PRIME.map((c, i) => pointAt(i, (scores[c.letter] ?? 0) / 100))
+  const dataPath = dataPoints.map(p => p.join(',')).join(' ')
+
+  return (
+    <svg viewBox={`0 0 ${size} ${size}`} width="100%" style={{ maxWidth: `${size}px`, display: 'block', margin: '0 auto' }}>
+      {/* concentric grid rings */}
+      {ringLevels.map(level => (
+        <polygon key={level}
+          points={PRIME.map((_, i) => pointAt(i, level).join(',')).join(' ')}
+          fill="none" stroke="rgba(201,168,76,.14)" strokeWidth="1" />
+      ))}
+      {/* axis spokes */}
+      {PRIME.map((c, i) => {
+        const [x, y] = pointAt(i, 1)
+        return <line key={c.letter} x1={center} y1={center} x2={x} y2={y} stroke="rgba(201,168,76,.14)" strokeWidth="1" />
+      })}
+      {/* data shape */}
+      <polygon points={dataPath} fill="rgba(201,168,76,.18)" stroke={GOLD} strokeWidth="1.5" strokeLinejoin="round" />
+      {dataPoints.map((p, i) => (
+        <circle key={i} cx={p[0]} cy={p[1]} r="3.5" fill={PRIME[i].color} stroke={DARK} strokeWidth="1.5" />
+      ))}
+      {/* axis labels + scores */}
+      {PRIME.map((c, i) => {
+        const [lx, ly] = pointAt(i, 1.24)
+        const score = scores[c.letter]
+        return (
+          <g key={c.letter}>
+            <text x={lx} y={ly - 4} textAnchor="middle" fontSize="11" fontWeight="700" fill={c.color} fontFamily="inherit">{c.letter}</text>
+            {score != null && (
+              <text x={lx} y={ly + 9} textAnchor="middle" fontSize="9" fill="rgba(247,244,238,.5)" fontFamily="inherit">{score}</text>
+            )}
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
+// ─── component ─────────────────────────────────────────────
+export default function ProfileClient({ id, searchParams, initialProfile = null })
+  const [profile, setProfile]     = useState(initialProfile)
+  const [loading, setLoading]     = useState(!initialProfile)
+  const [notFound, setNotFound]   = useState(false)
+  const [activeVideo, setActiveVideo] = useState(null)
+  const [avatarError, setAvatarError] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null)
+
+  useEffect(() => {
+    async function load() {
+      // Check if user is logged in (for own profile detection)
+      const { data: { user } } = await supabase.auth.getUser()
+      setCurrentUser(user)
+
+      if (initialProfile) {
+        if (!user || user.id !== initialProfile.id) {
+          const dedupeKey = `viewed_${initialProfile.id}`
+          if (!sessionStorage.getItem(dedupeKey)) {
+            sessionStorage.setItem(dedupeKey, '1')
+            supabase.from('profile_views').insert({
+              professional_profile_id: initialProfile.id,
+              viewer_id: user?.id || null,
+            }).then(({ error }) => { if (error) console.error('profile_views insert failed:', error) })
+          }
+        }
+        setLoading(false)
+        return
+      }
+
+      const { data: real, error: realError } = await supabase
+        .from('professional_profiles')
+        .select('id, display_name, headline, current_job_title, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, cv_summary')
+        .eq('id', id)
+        .maybeSingle()
+
+      // This used to fail silently on a bad column name — the query errored,
+      // `real` was always null, and every real profile fell through to the
+      // dummy marketplace_profiles lookup below without a trace. Logging it
+      // now so a future schema drift shows up immediately instead of
+      // masquerading as "profile not found."
+      if (realError) console.error('professional_profiles fetch failed:', realError)
+
+      if (real) {
+        setProfile({
+          ...real,
+          // Keep the form-facing name the rest of this component already
+          // expects, while the query itself uses the real column name.
+          years_experience: real.experience_years,
+          // Real column is a text[]; the rest of this page treats
+          // availability as a single string.
+          availability: Array.isArray(real.availability) ? (real.availability[0] || null) : real.availability,
+          valu_score: real.valu_index,
+          active_tracks: real.active_tracks || [],
+          _source: 'real',
+        })
+        setLoading(false)
+        // Fire-and-forget, never blocks rendering. Skip the profile owner
+        // viewing their own page — that's not a real "someone looked at
+        // me" signal. sessionStorage dedupe means refreshing or navigating
+        // back within the same tab doesn't inflate the count; a genuinely
+        // new visit (new tab, new session) does count again, which is the
+        // right granularity for "views" rather than "unique visitors."
+        if (!user || user.id !== real.id) {
+          const dedupeKey = `viewed_${real.id}`
+          if (!sessionStorage.getItem(dedupeKey)) {
+            sessionStorage.setItem(dedupeKey, '1')
+            supabase.from('profile_views').insert({
+              professional_profile_id: real.id,
+              viewer_id: user?.id || null,
+            }).then(({ error }) => { if (error) console.error('profile_views insert failed:', error) })
+          }
+        }
+        return
+      }
+
+      // If viewing own profile but no professional_profiles entry exists,
+      // redirect to profile setup (fresh from email confirmation flow)
+      if (user && user.id === id) {
+        window.location.href = '/profile/setup'
+        return
+      }
+
+      setNotFound(true)
+      setLoading(false)
+    }
+    load()
+  }, [id])
+
+  function copyLink() {
+    if (typeof window === 'undefined') return
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }).catch(() => {})
+  }
+
+  if (loading) return (
+    <div style={{ minHeight:'100vh', background: DARK, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font,Raleway,sans-serif)', color: DIM, fontSize:'13px', letterSpacing:'.08em' }}>
+      Loading…
+    </div>
+  )
+
+  if (notFound) return (
+    <>
+      <Nav />
+      <div style={{ minHeight:'100vh', background: DARK, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'16px', fontFamily:'var(--font,Raleway,sans-serif)', color: PARCH }}>
+        <div style={{ fontSize:'32px', color: GOLD }}>◈</div>
+        <p style={{ fontSize:'14px', fontWeight:300, color: DIM }}>Profile not found</p>
+        <Link href="/marketplace/talent" style={{ fontSize:'12px', color: GOLD, textDecoration:'none', letterSpacing:'.08em' }}>← Back to marketplace</Link>
+      </div>
+      <Footer />
+    </>
+  )
+
+  const p           = profile
+  const tracks        = p.active_tracks || (p.user_type ? [p.user_type] : [])
+  const isSpeaker     = tracks.includes('speaker')
+  const isFacilitator = tracks.includes('facilitator')
+  const isCandidate   = tracks.includes('candidate') || tracks.length === 0
+  const initials    = getInitials(p.display_name)
+  const avatarLetters = getAvatarLetters(p.display_name)
+  const atbId       = p.atb_id || '—'
+  const videos      = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
+  const compensation = (isSpeaker || isFacilitator) ? (p.fee_range || p.salary_expectation || null) : (p.salary_expectation || p.fee_range || null)
+  const compLabel   = (isSpeaker || isFacilitator) ? 'Fee Range' : 'Salary Range'
+  // Which track's framing (headline placeholder, CTA copy, tags shown) to
+  // display. If the marketplace page someone clicked in from tells us which
+  // track they were browsing (?track=speaker etc.), honour that — otherwise
+  // fall back to a fixed priority. Previously this always showed
+  // facilitator-first for anyone with multiple tracks, so a profile that was
+  // both Speaker and Facilitator showed "Request Facilitator" even when
+  // reached from the Speaker marketplace.
+  const requestedTrack = searchParams?.track
+  const displayTrack = (requestedTrack && tracks.includes(requestedTrack))
+    ? requestedTrack
+    : (isFacilitator ? 'facilitator' : isSpeaker ? 'speaker' : 'candidate')
+  const tags        = displayTrack === 'facilitator' ? (p.programme_types || []) : displayTrack === 'speaker' ? (p.topics || []) : (p.skills || [])
+  const isOwnProfile = !!(currentUser && currentUser.id === p.id)
+
+  const stats = [
+    { label:'Location',   value: p.location || '—' },
+    { label:'Industry',   value: p.industry || '—' },
+    { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
+    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} / 100` : 'Not assessed', href: p.valu_score != null ? '#valu-card' : null },
+  ]
+
+  return (
+    <>
+      <Nav />
+
+      <div style={{ minHeight:'100vh', background: DARK, color: PARCH, fontFamily:'var(--font,Raleway,sans-serif)', paddingTop:'67px' }}>
+
+        {/* PRIME stripe */}
+        <div style={{ position:'fixed', top:0, left:0, right:0, height:'3px', display:'flex', zIndex:201, pointerEvents:'none' }}>
+          {[['#1D9E75',20],['#378ADD',25],['#7F77DD',25],['#BA7517',20],['#D85A30',10]].map(([c,p],i) => (
+            <div key={i} style={{ flex:p, background:c, opacity:.85 }} />
+          ))}
+        </div>
+
+        {/* COVER BANNER */}
+        <div style={{ position:'relative', height:'280px', overflow:'hidden', background:`radial-gradient(ellipse 800px 400px at 10% 30%, rgba(201,168,76,.22), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 70%, rgba(201,168,76,.1), transparent 55%), linear-gradient(155deg, ${MID} 0%, ${DARK} 70%)` }}>
+          <svg viewBox="0 0 1200 280" preserveAspectRatio="none" style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:.45 }}>
+            <g stroke="#C9A84C" strokeOpacity=".18" strokeWidth="1" fill="none">
+              <path d="M0,240 C300,160 500,280 800,180 S1100,240 1200,160"/>
+              <path d="M0,180 C300,100 500,220 800,120 S1100,180 1200,100"/>
+              <path d="M0,120 C300,40 500,160 800,60 S1100,120 1200,40"/>
+              <path d="M0,280 C200,220 400,260 600,200 S900,240 1200,200"/>
+            </g>
+            <polygon points="1060,50 1110,140 1060,110 1010,140" fill="rgba(201,168,76,.15)"/>
+            <polygon points="80,200 120,260 80,240 40,260" fill="rgba(201,168,76,.08)"/>
+          </svg>
+          {/* availability chip — only shown when the person actually has a
+              value saved. The onboarding question was removed 31 Jul 2026,
+              so most profiles now have none; showing "Not Available" for
+              everyone by default would misrepresent them. */}
+          {p.availability && (
+            <div style={{ position:'absolute', top:'20px', right:'28px', display:'flex', alignItems:'center', gap:'7px', background:'rgba(26,26,46,.75)', border:`1px solid ${GLINE2}`, padding:'7px 16px 7px 12px', borderRadius:'999px', fontSize:'11px', letterSpacing:'.1em', textTransform:'uppercase', color: GOLD, backdropFilter:'blur(8px)' }}>
+              <div style={{ width:'7px', height:'7px', borderRadius:'50%', background:'#1D9E75', boxShadow:'0 0 0 0 rgba(29,158,117,.6)', animation:'vi-pulse 2s infinite' }} />
+              {p.availability === 'open' ? 'Open to Introductions' : p.availability === 'contract_only' ? 'Contract Only' : 'Not Available'}
+            </div>
+          )}
+          <div style={{ position:'absolute', inset:0, background:`linear-gradient(180deg, transparent 35%, ${DARK} 100%)` }} />
+        </div>
+
+        {/* HEADER BLOCK */}
+        <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'0 clamp(20px,4vw,40px)' }}>
+          <div className="vi-header-block" style={{ display:'flex', alignItems:'flex-end', gap:'24px', marginTop:'-80px', position:'relative', zIndex:5, flexWrap:'wrap' }}>
+
+            {/* Avatar — static ring, no longer spins the photo */}
+            <div style={{ width:'148px', height:'148px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
+              <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
+                <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: (p.photo_url && !avatarError) ? undefined : `linear-gradient(145deg,${MID},${DARK})`, overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'36px', fontWeight:700, color: GOLD, letterSpacing:'.04em' }}>
+                  {p.photo_url && !avatarError
+                    ? <img
+                        src={p.photo_url}
+                        alt={p.display_name ? `${p.display_name}'s photo` : 'Profile photo'}
+                        loading="lazy"
+                        decoding="async"
+                        onError={() => setAvatarError(true)}
+                        style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center' }}
+                      />
+                    : avatarLetters}
+                </div>
+              </div>
+            </div>
+
+            {/* ID block */}
+            <div style={{ paddingBottom:'16px', flex:1, minWidth:'200px' }}>
+              <div style={{ fontSize:'clamp(22px,3.5vw,32px)', fontWeight:700, letterSpacing:'.04em', lineHeight:1.1, marginBottom:'10px', color: PARCH, fontVariantNumeric:'tabular-nums' }}>
+                {atbId}
+              </div>
+              <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
+                <span style={{ fontSize:'14px', fontWeight:400, color: GOLD, letterSpacing:'.04em' }}>
+                  {p.headline || (displayTrack === 'facilitator' ? 'Valoria Facilitator' : displayTrack === 'speaker' ? 'Valoria Speaker' : 'Valoria Professional')}
+                </span>
+                <span style={{ fontSize:'11px', letterSpacing:'.06em', background: MID, border:`1px solid ${GLINE2}`, padding:'4px 10px', borderRadius:'4px', color: DIM }}>
+                  {initials} · Verified {displayTrack === 'facilitator' ? 'Facilitator' : displayTrack === 'speaker' ? 'Speaker' : 'Professional'}
+                </span>
+              </div>
+              {p.current_job_title && (
+                <div style={{ fontSize:'12px', fontWeight:300, color: DIM, marginTop:'4px' }}>{p.current_job_title}</div>
+              )}
+            </div>
+
+            {/* CTAs — the "request an intro to yourself" bug: this row never
+                checked isOwnProfile, so a professional viewing their own
+                public listing saw MORE TALENT / REQUEST INTRO (a mailto
+                addressed to their own ATB ID) instead of an edit action.
+                The isOwnProfile branch below is the fix; the buyer-facing
+                branch is unchanged. */}
+            <div style={{ display:'flex', gap:'10px', paddingBottom:'16px', flexShrink:0, flexWrap:'wrap' }}>
+              <button onClick={copyLink}
+                style={{ padding:'12px 18px', background:'transparent', border:`1px solid ${GLINE}`, color: DIM, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', cursor:'pointer', fontFamily:'inherit' }}>
+                {copied ? 'LINK COPIED' : 'SHARE'}
+              </button>
+              {isOwnProfile ? (
+                <Link href="/profile/edit"
+                  style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
+                  EDIT PROFILE
+                </Link>
+              ) : (
+                <>
+                  <Link href={displayTrack === 'facilitator' ? '/valoria-develop' : displayTrack === 'speaker' ? '/atb-spotlight' : '/atb-connect'}
+                    style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
+                    MORE {displayTrack === 'facilitator' ? 'FACILITATORS' : displayTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}
+                  </Link>
+                  {p.is_dummy ? (
+                    <button type="button" disabled
+                      style={{ padding:'12px 22px', background:'rgba(255,255,255,.06)', color:'rgba(247,244,238,.3)', fontSize:'11px', fontWeight:700, letterSpacing:'.12em', border:'none', cursor:'not-allowed' }}>
+                      SAMPLE — NOT AVAILABLE
+                    </button>
+                  ) : (
+                    <EnquiryForm
+                      professionalProfileId={p.id}
+                      atbId={atbId}
+                      enquiryType={displayTrack === 'facilitator' ? 'facilitator_commission' : displayTrack === 'speaker' ? 'speaker_booking' : 'candidate'}
+                      ctaLabel={displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
+                      currentUser={currentUser}
+                      triggerStyle={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', border:'none', textDecoration:'none' }}
+                    />
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* STAT STRIP */}
+        <div style={{ maxWidth:'1100px', margin:'32px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+          <div className="vi-stat-strip" style={{ display:'flex', borderTop:`1px solid ${GLINE}`, borderBottom:`1px solid ${GLINE}`, flexWrap:'wrap' }}>
+            {stats.map((s, i, arr) => {
+              const itemStyle = {
+                flex:'1 1 140px', padding:'16px 16px 16px 0',
+                borderRight: i < arr.length - 1 ? `1px solid ${GLINE}` : 'none',
+                paddingLeft: i > 0 ? '16px' : 0,
+                textDecoration:'none', display:'block',
+                transition:'background .15s ease',
+              }
+              const inner = (
+                <>
+                  <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.16em', textTransform:'uppercase', color:'rgba(201,168,76,.45)', marginBottom:'6px' }}>{s.label}</div>
+                  <div style={{ fontSize:'14px', fontWeight:500, color: PARCH, letterSpacing:'.02em' }}>{s.value}</div>
+                </>
+              )
+              return s.href
+                ? <a key={s.label} href={s.href} style={itemStyle}>{inner}</a>
+                : <div key={s.label} style={itemStyle}>{inner}</div>
+            })}
+          </div>
+        </div>
+
+        {/* VIDEO HIGHLIGHTS ROW */}
+        {videos.length > 0 && (
+          <div style={{ maxWidth:'1100px', margin:'32px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+            <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.45)', marginBottom:'14px' }}>Highlights</div>
+            <div style={{ display:'flex', gap:'16px', overflowX:'auto', paddingBottom:'6px' }}>
+              {videos.map((url, i) => {
+                const ytId = getYouTubeId(url)
+                const labels = ['Intro reel','Case study','Keynote clip','Panel talk']
+                const isActive = activeVideo === i
+                return (
+                  <div key={i} onClick={() => setActiveVideo(isActive ? null : i)}
+                    style={{ flexShrink:0, width:'84px', textAlign:'center', cursor:'pointer' }}>
+                    <div style={{ width:'72px', height:'72px', borderRadius:'50%', margin:'0 auto 8px', padding:'2.5px', background: isActive ? `conic-gradient(${GOLD}, rgba(201,168,76,.2) 40%, rgba(201,168,76,.05) 41%)` : 'rgba(201,168,76,.15)', border: isActive ? `none` : `1px solid ${GLINE}` }}>
+                      <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: MID, display:'flex', alignItems:'center', justifyContent:'center', color: GOLD, fontSize:'18px', border:`2px solid ${DARK}`, overflow:'hidden' }}>
+                        {ytId
+                          ? <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
+                          : '▶'}
+                      </div>
+                    </div>
+                    <div style={{ fontSize:'10px', color: DIM, letterSpacing:'.04em' }}>{labels[i] || `Video ${i+1}`}</div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* MAIN GRID */}
+        <div className="vi-profile-grid" style={{ maxWidth:'1100px', margin:'36px auto 80px', padding:'0 clamp(20px,4vw,40px)', display:'grid', gridTemplateColumns:'280px 1fr', gap:'40px' }}>
+
+          {/* SIDEBAR */}
+          <div style={{ minWidth:0 }}>
+
+            {/* VALU Index */}
+            <div id="valu-card" style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px', scrollMarginTop:'96px' }}>
+              <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'14px' }}>VALU Index</div>
+              {p.valu_score != null ? (
+                <>
+                  <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_score}<span style={{ fontSize:'20px', color: DIM, fontWeight:400 }}>/100</span></div>
+                  {p.designation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{p.designation.replace(/_/g,' ')}</div>}
+                  {p.cluster_scores && (
+                    <div style={{ marginTop:'8px' }}>
+                      <PrimeRadarChart scores={p.cluster_scores} />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
+                    This professional has not yet completed their VALU Index assessment.
+                  </p>
+                  <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer"
+                    style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
+                    ABOUT THE VALU INDEX
+                  </a>
+                </>
+              )}
+            </div>
+
+            {/* Profile ID verification */}
+            <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
+              <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'12px' }}>Profile ID</div>
+              <div style={{ fontSize:'13px', fontWeight:700, color: PARCH, letterSpacing:'.06em', marginBottom:'8px', fontVariantNumeric:'tabular-nums' }}>{atbId}</div>
+              <div style={{ fontSize:'11px', fontWeight:300, color: DIM, lineHeight:1.6 }}>Registered with African Talent Bureau Ltd.</div>
+            </div>
+
+            {/* Links — gated */}
+            <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px' }}>
+              <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'12px' }}>Contact & Links</div>
+              {p.phone || p.linkedin_url || p.website_url || compensation ? (
+                <>
+                  {compensation && (
+                    <div style={{ fontSize:'13px', fontWeight:300, color: DIM, padding:'10px 0', borderTop:`1px solid ${GLINE}` }}>
+                      💰&ensp;{compLabel} — visible after introduction
+                    </div>
+                  )}
+                  {p.phone && (
+                    <div style={{ fontSize:'13px', fontWeight:300, color: DIM, padding:'10px 0', borderTop:`1px solid ${GLINE}` }}>
+                      ☎&ensp;Phone — visible after introduction
+                    </div>
+                  )}
+                  {p.linkedin_url && (
+                    <div style={{ fontSize:'13px', fontWeight:300, color: DIM, padding:'10px 0', borderTop:`1px solid ${GLINE}` }}>
+                      in&ensp;LinkedIn — visible after introduction
+                    </div>
+                  )}
+                  {p.website_url && (
+                    <div style={{ fontSize:'13px', fontWeight:300, color: DIM, padding:'10px 0', borderTop:`1px solid ${GLINE}` }}>
+                      ↗&ensp;Website — visible after introduction
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p style={{ fontSize:'12px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No links added yet.</p>
+              )}
+            </div>
+          </div>
+
+          {/* MAIN CONTENT */}
+          <div style={{ minWidth:0 }}>
+
+            {/* Expanded video player */}
+            {activeVideo !== null && videos[activeVideo] && (() => {
+              const ytId = getYouTubeId(videos[activeVideo])
+              return ytId ? (
+                <div style={{ marginBottom:'32px' }}>
+                  <div style={{ position:'relative', paddingBottom:'56.25%', height:0, background:'#000', overflow:'hidden' }}>
+                    <iframe src={`https://www.youtube.com/embed/${ytId}?autoplay=1`}
+                      title="Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen
+                      style={{ position:'absolute', top:0, left:0, width:'100%', height:'100%', border:'none' }} />
+                  </div>
+                  <button onClick={() => setActiveVideo(null)}
+                    style={{ fontSize:'12px', color: DIM, background:'none', border:'none', cursor:'pointer', padding:'10px 0', fontFamily:'var(--font,Raleway,sans-serif)', letterSpacing:'.04em' }}>
+                    ← Close video
+                  </button>
+                </div>
+              ) : null
+            })()}
+
+            {/* About — a brief introduction in the professional's own words.
+                The VALU Index summary used to live here, but that's now
+                covered by the Key Strengths card below, so this section
+                is free to just be the bio. */}
+            <Section label="About">
+              {p.bio
+                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
+                : p.cv_summary
+                  ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.cv_summary}</p>
+                  : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No bio added yet.</p>}
+            </Section>
+
+            {/* Key Strengths — rectangular card, gold background per brand,
+                surfacing the top-scoring PRIME clusters as concrete points
+                rather than making a buyer read the radar chart to figure out
+                what the assessment actually found strong. Only shows once
+                the VALU Index has been completed. */}
+            {p.cluster_scores && (
+              <div style={{ background: GOLD, padding:'22px', marginBottom:'32px' }}>
+                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(15,15,26,.55)', marginBottom:'16px' }}>Key Strengths</div>
+                <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
+                  {rankedClusterStrengths(p.cluster_scores).map(({ letter, name, score, blurb }) => (
+                    <div key={letter} style={{ display:'flex', gap:'14px', alignItems:'flex-start' }}>
+                      <div style={{ width:'32px', height:'32px', borderRadius:'50%', border:`1.5px solid ${DARK}`, color: DARK, fontSize:'12px', fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                        {letter}
+                      </div>
+                      <div>
+                        <div style={{ fontSize:'13px', fontWeight:600, color: DARK, marginBottom:'4px' }}>
+                          {name} <span style={{ color:'rgba(15,15,26,.6)', fontWeight:400 }}>· {score}/100</span>
+                        </div>
+                        <p style={{ fontSize:'13px', fontWeight:400, color:'rgba(15,15,26,.75)', lineHeight:1.7, margin:0 }}>{blurb}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Skills / Topics */}
+            {tags.length > 0 && (
+              <Section label={displayTrack === 'facilitator' ? 'Programme Types' : displayTrack === 'speaker' ? 'Speaking Topics' : 'Core Skills'}>
+                <div style={{ display:'flex', flexWrap:'wrap', gap:'10px' }}>
+                  {tags.map(t => (
+                    <span key={t} style={{ padding:'8px 16px', border:`1px solid ${GLINE2}`, fontSize:'12px', fontWeight:400, color: DIM, letterSpacing:'.04em' }}>
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </Section>
+            )}
+
+            {/* Video grid (when no video expanded) */}
+            {videos.length > 0 && activeVideo === null && (
+              <Section label={(isSpeaker || isFacilitator) ? 'Speaker Reel & Videos' : 'Videos'}>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:'12px' }}>
+                  {videos.slice(0,4).map((url, i) => {
+                    const ytId = getYouTubeId(url)
+                    return (
+                      <div key={i} onClick={() => setActiveVideo(i)}
+                        style={{ aspectRatio:'16/10', position:'relative', background:`linear-gradient(145deg,${MID},${DARK})`, border:`1px solid ${GLINE}`, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', overflow:'hidden' }}>
+                        {ytId && <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:.5 }} />}
+                        <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'rgba(201,168,76,.9)', display:'flex', alignItems:'center', justifyContent:'center', color: DARK, fontSize:'15px', position:'relative', zIndex:1 }}>▶</div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </Section>
+            )}
+
+            {/* Introduction CTA — anchor target for the REQUEST INTRO / BOOK SPEAKER
+                links on /atb-connect and /atb-spotlight, which already point to
+                this page as #contact. scrollMarginTop accounts for the fixed nav. */}
+            {p.is_dummy && (
+              <div style={{ padding:'14px 18px', background:'rgba(154,106,0,.1)', border:'1px solid rgba(154,106,0,.35)', borderRadius:'6px', fontSize:'12px', fontWeight:600, color:'#D9A441', marginBottom:'12px', letterSpacing:'.02em' }}>
+                ⚠ Sample profile — not a real person. Real professionals are still joining; this placeholder can't receive introductions.
+              </div>
+            )}
+            <div id="contact" className="vi-cta-intro" style={{ background:`linear-gradient(135deg, rgba(201,168,76,.06), rgba(26,26,46,.3))`, border:`1px solid ${GLINE2}`, padding:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', flexWrap:'wrap', marginTop:'8px', scrollMarginTop:'96px' }}>
+              <div>
+                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'8px' }}>
+                  {isOwnProfile ? 'This Is Your Profile' : displayTrack === 'facilitator' ? 'Commission This Facilitator' : displayTrack === 'speaker' ? 'Book This Speaker' : 'Get in Touch'}
+                </div>
+                <p style={{ fontSize:'13px', fontWeight:300, color: DIM, maxWidth:'380px', lineHeight:1.7 }}>
+                  {isOwnProfile
+                    ? 'This is what others see when they view your profile. Keep it up to date so the right people can reach you.'
+                    : displayTrack === 'facilitator'
+                    ? `Interested in commissioning ${initials} for a programme? Valoria Institute facilitates all introductions.`
+                    : displayTrack === 'speaker'
+                    ? `Interested in booking ${initials} for your event? Valoria Institute facilitates all introductions.`
+                    : `Want to connect with ${initials}? All introductions go through Valoria Institute — your details stay protected.`}
+                </p>
+              </div>
+              {p.is_dummy ? (
+                <button type="button" disabled
+                  style={{ padding:'14px 28px', background:'rgba(255,255,255,.06)', color:'rgba(247,244,238,.3)', fontSize:'11px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor:'not-allowed', flexShrink:0, whiteSpace:'nowrap' }}>
+                  SAMPLE — NOT AVAILABLE
+                </button>
+              ) : isOwnProfile ? (
+                <Link href="/profile/edit" style={{ padding:'14px 28px', background:GOLD, color:DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.14em', textDecoration:'none', flexShrink:0, whiteSpace:'nowrap' }}>
+                  EDIT YOUR PROFILE
+                </Link>
+              ) : (
+                <EnquiryForm
+                  professionalProfileId={p.id}
+                  atbId={atbId}
+                  enquiryType={displayTrack === 'facilitator' ? 'facilitator_commission' : displayTrack === 'speaker' ? 'speaker_booking' : 'candidate'}
+                  ctaLabel={displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'SEND INTRODUCTION'}
+                  currentUser={currentUser}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Footer />
+
+      <style>{`
+        @keyframes vi-pulse {
+          0%{box-shadow:0 0 0 0 rgba(29,158,117,.55);}
+          70%{box-shadow:0 0 0 6px rgba(29,158,117,0);}
+          100%{box-shadow:0 0 0 0 rgba(29,158,117,0);}
+        }
+        .vi-stat-strip a:hover, .vi-stat-strip div:hover {
+          background: rgba(201,168,76,.04);
+        }
+        @media (max-width: 860px) {
+          .vi-profile-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 640px) {
+          .vi-stat-strip { flex-wrap: wrap !important; }
+          .vi-header-block { margin-top: -60px !important; }
+          .vi-cta-intro { flex-direction: column !important; align-items: flex-start !important; }
+        }
+      `}</style>
+    </>
+  )
+}
+
+function Section({ label, children }) {
+  return (
+    <div style={{ marginBottom:'36px', paddingBottom:'36px', borderBottom:`1px solid ${GLINE}` }}>
+      <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.45)', marginBottom:'16px' }}>{label}</div>
+      {children}
+    </div>
+  )
+}
