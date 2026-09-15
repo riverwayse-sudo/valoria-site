@@ -1,4 +1,10 @@
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key',
+  { auth: { persistSession: false, autoRefreshToken: false } }
+)
 
 function getInitials(name) {
   if (!name) return 'Valoria Professional'
@@ -24,9 +30,11 @@ export async function generateMetadata({ params }) {
     return {
       title: `${name} — ${type} Profile`,
       description: profile.bio?.slice(0, 160) || `${name} — ${profile.headline || type} on Valoria Institute.`,
+      alternates: { canonical: `/profile/${id}` },
       openGraph: {
         title: `${name} | Valoria Institute`,
         description: profile.bio?.slice(0, 160) || `${name} on Valoria Institute.`,
+        url: `/profile/${id}`,
         images: profile.photo_url ? [{ url: profile.photo_url }] : [{ url: '/og-image.png' }],
       },
       robots: { index: true, follow: true },
@@ -35,6 +43,7 @@ export async function generateMetadata({ params }) {
 
   return {
     title: 'Professional Profile | Valoria Institute',
+    alternates: { canonical: `/profile/${id}` },
     robots: { index: false },
   }
 }
