@@ -68,12 +68,10 @@ export default function Nav() {
   }
 
   const close = () => setMenuOpen(false)
-  const profileHref = user ? `/profile/${user.id}` : '/login'
-  const cta = user
-    ? accountType === 'professional'
-      ? { label: 'MY PROFILE', href: profileHref }
-      : { label: 'DASHBOARD', href: '/dashboard' }
-    : { label: 'START VALU', href: NAVIGATION.assessmentUrl, external: true }
+  // Keep the primary CTA stable during auth hydration. Previously it changed
+  // from START VALU to MY PROFILE/DASHBOARD after getUser(), causing a visible
+  // header layout shift on every page for signed-in users.
+  const cta = { label: 'START VALU', href: NAVIGATION.assessmentUrl, external: true }
 
   const renderItem = (item, className = 'nav-dropdown-link') => {
     const active = isPathActive(pathname, item.href)
