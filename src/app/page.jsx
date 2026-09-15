@@ -10,6 +10,7 @@ import { BRAND } from '@/lib/brand'
 import { PROFESSIONAL_STANDARD_SERIES, formatSessionDate } from '@/lib/professionalStandardSeries'
 import './home.css'
 import './home-ux.css'
+import './valu-home.css'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -113,7 +114,7 @@ export default function HomePage() {
             </Reveal>
           </> : <>
             <Reveal className="home-event-header"><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">COMING SOON</span></div><h2 id="event-title">The professional<br/><em>standard series.</em></h2><p className="home-event-description">Live conversations on capability, leadership, influence, relationships and enterprise. New sessions are announced as registration opens.</p></Reveal>
-            <Reveal className="home-event-footer"><div/><div className="home-event-actions"><a href="/events" className="btn-gold">VIEW EVENTS <span aria-hidden="true">→</span></a><a href="/insights" className="text-link">READ INSIGHTS <span aria-hidden="true">→</span></a></Reveal>
+            <Reveal className="home-event-footer"><div/><div className="home-event-actions"><a href="/events" className="btn-gold">VIEW EVENTS <span aria-hidden="true">→</span></a><a href="/insights" className="text-link">READ INSIGHTS <span aria-hidden="true">→</span></a></div></Reveal>
           </>}
         </div>
       </section>
