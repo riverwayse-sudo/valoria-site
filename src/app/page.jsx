@@ -127,6 +127,6 @@ export default function HomePage() {
       <section className="webinar-replay" id="webinar" aria-labelledby="replay-title"><div className="container"><Reveal className="wr-inner"><div className="eyebrow" style={{justifyContent:'center'}}><div className="eyebrow-line"/><span className="eyebrow-text">SESSION 01 · WATCH THE REPLAY</span><div className="eyebrow-line"/></div><h2 id="replay-title" className="wr-title">Why being good at your job<br/>is no longer <em>enough.</em></h2><p className="wr-sub">Watch the full session on the VALU Index, the PRIME framework and Valoria’s belief that talent is not the problem — infrastructure is.</p><div className="wr-video"><iframe src="https://www.youtube.com/embed/B9dD22vTErI" title="Valoria Institute — Launch Webinar Replay" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/></div><a href="/valu" className="btn-gold" style={{marginTop:'clamp(28px,4vw,40px)'}}>EXPLORE THE VALU INDEX <span aria-hidden="true">→</span></a></Reveal></div></section>
     </main>
     <Footer />
-    <WaitlistModal autoOpen source="site_gate" />
+    <WaitlistModal open={true} source="site_gate" />
   </>
 }
