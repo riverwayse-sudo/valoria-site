@@ -17,9 +17,14 @@ export default function WaitlistModal({ open, onClose, source = 'site_gate', aut
 
   useEffect(() => {
     if (!autoOpen) return undefined
+
+    // ?waitlist=show is an intentional preview override for QA. It lets the
+    // site owner verify the live popup even when this browser previously joined.
+    const forceShow = new URLSearchParams(window.location.search).get('waitlist') === 'show'
     const submitted = localStorage.getItem(GATE_KEY) === 'submitted' || document.cookie.split('; ').some((cookie) => cookie.startsWith(`${COOKIE_KEY}=submitted`))
-    if (submitted) return undefined
-    const timer = window.setTimeout(() => setInternalOpen(true), 4500)
+    if (submitted && !forceShow) return undefined
+
+    const timer = window.setTimeout(() => setInternalOpen(true), 1500)
     return () => window.clearTimeout(timer)
   }, [autoOpen])
 
