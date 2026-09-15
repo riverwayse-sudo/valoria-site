@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 
 const GATE_KEY = 'vi_waitlist_gate_v2'
 const COOKIE_KEY = 'vi_waitlist_v2'
+const CONFIRMATION_TIMEOUT = 60_000
 
 export default function WaitlistModal({ open, onClose, source = 'site_gate', autoOpen = false, eventMode = false }) {
   const [internalOpen, setInternalOpen] = useState(Boolean(open))
@@ -15,6 +16,10 @@ export default function WaitlistModal({ open, onClose, source = 'site_gate', aut
   const [error, setError] = useState('')
 
   useEffect(() => {
+    setInternalOpen(Boolean(open))
+  }, [open])
+
+  useEffect(() => {
     if (!autoOpen) return
     const forceShow = new URLSearchParams(window.location.search).get('waitlist') === 'show'
     const submitted = localStorage.getItem(GATE_KEY) === 'submitted' || document.cookie.split('; ').some(c => c.startsWith(`${COOKIE_KEY}=submitted`))
@@ -23,7 +28,16 @@ export default function WaitlistModal({ open, onClose, source = 'site_gate', aut
     return () => window.clearTimeout(timer)
   }, [autoOpen])
 
-  const isOpen = autoOpen ? internalOpen : Boolean(open)
+  useEffect(() => {
+    if (status !== 'done') return
+    const timer = window.setTimeout(() => {
+      setInternalOpen(false)
+      onClose?.()
+    }, CONFIRMATION_TIMEOUT)
+    return () => window.clearTimeout(timer)
+  }, [status, onClose])
+
+  const isOpen = autoOpen ? internalOpen : Boolean(open) && internalOpen
   const closeModal = () => { setInternalOpen(false); onClose?.() }
 
   async function handleSubmit(e) {
@@ -67,7 +81,7 @@ export default function WaitlistModal({ open, onClose, source = 'site_gate', aut
       <div className="vi-gate-card" onClick={e => e.stopPropagation()}>
         <button className="vi-gate-close" onClick={closeModal} aria-label="Close">×</button>
         <div className="vi-gate-stripe" aria-hidden="true" />
-        {status === 'done' ? <div className="vi-gate-done"><div className="vi-gate-done-icon">✓</div><div className="vi-gate-done-title">You&apos;re registered.</div><p className="vi-gate-done-sub">Your details have been received for <strong style={{color:'#F7F4EE',fontWeight:400}}>Strategic Thinking: You Are Solving the Wrong Problems.</strong> We&apos;ll be in touch with the event details.</p></div> : eventMode ? <>
+        {status === 'done' ? <div className="vi-gate-done"><div className="vi-gate-done-icon">✓</div><div className="vi-gate-done-title">You&apos;re registered.</div><p className="vi-gate-done-sub">Your details have been received for <strong style={{color:'#F7F4EE',fontWeight:400}}>Strategic Thinking: You Are Solving the Wrong Problems.</strong> We&apos;ll be in touch with the event details. This confirmation will close automatically after 1 minute.</p></div> : eventMode ? <>
           <div className="vi-gate-eyebrow">THE PROFESSIONAL STANDARD SERIES · SESSION 02</div>
           <h2 className="vi-gate-title">Strategic thinking.<br/><em>Choose better problems.</em></h2>
           <p className="vi-gate-sub">You may be solving problems efficiently. The harder question is whether you are solving the problems that matter. Join Valoria Institute for a focused conversation on strategic thinking, trade-offs and better problem selection.</p>
