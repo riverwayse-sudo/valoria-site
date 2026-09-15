@@ -1,0 +1,43 @@
+name: Profile hotfix
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: "!contains(github.event.head_commit.message, '[autofix]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fix profile server/client boundary
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/app/profile/[id]/ProfileClient.jsx')
+          s = p.read_text()
+          s = s.replace("export default function ProfileClient({ id, searchParams, initialProfile = null })\n", "export default function ProfileClient({ id, searchParams, initialProfile = null }) {\n", 1)
+          s = s.replace(".select('id, display_name, headline, current_job_title, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, cv_summary')", ".select('id, display_name, headline, current_job_title, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, cv_summary, programme_types')", 1)
+          p.write_text(s)
+
+          page = Path('src/app/profile/[id]/page.jsx')
+          t = page.read_text()
+          t = t.replace("import { supabase } from '@/lib/supabase'", "import { createClient } from '@supabase/supabase-js'\n\nconst supabase = createClient(\n  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',\n  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key',\n  { auth: { persistSession: false, autoRefreshToken: false } }\n)", 1)
+          page.write_text(t)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/app/profile/[id]/ProfileClient.jsx src/app/profile/[id]/page.jsx
+          git commit -m "fix: correct public profile server boundary [autofix]"
+          git push
+      - name: Remove temporary workflow
+        run: |
+          git fetch origin main
+          git rm -f .github/workflows/profile-hotfix.yml || true
+          git commit -m "chore: remove temporary profile hotfix workflow [autofix]" || true
+          git push || true
