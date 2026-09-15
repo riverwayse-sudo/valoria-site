@@ -8,9 +8,8 @@ export async function getMarketplaceRows(track = 'all') {
   if (!url || !key) return []
 
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
-  const table = track === 'all' ? 'marketplace_professionals_general' : 'marketplace_professionals'
   const { data, error } = await supabase
-    .from(table)
+    .from('marketplace_professionals')
     .select(FIELDS)
     .order('valu_index', { ascending: false, nullsFirst: false })
     .order('full_name', { ascending: true })
@@ -19,5 +18,21 @@ export async function getMarketplaceRows(track = 'all') {
     console.error('Marketplace server query failed:', error)
     return []
   }
-  return (data || []).map(row => ({ ...row, id: row.professional_id }))
+
+  const rows = (data || []).map(row => ({ ...row, id: row.professional_id }))
+  if (track !== 'all') return rows.filter(row => row.track === track)
+
+  // The unified marketplace must show one professional identity even when that
+  // identity is eligible for multiple capabilities. Keep the highest-VALU row
+  // as the canonical card and retain all governed capabilities for navigation.
+  const byProfessional = new Map()
+  for (const row of rows) {
+    const existing = byProfessional.get(row.professional_id)
+    if (!existing) {
+      byProfessional.set(row.professional_id, { ...row, tracks: [row.track] })
+    } else if (!existing.tracks.includes(row.track)) {
+      existing.tracks.push(row.track)
+    }
+  }
+  return [...byProfessional.values()].map(row => ({ ...row, track: row.tracks[0] || row.track }))
 }
