@@ -68,7 +68,7 @@ export default async function LiveProfilesScroll() {
               const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
               const capabilityLabels = tracks.map((track) => TRACK_META[track]).filter(Boolean)
               return (
-                <Link href={`/marketplace/${profile.id}`} key={`${profile.id}-${index}`} className="vi-scroll-card" aria-label={`View ${profile.atb_id || 'professional'} in the Valoria Marketplace`}>
+                <Link href={`/profile/${profile.id}`} key={`${profile.id}-${index}`} className="vi-scroll-card" aria-label={`View ${profile.atb_id || 'professional'} in the Valoria Marketplace`}>
                   <div className="vi-scroll-avatar" aria-hidden="true">
                     {profile.photo_url ? <img src={profile.photo_url} alt="" loading="lazy" /> : <span>{letters(profile.display_initials)}</span>}
                   </div>
