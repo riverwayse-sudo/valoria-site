@@ -8,8 +8,6 @@ export default async function sitemap() {
     { path: '/marketplace/talent', priority: 0.9, changeFrequency: 'daily' },
     { path: '/marketplace/speakers', priority: 0.9, changeFrequency: 'daily' },
     { path: '/marketplace/facilitators', priority: 0.9, changeFrequency: 'daily' },
-    { path: '/atb-connect', priority: 0.7, changeFrequency: 'monthly' },
-    { path: '/atb-spotlight', priority: 0.7, changeFrequency: 'monthly' },
     { path: '/facilitators', priority: 0.7, changeFrequency: 'monthly' },
     { path: '/develop', priority: 0.7, changeFrequency: 'monthly' },
     { path: '/prime', priority: 0.7, changeFrequency: 'monthly' },
