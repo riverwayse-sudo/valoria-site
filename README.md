@@ -70,6 +70,10 @@ npm test
 
 Production is deployed through Vercel from the `main` branch. Environment variables are configured in Vercel; public browser code must never contain a Supabase service-role secret.
 
+## Closure baseline
+
+The current release line keeps the marketplace and public profile architecture server-first, uses the canonical VALU/scoring contracts, defers privileged Supabase clients until request time, and treats CI/build failures as blocking release issues.
+
 ## Security
 
 Keep dependencies patched and review authentication, RLS, API routes and public profile data before shipping changes. Never use user-editable metadata as an authorization source.
