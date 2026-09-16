@@ -15,9 +15,7 @@ function getInitials(name) {
 export async function generateMetadata({ params }) {
   const { id } = params
 
-  // Public professional profiles have one authoritative source.
-  // Do not fall back to the retired marketplace_profiles table: that created
-  // two competing profile models and could produce inconsistent share metadata.
+  // Public professional profiles use the authoritative professional profile source.
   const { data: profile } = await supabase
     .from('professional_profiles')
     .select('display_name, headline, bio, photo_url, active_tracks')
