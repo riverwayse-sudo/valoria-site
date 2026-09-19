@@ -7,6 +7,14 @@
     {
       "path": "/api/cron/valu-reminders",
       "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/valu-reminders",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/event-registration-sync",
+      "schedule": "0,30 * * * *"
     }
   ]
 }
