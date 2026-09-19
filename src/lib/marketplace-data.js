@@ -41,3 +41,34 @@ export async function getMarketplaceRows(track = 'all') {
     }
   }).filter(row => track === 'all' || row.track === track)
 }
+
+export async function getMarketplaceCounts() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !key) return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
+
+  const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+  const { data, error } = await supabase
+    .from('marketplace_professionals')
+    .select('professional_id,track')
+
+  if (error) {
+    console.error('Marketplace count query failed:', error)
+    return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
+  }
+
+  const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
+  const all = new Set()
+  for (const row of data || []) {
+    const track = normalizeTrack(row.track)
+    if (!row.professional_id) continue
+    all.add(row.professional_id)
+    if (byTrack[track]) byTrack[track].add(row.professional_id)
+  }
+  return {
+    all: all.size,
+    candidate: byTrack.candidate.size,
+    speaker: byTrack.speaker.size,
+    facilitator: byTrack.facilitator.size,
+  }
+}

@@ -44,13 +44,11 @@ export default function WaitlistModal({ open, onClose, source = 'site_gate', aut
     setStatus('submitting')
     setError('')
     try {
-      const endpoint = eventMode ? '/api/session-registration' : '/api/waitlist'
+      const endpoint = eventMode ? '/api/event-registration' : '/api/waitlist'
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(eventMode
-          ? { session_id: '02', full_name: name.trim(), email: email.trim().toLowerCase(), phone: phone.trim(), whatsapp: phone.trim(), role: role.trim() || null, organisation: null, consent: true }
-          : { full_name: name.trim(), email: email.trim().toLowerCase(), phone: phone.trim() || null, role: role.trim() || null, interest: interest || null, type: 'gate', source }),
+        body: JSON.stringify({ full_name: name.trim(), email: email.trim().toLowerCase(), phone: phone.trim() || null, role: role.trim() || null, interest: interest || null, type: eventMode ? 'event' : 'gate', source }),
       })
       if (!res.ok && res.status !== 409) throw new Error('signup_failed')
       setStatus('done')

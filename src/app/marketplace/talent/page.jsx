@@ -1,5 +1,5 @@
 import MarketplaceExperienceV3 from '@/components/MarketplaceExperienceV3'
-import { getMarketplaceRows } from '@/lib/marketplace-data'
+import { getMarketplaceRows, getMarketplaceCounts } from '@/lib/marketplace-data'
 
 export const metadata = {
   title: 'Talent Marketplace — Valoria Institute',
@@ -8,6 +8,6 @@ export const metadata = {
 }
 
 export default async function TalentMarketplacePage() {
-  const initialRows = await getMarketplaceRows('candidate')
-  return <MarketplaceExperienceV3 forcedTrack="candidate" initialRows={initialRows} />
+  const [initialRows, initialCounts] = await Promise.all([getMarketplaceRows('candidate'), getMarketplaceCounts()])
+  return <MarketplaceExperienceV3 forcedTrack="candidate" initialRows={initialRows} initialCounts={initialCounts} />
 }

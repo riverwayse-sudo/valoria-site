@@ -27,7 +27,7 @@ export const CURRENCIES = [
 export const FIELD_LABELS = {
   display_name: 'your name', headline: 'your headline', bio: 'your bio',
   active_tracks: 'your path (Talent / Speaker / Facilitator)', industry: 'your industry',
-  username: 'your username', phone: 'your phone number', current_job_title: 'your current job title', photo_url: 'your profile photo',
+  username: 'your username', phone: 'your phone number', current_job_title: 'your current job title',
 }
 
 export const VALIDATORS = {

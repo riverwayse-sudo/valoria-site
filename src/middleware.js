@@ -54,14 +54,14 @@ export async function middleware(request) {
 
       const { data: profile } = await supabase
         .from('professional_profiles')
-        .select('profile_complete, display_name, headline, bio, photo_url, active_tracks, industry, username, phone, current_job_title')
+        .select('profile_complete, display_name, headline, bio, active_tracks, industry, username, phone, current_job_title')
         .eq('id', user.id)
         .maybeSingle()
 
       if (!profile || !profile.profile_complete) {
         const missing = !profile
           ? ['display_name', 'headline', 'bio', 'active_tracks', 'industry', 'username', 'phone', 'current_job_title']
-          : ['display_name', 'headline', 'bio', 'photo_url', 'industry', 'username', 'phone', 'current_job_title'].filter(field => !profile[field]).concat(!profile.active_tracks?.length ? ['active_tracks'] : [])
+          : ['display_name', 'headline', 'bio', 'industry', 'username', 'phone', 'current_job_title'].filter(field => !profile[field]).concat(!profile.active_tracks?.length ? ['active_tracks'] : [])
         const redirectUrl = new URL('/profile/setup', request.url)
         if (missing.length) redirectUrl.searchParams.set('incomplete', missing.join(','))
         return NextResponse.redirect(redirectUrl)

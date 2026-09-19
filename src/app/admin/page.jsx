@@ -101,9 +101,21 @@ export default function AdminPage() {
 
   async function toggleListing(p) {
     setBusy(p.id)
-    const next = p.listing_status === 'listed' ? 'unlisted' : 'listed'
-    const { error: e } = await supabase.from('professional_profiles').update({ listing_status: next }).eq('id', p.id)
-    if (e) setError(e.message); else setProfiles(xs => xs.map(x => x.id === p.id ? { ...x, listing_status: next } : x))
+    setError('')
+    const shouldList = p.listing_status !== 'listed'
+    const { data, error: e } = await supabase.rpc('admin_set_professional_listing', {
+      p_professional_id: p.id,
+      p_listed: shouldList,
+      p_reason: shouldList ? 'Administrator restored marketplace listing.' : 'Administrator removed the professional from marketplace discovery.',
+    })
+    if (e) {
+      setError(e.message)
+    } else if (!data?.ok) {
+      setError(data?.error || 'Marketplace listing change was not applied.')
+    } else {
+      const listingStatus = data?.listing_status || data?.result?.listing_status || p.listing_status
+      setProfiles(xs => xs.map(x => x.id === p.id ? { ...x, listing_status: listingStatus } : x))
+    }
     setBusy(null)
   }
 

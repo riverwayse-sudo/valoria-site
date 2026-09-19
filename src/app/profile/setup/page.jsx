@@ -385,7 +385,7 @@ function ProfileSetupForm() {
       // above), so it's dropped from this check too; requiring a field
       // nobody is ever asked would make profile_complete permanently false.
       profile_complete: !!(
-        f.display_name && f.headline && f.bio && f.photo_url && f.active_tracks.length > 0 &&
+        f.display_name && f.headline && f.bio && f.active_tracks.length > 0 &&
         f.industry && f.username && f.phone && f.current_job_title
       ),
       listing_status: existingListingStatusRef.current || 'pending', updated_at: new Date().toISOString(),

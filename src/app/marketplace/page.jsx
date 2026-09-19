@@ -1,7 +1,6 @@
 import '@/styles/premium-marketplace.css'
-import { redirect } from 'next/navigation'
 import MarketplaceExperienceV3 from '@/components/MarketplaceExperienceV3'
-import { getMarketplaceRows } from '@/lib/marketplace-data'
+import { getMarketplaceRows, getMarketplaceCounts } from '@/lib/marketplace-data'
 
 export const metadata = {
   title: 'Marketplace — Valoria Institute',
@@ -18,6 +17,6 @@ export default async function MarketplacePage({ searchParams }) {
   const requestedTrack = typeof params?.track === 'string' ? params.track : 'all'
   const forcedTrack = VALID_TRACKS.has(requestedTrack) ? requestedTrack : 'all'
   if (forcedTrack !== 'all') redirect(CANONICAL[forcedTrack])
-  const initialRows = await getMarketplaceRows('all')
-  return <MarketplaceExperienceV3 forcedTrack="all" initialRows={initialRows} />
+  const [initialRows, initialCounts] = await Promise.all([getMarketplaceRows('all'), getMarketplaceCounts()])
+  return <MarketplaceExperienceV3 forcedTrack="all" initialRows={initialRows} initialCounts={initialCounts} />
 }

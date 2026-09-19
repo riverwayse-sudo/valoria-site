@@ -1,5 +1,5 @@
 import MarketplaceExperienceV3 from '@/components/MarketplaceExperienceV3'
-import { getMarketplaceRows } from '@/lib/marketplace-data'
+import { getMarketplaceRows, getMarketplaceCounts } from '@/lib/marketplace-data'
 
 export const metadata = {
   title: 'Facilitator Marketplace — Valoria Institute',
@@ -8,6 +8,6 @@ export const metadata = {
 }
 
 export default async function FacilitatorMarketplacePage() {
-  const initialRows = await getMarketplaceRows('facilitator')
-  return <MarketplaceExperienceV3 forcedTrack="facilitator" initialRows={initialRows} />
+  const [initialRows, initialCounts] = await Promise.all([getMarketplaceRows('facilitator'), getMarketplaceCounts()])
+  return <MarketplaceExperienceV3 forcedTrack="facilitator" initialRows={initialRows} initialCounts={initialCounts} />
 }
