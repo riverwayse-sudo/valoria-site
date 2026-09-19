@@ -74,5 +74,6 @@ export async function GET(request) {
     incompleteProfiles = withAccounts.filter(a => !completeIds.has(a.user_id)).map(a => ({ name: a.name, email: a.email, designation: a.designation, totalScore: a.total_score, completedAt: a.completed_at }))
   }
 
-  return Response.json({ totalAssessments: clean.length, careerTypes, industries, trainingPriorities, scoreDistribution, incompleteProfiles })
+  const { count: waitlistSignups } = await supabase.from('waitlist').select('id', { count: 'exact', head: true })
+  return Response.json({ totalAssessments: clean.length, waitlistSignups: waitlistSignups ?? 0, careerTypes, industries, trainingPriorities, scoreDistribution, incompleteProfiles })
 }
