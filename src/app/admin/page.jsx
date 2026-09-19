@@ -21,6 +21,7 @@ export default function AdminPage() {
   const [user, setUser] = useState(null)
   const [messages, setMessages] = useState([])
   const [profiles, setProfiles] = useState([])
+  const [capabilities, setCapabilities] = useState([])
   const [buyers, setBuyers] = useState([])
   const [analytics, setAnalytics] = useState(null)
   const [admins, setAdmins] = useState([])
@@ -40,14 +41,16 @@ export default function AdminPage() {
     if (!currentUser) { window.location.href = '/admin/login'; return }
     setUser(currentUser)
 
-    const [msg, prof, buyer] = await Promise.all([
+    const [msg, prof, buyer, capabilityRows] = await Promise.all([
       supabase.from('enquiries').select('*, recipient:professional_profile_id(id,display_name,headline,active_tracks,photo_url)').order('created_at', { ascending: false }),
       supabase.from('professional_profiles').select('id,display_name,headline,active_tracks,listing_status,industry,availability,created_at,profile_complete,valu_index').order('created_at', { ascending: false }),
       supabase.from('profiles').select('id,user_type'),
+      supabase.from('professional_capabilities').select('professional_id,capability,is_active,eligibility_status,eligible_for_listing'),
     ])
     setMessages((msg.data || []).map(x => ({ ...x, recipient_profile_id: x.professional_profile_id })))
     setProfiles(prof.data || [])
     setBuyers(buyer.data || [])
+    setCapabilities(capabilityRows.data || [])
 
     try {
       const t = await token()
@@ -116,9 +119,9 @@ export default function AdminPage() {
     introduced: messages.filter(x => x.status === 'introduced').length,
     listed: profiles.filter(x => x.listing_status === 'listed').length,
     complete: profiles.filter(x => x.profile_complete).length,
-    talent: profiles.filter(x => (x.active_tracks || []).includes('candidate')).length,
-    speakers: profiles.filter(x => (x.active_tracks || []).includes('speaker')).length,
-    facilitators: profiles.filter(x => (x.active_tracks || []).includes('facilitator')).length,
+    talent: capabilities.filter(x => x.is_active && x.capability === 'talent').length,
+    speakers: capabilities.filter(x => x.is_active && x.capability === 'speaker').length,
+    facilitators: capabilities.filter(x => x.is_active && x.capability === 'facilitator').length,
   }
 
   if (loading) return <div style={styles.loading}>Loading Valoria Admin…</div>

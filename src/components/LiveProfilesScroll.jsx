@@ -6,6 +6,7 @@ const PARCH = '#F7F4EE'
 const DIM = 'rgba(247,244,238,.45)'
 
 const TRACK_META = {
+  talent: 'Talent',
   candidate: 'Talent',
   speaker: 'Speaker',
   facilitator: 'Facilitator',
