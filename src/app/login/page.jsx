@@ -52,6 +52,29 @@ export default function LoginPage() {
       // Authenticated users must never be blocked by the waitlist gate.
       document.cookie = `vi_waitlist_v2=submitted; path=/; max-age=31536000`
       const { data: { user } } = await supabase.auth.getUser()
+      const { data: { session } } = await supabase.auth.getSession()
+
+      // Complete a professional VALU snapshot handoff that was paused for email confirmation.
+      const pendingTasterId = sessionStorage.getItem('pending_taster_id')
+      if (pendingTasterId && session?.access_token) {
+        sessionStorage.removeItem('pending_taster_id')
+        const linkRes = await fetch('/api/link-taster', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ taster_id: pendingTasterId }),
+        })
+        const linkData = await linkRes.json().catch(() => ({}))
+        if (!linkRes.ok) {
+          setError(linkData.error || 'Your VALU result could not be linked to this account.')
+          setLoading(false)
+          return
+        }
+        window.location.href = '/profile/setup'
+        return
+      }
 
       // Check for pending identity_hash from email confirmation
       const pendingIdentityHash = sessionStorage.getItem('pending_identity_hash')
