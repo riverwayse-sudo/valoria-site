@@ -55,7 +55,12 @@ export async function GET(request) {
   let sent = 0
   for (const row of rows || []) {
     const { data: profile } = await admin.from('professional_profiles').select('profile_complete,assessment_completed_at').eq('id', row.user_id).maybeSingle()
-    if (!profile || profile.profile_complete || profile.assessment_completed_at) continue
+    if (!profile || profile.profile_complete) continue
+
+    // A linked professional can be in one of two incomplete states:
+    // 1) no authoritative full assessment yet -> assessment reminder
+    // 2) full assessment complete but profile incomplete -> profile reminder (handled below)
+    if (profile.assessment_completed_at) continue
     const count = Number(row.reminder_count || 0)
     if (!dueForReminder(row.linked_at, count)) continue
 
