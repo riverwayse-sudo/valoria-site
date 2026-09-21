@@ -9,15 +9,15 @@ export const metadata = {
 }
 
 const dimensions = [
-  ['P', 'Professionalism'],
+  ['P', 'Presence'],
   ['R', 'Relationships'],
-  ['I', 'Influence'],
-  ['M', 'Motivation & Stamina'],
+  ['I', 'Intelligence'],
+  ['M', 'Mastery'],
   ['E', 'Enterprise'],
 ]
 
 const faqs = [
-  ['How long does it take?', 'The initial VALU Index is a focused 15-question assessment designed to give you directional insight without asking you to spend a long time completing a diagnostic.'],
+  ['How long does it take?', 'The initial VALU snapshot is a focused 15-question directional experience. It does not establish the authoritative marketplace score.'],
   ['Who is it for?', 'It is designed for African professionals who want a clearer view of their current professional capability and a stronger foundation for development, visibility and opportunity.'],
   ['Is it free?', 'Yes. The initial VALU Index is free to take. It is the entry point into the wider Valoria professional ecosystem.'],
   ['Does the result define me?', 'No. Your initial result is directional, not a permanent label. It gives you a starting point for understanding where you are and deciding what to build next.'],
