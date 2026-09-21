@@ -20,6 +20,8 @@ export default function LoginPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const identityHash = params.get('identity_hash')
+    const pendingTasterId = params.get('pending_taster_id')
+    if (pendingTasterId) localStorage.setItem('pending_taster_id', pendingTasterId)
 
     if (identityHash) {
       // Store identity_hash in sessionStorage to use after login
@@ -55,9 +57,9 @@ export default function LoginPage() {
       const { data: { session } } = await supabase.auth.getSession()
 
       // Complete a professional VALU snapshot handoff that was paused for email confirmation.
-      const pendingTasterId = sessionStorage.getItem('pending_taster_id')
+      const pendingTasterId = localStorage.getItem('pending_taster_id')
       if (pendingTasterId && session?.access_token) {
-        sessionStorage.removeItem('pending_taster_id')
+        localStorage.removeItem('pending_taster_id')
         const linkRes = await fetch('/api/link-taster', {
           method: 'POST',
           headers: {
