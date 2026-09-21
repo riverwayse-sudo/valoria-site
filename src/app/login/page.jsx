@@ -78,23 +78,33 @@ export default function LoginPage() {
         return
       }
 
-      // Check for pending identity_hash from email confirmation
+      // Complete a VALU assessment handoff securely on the server.
       const pendingIdentityHash = sessionStorage.getItem('pending_identity_hash')
-      if (pendingIdentityHash) {
+      if (pendingIdentityHash && session?.access_token) {
         sessionStorage.removeItem('pending_identity_hash')
-        // Link the confirmed assessment to this user
         try {
-          await supabase
-            .from('valu_assessments')
-            .update({ user_id: user.id })
-            .eq('identity_hash', pendingIdentityHash)
-            .is('user_id', null)
+          const linkRes = await fetch('/api/link-assessment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({ identity_hash: pendingIdentityHash }),
+          })
+          const linkData = await linkRes.json().catch(() => ({}))
+          if (!linkRes.ok) {
+            setError(linkData.error || 'Your VALU assessment could not be linked to this account.')
+            setLoading(false)
+            return
+          }
+          window.location.href = `/profile/${user.id}?fresh=true`
+          return
         } catch (linkErr) {
           console.error('Failed to link assessment to user:', linkErr)
+          setError('Your VALU assessment could not be linked. Please try again.')
+          setLoading(false)
+          return
         }
-        // Redirect to profile page which will show their VALU Index
-        window.location.href = `/profile/${user.id}?fresh=true`
-        return
       }
 
       // Buyers (employer/organiser) live in `profiles`, professionals in
