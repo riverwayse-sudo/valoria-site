@@ -11,7 +11,7 @@ export const BRAND = {
   location: 'Lagos, Nigeria',
   compliance: 'NDPA 2023 Compliant',
   assessmentUrl: 'https://assessment.valoriainstitute.com/',
-  logo: '/logo.png',
+  logo: '/valoria-logo.svg',
 }
 
 export const COLORS = {
