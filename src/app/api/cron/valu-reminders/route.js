@@ -112,6 +112,9 @@ export async function GET(request) {
     if (!profile.username) missing.push('your username')
     if (!profile.phone) missing.push('your phone number')
     if (!profile.current_job_title) missing.push('your current job title')
+    if (!profile.location) missing.push('your location')
+    if (!profile.languages?.length) missing.push('your languages')
+    if (!profile.assessment_completed_at) missing.push('your full VALU assessment')
 
     const { data: userData } = await admin.auth.admin.getUserById(profile.id)
     const email = userData?.user?.email
