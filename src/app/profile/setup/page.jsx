@@ -157,12 +157,6 @@ function ProfileSetupForm() {
   // must never have its second track silently wiped just because they
   // clicked through a "pick one" screen again.
   const hadExistingTracksRef = useRef(false)
-  // The assessment app can auto-list a profile (listing_status: 'listed')
-  // the moment someone signs up post-assessment. Previously every save
-  // here unconditionally reset that to 'pending', silently unlisting
-  // someone from the marketplace just because they opened this page to
-  // add a photo. Preserve whatever status already existed on load.
-  const existingListingStatusRef = useRef(null)
 
   const [form, setForm] = useState(EMPTY_FORM)
 
@@ -195,7 +189,6 @@ function ProfileSetupForm() {
 
       if (existing) {
         hadExistingTracksRef.current = (existing.active_tracks || []).length > 0
-        existingListingStatusRef.current = existing.listing_status || null
         setForm(f => ({
           ...f, ...existing,
           // The DB column is experience_years, not years_experience — the
@@ -255,7 +248,6 @@ function ProfileSetupForm() {
             assessment_expires_at: assessment.expires_at,
           }))
           if (assessment.total_score >= 35) {
-            existingListingStatusRef.current = existingListingStatusRef.current || 'listed'
           }
         }
       }
@@ -351,7 +343,6 @@ function ProfileSetupForm() {
       // match a real column, so every field below was failing to save too.
       experience_years: f.years_experience ? parseInt(f.years_experience) : null,
       bio: f.bio || null, languages: f.languages, active_tracks: f.active_tracks,
-      visibility: 'registered_only',
       skills: f.skills, topics: f.topics, facilitation_topics: f.facilitation_topics,
       programme_types: f.programme_types, format_capabilities: f.format_capabilities,
       audience_sizes: f.audience_sizes, pcp_certified: f.pcp_certified,
@@ -371,24 +362,9 @@ function ProfileSetupForm() {
       modality: f.modality,
       notice_period: f.notice_period || null,
       salary_expectation: f.salary_expectation || null, fee_range: f.fee_range || null,
-      // Carried forward from the valu_assessments fallback lookup (or a real
-      // sync) in the load effect above — only written if we actually have a
-      // value, so a save never accidentally clears an existing score.
-      ...(f.valu_index != null ? { valu_index: f.valu_index } : {}),
-      ...(f.cluster_scores != null ? { cluster_scores: f.cluster_scores } : {}),
-      ...(f.designation != null ? { designation: f.designation } : {}),
-      ...(f.assessment_completed_at != null ? { assessment_completed_at: f.assessment_completed_at } : {}),
-      ...(f.assessment_expires_at != null ? { assessment_expires_at: f.assessment_expires_at } : {}),
-      // profile_complete is true when all mandatory fields are filled in.
-      // This gates marketplace visibility even if listing_status = 'listed'.
-      // skills is no longer a required question (removed — see screens()
-      // above), so it's dropped from this check too; requiring a field
-      // nobody is ever asked would make profile_complete permanently false.
-      profile_complete: !!(
-        f.display_name && f.headline && f.bio && f.active_tracks.length > 0 &&
-        f.industry && f.username && f.phone && f.current_job_title
-      ),
-      listing_status: existingListingStatusRef.current || 'pending', updated_at: new Date().toISOString(),
+      // Marketplace eligibility, listing status, VALU scores and assessment timestamps are platform-managed.
+      // They are written by the assessment/governance pipeline, never by profile-owner upserts.
+      updated_at: new Date().toISOString(),
     }, { onConflict: 'id' })
     setSaving(false)
     if (error) {
