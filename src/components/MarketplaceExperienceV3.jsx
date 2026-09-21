@@ -74,7 +74,7 @@ export default function MarketplaceExperienceV3({ forcedTrack='all', initialRows
 
   return <main style={S.page}>
     <header style={S.header} className="marketplace-header">
-      <Link href="/" aria-label="Valoria Institute home"><img src="/valoria-logo.svg" alt="Valoria Institute" style={{height:42}}/></Link>
+      <Link href="/" aria-label="Valoria Institute home"><img src="/valoria-original.png" alt="Valoria Institute" style={{height:42}}/></Link>
       <div style={S.brand}><b>VALORIA MARKETPLACE</b><span>One professional identity · Multiple capabilities</span></div>
       <Link href="/dashboard" style={S.nav}>Dashboard →</Link>
     </header>
