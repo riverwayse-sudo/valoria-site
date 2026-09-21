@@ -85,7 +85,7 @@ export default function Nav() {
     <style>{`
       nav.vi-nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:0 var(--pad);height:68px;display:flex;align-items:center;justify-content:space-between;background:var(--nav-bg);border-bottom:1px solid rgba(201,168,76,.08);transition:background .3s,box-shadow .3s}
       nav.vi-nav.scrolled{background:rgba(15,15,26,.97);backdrop-filter:blur(16px);border-color:rgba(201,168,76,.14);box-shadow:0 8px 30px rgba(0,0,0,.12)}
-      .nav-logo{display:flex;align-items:center;line-height:0;flex:none}.nav-logo img{height:40px;width:auto}
+      .nav-logo{display:flex;align-items:center;line-height:0;flex:none}.nav-logo img{height:42px;width:190px;object-fit:contain;object-position:left center}
       .nav-links{display:flex;align-items:center;gap:1px;list-style:none;margin:0;padding:0}.nav-links>li{position:relative}
       .nav-link{font-size:11px;color:var(--dim);text-decoration:none;letter-spacing:.07em;padding:10px 12px;transition:color .2s,background .2s;border-radius:999px;white-space:nowrap}
       .nav-link:hover,.nav-link.active{color:var(--parchment);background:rgba(255,255,255,.035)}
@@ -108,7 +108,7 @@ export default function Nav() {
     `}</style>
 
     <nav className={`vi-nav${scrolled ? ' scrolled' : ''}`} aria-label="Primary navigation">
-      <Link href="/" className="nav-logo" aria-label="Valoria Institute home"><img src="/logo.png" alt="Valoria Institute" /></Link>
+      <Link href="/" className="nav-logo" aria-label="Valoria Institute home"><img src="/valoria-logo.svg" alt="Valoria Institute" /></Link>
 
       <ul className="nav-links" role="list">
         {NAVIGATION.primary.map((item) => item.groups ? (
