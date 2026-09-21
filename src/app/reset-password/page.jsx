@@ -78,7 +78,7 @@ export default function ResetPasswordPage() {
         </div>
 
         <Link href="/" style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
-          <img src="/logo.png" alt="Valoria Institute" style={{ height: '44px', width: 'auto' }} />
+          <img src="/valoria-logo.svg" alt="Valoria Institute" style={{ height: '44px', width: 'auto' }} />
         </Link>
 
         {done ? (
