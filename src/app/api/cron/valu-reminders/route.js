@@ -80,7 +80,7 @@ export async function GET(request) {
 
   const { data: assessedProfiles } = await admin
     .from('professional_profiles')
-    .select('id,display_name,profile_complete,photo_url,created_at,assessment_completed_at,active_tracks,industry,username,phone,current_job_title')
+    .select('id,display_name,profile_complete,photo_url,created_at,assessment_completed_at,active_tracks,industry,username,phone,current_job_title,location,languages')
     .eq('profile_complete', false)
     .not('assessment_completed_at', 'is', null)
     .order('created_at', { ascending: true })
@@ -114,7 +114,6 @@ export async function GET(request) {
     if (!profile.current_job_title) missing.push('your current job title')
     if (!profile.location) missing.push('your location')
     if (!profile.languages?.length) missing.push('your languages')
-    if (!profile.assessment_completed_at) missing.push('your full VALU assessment')
 
     const { data: userData } = await admin.auth.admin.getUserById(profile.id)
     const email = userData?.user?.email
