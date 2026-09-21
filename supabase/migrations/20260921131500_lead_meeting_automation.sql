@@ -49,6 +49,8 @@ on conflict (source,event_session_id) do update set
   brevo_list_id=excluded.brevo_list_id,
   updated_at=now();
 
+delete from cron.job where jobname = 'valoria-send-lead-meeting-link';
+
 select cron.schedule(
   'valoria-send-lead-meeting-link','* * * * *',
   $$
