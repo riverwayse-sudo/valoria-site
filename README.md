@@ -35,7 +35,7 @@ After signup, a professional completes the authoritative full assessment and pro
 
 ## Marketplace model
 
-A professional account may hold multiple active modalities/profiles. Candidate, speaker and facilitator discovery are distinct marketplace pathways while remaining connected to the same account and authoritative VALU record.
+One professional account has one canonical professional profile and can hold multiple capability paths: Talent, Speaker and Facilitator. Category discovery uses capability projections from that same professional identity; capabilities are not separate marketplace profiles.
 
 Public profile surfaces use the approved public profile/ATB identifier and do not expose private email addresses.
 
