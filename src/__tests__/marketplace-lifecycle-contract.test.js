@@ -13,11 +13,17 @@ describe('VALUI marketplace lifecycle contract', () => {
 
   test('profile onboarding does not submit platform-owned governance fields', () => {
     const source = read('src/app/profile/setup/page.jsx')
-    expect(source).not.toContain('existingListingStatusRef')
-    expect(source).not.toMatch(/listing_status\s*:/)
-    expect(source).not.toMatch(/eligible_for_listing\s*:/)
-    expect(source).not.toMatch(/profile_complete:\s*!!/)
-    expect(source).not.toMatch(/visibility:\s*['"]registered_only['"]/)
+    const start = source.indexOf('async function saveProgress')
+    const end = source.indexOf('  // Mirrors the assessment\'s pattern', start)
+    const saveBlock = source.slice(start, end)
+    expect(saveBlock).toBeTruthy()
+    expect(saveBlock).not.toContain('existingListingStatusRef')
+    expect(saveBlock).not.toMatch(/listing_status\s*:/)
+    expect(saveBlock).not.toMatch(/eligible_for_listing\s*:/)
+    expect(saveBlock).not.toMatch(/profile_complete\s*:/)
+    expect(saveBlock).not.toMatch(/visibility\s*:/)
+    expect(saveBlock).not.toMatch(/valu_index\s*:/)
+    expect(saveBlock).not.toMatch(/assessment_completed_at\s*:/)
   })
 
   test('taster handoff derives ownership from the authenticated session', () => {
