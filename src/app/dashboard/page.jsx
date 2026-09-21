@@ -291,7 +291,7 @@ export default function DashboardPage() {
         {/* HEADER NAV */}
         <header style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 clamp(20px,4vw,40px)', height:'64px', background: MID, borderBottom:`1px solid ${GLINE}`, position:'sticky', top:0, zIndex:100 }}>
           <Link href="/" style={{ lineHeight:0 }}>
-            <img src="/logo.png" alt="Valoria Institute" style={{ height:'40px', width:'auto' }} />
+            <img src="/valoria-logo.svg" alt="Valoria Institute" style={{ height:'40px', width:'auto' }} />
           </Link>
           <nav style={{ display:'flex', gap:'22px', alignItems:'center' }}>
             <MarketplaceCTA style={{ fontSize:'12px', color: DIM, textDecoration:'none' }}>Marketplace</MarketplaceCTA>
