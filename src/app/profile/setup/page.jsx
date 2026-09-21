@@ -1014,10 +1014,10 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
         <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
           <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — VALU INDEX ASSESSMENT</div>
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
-            Your profile is set to <strong style={{ color:PARCH }}>Pending</strong> until you complete the VALU Index. Profiles scoring 35 or above become eligible for marketplace listing. The assessment takes approximately 25 minutes.
+            Your profile is set to <strong style={{ color:PARCH }}>Not yet listed</strong> until the authoritative full VALU assessment is complete and the marketplace governance gates are satisfied. A current score of 35 or above is required for marketplace eligibility.
           </p>
           <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
-            TAKE THE VALU INDEX →
+            COMPLETE THE FULL VALU ASSESSMENT →
           </a>
         </div>
       )}
