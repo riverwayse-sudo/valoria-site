@@ -21,6 +21,13 @@ async function sendEmail(row:any, config:any){
   const date = new Intl.DateTimeFormat("en-NG",{timeZone:"Africa/Lagos",weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(new Date(config.event_start))
   const time = new Intl.DateTimeFormat("en-NG",{timeZone:"Africa/Lagos",hour:"numeric",minute:"2-digit",hour12:true}).format(new Date(config.event_start))
 
+  const start=new Date(config.event_start)
+  const end=new Date(config.event_end)
+  const icsDate=(d)=>d.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z")
+  const uid="valoria-"+config.event_session_id+"-"+String(row.email).trim().toLowerCase().replace(/[^a-z0-9]/g,"")
+  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Valoria Institute//Events//EN","CALSCALE:GREGORIAN","METHOD:PUBLISH","BEGIN:VEVENT","UID:"+uid,"DTSTAMP:"+icsDate(new Date()),"DTSTART:"+icsDate(start),"DTEND:"+icsDate(end),"SUMMARY:"+config.event_title,"DESCRIPTION:Join the Valoria Institute session: "+config.meeting_link,"LOCATION:"+config.meeting_link,"STATUS:CONFIRMED","END:VEVENT","END:VCALENDAR"].join("\r\n")
+  const calendarBase64=btoa(unescape(encodeURIComponent(ics)))
+  const googleCalendarUrl="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(config.event_title)+"&dates="+icsDate(start)+"/"+icsDate(end)+"&details="+encodeURIComponent("Join the session: "+config.meeting_link)+"&location="+encodeURIComponent(config.meeting_link)
   const html = `<div style="margin:0;padding:40px 20px;background:#0F0F1A;font-family:Arial,sans-serif;color:#F7F4EE">
     <div style="max-width:560px;margin:0 auto;background:#1A1A2E;border:1px solid rgba(201,168,76,.25);padding:40px">
       <div style="font-size:11px;font-weight:700;letter-spacing:.18em;color:#C9A84C">VALORIA INSTITUTE</div>
@@ -35,7 +42,8 @@ async function sendEmail(row:any, config:any){
       <p style="text-align:center;margin:30px 0">
         <a href="${meeting}" style="display:inline-block;background:#C9A84C;color:#0F0F1A;padding:15px 28px;text-decoration:none;font-weight:700;letter-spacing:.08em;font-size:12px">JOIN THE SESSION →</a>
       </p>
-      <p style="font-size:11px;line-height:1.7;color:rgba(247,244,238,.4)">Keep this email. The same link will be used for the live session.</p>
+      <p style="text-align:center;margin:10px 0 24px"><a href="${googleCalendarUrl}" style="display:inline-block;border:1px solid #C9A84C;color:#C9A84C;padding:12px 20px;text-decoration:none;font-weight:700;font-size:11px;letter-spacing:.06em">ADD TO GOOGLE CALENDAR</a></p>
+      <p style="font-size:11px;line-height:1.7;color:rgba(247,244,238,.4)">A calendar invitation is attached to this email. Save it to your calendar so you have the session time and meeting link available.</p>
     </div>
   </div>`
 
@@ -48,7 +56,8 @@ async function sendEmail(row:any, config:any){
       replyTo:{name:FROM_NAME,email:FROM_EMAIL},
       subject:`Your Valoria meeting link — ${config.event_title}`,
       htmlContent:html,
-      tags:["valoria","meeting-link",row.source,config.event_session_id]
+      tags:["valoria","meeting-link","calendar-invite",row.source,config.event_session_id],
+      attachment:[{content:calendarBase64,name:"valoria-strategic-thinking.ics"}]
     })
   })
   const text = await response.text()
