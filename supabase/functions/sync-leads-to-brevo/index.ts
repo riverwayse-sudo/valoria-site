@@ -42,7 +42,8 @@ async function campaignState(row:any){
   const email=String(row.email).trim().toLowerCase()
   const {data:user}=await db.from("users").select("id").ilike("email",email).maybeSingle()
   const {data:assessment}=await db.from("valu_assessments").select("id,completed_at").ilike("email",email).order("completed_at",{ascending:false}).limit(1).maybeSingle()
-  const eventRegistered=row.source==="event_registration"
+  const {data:eventRows}=await db.from("lead_captures").select("id").ilike("email",email).eq("source","event_registration").limit(1)
+  const eventRegistered=(eventRows?.length??0)>0
   const assessmentCompleted=Boolean(assessment?.completed_at)
   const accountCreated=Boolean(user?.id)
   let nextAction="take_assessment"
