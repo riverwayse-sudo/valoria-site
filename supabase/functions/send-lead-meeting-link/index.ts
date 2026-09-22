@@ -6,6 +6,7 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ??
 const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY") ?? ""
 const FROM_EMAIL = Deno.env.get("BREVO_FROM_EMAIL") ?? "info@valoriainstitute.com"
 const FROM_NAME = Deno.env.get("BREVO_FROM_NAME") ?? "Valoria Institute"
+const LOGO_URL = "https://raw.githubusercontent.com/riverwayse-sudo/valoria-site/main/public/valoria-original.png"
 const db = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, { auth:{autoRefreshToken:false,persistSession:false} })
 
 function delay(attempt:number){ return Math.min(Math.max(60,2 ** Math.min(attempt,10) * 30),21600) }
@@ -28,7 +29,7 @@ async function sendEmail(row:any, config:any){
   const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Valoria Institute//Events//EN","CALSCALE:GREGORIAN","METHOD:PUBLISH","BEGIN:VEVENT","UID:"+uid,"DTSTAMP:"+icsDate(new Date()),"DTSTART:"+icsDate(start),"DTEND:"+icsDate(end),"SUMMARY:"+config.event_title,"DESCRIPTION:Join the Valoria Institute session: "+config.meeting_link,"LOCATION:"+config.meeting_link,"STATUS:CONFIRMED","END:VEVENT","END:VCALENDAR"].join("\r\n")
   const calendarBase64=btoa(unescape(encodeURIComponent(ics)))
   const googleCalendarUrl="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(config.event_title)+"&dates="+icsDate(start)+"/"+icsDate(end)+"&details="+encodeURIComponent("Join the session: "+config.meeting_link)+"&location="+encodeURIComponent(config.meeting_link)
-  const html = `<div style="margin:0;padding:40px 20px;background:#0F0F1A;font-family:Arial,sans-serif;color:#F7F4EE">
+  const html = `<div style="margin:0;padding:40px 20px;background:#1A1A2E;font-family:Arial,sans-serif;color:#F7F4EE">
     <div style="max-width:560px;margin:0 auto;background:#1A1A2E;border:1px solid rgba(201,168,76,.25);padding:40px">
       <div style="font-size:11px;font-weight:700;letter-spacing:.18em;color:#C9A84C">VALORIA INSTITUTE</div>
       <h1 style="font-weight:300;font-size:30px;line-height:1.15;margin:22px 0 14px">Your meeting link<br/><em style="color:#C9A84C">is here.</em></h1>
@@ -40,10 +41,10 @@ async function sendEmail(row:any, config:any){
         <div style="font-size:15px;margin-top:4px;color:#F7F4EE">${time} WAT</div>
       </div>
       <p style="text-align:center;margin:30px 0">
-        <a href="${meeting}" style="display:inline-block;background:#C9A84C;color:#0F0F1A;padding:15px 28px;text-decoration:none;font-weight:700;letter-spacing:.08em;font-size:12px">JOIN THE SESSION →</a>
+        <a href="${meeting}" style="display:inline-block;background:#C9A84C;color:#1A1A2E;padding:15px 28px;text-decoration:none;font-weight:700;letter-spacing:.08em;font-size:12px">JOIN THE SESSION →</a>
       </p>
       <p style="text-align:center;margin:10px 0 24px"><a href="${googleCalendarUrl}" style="display:inline-block;border:1px solid #C9A84C;color:#C9A84C;padding:12px 20px;text-decoration:none;font-weight:700;font-size:11px;letter-spacing:.06em">ADD TO GOOGLE CALENDAR</a></p>
-      <p style="font-size:11px;line-height:1.7;color:rgba(247,244,238,.4)">A calendar invitation is attached to this email. Save it to your calendar so you have the session time and meeting link available.</p>
+      <p style="font-size:11px;line-height:1.7;color:rgba(247,244,238,.4)">A calendar invitation is attached to this email. Save it to your calendar so you have the session time and meeting link available.<br/><br/>We look forward to seeing you.</p>
     </div>
   </div>`
 
