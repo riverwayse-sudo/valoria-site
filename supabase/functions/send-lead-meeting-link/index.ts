@@ -71,16 +71,19 @@ Deno.serve(async(req)=>{
     const limit=Math.min(Math.max(Number(payload?.limit??20),1),50)
     const sourceFilter=typeof payload?.source==="string" ? payload.source : null
 
+    const source=sourceFilter ?? "event_registration"
+    const {data:configs,error:configError}=await db.from("lead_automation_configs").select("*").eq("source",source).eq("enabled",true).not("meeting_link","is",null).limit(1)
+    if(configError) throw configError
+    const config=configs?.[0]
+    if(!config) throw new Error("EVENT_AUTOMATION_NOT_CONFIGURED")
     const {data:rows,error}=await db
       .from("lead_captures")
-      .select("*,lead_automation_configs!inner(*)")
+      .select("*")
+      .eq("source",source)
       .eq("automation_sent",false)
       .eq("consent",true)
       .not("email","is",null)
       .lte("automation_next_attempt_at",new Date().toISOString())
-      .eq("lead_automation_configs.enabled",true)
-      .eq("lead_automation_configs.source", sourceFilter ?? "event_registration")
-      .not("lead_automation_configs.meeting_link","is",null)
       .order("created_at",{ascending:true})
       .limit(limit)
 
@@ -88,7 +91,6 @@ Deno.serve(async(req)=>{
 
     let sent=0,failed=0
     for(const row of rows??[]){
-      const config=Array.isArray(row.lead_automation_configs)?row.lead_automation_configs[0]:row.lead_automation_configs
       const attempt=Number(row.automation_attempt_count??0)+1
       await db.from("lead_captures").update({automation_attempt_count:attempt,automation_last_attempt_at:new Date().toISOString()}).eq("id",row.id)
       try{
