@@ -10,7 +10,7 @@ const supabase = createClient(
 )
 
 export default async function ProfilePage({ params, searchParams }) {
-  const { id } = await params
+  const { id } = params
   const { data: profile } = await supabase
     .from('professional_profiles')
     .select('id, display_name, headline, current_job_title, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, cv_summary, programme_types, listing_status, visibility, updated_at')
