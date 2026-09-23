@@ -9,7 +9,7 @@ const supabase = createClient(
 const SITE_URL = 'https://valoriainstitute.com'
 
 export async function generateMetadata({ params }) {
-  const { id } = await params
+  const { id } = params
   const { data: profile } = await supabase
     .from('professional_profiles')
     .select('id,display_name,headline,bio,photo_url,active_tracks,listing_status,visibility,updated_at')
