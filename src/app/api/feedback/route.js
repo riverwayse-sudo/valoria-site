@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !key) throw new Error('Supabase configuration is missing.')
+  return createClient(url, key)
+}
 
 export async function POST(req) {
   try {
@@ -15,7 +17,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Rating is required' }, { status: 400 })
     }
 
-    const { error } = await supabase.from('webinar_feedback').insert({
+    const { error } = await getSupabase().from('webinar_feedback').insert({
       attended: attended || null,
       overall_rating,
       most_valuable: most_valuable || null,
