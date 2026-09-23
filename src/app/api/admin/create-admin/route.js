@@ -13,20 +13,22 @@
 
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-)
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !key) throw new Error('Supabase configuration is missing.')
+  return createClient(url, key)
+}
 
 export async function GET(request) {
   const authHeader = request.headers.get('authorization') || ''
   const token = authHeader.replace(/^Bearer\s+/i, '')
   if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
 
-  const { data: callerData, error: callerErr } = await supabase.auth.getUser(token)
+  const { data: callerData, error: callerErr } = await getSupabase().auth.getUser(token)
   if (callerErr || !callerData?.user) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
 
-  const { data: callerAdmin } = await supabase.from('admin_users').select('id').eq('id', callerData.user.id).maybeSingle()
+  const { data: callerAdmin } = await getSupabase().from('admin_users').select('id').eq('id', callerData.user.id).maybeSingle()
   if (!callerAdmin) return Response.json({ error: 'Admin access required.' }, { status: 403 })
 
   const { data: admins, error } = await supabase
@@ -44,10 +46,10 @@ export async function POST(request) {
     const token = authHeader.replace(/^Bearer\s+/i, '')
     if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
 
-    const { data: callerData, error: callerErr } = await supabase.auth.getUser(token)
+    const { data: callerData, error: callerErr } = await getSupabase().auth.getUser(token)
     if (callerErr || !callerData?.user) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
 
-    const { data: callerAdmin } = await supabase.from('admin_users').select('id').eq('id', callerData.user.id).maybeSingle()
+    const { data: callerAdmin } = await getSupabase().from('admin_users').select('id').eq('id', callerData.user.id).maybeSingle()
     if (!callerAdmin) return Response.json({ error: 'Only an existing admin can invite another admin.' }, { status: 403 })
 
     const { email, fullName } = await request.json()
@@ -55,7 +57,7 @@ export async function POST(request) {
       return Response.json({ error: 'A valid email is required.' }, { status: 400 })
     }
 
-    const { data: invited, error: inviteErr } = await supabase.auth.admin.inviteUserByEmail(email, {
+    const { data: invited, error: inviteErr } = await getSupabase().auth.admin.inviteUserByEmail(email, {
       data: { full_name: fullName || undefined },
       redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'}/reset-password`,
     })
@@ -63,10 +65,10 @@ export async function POST(request) {
       // Most likely cause: this email already has an auth.users account
       // (e.g. an existing buyer/professional). inviteUserByEmail can't
       // double as "promote an existing user" — handle that case below.
-      const { data: existing } = await supabase.auth.admin.listUsers()
+      const { data: existing } = await getSupabase().auth.admin.listUsers()
       const match = existing?.users?.find(u => u.email?.toLowerCase() === email.toLowerCase())
       if (match) {
-        const { error: promoteErr } = await supabase.from('admin_users').insert({
+        const { error: promoteErr } = await getSupabase().from('admin_users').insert({
           id: match.id, email: match.email, full_name: fullName || null, invited_by: callerAdmin.id,
         })
         if (promoteErr) return Response.json({ error: promoteErr.message }, { status: 500 })
@@ -75,7 +77,7 @@ export async function POST(request) {
       return Response.json({ error: inviteErr.message }, { status: 500 })
     }
 
-    const { error: insertErr } = await supabase.from('admin_users').insert({
+    const { error: insertErr } = await getSupabase().from('admin_users').insert({
       id: invited.user.id, email: invited.user.email, full_name: fullName || null, invited_by: callerAdmin.id,
     })
     if (insertErr) return Response.json({ error: insertErr.message }, { status: 500 })
