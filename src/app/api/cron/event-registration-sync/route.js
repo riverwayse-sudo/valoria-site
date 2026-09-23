@@ -1,7 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
 import { EVENT_SESSIONS, syncEventRegistrationToBrevo } from '@/lib/eventRegistrationBrevo'
 
-const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
+function getAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) throw new Error('Supabase service role configuration is missing.')
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
+}
 
 export const dynamic = 'force-dynamic'
 
@@ -36,7 +41,7 @@ export async function GET(request) {
         whatsapp: row.whatsapp || '',
         session,
       })
-      await admin.from('professional_standard_event_registrations').update({
+      await getAdmin().from('professional_standard_event_registrations').update({
         brevo_synced: result.synced,
         confirmation_email_sent: result.emailSent,
         brevo_last_attempt_at: new Date().toISOString(),
@@ -45,7 +50,7 @@ export async function GET(request) {
       }).eq('session_id', row.session_id).eq('email', row.email)
       if (result.synced) synced += 1
     } catch (error) {
-      await admin.from('professional_standard_event_registrations').update({
+      await getAdmin().from('professional_standard_event_registrations').update({
         brevo_last_attempt_at: new Date().toISOString(),
         brevo_attempt_count: Number(row.brevo_attempt_count || 0) + 1,
         brevo_last_error: String(error?.message || 'BREVO_SYNC_FAILED').slice(0, 160),
