@@ -6,43 +6,44 @@ const supabase = createClient(
   { auth: { persistSession: false, autoRefreshToken: false } }
 )
 
-function getInitials(name) {
-  if (!name) return 'Valoria Professional'
-  const w = name.trim().split(/\s+/)
-  return w.length === 1 ? w[0].slice(0,2).toUpperCase() : (w[0][0] + w[w.length-1][0]).toUpperCase()
-}
+const SITE_URL = 'https://valoriainstitute.com'
 
 export async function generateMetadata({ params }) {
-  const { id } = params
-
-  // Public professional profiles use the authoritative professional profile source.
+  const { id } = await params
   const { data: profile } = await supabase
     .from('professional_profiles')
-    .select('display_name, headline, bio, photo_url, active_tracks')
+    .select('id,display_name,headline,bio,photo_url,active_tracks,listing_status,visibility,updated_at')
     .eq('id', id)
     .maybeSingle()
 
-  if (profile) {
-    const name = getInitials(profile.display_name)
-    const type = (profile.active_tracks || []).includes('speaker') ? 'Speaker' : 'Professional'
+  const publiclyListed = Boolean(profile && profile.listing_status === 'listed' && profile.visibility !== 'private' && profile.display_name)
+
+  if (!publiclyListed) {
     return {
-      title: `${name} — ${type} Profile`,
-      description: profile.bio?.slice(0, 160) || `${name} — ${profile.headline || type} on Valoria Institute.`,
-      alternates: { canonical: `/profile/${id}` },
-      openGraph: {
-        title: `${name} | Valoria Institute`,
-        description: profile.bio?.slice(0, 160) || `${name} on Valoria Institute.`,
-        url: `/profile/${id}`,
-        images: profile.photo_url ? [{ url: profile.photo_url }] : [{ url: '/valoria-original.png?v=20260921' }],
-      },
-      robots: { index: true, follow: true },
+      title: 'Professional Profile | Valoria Institute',
+      robots: { index: false, follow: false },
     }
   }
 
+  const name = profile.display_name.trim()
+  const type = (profile.active_tracks || []).includes('speaker')
+    ? 'Speaker'
+    : (profile.active_tracks || []).includes('facilitator') ? 'Facilitator' : 'Professional'
+  const description = profile.bio?.replace(/\s+/g, ' ').trim().slice(0, 160)
+    || `${name} — ${profile.headline || type} on Valoria Institute.`
+
   return {
-    title: 'Professional Profile | Valoria Institute',
+    title: `${name} — ${type} Profile`,
+    description,
     alternates: { canonical: `/profile/${id}` },
-    robots: { index: false },
+    robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 } },
+    openGraph: {
+      type: 'profile',
+      title: `${name} | Valoria Institute`,
+      description,
+      url: `${SITE_URL}/profile/${id}`,
+      images: profile.photo_url ? [{ url: profile.photo_url, alt: `${name} — Valoria Institute profile` }] : [{ url: '/valoria-original.png', alt: 'Valoria Institute' }],
+    },
   }
 }
 
