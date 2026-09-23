@@ -12,10 +12,12 @@
 
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-)
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !key) throw new Error('Supabase configuration is missing.')
+  return createClient(url, key)
+}
 
 export async function POST(request) {
   try {
@@ -23,10 +25,10 @@ export async function POST(request) {
     const token = authHeader.replace(/^Bearer\s+/i, '')
     if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
 
-    const { data: callerData, error: callerErr } = await supabase.auth.getUser(token)
+    const { data: callerData, error: callerErr } = await getSupabase().auth.getUser(token)
     if (callerErr || !callerData?.user) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
 
-    const { data: callerAdmin } = await supabase.from('admin_users').select('id').eq('id', callerData.user.id).maybeSingle()
+    const { data: callerAdmin } = await getSupabase().from('admin_users').select('id').eq('id', callerData.user.id).maybeSingle()
     if (!callerAdmin) return Response.json({ error: 'Only an existing admin can revoke another admin.' }, { status: 403 })
 
     const { adminId } = await request.json()
@@ -35,7 +37,7 @@ export async function POST(request) {
       return Response.json({ error: "You can't revoke your own admin access." }, { status: 400 })
     }
 
-    const { error: deleteErr } = await supabase.from('admin_users').delete().eq('id', adminId)
+    const { error: deleteErr } = await getSupabase().from('admin_users').delete().eq('id', adminId)
     if (deleteErr) return Response.json({ error: deleteErr.message }, { status: 500 })
 
     return Response.json({ revoked: true })
