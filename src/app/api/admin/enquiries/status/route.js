@@ -3,15 +3,16 @@
 // not exposed through broad client-side RLS policies.
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-)
+
 
 const ALLOWED_STATUSES = new Set(['pending', 'reviewing', 'introduced', 'declined', 'completed'])
 
 export async function PATCH(request) {
   try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (!supabaseUrl || !serviceRoleKey) return Response.json({ error: 'Server misconfigured.' }, { status: 500 })
+    const supabase = createClient(supabaseUrl, serviceRoleKey)
     const token = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '')
     if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
 
