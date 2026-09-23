@@ -24,10 +24,12 @@
 
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !key) throw new Error('Supabase configuration is missing.')
+  return createClient(url, key)
+}
 
 function pickThree(arr) {
   return (arr || []).filter(Boolean).slice(0, 3)
@@ -77,7 +79,7 @@ export async function POST(request) {
       status: 401, headers: { 'Content-Type': 'application/json' },
     })
   }
-  const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+  const { data: { user }, error: authError } = await getSupabase().auth.getUser(token)
   if (authError || !user) {
     return new Response(JSON.stringify({ error: 'Not authenticated.' }), {
       status: 401, headers: { 'Content-Type': 'application/json' },
