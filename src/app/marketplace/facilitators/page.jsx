@@ -1,6 +1,8 @@
 import MarketplaceExperienceV3 from '@/components/MarketplaceExperienceV3'
 import { getMarketplaceRows, getMarketplaceCounts } from '@/lib/marketplace-data'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Facilitator Marketplace — Valoria Institute',
   description: 'Discover assessed Valoria facilitators aligned to PRIME-based capability development.',
