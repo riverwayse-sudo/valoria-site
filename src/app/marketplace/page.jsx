@@ -1,7 +1,8 @@
-import '@/styles/premium-marketplace.css'
 import MarketplaceExperienceV3 from '@/components/MarketplaceExperienceV3'
 import { redirect } from 'next/navigation'
 import { getMarketplaceRows, getMarketplaceCounts } from '@/lib/marketplace-data'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'Marketplace — Valoria Institute',
