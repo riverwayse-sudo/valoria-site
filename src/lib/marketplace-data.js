@@ -7,25 +7,40 @@ function normalizeTrack(value) {
   return v === 'talent' ? 'candidate' : v
 }
 
-export async function getMarketplaceRows(track = 'all') {
+function getClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) return []
+  if (!url || !key) return null
 
-  const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
-  const source = track === 'all' ? 'marketplace_professionals_general' : 'marketplace_professionals'
+  return createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: {
+      fetch(input, init = {}) {
+        return fetch(input, { ...init, cache: 'no-store' })
+      },
+    },
+  })
+}
+
+export async function getMarketplaceRows(track = 'all') {
+  const supabase = getClient()
+  if (!supabase) return []
+
+  // Both the overall marketplace and category pages read from the same
+  // authoritative capability projection. This prevents the category route
+  // from drifting behind the aggregate marketplace.
   const { data, error } = await supabase
-    .from(source)
+    .from('marketplace_professionals')
     .select(FIELDS)
     .order('valu_index', { ascending: false, nullsFirst: false })
     .order('full_name', { ascending: true })
 
   if (error) {
-    console.error(`Marketplace query failed (${source}):`, error)
+    console.error('Marketplace query failed:', error)
     return []
   }
 
-  return (data || []).map(row => {
+  const rows = (data || []).map(row => {
     const capabilities = [...new Set(
       (Array.isArray(row.capabilities) && row.capabilities.length ? row.capabilities : [row.capability, row.track])
         .map(normalizeTrack)
@@ -39,15 +54,18 @@ export async function getMarketplaceRows(track = 'all') {
       capabilities,
       tracks: capabilities,
     }
-  }).filter(row => track === 'all' || row.track === track)
+  })
+
+  // A category page must show every authoritative capability row for that
+  // category. The same professional may therefore appear in multiple
+  // capability categories, while remaining one professional identity.
+  return track === 'all' ? rows : rows.filter(row => row.track === normalizeTrack(track))
 }
 
 export async function getMarketplaceCounts() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
+  const supabase = getClient()
+  if (!supabase) return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
 
-  const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
   const { data, error } = await supabase
     .from('marketplace_professionals')
     .select('professional_id,track')
@@ -65,6 +83,7 @@ export async function getMarketplaceCounts() {
     all.add(row.professional_id)
     if (byTrack[track]) byTrack[track].add(row.professional_id)
   }
+
   return {
     all: all.size,
     candidate: byTrack.candidate.size,
