@@ -6,9 +6,19 @@ export default function robots() {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/dashboard', '/admin', '/profile/edit'],
+        disallow: [
+          '/api/',
+          '/admin',
+          '/dashboard',
+          '/profile/edit',
+          '/profile/settings',
+          '/login',
+          '/signup',
+          '/feedback',
+        ],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
+    host: SITE_URL,
   }
 }

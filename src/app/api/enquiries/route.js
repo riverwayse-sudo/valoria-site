@@ -7,10 +7,12 @@
 
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !key) throw new Error('Supabase configuration is missing.')
+  return createClient(url, key)
+}
 
 const BREVO_KEY = process.env.BREVO_API_KEY
 const FROM_EMAIL = 'info@valoriainstitute.com'
@@ -77,7 +79,7 @@ async function notifyProfessional({ professionalProfileId, enquiryType, atbId, b
   // In-app bell notification — goes in platform_notifications, the table
   // NotificationBell.jsx actually reads (see that file's fix note).
   const label = TYPE_LABELS[enquiryType] || 'Enquiry'
-  const { error: notifError } = await supabase.from('platform_notifications').insert([{
+  const { error: notifError } = await getSupabase().from('platform_notifications').insert([{
     user_id: professionalProfileId,
     type: 'enquiry',
     title: `New ${label.toLowerCase()}`,
@@ -88,7 +90,7 @@ async function notifyProfessional({ professionalProfileId, enquiryType, atbId, b
 
   if (!BREVO_KEY) return
   // The professional's email lives on auth.users, not professional_profiles.
-  const { data: userRow, error: userErr } = await supabase.auth.admin.getUserById(professionalProfileId)
+  const { data: userRow, error: userErr } = await getSupabase().auth.admin.getUserById(professionalProfileId)
   if (userErr || !userRow?.user?.email) {
     console.error('Enquiry professional email lookup failed:', userErr)
     return
@@ -142,7 +144,7 @@ export async function POST(request) {
     // until now. Keyed by IP, not email, since buyer_email is
     // self-reported and trivially spoofable per-request.
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || request.headers.get('x-real-ip') || 'unknown'
-    const { data: allowed, error: rateLimitError } = await supabase.rpc('check_rate_limit', {
+    const { data: allowed, error: rateLimitError } = await getSupabase().rpc('check_rate_limit', {
       p_key: `enquiry:${ip}`, p_max_count: 5, p_window_seconds: 3600,
     })
     if (rateLimitError) {
@@ -153,7 +155,7 @@ export async function POST(request) {
       return Response.json({ error: 'Too many requests from this connection — please try again later.' }, { status: 429 })
     }
 
-    const { error } = await supabase.from('enquiries').insert([{
+    const { error } = await getSupabase().from('enquiries').insert([{
       buyer_user_id: buyer_user_id || null,
       buyer_name: buyer_name.trim(),
       buyer_email: buyer_email.trim().toLowerCase(),

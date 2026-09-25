@@ -4,7 +4,12 @@ import { createClient } from '@supabase/supabase-js'
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY
-const admin = createClient(SB_URL, SERVICE)
+function getAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) throw new Error('Supabase service role configuration is missing.')
+  return createClient(SB_URL, SERVICE)
+}
 
 export async function POST(request) {
   if (!SERVICE || !SB_URL || !SB_ANON) {

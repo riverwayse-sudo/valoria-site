@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
+function getAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) throw new Error('Supabase service role configuration is missing.')
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
+}
 const BREVO_KEY = process.env.BREVO_API_KEY
 const FROM_EMAIL = process.env.BREVO_FROM_EMAIL || 'info@valoriainstitute.com'
 const FROM_NAME = process.env.BREVO_FROM_NAME || 'Valoria Institute'
@@ -54,7 +59,7 @@ export async function GET(request) {
 
   let sent = 0
   for (const row of rows || []) {
-    const { data: profile } = await admin.from('professional_profiles').select('profile_complete,assessment_completed_at').eq('id', row.user_id).maybeSingle()
+    const { data: profile } = await getAdmin().from('professional_profiles').select('profile_complete,assessment_completed_at').eq('id', row.user_id).maybeSingle()
     if (!profile || profile.profile_complete) continue
 
     // A linked professional can be in one of two incomplete states:
@@ -64,7 +69,7 @@ export async function GET(request) {
     const count = Number(row.reminder_count || 0)
     if (!dueForReminder(row.linked_at, count)) continue
 
-    const { data: userData } = await admin.auth.admin.getUserById(row.user_id)
+    const { data: userData } = await getAdmin().auth.getAdmin().getUserById(row.user_id)
     const email = userData?.user?.email
     if (!email) continue
     const firstName = String(row.name || 'there').trim().split(/\s+/)[0] || 'there'
@@ -73,7 +78,7 @@ export async function GET(request) {
     try {
       const send = await fetch('https://api.brevo.com/v3/smtp/email', { method:'POST', headers:{'api-key':BREVO_KEY,'Content-Type':'application/json'}, body:JSON.stringify({sender:{name:FROM_NAME,email:FROM_EMAIL},to:[{email,name:row.name}],subject:'Complete your VALU Index',htmlContent:html,tags:['valu-reminder','assessment-completion']}) })
       if (!send.ok) continue
-      await admin.from('taster_sessions').update({ reminder_count: count + 1, last_reminder_at: new Date().toISOString() }).eq('id', row.id)
+      await getAdmin().from('taster_sessions').update({ reminder_count: count + 1, last_reminder_at: new Date().toISOString() }).eq('id', row.id)
       sent += 1
     } catch {}
   }
@@ -115,14 +120,14 @@ export async function GET(request) {
     if (!profile.location) missing.push('your location')
     if (!profile.languages?.length) missing.push('your languages')
 
-    const { data: userData } = await admin.auth.admin.getUserById(profile.id)
+    const { data: userData } = await getAdmin().auth.getAdmin().getUserById(profile.id)
     const email = userData?.user?.email
     if (!email) continue
 
     try {
       const ok = await sendProfileReminder({ email, name: profile.display_name || userData.user.user_metadata?.display_name, missing })
       if (!ok) continue
-      await admin.from('valu_assessments').update({ profile_reminder_sent_at: new Date().toISOString() }).eq('id', assessment.id)
+      await getAdmin().from('valu_assessments').update({ profile_reminder_sent_at: new Date().toISOString() }).eq('id', assessment.id)
       profileReminders += 1
     } catch {}
   }
