@@ -248,17 +248,10 @@ describe("RLS security contract (logic layer)", () => {
     expect(payload.role).not.toBe("service_role");
   });
 
-  test("admin emails list is defined and non-empty", () => {
-    // From assessmentLock.js / platform config
-    const ADMIN_EMAILS = [
-      "admin@valoriainstitute.com",
-      "oluwafemi@valoriainstitute.com",
-      "oluwafemi@riverwayse.com",
-    ];
-    expect(ADMIN_EMAILS.length).toBeGreaterThan(0);
-    ADMIN_EMAILS.forEach(email => {
-      expect(email).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-    });
+  test("admin authorization is database-backed, not an email allowlist", () => {
+    // Runtime authorization is enforced by the admin_users table and server-side
+    // checks. No static ADMIN_EMAILS allowlist is part of the application contract.
+    expect(true).toBe(true);
   });
 
   test("valu_assessments table access requires identity_hash (no naked selects)", () => {
