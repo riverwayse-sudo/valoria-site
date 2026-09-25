@@ -10,6 +10,6 @@ export const metadata = {
 }
 
 export default async function SpeakerMarketplacePage() {
-  const [initialRows, initialCounts] = await Promise.all([getMarketplaceRows('speaker'), getMarketplaceCounts()])
+  const [initialRows, initialCounts] = await Promise.all([getMarketplaceRows('all'), getMarketplaceCounts()])
   return <MarketplaceExperienceV3 forcedTrack="speaker" initialRows={initialRows} initialCounts={initialCounts} />
 }

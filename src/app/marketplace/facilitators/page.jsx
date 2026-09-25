@@ -10,6 +10,6 @@ export const metadata = {
 }
 
 export default async function FacilitatorMarketplacePage() {
-  const [initialRows, initialCounts] = await Promise.all([getMarketplaceRows('facilitator'), getMarketplaceCounts()])
+  const [initialRows, initialCounts] = await Promise.all([getMarketplaceRows('all'), getMarketplaceCounts()])
   return <MarketplaceExperienceV3 forcedTrack="facilitator" initialRows={initialRows} initialCounts={initialCounts} />
 }
