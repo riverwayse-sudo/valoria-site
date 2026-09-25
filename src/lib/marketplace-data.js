@@ -39,7 +39,7 @@ export async function getMarketplaceRows(track = 'all') {
       capabilities,
       tracks: capabilities,
     }
-  }).filter(row => track === 'all' || row.track === track)
+  }).filter(row => track === 'all' || row.capabilities.includes(normalizeTrack(track)))
 }
 
 export async function getMarketplaceCounts() {
