@@ -1,5 +1,7 @@
 import MarketplaceExperienceV3 from '@/components/MarketplaceExperienceV3'
 import { redirect } from 'next/navigation'
+
+// Keep canonical track redirects server-side so the root marketplace route remains deterministic.
 import { getMarketplaceRows, getMarketplaceCounts } from '@/lib/marketplace-data'
 
 export const dynamic = 'force-dynamic'
