@@ -54,7 +54,7 @@ export default function MarketplaceExperienceV3({ forcedTrack='all', initialRows
   const results=useMemo(() => {
     const q=query.trim().toLowerCase()
     return rows.filter(p => {
-      if(track !== 'all' && !['candidate','speaker','facilitator'].includes(track)) return false
+      if(track !== 'all' && !getCapabilityTracks(p).includes(track)) return false
       const tags=[...(p.skills||[]),...(p.topics||[]),...(p.programme_types||[])]
       const text=['atb_id','full_name','headline','bio','industry'].some(k=>String(p[k]||'').toLowerCase().includes(q)) || tags.some(t=>String(t).toLowerCase().includes(q))
       if(q && !text) return false
@@ -85,7 +85,7 @@ export default function MarketplaceExperienceV3({ forcedTrack='all', initialRows
       <div style={S.eyebrow}>THE AFRICAN TALENT BUREAU</div>
       <h1 style={S.h1}>{track==='all'?<>Find capability. <em>Engage confidently.</em></>:<>{TRACKS[track].label} <em>on Valoria.</em></>}</h1>
       <p style={S.heroCopy}>{TRACKS[track].intro} Each listing is connected to a professional identity and the VALU/PRIME standard.</p>
-      <nav style={S.routes} aria-label="Marketplace categories">{ROUTES.map(([id,href])=><Link key={id} href={href} style={{...S.route,...(track===id?S.routeActive:{})}}>{TRACKS[id].short}<span>{initialCounts?.all ?? counts.all}</span></Link>)}</nav>
+      <nav style={S.routes} aria-label="Marketplace categories">{ROUTES.map(([id,href])=><Link key={id} href={href} style={{...S.route,...(track===id?S.routeActive:{})}}>{TRACKS[id].short}<span>{counts[id]}</span></Link>)}</nav>
     </div></section>
     <section style={S.toolbar} className="marketplace-toolbar">
       <div style={S.searchWrap} className="marketplace-search"><span style={S.searchIcon}>⌕</span><input aria-label="Search professionals" style={S.search} placeholder="Search by profile ID, skill, industry or topic…" value={query} onChange={e=>setQuery(e.target.value)}/></div>
