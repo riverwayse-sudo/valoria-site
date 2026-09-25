@@ -1,15 +1,5 @@
-import MarketplaceExperienceV3 from '@/components/MarketplaceExperienceV3'
+import MarketplaceDirectory from '@/components/MarketplaceDirectory'
 import { getMarketplaceRows, getMarketplaceCounts } from '@/lib/marketplace-data'
-
-export const dynamic = 'force-dynamic'
-
-export const metadata = {
-  title: 'Speaker Marketplace — Valoria Institute',
-  description: 'Discover assessed Valoria speakers across expertise, perspective and professional capability.',
-  alternates: { canonical: '/marketplace/speakers' },
-}
-
-export default async function SpeakerMarketplacePage() {
-  const [initialRows, initialCounts] = await Promise.all([getMarketplaceRows('speaker'), getMarketplaceCounts()])
-  return <MarketplaceExperienceV3 forcedTrack="speaker" initialRows={initialRows} initialCounts={initialCounts} />
-}
+export const dynamic='force-dynamic'
+export const metadata={title:'Speaker Marketplace — Valoria Institute',description:'Discover assessed Valoria speakers.'}
+export default async function Page(){const [rows,counts]=await Promise.all([getMarketplaceRows('speaker'),getMarketplaceCounts()]);return <MarketplaceDirectory rows={rows} counts={counts} activeTrack="speaker"/>}
