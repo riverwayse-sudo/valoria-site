@@ -54,7 +54,7 @@ export default function MarketplaceExperienceV3({ forcedTrack='all', initialRows
   const results=useMemo(() => {
     const q=query.trim().toLowerCase()
     return rows.filter(p => {
-      if(track !== 'all' && !getCapabilityTracks(p).includes(track)) return false
+      if(track !== 'all' && track !== 'candidate' && !getCapabilityTracks(p).includes(track)) return false
       const tags=[...(p.skills||[]),...(p.topics||[]),...(p.programme_types||[])]
       const text=['atb_id','full_name','headline','bio','industry'].some(k=>String(p[k]||'').toLowerCase().includes(q)) || tags.some(t=>String(t).toLowerCase().includes(q))
       if(q && !text) return false
