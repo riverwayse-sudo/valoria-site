@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
 const FIELDS = 'professional_id,full_name,bio,location,languages,headline,capability,track,capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,designation,fee_range,salary_expectation,availability_status,listing_status,eligible_for_listing,listed_at'
+const SOURCE = 'marketplace_public_roster'
 
 function normalizeTrack(value) {
   const v = String(value || '').toLowerCase()
@@ -13,15 +14,14 @@ export async function getMarketplaceRows(track = 'all') {
   if (!url || !key) return []
 
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
-  const source = track === 'all' ? 'marketplace_professionals_general' : 'marketplace_professionals'
   const { data, error } = await supabase
-    .from(source)
+    .from(SOURCE)
     .select(FIELDS)
     .order('valu_index', { ascending: false, nullsFirst: false })
     .order('full_name', { ascending: true })
 
   if (error) {
-    console.error(`Marketplace query failed (${source}):`, error)
+    console.error('Marketplace query failed:', error)
     return []
   }
 
@@ -31,11 +31,10 @@ export async function getMarketplaceRows(track = 'all') {
         .map(normalizeTrack)
         .filter(Boolean)
     )]
-    const rowTrack = normalizeTrack(row.track || row.capability || capabilities[0])
     return {
       ...row,
       id: row.professional_id,
-      track: rowTrack,
+      track: normalizeTrack(row.track || row.capability || capabilities[0]),
       capabilities,
       tracks: capabilities,
     }
@@ -49,8 +48,8 @@ export async function getMarketplaceCounts() {
 
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
   const { data, error } = await supabase
-    .from('marketplace_professionals')
-    .select('professional_id,track')
+    .from(SOURCE)
+    .select('professional_id,capabilities')
 
   if (error) {
     console.error('Marketplace count query failed:', error)
@@ -59,12 +58,15 @@ export async function getMarketplaceCounts() {
 
   const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
   const all = new Set()
+
   for (const row of data || []) {
-    const track = normalizeTrack(row.track)
     if (!row.professional_id) continue
     all.add(row.professional_id)
-    if (byTrack[track]) byTrack[track].add(row.professional_id)
+    for (const capability of new Set((row.capabilities || []).map(normalizeTrack))) {
+      if (byTrack[capability]) byTrack[capability].add(row.professional_id)
+    }
   }
+
   return {
     all: all.size,
     candidate: byTrack.candidate.size,
