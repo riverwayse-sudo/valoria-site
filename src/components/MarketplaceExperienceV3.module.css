@@ -1,0 +1,31 @@
+.root :global(.marketplace-header) { padding: 0 32px; }
+.root :global(.marketplace-header img) { display: block; }
+.root :global(.marketplace-hero-inner) { max-width: 1180px; margin: 0 auto; }
+.root :global(.marketplace-toolbar) { max-width: 1180px; margin: 0 auto; }
+.root :global(.marketplace-toolbar input:focus) { border-color: #C9A84C !important; box-shadow: 0 0 0 3px rgba(201,168,76,.08); }
+.root :global(.marketplace-workspace) { max-width: 1180px; margin: 0 auto; }
+.root :global(.marketplace-results-grid) { display: grid; grid-template-columns: repeat(auto-fill,minmax(290px,1fr)); gap: 16px; }
+.root :global(.marketplace-capability-card:hover > .marketplace-card-accent) { transform: scaleX(1); }
+.root :global(.marketplace-mobile-filter-btn) { display: none; }
+.root :global(.marketplace-compare-bar) { position: fixed; left: 20px; right: 20px; bottom: 20px; z-index: 40; }
+.root :global(.marketplace-compare-names) { display: flex; gap: 6px; flex: 1; overflow: hidden; }
+.root :global(.marketplace-compare-grid) { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 22px 0; }
+
+@media (max-width: 760px) {
+  .root :global(.marketplace-header) { padding: 0 16px !important; }
+  .root :global(.marketplace-header img) { height: 36px !important; width: 165px !important; object-fit: contain; object-position: left center; }
+  .root :global(.marketplace-hero-inner) { padding: 52px 20px 30px !important; }
+  .root :global(.marketplace-hero-inner h1) { font-size: clamp(38px,12vw,58px) !important; }
+  .root :global(.marketplace-toolbar) { padding: 14px 16px !important; flex-wrap: wrap; }
+  .root :global(.marketplace-search) { flex-basis: 100%; }
+  .root :global(.marketplace-mobile-filter-btn) { display: block !important; background: transparent; color: #F7F4EE; border: 1px solid rgba(201,168,76,.3); padding: 10px 13px; border-radius: 999px; font-family: inherit; font-size: 10px; }
+  .root :global(.marketplace-toolbar > label) { margin-left: auto; }
+  .root :global(.marketplace-workspace) { display: block !important; }
+  .root :global(.marketplace-filters) { display: none; }
+  .root :global(.marketplace-results) { padding: 28px 16px !important; }
+  .root :global(.marketplace-results-head) { align-items: flex-start !important; flex-direction: column; }
+  .root :global(.marketplace-results-grid) { grid-template-columns: 1fr !important; }
+  .root :global(.marketplace-compare-bar) { left: 10px !important; right: 10px !important; bottom: 10px !important; flex-wrap: wrap; }
+  .root :global(.marketplace-compare-names) { order: 3; flex-basis: 100%; }
+  .root :global(.marketplace-compare-grid) { grid-template-columns: 1fr !important; }
+}
