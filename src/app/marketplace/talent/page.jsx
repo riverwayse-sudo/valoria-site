@@ -10,6 +10,9 @@ export const metadata = {
 }
 
 export default async function TalentMarketplacePage() {
-  const [initialRows, initialCounts] = await Promise.all([getMarketplaceRows('all'), getMarketplaceCounts()])
+  // Track pages receive their canonical track rows from the server.
+  // Counts remain sourced from the authoritative general roster so the
+  // navigation and result totals cannot drift from the marketplace root.
+  const [initialRows, initialCounts] = await Promise.all([getMarketplaceRows('candidate'), getMarketplaceCounts()])
   return <MarketplaceExperienceV3 forcedTrack="candidate" initialRows={initialRows} initialCounts={initialCounts} />
 }
