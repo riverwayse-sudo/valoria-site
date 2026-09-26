@@ -33,7 +33,7 @@ export async function generateMetadata({ params }) {
         title: `${name} | Valoria Institute`,
         description: profile.bio?.slice(0, 160) || `${name} on Valoria Institute.`,
         url: `/profile/${id}`,
-        images: profile.photo_url ? [{ url: profile.photo_url }] : [{ url: '/valoria-original.png?v=20260921' }],
+        images: profile.photo_url ? [{ url: profile.photo_url }] : [{ url: '/logo.png?v=20260921' }],
       },
       robots: { index: true, follow: true },
     }
