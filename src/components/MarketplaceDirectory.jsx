@@ -66,18 +66,30 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
   </main>
 }
 
+function labelValues(value) {
+  if (!Array.isArray(value)) return []
+  return [...new Set(value.map(item => {
+    if (typeof item === 'string') return item.trim()
+    if (!item || typeof item !== 'object') return ''
+    return String(item.label ?? item.name ?? item.skill_name ?? item.title ?? item.value ?? '').trim()
+  }).filter(Boolean))]
+}
+
 function Profile({p}) {
   const initials=p.display_initials || String(p.full_name||'V').split(' ').map(x=>x[0]).slice(0,2).join('')
   const caps=[...(p.capabilities||p.tracks||[p.track])].map(normalize).filter(Boolean)
+  const skillTags=labelValues(p.skills)
+  const topicTags=labelValues(p.topics)
+  const tags=skillTags.length ? skillTags : topicTags.length ? topicTags : caps.map(c=>c==='candidate'?'TALENT':c.toUpperCase())
   return <article className={styles.card}>
     <div className={styles.identity}>
       <div className={styles.avatar}>{p.photo_url ? <img src={p.photo_url} alt="" /> : initials}</div>
       <div><small>PROFILE ID</small><strong>{p.atb_id || p.professional_id || 'UNASSIGNED'}</strong><em>✓ VALORIA ASSESSED</em></div>
-      {p.valu_index != null && <div className={styles.valu}><small>VALU</small><b>{p.valu_index}</b></div>}
+      {p.valu_index != null && <div className={styles.valu}><small>VALU</small><b>{p.valu_index}</b><span>/100</span></div>}
     </div>
     <h3>{p.headline || p.designation || 'Valoria Professional'}</h3>
     {p.location && <p className={styles.location}>{p.location}</p>}
-    <div className={styles.capabilities}>{caps.map(c=><span key={c}>{c==='candidate'?'TALENT':c.toUpperCase()}</span>)}</div>
+    {tags.length > 0 && <div className={styles.capabilities}>{tags.map(tag=><span key={tag}>{tag}</span>)}</div>}
     {p.bio && <p className={styles.bio}>{p.bio.length>155 ? p.bio.slice(0,155)+'…' : p.bio}</p>}
     <Link href={`/profile/${p.id}`} className={styles.view}>VIEW PROFILE →</Link>
   </article>
