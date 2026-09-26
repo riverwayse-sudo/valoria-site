@@ -108,7 +108,7 @@ export default function Nav() {
     `}</style>
 
     <nav className={`vi-nav${scrolled ? ' scrolled' : ''}`} aria-label="Primary navigation">
-      <Link href="/" className="nav-logo" aria-label="Valoria Institute home"><img src="/valoria-original.png" alt="Valoria Institute" /></Link>
+      <Link href="/" className="nav-logo" aria-label="Valoria Institute home"><img src="/logo.png" alt="Valoria Institute" /></Link>
 
       <ul className="nav-links" role="list">
         {NAVIGATION.primary.map((item) => item.groups ? (
