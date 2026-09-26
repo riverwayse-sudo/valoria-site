@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
+function getAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !serviceRoleKey) throw new Error('Supabase server configuration is missing.')
+  return createClient(url, serviceRoleKey)
+}
 const BREVO_KEY = process.env.BREVO_API_KEY
 const FROM_EMAIL = process.env.BREVO_FROM_EMAIL || 'info@valoriainstitute.com'
 const FROM_NAME = process.env.BREVO_FROM_NAME || 'Valoria Institute'
@@ -39,6 +44,7 @@ async function sendProfileReminder({ email, name, missing }) {
 }
 
 export async function GET(request) {
+  const admin = getAdminClient()
   const auth = request.headers.get('authorization') || ''
   if (!process.env.CRON_SECRET || auth !== `Bearer ${process.env.CRON_SECRET}`) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!BREVO_KEY) return NextResponse.json({ ok: false, sent: 0, error: 'BREVO_API_KEY not configured.' }, { status: 501 })
