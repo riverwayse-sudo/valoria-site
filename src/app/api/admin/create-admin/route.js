@@ -13,12 +13,15 @@
 
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-)
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) throw new Error('Supabase service role configuration is missing.')
+  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+}
 
 export async function GET(request) {
+  const supabase = getSupabase()
   const authHeader = request.headers.get('authorization') || ''
   const token = authHeader.replace(/^Bearer\s+/i, '')
   if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
@@ -39,6 +42,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+  const supabase = getSupabase()
   try {
     const authHeader = request.headers.get('authorization') || ''
     const token = authHeader.replace(/^Bearer\s+/i, '')
