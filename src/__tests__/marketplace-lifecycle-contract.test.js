@@ -5,14 +5,29 @@ const root = process.cwd()
 const read = file => fs.readFileSync(path.join(root, file), 'utf8')
 
 describe('VALUI marketplace lifecycle contract', () => {
-  test('marketplace root renders the canonical directory directly', () => {
-    const source = read('src/app/marketplace/page.jsx')
-    expect(source).toContain("import MarketplaceDirectory from '@/components/MarketplaceDirectory'")
-    expect(source).toContain("getMarketplaceRows('all')")
-    expect(source).toContain('getMarketplaceCounts()')
-    expect(source).toContain('activeTrack="all"')
-    expect(source).not.toContain("import { redirect } from 'next/navigation'")
-    expect(source).not.toContain('redirect(CANONICAL[forcedTrack])')
+  test('marketplace has one canonical entry route and three clean capability routes', () => {
+    const rootSource = read('src/app/marketplace/page.jsx')
+    const trackSource = read('src/app/marketplace/[track]/page.jsx')
+
+    expect(rootSource).toContain("import { redirect } from 'next/navigation'")
+    expect(rootSource).toContain("redirect('/marketplace/talent')")
+    expect(trackSource).toContain("const TRACKS = {")
+    expect(trackSource).toContain("talent:")
+    expect(trackSource).toContain("speakers:")
+    expect(trackSource).toContain("facilitators:")
+    expect(trackSource).toContain("getMarketplaceRows")
+    expect(trackSource).toContain("getMarketplaceCounts")
+    expect(trackSource).toContain("notFound()")
+  })
+
+  test('marketplace data is professional-first and deduplicates capabilities', () => {
+    const source = read('src/lib/marketplace-data.js')
+    expect(source).toContain("professional_id")
+    expect(source).toContain("new Set")
+    expect(source).toContain("all: all.size")
+    expect(source).toContain("candidate: byTrack.candidate.size")
+    expect(source).toContain("speaker: byTrack.speaker.size")
+    expect(source).toContain("facilitator: byTrack.facilitator.size")
   })
 
   test('profile onboarding does not submit platform-owned governance fields', () => {
@@ -42,7 +57,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     const source = read('src/app/api/link-assessment/route.js')
     expect(source).toContain('userClient.auth.getUser()')
     expect(source).toContain('assessment.email')
-    expect(source).toMatch(/admin\s*\.from\(['"]valu_assessments['"]\)/)
+    expect(source).toContain("admin.from('valu_assessments')")
     expect(source).toContain(".update({ user_id: user.id })")
   })
 
