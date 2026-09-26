@@ -77,23 +77,29 @@ function labelValues(value) {
 }
 
 function Profile({p}) {
-  const initials=displayText(p.display_initials) || displayText(p.full_name || 'V').split(' ').map(x=>x[0]).slice(0,2).join('')
+  const name = displayText(p.full_name || 'Valoria Professional')
+  const initials = displayText(p.display_initials) || name.split(' ').map(x=>x[0]).slice(0,2).join('')
   const caps=[...(p.capabilities||p.tracks||[p.track])].map(normalize).filter(Boolean)
+  const capabilityLabels = [...new Set(caps.map(c => c === 'candidate' ? 'TALENT' : c === 'speaker' ? 'SPEAKER' : c === 'facilitator' ? 'FACILITATOR' : c.toUpperCase()))]
   const skillTags=labelValues(p.skills)
   const topicTags=labelValues(p.topics)
-  const tags=skillTags.length ? skillTags : topicTags.length ? topicTags : caps.map(c=>c==='candidate'?'TALENT':c.toUpperCase())
+  const tags=capabilityLabels.length ? capabilityLabels : skillTags.length ? skillTags : topicTags
   const headline=displayText(p.headline || p.designation || 'Valoria Professional')
   const bio=displayText(p.bio)
   return <article className={styles.card}>
     <div className={styles.identity}>
       <div className={styles.avatar}>{p.photo_url ? <img src={p.photo_url} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" /> : initials}</div>
-      <div><small>PROFILE ID</small><strong>{displayText(p.atb_id || p.professional_id || 'UNASSIGNED')}</strong><em>✓ VALORIA ASSESSED</em></div>
+      <div>
+        <small>PROFILE ID</small>
+        <strong>{displayText(p.atb_id || p.professional_id || 'UNASSIGNED')}</strong>
+        <em>✓ VALORIA ASSESSED</em>
+      </div>
       {p.valu_index != null && <div className={styles.valu}><small>VALU</small><b>{p.valu_index}</b><span>/100</span></div>}
     </div>
-    <h3>{headline}</h3>
-    {p.location && <p className={styles.location}>{displayText(p.location)}</p>}
+    <h3>{name}</h3>
+    <p className={styles.career}>{headline}</p>
     {tags.length > 0 && <div className={styles.capabilities}>{tags.map(tag=><span key={tag}>{displayText(tag)}</span>)}</div>}
-    {bio && <p className={styles.bio}>{bio.length>155 ? bio.slice(0,155)+'…' : bio}</p>}
+    {bio && <p className={styles.bio}>{bio.length>220 ? bio.slice(0,220)+'…' : bio}</p>}
     <Link href={`/profile/${p.id}`} className={styles.view}>VIEW PROFILE →</Link>
   </article>
 }
