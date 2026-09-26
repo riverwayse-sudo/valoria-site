@@ -60,7 +60,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     const source = read('src/app/api/link-assessment/route.js')
     expect(source).toContain('userClient.auth.getUser()')
     expect(source).toContain('assessment.email')
-    expect(source).toContain("admin.from('valu_assessments')")
+    expect(source).toMatch(/admin\s*\.from\(['"]valu_assessments['"]\)/)
     expect(source).toContain(".update({ user_id: user.id })")
   })
 
