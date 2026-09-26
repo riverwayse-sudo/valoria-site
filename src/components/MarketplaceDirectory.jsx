@@ -77,8 +77,7 @@ function labelValues(value) {
 }
 
 function Profile({p}) {
-  const name = displayText(p.full_name || 'Valoria Professional')
-  const initials = displayText(p.display_initials) || name.split(' ').map(x=>x[0]).slice(0,2).join('')
+  const initials = displayText(p.display_initials) || 'V'
   const caps=[...(p.capabilities||p.tracks||[p.track])].map(normalize).filter(Boolean)
   const capabilityLabels = [...new Set(caps.map(c => c === 'candidate' ? 'TALENT' : c === 'speaker' ? 'SPEAKER' : c === 'facilitator' ? 'FACILITATOR' : c.toUpperCase()))]
   const skillTags=labelValues(p.skills)
@@ -96,7 +95,6 @@ function Profile({p}) {
       </div>
       {p.valu_index != null && <div className={styles.valu}><small>VALU</small><b>{p.valu_index}</b><span>/100</span></div>}
     </div>
-    <h3>{name}</h3>
     <p className={styles.career}>{headline}</p>
     {tags.length > 0 && <div className={styles.capabilities}>{tags.map(tag=><span key={tag}>{displayText(tag)}</span>)}</div>}
     {bio && <p className={styles.bio}>{bio.length>220 ? bio.slice(0,220)+'…' : bio}</p>}
