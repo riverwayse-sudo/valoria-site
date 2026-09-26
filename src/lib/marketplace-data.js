@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-const FIELDS = 'professional_id,full_name,bio,location,languages,headline,capability,track,capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,designation,fee_range,salary_expectation,availability_status'
+const FIELDS = 'professional_id,full_name,bio,location,languages,headline,current_job_title,capability,track,capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,designation,fee_range,salary_expectation,availability_status'
 const SOURCE = 'marketplace_public_roster'
 
 function normalizeTrack(value) {
