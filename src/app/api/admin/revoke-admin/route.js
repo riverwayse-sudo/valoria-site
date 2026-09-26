@@ -21,6 +21,7 @@ function getAdminClient() {
 
 export async function POST(request) {
   try {
+    const supabase = getAdminClient()
     const authHeader = request.headers.get('authorization') || ''
     const token = authHeader.replace(/^Bearer\s+/i, '')
     if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
