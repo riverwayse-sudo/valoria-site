@@ -26,7 +26,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
       if(industry && displayText(p.industry) !== industry) return false
       if(!q) return true
-      return [p.atb_id,p.full_name,p.headline,p.bio,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
+      return [p.atb_id,p.headline,p.current_job_title,p.bio,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
     })
   },[rows,activeTrack,query,industry])
 
@@ -83,7 +83,7 @@ function Profile({p}) {
   const skillTags=labelValues(p.skills)
   const topicTags=labelValues(p.topics)
   const tags=capabilityLabels.length ? capabilityLabels : skillTags.length ? skillTags : topicTags
-  const headline=displayText(p.headline || p.designation || 'Valoria Professional')
+  const career=displayText(p.current_job_title || p.headline || p.designation || 'Valoria Professional')
   const bio=displayText(p.bio)
   return <article className={styles.card}>
     <div className={styles.identity}>
@@ -95,7 +95,7 @@ function Profile({p}) {
       </div>
       {p.valu_index != null && <div className={styles.valu}><small>VALU</small><b>{p.valu_index}</b><span>/100</span></div>}
     </div>
-    <p className={styles.career}>{headline}</p>
+    <p className={styles.career}>{career}</p>
     {tags.length > 0 && <div className={styles.capabilities}>{tags.map(tag=><span key={tag}>{displayText(tag)}</span>)}</div>}
     {bio && <p className={styles.bio}>{bio.length>220 ? bio.slice(0,220)+'…' : bio}</p>}
     <Link href={`/profile/${p.id}`} className={styles.view}>VIEW PROFILE →</Link>
