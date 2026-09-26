@@ -86,7 +86,7 @@ function Profile({p}) {
   const bio=displayText(p.bio)
   return <article className={styles.card}>
     <div className={styles.identity}>
-      <div className={styles.avatar}>{p.photo_url ? <img src={p.photo_url} alt="" /> : initials}</div>
+      <div className={styles.avatar}>{p.photo_url ? <img src={p.photo_url} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" /> : initials}</div>
       <div><small>PROFILE ID</small><strong>{displayText(p.atb_id || p.professional_id || 'UNASSIGNED')}</strong><em>✓ VALORIA ASSESSED</em></div>
       {p.valu_index != null && <div className={styles.valu}><small>VALU</small><b>{p.valu_index}</b><span>/100</span></div>}
     </div>
