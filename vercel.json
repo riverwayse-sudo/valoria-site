@@ -10,7 +10,7 @@
     },
     {
       "path": "/api/cron/event-registration-sync",
-      "schedule": "0,30 * * * *"
+      "schedule": "0 9 * * *"
     }
   ]
 }
