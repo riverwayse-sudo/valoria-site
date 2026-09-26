@@ -31,7 +31,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
 
   return <main className={styles.page}>
     <header className={styles.header}>
-      <Link href="/" className={styles.logo} aria-label="Valoria Institute"><img src="/valoria-original.png" alt="Valoria Institute" /></Link>
+      <Link href="/" className={styles.logo} aria-label="Valoria Institute"><img src="/logo.png" alt="Valoria Institute" /></Link>
       <div className={styles.headerTitle}>MARKETPLACE</div>
       <Link href="/dashboard" className={styles.dashboard}>DASHBOARD →</Link>
     </header>
