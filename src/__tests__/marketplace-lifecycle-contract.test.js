@@ -5,14 +5,16 @@ const root = process.cwd()
 const read = file => fs.readFileSync(path.join(root, file), 'utf8')
 
 describe('VALUI marketplace lifecycle contract', () => {
-  test('marketplace has one canonical entry route and three clean capability routes', () => {
+  test('marketplace has one canonical directory route and three clean capability routes', () => {
     const rootSource = read('src/app/marketplace/page.jsx')
     const talent = read('src/app/marketplace/talent/page.jsx')
     const speakers = read('src/app/marketplace/speakers/page.jsx')
     const facilitators = read('src/app/marketplace/facilitators/page.jsx')
 
-    expect(rootSource).toContain("import { redirect } from 'next/navigation'")
-    expect(rootSource).toContain("redirect('/marketplace/talent')")
+    expect(rootSource).toContain("import MarketplaceDirectory from '@/components/MarketplaceDirectory'")
+    expect(rootSource).toContain("getMarketplaceRows('all')")
+    expect(rootSource).toContain('getMarketplaceCounts')
+    expect(rootSource).toContain('activeTrack="all"')
 
     for (const source of [talent, speakers, facilitators]) {
       expect(source).toContain("import MarketplaceDirectory from '@/components/MarketplaceDirectory'")
@@ -27,18 +29,18 @@ describe('VALUI marketplace lifecycle contract', () => {
 
   test('marketplace data is professional-first and deduplicates capabilities', () => {
     const source = read('src/lib/marketplace-data.js')
-    expect(source).toContain("professional_id")
-    expect(source).toContain("new Set")
-    expect(source).toContain("all: all.size")
-    expect(source).toContain("candidate: byTrack.candidate.size")
-    expect(source).toContain("speaker: byTrack.speaker.size")
-    expect(source).toContain("facilitator: byTrack.facilitator.size")
+    expect(source).toContain('professional_id')
+    expect(source).toContain('new Set')
+    expect(source).toContain('all: all.size')
+    expect(source).toContain('candidate: byTrack.candidate.size')
+    expect(source).toContain('speaker: byTrack.speaker.size')
+    expect(source).toContain('facilitator: byTrack.facilitator.size')
   })
 
   test('profile onboarding does not submit platform-owned governance fields', () => {
     const source = read('src/app/profile/setup/page.jsx')
     const start = source.indexOf('async function saveProgress')
-    const end = source.indexOf('  // Mirrors the assessment\'s pattern', start)
+    const end = source.indexOf("  // Mirrors the assessment's pattern", start)
     const saveBlock = source.slice(start, end)
     expect(saveBlock).toBeTruthy()
     expect(saveBlock).not.toContain('existingListingStatusRef')
@@ -63,7 +65,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('userClient.auth.getUser()')
     expect(source).toContain('assessment.email')
     expect(source).toMatch(/admin\s*\.from\(['"]valu_assessments['"]\)/)
-    expect(source).toContain(".update({ user_id: user.id })")
+    expect(source).toContain('.update({ user_id: user.id })')
   })
 
   test('email confirmation preserves the pending taster handoff', () => {
