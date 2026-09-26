@@ -62,7 +62,7 @@ export default function NotFound() {
       </div>
 
       <Link href="/" style={{ lineHeight: 0, marginTop: '60px', opacity: 0.4 }}>
-        <img src="/valoria-original.png" alt="Valoria Institute" style={{ height: '32px', width: 'auto' }} />
+        <img src="/logo.png" alt="Valoria Institute" style={{ height: '32px', width: 'auto' }} />
       </Link>
     </div>
   )
