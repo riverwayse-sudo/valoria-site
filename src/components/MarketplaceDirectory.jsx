@@ -48,7 +48,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     </section>
 
     <section className={styles.marketplaceControls}>
-      <div className={styles.marketplaceContainerControl}>
+      <div className={styles.marketplaceControlsContainer}>
         <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search professionals, skills or industries…" aria-label="Search marketplace"/>
         <select value={industry} onChange={e=>setIndustry(e.target.value)} aria-label="Filter by industry">
           <option value="">All industries</option>
