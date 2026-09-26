@@ -12,20 +12,21 @@ const TRACKS = [
 ]
 
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
+const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
 
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
   const [query,setQuery] = useState('')
   const [industry,setIndustry] = useState('')
-  const industries = useMemo(() => [...new Set(rows.map(r=>r.industry).filter(Boolean))].sort(), [rows])
+  const industries = useMemo(() => [...new Set(rows.map(r=>displayText(r.industry)).filter(Boolean))].sort(), [rows])
 
   const results = useMemo(() => {
     const q=query.trim().toLowerCase()
     return rows.filter(p => {
       const caps=[...(p.capabilities || p.tracks || [p.track])].map(normalize)
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
-      if(industry && p.industry !== industry) return false
+      if(industry && displayText(p.industry) !== industry) return false
       if(!q) return true
-      return [p.atb_id,p.full_name,p.headline,p.bio,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>String(v||'').toLowerCase().includes(q))
+      return [p.atb_id,p.full_name,p.headline,p.bio,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
     })
   },[rows,activeTrack,query,industry])
 
@@ -69,28 +70,30 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
 function labelValues(value) {
   if (!Array.isArray(value)) return []
   return [...new Set(value.map(item => {
-    if (typeof item === 'string') return item.trim()
+    if (typeof item === 'string') return displayText(item)
     if (!item || typeof item !== 'object') return ''
-    return String(item.label ?? item.name ?? item.skill_name ?? item.title ?? item.value ?? '').trim()
+    return displayText(item.label ?? item.name ?? item.skill_name ?? item.title ?? item.value)
   }).filter(Boolean))]
 }
 
 function Profile({p}) {
-  const initials=p.display_initials || String(p.full_name||'V').split(' ').map(x=>x[0]).slice(0,2).join('')
+  const initials=displayText(p.display_initials) || displayText(p.full_name || 'V').split(' ').map(x=>x[0]).slice(0,2).join('')
   const caps=[...(p.capabilities||p.tracks||[p.track])].map(normalize).filter(Boolean)
   const skillTags=labelValues(p.skills)
   const topicTags=labelValues(p.topics)
   const tags=skillTags.length ? skillTags : topicTags.length ? topicTags : caps.map(c=>c==='candidate'?'TALENT':c.toUpperCase())
+  const headline=displayText(p.headline || p.designation || 'Valoria Professional')
+  const bio=displayText(p.bio)
   return <article className={styles.card}>
     <div className={styles.identity}>
       <div className={styles.avatar}>{p.photo_url ? <img src={p.photo_url} alt="" /> : initials}</div>
-      <div><small>PROFILE ID</small><strong>{p.atb_id || p.professional_id || 'UNASSIGNED'}</strong><em>✓ VALORIA ASSESSED</em></div>
+      <div><small>PROFILE ID</small><strong>{displayText(p.atb_id || p.professional_id || 'UNASSIGNED')}</strong><em>✓ VALORIA ASSESSED</em></div>
       {p.valu_index != null && <div className={styles.valu}><small>VALU</small><b>{p.valu_index}</b><span>/100</span></div>}
     </div>
-    <h3>{p.headline || p.designation || 'Valoria Professional'}</h3>
-    {p.location && <p className={styles.location}>{p.location}</p>}
-    {tags.length > 0 && <div className={styles.capabilities}>{tags.map(tag=><span key={tag}>{tag}</span>)}</div>}
-    {p.bio && <p className={styles.bio}>{p.bio.length>155 ? p.bio.slice(0,155)+'…' : p.bio}</p>}
+    <h3>{headline}</h3>
+    {p.location && <p className={styles.location}>{displayText(p.location)}</p>}
+    {tags.length > 0 && <div className={styles.capabilities}>{tags.map(tag=><span key={tag}>{displayText(tag)}</span>)}</div>}
+    {bio && <p className={styles.bio}>{bio.length>155 ? bio.slice(0,155)+'…' : bio}</p>}
     <Link href={`/profile/${p.id}`} className={styles.view}>VIEW PROFILE →</Link>
   </article>
 }
