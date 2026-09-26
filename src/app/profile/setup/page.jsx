@@ -480,7 +480,7 @@ function ProfileSetupForm() {
 
       {/* NAV */}
       <header style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 clamp(20px,4vw,40px)', height:'60px', background:MID, borderBottom:`1px solid ${GLINE}` }}>
-        <Link href="/" style={{ lineHeight:0 }}><img src="/valoria-original.png" alt="Valoria" style={{ height:'36px', width:'auto' }} /></Link>
+        <Link href="/" style={{ lineHeight:0 }}><img src="/logo.png" alt="Valoria" style={{ height:'36px', width:'auto' }} /></Link>
         <div style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.14em', color:'rgba(201,168,76,.5)' }}>{screen.section?.toUpperCase()}</div>
         <button onClick={handleSaveExit} style={{ fontSize:'11px', color:DIM, background:'none', border:'none', cursor:'pointer', fontFamily:'inherit', letterSpacing:'.06em' }}>SAVE &amp; EXIT</button>
       </header>
