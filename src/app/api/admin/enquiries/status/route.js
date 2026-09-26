@@ -14,6 +14,7 @@ const ALLOWED_STATUSES = new Set(['pending', 'reviewing', 'introduced', 'decline
 
 export async function PATCH(request) {
   try {
+    const supabase = getAdminClient()
     const token = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '')
     if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
 
