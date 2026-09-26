@@ -5,19 +5,21 @@ const root = process.cwd()
 const read = file => fs.readFileSync(path.join(root, file), 'utf8')
 
 describe('VALUI marketplace lifecycle contract', () => {
-  test('marketplace has one canonical root and three capability routes', () => {
+  test('marketplace has one canonical entry route and three clean capability routes', () => {
     const rootSource = read('src/app/marketplace/page.jsx')
     const talent = read('src/app/marketplace/talent/page.jsx')
     const speakers = read('src/app/marketplace/speakers/page.jsx')
     const facilitators = read('src/app/marketplace/facilitators/page.jsx')
 
-    for (const source of [rootSource, talent, speakers, facilitators]) {
+    expect(rootSource).toContain("import { redirect } from 'next/navigation'")
+    expect(rootSource).toContain("redirect('/marketplace/talent')")
+
+    for (const source of [talent, speakers, facilitators]) {
       expect(source).toContain("import MarketplaceDirectory from '@/components/MarketplaceDirectory'")
       expect(source).toContain('getMarketplaceRows')
       expect(source).toContain('getMarketplaceCounts')
       expect(source).toContain('activeTrack=')
     }
-    expect(rootSource).toContain("getMarketplaceRows('all')")
     expect(talent).toContain("getMarketplaceRows('candidate')")
     expect(speakers).toContain("getMarketplaceRows('speaker')")
     expect(facilitators).toContain("getMarketplaceRows('facilitator')")
