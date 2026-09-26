@@ -5,10 +5,14 @@ const root = process.cwd()
 const read = file => fs.readFileSync(path.join(root, file), 'utf8')
 
 describe('VALUI marketplace lifecycle contract', () => {
-  test('marketplace canonical query route has a real redirect import', () => {
+  test('marketplace root renders the canonical directory directly', () => {
     const source = read('src/app/marketplace/page.jsx')
-    expect(source).toContain("import { redirect } from 'next/navigation'")
-    expect(source).toContain("redirect(CANONICAL[forcedTrack])")
+    expect(source).toContain("import MarketplaceDirectory from '@/components/MarketplaceDirectory'")
+    expect(source).toContain("getMarketplaceRows('all')")
+    expect(source).toContain('getMarketplaceCounts()')
+    expect(source).toContain('activeTrack="all"')
+    expect(source).not.toContain("import { redirect } from 'next/navigation'")
+    expect(source).not.toContain('redirect(CANONICAL[forcedTrack])')
   })
 
   test('profile onboarding does not submit platform-owned governance fields', () => {
