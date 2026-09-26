@@ -29,26 +29,26 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     })
   },[rows,activeTrack,query,industry])
 
-  return <main className={styles.page}>
-    <header className={styles.header}>
-      <Link href="/" className={styles.logo}>VALORIA <span>INSTITUTE</span></Link>
-      <div className={styles.headerTitle}>MARKETPLACE</div>
-      <Link href="/dashboard" className={styles.dashboard}>DASHBOARD →</Link>
+  return <main className={styles.marketplacePage}>
+    <header className={styles.marketplaceHeader}>
+      <Link href="/" className={styles.marketplaceLogo}>VALORIA <span>INSTITUTE</span></Link>
+      <div className={styles.marketplaceHeaderTitle}>MARKETPLACE</div>
+      <Link href="/dashboard" className={styles.marketplaceDashboard}>DASHBOARD →</Link>
     </header>
 
-    <section className={styles.hero}>
-      <div className={styles.container}>
-        <p className={styles.eyebrow}>THE AFRICAN TALENT BUREAU</p>
+    <section className={styles.marketplaceHero}>
+      <div className={styles.marketplaceContainer}>
+        <p className={styles.marketplaceEyebrow}>THE AFRICAN TALENT BUREAU</p>
         <h1>{activeTrack === 'all' ? <>Find capability.<br/><i>Engage confidently.</i></> : <>{TRACKS.find(t=>t[0]===activeTrack)?.[1]}<br/><i>on Valoria.</i></>}</h1>
-        <p className={styles.lede}>A curated directory of professionals who have completed the Valoria assessment and meet the Institute's marketplace requirements.</p>
-        <nav className={styles.tabs}>
-          {TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}
+        <p className={styles.marketplaceLede}>A curated directory of professionals who have completed the Valoria assessment and meet the Institute's marketplace requirements.</p>
+        <nav className={styles.marketplaceTabs}>
+          {TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.marketplaceActiveTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}
         </nav>
       </div>
     </section>
 
-    <section className={styles.controls}>
-      <div className={styles.containerControl}>
+    <section className={styles.marketplaceControls}>
+      <div className={styles.marketplaceContainerControl}>
         <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search professionals, skills or industries…" aria-label="Search marketplace"/>
         <select value={industry} onChange={e=>setIndustry(e.target.value)} aria-label="Filter by industry">
           <option value="">All industries</option>
@@ -58,14 +58,14 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       </div>
     </section>
 
-    <section className={styles.directory}>
-      <div className={styles.container}>
-        <div className={styles.directoryHead}>
-          <div><p className={styles.eyebrow}>VERIFIED DIRECTORY</p><h2>{results.length} {results.length===1?'professional':'professionals'}</h2></div>
+    <section className={styles.marketplaceDirectory}>
+      <div className={styles.marketplaceContainer}>
+        <div className={styles.marketplaceDirectoryHead}>
+          <div><p className={styles.marketplaceEyebrow}>VERIFIED DIRECTORY</p><h2>{results.length} {results.length===1?'professional':'professionals'}</h2></div>
           <span>VALU × PRIME</span>
         </div>
-        {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p}/>)}</div> :
-          <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
+        {results.length ? <div className={styles.marketplaceGrid}>{results.map(p=><Profile key={p.id} p={p}/>)}</div> :
+          <div className={styles.marketplaceEmpty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
       </div>
     </section>
   </main>
@@ -74,16 +74,16 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
 function Profile({p}) {
   const initials=p.display_initials || String(p.full_name||'V').split(' ').map(x=>x[0]).slice(0,2).join('')
   const caps=[...(p.capabilities||p.tracks||[p.track])].map(normalize).filter(Boolean)
-  return <article className={styles.card}>
-    <div className={styles.identity}>
-      <div className={styles.avatar}>{p.photo_url ? <img src={p.photo_url} alt="" /> : initials}</div>
+  return <article className={styles.marketplaceCard}>
+    <div className={styles.marketplaceIdentity}>
+      <div className={styles.marketplaceAvatar}>{p.photo_url ? <img src={p.photo_url} alt="" /> : initials}</div>
       <div><small>PROFILE ID</small><strong>{p.atb_id || p.professional_id || 'UNASSIGNED'}</strong><em>✓ VALORIA ASSESSED</em></div>
-      {p.valu_index != null && <div className={styles.valu}><small>VALU</small><b>{p.valu_index}</b></div>}
+      {p.valu_index != null && <div className={styles.marketplaceValu}><small>VALU</small><b>{p.valu_index}</b></div>}
     </div>
     <h3>{p.headline || p.designation || 'Valoria Professional'}</h3>
-    {p.location && <p className={styles.location}>{p.location}</p>}
-    <div className={styles.capabilities}>{caps.map(c=><span key={c}>{c==='candidate'?'TALENT':c.toUpperCase()}</span>)}</div>
-    {p.bio && <p className={styles.bio}>{p.bio.length>155 ? p.bio.slice(0,155)+'…' : p.bio}</p>}
-    <Link href={`/profile/${p.id}`} className={styles.view}>VIEW PROFILE →</Link>
+    {p.location && <p className={styles.marketplaceLocation}>{p.location}</p>}
+    <div className={styles.marketplaceCapabilities}>{caps.map(c=><span key={c}>{c==='candidate'?'TALENT':c.toUpperCase()}</span>)}</div>
+    {p.bio && <p className={styles.marketplaceBio}>{p.bio.length>155 ? p.bio.slice(0,155)+'…' : p.bio}</p>}
+    <Link href={`/profile/${p.id}`} className={styles.marketplaceView}>VIEW PROFILE →</Link>
   </article>
 }
