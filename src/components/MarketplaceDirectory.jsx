@@ -83,7 +83,7 @@ function Profile({p}) {
   const skillTags=labelValues(p.skills)
   const topicTags=labelValues(p.topics)
   const tags=capabilityLabels.length ? capabilityLabels : skillTags.length ? skillTags : topicTags
-  const career=displayText(p.current_job_title || p.headline || p.designation || 'Valoria Professional')
+  const career=displayText(p.headline || p.current_job_title || p.designation || 'Valoria Professional')
   const bio=displayText(p.bio)
   return <article className={styles.card}>
     <div className={styles.identity}>
