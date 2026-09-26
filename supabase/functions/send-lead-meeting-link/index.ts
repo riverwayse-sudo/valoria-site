@@ -6,7 +6,7 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ??
 const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY") ?? ""
 const FROM_EMAIL = Deno.env.get("BREVO_FROM_EMAIL") ?? "info@valoriainstitute.com"
 const FROM_NAME = Deno.env.get("BREVO_FROM_NAME") ?? "Valoria Institute"
-const LOGO_URL = "https://raw.githubusercontent.com/riverwayse-sudo/valoria-site/main/public/valoria-original.png"
+const LOGO_URL = "https://raw.githubusercontent.com/riverwayse-sudo/valoria-site/main/public/logo.png"
 const db = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, { auth:{autoRefreshToken:false,persistSession:false} })
 
 function delay(attempt:number){ return Math.min(Math.max(60,2 ** Math.min(attempt,10) * 30),21600) }
