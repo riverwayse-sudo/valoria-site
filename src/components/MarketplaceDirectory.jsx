@@ -1,84 +1,13 @@
-'use client'
-
-import Link from 'next/link'
-import { useMemo, useState } from 'react'
 import styles from './MarketplaceDirectory.module.css'
 
-const TRACKS = [
-  ['all','All', '/marketplace'],
-  ['candidate','Talent','/marketplace/talent'],
-  ['speaker','Speakers','/marketplace/speakers'],
-  ['facilitator','Facilitators','/marketplace/facilitators'],
-]
+const TRACKS = [['talent','Talent'],['speakers','Speakers'],['facilitators','Facilitators']]
 
-const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
-
-export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
-  const [query,setQuery] = useState('')
-  const [industry,setIndustry] = useState('')
-  const industries = useMemo(() => [...new Set(rows.map(r=>r.industry).filter(Boolean))].sort(), [rows])
-
-  const results = useMemo(() => {
-    const q=query.trim().toLowerCase()
-    return rows.filter(p => {
-      const caps=[...(p.capabilities || p.tracks || [p.track])].map(normalize)
-      if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
-      if(industry && p.industry !== industry) return false
-      if(!q) return true
-      return [p.atb_id,p.full_name,p.headline,p.bio,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>String(v||'').toLowerCase().includes(q))
-    })
-  },[rows,activeTrack,query,industry])
-
+export default function MarketplaceDirectory({ rows, counts, activeTrack }) {
+  const label = activeTrack === 'all' ? 'All Professionals' : TRACKS.find(([key]) => key === activeTrack)?.[1] || 'Marketplace'
+  const countKey = activeTrack === 'all' ? 'all' : activeTrack === 'talent' ? 'candidate' : activeTrack === 'speakers' ? 'speaker' : 'facilitator'
   return <main className={styles.page}>
-    <header className={styles.header}>
-      <Link href="/" className={styles.logo}>VALORIA <span>INSTITUTE</span></Link>
-      <div className={styles.headerTitle}>MARKETPLACE</div>
-      <Link href="/dashboard" className={styles.dashboard}>DASHBOARD →</Link>
-    </header>
-    <section className={styles.hero}>
-      <div className={styles.container}>
-        <p className={styles.eyebrow}>THE AFRICAN TALENT BUREAU</p>
-        <h1>{activeTrack === 'all' ? <>Find capability.<br/><i>Engage confidently.</i></> : <>{TRACKS.find(t=>t[0]===activeTrack)?.[1]}<br/><i>on Valoria.</i></>}</h1>
-        <p className={styles.lede}>A curated directory of professionals who have completed the Valoria assessment and meet the Institute's marketplace requirements.</p>
-        <nav className={styles.tabs}>{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
-      </div>
-    </section>
-    <section className={styles.controls}>
-      <div className={styles.containerControl}>
-        <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search professionals, skills or industries…" aria-label="Search marketplace"/>
-        <select value={industry} onChange={e=>setIndustry(e.target.value)} aria-label="Filter by industry">
-          <option value="">All industries</option>
-          {industries.map(v=><option key={v} value={v}>{v}</option>)}
-        </select>
-        {(query || industry) && <button onClick={()=>{setQuery('');setIndustry('')}}>CLEAR</button>}
-      </div>
-    </section>
-    <section className={styles.directory}>
-      <div className={styles.container}>
-        <div className={styles.directoryHead}>
-          <div><p className={styles.eyebrow}>VERIFIED DIRECTORY</p><h2>{results.length} {results.length===1?'professional':'professionals'}</h2></div>
-          <span>VALU × PRIME</span>
-        </div>
-        {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p}/>)}</div> :
-          <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
-      </div>
-    </section>
+    <section className={styles.hero}><div className={styles.eyebrow}>VALORIA INSTITUTE · MARKETPLACE</div><h1>{label}</h1><p>Verified professionals presented through one professional identity and their eligible capabilities.</p><div className={styles.stats}><span><strong>{counts?.[countKey] ?? 0}</strong> verified professionals</span><span>Talent · Speakers · Facilitators</span></div></section>
+    <nav className={styles.tabs} aria-label="Marketplace categories"><a href="/marketplace" className={activeTrack==='all'?styles.activeTab:''}>All</a>{TRACKS.map(([slug,name])=><a key={slug} href={`/marketplace/${slug}`} className={activeTrack===slug?styles.activeTab:''}>{name}</a>)}</nav>
+    <section className={styles.directory}>{rows.length===0?<div className={styles.empty}><h2>No verified professionals are currently listed.</h2><p>Listings appear after the required assessment and eligibility pathway is complete.</p></div>:<div className={styles.grid}>{rows.map(profile=><article key={profile.id} className={styles.card}><div className={styles.identity}>{profile.photo_url?<img src={profile.photo_url} alt="" className={styles.avatar}/>:<div className={styles.avatarFallback}>{profile.display_initials||profile.full_name?.slice(0,2)?.toUpperCase()||'VI'}</div>}<div><h2>{profile.full_name}</h2>{profile.headline&&<p className={styles.headline}>{profile.headline}</p>}{profile.location&&<p className={styles.meta}>{profile.location}</p>}</div></div>{profile.bio&&<p className={styles.bio}>{profile.bio}</p>}<div className={styles.capabilities}>{(profile.capabilities||[]).map(c=><span key={c}>{c==='candidate'?'Talent':c}</span>)}</div><a className={styles.profileLink} href={`/profile/${profile.id}`}>View professional profile →</a></article>)}</div>}</section>
   </main>
-}
-
-function Profile({p}) {
-  const initials=p.display_initials || String(p.full_name||'V').split(' ').map(x=>x[0]).slice(0,2).join('')
-  const caps=[...(p.capabilities||p.tracks||[p.track])].map(normalize).filter(Boolean)
-  return <article className={styles.card}>
-    <div className={styles.identity}>
-      <div className={styles.avatar}>{p.photo_url ? <img src={p.photo_url} alt="" /> : initials}</div>
-      <div><small>PROFILE ID</small><strong>{p.atb_id || p.professional_id || 'UNASSIGNED'}</strong><em>✓ VALORIA ASSESSED</em></div>
-      {p.valu_index != null && <div className={styles.valu}><small>VALU</small><b>{p.valu_index}</b></div>}
-    </div>
-    <h3>{p.headline || p.designation || 'Valoria Professional'}</h3>
-    {p.location && <p className={styles.location}>{p.location}</p>}
-    <div className={styles.capabilities}>{caps.map(c=><span key={c}>{c==='candidate'?'TALENT':c.toUpperCase()}</span>)}</div>
-    {p.bio && <p className={styles.bio}>{p.bio.length>155 ? p.bio.slice(0,155)+'…' : p.bio}</p>}
-    <Link href={`/profile/${p.id}`} className={styles.view}>VIEW PROFILE →</Link>
-  </article>
 }
