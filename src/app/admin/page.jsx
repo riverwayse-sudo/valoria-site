@@ -144,7 +144,7 @@ export default function AdminPage() {
 
       <header className="vi-admin-header" style={styles.header}>
         <div style={styles.brand}><Link href="/"><img src="/logo.png" alt="Valoria Institute" style={{height:40,width:'auto'}} /></Link><span style={styles.divider}/><span style={styles.adminLabel}>ADMIN</span></div>
-        <div style={styles.headerActions}><Link href="/admin/reconciliation" style={styles.navLink}>Reconciliation</Link><Link href="/admin/opportunities" style={styles.navLink}>Opportunities</Link><Link href="/admin/evidence" style={styles.navLink}>Evidence</Link><Link href="/admin/placement" style={styles.navLink}>Placement</Link><Link href="/admin/coaching" style={styles.navLink}>Coaching</Link><MarketplaceCTA style={styles.navLink}>Marketplace</MarketplaceCTA><button className="vi-admin-control" style={styles.signOut} onClick={() => supabase.auth.signOut().then(() => window.location.href='/')}>Sign Out</button></div>
+        <div style={styles.headerActions}><Link href="/admin/reconciliation" style={styles.navLink}>Reconciliation</Link><Link href="/admin/opportunities" style={styles.navLink}>Opportunities</Link><Link href="/admin/evidence" style={styles.navLink}>Evidence</Link><Link href="/admin/audit" style={styles.navLink}>Audit</Link><Link href="/admin/placement" style={styles.navLink}>Placement</Link><Link href="/admin/coaching" style={styles.navLink}>Coaching</Link><MarketplaceCTA style={styles.navLink}>Marketplace</MarketplaceCTA><button className="vi-admin-control" style={styles.signOut} onClick={() => supabase.auth.signOut().then(() => window.location.href='/')}>Sign Out</button></div>
       </header>
 
       <section className="vi-admin-page" style={styles.page}>
