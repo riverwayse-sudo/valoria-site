@@ -20,7 +20,7 @@ export async function GET(request){
   const {supabase,response}=await requireAdmin(request)
   if(response) return response
   const [journeyRes, assessmentRes, profileRes, capabilityRes] = await Promise.all([
-    supabase.from('professional_journey_directory').select('*').order('updated_at',{ascending:false}),
+    supabase.from('professional_journey').select('*').order('updated_at',{ascending:false}),
     supabase.from('valu_assessments').select('id,user_id,email,name,role,total_score,completed_at,assessment_version,scoring_version').not('completed_at','is',null).order('completed_at',{ascending:false}),
     supabase.from('professional_profiles').select('id,display_name,headline,profile_complete,active_tracks,photo_url,current_job_title,updated_at'),
     supabase.from('professional_capabilities').select('professional_id,capability,is_active,eligibility_status,eligible_for_listing,missing_requirements'),
