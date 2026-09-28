@@ -1,6 +1,6 @@
 'use client'
 
-<PARSED TEXT FOR PAGE: 1 / 47>
+
 import { useState, useEffect, useRef } from "react";
 const GOLD = "#C9A84C";
 const DARK = "#1A1A2E";
@@ -43,7 +43,7 @@ listing." },
 ];
 const EXPERIENCE_BANDS = [
  { id:"0-3", label:"0 – 3 years", desc:"Early career" },
-<PARSED TEXT FOR PAGE: 2 / 47>
+
  { id:"4-8", label:"4 – 8 years", desc:"Mid career" },
  { id:"9-15", label:"9 – 15 years", desc:"Senior" },
  { id:"15+", label:"15+ years", desc:"Executive / Director" },
@@ -88,7 +88,7 @@ what the decision looks like if the optimistic assumptions are wrong.", score:4}
  q:"When did you last genuinely change your mind about something important at 
 work — not just update a detail, but shift your position entirely? What caused it?",
  options:[
-<PARSED TEXT FOR PAGE: 3 / 47>
+
  {text:"I generally land in the right place from the start, so complete reversals are 
 rare.", score:1},
  {text:"I can think of something. Someone made a strong argument and I updated 
@@ -134,7 +134,7 @@ problem further down the line. What did you not see at the time?",
 example.", score:1},
  {text:"Something comes to mind. I focused on the immediate problem and did not 
 think far enough ahead.", score:2},
-<PARSED TEXT FOR PAGE: 4 / 47>
+
  {text:"I have a clear example. I optimised for the near term and did not trace the 
 downstream consequences.", score:3},
  {text:"I have a specific example with a clear analysis of the second-order 
@@ -181,7 +181,7 @@ workflow is the same.", score:2},
  {text:"I have deliberately redesigned parts of my workflow around AI — deciding 
 what to delegate and what to keep — and I have seen a real change in what I can 
 produce.", score:3},
-<PARSED TEXT FOR PAGE: 5 / 47>
+
  {text:"I have comprehensively redesigned how I work around the human-AI 
 boundary. I can name precisely which tasks I have moved to AI, what I have 
 protected as human, and how that has changed the nature and quality of my output.",
@@ -227,7 +227,7 @@ explained. What was your honest reaction?",
  {text:"Frustration — I had explained it clearly and they were not 
 following.",score:1},
  {text:"I tried again using simpler words.",score:2},
-<PARSED TEXT FOR PAGE: 6 / 47>
+
  {text:"I stopped and asked what specifically was unclear, then rebuilt from 
 there.",score:3},
  {text:"I treated it as a signal that my explanation was the problem, not their 
@@ -273,7 +273,7 @@ meant I did not recognise the moment I should have walked.",score:4},
 digital presence — describe what you stand for?",
  options:[
  {text:"They would see my job title and where I work, not much more.",score:1},
-<PARSED TEXT FOR PAGE: 7 / 47>
+
  {text:"They would get a general sense of my industry and some of what I 
 think.",score:2},
  {text:"They would have a clear picture of my expertise and the kind of 
@@ -320,7 +320,7 @@ moment, and decide later whether it needs addressing.",score:3},
  {text:"I notice it, name — internally — what triggered it, regulate before 
 responding, and make a deliberate choice about whether and how to address it based 
 on what is actually useful.",score:4},
-<PARSED TEXT FOR PAGE: 8 / 47>
+
  ]},
  { id:"R1b",cluster:"R",skill:"Emotional Intelligence",type:"situational",
  q:"A colleague who is usually high-performing has become visibly disengaged over 
@@ -367,7 +367,7 @@ conversation is starting to break down. You are not the most senior person in th
 room. What do you do?",
  options:[
  {text:"Stay quiet — it is not my place to intervene.",score:1},
-<PARSED TEXT FOR PAGE: 9 / 47>
+
  {text:"Try to redirect the conversation to the agenda to move things 
 forward.",score:2},
  {text:"Name what is happening — that the conversation has broken down — and 
@@ -413,7 +413,7 @@ approach this?",
 change.",score:1},
  {text:"Give them clearer direction and more structure to help them 
 succeed.",score:2},
-<PARSED TEXT FOR PAGE: 10 / 47>
+
  {text:"Have a conversation that starts with genuine curiosity about what is 
 happening for them — capability issues often have context that is not 
 visible.",score:3},
@@ -460,7 +460,7 @@ it.",score:3},
 changed for them, and work to understand whether the issue is about the project 
 itself, how it is being run, or something external that has shifted their 
 priorities.",score:4},
-<PARSED TEXT FOR PAGE: 11 / 47>
+
  ]},
  { id:"R4c",cluster:"R",skill:"Stakeholder Management",type:"reflective",
  q:"Tell me about a time a project you were leading stalled or failed because of a 
@@ -507,7 +507,7 @@ view of the risk they create — even though the case is already approved.",scor
 assumption, model the downside scenarios, and present a complete picture including 
 what the decision looks like if the optimistic assumptions are wrong.",score:4},
  ]},
-<PARSED TEXT FOR PAGE: 12 / 47>
+
  { id:"I1c",cluster:"I",skill:"Critical Thinking",type:"reflective",
  q:"When did you last genuinely change your mind about something important at 
 work — not just update a detail, but shift your position entirely? What caused it?",
@@ -552,7 +552,7 @@ alternatives are, and what I would recommend — and proactively find the decisi
  q:"Describe a decision you made that looked correct in the short term but created a 
 problem further down the line. What did you not see at the time?",
  options:[
-<PARSED TEXT FOR PAGE: 13 / 47>
+
  {text:"Most of my decisions hold up well over time — I cannot think of a clear 
 example.",score:1},
  {text:"Something comes to mind. I focused on the immediate problem and did not 
@@ -598,7 +598,7 @@ commercial impact. How did you think about it at the time?",
 functional area.",score:1},
  {text:"I can think of something. I made a call that saved costs or generated value, 
 though I did not formally model it.",score:2},
-<PARSED TEXT FOR PAGE: 14 / 47>
+
  {text:"I have a clear example where I thought through the commercial 
 implications deliberately before deciding.",score:3},
  {text:"I have a specific example where I built the commercial case, modelled the 
@@ -645,7 +645,7 @@ now?",
 developing real fluency.",score:1},
  {text:"I use AI tools and I am broadly aware of what they can do, but I would not 
 call myself genuinely fluent.",score:2},
-<PARSED TEXT FOR PAGE: 15 / 47>
+
  {text:"I have developed real working fluency — I know what AI can and cannot do 
 in my field, and I have redesigned meaningful parts of how I work around 
 it.",score:3},
@@ -690,7 +690,7 @@ handle it?",
  {text:"It was difficult. I explained what happened and apologised.",score:1},
  {text:"I acknowledged it, took responsibility, and focused on fixing the situation as 
 quickly as possible.",score:2},
-<PARSED TEXT FOR PAGE: 16 / 47>
+
  {text:"I took clear accountability — no deflection — fixed what I could, and had an 
 honest conversation about what happened and what I was changing to prevent 
 it.",score:3},
@@ -735,7 +735,7 @@ what did you actually do about it?",
 done.",score:1},
  {text:"I have felt it. I tried to manage by working smarter but mostly just pushed 
 through.",score:2},
-<PARSED TEXT FOR PAGE: 17 / 47>
+
  {text:"I have a clear example. I recognised the warning signs, made deliberate 
 changes to my load and my recovery, and learned something about my own limits 
 from it.",score:3},
@@ -782,7 +782,7 @@ What happened?",
  options:[
  {text:"I find mid-course changes genuinely disruptive — I do better with 
 stability.",score:1},
-<PARSED TEXT FOR PAGE: 18 / 47>
+
  {text:"I adapted, though it was frustrating. I wish there had been better 
 communication about the change.",score:2},
  {text:"I have a clear example. I processed the change quickly, adjusted my plan, 
@@ -829,7 +829,7 @@ approach from there.",score:4},
  q:"Tell me about an idea you originated, developed, and drove to implementation. 
 What happened?",
  options:[
-<PARSED TEXT FOR PAGE: 19 / 47>
+
  {text:"I have contributed to ideas in teams but I find it hard to point to something 
 that was mine from start to finish.",score:1},
  {text:"I have had ideas that were adopted, though I needed others to help drive 
@@ -876,7 +876,7 @@ outcome — that you had no formal authority to push. What did you actually do?"
 influence things outside my remit.",score:1},
  {text:"I can think of a time I pushed something forward. I made the case and 
 eventually people came around.",score:2},
-<PARSED TEXT FOR PAGE: 20 / 47>
+
  {text:"I have a clear example. I mapped who mattered, had deliberate 
 conversations, and built enough support to move it.",score:3},
  {text:"I have a specific example including the stakeholder map I built, how I 
@@ -922,7 +922,7 @@ Collaboration",type:"reflective",futureReady:true,
  options:[
  {text:"Honestly, I am not certain what AI cannot eventually do that I currently 
 do.",score:1},
-<PARSED TEXT FOR PAGE: 21 / 47>
+
  {text:"I think relationships and judgment are areas where humans will remain 
 essential.",score:2},
  {text:"I have a clear view of where my value lies that AI cannot replicate — 
@@ -969,7 +969,7 @@ thoroughly.",
  options:[
  {text:"Yes — thorough preparation is the difference between winning and losing a 
 negotiation.",score:1},
-<PARSED TEXT FOR PAGE: 22 / 47>
+
  {text:"Usually — preparation significantly increases my success rate.",score:2},
  {text:"Often but not always — even excellent preparation cannot overcome every 
 structural disadvantage.",score:3},
@@ -1011,7 +1011,7 @@ function computeTasterResult(answers) {
  { key:"Critical Thinking", label:"Critical Thinking", desc:"The ability to question 
 assumptions, interrogate data, and resist the pull of group consensus when something
 does not add up." },
-<PARSED TEXT FOR PAGE: 23 / 47>
+
  { key:"Strategic Thinking", label:"Strategic Thinking", desc:"The ability to see 
 beyond the task — to understand what is actually worth doing, what consequences 
 follow from each choice, and when to trade off speed for direction." },
@@ -1052,7 +1052,7 @@ normalisedSkills[a.key]);
  const weakestSkill = sorted[sorted.length - 1];
  // Maturity level label based on score
  function maturityLabel(score) {
-<PARSED TEXT FOR PAGE: 24 / 47>
+
  if (score >= 80) return { level:"Architectural", color:"#C9A84C", note:"You are 
 operating at the highest expression of this skill. You design around it, not just apply 
 it." };
@@ -1097,7 +1097,7 @@ remain valuable as AI scales and those who do not. The window to build this
 deliberately is still open — but it is narrowing."
  },
  };
-<PARSED TEXT FOR PAGE: 25 / 47>
+
  // The four unseen clusters — the reason to complete the full assessment
  const unseenClusters = [
  { id:"P", name:"Presence", theme:"How You Show Up", skills:"Communication, 
@@ -1139,7 +1139,7 @@ function computeResults(answers, timings) {
  });
  const clusterScores = {};
  CLUSTERS.forEach(c => {
-<PARSED TEXT FOR PAGE: 26 / 47>
+
  const raw = clusterRaw[c.id];
  clusterScores[c.id] = Math.round((raw / c.maxRaw) * 100);
  });
@@ -1179,7 +1179,7 @@ DESIGNATIONS[DESIGNATIONS.length-1];
  const frE = clusterAllScores.E.slice(-3);
  const frRaw = [...frI, ...frE].reduce((a,b) => a+b, 0);
  const futureReadyScore = Math.round((frRaw / 24) * 100);
-<PARSED TEXT FOR PAGE: 27 / 47>
+
  const sorted = [...CLUSTERS].sort((a,b) => clusterScores[b.id] - clusterScores[a.id]);
  return {
  valuIndex, clusterScores, desig, futureReadyScore,
@@ -1223,7 +1223,7 @@ style={{fontSize:10,fontWeight:600,fill:c.color}}>{c.id}</text>; })}
 // ── MAIN COMPONENT 
 ─────────────────────────────────────────────────────────
 ──
-<PARSED TEXT FOR PAGE: 28 / 47>
+
 export default function PRIMEAssessment() {
  // phase: "intro" | "taster" | "taster_results" | "assessing" | "results"
  const [phase, setPhase] = useState("intro");
@@ -1264,7 +1264,7 @@ export default function PRIMEAssessment() {
  if (selected === null) return;
  const elapsed = qStartTime ? Date.now() - qStartTime : 0;
  if (isTaster) {
-<PARSED TEXT FOR PAGE: 29 / 47>
+
  const newAnswers = { ...tasterAnswers, [currentQ]: selected };
  setTasterAnswers(newAnswers);
  setTransitioning(true);
@@ -1309,7 +1309,7 @@ export default function PRIMEAssessment() {
  setSelected(prevAnswers[currentQ - 1] ?? null);
  setCurrentQ(currentQ - 1);
  }
-<PARSED TEXT FOR PAGE: 30 / 47>
+
  function restart() {
  setPhase("intro"); setCurrentQ(0);
  setAnswers({}); setTasterAnswers({});
@@ -1352,7 +1352,7 @@ ht:1.05,margin:"0 0 16px",letterSpacing:"-0.02em"}}>
  <p 
 style={{fontSize:15,color:"rgba(247,244,238,0.55)",fontStyle:"italic",lineHeight:1.65,max
 Width:420,margin:"0 auto 12px"}}>
-<PARSED TEXT FOR PAGE: 31 / 47>
+
  Find out exactly where you stand — across five professional capability clusters 
 — in under 5 minutes.
  </p>
@@ -1391,7 +1391,7 @@ rgba(201,168,76,0.08)"}}>
  <span style={{fontSize:12,color:"rgba(247,244,238,0.45)",fontFamily:"sans￾serif"}}>{l}</span>
  <span style={{fontSize:16,color:GOLD,fontWeight:300}}>{n}</span>
  </div>
-<PARSED TEXT FOR PAGE: 32 / 47>
+
  ))}
  <div 
 style={{marginTop:10,fontSize:11,color:"rgba(247,244,238,0.3)",fontFamily:"sans￾serif",fontStyle:"italic"}}>Full score + marketplace listing</div>
@@ -1431,7 +1431,7 @@ rgba(201,168,76,0.2)`,borderRadius:3,padding:"12px
 ing:"border-box"}}/>
  </div>
  <div>
-<PARSED TEXT FOR PAGE: 33 / 47>
+
  <label 
 style={{fontSize:11,color:"rgba(247,244,238,0.4)",letterSpacing:"0.1em",display:"block",
 marginBottom:8,fontFamily:"sans-serif"}}>YEARS OF EXPERIENCE</label>
@@ -1471,7 +1471,7 @@ ontFamily:"sans￾serif",fontWeight:700,letterSpacing:"0.15em",cursor:name.trim(
 tSize:12,fontFamily:"sans￾serif",letterSpacing:"0.12em",cursor:name.trim()?"pointer":"not-allowed"}}>
  SKIP TO FULL VALU INDEX (54 QUESTIONS)
  </button>
-<PARSED TEXT FOR PAGE: 34 / 47>
+
  {!name.trim() && <p 
 style={{textAlign:"center",fontSize:12,color:"rgba(201,168,76,0.4)",marginTop:8,fontFa
 mily:"sans-serif"}}>Enter your name to begin</p>}
@@ -1514,7 +1514,7 @@ n"}}>
 %`,background:isTasterPhase?"rgba(201,168,76,0.7)":GOLD,borderRadius:1,transition:
 "width 0.4s ease"}}/>
  </div>
-<PARSED TEXT FOR PAGE: 35 / 47>
+
  </div>
  {/* Cluster badge */}
  {!isAnchor && cluster && (
@@ -1558,7 +1558,7 @@ style={{fontSize:"clamp(18px,3.2vw,24px)",fontWeight:300,color:PARCHMENT,lineHei
 ght:1.45,marginBottom:32,letterSpacing:"-0.01em"}}>
  {question?.q}
  </h2>
-<PARSED TEXT FOR PAGE: 36 / 47>
+
  <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:28}}>
  {question?.options.map((opt,i) => {
  const isSel = selected === i;
@@ -1602,7 +1602,7 @@ mily:"sans-serif",cursor:"pointer",letterSpacing:"0.1em"}}>
  style={{flex:1,padding:"14px 24px",background:selected!==null?
 GOLD:"rgba(201,168,76,0.15)",border:"none",borderRadius:3,color:selected!==null?
 DARK:"rgba(201,168,76,0.4)",fontSize:12,fontFamily:"sans-
-<PARSED TEXT FOR PAGE: 37 / 47>
+
 serif",fontWeight:700,letterSpacing:"0.15em",cursor:selected!==null?"pointer":"not￾allowed",transition:"all 0.25s"}}>
  {isTasterPhase
  ? (currentQ + 1 === TASTER_TOTAL ? "SEE MY RESULT" : "NEXT")
@@ -1642,7 +1642,7 @@ style={{fontSize:11,color:GOLD,letterSpacing:"0.2em",marginBottom:12,fontFamily:
 ns-serif"}}>
  VALU INDEX · INTELLIGENCE CLUSTER · TASTER
  </div>
-<PARSED TEXT FOR PAGE: 38 / 47>
+
  <h1 
 style={{fontSize:"clamp(24px,5vw,36px)",fontWeight:300,lineHeight:1.15,marginBotto
 m:10,letterSpacing:"-0.02em"}}>
@@ -1685,7 +1685,7 @@ style={{fontSize:13,color:"rgba(247,244,238,0.5)",lineHeight:1.55,fontFamily:"sa
  </div>
  </div>
  {/* Skill-level breakdown */}
-<PARSED TEXT FOR PAGE: 39 / 47>
+
  <div style={{background:"rgba(255,255,255,0.02)",border:"1px solid 
 rgba(201,168,76,0.12)",borderRadius:6,padding:24,marginBottom:24}}>
  <div 
@@ -1724,7 +1724,7 @@ style={{fontSize:12,color:"rgba(247,244,238,0.35)",lineHeight:1.5,fontFamily:"sa
  <div style={{fontSize:11,color:m.color,fontFamily:"sans￾serif",letterSpacing:"0.05em"}}>{m.level}</div>
  </div>
  </div>
-<PARSED TEXT FOR PAGE: 40 / 47>
+
  <div 
 style={{height:4,background:"rgba(255,255,255,0.06)",borderRadius:2,overflow:"hidde
 n",marginTop:8}}>
@@ -1766,7 +1766,7 @@ sans-serif"}}>
  {/* The four unseen clusters — the pull */}
  <div style={{padding:"24px",background:MID,border:`1px solid ${GOLD}
 `,borderRadius:6,marginBottom:16}}>
-<PARSED TEXT FOR PAGE: 41 / 47>
+
  <div 
 style={{fontSize:11,color:GOLD,letterSpacing:"0.2em",marginBottom:6,fontFamily:"san
 s-serif"}}>YOU HAVE SEEN 1 OF 5 CLUSTERS.</div>
@@ -1806,7 +1806,7 @@ amily:"sans￾serif",fontWeight:700,letterSpacing:"0.15em",cursor:"pointer",marg
  <p style={{fontSize:11,color:"rgba(247,244,238,0.3)",margin:0,fontFamily:"sans￾serif",textAlign:"center"}}>
  Always free · 45 minutes · Full score across all 17 skills · Marketplace listing
  </p>
-<PARSED TEXT FOR PAGE: 42 / 47>
+
  </div>
  <button onClick={restart}
  style={{width:"100%",padding:"12px",background:"transparent",border:"1px 
@@ -1847,7 +1847,7 @@ ns-serif"}}>VALU INDEX · ASSESSMENT COMPLETE</div>
  <h1 
 style={{fontSize:"clamp(26px,5vw,42px)",fontWeight:300,lineHeight:1.1,marginBottom
 :8,letterSpacing:"-0.02em"}}>
-<PARSED TEXT FOR PAGE: 43 / 47>
+
  {name || "Your"} <span style={{color:GOLD,fontStyle:"italic"}}>PRIME 
 Profile</span>
  </h1>
@@ -1889,7 +1889,7 @@ n:0,fontFamily:"sans-serif"}}>{desig.desc}</p>
 20px",background:listed?"rgba(29,158,117,0.1)":"rgba(136,136,136,0.1)",border:`1px 
 solid ${listed?"#1D9E75":"#888888"}
 40`,borderRadius:6,marginBottom:20,fontFamily:"sans-serif"}}>
-<PARSED TEXT FOR PAGE: 44 / 47>
+
  <div 
 style={{fontSize:11,fontWeight:700,color:listed?"#1D9E75":"#888888",letterSpacing:"0.
 1em",marginBottom:4}}>
@@ -1932,7 +1932,7 @@ ns-serif"}}>CLUSTER BREAKDOWN</div>
 rgba(201,168,76,0.1)`,borderRadius:6,marginBottom:8}}>
  <div style={{display:"flex",justifyContent:"space￾between",alignItems:"center",marginBottom:8}}>
  <div style={{display:"flex",gap:10,alignItems:"center"}}>
-<PARSED TEXT FOR PAGE: 45 / 47>
+
  <div style={{width:26,height:26,background:`${c.color}18`,border:`1px 
 solid ${c.color}
 40`,borderRadius:3,display:"flex",alignItems:"center",justifyContent:"center",fontSize:1
@@ -1974,7 +1974,7 @@ Collaboration",score:Math.round(futureReadyScore*0.95)}].map(fr=>(
  <div key={fr.name} style={{padding:"12px 16px",background:`${AMBER}
 08`,borderRadius:4,border:`1px solid ${AMBER}25`}}>
  <div style={{fontSize:12,color:AMBER,marginBottom:6,fontFamily:"sans￾serif"}}>{fr.name}</div>
-<PARSED TEXT FOR PAGE: 46 / 47>
+
  <div 
 style={{fontSize:20,fontWeight:300,color:PARCHMENT,marginBottom:4}}>{fr.score}
 </div>
@@ -2019,7 +2019,7 @@ rgba(201,168,76,0.25)`,borderRadius:3,color:"rgba(247,244,238,0.5)",fontSize:12,
 mily:"sans-serif",letterSpacing:"0.12em",cursor:"pointer"}}>
  RETAKE ASSESSMENT
  </button>
-<PARSED TEXT FOR PAGE: 47 / 47>
+
  </div>
  <div style={{textAlign:"center",paddingTop:20,borderTop:"1px solid 
 rgba(201,168,76,0.1)",fontSize:11,color:"rgba(247,244,238,0.2)",letterSpacing:"0.1em",fo
