@@ -1,14 +1,12 @@
 'use client'
 
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 const GOLD = "#C9A84C";
 const DARK = "#1A1A2E";
 const MID = "#2E2E4A";
 const PARCHMENT = "#F7F4EE";
-const ACCENT = "#EDE8DC";
 const AMBER = "#E8A020";
-const BODY = "#2C2C2C";
 // ── CLUSTER CONFIG 
 ─────────────────────────────────────────────────────────
 ─
