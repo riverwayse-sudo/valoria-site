@@ -77,3 +77,7 @@ The current release line keeps the marketplace and public profile architecture s
 ## Security
 
 Keep dependencies patched and review authentication, RLS, API routes and public profile data before shipping changes. Never use user-editable metadata as an authorization source.
+
+## Release recovery
+
+The Phase 5 expansion that caused the September 28, 2026 Vercel production build failures is preserved on `backup/phase5-broken-2026-09-28` for staged repair. Production `main` is kept on the last known-good build while the Phase 5 changes are reintroduced incrementally.
