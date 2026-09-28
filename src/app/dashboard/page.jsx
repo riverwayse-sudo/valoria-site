@@ -391,6 +391,14 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {isSupply && (
+          <ProgressiveCompletion
+            profile={p}
+            capabilities={capabilities}
+            listedCapabilities={listedCapabilities}
+          />
+        )}
+
         {/* FIXED: previously a profile with no active_tracks yet (fresh off
             claim-listing, before /profile/setup) silently fell through
             every isSpeaker/isFacilitator check to the candidate branch —
@@ -926,5 +934,54 @@ function SavedSearchesSection() {
         })}
       </div>
     </div>
+  )
+}
+
+function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
+  const hasAssessment = profile.valu_index != null
+  const hasBasic = !!(profile.display_name && profile.current_job_title)
+  const hasCapability = Array.isArray(profile.active_tracks) && profile.active_tracks.length > 0
+  const hasEvidence = !!(profile.cv_url || (profile.work_history || []).some(x => x?.title || x?.org) || (profile.certifications || '').trim())
+  const isListed = listedCapabilities.length > 0
+  const steps = [
+    ['Account created', true, null],
+    ['VALU Index completed', hasAssessment, hasAssessment ? null : 'https://assessment.valoriainstitute.com/'],
+    ['Starter profile created', hasBasic, '/profile/onboarding'],
+    ['Choose a capability', hasCapability, '/profile/setup'],
+    ['Add professional evidence', hasEvidence, '/profile/setup'],
+    ['Marketplace eligibility', isListed, null],
+  ]
+  const done = steps.filter(s => s[1]).length
+  const next = steps.find(s => !s[1] && s[2])
+  return (
+    <section style={{ maxWidth:'1100px', margin:'26px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+      <div style={{ background:MID, border:`1px solid ${GLINE}`, padding:'22px 24px' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', gap:20, alignItems:'flex-end', flexWrap:'wrap', marginBottom:18 }}>
+          <div>
+            <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.55)' }}>YOUR VALORIA JOURNEY</div>
+            <div style={{ fontSize:'20px', fontWeight:400, marginTop:7 }}>Build your profile at your pace.</div>
+            <div style={{ fontSize:'12px', color:DIM, marginTop:6 }}>Being on Valoria does not require marketplace readiness.</div>
+          </div>
+          <div style={{ fontSize:'11px', color:GOLD }}>{done} / {steps.length} milestones</div>
+        </div>
+        <div style={{ height:3, background:'rgba(255,255,255,.06)', marginBottom:18 }}>
+          <div style={{ height:'100%', width:`${Math.round(done / steps.length * 100)}%`, background:GOLD }} />
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(170px,1fr))', gap:10 }}>
+          {steps.map(([label, complete, href]) => (
+            <div key={label} style={{ border:'1px solid rgba(247,244,238,.07)', padding:'12px 13px', background:'rgba(255,255,255,.018)' }}>
+              <div style={{ fontSize:'10px', color:complete ? '#7FD9B8' : 'rgba(247,244,238,.35)', marginBottom:6 }}>{complete ? '✓ COMPLETE' : '○ NEXT'}</div>
+              {href ? <Link href={href} style={{ color:complete ? PARCH : GOLD, textDecoration:'none', fontSize:'12px' }}>{label}</Link> : <span style={{ color:PARCH, fontSize:'12px' }}>{label}</span>}
+            </div>
+          ))}
+        </div>
+        {next && (
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:16, flexWrap:'wrap', marginTop:18, paddingTop:16, borderTop:'1px solid rgba(247,244,238,.06)' }}>
+            <span style={{ fontSize:'12px', color:DIM }}>Next: <strong style={{ color:PARCH }}>{next[0]}</strong></span>
+            <Link href={next[2]} style={{ color:DARK, background:GOLD, textDecoration:'none', padding:'10px 16px', fontSize:'10px', fontWeight:700, letterSpacing:'.12em' }}>CONTINUE →</Link>
+          </div>
+        )}
+      </div>
+    </section>
   )
 }

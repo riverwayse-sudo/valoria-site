@@ -43,11 +43,12 @@ export async function middleware(request) {
     return response
   }
 
-  // Only private account surfaces are gated here. Public /profile/[id] pages
-  // must remain reachable even when a signed-in professional has an incomplete
-  // own profile; the public profile page handles self-profile onboarding.
+  // Progressive onboarding: an authenticated professional can enter the
+  // dashboard with a starter profile. Full profile completion is no longer
+  // the price of admission; marketplace eligibility remains governed
+  // separately by capability/evidence/admin rules.
   const privateProfileRoute = pathname === '/profile/edit' || pathname.startsWith('/profile/edit/')
-  if (user && (pathname.startsWith('/dashboard') || privateProfileRoute) && !pathname.startsWith('/profile/setup')) {
+  if (user && privateProfileRoute && !pathname.startsWith('/profile/setup') && !pathname.startsWith('/profile/onboarding')) {
     try {
       const { data: buyerProfile } = await supabase.from('profiles').select('id').eq('id', user.id).maybeSingle()
       if (buyerProfile) return response
