@@ -1,0 +1,76 @@
+-- Phase 4: operations, notifications, audit access and security hardening.
+create table if not exists public.platform_notifications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  notification_type text not null,
+  title text not null,
+  body text not null,
+  entity_type text,
+  entity_id uuid,
+  read_at timestamptz,
+  created_at timestamptz not null default now()
+);
+create index if not exists platform_notifications_user_idx on public.platform_notifications(user_id,created_at desc);
+alter table public.platform_notifications enable row level security;
+revoke all on table public.platform_notifications from anon,authenticated;
+grant select,update on table public.platform_notifications to authenticated;
+drop policy if exists platform_notifications_owner_read on public.platform_notifications;
+create policy platform_notifications_owner_read on public.platform_notifications for select to authenticated using (user_id=(select auth.uid()));
+drop policy if exists platform_notifications_owner_update on public.platform_notifications;
+create policy platform_notifications_owner_update on public.platform_notifications for update to authenticated using (user_id=(select auth.uid())) with check (user_id=(select auth.uid()));
+
+create or replace function public.create_platform_notification(p_user_id uuid,p_type text,p_title text,p_body text,p_action_url text default null)
+returns void language plpgsql security definer set search_path=public
+as $$ begin if p_user_id is null then return; end if; insert into public.platform_notifications(user_id,type,title,body,action_url) values(p_user_id,p_type,p_title,p_body,p_action_url); end $$;
+revoke all on function public.create_platform_notification(uuid,text,text,text,text) from public,anon,authenticated;
+
+create or replace function public.notify_application_status_change()
+returns trigger language plpgsql security definer set search_path=public
+as $$ begin if new.status is not distinct from old.status then return new; end if; perform public.create_platform_notification(new.professional_id,'application_status','Application update','Your application status is now '||replace(new.status,'_',' ')||'.','/dashboard'); return new; end $$;
+revoke all on function public.notify_application_status_change() from public,anon,authenticated;
+drop trigger if exists notify_application_status_change on public.opportunity_applications;
+create trigger notify_application_status_change after update on public.opportunity_applications for each row execute function public.notify_application_status_change();
+
+create or replace function public.notify_opportunity_publish()
+returns trigger language plpgsql security definer set search_path=public
+as $$ begin if new.status='published' and old.status is distinct from new.status then perform public.create_platform_notification(new.created_by,'opportunity_published','Opportunity published','Your opportunity “'||new.title||'” is now live.','/employer/dashboard'); end if; return new; end $$;
+revoke all on function public.notify_opportunity_publish() from public,anon,authenticated;
+drop trigger if exists notify_opportunity_publish on public.opportunities;
+create trigger notify_opportunity_publish after update on public.opportunities for each row execute function public.notify_opportunity_publish();
+
+create or replace function public.notify_opportunity_invite()
+returns trigger language plpgsql security definer set search_path=public
+as $$ declare v_title text; v_org text; begin select title,organisation_name into v_title,v_org from public.opportunities where id=new.opportunity_id; perform public.create_platform_notification(new.professional_id,'opportunity_invite','You have been invited','You have been invited to '||coalesce(v_title,'a Valoria opportunity')||coalesce(' by '||v_org,'')||'.','/opportunities'); return new; end $$;
+revoke all on function public.notify_opportunity_invite() from public,anon,authenticated;
+drop trigger if exists notify_opportunity_invite on public.opportunity_invites;
+create trigger notify_opportunity_invite after insert on public.opportunity_invites for each row execute function public.notify_opportunity_invite();
+
+drop view if exists public.professional_journey_directory;
+
+alter table public.assessment_sessions enable row level security;
+revoke all on table public.assessment_sessions from anon,authenticated;
+grant insert on table public.assessment_sessions to anon,authenticated;
+drop policy if exists assessment_sessions_public_insert on public.assessment_sessions;
+create policy assessment_sessions_public_insert on public.assessment_sessions for insert to anon,authenticated with check (char_length(coalesce(name,'')) between 1 and 200 and char_length(coalesce(role,'')) <= 200);
+
+alter table public.taster_sessions enable row level security;
+revoke all on table public.taster_sessions from anon,authenticated;
+grant insert,select,update on table public.taster_sessions to authenticated;
+grant insert on table public.taster_sessions to anon;
+drop policy if exists taster_sessions_public_insert on public.taster_sessions;
+create policy taster_sessions_public_insert on public.taster_sessions for insert to anon,authenticated with check (user_id is null and char_length(coalesce(name,'')) between 1 and 200 and char_length(coalesce(role,'')) <= 200);
+drop policy if exists taster_sessions_owner_read on public.taster_sessions;
+create policy taster_sessions_owner_read on public.taster_sessions for select to authenticated using (user_id=(select auth.uid()) or is_valoria_admin());
+drop policy if exists taster_sessions_owner_update on public.taster_sessions;
+create policy taster_sessions_owner_update on public.taster_sessions for update to authenticated using (user_id=(select auth.uid()) or is_valoria_admin()) with check (user_id=(select auth.uid()) or is_valoria_admin());
+
+alter table public.taster_assessment_recovery_emails enable row level security;
+revoke all on table public.taster_assessment_recovery_emails from anon,authenticated;
+grant select on table public.taster_assessment_recovery_emails to authenticated;
+drop policy if exists taster_recovery_admin_read on public.taster_assessment_recovery_emails;
+create policy taster_recovery_admin_read on public.taster_assessment_recovery_emails for select to authenticated using (is_valoria_admin());
+
+create or replace function public.set_opportunity_updated_at()
+returns trigger language plpgsql set search_path=public
+as $$ begin new.updated_at=now(); return new; end $$;
+revoke all on function public.set_opportunity_updated_at() from public,anon,authenticated;
