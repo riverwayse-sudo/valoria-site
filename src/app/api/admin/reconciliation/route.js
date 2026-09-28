@@ -56,5 +56,14 @@ export async function GET(request){
   })
   const counts=rows.reduce((acc,r)=>{acc[r.lifecycle_state]=(acc[r.lifecycle_state]||0)+1;return acc},{})
   const orphanedAssessments=(assessmentRes.data||[]).filter(a=>!a.user_id)
-  return Response.json({rows,counts,orphanedAssessments:orphanedAssessments.map(a=>({id:a.id,email:a.email,name:a.name,role:a.role,total_score:a.total_score,completed_at:a.completed_at,assessment_version:a.assessment_version}))})
+  const {data:userList}=await supabase.auth.admin.listUsers({page:1,perPage:1000})
+  const accounts=(userList?.users||[]).map(u=>({id:u.id,email:u.email||null,name:profileMap.get(u.id)?.display_name||u.user_metadata?.full_name||u.user_metadata?.name||null}))
+  const normalise=(value)=>String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()
+  const reconciliations=orphanedAssessments.map(a=>{
+    const target=normalise(a.name)
+    const candidates=target?accounts.filter(x=>normalise(x.name)===target):[]
+    const classification=candidates.length===1?'name_match_requires_review':candidates.length>1?'multiple_name_matches':'no_account_match'
+    return {id:a.id,email:a.email,name:a.name,role:a.role,total_score:a.total_score,completed_at:a.completed_at,assessment_version:a.assessment_version,classification,candidates}
+  })
+  return Response.json({rows,counts,orphanedAssessments:reconciliations})
 }
