@@ -77,7 +77,6 @@ export async function GET(request){
     if(r.public_roster) reasons.push('included in public roster')
     return {...r, listing_capabilities:listed.map(c=>c.capability), marketplace_exclusion_reasons:reasons}
   })
-  })
   const counts=rows.reduce((acc,r)=>{acc[r.lifecycle_state]=(acc[r.lifecycle_state]||0)+1;return acc},{})
   counts.unique_public_professionals=new Set((rosterRes.data||[]).map(r=>r.professional_id)).size
   counts.public_talent=(rosterRes.data||[]).filter(r=>r.track==='candidate').length
