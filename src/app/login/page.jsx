@@ -77,7 +77,7 @@ export default function LoginPage() {
         const handoffRes = await fetch('/api/valu-handoff', { headers: { Authorization: `Bearer ${session.access_token}` } })
         const handoff = await handoffRes.json().catch(() => ({}))
         if (handoff?.url) { window.location.href = handoff.url; return }
-        window.location.href = '/profile/setup'
+        window.location.href = '/profile/onboarding'
         return
       }
 
