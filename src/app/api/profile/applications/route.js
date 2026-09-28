@@ -1,0 +1,4 @@
+import {createClient} from '@supabase/supabase-js'
+function db(){return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}})}
+async function user(request){const t=(request.headers.get('authorization')||'').replace(/^Bearer\\s+/i,'');if(!t)return null;const {data}=await db().auth.getUser(t);return data?.user||null}
+export async function GET(request){const u=await user(request);if(!u)return Response.json({error:'Not authenticated.'},{status:401});const {data,error}=await db().from('opportunity_applications').select('*,opportunities:opportunity_id(id,slug,title,organisation_name,status)').eq('professional_id',u.id).order('created_at',{ascending:false});if(error)return Response.json({error:error.message},{status:500});return Response.json({applications:data||[]})}
