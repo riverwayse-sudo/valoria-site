@@ -1,0 +1,15 @@
+'use client'
+import {useState} from 'react'
+const GOLD='#C9A84C',DARK='#1A1A2E',PARCH='#F7F4EE'
+export default function SubmitOpportunity(){
+ const [form,setForm]=useState({opportunity_type:'job',work_mode:'hybrid'}),[sent,setSent]=useState(false),[error,setError]=useState(''),[saving,setSaving]=useState(false)
+ const set=(k,v)=>setForm(f=>({...f,[k]:v}))
+ async function submit(e){e.preventDefault();setSaving(true);setError('');try{const r=await fetch('/api/opportunities',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(form)});const x=await r.json();if(!r.ok)throw Error(x.error||'Could not submit');setSent(true)}catch(e){setError(e.message)}finally{setSaving(false)}}
+ if(sent)return <main style={{minHeight:'100vh',background:DARK,color:PARCH,display:'grid',placeItems:'center',padding:30,fontFamily:'Raleway,Arial'}}><div style={{maxWidth:620}}><div style={{color:GOLD,fontWeight:800,letterSpacing:'.15em',fontSize:11}}>SUBMISSION RECEIVED</div><h1>Valoria will review your opportunity.</h1><p style={{opacity:.7,lineHeight:1.7}}>It will not be published until it passes review. We will use the contact details you provided if clarification is required.</p></div></main>
+ return <main style={{minHeight:'100vh',background:PARCH,color:DARK,padding:'80px 7vw',fontFamily:'Raleway,Arial'}}><form onSubmit={submit} style={{maxWidth:760,margin:'auto'}}><div style={{color:GOLD,fontSize:11,fontWeight:800,letterSpacing:'.16em'}}>POST AN OPPORTUNITY</div><h1 style={{fontSize:48}}>Submit an opportunity for review.</h1><p style={{opacity:.65,lineHeight:1.6}}>Employers, recruiters and partners can submit opportunities. Valoria reviews every submission before publication.</p>
+ {['submitter_name','submitter_email','organisation_name','title','location','employment_type','experience_level','industry','compensation','application_url'].map(k=><label key={k} style={{display:'block',margin:'18px 0',fontSize:12,fontWeight:700}}>{k.replaceAll('_',' ').toUpperCase()}<input required={['submitter_name','submitter_email','organisation_name','title'].includes(k)} value={form[k]||''} onChange={e=>set(k,e.target.value)} style={{display:'block',width:'100%',padding:14,marginTop:7,border:'1px solid #D4C9A8',background:'#FAFAF7'}} /></label>)}
+ <label style={{display:'block',margin:'18px 0',fontSize:12,fontWeight:700}}>TYPE<select value={form.opportunity_type} onChange={e=>set('opportunity_type',e.target.value)} style={{display:'block',width:'100%',padding:14,marginTop:7}}>{['job','contract','consulting','speaking','facilitation','coaching','project'].map(x=><option key={x}>{x}</option>)}</select></label>
+ <label style={{display:'block',margin:'18px 0',fontSize:12,fontWeight:700}}>DESCRIPTION<textarea required value={form.description||''} onChange={e=>set('description',e.target.value)} rows={8} style={{display:'block',width:'100%',padding:14,marginTop:7}}/></label>
+ {error&&<p style={{color:'#a33'}}>{error}</p>}<button disabled={saving} style={{padding:'15px 24px',background:GOLD,border:0,fontWeight:800}}>{saving?'SUBMITTING…':'SUBMIT FOR REVIEW'}</button>
+ </form></main>
+}
