@@ -124,7 +124,7 @@ context than I do.", score:1},
  {text:"Prepare a clear, evidence-based view of the risk and find the right channel 
 to get it into the decision.", score:3},
  {text:"Prepare a structured analysis — what I am seeing, why it matters, what the 
-alternatives are, and what I would recommend — and proactively find the decision￾maker it needs to reach.", score:4},
+alternatives are, and what I would recommend — and proactively find the decisionmaker it needs to reach.", score:4},
  ]},
  { id:"I2c", cluster:"I", skill:"Strategic Thinking",
  q:"Describe a decision you made that looked correct in the short term but created a 
@@ -546,7 +546,7 @@ context than I do.",score:1},
  {text:"Prepare a clear, evidence-based view of the risk and find the right channel 
 to get it into the decision.",score:3},
  {text:"Prepare a structured analysis — what I am seeing, why it matters, what the 
-alternatives are, and what I would recommend — and proactively find the decision￾maker it needs to reach.",score:4},
+alternatives are, and what I would recommend — and proactively find the decisionmaker it needs to reach.",score:4},
  ]},
  { id:"I2c",cluster:"I",skill:"Strategic Thinking",type:"reflective",
  q:"Describe a decision you made that looked correct in the short term but created a 
@@ -1083,7 +1083,7 @@ organisations never deliberately teach."
  },
  "Business Acumen": {
  high: "You understand how value is created and where it is destroyed. You can 
-make a commercial case, not just a functional one. That makes you visible to decision￾makers in ways that purely technical professionals are not.",
+make a commercial case, not just a functional one. That makes you visible to decisionmakers in ways that purely technical professionals are not.",
  low: "Commercial fluency is the skill most professionals were never formally 
 taught — because their education and their early career rewarded functional 
 excellence, not commercial reasoning. That gap is closable."
@@ -1342,7 +1342,7 @@ auto",padding:"48px 24px"}}>
  <div style={{textAlign:"center",marginBottom:40}}>
  <div style={{display:"inline-block",padding:"6px 18px",border:`1px solid 
 rgba(201,168,76,0.3)`,borderRadius:2,marginBottom:28}}>
- <span style={{fontSize:11,letterSpacing:"0.2em",color:GOLD,fontFamily:"sans￾serif"}}>VALORIA INSTITUTE · AFRICAN TALENT BUREAU</span>
+ <span style={{fontSize:11,letterSpacing:"0.2em",color:GOLD,fontFamily:"sansserif"}}>VALORIA INSTITUTE · AFRICAN TALENT BUREAU</span>
  </div>
  <h1 
 style={{fontSize:"clamp(40px,8vw,64px)",fontWeight:300,color:PARCHMENT,lineHeig
@@ -1371,42 +1371,42 @@ five clusters.
  <div style={{padding:"18px 16px",border:`1px solid 
 rgba(201,168,76,0.2)`,borderRadius:4,background:"rgba(201,168,76,0.04)",textAlign:"ce
 nter"}}>
- <div style={{fontSize:11,color:GOLD,letterSpacing:"0.15em",fontFamily:"sans￾serif",marginBottom:10,fontWeight:700}}>INTELLIGENCE TASTER</div>
+ <div style={{fontSize:11,color:GOLD,letterSpacing:"0.15em",fontFamily:"sansserif",marginBottom:10,fontWeight:700}}>INTELLIGENCE TASTER</div>
  {[["9","Questions"],["~5","Minutes"]].map(([n,l])=>(
- <div key={l} style={{display:"flex",justifyContent:"space￾between",alignItems:"center",padding:"4px 0",borderBottom:"1px solid 
+ <div key={l} style={{display:"flex",justifyContent:"spacebetween",alignItems:"center",padding:"4px 0",borderBottom:"1px solid 
 rgba(201,168,76,0.08)"}}>
- <span style={{fontSize:12,color:"rgba(247,244,238,0.45)",fontFamily:"sans￾serif"}}>{l}</span>
+ <span style={{fontSize:12,color:"rgba(247,244,238,0.45)",fontFamily:"sansserif"}}>{l}</span>
  <span style={{fontSize:16,color:GOLD,fontWeight:300}}>{n}</span>
  </div>
  ))}
  <div 
-style={{marginTop:10,fontSize:11,color:"rgba(247,244,238,0.3)",fontFamily:"sans￾serif",fontStyle:"italic"}}>Instant directional insight</div>
+style={{marginTop:10,fontSize:11,color:"rgba(247,244,238,0.3)",fontFamily:"sansserif",fontStyle:"italic"}}>Instant directional insight</div>
  </div>
  <div style={{padding:"18px 16px",border:`1px solid ${GOLD}
 `,borderRadius:4,background:"rgba(201,168,76,0.06)",textAlign:"center"}}>
- <div style={{fontSize:11,color:GOLD,letterSpacing:"0.15em",fontFamily:"sans￾serif",marginBottom:10,fontWeight:700}}>FULL VALU INDEX</div>
+ <div style={{fontSize:11,color:GOLD,letterSpacing:"0.15em",fontFamily:"sansserif",marginBottom:10,fontWeight:700}}>FULL VALU INDEX</div>
  {[["54","Questions"],["18–28","Minutes"],["12mo","Valid"]].map(([n,l])=>(
- <div key={l} style={{display:"flex",justifyContent:"space￾between",alignItems:"center",padding:"4px 0",borderBottom:"1px solid 
+ <div key={l} style={{display:"flex",justifyContent:"spacebetween",alignItems:"center",padding:"4px 0",borderBottom:"1px solid 
 rgba(201,168,76,0.08)"}}>
- <span style={{fontSize:12,color:"rgba(247,244,238,0.45)",fontFamily:"sans￾serif"}}>{l}</span>
+ <span style={{fontSize:12,color:"rgba(247,244,238,0.45)",fontFamily:"sansserif"}}>{l}</span>
  <span style={{fontSize:16,color:GOLD,fontWeight:300}}>{n}</span>
  </div>
 
  ))}
  <div 
-style={{marginTop:10,fontSize:11,color:"rgba(247,244,238,0.3)",fontFamily:"sans￾serif",fontStyle:"italic"}}>Full score + marketplace listing</div>
+style={{marginTop:10,fontSize:11,color:"rgba(247,244,238,0.3)",fontFamily:"sansserif",fontStyle:"italic"}}>Full score + marketplace listing</div>
  </div>
  </div>
  {/* Always free statement */}
  <div style={{textAlign:"center",padding:"10px 0",marginBottom:8}}>
- <span style={{fontSize:12,color:GOLD,fontFamily:"sans￾serif",letterSpacing:"0.05em"}}>
+ <span style={{fontSize:12,color:GOLD,fontFamily:"sansserif",letterSpacing:"0.05em"}}>
  The VALU Index is always free — for every professional, at every stage.
  </span>
  </div>
  {/* Details form */}
  <div style={{background:"rgba(255,255,255,0.03)",border:`1px solid 
 rgba(201,168,76,0.15)`,borderRadius:6,padding:28,marginBottom:28}}>
- <div style={{fontSize:11,color:GOLD,letterSpacing:"0.15em",fontFamily:"sans￾serif",marginBottom:20}}>YOUR DETAILS</div>
+ <div style={{fontSize:11,color:GOLD,letterSpacing:"0.15em",fontFamily:"sansserif",marginBottom:20}}>YOUR DETAILS</div>
  <div style={{display:"flex",flexDirection:"column",gap:14}}>
  <div>
  <label 
@@ -1444,12 +1444,12 @@ border:`1px solid ${experience===b.id?GOLD:"rgba(201,168,76,0.2)"}
 `,borderRadius:3,cursor:"pointer",textAlign:"left",transition:"all 0.2s"}}>
  <div style={{fontSize:13,color:experience===b.id?
 GOLD:PARCHMENT,fontFamily:"sans-serif",marginBottom:2}}>{b.label}</div>
- <div style={{fontSize:10,color:"rgba(247,244,238,0.35)",fontFamily:"sans￾serif"}}>{b.desc}</div>
+ <div style={{fontSize:10,color:"rgba(247,244,238,0.35)",fontFamily:"sansserif"}}>{b.desc}</div>
  </button>
  ))}
  </div>
  <p 
-style={{fontSize:11,color:"rgba(247,244,238,0.25)",marginTop:8,fontFamily:"sans￾serif",fontStyle:"italic"}}>
+style={{fontSize:11,color:"rgba(247,244,238,0.25)",marginTop:8,fontFamily:"sansserif",fontStyle:"italic"}}>
  This does not affect your score — it adds professional context to your profile 
 for employers and organisers.
  </p>
@@ -1460,7 +1460,7 @@ for employers and organisers.
 setSelected(null); } }}
  style={{width:"100%",padding:"18px 32px",background:name.trim()?
 GOLD:"rgba(201,168,76,0.25)",border:"none",borderRadius:3,color:DARK,fontSize:13,f
-ontFamily:"sans￾serif",fontWeight:700,letterSpacing:"0.15em",cursor:name.trim()?"pointer":"not￾allowed",marginBottom:12}}>
+ontFamily:"sansserif",fontWeight:700,letterSpacing:"0.15em",cursor:name.trim()?"pointer":"notallowed",marginBottom:12}}>
  START THE TASTER — 5 MINUTES
  </button>
  <button onClick={()=>{ if(name.trim()) { startFullAssessment(); } }}
@@ -1468,7 +1468,7 @@ ontFamily:"sans￾serif",fontWeight:700,letterSpacing:"0.15em",cursor:name.trim(
 32px",background:"transparent",border:`1px solid $
 {name.trim()?"rgba(201,168,76,0.4)":"rgba(201,168,76,0.15)"}
 `,borderRadius:3,color:name.trim()?"rgba(247,244,238,0.6)":"rgba(247,244,238,0.2)",fon
-tSize:12,fontFamily:"sans￾serif",letterSpacing:"0.12em",cursor:name.trim()?"pointer":"not-allowed"}}>
+tSize:12,fontFamily:"sansserif",letterSpacing:"0.12em",cursor:name.trim()?"pointer":"not-allowed"}}>
  SKIP TO FULL VALU INDEX (54 QUESTIONS)
  </button>
 
@@ -1493,7 +1493,7 @@ auto",padding:"0 24px"}}>
  <div 
 style={{position:"sticky",top:0,background:DARK,paddingTop:20,paddingBottom:12,bo
 rderBottom:`1px solid rgba(201,168,76,0.1)`,marginBottom:32,zIndex:10}}>
- <div style={{display:"flex",justifyContent:"space￾between",alignItems:"center",marginBottom:6,fontFamily:"sans-serif"}}>
+ <div style={{display:"flex",justifyContent:"spacebetween",alignItems:"center",marginBottom:6,fontFamily:"sans-serif"}}>
  <span 
 style={{fontSize:11,color:"rgba(247,244,238,0.35)",letterSpacing:"0.12em"}}>
  {isTasterPhase ? "VALU INDEX · TASTER" : "PRIME FRAMEWORK · VALU 
@@ -1503,7 +1503,7 @@ INDEX"}
 {total}</span>
  </div>
  {isTasterPhase && (
- <div style={{fontSize:10,color:"rgba(247,244,238,0.2)",fontFamily:"sans￾serif",marginBottom:6}}>
+ <div style={{fontSize:10,color:"rgba(247,244,238,0.2)",fontFamily:"sansserif",marginBottom:6}}>
  Intelligence cluster · 9 questions · ~5 minutes · skill-level result
  </div>
  )}
@@ -1531,7 +1531,7 @@ style={{width:34,height:34,background:"rgba(255,255,255,0.06)",border:`1px solid
 style={{fontSize:11,color:clusterColor,letterSpacing:"0.15em",marginBottom:2,fontFam
 ily:"sans-serif"}}>{cluster.name.toUpperCase()}</div>
  <div 
-style={{fontSize:12,color:"rgba(247,244,238,0.4)",fontStyle:"italic",fontFamily:"sans￾serif"}}>{cluster.theme}</div>
+style={{fontSize:12,color:"rgba(247,244,238,0.4)",fontStyle:"italic",fontFamily:"sansserif"}}>{cluster.theme}</div>
  </div>
  {question?.futureReady && (
  <div style={{marginLeft:"auto",padding:"3px 10px",background:`${AMBER}
@@ -1581,7 +1581,7 @@ n:"all 0.2s",marginTop:1}}>
 style={{width:7,height:7,borderRadius:"50%",background:DARK}}/>}
  </div>
  <span style={{fontSize:14,color:isSel?
-PARCHMENT:"rgba(247,244,238,0.65)",lineHeight:1.55,fontFamily:"sans￾serif",fontWeight:isSel?400:300}}>
+PARCHMENT:"rgba(247,244,238,0.65)",lineHeight:1.55,fontFamily:"sansserif",fontWeight:isSel?400:300}}>
  {opt.text}
  </span>
  </div>
@@ -1603,7 +1603,7 @@ mily:"sans-serif",cursor:"pointer",letterSpacing:"0.1em"}}>
 GOLD:"rgba(201,168,76,0.15)",border:"none",borderRadius:3,color:selected!==null?
 DARK:"rgba(201,168,76,0.4)",fontSize:12,fontFamily:"sans-
 
-serif",fontWeight:700,letterSpacing:"0.15em",cursor:selected!==null?"pointer":"not￾allowed",transition:"all 0.25s"}}>
+serif",fontWeight:700,letterSpacing:"0.15em",cursor:selected!==null?"pointer":"notallowed",transition:"all 0.25s"}}>
  {isTasterPhase
  ? (currentQ + 1 === TASTER_TOTAL ? "SEE MY RESULT" : "NEXT")
  : (currentQ + 1 === TOTAL ? "COMPLETE ASSESSMENT" : "NEXT")}
@@ -1649,7 +1649,7 @@ m:10,letterSpacing:"-0.02em"}}>
  {name}, here is how you think.
  </h1>
  <p 
-style={{fontSize:14,color:"rgba(247,244,238,0.5)",lineHeight:1.65,fontFamily:"sans￾serif",margin:0}}>
+style={{fontSize:14,color:"rgba(247,244,238,0.5)",lineHeight:1.65,fontFamily:"sansserif",margin:0}}>
  9 questions. One cluster. A precise read on the skills that separate 
 professionals who execute from those who lead.
  {experience && <span style={{color:"rgba(247,244,238,0.35)"}}> · 
@@ -1681,7 +1681,7 @@ style={{fontSize:10,color:"rgba(247,244,238,0.4)",letterSpacing:"0.15em",marginB
 style={{fontSize:20,fontWeight:600,color:overallMaturity.color,marginBottom:8,fontF
 amily:"sans-serif"}}>{overallMaturity.level}</div>
  <div 
-style={{fontSize:13,color:"rgba(247,244,238,0.5)",lineHeight:1.55,fontFamily:"sans￾serif"}}>{overallMaturity.note}</div>
+style={{fontSize:13,color:"rgba(247,244,238,0.5)",lineHeight:1.55,fontFamily:"sansserif"}}>{overallMaturity.note}</div>
  </div>
  </div>
  {/* Skill-level breakdown */}
@@ -1702,26 +1702,26 @@ ns-serif"}}>
  <div key={skill.key} 
 style={{marginBottom:20,paddingBottom:20,borderBottom:"1px solid 
 rgba(255,255,255,0.05)"}}>
- <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex￾start",marginBottom:6}}>
+ <div style={{display:"flex",justifyContent:"space-between",alignItems:"flexstart",marginBottom:6}}>
  <div style={{flex:1}}>
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
  <span 
 style={{fontSize:14,fontWeight:600,color:PARCHMENT,fontFamily:"sans-serif"}}
 >{skill.label}</span>
  {isStrongest && <span style={{fontSize:9,color:GOLD,border:`1px solid $
-{GOLD}50`,padding:"1px 7px",borderRadius:99,fontFamily:"sans￾serif",letterSpacing:"0.1em"}}>STRONGEST</span>}
+{GOLD}50`,padding:"1px 7px",borderRadius:99,fontFamily:"sansserif",letterSpacing:"0.1em"}}>STRONGEST</span>}
  {isWeakest && <span 
 style={{fontSize:9,color:"rgba(247,244,238,0.35)",border:"1px solid 
-rgba(247,244,238,0.15)",padding:"1px 7px",borderRadius:99,fontFamily:"sans￾serif",letterSpacing:"0.1em"}}>MOST ROOM TO GROW</span>}
+rgba(247,244,238,0.15)",padding:"1px 7px",borderRadius:99,fontFamily:"sansserif",letterSpacing:"0.1em"}}>MOST ROOM TO GROW</span>}
  </div>
  <div 
-style={{fontSize:12,color:"rgba(247,244,238,0.35)",lineHeight:1.5,fontFamily:"sans￾serif",maxWidth:440}}>
+style={{fontSize:12,color:"rgba(247,244,238,0.35)",lineHeight:1.5,fontFamily:"sansserif",maxWidth:440}}>
  {skillDescriptions[skill.key]}
  </div>
  </div>
  <div style={{textAlign:"right",marginLeft:16,flexShrink:0}}>
- <div style={{fontSize:24,fontWeight:300,color:m.color,fontFamily:"sans￾serif"}}>{score}</div>
- <div style={{fontSize:11,color:m.color,fontFamily:"sans￾serif",letterSpacing:"0.05em"}}>{m.level}</div>
+ <div style={{fontSize:24,fontWeight:300,color:m.color,fontFamily:"sansserif"}}>{score}</div>
+ <div style={{fontSize:11,color:m.color,fontFamily:"sansserif",letterSpacing:"0.05em"}}>{m.level}</div>
  </div>
  </div>
 
@@ -1745,7 +1745,7 @@ ns-serif",fontWeight:700}}>
  YOUR EDGE — {strongestSkill.label.toUpperCase()}
  </div>
  <p 
-style={{fontSize:14,color:PARCHMENT,lineHeight:1.65,margin:0,fontFamily:"sans￾serif"}}>
+style={{fontSize:14,color:PARCHMENT,lineHeight:1.65,margin:0,fontFamily:"sansserif"}}>
  {skillInsights[strongestSkill.key].high}
  </p>
  </div>
@@ -1786,24 +1786,24 @@ create. Your Intelligence score is only part of the picture.
 rgba(255,255,255,0.06)"}}>
  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
  <span 
-style={{fontSize:16,fontWeight:700,color:"rgba(201,168,76,0.5)",fontFamily:"sans￾serif"}}>{c.id}</span>
- <span style={{fontSize:13,color:"rgba(247,244,238,0.6)",fontFamily:"sans￾serif",fontWeight:600}}>{c.name}</span>
+style={{fontSize:16,fontWeight:700,color:"rgba(201,168,76,0.5)",fontFamily:"sansserif"}}>{c.id}</span>
+ <span style={{fontSize:13,color:"rgba(247,244,238,0.6)",fontFamily:"sansserif",fontWeight:600}}>{c.name}</span>
  </div>
  <div 
-style={{fontSize:11,color:"rgba(247,244,238,0.25)",fontStyle:"italic",fontFamily:"sans￾serif",marginBottom:4}}>{c.theme}</div>
- <div style={{fontSize:11,color:"rgba(247,244,238,0.2)",fontFamily:"sans￾serif"}}>{c.skills}</div>
+style={{fontSize:11,color:"rgba(247,244,238,0.25)",fontStyle:"italic",fontFamily:"sansserif",marginBottom:4}}>{c.theme}</div>
+ <div style={{fontSize:11,color:"rgba(247,244,238,0.2)",fontFamily:"sansserif"}}>{c.skills}</div>
  <div 
-style={{marginTop:8,fontSize:11,color:"rgba(201,168,76,0.4)",fontFamily:"sans￾serif",letterSpacing:"0.1em"}}>NOT YET SCORED</div>
+style={{marginTop:8,fontSize:11,color:"rgba(201,168,76,0.4)",fontFamily:"sansserif",letterSpacing:"0.1em"}}>NOT YET SCORED</div>
  </div>
  ))}
  </div>
  <button onClick={startFullAssessment}
  style={{width:"100%",padding:"18px 
 32px",background:GOLD,border:"none",borderRadius:3,color:DARK,fontSize:13,fontF
-amily:"sans￾serif",fontWeight:700,letterSpacing:"0.15em",cursor:"pointer",marginBottom:10}}>
+amily:"sansserif",fontWeight:700,letterSpacing:"0.15em",cursor:"pointer",marginBottom:10}}>
  COMPLETE THE FULL VALU INDEX →
  </button>
- <p style={{fontSize:11,color:"rgba(247,244,238,0.3)",margin:0,fontFamily:"sans￾serif",textAlign:"center"}}>
+ <p style={{fontSize:11,color:"rgba(247,244,238,0.3)",margin:0,fontFamily:"sansserif",textAlign:"center"}}>
  Always free · 45 minutes · Full score across all 17 skills · Marketplace listing
  </p>
 
@@ -1852,7 +1852,7 @@ style={{fontSize:"clamp(26px,5vw,42px)",fontWeight:300,lineHeight:1.1,marginBott
 Profile</span>
  </h1>
  {role && <p 
-style={{fontSize:14,color:"rgba(247,244,238,0.4)",fontStyle:"italic",fontFamily:"sans￾serif",margin:"0 0 4px"}}>{role}</p>}
+style={{fontSize:14,color:"rgba(247,244,238,0.4)",fontStyle:"italic",fontFamily:"sansserif",margin:"0 0 4px"}}>{role}</p>}
  {expBand && <p 
 style={{fontSize:12,color:"rgba(247,244,238,0.25)",fontFamily:"sans-serif",margin:0}}
 >{expBand.label} · {expBand.desc}</p>}
@@ -1930,7 +1930,7 @@ ns-serif"}}>CLUSTER BREAKDOWN</div>
  <div key={c.id} style={{padding:"16px 
 20px",background:"rgba(255,255,255,0.025)",border:`1px solid 
 rgba(201,168,76,0.1)`,borderRadius:6,marginBottom:8}}>
- <div style={{display:"flex",justifyContent:"space￾between",alignItems:"center",marginBottom:8}}>
+ <div style={{display:"flex",justifyContent:"spacebetween",alignItems:"center",marginBottom:8}}>
  <div style={{display:"flex",gap:10,alignItems:"center"}}>
 
  <div style={{width:26,height:26,background:`${c.color}18`,border:`1px 
@@ -1942,7 +1942,7 @@ solid ${c.color}
 style={{fontSize:13,color:PARCHMENT,marginBottom:1,fontFamily:"sans-serif"}}
 >{c.name}</div>
  <div 
-style={{fontSize:11,color:"rgba(247,244,238,0.35)",fontStyle:"italic",fontFamily:"sans￾serif"}}>{c.theme}</div>
+style={{fontSize:11,color:"rgba(247,244,238,0.35)",fontStyle:"italic",fontFamily:"sansserif"}}>{c.theme}</div>
  </div>
  {flagged && <div style={{fontSize:10,color:AMBER,border:`1px solid $
 {AMBER}40`,padding:"2px 7px",borderRadius:99,fontFamily:"sans-serif"}}
@@ -1950,7 +1950,7 @@ style={{fontSize:11,color:"rgba(247,244,238,0.35)",fontStyle:"italic",fontFamily
  </div>
  <div>
  <span style={{fontSize:22,fontWeight:300,color:c.color}}>{score}</span>
- <span style={{fontSize:11,color:"rgba(247,244,238,0.3)",fontFamily:"sans￾serif"}}>/100</span>
+ <span style={{fontSize:11,color:"rgba(247,244,238,0.3)",fontFamily:"sansserif"}}>/100</span>
  </div>
  </div>
  <div 
@@ -1973,7 +1973,7 @@ style={{fontSize:11,color:AMBER,letterSpacing:"0.15em",marginBottom:12,fontWeigh
 Collaboration",score:Math.round(futureReadyScore*0.95)}].map(fr=>(
  <div key={fr.name} style={{padding:"12px 16px",background:`${AMBER}
 08`,borderRadius:4,border:`1px solid ${AMBER}25`}}>
- <div style={{fontSize:12,color:AMBER,marginBottom:6,fontFamily:"sans￾serif"}}>{fr.name}</div>
+ <div style={{fontSize:12,color:AMBER,marginBottom:6,fontFamily:"sansserif"}}>{fr.name}</div>
 
  <div 
 style={{fontSize:20,fontWeight:300,color:PARCHMENT,marginBottom:4}}>{fr.score}
