@@ -19,15 +19,23 @@ async function requireAdmin(request) {
 export async function GET(request){
   const {supabase,response}=await requireAdmin(request)
   if(response) return response
-  const [journeyRes, assessmentRes, profileRes, capabilityRes] = await Promise.all([
+  const [journeyRes, assessmentRes, profileRes, capabilityRes, documentRes, rosterRes] = await Promise.all([
     supabase.from('professional_journey_directory').select('*').order('updated_at',{ascending:false}),
     supabase.from('valu_assessments').select('id,user_id,email,name,role,total_score,completed_at,assessment_version,scoring_version').not('completed_at','is',null).order('completed_at',{ascending:false}),
     supabase.from('professional_profiles').select('id,display_name,headline,profile_complete,active_tracks,photo_url,current_job_title,updated_at'),
     supabase.from('professional_capabilities').select('professional_id,capability,is_active,eligibility_status,eligible_for_listing,missing_requirements'),
+    supabase.from('professional_documents').select('professional_id,status,document_type,created_at'),
+    supabase.from('marketplace_public_roster').select('professional_id,capabilities,track')
   ])
   if(journeyRes.error) return Response.json({error:journeyRes.error.message},{status:500})
   const profiles=profileRes.data||[]
   const profileMap=new Map(profiles.map(p=>[p.id,p]))
+  const documentMap=new Map()
+  for(const d of (documentRes.data||[])){
+    if(!documentMap.has(d.professional_id)) documentMap.set(d.professional_id,[])
+    documentMap.get(d.professional_id).push(d)
+  }
+  const rosterMap=new Map((rosterRes.data||[]).map(r=>[r.professional_id,r]))
   const capMap=new Map()
   for(const c of (capabilityRes.data||[])){
     if(!c.is_active) continue
@@ -52,9 +60,28 @@ export async function GET(request){
       assessment_score:a?.total_score??null,
       assessment_completed_at:a?.completed_at||null,
       assessment_version:a?.assessment_version||null,
-      capabilities:c,email:a?.email||null}
+      capabilities:c,email:a?.email||null,
+      evidence:(documentMap.get(j.user_id)||[]),
+      public_roster:rosterMap.has(j.user_id),
+      public_capabilities:rosterMap.get(j.user_id)?.capabilities||[],
+      public_track:rosterMap.get(j.user_id)?.track||null
+    }
+  }).map(r=>{
+    const reasons=[]
+    if(!r.assessment_id) reasons.push('VALU not completed')
+    if(!r.profile_complete) reasons.push('profile not complete')
+    if(!r.capabilities.length) reasons.push('no active capability')
+    const listed=r.capabilities.filter(c=>c.eligibility_status==='listed'&&c.eligible_for_listing)
+    if(r.capabilities.length && !listed.length) reasons.push('no capability is eligible and listed')
+    if(!r.public_roster && listed.length) reasons.push('listing projection mismatch')
+    if(r.public_roster) reasons.push('included in public roster')
+    return {...r, listing_capabilities:listed.map(c=>c.capability), marketplace_exclusion_reasons:reasons}
   })
   const counts=rows.reduce((acc,r)=>{acc[r.lifecycle_state]=(acc[r.lifecycle_state]||0)+1;return acc},{})
+  counts.unique_public_professionals=new Set((rosterRes.data||[]).map(r=>r.professional_id)).size
+  counts.public_talent=(rosterRes.data||[]).filter(r=>r.track==='candidate').length
+  counts.public_speakers=(rosterRes.data||[]).filter(r=>r.track==='speaker').length
+  counts.public_facilitators=(rosterRes.data||[]).filter(r=>r.track==='facilitator').length
   const orphanedAssessments=(assessmentRes.data||[]).filter(a=>!a.user_id)
   const {data:userList}=await supabase.auth.admin.listUsers({page:1,perPage:1000})
   const accounts=(userList?.users||[]).map(u=>({id:u.id,email:u.email||null,name:profileMap.get(u.id)?.display_name||u.user_metadata?.full_name||u.user_metadata?.name||null}))
