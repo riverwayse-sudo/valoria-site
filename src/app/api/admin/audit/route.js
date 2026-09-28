@@ -1,4 +1,0 @@
-import {createClient} from '@supabase/supabase-js'
-function db(){return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}})}
-async function admin(request){const sb=db();const t=(request.headers.get('authorization')||'').replace(/^Bearer\\s+/i,'');if(!t)return null;const {data}=await sb.auth.getUser(t);if(!data?.user?.id)return null;const {data:a}=await sb.from('admin_users').select('id').eq('id',data.user.id).maybeSingle();return a?data.user:null}
-export async function GET(request){const u=await admin(request);if(!u)return Response.json({error:'Admin access required.'},{status:403});const {data,error}=await db().from('platform_audit_events').select('*').order('created_at',{ascending:false}).limit(250);if(error)return Response.json({error:error.message},{status:500});return Response.json({events:data||[]})}
