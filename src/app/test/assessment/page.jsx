@@ -8,8 +8,8 @@ const MID = "#2E2E4A";
 const PARCHMENT = "#F7F4EE";
 const AMBER = "#E8A020";
 // ── CLUSTER CONFIG 
-─────────────────────────────────────────────────────────
-─
+
+
 const CLUSTERS = [
  { id:"P", name:"Presence", theme:"How you show up", color:"#1D9E75", 
 weight:0.20, maxRaw:12 },
@@ -48,7 +48,7 @@ const EXPERIENCE_BANDS = [
 ];
 // ── TASTER QUESTIONS (9 — one per key skill, chosen for maximum resonance) ─
 // ── TASTER: INTELLIGENCE CLUSTER ONLY 
-────────────────────────────────────────
+
 // 9 questions across the 4 Intelligence skills.
 // Purpose: give the user a precise read on one cluster, leaving four unseen.
 // The gap — "what about the other four?" — is the pull to the full assessment.
@@ -187,11 +187,11 @@ score:4},
  ]},
 ];
 // ── FULL QUESTION BANK (unchanged from v2) 
-──────────────────────────────────
+
 const ALL_QUESTIONS = [
  // ─ PRESENCE 
-─────────────────────────────────────────────────────────
-───────
+
+
  { id:"P1a",cluster:"P",skill:"Communication",type:"behavioural",
  q:"You need to explain a complex decision to a mixed audience — some technical, 
 some not. What do you do?",
@@ -303,8 +303,8 @@ on it.",score:3},
 feedback regularly and track whether my changes are landing.",score:4},
  ]},
  // ─ RELATIONSHIPS 
-─────────────────────────────────────────────────────────
-──
+
+
  { id:"R1a",cluster:"R",skill:"Emotional Intelligence",type:"behavioural",
  q:"You are in a high-pressure meeting and someone says something that genuinely 
 irritates you. What actually happens next?",
@@ -475,8 +475,8 @@ influence I underestimated, what they actually needed that I failed to deliver, 
 specific mapping practice I now use to prevent it recurring.",score:4},
  ]},
  // ─ INTELLIGENCE 
-─────────────────────────────────────────────────────────
-───
+
+
  { id:"I1a",cluster:"I",skill:"Critical Thinking",type:"behavioural",
  q:"Your most respected colleague presents data that strongly supports a decision 
 the team is excited about. You notice something in the analysis that does not add up. 
@@ -652,8 +652,8 @@ of the human-AI boundary in my domain, and I am actively building the capabiliti
 that will matter most as AI changes what my role requires.",score:4},
  ]},
  // ─ MASTERY 
-─────────────────────────────────────────────────────────
-────────
+
+
  { id:"M1a",cluster:"M",skill:"Execution & Accountability",type:"behavioural",
  q:"You take on a commitment and then realise it is going to be harder than you 
 thought. What do you do?",
@@ -791,8 +791,8 @@ kept others aligned, and what it demonstrated about how I work under
 ambiguity.",score:4},
  ]},
  // ─ ENTERPRISE 
-─────────────────────────────────────────────────────────
-─────
+
+
  { id:"E1a",cluster:"E",skill:"Commercial Creativity",type:"behavioural",
  q:"You are asked to achieve the same outcome with significantly fewer resources 
 than last time. What is your instinct?",
@@ -932,7 +932,7 @@ in deepening exactly those capabilities because they will become more valuable a
 commoditises the rest.",score:4},
  ]},
  // ─ VALIDITY ANCHORS 
-────────────────────────────────────────────────────────
+
  { id:"VA1",cluster:"VA",skill:"Validity",type:"anchor",
  q:"When you receive feedback from someone you respect, your first response is 
 always to implement it immediately.",
@@ -988,7 +988,7 @@ estimate accurately even with experience.",score:3},
  ]},
 ];
 // ── BUILD FULL QUESTION SEQUENCE (with validity anchors interleaved) 
-─────────
+
 function buildQuestionSequence() {
  const scored = ALL_QUESTIONS.filter(q => q.cluster !== "VA");
  const anchors = ALL_QUESTIONS.filter(q => q.cluster === "VA");
@@ -1001,7 +1001,7 @@ const QUESTIONS = buildQuestionSequence();
 const TOTAL = QUESTIONS.length;
 const TASTER_TOTAL = TASTER_QUESTIONS.length;
 // ── TASTER SCORING — Intelligence cluster only 
-────────────────────────────────
+
 // Scores each skill individually so the result screen shows a precise breakdown.
 // The four unseen clusters become the explicit pull to the full assessment.
 function computeTasterResult(answers) {
@@ -1121,7 +1121,7 @@ s.desc])),
  };
 }
 // ── FULL SCORING ENGINE (unchanged from v2) 
-──────────────────────────────────
+
 function computeResults(answers, timings) {
  const clusterRaw = { P:0, R:0, I:0, M:0, E:0 };
  const clusterCounts = { P:0, R:0, I:0, M:0, E:0 };
@@ -1189,8 +1189,8 @@ Programme" : valuIndex >= 50 ? "PRIME Cluster" : "PRIME Sprint",
  };
 }
 // ── RADAR CHART 
-─────────────────────────────────────────────────────────
-────
+
+
 function Radar({ scores, size = 200 }) {
  const cx = size/2, cy = size/2, r = size * 0.37, n = 5;
  const angle = i => (Math.PI*2*i/n) - Math.PI/2;
@@ -1219,8 +1219,7 @@ style={{fontSize:10,fontWeight:600,fill:c.color}}>{c.id}</text>; })}
  );
 }
 // ── MAIN COMPONENT 
-─────────────────────────────────────────────────────────
-──
+
 
 export default function PRIMEAssessment() {
  // phase: "intro" | "taster" | "taster_results" | "assessing" | "results"
@@ -1330,8 +1329,8 @@ xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence
 type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect 
 width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` };
  // ── INTRO 
-─────────────────────────────────────────────────────────
-─────────
+
+
  if (phase === "intro") return (
  <div style={base}>
  <div style={grain}/>
@@ -1477,7 +1476,7 @@ mily:"sans-serif"}}>Enter your name to begin</p>}
  </div>
  );
  // ── QUESTION SCREEN (shared for taster and full) 
-───────────────────────────
+
  if (phase === "taster" || phase === "assessing") {
  const isAnchor = question?.validAnchor;
  const clusterColor = cluster?.color || GOLD;
@@ -1620,7 +1619,7 @@ style={{display:"flex",justifyContent:"center",paddingBottom:40,opacity:0.6}}>
  );
  }
  // ── TASTER RESULTS 
-─────────────────────────────────────────────────────────
+
  if (phase === "taster_results" && tasterResults) {
  const {
  intelligenceScore, normalisedSkills, strongestSkill, weakestSkill,
@@ -1826,7 +1825,7 @@ rgba(201,168,76,0.08)",fontSize:11,color:"rgba(247,244,238,0.15)",letterSpacing:
  );
  }
  // ── FULL RESULTS (unchanged from v2 with experience context added) 
-──────────
+
  if (phase === "results" && results) {
  const { valuIndex, clusterScores, desig, futureReadyScore, strongest, weakest, listed,
 pathway, speedFlag, gamingDetected, consistencyFlags } = results;
