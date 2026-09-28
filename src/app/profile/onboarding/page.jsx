@@ -102,7 +102,6 @@ export default function ProgressiveOnboardingPage() {
         past_clients: [],
         youtube_links: [],
         visibility: 'registered_only',
-        profile_complete: false,
         updated_at: new Date().toISOString(),
       }, { onConflict:'id' })
       if (error) throw error
