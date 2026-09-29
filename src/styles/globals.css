@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500&display=swap');
 
+/* Valoria typography lock: Raleway is the only website typeface. */
+html, body, button, input, textarea, select, option { font-family: 'Raleway', sans-serif !important; }
+h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif !important; }
+
 /* Webflow badge suppression */
 .w-webflow-badge { display: none !important; }
 
@@ -31,7 +35,7 @@
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } .reveal { opacity: 1 !important; transform: none !important; } .au { opacity: 1 !important; animation: none !important; } }
 html { scroll-behavior: smooth; }
-body { background: var(--dark); color: var(--parchment); font-family: var(--font); overflow-x: hidden; line-height: 1.6; }
+body { background: var(--dark); color: var(--parchment); font-family: 'Raleway', sans-serif; overflow-x: hidden; line-height: 1.6; }
 body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: .03; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 256px; }
 .container { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
 .eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
@@ -92,7 +96,7 @@ body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-i
 .card:hover { border-color: rgba(201,168,76,.25); transform: translateY(-2px); }
 
 /* APPROVED CONNECTED CARD SYSTEM — shared Valoria visual language. */
-.vi-card { background: var(--dark-card); border: 0; border-radius: 0; padding: clamp(28px,3.5vw,44px) clamp(24px,3vw,36px); position: relative; overflow: hidden; transition: background .3s, box-shadow .3s, transform .3s; cursor: default; }
+ .vi-card { background: var(--dark-card); border: 0; border-radius: var(--card-radius); padding: clamp(28px,3.5vw,44px) clamp(24px,3vw,36px); position: relative; overflow: hidden; transition: background .3s, box-shadow .3s, transform .3s; cursor: default; }
 .vi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--card-color, #C9A84C); transform: scaleX(0); transform-origin: left; transition: transform .4s cubic-bezier(.22,1,.36,1); }
 .vi-card:hover { background: rgba(18,18,28,.98); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,.3); }
 .vi-card:hover::before { transform: scaleX(1); }
