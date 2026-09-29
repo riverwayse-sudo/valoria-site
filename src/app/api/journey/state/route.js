@@ -44,17 +44,31 @@ export async function GET(request) {
   const activeCapability=capabilities.filter(c=>c.is_active)
   const eligibleCapabilities=activeCapability.filter(c=>c.eligible_for_listing||c.eligibility_status==='eligible'||c.eligibility_status==='listed')
   const listedCapabilities=activeCapability.filter(c=>c.eligible_for_listing&&(c.eligibility_status==='listed'||!!c.listed_at))
+  const capabilityMissing=[...new Set(activeCapability.flatMap(c=>Array.isArray(c.missing_requirements)?c.missing_requirements:[]))]
   const assessmentCurrent=!!assessment?.completed_at&&Number(assessment?.total_score||profile?.valu_index||0)>=35&&(!assessment?.expires_at||new Date(assessment.expires_at)>new Date())
-  const listed=assessmentCurrent || profile?.listing_status==='listed'||listedCapabilities.length>0||journey?.marketplace_ready===true
+  const listed=profile?.listing_status==='listed'||profile?.eligible_for_listing===true||listedCapabilities.length>0||journey?.marketplace_ready===true
   const capabilityAccess=eligibleCapabilities.length>0&&profileReady&&assessmentCurrent
+  const eligibilityComplete=capabilityAccess
   const opportunityEngaged=!!opportunity
   const opportunityAccess=opportunityEngaged&&capabilityAccess
   let next='assess'
   if(!hasAssessment)next='assess'
+  else if(!reportReady)next='report'
   else if(!listed)next='listed'
   else if(!profileReady)next='profile'
-  else if(!capabilityAccess)next='capability'
+  else if(!activeCapability.length)next='capability'
+  else if(!eligibilityComplete)next='eligibility'
   else if(!opportunityEngaged)next='opportunity'
   else next='opportunity'
-  return NextResponse.json({authenticated:true,state:{connect:{complete:true},assessment:{complete:hasAssessment,reportStatus,reportReady,reportDelivered,score:assessment?.total_score??profile?.valu_index??null,designation:assessment?.designation||profile?.designation||null},profile:{complete:profileReady,missing:profileMissing},capability:{complete:capabilityAccess,capabilities:activeCapability,eligible:eligibleCapabilities},eligibility:{complete:capabilityAccess,missing:[...new Set(profileMissing)],capabilities:eligibleCapabilities},marketplace:{complete:listed,capabilities:listedCapabilities},opportunity:{complete:opportunityEngaged,access:opportunityAccess,latest:opportunity},next,lifecycle:journey?.lifecycle_state||null}})
+  return NextResponse.json({authenticated:true,state:{
+    connect:{complete:true},
+    assessment:{complete:hasAssessment,reportStatus,reportReady,reportDelivered,score:assessment?.total_score??profile?.valu_index??null,designation:assessment?.designation||profile?.designation||null},
+    report:{complete:reportReady,delivered:reportDelivered,status:reportStatus},
+    profile:{complete:profileReady,missing:profileMissing},
+    capability:{complete:capabilityAccess,capabilities:activeCapability,eligible:eligibleCapabilities,missing:capabilityMissing},
+    eligibility:{complete:eligibilityComplete,missing:[...new Set([...profileMissing,...capabilityMissing])],capabilities:eligibleCapabilities},
+    marketplace:{complete:listed,capabilities:listedCapabilities},
+    opportunity:{complete:opportunityEngaged,access:opportunityAccess,latest:opportunity},
+    next,lifecycle:journey?.lifecycle_state||null
+  }})
 }
