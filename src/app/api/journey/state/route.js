@@ -39,7 +39,13 @@ export async function GET(request) {
   const activeCapability=capabilities.filter(c=>c.is_active)
   const eligibleCapabilities=activeCapability.filter(c=>c.eligible_for_listing||c.eligibility_status==='eligible'||c.eligibility_status==='listed')
   const listedCapabilities=activeCapability.filter(c=>c.eligible_for_listing&&(c.eligibility_status==='listed'||!!c.listed_at))
-  const eligible=eligibleCapabilities.length>0||journey?.eligibility_state==='eligible'||journey?.eligibility_state==='listed'||journey?.marketplace_ready===true
+  const assessmentCurrent=!!assessment?.completed_at&&Number(assessment?.total_score||profile?.valu_index||0)>=35&&(!assessment?.expires_at||new Date(assessment.expires_at)>new Date())
+  const eligibilityMissing=[]
+  if(!profileReady)eligibilityMissing.push(...profileMissing)
+  if(!assessmentCurrent)eligibilityMissing.push('Current full VALU assessment with a score of at least 35')
+  if(!activeCapability.length)eligibilityMissing.push('At least one active capability')
+  if(activeCapability.length&&!eligibleCapabilities.length)eligibilityMissing.push(...activeCapability.flatMap(c=>Array.isArray(c.missing_requirements)?c.missing_requirements:[]))
+  const eligible=eligibleCapabilities.length>0&&assessmentCurrent&&profileReady||journey?.eligibility_state==='eligible'||journey?.eligibility_state==='listed'||journey?.marketplace_ready===true
   const listed=profile?.listing_status==='listed'||listedCapabilities.length>0||journey?.marketplace_ready===true
   const opportunityEngaged=!!opportunity
   let next='assess'
@@ -51,5 +57,5 @@ export async function GET(request) {
   else if(!listed)next='marketplace'
   else if(!opportunityEngaged)next='opportunity'
   else next='opportunity'
-  return NextResponse.json({authenticated:true,state:{connect:{complete:true},assessment:{complete:hasAssessment,reportStatus,reportReady,reportDelivered,score:assessment?.total_score??profile?.valu_index??null,designation:assessment?.designation||profile?.designation||null},profile:{complete:profileReady,missing:profileMissing},capability:{complete:activeCapability.length>0,capabilities:activeCapability},eligibility:{complete:eligible,missing:activeCapability.filter(c=>!c.eligible_for_listing&&c.missing_requirements).flatMap(c=>Array.isArray(c.missing_requirements)?c.missing_requirements:[]),capabilities:eligibleCapabilities},marketplace:{complete:listed,capabilities:listedCapabilities},opportunity:{complete:opportunityEngaged,latest:opportunity},next,lifecycle:journey?.lifecycle_state||null}})
+  return NextResponse.json({authenticated:true,state:{connect:{complete:true},assessment:{complete:hasAssessment,reportStatus,reportReady,reportDelivered,score:assessment?.total_score??profile?.valu_index??null,designation:assessment?.designation||profile?.designation||null},profile:{complete:profileReady,missing:profileMissing},capability:{complete:activeCapability.length>0,capabilities:activeCapability},eligibility:{complete:eligible,missing:[...new Set(eligibilityMissing)],capabilities:eligibleCapabilities},marketplace:{complete:listed,capabilities:listedCapabilities},opportunity:{complete:opportunityEngaged,latest:opportunity},next,lifecycle:journey?.lifecycle_state||null}})
 }
