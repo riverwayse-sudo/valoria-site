@@ -141,3 +141,21 @@ comment on table public.professional_event_attendance is
 
 comment on table public.professional_certificates is
   'Issued certificates linked one-to-one with verified attendance and surfaced on professional profiles.';
+
+
+-- Seed the canonical Professional Standard Series event catalogue.
+insert into public.professional_events (session_id,title,description,event_date,duration_minutes,event_type,status)
+values
+  ('01','Why Being Good at Your Job Is No Longer Enough','The opening Valoria conversation on professional worth, visibility, influence and the capabilities that increasingly determine whether good work becomes recognised opportunity.','2026-07-18T10:00:00+01:00',90,'professional_standard','completed'),
+  ('02','Strategic Thinking: You Are Solving the Wrong Problems','A focused conversation on the difference between solving problems and selecting the problems worth solving — and why strategic trade-offs are a discipline, not a compromise.','2026-09-26T10:00:00+01:00',90,'professional_standard','completed'),
+  ('03','Execution Without Burnout: Why High Performers Plateau','A practical examination of the gap between being busy and creating impact, including the indispensability trap and how high performers can build a more sustainable operating model.','2026-10-17T10:00:00+01:00',90,'professional_standard','scheduled'),
+  ('04','Emotional Intelligence Is Not About Being Nice','Treat emotional intelligence as a precision instrument for perception, regulation and strategic application.','2026-11-14T10:00:00+01:00',90,'professional_standard','scheduled'),
+  ('05','Influence Without Authority: The Real Currency of Organisational Power','Understand authority versus influence and build a 90-day stakeholder influence map.','2026-12-05T10:00:00+01:00',90,'professional_standard','scheduled')
+on conflict (session_id) do update set
+  title=excluded.title,
+  description=excluded.description,
+  event_date=excluded.event_date,
+  duration_minutes=excluded.duration_minutes,
+  event_type=excluded.event_type,
+  status=excluded.status,
+  updated_at=now();
