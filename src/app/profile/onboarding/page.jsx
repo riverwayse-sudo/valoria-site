@@ -105,7 +105,7 @@ export default function ProgressiveOnboardingPage() {
         updated_at: new Date().toISOString(),
       }, { onConflict:'id' })
       if (error) throw error
-      router.replace('/dashboard')
+      router.replace('/profile/setup')
     } catch (err) {
       console.error('Progressive onboarding save failed:', err)
       setError('We could not save your starter profile. Please try again.')
@@ -123,7 +123,7 @@ export default function ProgressiveOnboardingPage() {
         <div style={styles.eyebrow}>YOU'RE IN</div>
         <h1 style={styles.title}>Start with the essentials.<br/><em>Build the rest when you're ready.</em></h1>
         <p style={styles.lead}>
-          Your account and VALU journey are already captured. We only need a few details to create your professional home on Valoria. Everything else can be completed later.
+          Your account and VALU journey are already captured. Save these essentials first, then continue into your full professional profile. You can leave at any point and return without losing the record.
         </p>
 
         {valu?.total_score != null && (
@@ -151,7 +151,7 @@ export default function ProgressiveOnboardingPage() {
 
           {error && <div style={styles.error}>{error}</div>}
           <button disabled={saving || !form.display_name.trim() || !form.current_job_title.trim()} style={{...styles.button,opacity:(saving || !form.display_name.trim() || !form.current_job_title.trim())?.5:1}}>
-            {saving ? 'SAVING YOUR PROFILE…' : 'ENTER VALORIA →'}
+            {saving ? 'SAVING YOUR PROFILE…' : 'SAVE & BUILD MY PROFILE →'}
           </button>
         </form>
 
@@ -163,7 +163,7 @@ export default function ProgressiveOnboardingPage() {
           <p>We'll bring these back at the right moment instead of asking for everything at once.</p>
         </div>
 
-        <div style={styles.footer}><Link href="/dashboard">Skip for now</Link><span>Nothing here determines marketplace listing.</span></div>
+        <div style={styles.footer}><Link href="/dashboard">Save & continue later</Link><span>Nothing here determines marketplace listing.</span></div>
       </div>
     </main>
   )
