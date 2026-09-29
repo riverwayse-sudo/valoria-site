@@ -1081,14 +1081,14 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
           <p style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.6, margin:0 }}>
             {Number(form.valu_index) >= 35
               ? 'You\u2019re eligible for marketplace listing once this profile is reviewed.'
-              : 'Profiles scoring 35 or above become eligible for marketplace listing — you can retake the VALU Index any time to improve your score.'}
+              : 'Your completed VALU assessment keeps your marketplace listing active. Build out your profile to unlock more of what Valoria can make available to you.'}
           </p>
         </div>
       ) : (
         <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
           <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — VALU INDEX ASSESSMENT</div>
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
-            Your profile is set to <strong style={{ color:PARCH }}>Not yet listed</strong> until the authoritative full VALU assessment is complete and the marketplace governance gates are satisfied. A current score of 35 or above is required for marketplace eligibility.
+            Your profile is not yet listed because the full VALU assessment is not complete. Complete VALU and you will be listed first; completing your professional profile then unlocks additional visibility and opportunities.
           </p>
           <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
             COMPLETE THE FULL VALU ASSESSMENT →
@@ -1099,7 +1099,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
       <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'28px' }}>
         <input type="checkbox" checked={form.consent} onChange={e => set('consent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
         <span style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7 }}>
-          I confirm all information provided is accurate. I understand my profile will be reviewed before listing, and my full name stays private until Valoria facilitates a formal introduction.
+          I confirm all information provided is accurate. I understand that completing VALU establishes my marketplace listing, while completing my professional profile unlocks additional visibility and opportunities.
         </span>
       </label>
 
