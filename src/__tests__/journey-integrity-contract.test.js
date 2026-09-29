@@ -105,4 +105,21 @@ describe('journey integrity contract', () => {
     expect(pages).toContain("getMarketplaceRows('speaker')")
     expect(pages).toContain("getMarketplaceRows('facilitator')")
   })
+  test('password recovery waits for the asynchronous Supabase recovery session and surfaces link errors', () => {
+    const source = read('src/app/reset-password/page.jsx')
+    expect(source).toContain("event === 'PASSWORD_RECOVERY'")
+    expect(source).toContain('let resolved = false')
+    expect(source).toContain('setTimeout(() => {')
+    expect(source).toContain('}, 10000)')
+    expect(source).toContain("error_description")
+    expect(source).not.toContain('if (!sessionReady) setNoSession(true)')
+  })
+
+  test('login password reset uses the canonical production recovery route', () => {
+    const source = read('src/app/login/page.jsx')
+    expect(source).toContain('resetPasswordForEmail')
+    expect(source).toContain('/reset-password')
+    expect(source).toContain('setResetSent(true)')
+  })
+
 })
