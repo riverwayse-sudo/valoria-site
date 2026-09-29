@@ -8,6 +8,30 @@ function normalizeTrack(value) {
   return v === 'talent' ? 'candidate' : v
 }
 
+function dedupeProfessionals(rows) {
+  const map = new Map()
+  for (const row of rows || []) {
+    if (!row.professional_id) continue
+    if (!map.has(row.professional_id)) {
+      map.set(row.professional_id, {
+        ...row,
+        id: row.professional_id,
+        capabilities: [],
+        tracks: [],
+      })
+    }
+    const target = map.get(row.professional_id)
+    const values = [
+      ...(Array.isArray(row.capabilities) ? row.capabilities : []),
+      row.capability,
+      row.track,
+    ].map(normalizeTrack).filter(Boolean)
+    target.capabilities = [...new Set([...target.capabilities, ...values])]
+    target.tracks = target.capabilities
+  }
+  return [...map.values()]
+}
+
 export async function getMarketplaceRows(track = 'all') {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -25,20 +49,8 @@ export async function getMarketplaceRows(track = 'all') {
     return []
   }
 
-  return (data || []).map(row => {
-    const capabilities = [...new Set(
-      (Array.isArray(row.capabilities) ? row.capabilities : [row.capability, row.track])
-        .map(normalizeTrack)
-        .filter(Boolean)
-    )]
-    return {
-      ...row,
-      id: row.professional_id,
-      track: normalizeTrack(row.track || row.capability || capabilities[0]),
-      capabilities,
-      tracks: capabilities,
-    }
-  }).filter(row => track === 'all' || row.capabilities.includes(normalizeTrack(track)))
+  const rows = dedupeProfessionals(data)
+  return rows.filter(row => track === 'all' || row.capabilities.includes(normalizeTrack(track)))
 }
 
 export async function getMarketplaceCounts() {
@@ -49,7 +61,7 @@ export async function getMarketplaceCounts() {
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
   const { data, error } = await supabase
     .from(SOURCE)
-    .select('professional_id,capabilities')
+    .select('professional_id,capability,track,capabilities')
 
   if (error) {
     console.error('Marketplace count query failed:', error)
@@ -62,7 +74,12 @@ export async function getMarketplaceCounts() {
   for (const row of data || []) {
     if (!row.professional_id) continue
     all.add(row.professional_id)
-    for (const capability of new Set((row.capabilities || []).map(normalizeTrack))) {
+    const values = new Set([
+      ...(Array.isArray(row.capabilities) ? row.capabilities : []),
+      row.capability,
+      row.track,
+    ].map(normalizeTrack).filter(Boolean))
+    for (const capability of values) {
       if (byTrack[capability]) byTrack[capability].add(row.professional_id)
     }
   }

@@ -74,9 +74,6 @@ export default function LoginPage() {
           setLoading(false)
           return
         }
-        const handoffRes = await fetch('/api/valu-handoff', { headers: { Authorization: `Bearer ${session.access_token}` } })
-        const handoff = await handoffRes.json().catch(() => ({}))
-        if (handoff?.url) { window.location.href = handoff.url; return }
         window.location.href = '/profile/onboarding'
         return
       }
@@ -134,7 +131,7 @@ export default function LoginPage() {
 
       if (!profile || !profile.display_name) {
         // First time — go to setup wizard
-        window.location.href = '/profile/setup'
+        window.location.href = '/profile/onboarding'
       } else {
         // Returning user — go to dashboard
         window.location.href = '/dashboard'
