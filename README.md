@@ -85,3 +85,8 @@ Never use user-editable metadata as an authorization source, and never expose a 
 ## Release recovery
 
 The Phase 5 expansion that caused the September 28, 2026 Vercel production build failures is preserved on `backup/phase5-broken-2026-09-28` for staged repair. The repaired Phase 5–8 release line remains the canonical production source; failed historical deployments are not used as release baselines.
+
+
+## Phase 8 closure
+
+The canonical release line includes the professional lifecycle, coaching and placement surfaces, assessment reconciliation, journey continuity, marketplace normalization, public opportunity abuse protection, and database permission hardening. Auth leaked-password protection remains a Supabase Auth project setting.
