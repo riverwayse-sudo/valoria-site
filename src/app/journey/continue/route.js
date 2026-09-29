@@ -5,68 +5,42 @@ import { createClient } from '@supabase/supabase-js'
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY
+const ASSESSMENT_ORIGIN = 'https://assessment.valoriainstitute.com'
 
-const STAGE_ROUTES = {
-  connect: '/dashboard',
-  assess: 'https://assessment.valoriainstitute.com/',
-  profile: '/profile/setup',
-  capability: '/profile/setup',
-  eligibility: '/dashboard',
-  marketplace: '/marketplace',
-  opportunity: '/opportunities',
+async function getUser(request) {
+  if (!SB_URL || !SB_ANON) return null
+  const supabase = createServerClient(SB_URL, SB_ANON, { cookies:{ getAll:()=>request.cookies.getAll(), setAll:()=>{} } })
+  const { data:{user} }=await supabase.auth.getUser()
+  return user||null
 }
 
-export async function GET(request) {
-  const token = request.nextUrl.searchParams.get('token')?.trim()
-  if (!token || !SERVICE || !SB_URL || !SB_ANON) {
-    return NextResponse.redirect(new URL('/journey', request.url))
+async function stageTarget(request, stage, user) {
+  const routes={connect:'/dashboard',profile:'/profile/setup',capability:'/profile/setup',eligibility:'/dashboard',marketplace:'/marketplace',opportunity:'/opportunities'}
+  if(stage!=='assess') return routes[stage]||'/journey'
+  if(!user||!SERVICE||!SB_URL) return ASSESSMENT_ORIGIN+'/'
+  const admin=createClient(SB_URL,SERVICE,{auth:{persistSession:false,autoRefreshToken:false}})
+  const {data:taster}=await admin.from('taster_sessions').select('id,name,role,experience').eq('user_id',user.id).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle()
+  if(!taster) return '/profile/setup?valu=required'
+  const params=new URLSearchParams({full:'1',taster_id:taster.id,name:taster.name||'',role:taster.role||'',experience:taster.experience||''})
+  return ASSESSMENT_ORIGIN+'/?'+params.toString()
+}
+
+export async function GET(request){
+  const token=request.nextUrl.searchParams.get('token')?.trim()
+  const stage=request.nextUrl.searchParams.get('stage')?.trim()
+  if(stage&&!token){
+    const user=await getUser(request)
+    if(!user){const signup=new URL('/signup',request.url);signup.searchParams.set('returnTo','/journey/continue?stage='+encodeURIComponent(stage));return NextResponse.redirect(signup)}
+    return NextResponse.redirect(new URL(await stageTarget(request,stage,user),request.url))
   }
-
-  const admin = createClient(SB_URL, SERVICE, { auth: { persistSession:false, autoRefreshToken:false } })
-  const { data: link, error } = await admin
-    .from('valoria_reentry_links')
-    .select('id,user_id,target_stage,expires_at,used_at')
-    .eq('token', token)
-    .maybeSingle()
-
-  if (error || !link || link.used_at || (link.expires_at && new Date(link.expires_at) <= new Date())) {
-    return NextResponse.redirect(new URL('/journey', request.url))
-  }
-
-  const response = NextResponse.next()
-  const supabase = createServerClient(SB_URL, SB_ANON, {
-    cookies: {
-      getAll() { return request.cookies.getAll() },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options))
-      },
-    },
-  })
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    const signup = new URL('/signup', request.url)
-    signup.searchParams.set('returnTo', '/journey/continue?token=' + encodeURIComponent(token))
-    return NextResponse.redirect(signup)
-  }
-
-  if (link.user_id && link.user_id !== user.id) {
-    return NextResponse.redirect(new URL('/journey', request.url))
-  }
-
-  await admin.from('valoria_reentry_links').update({
-    user_id: user.id,
-    used_at: new Date().toISOString(),
-  }).eq('id', link.id).is('used_at', null)
-
-  await admin.from('valoria_journey_events').insert({
-    user_id: user.id,
-    event_key: 'journey_reentered',
-    source: 'reentry_link',
-    source_id: link.id,
-    metadata: { target_stage: link.target_stage },
-  })
-
-  const target = STAGE_ROUTES[link.target_stage] || '/journey'
-  return NextResponse.redirect(new URL(target, request.url))
+  if(!token||!SERVICE||!SB_URL||!SB_ANON)return NextResponse.redirect(new URL('/journey',request.url))
+  const admin=createClient(SB_URL,SERVICE,{auth:{persistSession:false,autoRefreshToken:false}})
+  const {data:link,error}=await admin.from('valoria_reentry_links').select('id,user_id,target_stage,expires_at,used_at').eq('token',token).maybeSingle()
+  if(error||!link||link.used_at||(link.expires_at&&new Date(link.expires_at)<=new Date()))return NextResponse.redirect(new URL('/journey',request.url))
+  const user=await getUser(request)
+  if(!user){const signup=new URL('/signup',request.url);signup.searchParams.set('returnTo','/journey/continue?token='+encodeURIComponent(token));return NextResponse.redirect(signup)}
+  if(link.user_id&&link.user_id!==user.id)return NextResponse.redirect(new URL('/journey',request.url))
+  await admin.from('valoria_reentry_links').update({user_id:user.id,used_at:new Date().toISOString()}).eq('id',link.id).is('used_at',null)
+  await admin.from('valoria_journey_events').insert({user_id:user.id,event_key:'journey_reentered',source:'reentry_link',source_id:link.id,metadata:{target_stage:link.target_stage}})
+  return NextResponse.redirect(new URL(await stageTarget(request,link.target_stage,user),request.url))
 }
