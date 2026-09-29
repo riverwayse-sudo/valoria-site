@@ -47,6 +47,16 @@ describe('journey integrity contract', () => {
     expect(source).toContain("from('opportunities').delete()")
   })
 
+  test('opportunity application flow has both professional and employer endpoints', () => {
+    const apply = read('src/app/api/opportunities/applications/route.js')
+    const employer = read('src/app/api/employer/applications/route.js')
+    const dashboard = read('src/app/employer/dashboard/page.jsx')
+    expect(apply).toContain("from('opportunity_applications')")
+    expect(apply).toContain("event_type: 'application'")
+    expect(employer).toContain("application_status_changed")
+    expect(dashboard).toContain('/api/employer/applications')
+  })
+
   test('production smoke gate covers the canonical public and unauthenticated API surfaces', () => {
     const source = read('scripts/production-smoke.mjs')
     for (const marker of [
