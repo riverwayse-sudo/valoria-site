@@ -46,11 +46,11 @@ const FAINT   = 'rgba(247,244,238,.15)'
 const GLINE   = 'rgba(201,168,76,.12)'
 const GLINE2  = 'rgba(201,168,76,.28)'
 const PRIME   = [
-  { letter: 'P', color: '#1D9E75', label: 'Presence' },
-  { letter: 'R', color: '#378ADD', label: 'Relationships' },
-  { letter: 'I', color: '#7F77DD', label: 'Intelligence' },
-  { letter: 'M', color: '#BA7517', label: 'Mastery' },
-  { letter: 'E', color: '#D85A30', label: 'Enterprise' },
+  { letter: 'P', color: '#C9A84C', label: 'Presence' },
+  { letter: 'R', color: '#C9A84C', label: 'Relationships' },
+  { letter: 'I', color: '#C9A84C', label: 'Intelligence' },
+  { letter: 'M', color: '#C9A84C', label: 'Mastery' },
+  { letter: 'E', color: '#C9A84C', label: 'Enterprise' },
 ]
 
 // Returns the top-scoring PRIME clusters (highest first), capped at 3, for
@@ -297,7 +297,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
 
         {/* PRIME stripe */}
         <div style={{ position:'fixed', top:0, left:0, right:0, height:'3px', display:'flex', zIndex:201, pointerEvents:'none' }}>
-          {[['#1D9E75',20],['#378ADD',25],['#7F77DD',25],['#BA7517',20],['#D85A30',10]].map(([c,p],i) => (
+          {[['#C9A84C',20],['#C9A84C',25],['#C9A84C',25],['#C9A84C',20],['#C9A84C',10]].map(([c,p],i) => (
             <div key={i} style={{ flex:p, background:c, opacity:.85 }} />
           ))}
         </div>
@@ -320,7 +320,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               everyone by default would misrepresent them. */}
           {p.availability && (
             <div style={{ position:'absolute', top:'20px', right:'28px', display:'flex', alignItems:'center', gap:'7px', background:'rgba(26,26,46,.75)', border:`1px solid ${GLINE2}`, padding:'7px 16px 7px 12px', borderRadius:'999px', fontSize:'11px', letterSpacing:'.1em', textTransform:'uppercase', color: GOLD, backdropFilter:'blur(8px)' }}>
-              <div style={{ width:'7px', height:'7px', borderRadius:'50%', background:'#1D9E75', boxShadow:'0 0 0 0 rgba(29,158,117,.6)', animation:'vi-pulse 2s infinite' }} />
+              <div style={{ width:'7px', height:'7px', borderRadius:'50%', background:'#C9A84C', boxShadow:'0 0 0 0 rgba(29,158,117,.6)', animation:'vi-pulse 2s infinite' }} />
               {p.availability === 'open' ? 'Open to Introductions' : p.availability === 'contract_only' ? 'Contract Only' : 'Not Available'}
             </div>
           )}
@@ -615,7 +615,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                       <article key={cert.id} style={{ background:MID, border:`1px solid ${GLINE}`, padding:'20px' }}>
                         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:'12px', marginBottom:'14px' }}>
                           <span style={{ fontSize:'8px', fontWeight:700, letterSpacing:'.16em', color:GOLD }}>VERIFIED ATTENDANCE</span>
-                          <span style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#1D9E75', flexShrink:0 }} aria-label="Verified" />
+                          <span style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#C9A84C', flexShrink:0 }} aria-label="Verified" />
                         </div>
                         <h3 style={{ fontSize:'18px', fontWeight:500, color:PARCH, lineHeight:1.3, margin:'0 0 8px' }}>{cert.event_title}</h3>
                         <div style={{ fontSize:'11px', color:DIM, lineHeight:1.7 }}>{eventDate} · {cert.issuer}</div>
