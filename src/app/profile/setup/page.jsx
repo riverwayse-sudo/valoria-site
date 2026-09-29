@@ -11,8 +11,6 @@ import {
   FIELD_LABELS, VALIDATORS, validatorError, getInitials, CURRENCIES,
 } from '@/lib/profileOptions'
 
-const PRIME_COLORS = { P:'#1D9E75', R:'#378ADD', I:'#7F77DD', M:'#BA7517', E:'#D85A30' }
-
 
 const EMPTY_FORM = {
   active_tracks: [],
@@ -458,9 +456,7 @@ function ProfileSetupForm() {
     return (
       <div style={{ minHeight:'100vh', background:DARK, color:PARCH, fontFamily:'var(--font,Raleway,sans-serif)', display:'flex', alignItems:'center', justifyContent:'center', padding:'20px' }}>
         <div style={{ maxWidth:'480px', width:'100%', textAlign:'center' }}>
-          <div style={{ height:'3px', display:'flex', marginBottom:'40px', borderRadius:'2px', overflow:'hidden' }}>
-            {Object.values(PRIME_COLORS).map((c,i) => <div key={i} style={{ flex:1, background:c, opacity:.85 }} />)}
-          </div>
+          <div style={{ height:'2px', background:GOLD, opacity:.75, marginBottom:'40px', borderRadius:'2px' }} />
           <div style={{ width:'56px', height:'56px', borderRadius:'50%', background:'rgba(29,158,117,.12)', border:'1px solid rgba(29,158,117,.3)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 24px' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#1D9E75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
@@ -499,9 +495,7 @@ function ProfileSetupForm() {
   return (
     <div style={{ minHeight:'100vh', background:DARK, color:PARCH, fontFamily:'var(--font,Raleway,sans-serif)' }}>
       {/* PRIME stripe */}
-      <div style={{ height:'3px', display:'flex', position:'sticky', top:0, zIndex:200 }}>
-        {Object.values(PRIME_COLORS).map((c,i) => <div key={i} style={{ flex:1, background:c, opacity:.85 }} />)}
-      </div>
+      <div style={{ height:'2px', background:GOLD, position:'sticky', top:0, zIndex:200, opacity:.8 }} />
 
       {/* NAV */}
       <header style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 clamp(20px,4vw,40px)', height:'60px', background:MID, borderBottom:`1px solid ${GLINE}` }}>
@@ -534,9 +528,9 @@ function ProfileSetupForm() {
           </div>
         </div>
 
-        <div style={{ display:'grid', gridTemplateColumns:'170px minmax(0,1fr)', gap:'28px', alignItems:'start' }}>
-          <aside style={{ position:'sticky', top:'86px', display:'grid', gap:'6px' }}>
-            <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'8px' }}>PROFILE BUILD</div>
+        <div style={{ display:'grid', gridTemplateColumns:'minmax(0,1fr)', gap:'28px', alignItems:'start' }}>
+          <aside style={{ display:'flex', flexWrap:'wrap', gap:'6px', alignItems:'stretch', marginBottom:'6px' }}>
+            <div style={{ width:'100%', fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'2px' }}>PROFILE BUILD</div>
             {sectionNames.map((name, idx) => {
               const start = sectionStarts[idx]
               const end = idx === sectionNames.length - 1 ? screens.length - 2 : sectionStarts[idx + 1] - 1
@@ -1000,7 +994,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
       <Title>Review &amp;<br/><Em>submit.</Em></Title>
       <Sub>Take one more look before this goes live for review.</Sub>
 
-      <div style={{ background:'rgba(237,232,220,0.97)', color:'#0F0F1A', padding:'20px', marginBottom:'24px', border:'1px solid #C9A84C' }}>
+      <div style={{ background:MID, color:PARCH, padding:'20px', marginBottom:'24px', border:`1px solid ${GLINE}` }}>
         <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'12px' }}>
           <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'#0F0F1A', color:GOLD, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, fontSize:'14px', overflow:'hidden', flexShrink:0 }}>
             {form.photo_url ? <img src={form.photo_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : getInitials(form.display_name)}
@@ -1013,7 +1007,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
         </div>
         {tags.length > 0 && (
           <div style={{ display:'flex', flexWrap:'wrap', gap:'6px', marginBottom:'10px' }}>
-            {tags.slice(0,5).map(t => <span key={t} style={{ padding:'4px 10px', border:'1px solid #D4C9A8', fontSize:'11px', color:'#2E2E4A', background:'#EDE8DC' }}>{t}</span>)}
+            {tags.slice(0,5).map(t => <span key={t} style={{ padding:'4px 10px', border:`1px solid ${GLINE}`, fontSize:'11px', color:PARCH, background:'rgba(255,255,255,.04)' }}>{t}</span>)}
           </div>
         )}
         {form.bio && <p style={{ fontSize:'12px', color:'#444441', lineHeight:1.6, margin:'0 0 12px' }}>{form.bio.slice(0,120)}{form.bio.length > 120 ? '…' : ''}</p>}
