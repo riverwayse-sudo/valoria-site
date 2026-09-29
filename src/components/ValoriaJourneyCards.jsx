@@ -32,8 +32,8 @@ function buildCards(state){
   if(m.key==='assess'&&complete){href='/dashboard';action='VIEW ASSESSMENT'}
   if(m.key==='report'&&complete){href='/report';action='VIEW REPORT'}
   if(m.key==='profile'&&complete){href='/profile/edit';action='VIEW PROFILE'}
-  if(m.key==='capability'&&complete){href='/profile/setup';action='VIEW CAPABILITIES'}
-  if(m.key==='eligibility'&&complete){href='/profile/setup';action='VIEW ELIGIBILITY'}
+  if(m.key==='capability'&&complete){href='/profile/passport';action='VIEW CAPABILITY PASSPORT'}
+  if(m.key==='eligibility'&&complete){href='/profile/passport';action='VIEW ELIGIBILITY'}
   if(m.key==='listed'&&complete){href='/marketplace';action='VIEW MARKETPLACE'}
   if(m.key==='opportunity'&&complete){href='/opportunities';action='VIEW OPPORTUNITIES'}
   return {...m,complete,current,locked,href,action}
