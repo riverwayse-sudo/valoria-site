@@ -16,7 +16,7 @@ export async function GET(request) {
     admin.from('professional_journey').select('*').eq('user_id',user.id).maybeSingle(),
     admin.from('professional_profiles').select('*').eq('id',user.id).maybeSingle(),
     admin.from('professional_capabilities').select('id,capability,is_active,eligibility_status,eligible_for_listing,listed_at,missing_requirements').eq('professional_id',user.id).eq('is_active',true),
-    admin.from('valu_assessments').select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,designation,created_at').eq('user_id',user.id).order('completed_at',{ascending:false}).limit(1).maybeSingle(),
+    admin.from('valu_assessments').select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,designation,created_at,expires_at').eq('user_id',user.id).order('completed_at',{ascending:false}).limit(1).maybeSingle(),
     admin.from('opportunity_submissions').select('id,opportunity_id,status,created_at').eq('submitter_user_id',user.id).order('created_at',{ascending:false}).limit(1).maybeSingle(),
   ])
   const journey=journeyRes.data||null, profile=profileRes.data||null, capabilities=capsRes.data||[], assessment=assessmentRes.data||null, opportunity=opportunityRes.data||null
