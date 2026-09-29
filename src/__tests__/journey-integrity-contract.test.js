@@ -69,4 +69,32 @@ describe('journey integrity contract', () => {
       '/api/outcomes',
     ]) expect(source).toContain(marker)
   })
+  
+  test('marketplace uses the canonical public roster and counts multi-capability professionals uniquely', () => {
+    const source = read('src/lib/marketplace-data.js')
+    expect(source).toContain("const SOURCE = 'marketplace_public_roster'")
+    expect(source).toContain('new Set()')
+    expect(source).toContain('row.capabilities')
+  })
+
+  test('legacy PRIME color tokens are removed from the active design system', () => {
+    const globals = read('src/styles/globals.css')
+    const facilitator = read('src/app/facilitators/page.jsx')
+    for (const token of ['--teal', '--blue', '--purple', '--amber', '--coral']) {
+      expect(globals).not.toContain(token)
+    }
+    expect(facilitator).not.toContain('COLORS.teal')
+    expect(facilitator).not.toContain('#1D9E75')
+  })
+
+  test('marketplace pages use the canonical capability vocabulary', () => {
+    const pages = [
+      read('src/app/marketplace/talent/page.jsx'),
+      read('src/app/marketplace/speakers/page.jsx'),
+      read('src/app/marketplace/facilitators/page.jsx'),
+    ].join('\n')
+    expect(pages).toContain("getMarketplaceRows('candidate')")
+    expect(pages).toContain("getMarketplaceRows('speaker')")
+    expect(pages).toContain("getMarketplaceRows('facilitator')")
+  })
 })
