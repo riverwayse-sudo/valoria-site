@@ -62,3 +62,24 @@ The general marketplace returns one row per professional. Category marketplaces 
 Supabase governance functions and the platform migration history are authoritative for eligibility and listing behavior. Public-site copy must describe this same lifecycle.
 
 Do not introduce client-side eligibility shortcuts, alternate marketplace rules, legacy evidence-table requirements, or separate marketplace identities without changing this contract first.
+
+## Value activation and outcome layer
+
+The marketplace lifecycle is not the end of the professional journey. After a current full VALU assessment produces a report, Valoria creates a value activation plan containing strengths, development priorities, next actions and the value unlocked by completion. The plan must be activated before the report milestone is treated as fully complete in the continuity journey.
+
+The professional identity then becomes a capability passport:
+
+- Assessed: current full VALU assessment and report.
+- Self-declared: professional profile and capability information supplied by the professional.
+- Evidence-backed: documents or other accepted evidence submitted for review.
+- Verified: evidence or credentials approved through Valoria governance.
+- Eligible: platform-governed capability gate satisfied.
+- Listed: eligible capability projected into the public registry.
+
+Opportunity access is a separate outcome layer. Matching uses structured capability, industry and skill signals. Discovery, enquiry, invite, application, shortlist, introduction, interview, selection and engagement events can be recorded against the professional so Valoria can measure movement from merit signal to opportunity outcome.
+
+The north-star operational funnel is therefore:
+
+Assessment → Report → Value Activation → Profile → Capability Passport → Eligibility → Verification → Listing → Opportunity Match → Engagement → Outcome.
+
+All historical entry points should resolve into this same lifecycle without discarding prior assessment, taster, report, profile or capability records.
