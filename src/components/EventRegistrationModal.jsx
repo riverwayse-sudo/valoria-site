@@ -39,6 +39,7 @@ function Countdown({ target, label, live = false }) {
 export default function EventRegistrationModal({ session, onClose }) {
   const [status, setStatus] = useState('idle')
   const [error, setError] = useState('')
+  const [journeyUrl, setJourneyUrl] = useState('')
   const [form, setForm] = useState({ full_name: '', email: '', role: '', organisation: '', whatsapp: '', consent: false })
   const modalRef = useRef(null)
   const firstInputRef = useRef(null)
@@ -95,6 +96,7 @@ export default function EventRegistrationModal({ session, onClose }) {
       })
       const data = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(data.error || 'Registration could not be completed.')
+      setJourneyUrl(data.journey_url || '/journey')
       setStatus('success')
     } catch (err) {
       setStatus('error')
