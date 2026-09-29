@@ -2,6 +2,26 @@ import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
 
+async function sendWelcomeEmail({ email, fullName, interest, role, journeyUrl }) {
+  const key = process.env.BREVO_API_KEY
+  if (!key) return
+  const fromEmail = process.env.BREVO_FROM_EMAIL || 'info@valoriainstitute.com'
+  const fromName = process.env.BREVO_FROM_NAME || 'Valoria Institute'
+  const escape = (v='') => String(v).replace(/[&<>'\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]))
+  const first = escape(fullName.split(/\\s+/)[0] || 'there')
+  const safeJourney = escape(journeyUrl)
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method:'POST', headers:{'api-key':key,'Content-Type':'application/json'},
+    body:JSON.stringify({
+      sender:{name:fromName,email:fromEmail}, to:[{email,name:fullName}],
+      replyTo:{email:fromEmail,name:fromName}, subject:'Your Valoria journey starts here.',
+      htmlContent:`<div style="font-family:Arial,sans-serif;background:#0F0F1A;color:#F7F4EE;padding:40px"><div style="max-width:560px;margin:auto;background:#1A1A2E;padding:40px"><p style="color:#C9A84C;letter-spacing:.16em;font-size:11px;font-weight:700">VALORIA INSTITUTE</p><h1 style="font-weight:400">Your place is saved.</h1><p>Hi ${first},</p><p>We've saved your interest with Valoria. You do not need to start over when you return.</p><p style="margin-top:28px"><a href="${safeJourney}" style="display:inline-block;background:#C9A84C;color:#1A1A2E;padding:14px 20px;text-decoration:none;font-weight:700">CONTINUE YOUR VALORIA JOURNEY →</a></p><p style="color:rgba(247,244,238,.55);font-size:12px;line-height:1.6">This personal continuation link is valid for 30 days.</p></div></div>`,
+      tags:['valoria-lead','journey-continuity']
+    })
+  })
+  if(!response.ok) throw new Error(`BREVO_EMAIL_${response.status}`)
+}
+
 export async function POST(request) {
   try {
     const body = await request.json()
