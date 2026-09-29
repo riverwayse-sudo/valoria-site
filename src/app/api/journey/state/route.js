@@ -19,7 +19,12 @@ export async function GET(request) {
     admin.from('valu_assessments').select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,designation,created_at,expires_at').eq('user_id',user.id).order('completed_at',{ascending:false}).limit(1).maybeSingle(),
     admin.from('opportunity_submissions').select('id,opportunity_id,status,created_at').eq('submitter_user_id',user.id).order('created_at',{ascending:false}).limit(1).maybeSingle(),
   ])
-  const journey=journeyRes.data||null, profile=profileRes.data||null, capabilities=capsRes.data||[], assessment=assessmentRes.data||null, opportunity=opportunityRes.data||null
+  const journey=journeyRes.data||null, profile=profileRes.data||null, capabilities=capsRes.data||[], opportunity=opportunityRes.data||null
+  let assessment=assessmentRes.data||null
+  if(!assessment&&user.email){
+    const {data:byEmail}=await admin.from('valu_assessments').select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,designation,created_at,expires_at,user_id').eq('email',user.email.toLowerCase()).order('completed_at',{ascending:false}).limit(1).maybeSingle()
+    assessment=byEmail||null
+  }
   const hasAssessment=!!(assessment?.completed_at||journey?.current_assessment_id||profile?.assessment_completed_at||profile?.valu_index!=null)
   const reportStatus=assessment?.report_status||(assessment?.ai_report?'READY':hasAssessment?'PENDING':'NOT_STARTED')
   const reportReady=['READY','EMAIL_PENDING','SENT'].includes(reportStatus)||!!assessment?.ai_report
