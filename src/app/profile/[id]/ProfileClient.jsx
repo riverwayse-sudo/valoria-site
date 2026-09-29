@@ -131,6 +131,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
   const [avatarError, setAvatarError] = useState(false)
   const [copied, setCopied] = useState(false)
   const [currentUser, setCurrentUser] = useState(null)
+  const [certificates, setCertificates] = useState([])
 
   useEffect(() => {
     async function load() {
@@ -139,6 +140,15 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
       setCurrentUser(user)
 
       if (initialProfile) {
+        const { data: certificateRows, error: certificateError } = await supabase
+          .from('professional_certificates')
+          .select('id,certificate_number,title,event_title,event_date,issuer,issued_at,verification_token')
+          .eq('professional_id', initialProfile.id)
+          .is('revoked_at', null)
+          .order('issued_at', { ascending: false })
+        if (certificateError) console.error('professional certificates fetch failed:', certificateError)
+        setCertificates(certificateRows || [])
+
         if (!user || user.id !== initialProfile.id) {
           const dedupeKey = `viewed_${initialProfile.id}`
           if (!sessionStorage.getItem(dedupeKey)) {
@@ -167,6 +177,15 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
       if (realError) console.error('professional_profiles fetch failed:', realError)
 
       if (real) {
+        const { data: certificateRows, error: certificateError } = await supabase
+          .from('professional_certificates')
+          .select('id,certificate_number,title,event_title,event_date,issuer,issued_at,verification_token')
+          .eq('professional_id', real.id)
+          .is('revoked_at', null)
+          .order('issued_at', { ascending: false })
+        if (certificateError) console.error('professional certificates fetch failed:', certificateError)
+        setCertificates(certificateRows || [])
+
         setProfile({
           ...real,
           // Keep the form-facing name the rest of this component already
@@ -581,6 +600,32 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                       {t}
                     </span>
                   ))}
+                </div>
+              </Section>
+            )}
+
+            {/* Verified participation — certificates are issued only from verified attendance.
+                They are intentionally part of the professional record, not a temporary event page. */}
+            {certificates.length > 0 && (
+              <Section label={`Participation & Certificates · ${certificates.length} verified event${certificates.length === 1 ? '' : 's'}`}>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))', gap:'12px' }}>
+                  {certificates.map(cert => {
+                    const eventDate = new Intl.DateTimeFormat('en-NG', { day:'numeric', month:'short', year:'numeric', timeZone:'Africa/Lagos' }).format(new Date(cert.event_date))
+                    return (
+                      <article key={cert.id} style={{ background:MID, border:`1px solid ${GLINE}`, padding:'20px' }}>
+                        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:'12px', marginBottom:'14px' }}>
+                          <span style={{ fontSize:'8px', fontWeight:700, letterSpacing:'.16em', color:GOLD }}>VERIFIED ATTENDANCE</span>
+                          <span style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#1D9E75', flexShrink:0 }} aria-label="Verified" />
+                        </div>
+                        <h3 style={{ fontSize:'18px', fontWeight:500, color:PARCH, lineHeight:1.3, margin:'0 0 8px' }}>{cert.event_title}</h3>
+                        <div style={{ fontSize:'11px', color:DIM, lineHeight:1.7 }}>{eventDate} · {cert.issuer}</div>
+                        <div style={{ marginTop:'16px', paddingTop:'12px', borderTop:`1px solid ${GLINE}`, display:'flex', justifyContent:'space-between', alignItems:'center', gap:'12px' }}>
+                          <span style={{ fontSize:'9px', color:'rgba(247,244,238,.38)', letterSpacing:'.06em', fontVariantNumeric:'tabular-nums' }}>{cert.certificate_number}</span>
+                          <Link href={`/certificate/${cert.verification_token}`} target="_blank" style={{ color:GOLD, fontSize:'9px', fontWeight:700, letterSpacing:'.1em', textDecoration:'none', whiteSpace:'nowrap' }}>VERIFY →</Link>
+                        </div>
+                      </article>
+                    )
+                  })}
                 </div>
               </Section>
             )}
