@@ -29,7 +29,12 @@ export async function GET(request) {
   if(!profile?.current_job_title?.trim()&&!profile?.headline?.trim())profileMissing.push('Your professional title')
   if(!profile?.bio?.trim())profileMissing.push('Your professional bio')
   if(!profile?.industry?.trim())profileMissing.push('Your industry')
+  if(!profile?.username?.trim())profileMissing.push('Your username')
+  if(!profile?.phone?.trim())profileMissing.push('Your phone number')
+  if(!profile?.location?.trim())profileMissing.push('Your location')
+  if(!Array.isArray(profile?.languages)||profile.languages.length===0)profileMissing.push('At least one language')
   if(!profile?.photo_url?.trim())profileMissing.push('Your profile photo')
+  if(!profile?.cv_url?.trim())profileMissing.push('Your CV')
   const profileReady=profile?.profile_complete===true&&profileMissing.length===0
   const activeCapability=capabilities.filter(c=>c.is_active)
   const eligibleCapabilities=activeCapability.filter(c=>c.eligible_for_listing||c.eligibility_status==='eligible'||c.eligibility_status==='listed')
