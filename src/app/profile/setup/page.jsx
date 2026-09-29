@@ -433,6 +433,34 @@ function ProfileSetupForm() {
     setSaving(true)
     const ok = await saveProgress()
     if (!ok) { setSaving(false); return }
+
+    // Completion is an explicit governance state, not a side-effect of autosave.
+    // Keep assessment/eligibility/listing platform-managed.
+    const { error: completionError } = await supabase
+      .from('professional_profiles')
+      .update({ profile_complete: true, updated_at: new Date().toISOString() })
+      .eq('id', user.id)
+    if (completionError) {
+      console.error('Profile completion update failed:', completionError)
+      setSaving(false)
+      setSaveError('Your profile was saved, but completion could not be confirmed. Please try again.')
+      return
+    }
+
+    // Maintain the canonical 1 Profile → 1–3+ Capabilities model.
+    const capabilityMap = { candidate: 'talent', talent: 'talent', speaker: 'speaker', facilitator: 'facilitator' }
+    const capabilities = [...new Set((form.active_tracks || []).map(t => capabilityMap[String(t).toLowerCase()]).filter(Boolean))]
+    if (capabilities.length) {
+      const { error: capabilityError } = await supabase
+        .from('professional_capabilities')
+        .upsert(capabilities.map(capability => ({ professional_id: user.id, capability, is_active: true, updated_at: new Date().toISOString() })), { onConflict: 'professional_id,capability' })
+      if (capabilityError) {
+        console.error('Capability sync failed:', capabilityError)
+        setSaving(false)
+        setSaveError('Your profile was saved, but your capability selection could not be synchronized. Please try again.')
+        return
+      }
+    }
     // Fetch back what the database actually assigned (atb_id is set by a
     // trigger, not by this app) so we can show it — previously this just
     // redirected silently with no confirmation of any kind.
