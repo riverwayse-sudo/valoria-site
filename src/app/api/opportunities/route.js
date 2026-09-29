@@ -12,7 +12,7 @@ function clientKey(request,email){
 }
 export async function GET(){
   const sb=db()
-  const {data,error}=await sb.from('opportunities').select('id,slug,title,opportunity_type,summary,organisation_name,location,work_mode,employment_type,experience_level,industry,capabilities,compensation,closing_at').eq('status','published').eq('access_level','public').or('closing_at.is.null,closing_at.gt.'+new Date().toISOString()).order('published_at',{ascending:false})
+  const {data,error}=await sb.from('opportunities').select('id,slug,title,opportunity_type,summary,organisation_name,location,work_mode,employment_type,experience_level,industry,capabilities,skills,compensation,application_method,application_url,closing_at').eq('status','published').eq('access_level','public').or('closing_at.is.null,closing_at.gt.'+new Date().toISOString()).order('published_at',{ascending:false})
   if(error)return Response.json({error:error.message},{status:500})
   return Response.json({opportunities:data||[]})
 }
