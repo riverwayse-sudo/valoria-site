@@ -59,12 +59,17 @@ export async function POST(request) {
     .is('user_id', null)
 
   if (linkError) return NextResponse.json({ error: 'Could not link the teaser result.' }, { status: 502 })
-  await admin.from('valoria_journey_events').insert({
+  const { data: linked, error: verifyError } = await admin.from('taster_sessions').select('id,user_id,linked_at').eq('id', tasterId).maybeSingle()
+  if (verifyError || linked?.user_id !== user.id || !linked?.linked_at) {
+    return NextResponse.json({ error: 'The teaser link could not be verified. Please retry.' }, { status: 502 })
+  }
+  const { error: eventError } = await admin.from('valoria_journey_events').insert({
     user_id: user.id,
     event_key: 'taster_linked',
     source: 'taster_session',
     source_id: tasterId,
     metadata: { link_method: 'verified_taster_id_name_match' },
   })
+  if (eventError) return NextResponse.json({ error: 'Teaser linked, but the journey event could not be recorded. Please retry the journey step.', detail: eventError.message }, { status: 502 })
   return NextResponse.json({ ok: true, next: '/profile/setup' })
 }
