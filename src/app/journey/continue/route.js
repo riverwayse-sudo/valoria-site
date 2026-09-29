@@ -20,7 +20,7 @@ async function stageTarget(request, stage, user) {
   if(!user||!SERVICE||!SB_URL) return ASSESSMENT_ORIGIN+'/'
   const admin=createClient(SB_URL,SERVICE,{auth:{persistSession:false,autoRefreshToken:false}})
   const {data:taster}=await admin.from('taster_sessions').select('id,name,role,experience').eq('user_id',user.id).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle()
-  if(!taster) return '/profile/setup?valu=required'
+  if(!taster) return ASSESSMENT_ORIGIN+'/'
   const params=new URLSearchParams({full:'1',taster_id:taster.id,name:taster.name||'',role:taster.role||'',experience:taster.experience||''})
   return ASSESSMENT_ORIGIN+'/?'+params.toString()
 }
