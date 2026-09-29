@@ -72,12 +72,16 @@ Production is deployed through Vercel from the `main` branch. Environment variab
 
 ## Closure baseline
 
-The current release line keeps the marketplace and public profile architecture server-first, uses the canonical VALU/scoring contracts, defers privileged Supabase clients until request time, and treats CI/build failures as blocking release issues.
+Phase 1 through Phase 8 are now the canonical release line on `main`. This includes marketplace integrity/evidence governance, opportunity/application lifecycle, assessment continuity, operations/security hardening, coaching/placement, controlled assessment reconciliation, canonical marketplace reconciliation, and report-generation permission hardening.
+
+The canonical release line keeps the marketplace and public profile architecture server-first, uses the canonical VALU/scoring contracts, defers privileged Supabase clients until request time, and treats CI/build failures as blocking release issues.
 
 ## Security
 
-Keep dependencies patched and review authentication, RLS, API routes and public profile data before shipping changes. Never use user-editable metadata as an authorization source.
+The remaining Supabase security-advisor warning is the Auth **Leaked Password Protection** setting. This is a Supabase Auth project setting rather than a repository migration and must be enabled in the Supabase Auth configuration before the security checklist can be considered fully green.
+
+Never use user-editable metadata as an authorization source, and never expose a Supabase service-role secret to browser code.
 
 ## Release recovery
 
-The Phase 5 expansion that caused the September 28, 2026 Vercel production build failures is preserved on `backup/phase5-broken-2026-09-28` for staged repair. Production `main` is kept on the last known-good build while the Phase 5 changes are reintroduced incrementally.
+The Phase 5 expansion that caused the September 28, 2026 Vercel production build failures is preserved on `backup/phase5-broken-2026-09-28` for staged repair. The repaired Phase 5–8 release line remains the canonical production source; failed historical deployments are not used as release baselines.
