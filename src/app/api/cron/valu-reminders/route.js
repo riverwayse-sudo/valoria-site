@@ -36,7 +36,7 @@ async function sendProfileReminder({ email, name, missing }) {
       to: [{ email, name: String(name || firstName) }],
       replyTo: { email: FROM_EMAIL, name: FROM_NAME },
       subject: 'Complete your Valoria professional profile',
-      htmlContent: `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#1A1A2E;line-height:1.65"><p style="font-size:11px;font-weight:700;letter-spacing:.14em;color:#C9A84C">VALORIA INSTITUTE</p><h2 style="font-weight:400">Your professional profile needs one more pass.</h2><p>Hi ${escapeHtml(firstName)}, your VALU result is recorded, but your professional profile is not yet complete.</p><p>Still missing: <strong>${escapeHtml(missingCopy)}</strong>.</p><a href="https://valoriainstitute.com/profile/setup" style="display:inline-block;padding:13px 22px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-weight:700;font-size:12px;letter-spacing:.08em">COMPLETE MY PROFILE →</a><p style="font-size:11px;color:#8A8578;margin-top:26px">Your profile must be complete before Valoria can make the relevant marketplace capability discoverable.</p></div>`,
+      htmlContent: `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#1A1A2E;line-height:1.65"><p style="font-size:11px;font-weight:700;letter-spacing:.14em;color:#C9A84C">VALORIA INSTITUTE</p><h2 style="font-weight:400">Your professional profile needs one more pass.</h2><p>Hi ${escapeHtml(firstName)}, your VALU result is recorded, but your professional profile is not yet complete.</p><p>Still missing: <strong>${escapeHtml(missingCopy)}</strong>.</p><a href="https://valoriainstitute.com/profile/setup" style="display:inline-block;padding:13px 22px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-weight:700;font-size:12px;letter-spacing:.08em">COMPLETE MY PROFILE →</a><p style="font-size:11px;color:#8A8578;margin-top:26px">You are already listed because you completed VALU. Completing your profile unlocks richer visibility, employer discovery and opportunity matching.</p></div>`,
       tags: ['profile-reminder', 'marketplace-completion'],
     }),
   })
@@ -100,13 +100,15 @@ export async function GET(request) {
 
     const { data: assessment } = await admin
       .from('valu_assessments')
-      .select('id,profile_reminder_sent_at')
+      .select('id,profile_reminder_count,last_profile_reminder_at')
       .eq('user_id', profile.id)
       .order('completed_at', { ascending: false })
       .limit(1)
       .maybeSingle()
 
-    if (!assessment || assessment.profile_reminder_sent_at) continue
+    if (!assessment) continue
+    const reminderCount = Number(assessment.profile_reminder_count || 0)
+    if (!dueForReminder(completedAt, reminderCount)) continue
 
     const missing = []
     if (!profile.display_name) missing.push('your name')
@@ -128,7 +130,7 @@ export async function GET(request) {
     try {
       const ok = await sendProfileReminder({ email, name: profile.display_name || userData.user.user_metadata?.display_name, missing })
       if (!ok) continue
-      await admin.from('valu_assessments').update({ profile_reminder_sent_at: new Date().toISOString() }).eq('id', assessment.id)
+      await admin.from('valu_assessments').update({ profile_reminder_sent_at: new Date().toISOString(), profile_reminder_count: reminderCount + 1, last_profile_reminder_at: new Date().toISOString() }).eq('id', assessment.id)
       profileReminders += 1
     } catch {}
   }
