@@ -8,10 +8,12 @@ export const metadata = {
 
 const STAGE_ROUTES = {
   connect: '/signup',
-  assess: 'https://assessment.valoriainstitute.com/',
+  assess: '/journey/continue?stage=assess',
+  report: '/report',
   profile: '/profile/setup',
   capability: '/profile/setup',
-  eligibility: '/dashboard',
+  eligibility: '/profile/setup',
+  listed: '/marketplace',
   marketplace: '/marketplace',
   opportunity: '/opportunities',
 }
