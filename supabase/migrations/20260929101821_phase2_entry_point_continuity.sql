@@ -22,6 +22,23 @@ end;
 $$;
 revoke all on function public.valoria_record_journey_event(uuid,text,text,text,jsonb) from public, anon, authenticated;
 
+
+create or replace function public.valoria_lead_capture_continuity()
+returns trigger language plpgsql security definer set search_path = ''
+as $
+declare v_user_id uuid;
+begin
+  select id into v_user_id from auth.users where lower(email)=lower(new.email) order by created_at desc limit 1;
+  perform public.valoria_record_journey_event(v_user_id,'lead_captured','lead_capture',new.id::text,
+    jsonb_build_object('source',new.source,'interest',new.interest,'event_session_id',new.event_session_id));
+  return new;
+end;
+$;
+revoke all on function public.valoria_lead_capture_continuity() from public, anon, authenticated;
+drop trigger if exists trg_valoria_lead_capture_continuity on public.lead_captures;
+create trigger trg_valoria_lead_capture_continuity
+after insert on public.lead_captures for each row execute function public.valoria_lead_capture_continuity();
+
 create or replace function public.valoria_event_registration_continuity()
 returns trigger language plpgsql security definer set search_path = ''
 as $$
