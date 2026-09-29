@@ -74,6 +74,10 @@ export async function POST(request) {
     if (linkError) {
       return NextResponse.json({ error: 'Could not link the VALU assessment.' }, { status: 502 })
     }
+    const { data: linked, error: verifyError } = await admin.from('valu_assessments').select('id,user_id').eq('id', assessment.id).maybeSingle()
+    if (verifyError || linked?.user_id !== user.id) {
+      return NextResponse.json({ error: 'The VALU assessment link could not be verified. Please retry.' }, { status: 502 })
+    }
   }
 
   return NextResponse.json({ ok: true, assessment_id: assessment.id, user_id: user.id })
