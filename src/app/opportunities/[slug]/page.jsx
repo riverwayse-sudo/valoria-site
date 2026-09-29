@@ -4,8 +4,21 @@ import Link from 'next/link'
 import {supabase} from '@/lib/supabase'
 const GOLD='#C9A84C',DARK='#1A1A2E',PARCH='#F7F4EE'
 export default function OpportunityDetail({params}){
- const [o,setO]=useState(null),[loading,setLoading]=useState(true)
- useEffect(()=>{fetch('/api/opportunities').then(r=>r.json()).then(x=>setO((x.opportunities||[]).find(v=>v.slug===params.slug))).finally(()=>setLoading(false))},[params.slug])
+ const [o,setO]=useState(null),[loading,setLoading]=useState(true),[error,setError]=useState(''),[session,setSession]=useState(null),[coverNote,setCoverNote]=useState(''),[applied,setApplied]=useState(false),[applying,setApplying]=useState(false),[applyError,setApplyError]=useState('')
+ useEffect(()=>{
+  let active=true
+  async function load(){
+   try{
+    const [opportunitiesResponse,sessionResult]=await Promise.all([fetch('/api/opportunities'),supabase.auth.getSession()])
+    const payload=await opportunitiesResponse.json().catch(()=>({}))
+    if(!opportunitiesResponse.ok) throw new Error(payload.error||'Opportunities could not be loaded.')
+    if(active){setO((payload.opportunities||[]).find(v=>v.slug===params.slug)||null);setSession(sessionResult.data?.session||null)}
+   }catch(e){if(active)setError(e.message||'Opportunity could not be loaded.')}
+   finally{if(active)setLoading(false)}
+  }
+  load()
+  return ()=>{active=false}
+ },[params.slug])
  if(loading)return <main style={{minHeight:'100vh',background:PARCH,padding:80}}>Loading…</main>
  if(error)return <main style={{minHeight:'100vh',background:PARCH,color:DARK,padding:80,fontFamily:'Raleway,sans-serif'}}><h1>We could not load this opportunity.</h1><p>{error}</p><Link href="/opportunities">Back to opportunities</Link></main>
  if(!o)return <main style={{minHeight:'100vh',background:PARCH,padding:80}}><h1>Opportunity not found.</h1><Link href="/opportunities">Back to opportunities</Link></main>
