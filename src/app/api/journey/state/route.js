@@ -13,18 +13,22 @@ export async function GET(request) {
   if (!user) return NextResponse.json({ authenticated:false, state:null })
 
   const admin=createClient(SB_URL,SERVICE,{auth:{persistSession:false,autoRefreshToken:false}})
-  const [journeyRes,profileRes,capsRes,assessmentRes,opportunityRes]=await Promise.all([
+  const [journeyRes,profileRes,capsRes,assessmentRes,opportunityRes,activationRes,documentsRes]=await Promise.all([
     admin.from('professional_journey').select('*').eq('user_id',user.id).maybeSingle(),
     admin.from('professional_profiles').select('*').eq('id',user.id).maybeSingle(),
     admin.from('professional_capabilities').select('id,capability,is_active,eligibility_status,eligible_for_listing,listed_at,missing_requirements').eq('professional_id',user.id).eq('is_active',true),
     admin.from('valu_assessments').select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,designation,created_at,expires_at').eq('user_id',user.id).order('completed_at',{ascending:false}).limit(1).maybeSingle(),
     admin.from('opportunity_submissions').select('id,opportunity_id,status,created_at').eq('submitter_user_id',user.id).order('created_at',{ascending:false}).limit(1).maybeSingle(),
+    admin.from('professional_value_activation').select('*').eq('professional_id',user.id).maybeSingle(),
+    admin.from('professional_documents').select('id,document_type,verification_status,verified_at').eq('professional_id',user.id).order('created_at',{ascending:false}),
   ])
 
   const journey=journeyRes.data||null
   const profile=profileRes.data||null
   const capabilities=capsRes.data||[]
   const opportunity=opportunityRes.data||null
+  const activation=activationRes.data||null
+  const documents=documentsRes.data||[]
 
   let assessment=assessmentRes.data||null
   if(!assessment&&user.email){
@@ -67,10 +71,19 @@ export async function GET(request) {
   // not something that becomes complete only after the first application.
   const opportunityAccess=listed
   const opportunityEngaged=!!opportunity
+  const verification={
+    cv: documents.find(d=>d.document_type==='cv')?.verification_status||'not_submitted',
+    verifiedDocuments: documents.filter(d=>d.verification_status==='verified').length,
+    totalDocuments: documents.length,
+  }
+  const valueActivationReady=!!activation&&['ready','activated'].includes(activation.status)
+  const valueActivationComplete=activation?.status==='activated'
+
 
   let next='assess'
   if(!hasAssessment)next='assess'
   else if(!reportReady)next='report'
+  else if(!valueActivationReady)next='report'
   else if(!profileReady)next='profile'
   else if(!capabilitySelected)next='capability'
   else if(!eligibilityComplete)next='eligibility'
@@ -80,12 +93,13 @@ export async function GET(request) {
   return NextResponse.json({authenticated:true,state:{
     connect:{complete:true},
     assessment:{complete:hasAssessment,current:assessmentCurrent,reportStatus,reportReady,reportDelivered,score:assessment?.total_score??profile?.valu_index??null,designation:assessment?.designation||profile?.designation||null},
-    report:{complete:reportReady,delivered:reportDelivered,status:reportStatus},
+    report:{complete:reportReady,delivered:reportDelivered,status:reportStatus,valueActivationReady,valueActivationComplete: valueActivationComplete,activation},
     profile:{complete:profileReady,missing:profileMissing},
     capability:{complete:capabilitySelected,capabilities:activeCapability,eligible:eligibleCapabilities,missing:capabilityMissing},
     eligibility:{complete:eligibilityComplete,missing:[...new Set([...profileMissing,...capabilityMissing])],capabilities:eligibleCapabilities},
     marketplace:{complete:listed,capabilities:listedCapabilities},
     opportunity:{complete:opportunityAccess,access:opportunityAccess,engaged:opportunityEngaged,latest:opportunity},
+    passport:{capabilities:activeCapability,verification},
     next,lifecycle:journey?.lifecycle_state||null
   }})
 }
