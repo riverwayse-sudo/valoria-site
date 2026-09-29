@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'\nimport { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
 
@@ -7,7 +7,7 @@ export const metadata={title:'Your VALU Report',robots:{index:false,follow:false
 export default async function ReportPage(){
   const url=process.env.NEXT_PUBLIC_SUPABASE_URL,anon=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,service=process.env.SUPABASE_SERVICE_ROLE_KEY
   if(!url||!anon||!service) redirect('/dashboard')
-  const supabase=createServerClient(url,anon,{cookies:{getAll(){return []},setAll(){}}})
+  const cookieStore=await cookies()\n  const supabase=createServerClient(url,anon,{cookies:{getAll(){return cookieStore.getAll()},setAll(){}}})
   const {data:{user}}=await supabase.auth.getUser()
   if(!user) redirect('/login?returnTo=/report')
   const admin=createClient(url,service,{auth:{persistSession:false,autoRefreshToken:false}})
