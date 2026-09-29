@@ -81,10 +81,10 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   // self-reported in the wizard; self-reporting them again was the
   // redundant "manual syncing" Temitayo flagged.
   if (isSpeaker || isFacilitator) s.push({ key:'topics', kind:'multi-chip', section:'Expertise', title:'What topics do you speak on?', sub:'Select up to 6.', options:TOPICS_POOL, max:6, required:true })
-  if (isSpeaker) s.push({ key:'format_capabilities', kind:'multi-chip', section:'Expertise', title:'What speaking formats do you offer?', sub:'Select all that apply.', options:FORMAT_CAPS, required:true, color:'#7F77DD' })
-  if (isSpeaker) s.push({ key:'audience_sizes', kind:'multi-chip', section:'Expertise', title:'What audience sizes have you spoken to?', sub:'Select all that apply.', options:AUDIENCE_SIZES, required:true, color:'#1D9E75' })
+  if (isSpeaker) s.push({ key:'format_capabilities', kind:'multi-chip', section:'Expertise', title:'What speaking formats do you offer?', sub:'Select all that apply.', options:FORMAT_CAPS, required:true, color:'GOLD' })
+  if (isSpeaker) s.push({ key:'audience_sizes', kind:'multi-chip', section:'Expertise', title:'What audience sizes have you spoken to?', sub:'Select all that apply.', options:AUDIENCE_SIZES, required:true, color:'GOLD' })
   if (isSpeaker) s.push({ key:'past_events', kind:'list', section:'Expertise', title:'Any past speaking engagements?', sub:'Up to 3. These build trust with people viewing your profile.', fields:[{ key:'name', placeholder:'Event name' }, { key:'role', placeholder:'Your role' }], max:3, addLabel:'+ Add event', required:true })
-  if (isFacilitator) s.push({ key:'programme_types', kind:'multi-chip', section:'Expertise', title:'What programme types do you run?', sub:'Select all that apply.', options:PROGRAMME_TYPES, required:true, color:'#1D9E75' })
+  if (isFacilitator) s.push({ key:'programme_types', kind:'multi-chip', section:'Expertise', title:'What programme types do you run?', sub:'Select all that apply.', options:PROGRAMME_TYPES, required:true, color:'GOLD' })
   if (isFacilitator) s.push({ key:'past_clients', kind:'list', section:'Expertise', title:'Any past clients or programmes?', sub:'Up to 3.', fields:[{ key:'name', placeholder:'Organisation' }, { key:'programme', placeholder:'Programme delivered' }], max:3, addLabel:'+ Add client', required:true })
   if (isFacilitator) s.push({ key:'pcp_certified', kind:'boolean', section:'Expertise', title:'Do you hold a Valoria PCP certification?', sub:'PRIME-Certified Practitioner.' })
   if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Up to 3 roles. Helps people understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organisation' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:true })
@@ -486,7 +486,7 @@ function ProfileSetupForm() {
         <div style={{ maxWidth:'480px', width:'100%', textAlign:'center' }}>
           <div style={{ height:'2px', background:GOLD, opacity:.75, marginBottom:'40px', borderRadius:'2px' }} />
           <div style={{ width:'56px', height:'56px', borderRadius:'50%', background:'rgba(29,158,117,.12)', border:'1px solid rgba(29,158,117,.3)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 24px' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#1D9E75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="GOLD" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
           <Title>You&apos;re in,<br/><Em>{form.display_name?.split(' ')[0] || 'welcome'}.</Em></Title>
           <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.75, marginBottom:'28px' }}>
@@ -542,7 +542,7 @@ function ProfileSetupForm() {
           <div style={{ background:'rgba(216,90,48,.08)', border:'1px solid rgba(216,90,48,.3)', padding:'16px 18px', marginBottom:'24px' }}>
             <p style={{ fontSize:'13px', fontWeight:300, color:PARCH, lineHeight:1.7, margin:0 }}>
               You were brought back here because your profile isn&apos;t finished yet — still missing{' '}
-              <strong style={{ color:'#D85A30' }}>{incompleteFields.map(f => FIELD_LABELS[f] || f).join(', ')}</strong>.
+              <strong style={{ color:'GOLD' }}>{incompleteFields.map(f => FIELD_LABELS[f] || f).join(', ')}</strong>.
               Fill in the rest and hit Finish to unlock the rest of the site.
             </p>
           </div>
@@ -630,11 +630,11 @@ function VerifiedVideoInput({ url, onChange, onRemove, placeholder, removable, f
   return (
     <div>
       <div style={{ display:'flex', gap:'8px', marginBottom: formatError ? '4px' : '6px', alignItems:'center' }}>
-        <input style={{ ...inputStyle, flex:1, marginBottom:0, ...(formatError ? { border:'1px solid #D85A30' } : {}) }} value={url}
+        <input style={{ ...inputStyle, flex:1, marginBottom:0, ...(formatError ? { border:'1px solid GOLD' } : {}) }} value={url}
           placeholder={placeholder}
           onChange={e => onChange(e.target.value)} />
         {removable && (
-          <button onClick={onRemove} style={{ ...ghostBtnStyle, padding:'0 12px', color:'#D85A30', borderColor:'rgba(216,90,48,.3)' }}>✕</button>
+          <button onClick={onRemove} style={{ ...ghostBtnStyle, padding:'0 12px', color:'GOLD', borderColor:'rgba(216,90,48,.3)' }}>✕</button>
         )}
       </div>
       {formatError && <ErrorText>{validatorError('youtube')}</ErrorText>}
@@ -642,10 +642,10 @@ function VerifiedVideoInput({ url, onChange, onRemove, placeholder, removable, f
         <p style={{ fontSize:'11px', color:DIM, margin:'0 0 10px' }}>Checking link…</p>
       )}
       {!formatError && status === 'valid' && (
-        <p style={{ fontSize:'11px', color:'#1D9E75', margin:'0 0 10px' }}>✓ Verified{info?.title ? ` — "${info.title}"` : ''}</p>
+        <p style={{ fontSize:'11px', color:'GOLD', margin:'0 0 10px' }}>✓ Verified{info?.title ? ` — "${info.title}"` : ''}</p>
       )}
       {!formatError && status === 'invalid' && (
-        <p style={{ fontSize:'11px', color:'#D85A30', margin:'0 0 10px' }}>{info?.error || 'Couldn\u2019t verify this video.'}</p>
+        <p style={{ fontSize:'11px', color:'GOLD', margin:'0 0 10px' }}>{info?.error || 'Couldn\u2019t verify this video.'}</p>
       )}
     </div>
   )
@@ -667,9 +667,9 @@ function ScreenBody(props) {
       // Picking more than one here gives a single profile listed across each
       // chosen marketplace, decided upfront rather than added later.
       const options = [
-        { id:'candidate',   label:'Talent',      desc:'I want employers and recruiters to find me through ATB Connect.', color:'#378ADD' },
+        { id:'candidate',   label:'Talent',      desc:'I want employers and recruiters to find me through ATB Connect.', color:'GOLD' },
         { id:'speaker',     label:'Speaker',     desc:'I want to be booked for events and conferences through ATB Spotlight.', color:GOLD },
-        { id:'facilitator', label:'Facilitator', desc:'I want to be commissioned for L&D programmes through ATB Develop.', color:'#1D9E75' },
+        { id:'facilitator', label:'Facilitator', desc:'I want to be commissioned for L&D programmes through ATB Develop.', color:'GOLD' },
       ]
       const selected = form.active_tracks || []
       return (
@@ -718,7 +718,7 @@ function ScreenBody(props) {
                 <div key={fld.key}>
                   <input
                     type={fld.inputType || 'text'}
-                    style={{ ...inputStyle, ...(showError ? { border:'1px solid #D85A30' } : {}) }}
+                    style={{ ...inputStyle, ...(showError ? { border:'1px solid GOLD' } : {}) }}
                     value={v} placeholder={fld.placeholder}
                     onChange={e => set(fld.key, e.target.value)}
                   />
@@ -743,7 +743,7 @@ function ScreenBody(props) {
           {screen.sub && <Sub>{screen.sub}</Sub>}
           <input
             autoFocus type={screen.inputType || 'text'} maxLength={screen.maxLength}
-            style={{ ...inputStyle, ...(showError ? { border:'1px solid #D85A30' } : {}) }}
+            style={{ ...inputStyle, ...(showError ? { border:'1px solid GOLD' } : {}) }}
             value={val || ''} placeholder={screen.placeholder}
             onChange={e => set(screen.key, e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && isValid) goNext() }}
@@ -817,7 +817,7 @@ function ScreenBody(props) {
           <Sub>Which industry would you like to move into?</Sub>
           <div style={{ display:'flex', flexWrap:'wrap', gap:'8px', marginBottom:'8px' }}>
             {screen.options.map(o => (
-              <Chip key={o} label={o} on={preferred === o} onClick={() => set('preferred_industry', o)} color="#7F77DD" />
+              <Chip key={o} label={o} on={preferred === o} onClick={() => set('preferred_industry', o)} color="GOLD" />
             ))}
           </div>
           <ContinueBar onNext={goNext} nextDisabled={!current || !preferred} saving={saving} />
@@ -994,7 +994,7 @@ function ScreenBody(props) {
               {cvUploading ? 'Uploading…' : form.cv_url ? 'Replace CV' : 'Upload CV'}
             </button>
             {fileLabel && (
-              <button onClick={downloadExistingCV} style={{ ...ghostBtnStyle, borderColor:'rgba(29,158,117,.4)', color:'#1D9E75' }}>
+              <button onClick={downloadExistingCV} style={{ ...ghostBtnStyle, borderColor:'rgba(29,158,117,.4)', color:'GOLD' }}>
                 ✓ {fileLabel}
               </button>
             )}
@@ -1031,7 +1031,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
             <div style={{ fontSize:'12px', color:GOLD, fontWeight:500, marginBottom:'2px' }}>{form.headline || 'Your headline'}</div>
             {form.location && <div style={{ fontSize:'11px', color:'#5F5E5A' }}>📍 {form.location}</div>}
           </div>
-          <div style={{ fontSize:'11px', fontWeight:700, color:'#1D9E75' }}>● Open</div>
+          <div style={{ fontSize:'11px', fontWeight:700, color:'GOLD' }}>● Open</div>
         </div>
         {tags.length > 0 && (
           <div style={{ display:'flex', flexWrap:'wrap', gap:'6px', marginBottom:'10px' }}>
@@ -1073,10 +1073,10 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
           scored and were sitting in front of their own result. */}
       {form.assessment_completed_at ? (
         <div style={{ background:'rgba(29,158,117,.06)', border:'1px solid rgba(29,158,117,.3)', padding:'20px', marginBottom:'24px' }}>
-          <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'#1D9E75', marginBottom:'10px' }}>VALU INDEX — COMPLETE</div>
+          <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'GOLD', marginBottom:'10px' }}>VALU INDEX — COMPLETE</div>
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 6px' }}>
             Your VALU Index score is <strong style={{ color:PARCH }}>{form.valu_index}</strong>
-            {form.designation ? <> — <strong style={{ color:'#1D9E75' }}>{form.designation}</strong></> : null}.
+            {form.designation ? <> — <strong style={{ color:'GOLD' }}>{form.designation}</strong></> : null}.
           </p>
           <p style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.6, margin:0 }}>
             {Number(form.valu_index) >= 35
@@ -1126,7 +1126,7 @@ function CharCount({ val, max }) {
 }
 
 function ErrorText({ children }) {
-  return <div style={{ fontSize:'12px', color:'#D85A30', margin:'-2px 0 16px' }}>{children}</div>
+  return <div style={{ fontSize:'12px', color:'GOLD', margin:'-2px 0 16px' }}>{children}</div>
 }
 
 function Chip({ label, on, onClick, color, disabled }) {
