@@ -64,7 +64,7 @@ export async function POST(request) {
     event_key: 'taster_linked',
     source: 'taster_session',
     source_id: tasterId,
-    metadata: { link_method: 'name_role_match' },
+    metadata: { link_method: 'verified_taster_id_name_match' },
   })
   return NextResponse.json({ ok: true, next: '/profile/setup' })
 }
