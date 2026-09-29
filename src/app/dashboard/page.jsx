@@ -109,6 +109,7 @@ export default function DashboardPage() {
   const [showMessages, setShowMessages] = useState(false)
   const [profileViewCount, setProfileViewCount] = useState(null)
   const [capabilities, setCapabilities] = useState([])
+  const [assessment, setAssessment] = useState(null)
 
   useEffect(() => {
     async function load() {
@@ -132,6 +133,15 @@ export default function DashboardPage() {
           .eq('professional_id', user.id)
         if (capabilityError) console.error('Dashboard capability status load failed:', capabilityError)
         setCapabilities(capabilityRows || [])
+        const { data: assessmentRow } = await supabase
+          .from('valu_assessments')
+          .select('completed_at,total_score,designation,valu_index:total_score')
+          .eq('user_id', user.id)
+          .not('completed_at', 'is', null)
+          .order('completed_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+        setAssessment(assessmentRow || null)
 
         // head:true — only need the count header, not the rows themselves.
         // RLS (see pending-migrations/012_add_profile_views.sql) already
@@ -323,6 +333,17 @@ export default function DashboardPage() {
           )}
           <div style={{ position:'absolute', inset:0, background:`linear-gradient(180deg, transparent 35%, ${DARK} 100%)` }} />
         </div>
+
+        {/* VALORIA PROGRESSION / UNLOCK SYSTEM */}
+        {isSupply && (
+          <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'26px clamp(20px,4vw,40px) 0' }}>
+            <AccessProgressCard
+              profile={p}
+              assessment={assessment}
+              capabilities={capabilities}
+            />
+          </div>
+        )}
 
         {/* HEADER BLOCK */}
         <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'0 clamp(20px,4vw,40px)' }}>
@@ -727,6 +748,50 @@ export default function DashboardPage() {
 }
 
 // ── Welcome modal ────────────────────────────────────────────────────────────
+function AccessProgressCard({ profile, assessment, capabilities }) {
+  const assessmentDone = !!assessment?.completed_at
+  const profileComplete = !!profile?.profile_complete
+  const capabilityReady = capabilities.some(c => c.is_active && c.eligible_for_listing)
+  const completedCount = [assessmentDone, profileComplete, capabilityReady].filter(Boolean).length
+  const steps = [
+    { icon:'✓', title:'VALU COMPLETE', detail:'Your assessment is complete.', unlocked:assessmentDone, action:assessmentDone ? 'LISTED' : 'COMPLETE VALU' },
+    { icon:'◈', title:'PROFESSIONAL PROFILE', detail:'Complete your profile to unlock richer professional visibility and employer discovery.', unlocked:profileComplete, action:profileComplete ? 'UNLOCKED' : 'LOCKED' },
+    { icon:'◆', title:'CAPABILITY ACCESS', detail:'Complete the requirements for a capability to unlock matching opportunities.', unlocked:capabilityReady, action:capabilityReady ? 'UNLOCKED' : 'LOCKED' },
+  ]
+  return (
+    <section style={{ background:'linear-gradient(135deg,rgba(26,26,46,.98),rgba(15,15,26,.98))', border:'1px solid rgba(201,168,76,.24)', borderRadius:'18px', padding:'22px', boxShadow:'0 18px 50px rgba(0,0,0,.2)' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', gap:'20px', alignItems:'flex-start', flexWrap:'wrap', marginBottom:'18px' }}>
+        <div>
+          <div style={{ fontSize:'9px', letterSpacing:'.18em', fontWeight:800, color:'rgba(201,168,76,.65)', marginBottom:'7px' }}>VALORIA PROGRESSION</div>
+          <h2 style={{ margin:0, color:'#F7F4EE', fontSize:'20px', fontWeight:800 }}>You are already in the game.</h2>
+          <p style={{ margin:'7px 0 0', color:'rgba(247,244,238,.58)', fontSize:'12px', lineHeight:1.65 }}>Every completed stage unlocks something with real value. Your listing is the starting point — your profile determines how much of Valoria can work for you.</p>
+        </div>
+        <div style={{ minWidth:'105px', textAlign:'right' }}>
+          <div style={{ color:'#C9A84C', fontSize:'25px', fontWeight:800 }}>{completedCount}/3</div>
+          <div style={{ color:'rgba(247,244,238,.4)', fontSize:'9px', letterSpacing:'.12em' }}>STAGES UNLOCKED</div>
+        </div>
+      </div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,minmax(0,1fr))', gap:'10px' }}>
+        {steps.map((step,i) => (
+          <div key={step.title} style={{ border:'1px solid '+(step.unlocked?'rgba(29,158,117,.35)':'rgba(201,168,76,.14)'), background:step.unlocked?'rgba(29,158,117,.07)':'rgba(255,255,255,.025)', borderRadius:'12px', padding:'15px', minHeight:'112px' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'11px' }}>
+              <span style={{ width:'27px', height:'27px', borderRadius:'8px', display:'grid', placeItems:'center', background:step.unlocked?'rgba(29,158,117,.16)':'rgba(201,168,76,.08)', color:step.unlocked?'#1D9E75':'#C9A84C', fontWeight:800 }}>{step.icon}</span>
+              <span style={{ fontSize:'8px', fontWeight:800, letterSpacing:'.1em', color:step.unlocked?'#1D9E75':'rgba(247,244,238,.34)' }}>{step.action}</span>
+            </div>
+            <div style={{ color:'#F7F4EE', fontSize:'10px', fontWeight:800, letterSpacing:'.08em', marginBottom:'6px' }}>{step.title}</div>
+            <div style={{ color:'rgba(247,244,238,.5)', fontSize:'11px', lineHeight:1.55 }}>{step.detail}</div>
+          </div>
+        ))}
+      </div>
+      {!profileComplete && assessmentDone && (
+        <Link href="/profile/setup" style={{ display:'inline-flex', marginTop:'16px', padding:'11px 16px', background:'#C9A84C', color:'#0F0F1A', borderRadius:'8px', textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em' }}>
+          UNLOCK MORE VALUE → COMPLETE PROFILE
+        </Link>
+      )}
+    </section>
+  )
+}
+
 function WelcomeModal({ firstName, isSupply, isOrganiser, pct, onClose }) {
   const [step, setStep] = useState(0)
   const [visible, setVisible] = useState(false)
