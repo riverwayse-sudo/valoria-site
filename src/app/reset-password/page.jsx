@@ -19,23 +19,41 @@ export default function ResetPasswordPage() {
   const [noSession, setNoSession]       = useState(false)
 
   useEffect(() => {
-    // Supabase sends the user back here with a token in the URL hash.
-    // onAuthStateChange fires with PASSWORD_RECOVERY event when the
-    // token is valid — that gives us a live session to update against.
-    const { data: listener } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        setSessionReady(true)
-      }
+    let resolved = false
+
+    // Supabase can deliver the recovery session asynchronously after the
+    // page loads. Do not use React state inside the timeout closure because
+    // that would capture the initial false value and incorrectly declare a
+    // valid recovery link expired.
+    const markReady = () => {
+      resolved = true
+      setNoSession(false)
+      setSessionReady(true)
+    }
+
+    const hash = window.location.hash
+    const hashParams = new URLSearchParams(hash.replace(/^#/, ''))
+    const recoveryError = hashParams.get('error_description') || hashParams.get('error')
+    if (recoveryError) {
+      resolved = true
+      setError(decodeURIComponent(recoveryError.replace(/\+/g, ' ')))
+      setNoSession(true)
+    }
+
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY' || session) markReady()
     })
-    // Also check if there's already an active session (user arrived via
-    // email link on the same device they're already logged in on)
+
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) setSessionReady(true)
-    })
-    // If after 3 seconds there's still no session, the link is invalid/expired
+      if (session) markReady()
+    }).catch(() => {})
+
+    // Give the auth callback enough time to process the recovery hash before
+    // showing an expiry state. The user can always request a fresh link.
     const timer = setTimeout(() => {
-      if (!sessionReady) setNoSession(true)
-    }, 4000)
+      if (!resolved) setNoSession(true)
+    }, 10000)
+
     return () => {
       listener.subscription.unsubscribe()
       clearTimeout(timer)
@@ -92,7 +110,7 @@ export default function ResetPasswordPage() {
           <>
             <div style={{ fontSize: '28px', color: '#D85A30', textAlign: 'center', marginBottom: '16px' }}>⚠</div>
             <h2 style={{ ...S.title, fontSize: '22px' }}>Link expired or invalid.</h2>
-            <p style={S.sub}>Password reset links are single-use and expire after 1 hour. Request a new one from the sign-in page.</p>
+            <p style={S.sub}>The reset link may have expired, already been used, or could not be verified on this device. Request a fresh link from the sign-in page.</p>
             <Link href="/login" style={S.btnGold}>BACK TO SIGN IN →</Link>
           </>
         ) : !sessionReady ? (
