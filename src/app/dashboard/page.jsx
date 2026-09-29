@@ -25,11 +25,11 @@ const PRIME   = [
 const FIRST_TIME_WINDOW_HOURS = 48
 
 const STATUS_COLORS = {
-  pending:    { bg: 'rgba(186,117,23,.12)',  text: '#BA7517',  label: 'Pending' },
-  reviewing:  { bg: 'rgba(55,138,221,.12)',  text: '#378ADD',  label: 'Under Review' },
-  introduced: { bg: 'rgba(29,158,117,.12)',  text: '#1D9E75',  label: 'Introduced' },
-  declined:   { bg: 'rgba(216,90,48,.12)',   text: '#D85A30',  label: 'Declined' },
-  completed:  { bg: 'rgba(201,168,76,.12)',  text: GOLD,       label: 'Completed' },
+  pending:    { bg: 'rgba(201,168,76,.10)',  text: GOLD, label: 'Pending' },
+  reviewing:  { bg: 'rgba(201,168,76,.10)',  text: GOLD, label: 'Under Review' },
+  introduced: { bg: 'rgba(201,168,76,.10)',  text: GOLD, label: 'Introduced' },
+  declined:   { bg: 'rgba(247,244,238,.08)', text: PARCH, label: 'Declined' },
+  completed:  { bg: 'rgba(201,168,76,.12)',  text: GOLD, label: 'Completed' },
 }
 
 // ─── helpers ─────────────────────────────────────────────
@@ -291,12 +291,8 @@ export default function DashboardPage() {
           />
         )}
 
-        {/* PRIME stripe */}
-        <div style={{ position:'fixed', top:0, left:0, right:0, height:'3px', display:'flex', zIndex:201, pointerEvents:'none' }}>
-          {[['#1D9E75',20],['#378ADD',25],['#7F77DD',25],['#BA7517',20],['#D85A30',10]].map(([c,w],i) => (
-            <div key={i} style={{ flex:w, background:c, opacity:.85 }} />
-          ))}
-        </div>
+        {/* Valoria brand line */}
+        <div style={{ position:'fixed', top:0, left:0, right:0, height:'3px', background:GOLD, opacity:.9, zIndex:201, pointerEvents:'none' }} />
 
         {/* HEADER NAV */}
         <header style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 clamp(20px,4vw,40px)', height:'64px', background: MID, borderBottom:`1px solid ${GLINE}`, position:'sticky', top:0, zIndex:100 }}>
@@ -809,7 +805,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
       </div>
       {next && (
         <Link href={next.n==='02'?'/journey/continue?stage=assess':next.n==='04'?'/profile/setup':next.n==='05'?'/profile/setup':next.n==='06'?'/profile/passport':next.n==='07'?'/marketplace':'/opportunities'}
-          style={{ display:'inline-flex', marginTop:'2px', padding:'11px 16px', background:'#C9A84C', color:'#0F0F1A', borderRadius:'8px', textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em' }}>
+          style={{ display:'inline-flex', marginTop:'2px', padding:'11px 16px', background:'#C9A84C', color:'#0F0F1A', borderRadius:'22px', textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em' }}>
           CONTINUE {next.title} →
         </Link>
       )}
