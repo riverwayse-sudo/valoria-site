@@ -59,5 +59,12 @@ export async function POST(request) {
     .is('user_id', null)
 
   if (linkError) return NextResponse.json({ error: 'Could not link the teaser result.' }, { status: 502 })
+  await admin.from('valoria_journey_events').insert({
+    user_id: user.id,
+    event_key: 'taster_linked',
+    source: 'taster_session',
+    source_id: tasterId,
+    metadata: { link_method: 'name_role_match' },
+  })
   return NextResponse.json({ ok: true, next: '/profile/setup' })
 }
