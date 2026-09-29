@@ -15,11 +15,14 @@ export default function LoginPage() {
   const [resetSent, setResetSent] = useState(false)
   const [resetting, setResetting] = useState(false)
   const [redirecting, setRedirecting] = useState(false)
+  const [returnTo, setReturnTo] = useState('')
 
   // Check for identity_hash in URL (from email confirmation redirect)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const identityHash = params.get('identity_hash')
+    const requestedReturnTo = params.get('returnTo') || ''
+    if (requestedReturnTo.startsWith('/')) setReturnTo(requestedReturnTo)
     const pendingTasterId = params.get('pending_taster_id')
     if (pendingTasterId) localStorage.setItem('pending_taster_id', pendingTasterId)
 
@@ -40,6 +43,11 @@ export default function LoginPage() {
       }).catch(() => {})
     }
   }, [])
+
+  function redirectAfterLogin(defaultPath) {
+    const target = returnTo && returnTo.startsWith('/') ? returnTo : defaultPath
+    window.location.href = target
+  }
 
   async function handleLogin(e) {
     e.preventDefault()
@@ -84,7 +92,7 @@ export default function LoginPage() {
             body: JSON.stringify({ taster_id: pendingTasterId }),
           })
           if (claimRes.ok) {
-            window.location.href = '/dashboard'
+            redirectAfterLogin('/dashboard')
             return
           }
           // Some historical assessments predate the taster_id handoff.
@@ -95,11 +103,11 @@ export default function LoginPage() {
             body: JSON.stringify({ email: user.email }),
           })
           if (emailClaim.ok) {
-            window.location.href = '/dashboard'
+            redirectAfterLogin('/dashboard')
             return
           }
         } catch (_) {}
-        window.location.href = '/profile/onboarding'
+        redirectAfterLogin('/profile/onboarding')
         return
       }
 
@@ -144,7 +152,7 @@ export default function LoginPage() {
         .maybeSingle()
 
       if (buyerProfile) {
-        window.location.href = '/dashboard'
+        redirectAfterLogin('/dashboard')
         return
       }
 
@@ -156,7 +164,7 @@ export default function LoginPage() {
 
       if (!profile || !profile.display_name) {
         // First time — go to setup wizard
-        window.location.href = '/profile/onboarding'
+        redirectAfterLogin('/profile/onboarding')
       } else {
         // Returning user — go to dashboard
         window.location.href = '/dashboard'
