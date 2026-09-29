@@ -6,7 +6,7 @@
 // moment the identity_hash lands" effect no longer runs — that code lives
 // on assessment.valoriainstitute.com and never sees this redirect.
 //
-// The 15-min sweep-unsent-reports cron still catches this eventually, but
+// The scheduled sweep-unsent-reports recovery job still catches this eventually, but
 // this route restores the instant path: it's a thin server-to-server relay
 // so the browser calls same-origin (no CORS/preflight issues) and this
 // route does the actual cross-origin call to the assessment app, where
