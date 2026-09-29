@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { recordJourneyEvent } from '@/lib/valoriaContinuity'
 import styles from './ValoriaJourneyCards.module.css'
 
 const MILESTONES = [
@@ -66,6 +67,7 @@ export default function ValoriaJourneyCards({ compact = false }) {
       if (!alive) return
       if (!user) { setLoading(false); return }
       setUser(user)
+      await recordJourneyEvent({ userId: user.id, eventKey: 'journey_viewed', source: 'journey_cards' })
 
       const [journeyResult, profileResult, capabilityResult] = await Promise.all([
         supabase.from('professional_journey').select('*').eq('user_id', user.id).maybeSingle(),
