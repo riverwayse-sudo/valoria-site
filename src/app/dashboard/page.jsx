@@ -15,11 +15,11 @@ const FAINT   = 'rgba(247,244,238,.15)'
 const GLINE   = 'rgba(201,168,76,.12)'
 const GLINE2  = 'rgba(201,168,76,.28)'
 const PRIME   = [
-  { letter: 'P', color: '#1D9E75' },
-  { letter: 'R', color: '#378ADD' },
-  { letter: 'I', color: '#7F77DD' },
-  { letter: 'M', color: '#BA7517' },
-  { letter: 'E', color: '#D85A30' },
+  { letter: 'P', color: GOLD },
+  { letter: 'R', color: GOLD },
+  { letter: 'I', color: GOLD },
+  { letter: 'M', color: GOLD },
+  { letter: 'E', color: GOLD },
 ]
 
 const FIRST_TIME_WINDOW_HOURS = 48
