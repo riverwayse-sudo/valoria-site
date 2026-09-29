@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import './ValoriaJourneyCards.css'
+import styles from './ValoriaJourneyCards.module.css'
 
 const MILESTONES = [
   { key: 'connect', title: 'Join Valoria', description: 'Your Valoria account anchors everything you do here.', href: '/signup', icon: '01' },
@@ -92,23 +92,23 @@ export default function ValoriaJourneyCards({ compact = false }) {
   if (loading || !user) return null
 
   return (
-    <section aria-label="Your Valoria Journey" className={'vi-journey' + (compact ? ' vi-journey-compact' : '')}>
-      <div className="vi-journey-head">
+    <section aria-label="Your Valoria Journey" className={styles.journey + (compact ? ' ' + styles.compact : '')}>
+      <div className={styles.head}>
         <div>
-          <div className="vi-journey-eyebrow">YOUR VALORIA JOURNEY</div>
+          <div className={styles.eyebrow}>YOUR VALORIA JOURNEY</div>
           <h2>{current?.title || 'Continue your journey'}</h2>
           <p>{current?.description || 'Your next step is ready.'}</p>
         </div>
-        <div className="vi-journey-progress">
+        <div className={styles.progress}>
           <strong>{completedCount}/{cards.length}</strong>
           <span>MILESTONES</span>
         </div>
       </div>
-      <div className="vi-journey-track" aria-hidden="true"><span style={{ width: progress + '%' }} /></div>
-      <div className="vi-journey-cards">
+      <div className={styles.track} aria-hidden="true"><span style={{ width: progress + '%' }} /></div>
+      <div className={styles.cards}>
         {cards.map(card => <JourneyCard key={card.key} card={card} />)}
       </div>
-      <div className="vi-journey-next">
+      <div className={styles.next}>
         <span><b>NEXT OBJECTIVE</b> {current?.title}</span>
         {current && !current.locked && <JourneyLink card={current} primary />}
       </div>
@@ -118,11 +118,11 @@ export default function ValoriaJourneyCards({ compact = false }) {
 
 function JourneyCard({ card }) {
   return (
-    <article className={'vi-journey-card' + (card.complete ? ' complete' : '') + (card.current ? ' current' : '') + (card.locked ? ' locked' : '')}>
+    <article className={styles.card + (card.complete ? ' ' + styles.complete : '') + (card.current ? ' ' + styles.current : '') + (card.locked ? ' ' + styles.locked : '')}>
       <div>
-        <div className="vi-card-top">
-          <span className="vi-card-index">{card.icon}</span>
-          <span className="vi-card-state">{card.complete ? '✓ COMPLETE' : card.current ? 'CURRENT' : 'LOCKED'}</span>
+        <div className={styles.cardTop}>
+          <span className={styles.cardIndex}>{card.icon}</span>
+          <span className={styles.cardState}>{card.complete ? '✓ COMPLETE' : card.current ? 'CURRENT' : 'LOCKED'}</span>
         </div>
         <h3>{card.title}</h3>
         <p>{card.description}</p>
@@ -136,7 +136,7 @@ function JourneyLink({ card, primary = false }) {
   return (
     <Link
       href={card.href}
-      className="vi-card-action"
+      className={styles.action}
       {...(card.external ? { target:'_blank', rel:'noopener noreferrer' } : {})}
     >
       {primary ? 'CONTINUE →' : card.action + ' →'}
