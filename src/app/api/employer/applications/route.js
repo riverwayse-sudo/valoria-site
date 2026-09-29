@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js'
 const URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY
+// Build-safe employer application route: all related records are resolved in separate queries.
 const STATUSES = new Set(['submitted', 'reviewing', 'shortlisted', 'introduced', 'interview', 'selected', 'declined', 'withdrawn'])
 
 async function context(request) {
