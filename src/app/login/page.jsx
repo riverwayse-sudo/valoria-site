@@ -74,6 +74,31 @@ export default function LoginPage() {
           setLoading(false)
           return
         }
+        // Restore any completed full VALU assessment attached to the same taster.
+        // A taster-only record is still valid; in that case the claim endpoint
+        // simply reports that no completed assessment exists and onboarding continues.
+        try {
+          const claimRes = await fetch('/api/assessment/claim', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+            body: JSON.stringify({ taster_id: pendingTasterId }),
+          })
+          if (claimRes.ok) {
+            window.location.href = '/dashboard'
+            return
+          }
+          // Some historical assessments predate the taster_id handoff.
+          // Fall back to the verified account email without discarding the taster.
+          const emailClaim = await fetch('/api/assessment/claim', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+            body: JSON.stringify({ email: user.email }),
+          })
+          if (emailClaim.ok) {
+            window.location.href = '/dashboard'
+            return
+          }
+        } catch (_) {}
         window.location.href = '/profile/onboarding'
         return
       }
