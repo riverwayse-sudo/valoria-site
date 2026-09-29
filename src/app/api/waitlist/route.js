@@ -8,7 +8,7 @@ async function sendWelcomeEmail({ email, fullName, interest, role, journeyUrl })
   const fromEmail = process.env.BREVO_FROM_EMAIL || 'info@valoriainstitute.com'
   const fromName = process.env.BREVO_FROM_NAME || 'Valoria Institute'
   const escape = (v='') => String(v).replace(/[&<>'\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]))
-  const first = escape(fullName.split(/\\s+/)[0] || 'there')
+  const first = escape(fullName.split(/\s+/)[0] || 'there')
   const safeJourney = escape(journeyUrl)
   const response = await fetch('https://api.brevo.com/v3/smtp/email', {
     method:'POST', headers:{'api-key':key,'Content-Type':'application/json'},
