@@ -1,3 +1,7 @@
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
+
 export async function POST(request) {
   try {
     const body = await request.json()
@@ -47,12 +51,26 @@ export async function POST(request) {
       return Response.json({ error: 'Something went wrong. Please try again.' }, { status: 500 })
     }
 
+    const token = crypto.randomUUID().replaceAll('-', '') + crypto.randomUUID().replaceAll('-', '')
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    const { data: reentry } = await supabase.from('valoria_reentry_links').insert({
+      token,
+      entry_point: 'lead_capture',
+      target_stage: 'connect',
+      source: 'website_waitlist',
+      source_id: email.trim().toLowerCase(),
+      expires_at: expiresAt,
+    }).select('token').single()
+    const journeyUrl = reentry?.token
+      ? `${new URL(request.url).origin}/journey/continue?token=${encodeURIComponent(reentry.token)}`
+      : `${new URL(request.url).origin}/journey`
+
     // Send welcome email (fire and forget — don't block the response)
     sendWelcomeEmail(email.trim().toLowerCase(), full_name.trim(), interest, role?.trim()).catch(
       err => console.error('Brevo email error:', err)
     )
 
-    return Response.json({ message: 'Joined successfully.' }, { status: 200 })
+    return Response.json({ message: 'Joined successfully.', journey_url: journeyUrl }, { status: 200 })
   } catch (err) {
     console.error('Waitlist API error:', err)
     return Response.json({ error: 'Server error. Please try again.' }, { status: 500 })

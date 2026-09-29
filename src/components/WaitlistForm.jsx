@@ -79,6 +79,7 @@ export default function WaitlistForm() {
   const [loading,   setLoading]   = useState(false)
   const [error,     setError]     = useState('')
   const [utm,       setUtm]       = useState({ source: null, medium: null, campaign: null })
+  const [journeyUrl, setJourneyUrl] = useState('/journey')
 
   // Capture UTM params on mount so live campaign traffic is attributable.
   useEffect(() => {
@@ -132,7 +133,9 @@ export default function WaitlistForm() {
           utm_campaign: utm.campaign,
         }),
       })
+      const data = await res.json().catch(() => ({}))
       if (!res.ok && res.status !== 409) throw new Error('failed')
+      setJourneyUrl(data.journey_url || '/journey')
 
       localStorage.setItem(GATE_KEY, 'submitted')
       document.cookie = `${COOKIE_KEY}=submitted; path=/; max-age=31536000`
@@ -204,6 +207,9 @@ export default function WaitlistForm() {
                 You&apos;re early. That matters more than you think.<br/>
                 <span className="wl-done-close-tag">WE&apos;LL BE IN TOUCH.</span>
               </div>
+              <a href={journeyUrl} style={{ display:'block', marginTop:'22px', padding:'14px 18px', background:'#C9A84C', color:'#1A1A2E', textAlign:'center', textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.14em', borderRadius:'999px' }}>
+                CONTINUE YOUR VALORIA JOURNEY →
+              </a>
             </div>
           </div>
         ) : (

@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
@@ -30,12 +30,18 @@ const BUYER_TYPES = [
 ]
 
 export default function SignupPage() {
+  useEffect(() => {
+    const value = new URLSearchParams(window.location.search).get('returnTo') || ''
+    setReturnTo(value.startsWith('/') ? value : '')
+  }, [])
+
   const [step, setStep] = useState(1)
   const [userType, setUserType] = useState(null)
   const [form, setForm] = useState({ email: '', password: '', confirmPassword: '', name: '', company: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [returnTo, setReturnTo] = useState('')
 
   async function handleSignup(e) {
     e.preventDefault()
@@ -51,7 +57,7 @@ export default function SignupPage() {
         password: form.password,
         options: {
           data: { display_name: form.name, user_type: userType },
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: `${window.location.origin}${returnTo || '/dashboard'}`,
         },
       })
       if (signupError) throw signupError
@@ -88,7 +94,11 @@ export default function SignupPage() {
           <p style={S.sub}>
             Check your email and click the confirmation link to activate your account. Then start searching the marketplace.
           </p>
-          <MarketplaceCTA style={S.btnGold}>BROWSE THE MARKETPLACE →</MarketplaceCTA>
+          {returnTo ? (
+            <a href={returnTo} style={S.btnGold}>CONTINUE YOUR VALORIA JOURNEY →</a>
+          ) : (
+            <MarketplaceCTA style={S.btnGold}>BROWSE THE MARKETPLACE →</MarketplaceCTA>
+          )}
           <a href="/dashboard" style={{ ...S.btnGold, background: 'transparent', border: '1px solid rgba(201,168,76,.3)', color: GOLD, marginTop: '10px', display: 'block', textAlign: 'center' }}>
             GO TO DASHBOARD
           </a>

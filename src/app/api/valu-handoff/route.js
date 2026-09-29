@@ -11,5 +11,6 @@ export async function GET(request) {
   if (userError || !userData?.user) return NextResponse.json({ error:'Unauthorized' }, { status:401 })
   const { data:taster } = await admin.from('taster_sessions').select('id,name,role,experience').eq('user_id', userData.user.id).order('linked_at',{ascending:false}).limit(1).maybeSingle()
   if (!taster) return NextResponse.json({ url:'https://assessment.valoriainstitute.com/' })
+  await admin.from('valoria_journey_events').insert({ user_id:userData.user.id, event_key:'assessment_handoff', source:'taster_session', source_id:taster.id, metadata:{ destination:'assessment.valoriainstitute.com', mode:'full' } })
   return NextResponse.json({ url:`https://assessment.valoriainstitute.com/?full=1&taster_id=${encodeURIComponent(taster.id)}&name=${encodeURIComponent(taster.name||'')}&role=${encodeURIComponent(taster.role||'')}&experience=${encodeURIComponent(taster.experience||'')}` })
 }
