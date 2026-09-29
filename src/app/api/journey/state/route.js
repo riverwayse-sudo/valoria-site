@@ -11,6 +11,7 @@ export async function GET(request) {
   const supabase = createServerClient(SB_URL, SB_ANON, { cookies:{ getAll:()=>request.cookies.getAll(), setAll:()=>{} } })
   const { data:{user} }=await supabase.auth.getUser()
   if (!user) return NextResponse.json({ authenticated:false, state:null })
+
   const admin=createClient(SB_URL,SERVICE,{auth:{persistSession:false,autoRefreshToken:false}})
   const [journeyRes,profileRes,capsRes,assessmentRes,opportunityRes]=await Promise.all([
     admin.from('professional_journey').select('*').eq('user_id',user.id).maybeSingle(),
@@ -19,16 +20,23 @@ export async function GET(request) {
     admin.from('valu_assessments').select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,designation,created_at,expires_at').eq('user_id',user.id).order('completed_at',{ascending:false}).limit(1).maybeSingle(),
     admin.from('opportunity_submissions').select('id,opportunity_id,status,created_at').eq('submitter_user_id',user.id).order('created_at',{ascending:false}).limit(1).maybeSingle(),
   ])
-  const journey=journeyRes.data||null, profile=profileRes.data||null, capabilities=capsRes.data||[], opportunity=opportunityRes.data||null
+
+  const journey=journeyRes.data||null
+  const profile=profileRes.data||null
+  const capabilities=capsRes.data||[]
+  const opportunity=opportunityRes.data||null
+
   let assessment=assessmentRes.data||null
   if(!assessment&&user.email){
     const {data:byEmail}=await admin.from('valu_assessments').select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,designation,created_at,expires_at,user_id').eq('email',user.email.toLowerCase()).order('completed_at',{ascending:false}).limit(1).maybeSingle()
     assessment=byEmail||null
   }
+
   const hasAssessment=!!(assessment?.completed_at||journey?.current_assessment_id||profile?.assessment_completed_at||profile?.valu_index!=null)
   const reportStatus=assessment?.report_status||(assessment?.ai_report?'READY':hasAssessment?'PENDING':'NOT_STARTED')
   const reportReady=['READY','EMAIL_PENDING','SENT'].includes(reportStatus)||!!assessment?.ai_report
   const reportDelivered=reportStatus==='SENT'||!!assessment?.report_email_sent_at
+
   const profileMissing=[]
   if(!profile?.display_name?.trim())profileMissing.push('Your name')
   if(!profile?.current_job_title?.trim()&&!profile?.headline?.trim())profileMissing.push('Your professional title')
@@ -40,35 +48,44 @@ export async function GET(request) {
   if(!Array.isArray(profile?.languages)||profile.languages.length===0)profileMissing.push('At least one language')
   if(!profile?.photo_url?.trim())profileMissing.push('Your profile photo')
   if(!profile?.cv_url?.trim())profileMissing.push('Your CV')
-  const profileReady=profile?.profile_complete===true&&profileMissing.length===0
+
+  // Profile is the professional identity layer. Capability is deliberately a
+  // separate milestone so the user can build identity first and then activate
+  // one or more pathways without creating a deadlock.
+  const assessmentCurrent=!!assessment?.completed_at&&Number(assessment?.total_score||profile?.valu_index||0)>=35&&(!assessment?.expires_at||new Date(assessment.expires_at)>new Date())
+  const profileReady=profile?.profile_complete===true&&profileMissing.length===0&&assessmentCurrent
+
   const activeCapability=capabilities.filter(c=>c.is_active)
   const eligibleCapabilities=activeCapability.filter(c=>c.eligible_for_listing||c.eligibility_status==='eligible'||c.eligibility_status==='listed')
   const listedCapabilities=activeCapability.filter(c=>c.eligible_for_listing&&(c.eligibility_status==='listed'||!!c.listed_at))
   const capabilityMissing=[...new Set(activeCapability.flatMap(c=>Array.isArray(c.missing_requirements)?c.missing_requirements:[]))]
-  const assessmentCurrent=!!assessment?.completed_at&&Number(assessment?.total_score||profile?.valu_index||0)>=35&&(!assessment?.expires_at||new Date(assessment.expires_at)>new Date())
-  const listed=profile?.listing_status==='listed'||profile?.eligible_for_listing===true||listedCapabilities.length>0||journey?.marketplace_ready===true
-  const capabilityAccess=eligibleCapabilities.length>0&&profileReady&&assessmentCurrent
-  const eligibilityComplete=capabilityAccess
+  const capabilitySelected=activeCapability.length>0
+  const eligibilityComplete=profileReady&&capabilitySelected&&eligibleCapabilities.length>0
+  const listed=listedCapabilities.length>0&&eligibilityComplete
+
+  // Opportunity access is a capability of an eligible/listed professional,
+  // not something that becomes complete only after the first application.
+  const opportunityAccess=listed
   const opportunityEngaged=!!opportunity
-  const opportunityAccess=opportunityEngaged&&capabilityAccess
+
   let next='assess'
   if(!hasAssessment)next='assess'
   else if(!reportReady)next='report'
-  else if(!listed)next='listed'
   else if(!profileReady)next='profile'
-  else if(!activeCapability.length)next='capability'
+  else if(!capabilitySelected)next='capability'
   else if(!eligibilityComplete)next='eligibility'
-  else if(!opportunityEngaged)next='opportunity'
+  else if(!listed)next='listed'
   else next='opportunity'
+
   return NextResponse.json({authenticated:true,state:{
     connect:{complete:true},
-    assessment:{complete:hasAssessment,reportStatus,reportReady,reportDelivered,score:assessment?.total_score??profile?.valu_index??null,designation:assessment?.designation||profile?.designation||null},
+    assessment:{complete:hasAssessment,current:assessmentCurrent,reportStatus,reportReady,reportDelivered,score:assessment?.total_score??profile?.valu_index??null,designation:assessment?.designation||profile?.designation||null},
     report:{complete:reportReady,delivered:reportDelivered,status:reportStatus},
     profile:{complete:profileReady,missing:profileMissing},
-    capability:{complete:capabilityAccess,capabilities:activeCapability,eligible:eligibleCapabilities,missing:capabilityMissing},
+    capability:{complete:capabilitySelected,capabilities:activeCapability,eligible:eligibleCapabilities,missing:capabilityMissing},
     eligibility:{complete:eligibilityComplete,missing:[...new Set([...profileMissing,...capabilityMissing])],capabilities:eligibleCapabilities},
     marketplace:{complete:listed,capabilities:listedCapabilities},
-    opportunity:{complete:opportunityEngaged,access:opportunityAccess,latest:opportunity},
+    opportunity:{complete:opportunityAccess,access:opportunityAccess,engaged:opportunityEngaged,latest:opportunity},
     next,lifecycle:journey?.lifecycle_state||null
   }})
 }
