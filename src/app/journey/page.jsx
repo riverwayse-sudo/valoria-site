@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation'
 import ValoriaJourneyCards from '@/components/ValoriaJourneyCards'
 
 export const metadata = {
@@ -5,7 +6,22 @@ export const metadata = {
   robots: { index: false, follow: false },
 }
 
-export default function JourneyPage() {
+const STAGE_ROUTES = {
+  connect: '/signup',
+  assess: 'https://assessment.valoriainstitute.com/',
+  profile: '/profile/setup',
+  capability: '/profile/setup',
+  eligibility: '/dashboard',
+  marketplace: '/marketplace',
+  opportunity: '/opportunities',
+}
+
+export default async function JourneyPage({ searchParams }) {
+  const params = await searchParams
+  const stage = typeof params?.stage === 'string' ? params.stage : null
+  const target = stage ? STAGE_ROUTES[stage] : null
+  if (target) redirect(target)
+
   return (
     <main style={{ minHeight:'100vh', background:'#0F0F1A', color:'#FAFAF7', padding:'90px 0 80px', fontFamily:'Raleway,Arial,sans-serif' }}>
       <div style={{ maxWidth:1100, margin:'0 auto', padding:'0 clamp(20px,4vw,40px)' }}>
