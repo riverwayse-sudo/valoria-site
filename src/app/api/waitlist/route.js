@@ -66,7 +66,7 @@ export async function POST(request) {
     const { data: reentry } = await supabase.from('valoria_reentry_links').insert({
       token,
       entry_point: 'lead_capture',
-      target_stage: 'connect',
+      target_stage: 'assess',
       source: 'website_waitlist',
       source_id: email.trim().toLowerCase(),
       expires_at: expiresAt,
