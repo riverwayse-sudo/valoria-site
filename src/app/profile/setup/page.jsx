@@ -150,6 +150,9 @@ function ProfileSetupForm() {
   const [cvError, setCvError] = useState('')
   const [editingTracks, setEditingTracks] = useState(false)
   const [submittedInfo, setSubmittedInfo] = useState(null)
+  const [autoSaveStatus, setAutoSaveStatus] = useState('saved')
+  const hydratedRef = useRef(false)
+  const autoSaveTimerRef = useRef(null)
   const fileRef = useRef(null)
   const cvFileRef = useRef(null)
   // Captured once on load — whether this person already had tracks set
@@ -171,7 +174,10 @@ function ProfileSetupForm() {
   const showTrackScreens = !hadExistingTracksRef.current || editingTracks
   const screens = useMemo(() => buildScreens(form, showTrackScreens, editingTracks), [form.active_tracks, form.display_name, isSpeaker, isFacilitator, showTrackScreens, editingTracks])
   const screen = screens[Math.min(screenIndex, screens.length - 1)]
-  const progress = Math.round((screenIndex / (screens.length - 1)) * 100)
+  const progress = Math.round((screenIndex / Math.max(1, screens.length - 1)) * 100)
+  const sectionNames = [...new Set(screens.map(s => s.section).filter(Boolean))].filter(s => s !== 'Review')
+  const sectionStarts = sectionNames.map(name => screens.findIndex(s => s.section === name))
+  const currentSection = screen?.section || 'Review'
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -253,8 +259,26 @@ function ProfileSetupForm() {
       }
 
       setReady(true)
+      hydratedRef.current = true
+      setAutoSaveStatus('saved')
     })
   }, [])
+
+  useEffect(() => {
+    if (!ready || !hydratedRef.current || !user) return
+    setAutoSaveStatus('saving')
+    clearTimeout(autoSaveTimerRef.current)
+    autoSaveTimerRef.current = setTimeout(async () => {
+      const ok = await saveProgress(form, { silent: true })
+      setAutoSaveStatus(ok ? 'saved' : 'error')
+    }, 900)
+    return () => clearTimeout(autoSaveTimerRef.current)
+  }, [form, ready, user])
+
+  function jumpToSection(name) {
+    const index = screens.findIndex(s => s.section === name)
+    if (index >= 0) setScreenIndex(index)
+  }
 
   function set(key, val) { setForm(f => ({ ...f, [key]: val })) }
   function toggleArr(key, val) {
@@ -328,10 +352,11 @@ function ProfileSetupForm() {
     if (data?.signedUrl) window.open(data.signedUrl, '_blank')
   }
 
-  async function saveProgress(overrides) {
+  async function saveProgress(overrides, options = {}) {
     if (!user) return false
     const f = overrides || form
-    setSaving(true)
+    const silent = options.silent === true
+    if (!silent) setSaving(true)
     const { error } = await supabase.from('professional_profiles').upsert({
       id: user.id,
       display_name: f.display_name || null, headline: f.headline || null,
@@ -366,7 +391,7 @@ function ProfileSetupForm() {
       // They are written by the assessment/governance pipeline, never by profile-owner upserts.
       updated_at: new Date().toISOString(),
     }, { onConflict: 'id' })
-    setSaving(false)
+    if (!silent) setSaving(false)
     if (error) {
       console.error('Profile save failed:', error)
       setSaveError(
@@ -490,7 +515,7 @@ function ProfileSetupForm() {
         <div style={{ height:'100%', width:`${progress}%`, background:GOLD, transition:'width .4s ease' }} />
       </div>
 
-      <div style={{ maxWidth:'640px', margin:'0 auto', padding:'clamp(40px,8vh,80px) 20px 60px', minHeight:'calc(100vh - 66px)', display:'flex', flexDirection:'column', justifyContent:'center' }}>
+      <div style={{ maxWidth:'960px', margin:'0 auto', padding:'clamp(30px,6vh,64px) 20px 60px', minHeight:'calc(100vh - 66px)', display:'flex', flexDirection:'column', justifyContent:'center' }}>
         {incompleteFields.length > 0 && (
           <div style={{ background:'rgba(216,90,48,.08)', border:'1px solid rgba(216,90,48,.3)', padding:'16px 18px', marginBottom:'24px' }}>
             <p style={{ fontSize:'13px', fontWeight:300, color:PARCH, lineHeight:1.7, margin:0 }}>
@@ -500,11 +525,36 @@ function ProfileSetupForm() {
             </p>
           </div>
         )}
-        <div style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.2em', color:'rgba(201,168,76,.4)', marginBottom:'16px' }}>
-          {screenIndex + 1} OF {screens.length}
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', marginBottom:'18px' }}>
+          <div style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.2em', color:'rgba(201,168,76,.4)' }}>
+            {screenIndex + 1} OF {screens.length} · {currentSection.toUpperCase()}
+          </div>
+          <div style={{ fontSize:'10px', letterSpacing:'.06em', color:autoSaveStatus === 'error' ? '#F09595' : DIM }}>
+            {autoSaveStatus === 'saving' ? 'Saving draft…' : autoSaveStatus === 'error' ? 'Draft not saved' : 'Draft saved'}
+          </div>
         </div>
 
-        <ScreenBody
+        <div style={{ display:'grid', gridTemplateColumns:'170px minmax(0,1fr)', gap:'28px', alignItems:'start' }}>
+          <aside style={{ position:'sticky', top:'86px', display:'grid', gap:'6px' }}>
+            <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'8px' }}>PROFILE BUILD</div>
+            {sectionNames.map((name, idx) => {
+              const start = sectionStarts[idx]
+              const end = idx === sectionNames.length - 1 ? screens.length - 2 : sectionStarts[idx + 1] - 1
+              const active = currentSection === name
+              const complete = screenIndex > end
+              const pct = Math.max(0, Math.min(100, Math.round(((screenIndex - start + 1) / Math.max(1, end - start + 1)) * 100)))
+              return (
+                <button key={name} onClick={() => jumpToSection(name)} style={{ textAlign:'left', padding:'10px 11px', border:'1px solid ' + (active ? 'rgba(201,168,76,.45)' : 'rgba(201,168,76,.10)'), background:active ? 'rgba(201,168,76,.08)' : 'transparent', color:active ? PARCH : DIM, fontFamily:'inherit', cursor:'pointer', borderRadius:'6px' }}>
+                  <span style={{ display:'block', fontSize:'10px', fontWeight:700, letterSpacing:'.08em' }}>{complete ? '✓ ' : ''}{name}</span>
+                  <span style={{ display:'block', fontSize:'9px', color:active ? 'rgba(247,244,238,.55)' : 'rgba(247,244,238,.28)', marginTop:'4px' }}>{pct}%</span>
+                </button>
+              )
+            })}
+            <button onClick={() => setScreenIndex(screens.length - 1)} style={{ textAlign:'left', padding:'10px 11px', border:'1px solid ' + (currentSection === 'Review' ? 'rgba(201,168,76,.45)' : 'rgba(201,168,76,.10)'), background:currentSection === 'Review' ? 'rgba(201,168,76,.08)' : 'transparent', color:currentSection === 'Review' ? PARCH : DIM, fontFamily:'inherit', cursor:'pointer', borderRadius:'6px', fontSize:'10px', fontWeight:700, letterSpacing:'.08em' }}>REVIEW</button>
+          </aside>
+
+          <div style={{ minWidth:0 }}>
+            <ScreenBody
           screen={screen} form={form} set={set} toggleArr={toggleArr} updateListItem={updateListItem}
           selectAndAdvance={selectAndAdvance} goNext={goNext} saving={saving} saveError={saveError}
           photoUploading={photoUploading} photoError={photoError} fileRef={fileRef} uploadPhoto={uploadPhoto}
@@ -513,6 +563,8 @@ function ProfileSetupForm() {
           tags={tags} videoLinks={videoLinks} handleFinish={handleFinish}
           onChangeTracks={() => { setEditingTracks(true); setScreenIndex(0) }}
         />
+          </div>
+        </div>
 
         <div style={{ display:'flex', gap:'12px', marginTop:'32px' }}>
           {screenIndex > 0 && screen.kind !== 'review' && (
