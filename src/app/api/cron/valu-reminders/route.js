@@ -59,6 +59,8 @@ export async function GET(request) {
   if (error) return NextResponse.json({ ok: false, error: 'Reminder queue unavailable.' }, { status: 502 })
 
   let sent = 0
+  let failed = 0
+  const failures = []
   for (const row of rows || []) {
     const { data: profile } = await admin.from('professional_profiles').select('profile_complete,assessment_completed_at').eq('id', row.user_id).maybeSingle()
     if (!profile || profile.profile_complete) continue
@@ -78,10 +80,22 @@ export async function GET(request) {
     const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#1A1A2E;line-height:1.65"><p style="font-size:11px;font-weight:700;letter-spacing:.14em;color:#C9A84C">VALORIA INSTITUTE</p><h2 style="font-weight:400">Your VALU journey is not finished.</h2><p>Hi ${escapeHtml(firstName)}, your 15-question snapshot gave you a directional read. Your Valoria profile is currently <strong>Basic · Incomplete</strong>.</p><p>Complete the full VALU assessment to establish your official score and unlock the completed professional profile.</p><a href="${assessmentUrl}" style="display:inline-block;padding:13px 22px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-weight:700;font-size:12px;letter-spacing:.08em">COMPLETE THE FULL ASSESSMENT →</a><p style="font-size:11px;color:#8A8578;margin-top:26px">You can complete your professional profile after the assessment.</p></div>`
     try {
       const send = await fetch('https://api.brevo.com/v3/smtp/email', { method:'POST', headers:{'api-key':BREVO_KEY,'Content-Type':'application/json'}, body:JSON.stringify({sender:{name:FROM_NAME,email:FROM_EMAIL},to:[{email,name:row.name}],subject:'Complete your VALU Index',htmlContent:html,tags:['valu-reminder','assessment-completion']}) })
-      if (!send.ok) continue
-      await admin.from('taster_sessions').update({ reminder_count: count + 1, last_reminder_at: new Date().toISOString() }).eq('id', row.id)
+      if (!send.ok) {
+        failed += 1
+        failures.push({ type: 'assessment_reminder', id: row.id, status: send.status })
+        continue
+      }
+      const { error: reminderUpdateError } = await admin.from('taster_sessions').update({ reminder_count: count + 1, last_reminder_at: new Date().toISOString() }).eq('id', row.id)
+      if (reminderUpdateError) {
+        failed += 1
+        failures.push({ type: 'assessment_reminder_state', id: row.id, error: reminderUpdateError.message })
+        continue
+      }
       sent += 1
-    } catch {}
+    } catch (error) {
+      failed += 1
+      failures.push({ type: 'assessment_reminder_exception', id: row.id, error: String(error?.message || error) })
+    }
   }
 
   const { data: assessedProfiles } = await admin
@@ -129,11 +143,23 @@ export async function GET(request) {
 
     try {
       const ok = await sendProfileReminder({ email, name: profile.display_name || userData.user.user_metadata?.display_name, missing })
-      if (!ok) continue
-      await admin.from('valu_assessments').update({ profile_reminder_sent_at: new Date().toISOString(), profile_reminder_count: reminderCount + 1, last_profile_reminder_at: new Date().toISOString() }).eq('id', assessment.id)
+      if (!ok) {
+        failed += 1
+        failures.push({ type: 'profile_reminder', id: profile.id, error: 'email_provider_rejected' })
+        continue
+      }
+      const { error: reminderUpdateError } = await admin.from('valu_assessments').update({ profile_reminder_sent_at: new Date().toISOString(), profile_reminder_count: reminderCount + 1, last_profile_reminder_at: new Date().toISOString() }).eq('id', assessment.id)
+      if (reminderUpdateError) {
+        failed += 1
+        failures.push({ type: 'profile_reminder_state', id: profile.id, error: reminderUpdateError.message })
+        continue
+      }
       profileReminders += 1
-    } catch {}
+    } catch (error) {
+      failed += 1
+      failures.push({ type: 'profile_reminder_exception', id: profile.id, error: String(error?.message || error) })
+    }
   }
 
-  return NextResponse.json({ ok: true, sent, profile_reminders: profileReminders })
+  return NextResponse.json({ ok: failed === 0, sent, profile_reminders: profileReminders, failed, failures })
 }
