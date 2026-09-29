@@ -56,8 +56,22 @@ export async function POST(request) {
       .eq('session_id', sessionId)
       .eq('email', email)
 
+    const token = crypto.randomUUID().replaceAll('-', '') + crypto.randomUUID().replaceAll('-', '')
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    const { data: reentry } = await supabase.from('valoria_reentry_links').insert({
+      token,
+      entry_point: 'event_registration',
+      target_stage: 'assess',
+      source: 'professional_standard_event_registration',
+      source_id: sessionId,
+      expires_at: expiresAt,
+    }).select('token').single()
+    const journeyUrl = reentry?.token
+      ? `${new URL(request.url).origin}/journey/continue?token=${encodeURIComponent(reentry.token)}`
+      : `${new URL(request.url).origin}/journey`
+
     try {
-      const brevo = await syncEventRegistrationToBrevo({ email, fullName, role, organisation, whatsapp, session })
+      const brevo = await syncEventRegistrationToBrevo({ email, fullName, role, organisation, whatsapp, session, journeyUrl })
       await supabase.from('professional_standard_event_registrations').update({
         brevo_synced: brevo.synced, confirmation_email_sent: brevo.emailSent, brevo_last_error: brevo.errorCode,
       }).eq('session_id', sessionId).eq('email', email)
@@ -68,6 +82,7 @@ export async function POST(request) {
           : 'Registration confirmed. Confirmation delivery is being retried automatically.',
         brevo_synced: brevo.synced,
         confirmation_email_sent: brevo.emailSent,
+        journey_url: journeyUrl,
       })
     } catch (brevoError) {
       const syncError = normaliseError(brevoError)
