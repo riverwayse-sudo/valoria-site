@@ -1,7 +1,6 @@
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
-import { COLORS } from '@/lib/brand'
 import '../pages.css'
 
 export const metadata = {
@@ -16,7 +15,7 @@ export const metadata = {
   alternates: { canonical: 'https://valoriainstitute.com/facilitators' },
 }
 
-const color = COLORS.teal
+const color = '#C9A84C'
 
 const HOW_IT_WORKS = [
   { step: '01', title: 'Tell us what you need.', body: 'Submit an enquiry through the platform or contact us directly. Tell us which cluster your team needs to close — Presence, Relationships, Intelligence, Mastery, or Enterprise — and the context: team size, delivery format, timeline.' },
