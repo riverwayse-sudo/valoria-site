@@ -87,6 +87,14 @@ describe('journey integrity contract', () => {
     expect(facilitator).not.toContain('#1D9E75')
   })
 
+  test('opportunity detail declares every state value used by the application loop', () => {
+    const source = read('src/app/opportunities/[slug]/page.jsx')
+    for (const marker of ['[error,setError]', '[session,setSession]', '[coverNote,setCoverNote]', '[applied,setApplied]', '[applying,setApplying]', '[applyError,setApplyError]']) {
+      expect(source).toContain(marker)
+    }
+    expect(source).toContain("supabase.auth.getSession()")
+  })
+
   test('marketplace pages use the canonical capability vocabulary', () => {
     const pages = [
       read('src/app/marketplace/talent/page.jsx'),
