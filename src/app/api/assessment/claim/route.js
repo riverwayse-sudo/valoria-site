@@ -32,13 +32,20 @@ export async function POST(request){
  if(!candidate.user_id){
    const {error:uerr}=await sb.from('valu_assessments').update({user_id:user.id}).eq('id',candidate.id).is('user_id',null)
    if(uerr)return Response.json({error:uerr.message},{status:500})
+   const {data:linked,error:verifyError}=await sb.from('valu_assessments').select('id,user_id').eq('id',candidate.id).maybeSingle()
+   if(verifyError||linked?.user_id!==user.id)return Response.json({error:'The assessment claim could not be verified. Please retry.'},{status:502})
  }
  if(taster){
    const {error:terr}=await sb.from('taster_sessions').update({user_id:user.id,linked_at:new Date().toISOString()}).eq('id',taster.id).is('user_id',null)
    if(terr)return Response.json({error:terr.message},{status:500})
+   const {data:linkedTaster,error:verifyTaster}=await sb.from('taster_sessions').select('id,user_id,linked_at').eq('id',taster.id).maybeSingle()
+   if(verifyTaster||linkedTaster?.user_id!==user.id||!linkedTaster?.linked_at)return Response.json({error:'The previous snapshot claim could not be verified. Please retry.'},{status:502})
  }
- await sb.from('assessment_identity_links').upsert({assessment_id:candidate.id,user_id:user.id,link_method:linkMethod,linked_by:user.id},{onConflict:'assessment_id'})
- const {data:journey}=await sb.rpc('refresh_professional_journey',{p_user_id:user.id})
- await sb.from('platform_audit_events').insert({actor_user_id:user.id,subject_user_id:user.id,entity_type:'assessment',entity_id:candidate.id,action:'claimed_existing_assessment',after_state:{score:candidate.total_score,completed_at:candidate.completed_at,assessment_version:candidate.assessment_version,link_method:linkMethod,taster_id:candidate.taster_id||taster?.id||null}})
+ const {error:identityError}=await sb.from('assessment_identity_links').upsert({assessment_id:candidate.id,user_id:user.id,link_method:linkMethod,linked_by:user.id},{onConflict:'assessment_id'})
+ if(identityError)return Response.json({error:'Assessment linked, but the identity record could not be persisted.',detail:identityError.message},{status:502})
+ const {data:journey, error:journeyError}=await sb.rpc('refresh_professional_journey',{p_user_id:user.id})
+ if(journeyError)return Response.json({error:'Assessment linked, but journey state could not be refreshed.',detail:journeyError.message},{status:502})
+ const {error:auditError}=await sb.from('platform_audit_events').insert({actor_user_id:user.id,subject_user_id:user.id,entity_type:'assessment',entity_id:candidate.id,action:'claimed_existing_assessment',after_state:{score:candidate.total_score,completed_at:candidate.completed_at,assessment_version:candidate.assessment_version,link_method:linkMethod,taster_id:candidate.taster_id||taster?.id||null}})
+ if(auditError)return Response.json({error:'Assessment linked, but the audit event could not be recorded.',detail:auditError.message},{status:502})
  return Response.json({ok:true,assessment:candidate,journey,continuity:{tasterLinked:!!taster,assessmentLinked:true,next:'/dashboard'}})
 }
