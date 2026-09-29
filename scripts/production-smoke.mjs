@@ -4,11 +4,14 @@ const checks = [
   ['assessment', '/test/assessment', 200],
   ['opportunities page', '/opportunities', 200],
   ['marketplace', '/marketplace', 200],
+  ['employer dashboard', '/employer/dashboard', 200],
   ['opportunities API', '/api/opportunities', 200],
   ['journey state unauthenticated', '/api/journey/state', 200],
   ['matches unauthenticated', '/api/opportunities/matches', 401],
   ['outcomes unauthenticated', '/api/outcomes', 401],
   ['journey diagnostics unauthenticated', '/api/journey/diagnostics', 401],
+  ['profile applications unauthenticated', '/api/profile/applications', 401],
+  ['opportunity messages unauthenticated', '/api/opportunities/messages', 401],
 ]
 
 let failed = 0
