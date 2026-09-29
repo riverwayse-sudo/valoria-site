@@ -4,19 +4,25 @@ import Link from 'next/link'
 import styles from './ValoriaJourneyCards.module.css'
 
 const MILESTONES=[
- {key:'connect',title:'Join Valoria',description:'Your Valoria account anchors everything you do here.',href:'/signup',icon:'01'},
- {key:'assess',title:'Understand your value',description:'Complete VALU and establish your canonical VALU Index.',href:'/journey/continue?stage=assess',icon:'02'},
- {key:'report',title:'Receive your VALU report',description:'Your assessment becomes useful when your report is ready and connected to your next step.',href:'/dashboard',icon:'03'},
- {key:'profile',title:'Build your professional profile',description:'Turn your assessment into a complete professional identity.',href:'/profile/setup',icon:'04'},
- {key:'capability',title:'Define your capability',description:'Choose the professional capabilities you want Valoria to recognize.',href:'/profile/setup',icon:'05'},
- {key:'eligibility',title:'Reach eligibility',description:'Complete the requirements for professional discovery.',href:'/dashboard',icon:'06'},
- {key:'marketplace',title:'Enter the Marketplace',description:'Make your eligible capabilities discoverable.',href:'/marketplace',icon:'07'},
- {key:'opportunity',title:'Explore opportunities',description:'Turn your Valoria presence into meaningful opportunities.',href:'/opportunities',icon:'08'},
+ {key:'connect',title:'Join Valoria',description:'Your account anchors your Valoria identity.',href:'/profile/onboarding',icon:'01'},
+ {key:'assess',title:'Complete VALU',description:'Complete the full VALU assessment and establish your canonical VALU Index.',href:'/journey/continue?stage=assess',icon:'02'},
+ {key:'listed',title:'You are Listed',description:'A completed VALU assessment earns your marketplace presence immediately.',href:'/marketplace',icon:'03'},
+ {key:'profile',title:'Complete your Profile',description:'Build the professional information that unlocks richer visibility and employer discovery.',href:'/profile/setup',icon:'04'},
+ {key:'capability',title:'Unlock Capability Access',description:'Complete the requirements for the capabilities and pathways you want to activate.',href:'/profile/setup',icon:'05'},
+ {key:'opportunity',title:'Access Opportunities',description:'Use your completed profile and eligible capabilities for matching, enquiries and opportunities.',href:'/opportunities',icon:'06'},
 ]
 function buildCards(state){
- const completed={connect:!!state?.connect?.complete,assess:!!state?.assessment?.complete,report:!!state?.assessment?.reportReady,profile:!!state?.profile?.complete,capability:!!state?.capability?.complete,eligibility:!!state?.eligibility?.complete,marketplace:!!state?.marketplace?.complete,opportunity:!!state?.opportunity?.complete}
- const firstOpen=['assess','report','profile','capability','eligibility','marketplace','opportunity'].find(k=>!completed[k])||'opportunity'
- return MILESTONES.map(m=>{const complete=completed[m.key],current=!complete&&m.key===firstOpen,locked=!complete&&!current;let href=m.href,action=complete?'VIEW':current?'CONTINUE':'LOCKED';if(m.key==='assess'&&complete){href='/dashboard';action='VIEW ASSESSMENT'}if(m.key==='report'){href=complete?'/report':'/dashboard';if(state?.assessment?.reportStatus==='EMAIL_PENDING')action='REPORT READY — EMAIL PENDING';else if(state?.assessment?.reportStatus==='FAILED')action='RETRY REPORT';else if(complete)action='VIEW REPORT'}if(m.key==='profile'&&complete){href='/profile/edit';action='VIEW PROFILE'}if(m.key==='capability'&&complete){href='/profile/setup';action='VIEW CAPABILITIES'}if(m.key==='eligibility'&&complete){href='/dashboard';action='VIEW STATUS'}if(m.key==='marketplace'&&complete){href='/marketplace';action='VIEW MARKETPLACE'}return {...m,complete,current,locked,href,action}})
+ const completed={connect:!!state?.connect?.complete,assess:!!state?.assessment?.complete,listed:!!state?.marketplace?.complete,profile:!!state?.profile?.complete,capability:!!state?.capability?.complete,opportunity:!!state?.opportunity?.access}
+ const firstOpen=['assess','listed','profile','capability','opportunity'].find(k=>!completed[k])||'opportunity'
+ return MILESTONES.map(m=>{
+  const complete=completed[m.key],current=!complete&&m.key===firstOpen,locked=!complete&&!current
+  let href=m.href,action=complete?'VIEW':current?'CONTINUE':'LOCKED'
+  if(m.key==='assess'&&complete){href='/dashboard';action='VIEW ASSESSMENT'}
+  if(m.key==='listed'&&complete){href='/marketplace';action='VIEW MARKETPLACE'}
+  if(m.key==='profile'&&complete){href='/profile/edit';action='VIEW PROFILE'}
+  if(m.key==='capability'&&complete){href='/profile/setup';action='VIEW CAPABILITIES'}
+  return {...m,complete,current,locked,href,action}
+ })
 }
 export default function ValoriaJourneyCards({compact=false}){
  const [user,setUser]=useState(null),[state,setState]=useState(null),[loading,setLoading]=useState(true)
