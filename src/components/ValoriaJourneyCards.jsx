@@ -13,7 +13,7 @@ const MILESTONES = [
   { key: 'capability', title: 'Define your capability', description: 'Choose the professional capabilities you want Valoria to recognize.', href: '/profile/setup', icon: '04' },
   { key: 'eligibility', title: 'Reach eligibility', description: 'Complete the requirements for professional discovery.', href: '/dashboard', icon: '05' },
   { key: 'marketplace', title: 'Enter the Marketplace', description: 'Make your eligible capabilities discoverable.', href: '/marketplace', icon: '06' },
-  { key: 'opportunity', title: 'Explore opportunities', description: 'Turn your Valoria presence into meaningful opportunities.', href: '/marketplace', icon: '07' },
+  { key: 'opportunity', title: 'Explore opportunities', description: 'Turn your Valoria presence into meaningful opportunities.', href: '/opportunities', icon: '07' },
 ]
 
 function deriveState(journey, profile, capabilities) {
@@ -47,7 +47,7 @@ function buildCards(state) {
     let action = isComplete ? 'VIEW' : isCurrent ? 'CONTINUE' : 'LOCKED'
     if (m.key === 'assess' && isComplete) { href = '/dashboard'; action = 'VIEW JOURNEY' }
     if (m.key === 'profile' && isComplete) { href = '/profile/edit'; action = 'VIEW PROFILE' }
-    if (m.key === 'capability' && isComplete) { href = '/dashboard'; action = 'VIEW CAPABILITIES' }
+    if (m.key === 'capability' && isComplete) { href = '/profile/setup'; action = 'VIEW CAPABILITIES' }
     if (m.key === 'eligibility' && isComplete) { href = '/dashboard'; action = 'VIEW STATUS' }
     return { ...m, complete: isComplete, current: isCurrent, locked: isLocked, href, action }
   })
