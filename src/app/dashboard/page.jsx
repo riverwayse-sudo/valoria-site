@@ -751,41 +751,66 @@ export default function DashboardPage() {
 function AccessProgressCard({ profile, assessment, capabilities }) {
   const assessmentDone = !!assessment?.completed_at
   const profileComplete = !!profile?.profile_complete
-  const capabilityReady = capabilities.some(c => c.is_active && c.eligible_for_listing)
-  const completedCount = [assessmentDone, profileComplete, capabilityReady].filter(Boolean).length
-  const steps = [
-    { icon:'✓', title:'VALU COMPLETE', detail:'Your assessment is complete.', unlocked:assessmentDone, action:assessmentDone ? 'LISTED' : 'COMPLETE VALU' },
-    { icon:'◈', title:'PROFESSIONAL PROFILE', detail:'Complete your profile to unlock richer professional visibility and employer discovery.', unlocked:profileComplete, action:profileComplete ? 'UNLOCKED' : 'LOCKED' },
-    { icon:'◆', title:'CAPABILITY ACCESS', detail:'Complete the requirements for a capability to unlock matching opportunities.', unlocked:capabilityReady, action:capabilityReady ? 'UNLOCKED' : 'LOCKED' },
+  const capabilityReady = capabilities.some(c => c.is_active)
+  const eligibilityReady = capabilities.some(c => c.is_active && (c.eligible_for_listing || c.eligibility_status === 'eligible' || c.eligibility_status === 'listed'))
+  const listedReady = capabilities.some(c => c.is_active && (c.eligibility_status === 'listed' || c.eligible_for_listing))
+  const stages = [
+    { n:'01', title:'ACCOUNT', done:true, detail:'Identity established.' },
+    { n:'02', title:'VALU', done:assessmentDone, detail:'Canonical assessment signal.' },
+    { n:'03', title:'REPORT', done:assessmentDone, detail:'Assessment intelligence available.' },
+    { n:'04', title:'PROFILE', done:profileComplete, detail:'Professional identity complete.' },
+    { n:'05', title:'CAPABILITY', done:capabilityReady, detail:'Capability pathway activated.' },
+    { n:'06', title:'ELIGIBILITY', done:eligibilityReady, detail:'Governance requirements satisfied.' },
+    { n:'07', title:'LISTING', done:listedReady, detail:'Eligible capability is discoverable.' },
+    { n:'08', title:'OPPORTUNITY', done:listedReady, detail:'Discovery and matching unlocked.' },
   ]
+  const completedCount = stages.filter(s => s.done).length
+  const next = stages.find(s => !s.done)
+
   return (
-    <section style={{ background:'linear-gradient(135deg,rgba(26,26,46,.98),rgba(15,15,26,.98))', border:'1px solid rgba(201,168,76,.24)', borderRadius:'18px', padding:'22px', boxShadow:'0 18px 50px rgba(0,0,0,.2)' }}>
+    <section style={{ background:'linear-gradient(135deg,rgba(26,26,46,.98),rgba(15,15,26,.98))', border:'1px solid rgba(201,168,76,.24)', borderRadius:'18px', padding:'22px', boxShadow:'0 18px 50px rgba(0,0,0,.2)', overflow:'hidden' }}>
       <div style={{ display:'flex', justifyContent:'space-between', gap:'20px', alignItems:'flex-start', flexWrap:'wrap', marginBottom:'18px' }}>
         <div>
-          <div style={{ fontSize:'9px', letterSpacing:'.18em', fontWeight:800, color:'rgba(201,168,76,.65)', marginBottom:'7px' }}>VALORIA PROGRESSION</div>
-          <h2 style={{ margin:0, color:'#F7F4EE', fontSize:'20px', fontWeight:800 }}>You are already in the game.</h2>
-          <p style={{ margin:'7px 0 0', color:'rgba(247,244,238,.58)', fontSize:'12px', lineHeight:1.65 }}>Every completed stage unlocks something with real value. Your listing is the starting point — your profile determines how much of Valoria can work for you.</p>
+          <div style={{ fontSize:'9px', letterSpacing:'.18em', fontWeight:800, color:'rgba(201,168,76,.65)', marginBottom:'7px' }}>VALORIA PROGRESSION · FIELD OBJECTIVES</div>
+          <h2 style={{ margin:0, color:'#F7F4EE', fontSize:'20px', fontWeight:800 }}>Your next unlock is visible.</h2>
+          <p style={{ margin:'7px 0 0', color:'rgba(247,244,238,.58)', fontSize:'12px', lineHeight:1.65 }}>Completed objectives stay cleared. The active objective is the only card asking for action; future stages remain locked until their prerequisite is met.</p>
         </div>
         <div style={{ minWidth:'105px', textAlign:'right' }}>
-          <div style={{ color:'#C9A84C', fontSize:'25px', fontWeight:800 }}>{completedCount}/3</div>
-          <div style={{ color:'rgba(247,244,238,.4)', fontSize:'9px', letterSpacing:'.12em' }}>STAGES UNLOCKED</div>
+          <div style={{ color:'#C9A84C', fontSize:'25px', fontWeight:800 }}>{completedCount}/8</div>
+          <div style={{ color:'rgba(247,244,238,.4)', fontSize:'9px', letterSpacing:'.12em' }}>OBJECTIVES CLEARED</div>
         </div>
       </div>
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,minmax(0,1fr))', gap:'10px' }}>
-        {steps.map((step,i) => (
-          <div key={step.title} style={{ border:'1px solid '+(step.unlocked?'rgba(29,158,117,.35)':'rgba(201,168,76,.14)'), background:step.unlocked?'rgba(29,158,117,.07)':'rgba(255,255,255,.025)', borderRadius:'12px', padding:'15px', minHeight:'112px' }}>
-            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'11px' }}>
-              <span style={{ width:'27px', height:'27px', borderRadius:'8px', display:'grid', placeItems:'center', background:step.unlocked?'rgba(29,158,117,.16)':'rgba(201,168,76,.08)', color:step.unlocked?'#1D9E75':'#C9A84C', fontWeight:800 }}>{step.icon}</span>
-              <span style={{ fontSize:'8px', fontWeight:800, letterSpacing:'.1em', color:step.unlocked?'#1D9E75':'rgba(247,244,238,.34)' }}>{step.action}</span>
+      <div style={{ height:'4px', background:'rgba(247,244,238,.07)', marginBottom:'16px' }}>
+        <div style={{ height:'100%', width:(completedCount/8*100)+'%', background:'linear-gradient(90deg,rgba(201,168,76,.35),#C9A84C)', transition:'width .8s cubic-bezier(.22,1,.36,1)' }} />
+      </div>
+      <div style={{ display:'flex', overflowX:'auto', gap:'0', padding:'4px 2px 14px', scrollbarWidth:'thin' }}>
+        {stages.map((stage,i) => (
+          <div key={stage.n} style={{
+            position:'relative', flex:'0 0 132px', minHeight:'128px', padding:'13px',
+            marginLeft:i===0?0:-6, zIndex:stage.done?2:stage.n===next?.n?4:1,
+            border:'1px solid '+(stage.done?'rgba(201,168,76,.25)':stage.n===next?.n?'#C9A84C':'rgba(247,244,238,.08)'),
+            background:stage.done?'linear-gradient(160deg,rgba(32,32,53,.98),rgba(15,15,26,.98))':stage.n===next?.n?'linear-gradient(160deg,rgba(45,45,73,.98),rgba(15,15,26,.98))':'rgba(255,255,255,.025)',
+            opacity:stage.done?1:stage.n===next?.n?1:.42,
+            transform:stage.n===next?.n?'translateY(-6px) skewY(-1deg)':'skewY(-1deg)',
+            boxShadow:stage.n===next?.n?'0 14px 28px rgba(0,0,0,.3)':'6px 8px 0 rgba(0,0,0,.12)',
+            transition:'transform .3s ease, opacity .3s ease'
+          }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+              <span style={{ color:'#C9A84C', fontSize:'9px', fontWeight:800 }}>{stage.n}</span>
+              <span style={{ color:stage.done?'#7ec8a7':stage.n===next?.n?'#C9A84C':'rgba(247,244,238,.3)', fontSize:'7px', fontWeight:800, letterSpacing:'.1em' }}>{stage.done?'CLEARED':stage.n===next?.n?'ACTIVE':'LOCKED'}</span>
             </div>
-            <div style={{ color:'#F7F4EE', fontSize:'10px', fontWeight:800, letterSpacing:'.08em', marginBottom:'6px' }}>{step.title}</div>
-            <div style={{ color:'rgba(247,244,238,.5)', fontSize:'11px', lineHeight:1.55 }}>{step.detail}</div>
+            <div style={{ color:'rgba(247,244,238,.3)', fontSize:'7px', letterSpacing:'.12em', fontWeight:800, marginTop:'18px' }}>VALORIA // {stage.title}</div>
+            <div style={{ color:'#F7F4EE', fontSize:'10px', fontWeight:800, marginTop:'7px', lineHeight:1.25 }}>{stage.detail}</div>
+            <div style={{ height:'4px', background:'rgba(247,244,238,.07)', marginTop:'14px', overflow:'hidden' }}>
+              <div style={{ height:'100%', width:stage.done?'100%':stage.n===next?.n?'38%':'0%', background:'#C9A84C', boxShadow:'0 0 10px rgba(201,168,76,.35)' }} />
+            </div>
           </div>
         ))}
       </div>
-      {!profileComplete && assessmentDone && (
-        <Link href="/profile/setup" style={{ display:'inline-flex', marginTop:'16px', padding:'11px 16px', background:'#C9A84C', color:'#0F0F1A', borderRadius:'8px', textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em' }}>
-          UNLOCK MORE VALUE → COMPLETE PROFILE
+      {next && (
+        <Link href={next.n==='02'?'/journey/continue?stage=assess':next.n==='04'?'/profile/setup':next.n==='05'?'/profile/setup':next.n==='06'?'/profile/passport':next.n==='07'?'/marketplace':'/opportunities'}
+          style={{ display:'inline-flex', marginTop:'2px', padding:'11px 16px', background:'#C9A84C', color:'#0F0F1A', borderRadius:'8px', textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em' }}>
+          CONTINUE {next.title} →
         </Link>
       )}
     </section>
