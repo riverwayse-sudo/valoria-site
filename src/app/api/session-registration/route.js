@@ -58,6 +58,14 @@ export async function POST(request) {
 
     const token = crypto.randomUUID().replaceAll('-', '') + crypto.randomUUID().replaceAll('-', '')
     const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    let existingUserId = null
+    try {
+      const { data: existingUser } = await supabase.auth.admin.getUserByEmail(email)
+      existingUserId = existingUser?.user?.id || null
+    } catch (lookupError) {
+      console.warn('Could not resolve existing account for event registration:', lookupError?.message || lookupError)
+    }
+
     const { data: reentry } = await supabase.from('valoria_reentry_links').insert({
       token,
       entry_point: 'event_registration',
