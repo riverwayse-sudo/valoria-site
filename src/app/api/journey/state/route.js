@@ -93,7 +93,7 @@ export async function GET(request) {
   return NextResponse.json({authenticated:true,state:{
     connect:{complete:true},
     assessment:{complete:hasAssessment,current:assessmentCurrent,reportStatus,reportReady,reportDelivered,score:assessment?.total_score??profile?.valu_index??null,designation:assessment?.designation||profile?.designation||null},
-    report:{complete:reportReady,delivered:reportDelivered,status:reportStatus,valueActivationReady,valueActivationComplete: valueActivationComplete,activation},
+    report:{complete:reportReady&&valueActivationComplete,ready:reportReady,delivered:reportDelivered,status:reportStatus,valueActivationReady,valueActivationComplete,activation},
     profile:{complete:profileReady,missing:profileMissing},
     capability:{complete:capabilitySelected,capabilities:activeCapability,eligible:eligibleCapabilities,missing:capabilityMissing},
     eligibility:{complete:eligibilityComplete,missing:[...new Set([...profileMissing,...capabilityMissing])],capabilities:eligibleCapabilities},
