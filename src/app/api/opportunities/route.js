@@ -33,6 +33,9 @@ export async function POST(request){
   const {data:op,error:opError}=await sb.from('opportunities').insert({slug,title:body.title,opportunity_type:body.opportunity_type||'job',summary:body.summary||null,description:body.description,organisation_name:body.organisation_name,location:body.location||null,work_mode:body.work_mode||null,employment_type:body.employment_type||null,experience_level:body.experience_level||null,industry:body.industry||null,capabilities:body.capabilities||[],skills:body.skills||[],compensation:body.compensation||null,application_method:body.application_url?'external':'valoria',application_url:body.application_url||null,closing_at:body.closing_at||null,status:'pending_review',access_level:'public'}).select('id').single()
   if(opError)return Response.json({error:opError.message},{status:500})
   const {error:subError}=await sb.from('opportunity_submissions').insert({opportunity_id:op.id,submitter_name:body.submitter_name,submitter_email:email,organisation_name:body.organisation_name,payload:body,status:'pending_review'})
-  if(subError)return Response.json({error:subError.message},{status:500})
+  if(subError){
+    await sb.from('opportunities').delete().eq('id',op.id)
+    return Response.json({error:subError.message},{status:500})
+  }
   return Response.json({ok:true,id:op.id,status:'pending_review'})
 }
