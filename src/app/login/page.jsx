@@ -87,6 +87,17 @@ export default function LoginPage() {
             window.location.href = '/dashboard'
             return
           }
+          // Some historical assessments predate the taster_id handoff.
+          // Fall back to the verified account email without discarding the taster.
+          const emailClaim = await fetch('/api/assessment/claim', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+            body: JSON.stringify({ email: user.email }),
+          })
+          if (emailClaim.ok) {
+            window.location.href = '/dashboard'
+            return
+          }
         } catch (_) {}
         window.location.href = '/profile/onboarding'
         return
