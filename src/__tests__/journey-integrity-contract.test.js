@@ -1,0 +1,62 @@
+const fs = require('fs')
+const path = require('path')
+
+function read(relative) {
+  return fs.readFileSync(path.join(process.cwd(), relative), 'utf8')
+}
+
+describe('journey integrity contract', () => {
+  test('journey state fails loudly when required database reads fail', () => {
+    const source = read('src/app/api/journey/state/route.js')
+    expect(source).toContain('query_errors')
+    expect(source).toContain('status: 502')
+    expect(source).toContain("require('@/lib/journey-state')")
+  })
+
+  test('journey diagnostics exists and requires authentication', () => {
+    const source = read('src/app/api/journey/diagnostics/route.js')
+    expect(source).toContain("Authentication required.")
+    expect(source).toContain('invariant_failures')
+    expect(source).toContain('all_required_reads_verified')
+  })
+
+  test('historical assessment claim verifies every critical persistence step', () => {
+    const source = read('src/app/api/assessment/claim/route.js')
+    expect(source).toContain('verifyError')
+    expect(source).toContain('verifyTaster')
+    expect(source).toContain('identityError')
+    expect(source).toContain('journeyError')
+    expect(source).toContain('auditError')
+  })
+
+  test('value activation is idempotent and does not silently lose its audit event', () => {
+    const source = read('src/app/api/journey/value-activation/route.js')
+    expect(source).toContain('alreadyActivated')
+    expect(source).toContain('eventError')
+    expect(source).toContain('Value activation plan does not exist yet')
+  })
+
+  test('opportunity matching does not silently treat database errors as zero matches', () => {
+    const source = read('src/app/api/opportunities/matches/route.js')
+    expect(source).toContain('query_errors')
+    expect(source).toContain('status:502')
+  })
+
+  test('opportunity submission removes the created opportunity if submission persistence fails', () => {
+    const source = read('src/app/api/opportunities/route.js')
+    expect(source).toContain("from('opportunities').delete()")
+  })
+
+  test('production smoke gate covers the canonical public and unauthenticated API surfaces', () => {
+    const source = read('scripts/production-smoke.mjs')
+    for (const marker of [
+      '/test/assessment',
+      '/opportunities',
+      '/marketplace',
+      '/api/journey/state',
+      '/api/journey/diagnostics',
+      '/api/opportunities/matches',
+      '/api/outcomes',
+    ]) expect(source).toContain(marker)
+  })
+})
