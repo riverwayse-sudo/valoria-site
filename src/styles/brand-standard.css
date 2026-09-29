@@ -34,33 +34,32 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif; }
 .nav-dropdown { background: var(--valoria-midnight) !important; border-color: var(--valoria-brass) !important; border-radius: 8px !important; }
 .nav-cta { background: var(--valoria-gold) !important; color: var(--valoria-midnight) !important; }
 
-/* Manual: digital cards = Warm Parchment, 8px, Brass border, no shadow */
+/* GLOBAL CARD SYSTEM — the homepage connected-card geometry is the only website card language. */
 .card, .vi-card, .card-gold, .waitlist-card {
   background: var(--valoria-parchment) !important;
   color: var(--valoria-slate) !important;
   border: 1px solid var(--valoria-brass) !important;
-  border-radius: 8px !important;
+  border-radius: var(--vi-card-radius, 22px) !important;
   box-shadow: none !important;
 }
 .card:hover, .vi-card:hover, .card-gold:hover, .waitlist-card:hover {
-  background: var(--valoria-parchment) !important;
   border-color: var(--valoria-gold) !important;
-  box-shadow: none !important;
-  transform: none;
 }
-.card h1, .card h2, .card h3, .card h4, .card h5, .card h6,
-.vi-card h1, .vi-card h2, .vi-card h3, .vi-card h4, .vi-card h5, .vi-card h6,
-.card-gold h1, .card-gold h2, .card-gold h3, .card-gold h4, .card-gold h5, .card-gold h6,
-.waitlist-card h1, .waitlist-card h2, .waitlist-card h3, .waitlist-card h4, .waitlist-card h5, .waitlist-card h6 {
-  color: var(--valoria-midnight) !important;
+.vi-card-grid {
+  border-radius: var(--vi-card-radius, 22px) !important;
+  overflow: hidden !important;
 }
-.card p, .card li, .vi-card p, .vi-card li, .card-gold p, .card-gold li,
-.waitlist-card p, .waitlist-card li { color: var(--valoria-slate) !important; }
-.vi-card::before, .card-gold::before { background: var(--valoria-gold) !important; }
+.vi-card-grid > .vi-card { border-radius: 0 !important; }
+.card h1,.card h2,.card h3,.card h4,.card h5,.card h6,
+.vi-card h1,.vi-card h2,.vi-card h3,.vi-card h4,.vi-card h5,.vi-card h6,
+.card-gold h1,.card-gold h2,.card-gold h3,.card-gold h4,.card-gold h5,.card-gold h6,
+.waitlist-card h1,.waitlist-card h2,.waitlist-card h3,.waitlist-card h4,.waitlist-card h5,.waitlist-card h6 { color: var(--valoria-midnight) !important; }
+.card p,.card li,.vi-card p,.vi-card li,.card-gold p,.card-gold li,.waitlist-card p,.waitlist-card li { color: var(--valoria-slate) !important; }
+.vi-card::before,.card-gold::before { background: var(--valoria-gold) !important; }
 .vi-card-grid { background: var(--valoria-brass) !important; border-color: var(--valoria-brass) !important; }
 .vi-card-num { color: var(--valoria-slate) !important; }
 .vi-card-name { color: var(--valoria-midnight) !important; font-weight: 700 !important; }
-.vi-card-label, .vi-card-link { color: var(--valoria-gold) !important; }
+.vi-card-label,.vi-card-link { color: var(--valoria-gold) !important; }
 .vi-card-body { color: var(--valoria-slate) !important; }
 
 /*
