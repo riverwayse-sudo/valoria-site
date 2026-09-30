@@ -122,4 +122,18 @@ describe('journey integrity contract', () => {
     expect(source).toContain('setResetSent(true)')
   })
 
+  test('the experience keeps the webbed result and exposes only one next journey action', () => {
+    const journey = read('src/components/ValoriaJourneyCards.jsx')
+    const report = read('src/app/report/page.jsx')
+    const dashboard = read('src/app/dashboard/page.jsx')
+    expect(journey).toContain('role="list"')
+    expect(journey).toContain('webNode')
+    expect(journey).toContain('YOUR NEXT STEP')
+    expect(report).toContain('Your five PRIME dimension results')
+    expect(report).toContain('radarShape')
+    expect(report).toContain('SEE MY NEXT STEP')
+    expect(dashboard).toContain('YOUR NEXT STEP')
+    expect(dashboard).not.toContain('OBJECTIVES CLEARED')
+  })
+
 })
