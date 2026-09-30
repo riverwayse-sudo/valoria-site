@@ -5,7 +5,7 @@ function read(relative) {
   return fs.readFileSync(path.join(process.cwd(), relative), 'utf8')
 }
 
-describe('journey integrity contract', () => {
+describe('journey integrity contract', () => { // UX simplification coverage
   test('journey state fails loudly when required database reads fail', () => {
     const source = read('src/app/api/journey/state/route.js')
     expect(source).toContain('query_errors')
