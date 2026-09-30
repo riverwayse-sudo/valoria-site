@@ -1025,6 +1025,34 @@ function SavedSearchesSection() {
 
 function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
   const hasAssessment = profile.valu_index != null
+  const hasProfile = !!(profile.display_name && profile.current_job_title)
+  const hasCapability = Array.isArray(profile.active_tracks) && profile.active_tracks.length > 0
+  const isListed = listedCapabilities.length > 0
+
+  const current = !hasAssessment
+    ? { label:'See your signal', text:'Start VALU and understand where you stand.', href:'https://assessment.valoriainstitute.com/' }
+    : !hasProfile
+      ? { label:'Build your profile', text:'Tell us about your work so people can understand you.', href:'/profile/onboarding' }
+      : !hasCapability
+        ? { label:'Show what you can do', text:'Choose the capability you want Valoria to show.', href:'/profile/setup' }
+        : !isListed
+          ? { label:'Become discoverable', text:'Finish your readiness steps to enter the Registry.', href:'/profile/passport' }
+          : { label:'Find opportunities', text:'See opportunities that fit what you do.', href:'/opportunities' }
+
+  return (
+    <section aria-label="Your next Valoria step" style={{ maxWidth:'1100px', margin:'26px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:24, flexWrap:'wrap', padding:'20px 22px', background:MID, border:`1px solid ${GLINE}` }}>
+        <div style={{ minWidth:0 }}>
+          <div style={{ fontSize:'9px', fontWeight:800, letterSpacing:'.18em', color:GOLD }}>YOUR NEXT STEP</div>
+          <div style={{ fontSize:'20px', fontWeight:400, color:PARCH, marginTop:7 }}>{current.label}</div>
+          <div style={{ fontSize:'12px', color:DIM, marginTop:5, lineHeight:1.5 }}>{current.text}</div>
+        </div>
+        <Link href={current.href} style={{ flexShrink:0, padding:'12px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'9px', fontWeight:800, letterSpacing:'.12em' }}>CONTINUE →</Link>
+      </div>
+    </section>
+  )
+}) {
+  const hasAssessment = profile.valu_index != null
   const hasBasic = !!(profile.display_name && profile.current_job_title)
   const hasCapability = Array.isArray(profile.active_tracks) && profile.active_tracks.length > 0
   const hasEvidence = !!(profile.cv_url || (profile.work_history || []).some(x => x?.title || x?.org) || (profile.certifications || '').trim())
