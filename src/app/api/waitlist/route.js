@@ -10,10 +10,16 @@ async function sendWelcomeEmail({ email, fullName, journeyUrl }) {
   const res=await fetch('https://api.brevo.com/v3/smtp/email',{method:'POST',headers:{'api-key':key,'Content-Type':'application/json'},body:JSON.stringify({sender:{name:fromName,email:fromEmail},to:[{email,name:fullName}],replyTo:{email:fromEmail,name:fromName},subject:'Your Valoria journey starts here.',htmlContent:`<div style="font-family:Arial,sans-serif;background:#0F0F1A;color:#F7F4EE;padding:40px"><div style="max-width:560px;margin:auto;background:#1A1A2E;padding:40px"><p style="color:#C9A84C;letter-spacing:.16em;font-size:11px;font-weight:700">VALORIA INSTITUTE</p><h1 style="font-weight:400">Your place is saved.</h1><p>Hi ${first},</p><p>We've saved your interest with Valoria. You do not need to start over when you return.</p><p style="margin-top:28px"><a href="${escape(journeyUrl)}" style="display:inline-block;background:#C9A84C;color:#1A1A2E;padding:14px 20px;text-decoration:none;font-weight:700">CONTINUE YOUR VALORIA JOURNEY →</a></p><p style="color:rgba(247,244,238,.55);font-size:12px">This continuation link is valid for 30 days.</p></div></div>`,tags:['valoria-lead','journey-continuity']})});if(!res.ok)throw new Error(`BREVO_EMAIL_${res.status}`)
 }
 
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) throw new Error('Supabase server configuration is missing.')
+  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+}
 
 export async function POST(request) {
   try {
+    const supabase = getSupabase()
     const body = await request.json()
     const { full_name, email, role, interest, type, source, utm_source, utm_medium, utm_campaign } = body
 
@@ -76,7 +82,7 @@ export async function POST(request) {
       : `${new URL(request.url).origin}/journey`
 
     // Send welcome email (fire and forget — don't block the response)
-    sendWelcomeEmail(email.trim().toLowerCase(), full_name.trim(), interest, role?.trim()).catch(
+    sendWelcomeEmail({ email: email.trim().toLowerCase(), fullName: full_name.trim(), journeyUrl }).catch(
       err => console.error('Brevo email error:', err)
     )
 
