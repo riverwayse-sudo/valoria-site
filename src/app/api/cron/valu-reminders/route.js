@@ -44,7 +44,8 @@ async function sendProfileReminder({ email, name, missing }) {
 }
 
 export async function GET(request) {
-  const admin = getAdminClient()
+  let admin
+  try { admin = getAdminClient() } catch { return NextResponse.json({ ok:false, error:'Service unavailable.' }, { status:503 }) }
   const auth = request.headers.get('authorization') || ''
   if (!process.env.CRON_SECRET || auth !== `Bearer ${process.env.CRON_SECRET}`) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!BREVO_KEY) return NextResponse.json({ ok: false, sent: 0, error: 'BREVO_API_KEY not configured.' }, { status: 501 })
