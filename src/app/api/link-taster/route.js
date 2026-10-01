@@ -4,13 +4,17 @@ import { createClient } from '@supabase/supabase-js'
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY
-const admin = createClient(SB_URL, SERVICE)
+function getAdmin() {
+  if (!SB_URL || !SERVICE) throw new Error('Supabase server configuration is missing.')
+  return createClient(SB_URL, SERVICE, { auth: { persistSession: false, autoRefreshToken: false } })
+}
 
 function norm(value) {
   return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ')
 }
 
 export async function POST(request) {
+  const admin = getAdmin()
   if (!SERVICE || !SB_URL || !SB_ANON) {
     return NextResponse.json({ error: 'Server misconfigured.' }, { status: 500 })
   }

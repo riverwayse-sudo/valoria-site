@@ -7,10 +7,12 @@
 
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !key) throw new Error('Supabase server configuration is missing.')
+  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+}
 
 const INTEREST_LABELS = {
   professional:  'Professional',
@@ -27,6 +29,7 @@ export const revalidate = 30
 
 export async function GET() {
   try {
+    const supabase = getSupabase()
     const { count, error: countError } = await supabase
       .from('waitlist')
       .select('*', { count: 'exact', head: true })
