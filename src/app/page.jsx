@@ -1,7 +1,6 @@
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
-import ValuMotion from '@/components/ValuMotion'
 import HeroSlider from '@/components/HeroSlider'
 import EntryPointsGrid from '@/components/EntryPointsGrid'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
@@ -58,9 +57,23 @@ export default function HomePage() {
 
           <Reveal className="valu-conversion-card">
             <div className="vcc-top"><span>YOUR ENTRY POINT</span><strong>VALU INDEX</strong></div>
-            <div className="vcc-orbit" aria-hidden="true">
-              <div className="vcc-core"><span>START</span><b>VALU</b></div>
-              <span className="vcc-node vcc-p">P</span><span className="vcc-node vcc-r">R</span><span className="vcc-node vcc-i">I</span><span className="vcc-node vcc-m">M</span><span className="vcc-node vcc-e">E</span>
+            <div className="vcc-radar" aria-hidden="true">
+              <svg className="vcc-radar-svg" viewBox="0 0 100 100" role="presentation">
+                <g className="vcc-radar-grid">
+                  <polygon points="50,42 57.6,44.5 54.7,53.6 45.3,53.6 42.4,44.5"/>
+                  <polygon points="50,34 65.2,39 59.5,57.3 40.5,57.3 34.8,39"/>
+                  <polygon points="50,26 72.8,33.5 64.3,61 35.7,61 27.2,33.5"/>
+                  <polygon points="50,18 80.4,28 69,64.6 31,64.6 19.6,28"/>
+                  <polygon points="50,10 88,22.5 73.8,68.2 26.2,68.2 12,22.5"/>
+                  <line x1="50" y1="50" x2="50" y2="10"/><line x1="50" y1="50" x2="88" y2="22.5"/><line x1="50" y1="50" x2="73.8" y2="68.2"/><line x1="50" y1="50" x2="26.2" y2="68.2"/><line x1="50" y1="50" x2="12" y2="22.5"/>
+                </g>
+                <polygon className="vcc-radar-area" points="50,20 78,30 67,62 31,60 20,29"/>
+                <g className="vcc-radar-points"><circle cx="50" cy="20" r="1.8"/><circle cx="78" cy="30" r="1.8"/><circle cx="67" cy="62" r="1.8"/><circle cx="31" cy="60" r="1.8"/><circle cx="20" cy="29" r="1.8"/></g>
+                <g className="vcc-radar-labels">
+                  <text x="50" y="5" textAnchor="middle">PRESENCE</text><text x="94" y="21" textAnchor="end">RELATIONSHIPS</text><text x="79" y="78" textAnchor="middle">INTELLIGENCE</text><text x="21" y="78" textAnchor="middle">MASTERY</text><text x="6" y="21">ENTERPRISE</text>
+                </g>
+              </svg>
+              <div className="vcc-radar-center">VALU</div>
             </div>
             <div className="vcc-steps">
               <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>15-question snapshot</small></div></div>
@@ -92,12 +105,14 @@ export default function HomePage() {
       .valu-conversion-card:before{content:"";position:absolute;width:330px;height:330px;border-radius:50%;border:1px solid rgba(201,168,76,.11);right:-150px;top:-130px}
       .vcc-top{display:flex;justify-content:space-between;gap:15px;font:800 8px/1 Raleway,sans-serif;letter-spacing:.18em;color:rgba(247,244,238,.4)}
       .vcc-top strong{color:#C9A84C}
-      .vcc-orbit{height:205px;position:relative;display:flex;align-items:center;justify-content:center}
-      .vcc-orbit:before,.vcc-orbit:after{content:"";position:absolute;border:1px solid rgba(201,168,76,.2);border-radius:50%;width:150px;height:150px}.vcc-orbit:after{width:215px;height:215px;border-color:rgba(247,244,238,.07)}
-      .vcc-core{position:relative;z-index:2;width:92px;height:92px;border-radius:50%;background:#C9A84C;color:#1A1A2E;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 45px rgba(201,168,76,.16)}
-      .vcc-core span{font:800 7px/1 Raleway,sans-serif;letter-spacing:.18em;margin-bottom:7px}.vcc-core b{font:700 18px/1 Raleway,sans-serif;letter-spacing:.02em}
-      .vcc-node{position:absolute;z-index:3;width:28px;height:28px;border:1px solid rgba(201,168,76,.55);border-radius:50%;background:#1A1A2E;color:#C9A84C;display:flex;align-items:center;justify-content:center;font:800 9px/1 Raleway,sans-serif}
-      .vcc-p{top:5px}.vcc-r{right:13%}.vcc-i{bottom:5px}.vcc-m{left:13%;bottom:22px}.vcc-e{left:4%;top:52px}
+      .vcc-radar{height:250px;position:relative;display:flex;align-items:center;justify-content:center}
+      .vcc-radar-svg{width:min(100%,310px);height:250px;overflow:visible}
+      .vcc-radar-grid polygon,.vcc-radar-grid line{fill:none;stroke:rgba(247,244,238,.13);stroke-width:.45}
+      .vcc-radar-grid polygon:first-child{stroke:rgba(201,168,76,.22)}
+      .vcc-radar-area{fill:rgba(201,168,76,.22);stroke:#C9A84C;stroke-width:1.1;vector-effect:non-scaling-stroke}
+      .vcc-radar-points circle{fill:#C9A84C;stroke:#1A1A2E;stroke-width:1.2}
+      .vcc-radar-labels text{fill:rgba(247,244,238,.52);font:800 3.1px/1 Raleway,sans-serif;letter-spacing:.14px}
+      .vcc-radar-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;border:1px solid rgba(201,168,76,.55);border-radius:50%;background:#1A1A2E;color:#C9A84C;display:flex;align-items:center;justify-content:center;font:800 9px/1 Raleway,sans-serif;letter-spacing:.1em;box-shadow:0 0 28px rgba(201,168,76,.12)}
       .vcc-steps{border-top:1px solid rgba(247,244,238,.12)}
       .vcc-step{display:grid;grid-template-columns:34px 1fr;gap:12px;padding:16px 0;border-bottom:1px solid rgba(247,244,238,.1);align-items:start}
       .vcc-step>span{font:800 8px/1 Raleway,sans-serif;letter-spacing:.1em;color:#C9A84C;padding-top:3px}
@@ -105,7 +120,7 @@ export default function HomePage() {
       .vcc-bottom-cta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding:15px 16px;background:#C9A84C;color:#1A1A2E;text-decoration:none;font:800 9px/1 Raleway,sans-serif;letter-spacing:.12em;transition:transform .2s ease,box-shadow .2s ease}
       .vcc-bottom-cta:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(201,168,76,.18)}
       @media(max-width:900px){.valu-conversion-shell{grid-template-columns:1fr}.valu-conversion-intro{max-width:760px}.valu-conversion-card{min-height:500px;max-width:620px}}
-      @media(max-width:600px){.valu-conversion-shell{gap:34px}.valu-conversion-card{min-height:490px;padding:22px}.vcc-orbit{height:175px}.vcc-orbit:after{width:185px;height:185px}.vcc-orbit:before{width:130px;height:130px}.vcc-node{width:25px;height:25px}.valu-conversion-proof{gap:9px}.valu-conversion-note{font-size:11px}}
+      @media(max-width:600px){.valu-conversion-shell{gap:34px}.valu-conversion-card{min-height:490px;padding:22px}.vcc-radar{height:205px}.vcc-radar-svg{height:205px}.vcc-radar-labels text{font-size:3px}.valu-conversion-proof{gap:9px}.valu-conversion-note{font-size:11px}}
 \n      .home-event-countdown{margin-top:clamp(38px,5vw,64px);padding:clamp(28px,4vw,44px) clamp(22px,4vw,48px);background:#1A1A2E;border:1px solid rgba(201,168,76,.42);text-align:center;box-shadow:0 18px 55px rgba(26,26,46,.14)}\n      .home-event-countdown-label{font:800 10px/1 Raleway,sans-serif;letter-spacing:.24em;color:#C9A84C;text-transform:uppercase}\n      .home-event-countdown-title{margin:13px auto 24px;max-width:760px;font:500 clamp(18px,2.1vw,27px)/1.2 Raleway,sans-serif;letter-spacing:-.015em;color:#F7F4EE;text-transform:uppercase}\n      .home-event-countdown .session-timer{margin:0;border:0;background:transparent;padding:0}\n      .home-event-countdown .event-countdown-label{display:none}\n      .home-event-countdown .event-countdown-units{justify-content:center;gap:clamp(12px,2.8vw,34px)}\n      .home-event-countdown .event-countdown-unit{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:clamp(68px,10vw,118px);padding:0;background:transparent;border:0}\n      .home-event-countdown .event-countdown-unit strong{font:300 clamp(42px,7vw,82px)/.9 Raleway,sans-serif;letter-spacing:-.055em;color:#F7F4EE;font-variant-numeric:tabular-nums}\n      .home-event-countdown .event-countdown-unit span{font:800 8px/1 Raleway,sans-serif;letter-spacing:.2em;color:rgba(247,244,238,.42)}\n      .home-event-countdown .session-timer-live{color:#8ed0a2;font-size:12px;letter-spacing:.18em}\n      .home-event-countdown .session-timer-live .event-countdown{display:block;margin-top:15px}\n      .home-event-countdown .session-timer-live .event-countdown-units{display:flex;margin-left:0}\n      .home-event-countdown .session-timer-live .event-countdown-label{display:none}\n      .home-event-countdown .session-timer-ended{font:800 12px/1 Raleway,sans-serif;letter-spacing:.18em;color:rgba(247,244,238,.42)}\n      @media(max-width:600px){.home-event-countdown{padding:26px 12px}.home-event-countdown-title{font-size:15px;margin-bottom:22px}.home-event-countdown .event-countdown-units{gap:4px}.home-event-countdown .event-countdown-unit{min-width:calc((100vw - 52px)/4)}.home-event-countdown .event-countdown-unit strong{font-size:clamp(30px,11vw,48px)}.home-event-countdown .event-countdown-unit span{font-size:7px;letter-spacing:.12em}}\n    `}</style>
   </>
 }
