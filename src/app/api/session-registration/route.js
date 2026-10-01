@@ -2,12 +2,18 @@ import { createClient } from '@supabase/supabase-js'
 import { getSessionState } from '@/lib/professionalStandardSeries'
 import { EVENT_SESSIONS, syncEventRegistrationToBrevo } from '@/lib/eventRegistrationBrevo'
 
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) throw new Error('Supabase server configuration is missing.')
+  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+}
 
 function normaliseError(error) { return String(error?.message || 'BREVO_SYNC_FAILED').slice(0, 160) }
 
 export async function POST(request) {
   try {
+    const supabase = getSupabase()
     const body = await request.json()
     const sessionId = String(body.session_id || '').trim()
     const fullName = String(body.full_name || '').trim().slice(0, 120)
