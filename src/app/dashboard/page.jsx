@@ -1037,3 +1037,4 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
       </div>
     </section>
   )
+}
