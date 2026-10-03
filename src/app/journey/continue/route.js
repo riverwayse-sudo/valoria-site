@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js'
 const SB_URL=process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const SERVICE=process.env.SUPABASE_SERVICE_ROLE_KEY
-const ASSESSMENT_ORIGIN='https://assessment.valoriainstitute.com'
+const ASSESSMENT_ORIGIN='https://valoriainstitute.com/valu/assessment'
 
 async function getUser(request){
  if(!SB_URL||!SB_ANON)return null
