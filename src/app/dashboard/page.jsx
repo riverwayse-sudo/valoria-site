@@ -749,7 +749,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
   const profileComplete = !!profile?.profile_complete
   const capabilityReady = capabilities.some(c => c.is_active)
   const eligibilityReady = capabilities.some(c => c.is_active && (c.eligible_for_listing || c.eligibility_status === 'eligible' || c.eligibility_status === 'listed'))
-  const listedReady = capabilities.some(c => c.is_active && (c.eligibility_status === 'listed' || c.eligible_for_listing))
+  const listedReady = capabilities.some(c => c.is_active && c.eligible_for_listing === true && c.eligibility_status === 'listed')
   const stages = [
     { title:'VALU', done:assessmentDone },
     { title:'PROFILE', done:profileComplete },

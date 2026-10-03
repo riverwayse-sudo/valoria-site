@@ -27,7 +27,7 @@ function deriveJourneyState({ assessment, profile, capabilities = [], activation
     c.eligible_for_listing || c.eligibility_status === 'eligible' || c.eligibility_status === 'listed'
   )
   const listedCapabilities = activeCapabilities.filter(c =>
-    c.eligible_for_listing && (c.eligibility_status === 'listed' || !!c.listed_at)
+    c.eligible_for_listing === true && c.eligibility_status === 'listed'
   )
   const capabilityMissing = [...new Set(activeCapabilities.flatMap(c =>
     Array.isArray(c.missing_requirements) ? c.missing_requirements : []
