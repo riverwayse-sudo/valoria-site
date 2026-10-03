@@ -1,3 +1,7 @@
+@import './home-ux.css';
+@import './valu-home.css';
+@import './home-canonical.css';
+
 /* ── HOME.CSS — Valoria Institute homepage ───────────────────────────────
    FIX: hero h1 reduced, hero padding tightened so full content is visible
    on load without scrolling. Hero section height constrained to viewport.
