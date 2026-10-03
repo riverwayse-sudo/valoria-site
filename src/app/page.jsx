@@ -9,8 +9,6 @@ import { SessionTimer } from '@/components/EventRegistrationModal'
 import { BRAND } from '@/lib/brand'
 import { PROFESSIONAL_STANDARD_SERIES, formatSessionDate } from '@/lib/professionalStandardSeries'
 import './home.css'
-import './home-ux.css'
-import './valu-home.css'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -91,36 +89,5 @@ export default function HomePage() {
       <section className="webinar-replay" id="webinar" aria-labelledby="replay-title"><div className="container"><Reveal className="wr-inner"><div className="eyebrow" style={{justifyContent:'center'}}><div className="eyebrow-line"/><span className="eyebrow-text">SESSION 01 · WATCH THE REPLAY</span><div className="eyebrow-line"/></div><h2 id="replay-title" className="wr-title">Why being good at your job<br/>is no longer <em>enough.</em></h2><p className="wr-sub">Watch the full session on the VALU Index, the PRIME framework and Valoria’s belief that talent is not the problem — infrastructure is.</p><div className="wr-video"><iframe src="https://www.youtube.com/embed/B9dD22vTErI" title="Valoria Institute — Launch Webinar Replay" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen/></div><a href="/valu" className="btn-gold" style={{marginTop:'clamp(28px,4vw,40px)'}}>EXPLORE THE VALU INDEX <span aria-hidden="true">→</span></a></Reveal></div></section>
     </main>
     <Footer />
-    <style>{`
-      .valu-conversion{background:#F7F4EE;color:#1A1A2E;position:relative;overflow:hidden}
-      .valu-conversion-shell{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(360px,.72fr);gap:clamp(45px,8vw,110px);align-items:center}
-      .valu-conversion-intro{max-width:720px}
-      .valu-conversion .valu-title{max-width:760px;margin-bottom:22px}
-      .valu-conversion .valu-desc{max-width:680px}
-      .valu-conversion-proof{display:flex;align-items:center;gap:13px;margin:30px 0 28px;flex-wrap:wrap;font:800 9px/1 Raleway,sans-serif;letter-spacing:.15em;color:#6D6B76}
-      .valu-conversion-proof b{color:#1A1A2E;font-size:12px;margin-right:4px}
-      .valu-conversion-proof i{font-style:normal;color:#C9A84C}
-      .valu-conversion-note{max-width:600px;margin:20px 0 0;color:#777582;font-size:12px;line-height:1.65}
-      .valu-conversion-card{position:relative;min-height:560px;padding:28px;background:#1A1A2E;border:1px solid rgba(201,168,76,.4);box-shadow:0 28px 80px rgba(26,26,46,.18);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
-      .valu-conversion-card:before{content:"";position:absolute;width:330px;height:330px;border-radius:50%;border:1px solid rgba(201,168,76,.11);right:-150px;top:-130px}
-      .vcc-top{display:flex;justify-content:space-between;gap:15px;font:800 8px/1 Raleway,sans-serif;letter-spacing:.18em;color:rgba(247,244,238,.4)}
-      .vcc-top strong{color:#C9A84C}
-      .vcc-radar{height:250px;position:relative;display:flex;align-items:center;justify-content:center}
-      .vcc-radar-svg{width:min(100%,310px);height:250px;overflow:visible}
-      .vcc-radar-grid polygon,.vcc-radar-grid line{fill:none;stroke:rgba(247,244,238,.13);stroke-width:.45}
-      .vcc-radar-grid polygon:first-child{stroke:rgba(201,168,76,.22)}
-      .vcc-radar-area{fill:rgba(201,168,76,.22);stroke:#C9A84C;stroke-width:1.1;vector-effect:non-scaling-stroke}
-      .vcc-radar-points circle{fill:#C9A84C;stroke:#1A1A2E;stroke-width:1.2}
-      .vcc-radar-labels text{fill:rgba(247,244,238,.52);font:800 3.1px/1 Raleway,sans-serif;letter-spacing:.14px}
-      .vcc-radar-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;border:1px solid rgba(201,168,76,.55);border-radius:50%;background:#1A1A2E;color:#C9A84C;display:flex;align-items:center;justify-content:center;font:800 9px/1 Raleway,sans-serif;letter-spacing:.1em;box-shadow:0 0 28px rgba(201,168,76,.12)}
-      .vcc-steps{border-top:1px solid rgba(247,244,238,.12)}
-      .vcc-step{display:grid;grid-template-columns:34px 1fr;gap:12px;padding:16px 0;border-bottom:1px solid rgba(247,244,238,.1);align-items:start}
-      .vcc-step>span{font:800 8px/1 Raleway,sans-serif;letter-spacing:.1em;color:#C9A84C;padding-top:3px}
-      .vcc-step b{display:block;font:500 13px/1.2 Raleway,sans-serif;color:#F7F4EE}.vcc-step small{display:block;margin-top:5px;font:400 10px/1.4 Raleway,sans-serif;color:rgba(247,244,238,.4)}
-      .vcc-bottom-cta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding:15px 16px;background:#C9A84C;color:#1A1A2E;text-decoration:none;font:800 9px/1 Raleway,sans-serif;letter-spacing:.12em;transition:transform .2s ease,box-shadow .2s ease}
-      .vcc-bottom-cta:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(201,168,76,.18)}
-      @media(max-width:900px){.valu-conversion-shell{grid-template-columns:1fr}.valu-conversion-intro{max-width:760px}.valu-conversion-card{min-height:500px;max-width:620px}}
-      @media(max-width:600px){.valu-conversion-shell{gap:34px}.valu-conversion-card{min-height:490px;padding:22px}.vcc-radar{height:205px}.vcc-radar-svg{height:205px}.vcc-radar-labels text{font-size:3px}.valu-conversion-proof{gap:9px}.valu-conversion-note{font-size:11px}}
-\n      .home-event-countdown{margin-top:clamp(38px,5vw,64px);padding:clamp(28px,4vw,44px) clamp(22px,4vw,48px);background:#1A1A2E;border:1px solid rgba(201,168,76,.42);text-align:center;box-shadow:0 18px 55px rgba(26,26,46,.14)}\n      .home-event-countdown-label{font:800 10px/1 Raleway,sans-serif;letter-spacing:.24em;color:#C9A84C;text-transform:uppercase}\n      .home-event-countdown-title{margin:13px auto 24px;max-width:760px;font:500 clamp(18px,2.1vw,27px)/1.2 Raleway,sans-serif;letter-spacing:-.015em;color:#F7F4EE;text-transform:uppercase}\n      .home-event-countdown .session-timer{margin:0;border:0;background:transparent;padding:0}\n      .home-event-countdown .event-countdown-label{display:none}\n      .home-event-countdown .event-countdown-units{justify-content:center;gap:clamp(12px,2.8vw,34px)}\n      .home-event-countdown .event-countdown-unit{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:clamp(68px,10vw,118px);padding:0;background:transparent;border:0}\n      .home-event-countdown .event-countdown-unit strong{font:300 clamp(42px,7vw,82px)/.9 Raleway,sans-serif;letter-spacing:-.055em;color:#F7F4EE;font-variant-numeric:tabular-nums}\n      .home-event-countdown .event-countdown-unit span{font:800 8px/1 Raleway,sans-serif;letter-spacing:.2em;color:rgba(247,244,238,.42)}\n      .home-event-countdown .session-timer-live{color:#8ed0a2;font-size:12px;letter-spacing:.18em}\n      .home-event-countdown .session-timer-live .event-countdown{display:block;margin-top:15px}\n      .home-event-countdown .session-timer-live .event-countdown-units{display:flex;margin-left:0}\n      .home-event-countdown .session-timer-live .event-countdown-label{display:none}\n      .home-event-countdown .session-timer-ended{font:800 12px/1 Raleway,sans-serif;letter-spacing:.18em;color:rgba(247,244,238,.42)}\n      @media(max-width:600px){.home-event-countdown{padding:26px 12px}.home-event-countdown-title{font-size:15px;margin-bottom:22px}.home-event-countdown .event-countdown-units{gap:4px}.home-event-countdown .event-countdown-unit{min-width:calc((100vw - 52px)/4)}.home-event-countdown .event-countdown-unit strong{font-size:clamp(30px,11vw,48px)}.home-event-countdown .event-countdown-unit span{font-size:7px;letter-spacing:.12em}}\n    `}</style>
   </>
 }
