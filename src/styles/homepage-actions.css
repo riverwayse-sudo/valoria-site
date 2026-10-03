@@ -90,18 +90,3 @@
 }
 
 
-/* CANONICAL PATHWAY PRESENTATION — loaded by the root layout. */
-.home-pathways .home-pathway-card,
-.home-pathways .home-pathway-card:visited { color:#1A1A2E; background:#FFFFFF; }
-.home-pathways .home-pathway-card .home-pathway-number { color:#9A7428; }
-.home-pathways .home-pathway-card .home-pathway-label { color:#555565; }
-.home-pathways .home-pathway-card h3 { color:#1A1A2E; }
-.home-pathways .home-pathway-card > p { color:#555565; }
-.home-pathways .home-pathway-card .home-pathway-cta { color:#1A1A2E; }
-.home-pathways .home-pathway-card .home-pathway-cta span { color:#1A1A2E; }
-.home-pathways .home-pathway-card:hover,
-.home-pathways .home-pathway-card:focus-visible { color:#1A1A2E; background:#FBFAF7; }
-.home-pathways .home-pathway-card:hover h3,
-.home-pathways .home-pathway-card:focus-visible h3,
-.home-pathways .home-pathway-card:hover > p,
-.home-pathways .home-pathway-card:focus-visible > p { color:#1A1A2E; }
