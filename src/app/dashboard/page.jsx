@@ -523,7 +523,7 @@ export default function DashboardPage() {
                     <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
                       You haven't completed your VALU Index assessment yet.
                     </p>
-                    <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer"
+                    <a href="https://valoriainstitute.com/valu/assessment/" target="_blank" rel="noopener noreferrer"
                       style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
                       TAKE THE ASSESSMENT
                     </a>
@@ -759,7 +759,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
   ]
   const next = stages.find(s => !s.done) || { title:'OPPORTUNITIES', done:true }
   const nextHref = !assessmentDone
-    ? 'https://assessment.valoriainstitute.com/'
+    ? 'https://valoriainstitute.com/valu/assessment/'
     : !profileComplete
       ? '/profile/setup'
       : !capabilityReady
@@ -1016,7 +1016,7 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
   const isListed = listedCapabilities.length > 0
 
   const current = !hasAssessment
-    ? { label:'See your signal', text:'Start VALU and understand where you stand.', href:'https://assessment.valoriainstitute.com/' }
+    ? { label:'See your signal', text:'Start VALU and understand where you stand.', href:'https://valoriainstitute.com/valu/assessment/' }
     : !hasProfile
       ? { label:'Build your profile', text:'Tell us about your work so people can understand you.', href:'/profile/onboarding' }
       : !hasCapability

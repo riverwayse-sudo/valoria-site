@@ -10,7 +10,7 @@ export const BRAND = {
   copyrightEntity: 'African Talent Bureau Ltd',
   location: 'Lagos, Nigeria',
   compliance: 'NDPA 2023 Compliant',
-  assessmentUrl: 'https://assessment.valoriainstitute.com/',
+  assessmentUrl: '/valu/assessment/',
   logo: '/logo.png',
 }
 

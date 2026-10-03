@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
 
 export default function WaitlistPage() {
-  redirect('https://assessment.valoriainstitute.com/')
+  redirect('https://valoriainstitute.com/valu/assessment/')
 }

@@ -17,7 +17,7 @@ const DIM = 'rgba(247,244,238,.55)'
 const sections = [
   {
     title: '1. Who we are',
-    body: `Valoria Institute is an initiative of African Talent Bureau Ltd, registered in Nigeria. We operate the Valoria Institute professional marketplace at valoriainstitute.com and the VALU Index assessment platform at assessment.valoriainstitute.com.\n\nFor questions about this policy, contact us at: privacy@valoriainstitute.com`,
+    body: `Valoria Institute is an initiative of African Talent Bureau Ltd, registered in Nigeria. We operate the Valoria Institute professional marketplace at valoriainstitute.com and the VALU Index assessment platform at valoriainstitute.com/valu/assessment.\n\nFor questions about this policy, contact us at: privacy@valoriainstitute.com`,
   },
   {
     title: '2. Data we collect',

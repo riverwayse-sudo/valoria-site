@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    const origin = process.env.VALU_UPSTREAM_ORIGIN || 'https://assessment.valoriainstitute.com'
+    return [
+      { source: '/valu/assessment', destination: `${origin}/` },
+      { source: '/valu/assessment/:path*', destination: `${origin}/:path*` },
+    ]
+  },
   images: {
     remotePatterns: [
       {

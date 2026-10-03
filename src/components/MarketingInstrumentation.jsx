@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 
-const ASSESSMENT_HOST = 'assessment.valoriainstitute.com'
+const ASSESSMENT_PATH = '/valu/assessment'
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']
 
 function track(name, params = {}) {
@@ -16,7 +16,7 @@ export default function MarketingInstrumentation() {
     const params = new URLSearchParams(window.location.search)
     const utm = Object.fromEntries(UTM_KEYS.filter((key) => params.get(key)).map((key) => [key, params.get(key)]))
 
-    const links = document.querySelectorAll('a[href*="assessment.valoriainstitute.com"]')
+    const links = document.querySelectorAll('a[href*="/valu/assessment"]')
     links.forEach((link) => {
       try {
         const url = new URL(link.href)
@@ -33,7 +33,7 @@ export default function MarketingInstrumentation() {
       try { url = new URL(link.href, window.location.href) } catch { return }
       const label = (link.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 120)
 
-      if (url.hostname === ASSESSMENT_HOST) {
+      if (url.pathname.startsWith(ASSESSMENT_PATH)) {
         track('valu_start_click', { cta_label: label, destination: url.pathname, ...utm })
       } else if (url.pathname.startsWith('/marketplace')) {
         track('marketplace_click', { cta_label: label, destination: url.pathname, ...utm })
