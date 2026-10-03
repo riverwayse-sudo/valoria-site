@@ -6,9 +6,9 @@
 .home-section-heading>p{font-size:17px;line-height:1.72;color:#555565;max-width:520px;margin:0 0 3px}
 
 /* CANONICAL CONNECTED CARD SYSTEM — do not create one-off card geometry. */
-.home-pathway-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;background:rgba(26,26,46,.12);border:1px solid rgba(26,26,46,.12);border-radius:24px;overflow:hidden}
-.home-pathway-card{position:relative;min-height:320px;padding:30px 30px 28px;display:flex;flex-direction:column;text-decoration:none;color:#1A1A2E;background:#fff;border:0;border-right:1px solid rgba(26,26,46,.12);transition:background .25s ease,box-shadow .25s ease;overflow:hidden;border-radius:0}
-.home-pathway-card:last-child{border-right:0}.home-pathway-card:first-child{border-radius:23px 0 0 23px}.home-pathway-card:last-child{border-radius:0 23px 23px 0}
+.home-pathway-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;background:transparent;border:0;border-radius:0;overflow:visible}
+.home-pathway-card{position:relative;min-height:360px;padding:36px 34px 32px;display:flex;flex-direction:column;text-decoration:none;color:#1A1A2E;background:#fff;border:0;border-right:1px solid rgba(26,26,46,.12);transition:background .25s ease,box-shadow .25s ease;overflow:hidden;border-radius:0}
+.home-pathway-card:last-child{border-right:0}.home-pathway-card:first-child,.home-pathway-card:last-child{border-radius:22px}
 .home-pathway-card:before{content:'';position:absolute;inset:0 auto 0 0;width:3px;background:transparent;transition:background .25s ease}
 .home-pathway-card:hover,.home-pathway-card:focus-visible{background:#fbfaf7;box-shadow:inset 0 0 0 1px rgba(154,116,40,.35);outline:none;z-index:1}
 .home-pathway-card:hover:before,.home-pathway-card:focus-visible:before,.home-pathway-card.is-primary:before{background:#C9A84C}
@@ -57,7 +57,7 @@
  .ep-grid{grid-template-columns:1fr}.ep-grid .ep-card{min-height:0;border-right:0;border-bottom:1px solid rgba(201,168,76,.12)}.ep-grid .ep-card:last-child{border-bottom:0}.hero-slider{height:100svh;min-height:680px;max-height:none;padding:68px var(--pad) 32px}.hero-slider .hero-title,.hero-slider .hero-event-slide .hero-title{font-size:clamp(44px,7vw,56px)}.hero-slider .hero-slide .hero-inner{height:100%;padding-top:0!important}
 }
 @media(max-width:640px){
- .home-pathways,.home-featured-event,.home-insights{padding-top:64px;padding-bottom:64px}.home-section-heading h2,.home-featured-event h2,.home-insights h2{font-size:clamp(32px,9vw,44px)}.home-pathway-card{padding:24px;min-height:230px}.home-pathway-number{margin-bottom:22px}.ep-header{margin-bottom:32px}.entry-points{padding-top:64px;padding-bottom:64px}.home-entry-title{font-size:clamp(36px,10vw,48px)}.ep-desc{font-size:16px;line-height:1.65;margin-top:18px}.ep-grid .ep-card{padding:28px 24px}.ep-grid .ep-name{font-size:26px}
+ .home-pathways,.home-featured-event,.home-insights{padding-top:64px;padding-bottom:64px}.home-section-heading h2,.home-featured-event h2,.home-insights h2{font-size:clamp(32px,9vw,44px)}.home-pathway-card{padding:28px;min-height:280px}.home-pathway-number{margin-bottom:22px}.ep-header{margin-bottom:32px}.entry-points{padding-top:64px;padding-bottom:64px}.home-entry-title{font-size:clamp(36px,10vw,48px)}.ep-desc{font-size:16px;line-height:1.65;margin-top:18px}.ep-grid .ep-card{padding:28px 24px}.ep-grid .ep-name{font-size:26px}
  .home-event-header h2{font-size:clamp(38px,10vw,52px);line-height:1.04}.home-event-description{font-size:16px;line-height:1.7;margin-top:20px}.home-event-footer{margin-top:40px;padding-top:24px}.home-event-facts{grid-template-columns:1fr 1fr;gap:20px 16px}.home-event-actions{align-items:stretch;flex-direction:column;gap:10px}.home-event-actions .btn-gold,.home-event-actions .text-link{width:100%}.home-event-actions .text-link{justify-content:center}.home-event-facts strong{font-size:12px}
  .home-dual-actions{align-items:stretch;flex-direction:column;gap:10px}.home-dual-actions .btn-gold,.home-dual-actions .text-link{width:100%}.home-dual-actions .text-link{justify-content:center}.hero-slider{min-height:640px;padding:68px var(--pad) 24px}.hero-slider .hero-title,.hero-slider .hero-event-slide .hero-title{font-size:clamp(38px,10.5vw,48px);line-height:1.04}
 }
