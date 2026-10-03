@@ -12,30 +12,21 @@
 .home-pathway-card:before{content:'';position:absolute;inset:0 auto 0 0;width:3px;background:transparent;transition:background .25s ease}
 .home-pathway-card:hover,.home-pathway-card:focus-visible{background:#fbfaf7;box-shadow:inset 0 0 0 1px rgba(154,116,40,.35);outline:none;z-index:1}
 .home-pathway-card:hover:before,.home-pathway-card:focus-visible:before,.home-pathway-card.is-primary:before{background:#C9A84C}
-.home-pathway-number{font:700 10px var(--font);letter-spacing:.16em;color:#9A7428;margin-bottom:30px}.home-pathway-label{font:800 10px var(--font);letter-spacing:.16em;color:#777789;margin-bottom:14px}.home-pathway-card h3{font:500 clamp(24px,2vw,30px) var(--font);line-height:1.12;letter-spacing:-.02em;margin:0 0 14px}.home-pathway-card p{font-size:15px;line-height:1.7;color:#606070;margin:0;max-width:380px}.home-pathway-cta{margin-top:auto;padding-top:28px;font:800 10px var(--font);letter-spacing:.13em;color:#1A1A2E}.home-pathway-cta span,.text-link span{color:#9A7428;margin-left:5px}
-/* HOMEPAGE PATHWAY CONTRAST LOCK — cream surface requires dark editorial type. */
+.home-pathway-number{font:700 10px var(--font);letter-spacing:.16em;color:#9A7428;margin-bottom:30px}.home-pathway-label{font:800 10px var(--font);letter-spacing:.16em;color:#777789;margin-bottom:14px}.home-pathway-card h3{font:500 clamp(24px,2vw,30px) var(--font);line-height:1.12;letter-spacing:-.02em;margin:0 0 14px}.home-pathway-card p{font-size:15px;line-height:1.7;color:#606070;margin:0;max-width:380px}.home-pathway-cta{margin-top:auto;padding-top:28px;font:800 10px var(--font);letter-spacing:.13em}.home-pathway-cta span,.text-link span{margin-left:5px}
+/* CANONICAL PATHWAY PRESENTATION — this stylesheet owns pathway surface + editorial type. */
 .home-pathways .home-pathway-card,
-.home-pathways .home-pathway-card:visited {
-  --home-pathway-fg: #1A1A2E;
-  --home-pathway-muted: #555565;
-  color: var(--home-pathway-fg) !important;
-  -webkit-text-fill-color: var(--home-pathway-fg) !important;
-  background: #FFFFFF !important;
-}
-.home-pathways .home-pathway-card .home-pathway-number { color:#9A7428 !important; -webkit-text-fill-color:#9A7428 !important; }
-.home-pathways .home-pathway-card .home-pathway-label { color:var(--home-pathway-muted) !important; -webkit-text-fill-color:var(--home-pathway-muted) !important; }
-.home-pathways .home-pathway-card h3 { color:var(--home-pathway-fg) !important; -webkit-text-fill-color:var(--home-pathway-fg) !important; }
-.home-pathways .home-pathway-card > p { color:var(--home-pathway-muted) !important; -webkit-text-fill-color:var(--home-pathway-muted) !important; }
-.home-pathways .home-pathway-card .home-pathway-cta { color:var(--home-pathway-fg) !important; -webkit-text-fill-color:var(--home-pathway-fg) !important; }
-.home-pathways .home-pathway-card .home-pathway-cta span { color:#9A7428 !important; -webkit-text-fill-color:#9A7428 !important; }
+.home-pathways .home-pathway-card:visited { color:#1A1A2E; background:#FFFFFF; }
+.home-pathways .home-pathway-card .home-pathway-number { color:#9A7428; }
+.home-pathways .home-pathway-card .home-pathway-label { color:#555565; }
+.home-pathways .home-pathway-card h3 { color:#1A1A2E; }
+.home-pathways .home-pathway-card > p { color:#555565; }
 .home-pathways .home-pathway-card:hover,
-.home-pathways .home-pathway-card:focus-visible { color:var(--home-pathway-fg) !important; -webkit-text-fill-color:var(--home-pathway-fg) !important; background:#FBFAF7 !important; }
+.home-pathways .home-pathway-card:focus-visible { color:#1A1A2E; background:#FBFAF7; }
 .home-pathways .home-pathway-card:hover h3,
 .home-pathways .home-pathway-card:focus-visible h3,
 .home-pathways .home-pathway-card:hover > p,
-.home-pathways .home-pathway-card:focus-visible > p,
-.home-pathways .home-pathway-card:hover .home-pathway-cta,
-.home-pathways .home-pathway-card:focus-visible .home-pathway-cta { color:var(--home-pathway-fg) !important; -webkit-text-fill-color:var(--home-pathway-fg) !important; }
+.home-pathways .home-pathway-card:focus-visible > p { color:#1A1A2E; }
+
 .live-profiles{margin-top:0}
 
 /* INSTITUTIONAL PATHWAYS — approved connected dark card geometry. */
