@@ -70,6 +70,17 @@ test('eligible capability is not enough until profile is complete', () => {
   expect(state.next).toBe('listed')
 })
 
+test('eligible or timestamped capability is not listed until authoritative listed status is set', () => {
+  const state = deriveJourneyState({
+    assessment: completedAssessment,
+    activation: { status: 'activated' },
+    profile: completeProfile,
+    capabilities: [{ id: 'c1', capability: 'talent', is_active: true, eligibility_status: 'eligible', eligible_for_listing: true, listed_at: '2026-09-29T11:00:00.000Z' }],
+  })
+  expect(state.marketplace.complete).toBe(false)
+  expect(state.next).toBe('listed')
+})
+
 test('listed capability unlocks opportunity access', () => {
   const state = deriveJourneyState({
     assessment: completedAssessment,
