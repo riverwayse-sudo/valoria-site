@@ -29,7 +29,7 @@
 
 :root{--home-section-pad:clamp(72px,9vw,120px);--home-content-width:1200px;--home-radius:22px;--home-control-h:48px;}
 .home-section-heading h2,.home-featured-event h2,.home-insights h2,.valu-conversion .valu-title,.home-entry-title,.wr-title{text-wrap:balance;}
-.home-section-heading>p,.valu-conversion .valu-desc,.ep-desc,.home-event-description,.wr-sub,.alignment-sub{text-wrap:pretty;}.valu-conversion-card{min-height:490px;padding:22px}.vcc-radar,.vcc-radar-svg{height:205px}.home-event-countdown{padding:26px 12px}.home-event-countdown-title{font-size:15px}.home-event-countdown .event-countdown-units{gap:4px}.home-event-countdown .event-countdown-unit{min-width:calc((100vw - 52px)/4)}.home-event-countdown .event-countdown-unit strong{font-size:clamp(30px,11vw,48px)}}
+.home-section-heading>p,.valu-conversion .valu-desc,.ep-desc,.home-event-description,.wr-sub,.alignment-sub{text-wrap:pretty;}.valu-conversion-card{min-height:490px;padding:22px}.vcc-radar,.vcc-radar-svg{height:205px}.home-event-countdown{padding:26px 12px}.home-event-countdown-title{font-size:15px}.home-event-countdown .event-countdown-units{gap:4px}.home-event-countdown .event-countdown-unit{min-width:calc((100vw - 52px)/4)}.home-event-countdown .event-countdown-unit strong{font-size:clamp(30px,11vw,48px)}
 
 
 /* Constitution: shared alignment and CTA geometry. */
