@@ -40,3 +40,27 @@
 .home-section-heading h2,.home-featured-event h2,.home-insights h2,.valu-conversion .valu-title,.home-entry-title,.wr-title{text-wrap:balance}
 .home-section-heading>p,.valu-conversion .valu-desc,.ep-desc,.home-event-description,.wr-sub,.alignment-sub{text-wrap:pretty}
 .eyebrow--center{justify-content:center}.wr-cta{margin-top:clamp(28px,4vw,40px)}
+
+
+/* ── PATHWAY COLOR AUTHORITY ────────────────────────────────────────────
+   Homepage pathway presentation is owned here. This is intentionally
+   scoped to the cream pathway section so global card/button styles cannot
+   leak into its text hierarchy.
+   ───────────────────────────────────────────────────────────────────── */
+.home-pathways{background:#F7F4EE;color:#1A1A2E}
+.home-pathways .home-section-heading h2{color:#1A1A2E}
+.home-pathways .home-section-heading p{color:#555565}
+.home-pathways .home-pathway-card,
+.home-pathways .home-pathway-card:visited{color:#1A1A2E;background:#FFFFFF}
+.home-pathways .home-pathway-card .home-pathway-number{color:#9A7428}
+.home-pathways .home-pathway-card .home-pathway-label{color:#555565}
+.home-pathways .home-pathway-card h3{color:#1A1A2E}
+.home-pathways .home-pathway-card>p{color:#555565}
+.home-pathways .home-pathway-card .home-pathway-cta,
+.home-pathways .home-pathway-card .home-pathway-cta span{color:#1A1A2E}
+.home-pathways .home-pathway-card:hover,
+.home-pathways .home-pathway-card:focus-visible{color:#1A1A2E;background:#FBFAF7}
+.home-pathways .home-pathway-card:hover h3,
+.home-pathways .home-pathway-card:focus-visible h3,
+.home-pathways .home-pathway-card:hover>p,
+.home-pathways .home-pathway-card:focus-visible>p{color:#1A1A2E}
