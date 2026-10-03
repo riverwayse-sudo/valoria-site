@@ -485,7 +485,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                   <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
                     This professional has not yet completed their VALU Index assessment.
                   </p>
-                  <a href="https://assessment.valoriainstitute.com/" target="_blank" rel="noopener noreferrer"
+                  <a href="https://valoriainstitute.com/valu/assessment/" target="_blank" rel="noopener noreferrer"
                     style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
                     ABOUT THE VALU INDEX
                   </a>
