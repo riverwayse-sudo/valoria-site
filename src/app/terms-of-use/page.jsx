@@ -17,7 +17,7 @@ const DIM = 'rgba(247,244,238,.55)'
 const sections = [
   {
     title: '1. About these terms',
-    body: `These Terms of Use govern your access to and use of the Valoria Institute platform, including the marketplace at valoriainstitute.com and the VALU Index assessment at assessment.valoriainstitute.com, operated by African Talent Bureau Ltd ("Valoria Institute", "we", "us").\n\nBy creating an account or joining the waitlist, you agree to these terms. If you do not agree, do not use the platform.`,
+    body: `These Terms of Use govern your access to and use of the Valoria Institute platform, including the marketplace at valoriainstitute.com and the VALU Index assessment at valoriainstitute.com/valu/assessment, operated by African Talent Bureau Ltd ("Valoria Institute", "we", "us").\n\nBy creating an account or joining the waitlist, you agree to these terms. If you do not agree, do not use the platform.`,
   },
   {
     title: '2. Who can use the platform',
