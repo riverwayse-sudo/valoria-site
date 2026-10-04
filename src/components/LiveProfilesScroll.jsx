@@ -43,7 +43,7 @@ export default async function LiveProfilesScroll() {
   const discoverableCount = count ?? unique.length
   const trackCounts = unique.reduce((acc, profile) => {
     const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
-    tracks.forEach(track => { if (TRACK_META[track]) acc[track] = (acc[track] || 0) + 1 })
+    tracks.forEach(track => { const normalized = track === 'talent' ? 'candidate' : track; if (TRACK_META[normalized]) acc[normalized] = (acc[normalized] || 0) + 1 })
     return acc
   }, {})
 
