@@ -99,3 +99,8 @@
 .home-event-countdown-label{color:rgba(201,168,76,.55);font-size:9px;font-weight:700;letter-spacing:.18em}.home-event-countdown-title{color:rgba(247,244,238,.42);font-size:11px;letter-spacing:.08em;max-width:460px}
 @media(max-width:900px){.alignment{padding:88px var(--pad)}.alignment-inner{max-width:720px}.alignment-cats{grid-template-columns:1fr}.cat-item,.cat-item:first-child,.cat-item:last-child,.cat-item.cat-highlight{padding:28px 0;border-right:0;border-bottom:1px solid rgba(201,168,76,.12);background:transparent}.cat-item:last-child{border-bottom:0}.ep-header{grid-template-columns:1fr;gap:24px}.home-event-footer{flex-direction:column;align-items:stretch}.home-event-actions{align-items:flex-start}.home-event-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.home-event-countdown{flex-direction:column;align-items:flex-start}}
 @media(max-width:640px){.alignment-title,.home-entry-title,.home-event-header h2{font-size:44px}.alignment-sub,.ep-desc,.home-event-description{font-size:17px}.home-event-facts{grid-template-columns:1fr 1fr}.home-event-countdown-title{font-size:10px;line-height:1.5}}
+
+/* Canonical homepage section shells: these sections own their width and do not inherit the global container constraint. */
+.alignment > .container,.entry-points > .container,.home-featured-event > .container{width:100%;max-width:none;padding-inline:0;margin-inline:0}
+.alignment .alignment-inner,.entry-points .ep-header,.entry-points .ep-grid,.home-featured-event .home-event-shell{width:min(1280px,calc(100% - 48px));max-width:1280px;margin-inline:auto}
+@media(max-width:640px){.alignment .alignment-inner,.entry-points .ep-header,.entry-points .ep-grid,.home-featured-event .home-event-shell{width:calc(100% - 36px)}}
