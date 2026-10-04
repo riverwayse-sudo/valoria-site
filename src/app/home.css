@@ -104,3 +104,58 @@
 .alignment > .container,.entry-points > .container,.home-featured-event > .container{width:100%;max-width:none;padding-inline:0;margin-inline:0}
 .alignment .alignment-inner,.entry-points .ep-header,.entry-points .ep-grid,.home-featured-event .home-event-shell{width:min(1280px,calc(100% - 48px));max-width:1280px;margin-inline:auto}
 @media(max-width:640px){.alignment .alignment-inner,.entry-points .ep-header,.entry-points .ep-grid,.home-featured-event .home-event-shell{width:calc(100% - 36px)}}
+
+
+/* ── HOMEPAGE SECTION AUDIT — final visual authority ───────────────────
+   Keep section-owned typography and contrast stronger than imported UX
+   defaults. Do not allow global card/text rules to leak across sections.
+*/
+.home-pathways > .container,
+.valu-conversion > .container{
+  width:min(1200px,calc(100% - 48px));
+  max-width:1200px;
+  margin-inline:auto;
+  padding-inline:0;
+}
+.home-pathways .home-section-heading,
+.valu-conversion .valu-conversion-shell{
+  width:100%;
+}
+.home-featured-event .home-event-shell{
+  width:min(1280px,calc(100% - 48px)) !important;
+  max-width:1280px !important;
+  margin-inline:auto !important;
+}
+.home-featured-event h2,
+.home-featured-event .home-event-header h2{
+  color:var(--parchment) !important;
+}
+.home-featured-event h2 em,
+.home-featured-event .home-event-header h2 em{
+  color:var(--gold) !important;
+  font-style:italic;
+}
+.home-featured-event .text-link{
+  color:var(--parchment) !important;
+}
+.home-featured-event .text-link span{
+  color:var(--gold) !important;
+}
+.entry-points .ep-grid{
+  width:100%;
+}
+.alignment .alignment-inner{
+  width:min(1280px,calc(100% - 48px));
+  max-width:1280px;
+}
+@media(max-width:640px){
+  .home-pathways > .container,
+  .valu-conversion > .container,
+  .home-featured-event .home-event-shell,
+  .alignment .alignment-inner{
+    width:calc(100% - 36px);
+  }
+  .home-featured-event .text-link{
+    color:var(--parchment) !important;
+  }
+}
