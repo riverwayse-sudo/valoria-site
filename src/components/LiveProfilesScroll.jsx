@@ -81,9 +81,10 @@ export default async function LiveProfilesScroll() {
             <div className="vi-scroll-track">
               {loop.map((profile, index) => {
                 const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
-                const primaryTrack = tracks.find(track => TRACK_META[track]) || 'candidate'
+                const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
+                const primaryTrack = normalizedTracks.find(track => TRACK_META[track]) || 'candidate'
                 const meta = TRACK_META[primaryTrack]
-                const capabilityLabels = tracks.map(track => TRACK_META[track]?.label).filter(Boolean)
+                const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
                 return (
                   <Link
                     href={meta.href}
