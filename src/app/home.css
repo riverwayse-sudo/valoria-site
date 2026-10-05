@@ -287,6 +287,12 @@
   background: var(--gold);
 }
 
+.hero-slider .vb-fill.score-88 { width: 88%; }
+.hero-slider .vb-fill.score-90 { width: 90%; }
+.hero-slider .vb-fill.score-82 { width: 82%; }
+.hero-slider .vb-fill.score-80 { width: 80%; }
+.hero-slider .vb-fill.score-75 { width: 75%; }
+
 .hero-slider .vc-foot {
   color: rgba(247,244,238,.25);
   font-size: 9px;
@@ -300,6 +306,12 @@
 .hero-slider .hmc-bar {
   background: var(--gold);
 }
+
+.hero-slider .score-88 { width: 88%; }
+.hero-slider .score-90 { width: 90%; }
+.hero-slider .score-82 { width: 82%; }
+.hero-slider .score-80 { width: 80%; }
+.hero-slider .score-75 { width: 75%; }
 
 .hero-slider .hero-slider-controls {
   position: absolute;
