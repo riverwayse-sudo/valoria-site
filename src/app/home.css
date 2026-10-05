@@ -634,6 +634,197 @@
   box-shadow: 0 14px 36px rgba(26,26,46,.12);
 }
 
+/* EVENTS + REPLAY */
+.home-events {
+  background: var(--dark);
+  color: var(--parchment);
+  border-top: 1px solid rgba(201,168,76,.10);
+}
+.home-events-heading {
+  margin-bottom: clamp(38px, 5vw, 60px);
+}
+.home-events-feature {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(340px, .85fr);
+  min-height: 520px;
+  overflow: hidden;
+  border: 1px solid rgba(201,168,76,.18);
+  border-radius: var(--home-radius);
+  background: var(--valoria-void);
+}
+.home-events-video {
+  position: relative;
+  min-height: 100%;
+  background: #090910;
+}
+.home-events-video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.home-events-slider {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: clamp(30px, 5vw, 58px);
+  border-left: 1px solid rgba(201,168,76,.14);
+}
+.home-events-status,
+.home-events-meta,
+.home-events-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.home-events-status {
+  margin-bottom: 24px;
+  color: rgba(247,244,238,.38);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+.home-events-status span:first-child {
+  color: var(--gold);
+}
+.home-events-cluster {
+  align-self: flex-start;
+  margin-bottom: 18px;
+  padding: 7px 10px;
+  border: 1px solid rgba(201,168,76,.24);
+  border-radius: var(--btn-radius);
+  color: rgba(247,244,238,.52);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+.home-events-slider h3 {
+  margin: 0 0 16px;
+  color: var(--parchment);
+  font-size: clamp(25px, 3vw, 40px);
+  font-weight: 350;
+  line-height: 1.08;
+  letter-spacing: -.02em;
+}
+.home-events-slider > p {
+  margin: 0 0 26px;
+  color: rgba(247,244,238,.55);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.home-events-meta {
+  padding-block: 16px;
+  border-top: 1px solid rgba(247,244,238,.10);
+  border-bottom: 1px solid rgba(247,244,238,.10);
+  color: rgba(247,244,238,.42);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+}
+.home-events-controls {
+  margin-top: 22px;
+}
+.home-events-dots {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.home-events-dots button {
+  width: 28px;
+  height: 3px;
+  padding: 0;
+  border: 0;
+  border-radius: 99px;
+  background: rgba(247,244,238,.16);
+  cursor: pointer;
+}
+.home-events-dots button.is-active {
+  width: 48px;
+  background: var(--gold);
+}
+.home-events-arrows {
+  display: flex;
+  gap: 7px;
+}
+.home-events-arrows button {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(201,168,76,.25);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--parchment);
+  cursor: pointer;
+}
+.home-events-arrows button:hover,
+.home-events-arrows button:focus-visible {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--dark-mid);
+  outline: none;
+}
+.home-events-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding-top: 20px;
+}
+.home-events-footer span {
+  color: rgba(247,244,238,.28);
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+.home-events-footer a {
+  color: var(--gold);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .13em;
+  text-decoration: none;
+}
+@media (max-width: 900px) {
+  .home-events-feature {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .home-events-video {
+    aspect-ratio: 16 / 9;
+    min-height: 0;
+  }
+  .home-events-slider {
+    border-left: 0;
+    border-top: 1px solid rgba(201,168,76,.14);
+  }
+}
+@media (max-width: 640px) {
+  .home-events-slider {
+    padding: 24px;
+  }
+  .home-events-slider h3 {
+    font-size: 25px;
+  }
+  .home-events-slider > p {
+    font-size: 12px;
+  }
+  .home-events-meta,
+  .home-events-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .home-events-controls {
+    width: 100%;
+  }
+}
+
 /* VALU CONVERSION */
 .valu-section.valu-conversion {
   background: var(--dark-mid);
