@@ -1,32 +1,34 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 export default function Reveal({ children, className = '', as: Tag = 'div', delay = 0, ...props }) {
   const ref = useRef(null)
 
   useEffect(() => {
     const el = ref.current
-    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!el) return
 
-    gsap.registerPlugin(ScrollTrigger)
-    const ctx = gsap.context(() => {
-      gsap.fromTo(el,
-        { autoAlpha: 0, y: 28 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.8,
-          delay,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
-        }
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduced) {
+      el.classList.add('visible')
+      return
+    }
+
+    const timer = window.setTimeout(() => {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return
+          el.classList.add('visible')
+          observer.disconnect()
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
       )
-    }, el)
+      observer.observe(el)
+      return () => observer.disconnect()
+    }, Math.max(0, delay * 1000))
 
-    return () => ctx.revert()
+    return () => window.clearTimeout(timer)
   }, [delay])
 
   return <Tag ref={ref} className={`reveal ${className}`} {...props}>{children}</Tag>
