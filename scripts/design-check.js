@@ -36,8 +36,8 @@ for (const { file, text } of existing.filter(({ file }) => homepageFiles.include
   for (const color of legacyColors) {
     if (text.toLowerCase().includes(color)) add(`${file}: legacy/unapproved colour token ${color}`);
   }
-  if (/transition\s*:\s*all\\b/i.test(text)) add(`${file}: transition: all is prohibited`);
-  if (/animation\s*:\s*all\\b/i.test(text)) add(`${file}: animation: all is prohibited`);
+  if (/transition\s*:\s*all\b/i.test(text)) add(`${file}: transition: all is prohibited`);
+  if (/animation\s*:\s*all\b/i.test(text)) add(`${file}: animation: all is prohibited`);
   if (/easeOutElastic|easeInOutBack|elastic/i.test(text)) add(`${file}: spring/bouncy easing is prohibited`);
 }
 
@@ -82,7 +82,7 @@ if (/\.reveal\s*\{|@keyframes\s+fade-up|\.au\s*\{[^}]*animation/i.test(globals))
   add('src/styles/globals.css: legacy reveal/entrance motion competes with canonical motion.css');
 }
 const homeCss = existing.find((x) => x.file === 'src/app/home.css')?.text || '';
-if (/\\b(?:transition|animation)\\s*:/i.test(homeCss)) add('src/app/home.css: motion declarations must live in src/styles/motion.css');
+if (/\b(?:transition|animation)\s*:/i.test(homeCss)) add('src/app/home.css: motion declarations must live in src/styles/motion.css');
 if (/@keyframes\s+(scrollBounce|heroSlideFade)/.test(homeCss)) {
   add('src/app/home.css: legacy hero keyframes compete with canonical motion.css');
 }
