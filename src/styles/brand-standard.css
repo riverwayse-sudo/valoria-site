@@ -10,6 +10,9 @@
   --valoria-linen: #EDE8DC;
   --valoria-brass: #D4C9A8;
   --valoria-ivory: #FAFAF7;
+  --valoria-gold-deep: #9A7428;
+  --valoria-void: #0F0F1A;
+  --valoria-ink-card: #11111F;
   --dark: var(--valoria-midnight);
   --dark-mid: var(--valoria-slate);
   --dark-card: var(--valoria-parchment);
