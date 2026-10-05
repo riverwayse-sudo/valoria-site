@@ -139,3 +139,58 @@ When a design choice conflicts with a local visual preference, choose the option
 6. conversion clarity.
 
 Premium means controlled, not complicated.
+
+
+## 13. Hard enforcement standard
+
+This constitution is a **release control system**, not design guidance.
+
+A change is rejected when it violates an enforceable rule. Developers must not bypass a failed design check to preserve a local visual result.
+
+### Mandatory ownership
+
+- **Layout:** component/home CSS.
+- **Motion:** `src/styles/motion.css` only.
+- **Tokens:** canonical variables only where a token exists.
+- **Journey/business state:** canonical data/state engine, never component-local inference.
+- **Responsive behaviour:** component contract + explicit breakpoint rules.
+- **Validation:** automated design gate first, real-browser verification second.
+
+### Prohibited escape routes
+
+The following are not acceptable fixes:
+
+- adding another stylesheet to override an existing stylesheet;
+- adding inline `<style>` blocks to a component;
+- adding arbitrary `!important` to win the cascade;
+- moving an element with a transform to conceal a layout defect;
+- adding a negative margin to repair spacing;
+- adding duplicate animation/transition definitions;
+- introducing a new colour system for a local section;
+- hard-coding a page-level exception when the component contract is wrong;
+- suppressing or weakening the design check;
+- declaring a page fixed because a build succeeded.
+
+### Release rule
+
+**BUILD PASS ≠ DESIGN PASS.**
+
+Production promotion requires:
+
+`design:check → build → READY staging → browser verification → promotion`
+
+A failed stage blocks the next stage.
+
+### Defect rule
+
+When a visual defect is found:
+
+1. identify the authoritative system responsible;
+2. reproduce the defect at the affected breakpoint;
+3. fix the source system;
+4. remove the compensating patch;
+5. run the automated gate;
+6. verify the rendered result at all supported breakpoints;
+7. only then promote.
+
+A symptom fix that leaves the underlying conflicting rule in place is considered a failed implementation.
