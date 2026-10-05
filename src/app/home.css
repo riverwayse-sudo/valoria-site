@@ -581,7 +581,6 @@
   line-height: 1;
   text-align: center;
   text-decoration: none;
-  transition: background-color .24s cubic-bezier(.22,1,.36,1), border-color .24s cubic-bezier(.22,1,.36,1), color .24s cubic-bezier(.22,1,.36,1), transform .24s cubic-bezier(.22,1,.36,1);
 }
 
 .home-pathway-card.is-primary .home-pathway-cta {
