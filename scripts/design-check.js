@@ -36,8 +36,8 @@ for (const { file, text } of existing.filter(({ file }) => homepageFiles.include
   for (const color of legacyColors) {
     if (text.toLowerCase().includes(color)) add(`${file}: legacy/unapproved colour token ${color}`);
   }
-  if (/transition\\s*:\\s*all\\b/i.test(text)) add(`${file}: transition: all is prohibited`);
-  if (/animation\\s*:\\s*all\\b/i.test(text)) add(`${file}: animation: all is prohibited`);
+  if (/transition\s*:\s*all\\b/i.test(text)) add(`${file}: transition: all is prohibited`);
+  if (/animation\s*:\s*all\\b/i.test(text)) add(`${file}: animation: all is prohibited`);
   if (/easeOutElastic|easeInOutBack|elastic/i.test(text)) add(`${file}: spring/bouncy easing is prohibited`);
 }
 
@@ -86,7 +86,7 @@ if (/@keyframes\s+(scrollBounce|heroSlideFade)/.test(homeCss)) {
   add('src/app/home.css: legacy hero keyframes compete with canonical motion.css');
 }
 
-const negativeMargin = existing.filter(({ file, text }) => homepageFiles.includes(file) && /margin(?:-(?:top|right|bottom|left))?\\s*:\\s*-\\d/.test(text));
+const negativeMargin = existing.filter(({ file, text }) => homepageFiles.includes(file) && /margin(?:-(?:top|right|bottom|left))?\s*:\s*-\\d/.test(text));
 for (const { file } of negativeMargin) add(`${file}: negative margin detected; justify or remove before production`);
 
 if (violations.length) {
