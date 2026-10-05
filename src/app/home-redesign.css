@@ -179,3 +179,154 @@
   .valu-conversion .home-dual-actions .btn-gold { width:100% !important; }
   .live-profiles-shell { grid-template-columns:1fr !important; padding-inline:20px !important; }
 }
+
+
+/* 3A. VALU CONVERSION CARD — component contract.
+   The card owns its internal geometry so legacy homepage rules cannot collapse it. */
+.valu-conversion .valu-conversion-card {
+  display:flex !important;
+  flex-direction:column !important;
+  gap:0 !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+  overflow:hidden !important;
+}
+.valu-conversion .vcc-top {
+  display:flex !important;
+  align-items:baseline !important;
+  justify-content:space-between !important;
+  gap:20px !important;
+  padding-bottom:18px !important;
+  border-bottom:1px solid rgba(212,201,168,.18) !important;
+}
+.valu-conversion .vcc-top span {
+  color:#D4C9A8 !important;
+  font-size:9px !important;
+  font-weight:800 !important;
+  letter-spacing:.18em !important;
+}
+.valu-conversion .vcc-top strong {
+  color:#C9A84C !important;
+  font-size:11px !important;
+  font-weight:800 !important;
+  letter-spacing:.12em !important;
+}
+.valu-conversion .vcc-radar {
+  position:relative !important;
+  width:100% !important;
+  height:280px !important;
+  margin:18px 0 10px !important;
+  display:grid !important;
+  place-items:center !important;
+}
+.valu-conversion .vcc-radar-svg {
+  display:block !important;
+  width:min(100%,300px) !important;
+  height:auto !important;
+  max-height:280px !important;
+  overflow:visible !important;
+}
+.valu-conversion .vcc-radar-grid polygon,
+.valu-conversion .vcc-radar-grid line {
+  fill:none !important;
+  stroke:rgba(212,201,168,.18) !important;
+  stroke-width:.55 !important;
+}
+.valu-conversion .vcc-radar-area {
+  fill:rgba(201,168,76,.16) !important;
+  stroke:#C9A84C !important;
+  stroke-width:1.2 !important;
+}
+.valu-conversion .vcc-radar-points circle {
+  fill:#C9A84C !important;
+  stroke:#11111F !important;
+  stroke-width:.8 !important;
+}
+.valu-conversion .vcc-radar-labels text {
+  fill:rgba(247,244,238,.64) !important;
+  font-family:inherit !important;
+  font-size:3.4px !important;
+  font-weight:700 !important;
+  letter-spacing:.08px !important;
+}
+.valu-conversion .vcc-radar-center {
+  position:absolute !important;
+  left:50% !important;
+  top:50% !important;
+  transform:translate(-50%,-50%) !important;
+  color:#F7F4EE !important;
+  font-size:12px !important;
+  font-weight:800 !important;
+  letter-spacing:.16em !important;
+}
+.valu-conversion .vcc-steps {
+  display:grid !important;
+  gap:0 !important;
+  border-top:1px solid rgba(212,201,168,.18) !important;
+}
+.valu-conversion .vcc-step {
+  display:grid !important;
+  grid-template-columns:32px minmax(0,1fr) !important;
+  gap:12px !important;
+  align-items:center !important;
+  min-width:0 !important;
+  padding:13px 0 !important;
+  border-bottom:1px solid rgba(212,201,168,.12) !important;
+}
+.valu-conversion .vcc-step > span {
+  color:rgba(212,201,168,.52) !important;
+  font-size:9px !important;
+  font-weight:800 !important;
+  letter-spacing:.12em !important;
+}
+.valu-conversion .vcc-step.is-active > span {
+  color:#C9A84C !important;
+}
+.valu-conversion .vcc-step b,
+.valu-conversion .vcc-step small {
+  display:block !important;
+  min-width:0 !important;
+}
+.valu-conversion .vcc-step b {
+  color:#F7F4EE !important;
+  font-size:13px !important;
+  line-height:1.35 !important;
+}
+.valu-conversion .vcc-step small {
+  margin-top:2px !important;
+  color:rgba(247,244,238,.52) !important;
+  font-size:11px !important;
+  line-height:1.45 !important;
+}
+.valu-conversion .vcc-bottom-cta {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:16px !important;
+  margin-top:18px !important;
+  padding:14px 16px !important;
+  background:#C9A84C !important;
+  color:#1A1A2E !important;
+  text-decoration:none !important;
+  font-size:10px !important;
+  font-weight:900 !important;
+  letter-spacing:.13em !important;
+  border-radius:10px !important;
+}
+.valu-conversion .vcc-bottom-cta:hover,
+.valu-conversion .vcc-bottom-cta:focus-visible {
+  background:#D4C9A8 !important;
+  outline:2px solid #F7F4EE !important;
+  outline-offset:3px !important;
+}
+@media(max-width:900px) {
+  .valu-conversion .vcc-radar { height:260px !important; }
+}
+@media(max-width:640px) {
+  .valu-conversion .valu-conversion-card { padding:22px !important; }
+  .valu-conversion .vcc-radar { height:250px !important; }
+  .valu-conversion .vcc-radar-svg { width:min(100%,270px) !important; }
+  .valu-conversion .vcc-top { gap:12px !important; }
+  .valu-conversion .vcc-top strong { font-size:10px !important; }
+  .valu-conversion .vcc-bottom-cta { font-size:9px !important; }
+}
