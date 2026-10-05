@@ -6,8 +6,8 @@
 /* ── HERO SYSTEM — canonical slider geometry ─────────────────────────── */
 .hero-slider{position:relative;min-height:clamp(680px,88vh,900px);padding-top:68px;display:block}
 .hero-slider .hero-slides{position:relative;min-height:clamp(612px,calc(88vh - 68px),832px);width:100%}
-.hero-slider .hero-slide{position:absolute;inset:0;display:flex;align-items:center;opacity:0;visibility:hidden;pointer-events:none;transform:translate3d(20px,0,0);z-index:0}
-.hero-slider .hero-slide.is-active{display:flex;opacity:1;visibility:visible;pointer-events:auto;transform:translate3d(0,0,0);z-index:2}
+.hero-slider .hero-slide{position:absolute;inset:0;display:flex;align-items:center;visibility:hidden;pointer-events:none;z-index:0}
+.hero-slider .hero-slide.is-active{display:flex;visibility:visible;pointer-events:auto;z-index:2}
 .hero-slider .hero-inner{min-height:100%;padding-block:clamp(56px,7vw,88px)}
 .hero-slider .hero-slider-controls{z-index:5}
 .hero-slider .hero-scroll-cue{z-index:5}
