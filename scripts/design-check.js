@@ -7,8 +7,8 @@ const root = process.cwd();
 const files = [
   'src/app/page.jsx',
   'src/app/home.css',
-  'src/app/home-redesign.css',
-  'src/app/valu-home.css',
+  'src/styles/motion.css',
+  'src/styles/brand-standard.css',
   'src/app/globals.css',
 ];
 
@@ -38,8 +38,16 @@ for (const section of requiredSections) {
   if (!page.includes(section)) violations.push(`src/app/page.jsx: required homepage composition missing ${section}`);
 }
 
-if (!page.includes('home-redesign.css')) {
-  violations.push('src/app/page.jsx: homepage redesign stylesheet is not loaded');
+if (!page.includes("import './home.css'")) {
+  violations.push('src/app/page.jsx: canonical homepage stylesheet is not loaded');
+}
+
+const motion = existing.find((x) => x.file === 'src/styles/motion.css')?.text || '';
+if (!motion.includes('--motion-reveal') || !motion.includes('prefers-reduced-motion')) {
+  violations.push('src/styles/motion.css: canonical motion tokens or reduced-motion contract missing');
+}
+if (motion.includes('transition: all') || motion.includes('animation: all')) {
+  violations.push('src/styles/motion.css: broad all-property animation/transition is prohibited');
 }
 
 if (violations.length) {
