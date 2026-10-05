@@ -70,9 +70,6 @@ export default function HeroSlider() {
               <p>{upcomingSession.description}</p>
               <div className="hero-event-status">{upcomingState === 'coming-soon' ? 'COMING SOON · DATE TO BE CONFIRMED' : formatSessionDate(upcomingSession)}</div>
               {upcomingState !== 'coming-soon' && <SessionTimer session={upcomingSession} />}
-              <div className="hero-event-actions">
-                <button type="button" className="btn-gold hero-register-cta" onClick={openRegistration} disabled={!canRegister}>{canRegister ? 'REGISTER FOR THIS SESSION →' : upcomingState === 'live' ? 'SESSION IS LIVE' : 'REGISTRATION UNAVAILABLE'}</button>
-              </div>
             </aside>
           </div>
         </div>
