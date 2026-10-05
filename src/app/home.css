@@ -159,3 +159,121 @@
     color:var(--parchment) !important;
   }
 }
+
+/* ── HOMEPAGE CLOSURE — single final authority ───────────────────────────
+   These rules intentionally sit last in the cascade. They close the
+   homepage-specific geometry/contrast contract after all legacy imports.
+*/
+.home-pathways{
+  width:100%;
+  background:#F7F4EE !important;
+  color:#1A1A2E !important;
+  overflow:hidden;
+}
+.home-pathways > .container{
+  width:min(1200px,calc(100% - 48px)) !important;
+  max-width:1200px !important;
+  margin-inline:auto !important;
+  padding-inline:0 !important;
+}
+.home-pathways .home-section-heading{
+  width:100%;
+  min-width:0;
+}
+.home-pathways .home-section-heading > div,
+.home-pathways .home-section-heading > p{
+  min-width:0;
+}
+.home-pathways .home-section-heading h2,
+.home-pathways .home-pathway-card h3,
+.home-pathways .home-pathway-card > p,
+.home-pathways .home-pathway-card .home-pathway-cta{
+  color:#1A1A2E !important;
+}
+.home-pathways .home-section-heading > p,
+.home-pathways .home-pathway-card .home-pathway-label,
+.home-pathways .home-pathway-card > p{
+  color:#555565 !important;
+}
+.home-pathways .home-section-heading .eyebrow-text{
+  color:#9A7428 !important;
+}
+
+.valu-conversion > .container{
+  width:min(1200px,calc(100% - 48px)) !important;
+  max-width:1200px !important;
+  margin-inline:auto !important;
+  padding-inline:0 !important;
+}
+.valu-conversion-shell{
+  width:100%;
+  min-width:0;
+}
+.valu-conversion-intro,
+.valu-conversion-card{
+  min-width:0;
+}
+
+.alignment > .container,
+.entry-points > .container,
+.home-featured-event > .container{
+  width:100% !important;
+  max-width:none !important;
+  margin-inline:0 !important;
+  padding-inline:0 !important;
+}
+.alignment .alignment-inner,
+.entry-points .ep-header,
+.entry-points .ep-grid,
+.home-featured-event .home-event-shell{
+  width:min(1280px,calc(100% - 48px)) !important;
+  max-width:1280px !important;
+  margin-inline:auto !important;
+  min-width:0;
+}
+.alignment .alignment-lead,
+.alignment .alignment-cats,
+.entry-points .ep-header > *,
+.entry-points .ep-grid > *,
+.home-featured-event .home-event-header,
+.home-featured-event .home-event-footer,
+.home-featured-event .home-event-countdown{
+  min-width:0;
+}
+.entry-points .ep-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+.home-featured-event{
+  background:var(--dark) !important;
+  color:var(--parchment) !important;
+}
+.home-featured-event .home-event-header h2,
+.home-featured-event .home-event-description,
+.home-featured-event .home-event-facts strong,
+.home-featured-event .text-link{
+  color:var(--parchment) !important;
+}
+.home-featured-event .home-event-description{
+  color:rgba(247,244,238,.62) !important;
+}
+.home-featured-event .home-event-fact-label,
+.home-featured-event .home-event-meta-top,
+.home-featured-event .text-link span{
+  color:var(--gold) !important;
+}
+
+@media(max-width:900px){
+  .entry-points .ep-grid{grid-template-columns:1fr;}
+}
+@media(max-width:640px){
+  .home-pathways > .container,
+  .valu-conversion > .container,
+  .alignment .alignment-inner,
+  .entry-points .ep-header,
+  .entry-points .ep-grid,
+  .home-featured-event .home-event-shell{
+    width:calc(100% - 36px) !important;
+  }
+}
+
