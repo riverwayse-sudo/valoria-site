@@ -82,6 +82,7 @@ if (/\.reveal\s*\{|@keyframes\s+fade-up|\.au\s*\{[^}]*animation/i.test(globals))
   add('src/styles/globals.css: legacy reveal/entrance motion competes with canonical motion.css');
 }
 const homeCss = existing.find((x) => x.file === 'src/app/home.css')?.text || '';
+if (/\\b(?:transition|animation)\\s*:/i.test(homeCss)) add('src/app/home.css: motion declarations must live in src/styles/motion.css');
 if (/@keyframes\s+(scrollBounce|heroSlideFade)/.test(homeCss)) {
   add('src/app/home.css: legacy hero keyframes compete with canonical motion.css');
 }
