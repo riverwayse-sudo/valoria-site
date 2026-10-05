@@ -147,3 +147,17 @@ nav.vi-nav.scrolled,
 .nav-cta:hover { transform: translate3d(0,-1px,0); }
 .nav-burger.open span:nth-child(1) { transform: translate3d(0,6.5px,0) rotate(45deg); }
 .nav-burger.open span:nth-child(3) { transform: translate3d(0,-6.5px,0) rotate(-45deg); }
+
+/* Homepage interaction motion — timing remains canonical. */
+.hero-slider-dot { transition: background-color var(--motion-standard) var(--motion-ease); }
+.ps-card { transition: transform var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), box-shadow var(--motion-standard) var(--motion-ease); }
+.ps-card-cta { transition: background-color var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), transform var(--motion-standard) var(--motion-ease); }
+.ps-card:hover { transform: translate3d(0,-3px,0); }
+.ps-card-cta:hover { transform: translate3d(2px,0,0); }
+.vi-scroll-track { animation: vi-scroll-x var(--motion-registry-loop) linear infinite; }
+@keyframes vi-scroll-x { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
+@media (prefers-reduced-motion: reduce) {
+  .ps-card,.ps-card-cta { transition: none; }
+  .ps-card:hover,.ps-card-cta:hover { transform: none; }
+  .vi-scroll-track { animation: none; }
+}
