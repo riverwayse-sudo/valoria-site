@@ -513,7 +513,10 @@
 .home-pathways .home-pathway-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0,1fr));
-  gap: 18px;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--valoria-brass);
+  border-radius: var(--home-radius);
 }
 
 .home-pathway-card {
@@ -524,10 +527,15 @@
   flex-direction: column;
   background: var(--valoria-ivory);
   color: var(--dark-mid);
-  border: 1px solid var(--valoria-brass);
-  border-radius: var(--home-radius);
+  border: 0;
+  border-right: 1px solid var(--valoria-brass);
+  border-radius: 0;
   text-decoration: none;
-  box-shadow: 0 8px 30px rgba(26,26,46,.06);
+  box-shadow: none;
+}
+
+.home-pathway-card:last-child {
+  border-right: 0;
 }
 
 .home-pathway-card.is-primary {
