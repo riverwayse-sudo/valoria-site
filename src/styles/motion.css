@@ -7,6 +7,7 @@
   --motion-emphasis: 420ms;
   --motion-reveal: 560ms;
   --motion-section: 720ms;
+  --motion-registry-loop: 42s;
   --motion-ease: cubic-bezier(.22,1,.36,1);
   --motion-ease-linear: cubic-bezier(0,0,1,1);
   --motion-distance: 20px;
@@ -72,12 +73,12 @@
   transform: translate3d(0,-2px,0);
 }
 
-.hero-scroll-cue svg {
-  animation: valoria-scroll-cue 1800ms var(--motion-ease) infinite;
-}
-@keyframes valoria-scroll-cue {
-  0%,100% { transform: translate3d(0,0,0); opacity: .55; }
-  50% { transform: translate3d(0,5px,0); opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-scroll-cue svg { animation: valoria-scroll-cue 1800ms var(--motion-ease) infinite; }
+  @keyframes valoria-scroll-cue {
+    0%,100% { transform: translate3d(0,0,0); opacity: .55; }
+    50% { transform: translate3d(0,5px,0); opacity: 1; }
+  }
 }
 
 .hero-slider .hero-slide {
