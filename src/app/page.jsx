@@ -2,13 +2,10 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
-import EntryPointsGrid from '@/components/EntryPointsGrid'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
-import EventRegistrationTrigger from '@/components/EventRegistrationTrigger'
-import { SessionTimer } from '@/components/EventRegistrationModal'
 import { BRAND } from '@/lib/brand'
-import { PROFESSIONAL_STANDARD_SERIES, formatSessionDate } from '@/lib/professionalStandardSeries'
 import './home.css'
+import './home-redesign.css'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -24,19 +21,36 @@ const pathwayCards = [
   { label: 'FOR EVENT ORGANISERS', title: 'Find speakers and facilitators.', body: 'Access professionals with relevant expertise for conversations, programmes and organisational moments.', href: '/marketplace/speakers', cta: 'FIND PROFESSIONALS' }
 ]
 
-function getUpcomingEvent() {
-  const now = Date.now()
-  return PROFESSIONAL_STANDARD_SERIES.find(session => session.dateApproved && !session.replay && new Date(session.end).getTime() > now) || null
-}
-
 export default function HomePage() {
-  const upcomingEvent = getUpcomingEvent()
-
   return <>
     <Nav />
-    <main id="main-content">
+    <main id="main-content" className="home-redesign-root">
       <HeroSlider />
-      <section className="home-pathways" aria-labelledby="pathways-title"><div className="container"><Reveal className="home-section-heading"><div><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">START HERE</span></div><h2 id="pathways-title">What brings you<br/><em>to Valoria?</em></h2></div><p>Choose the path that matches what you need today. Valoria connects professional development, visibility and opportunity through one institutional standard.</p></Reveal><Reveal className="home-pathway-grid" as="div">{pathwayCards.map((card, index) => <a className={`home-pathway-card ${index === 0 ? 'is-primary' : ''}`} href={card.href} key={card.label}><span className="home-pathway-number">0{index + 1}</span><span className="home-pathway-label">{card.label}</span><h3>{card.title}</h3><p>{card.body}</p><span className="home-pathway-cta">{card.cta} <span aria-hidden="true">→</span></span></a>)}</Reveal></div></section>
+
+      <section className="home-pathways" aria-labelledby="pathways-title">
+        <div className="container">
+          <Reveal className="home-section-heading">
+            <div>
+              <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">START HERE</span></div>
+              <h2 id="pathways-title">What brings you<br/><em>to Valoria?</em></h2>
+            </div>
+            <p>Choose the path that matches what you need today. One institutional standard connects professional development, visibility and opportunity.</p>
+          </Reveal>
+
+          <Reveal className="home-pathway-grid" as="div">
+            {pathwayCards.map((card, index) => (
+              <a className={`home-pathway-card ${index === 0 ? 'is-primary' : ''}`} href={card.href} key={card.label}>
+                <span className="home-pathway-number">0{index + 1}</span>
+                <span className="home-pathway-label">{card.label}</span>
+                <h3>{card.title}</h3>
+                <p>{card.body}</p>
+                <span className="home-pathway-cta">{card.cta} <span aria-hidden="true">→</span></span>
+              </a>
+            ))}
+          </Reveal>
+        </div>
+      </section>
+
       <section className="valu-section valu-conversion" id="valu" aria-labelledby="home-valu-title">
         <div className="container valu-conversion-shell">
           <Reveal className="valu-conversion-intro">
@@ -82,11 +96,8 @@ export default function HomePage() {
           </Reveal>
         </div>
       </section>
-      <LiveProfilesScroll />
-      <section className="alignment" id="alignment" aria-labelledby="promise-title"><div className="container"><Reveal className="alignment-inner"><div className="alignment-lead"><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">THE VALORIA PROMISE</span></div><h2 id="promise-title" className="alignment-title">Capability should lead<br/><em>somewhere.</em></h2><p className="alignment-sub">Valoria builds the institutional infrastructure that turns capability into a professional signal — then connects that signal to the right opportunity.</p></div><div className="alignment-cats" aria-label="The Valoria promise"><article className="cat-item"><span className="cat-num">01</span><h3 className="cat-name">Develop</h3><p>Build capability with a clearer understanding of where you stand and what comes next.</p></article><article className="cat-item cat-highlight"><span className="cat-num">02</span><h3 className="cat-name">Surface</h3><p>Make meaningful capability visible through structured assessment, profile and evidence.</p></article><article className="cat-item"><span className="cat-num">03</span><h3 className="cat-name">Connect</h3><p>Move from being capable to being discoverable for the opportunities that fit.</p></article></div></Reveal></div></section>
-      <section className="entry-points" id="entry-points"><div className="container"><Reveal className="ep-header"><div><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">ONE INSTITUTION · MULTIPLE PATHWAYS</span></div><h2 className="home-entry-title">One institution.<br/><em>Multiple ways in.</em></h2></div><p className="ep-desc">Whether you are developing your career, hiring capability or sourcing a speaker, the same institutional standard connects the experience.</p></Reveal><Reveal className="ep-grid" as="div"><EntryPointsGrid/></Reveal></div></section>
-      <section className="home-featured-event" aria-labelledby="event-title"><div className="container home-event-shell">{upcomingEvent ? <><Reveal className="home-event-header"><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">UPCOMING SESSION</span></div><div className="home-event-meta-top">SESSION {upcomingEvent.id} <span aria-hidden="true">·</span> {upcomingEvent.cluster}</div><h2 id="event-title">{upcomingEvent.title}</h2><p className="home-event-description">{upcomingEvent.description}</p></Reveal><Reveal className="home-event-footer"><div className="home-event-facts" aria-label="Session details"><div><span className="home-event-fact-label">DATE</span><strong>{formatSessionDate(upcomingEvent)}</strong></div><div><span className="home-event-fact-label">TIME</span><strong>10:00 AM WAT</strong></div><div><span className="home-event-fact-label">FORMAT</span><strong>VIRTUAL · 90 MINUTES</strong></div>{upcomingEvent.speaker && <div><span className="home-event-fact-label">WITH</span><strong>{upcomingEvent.speaker}</strong></div>}</div><div className="home-event-actions"><EventRegistrationTrigger session={upcomingEvent} className="btn-gold">REGISTER FOR THIS SESSION <span aria-hidden="true">→</span></EventRegistrationTrigger><a href="/events" className="text-link">VIEW ALL EVENTS <span aria-hidden="true">→</span></a></div></Reveal><div className="home-event-countdown" aria-label="Webinar countdown"><div className="home-event-countdown-label">NEXT LIVE SESSION</div><div className="home-event-countdown-title">{upcomingEvent.title}</div><SessionTimer session={upcomingEvent}/></div></> : <><Reveal className="home-event-header"><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">COMING SOON</span></div><h2 id="event-title">The professional<br/><em>standard series.</em></h2><p className="home-event-description">Live conversations on capability, leadership, influence, relationships and enterprise. New sessions are announced as registration opens.</p></Reveal><Reveal className="home-event-footer"><div/><div className="home-event-actions"><a href="/events" className="btn-gold">VIEW EVENTS <span aria-hidden="true">→</span></a><a href="/insights" className="text-link">READ INSIGHTS <span aria-hidden="true">→</span></a></div></Reveal></>}</div></section>
 
+      <LiveProfilesScroll />
     </main>
     <Footer />
   </>
