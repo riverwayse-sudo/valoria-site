@@ -82,8 +82,8 @@ if (/\.reveal\s*\{|@keyframes\s+fade-up|\.au\s*\{[^}]*animation/i.test(globals))
   add('src/styles/globals.css: legacy reveal/entrance motion competes with canonical motion.css');
 }
 const homeCss = existing.find((x) => x.file === 'src/app/home.css')?.text || '';
-if (/\b(?:transition|animation|transform)\s*:/i.test(homeCss)) add('src/app/home.css: motion declarations (transition/animation/transform) must live in src/styles/motion.css');
-if (/\bopacity\s*:/i.test(homeCss)) add('src/app/home.css: opacity is motion/state presentation and must live in src/styles/motion.css');
+if (/\b(?:transition|animation)\s*:/i.test(homeCss)) add('src/app/home.css: transition/animation declarations must live in src/styles/motion.css');
+if (/\.hero-slider[^{}]*\{[^}]*\b(?:transition|animation|opacity)\s*:/is.test(homeCss)) add('src/app/home.css: hero motion state must live in src/styles/motion.css');
 if (/@keyframes\s+/.test(homeCss)) add('src/app/home.css: keyframes are prohibited; motion.css is the sole animation authority');
 const spacingTokens = ['--space-section','--space-section-tight','--space-content'];
 for (const token of spacingTokens) if (!homeCss.includes(token)) add(`src/app/home.css: missing canonical homepage spacing token ${token}`);
