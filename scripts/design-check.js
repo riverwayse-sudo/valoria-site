@@ -73,8 +73,11 @@ if (motion.includes('transition: all') || motion.includes('animation: all')) add
 
 const homepage = existing.filter(({ file }) => homepageFiles.includes(file));
 for (const { file, text } of homepage) {
-  if (file !== 'src/styles/motion.css' && /<style(?:\s|>)/i.test(text)) {
+  if (file !== 'src/styles/motion.css' && /<style(?:\\s|>)/i.test(text)) {
     add(`${file}: homepage component contains an inline <style> block; move presentation/motion to canonical stylesheets`);
+  }
+  if (/style=\\{\\{[^}]*\\b(?:background|color|border|borderRadius|boxShadow)\\b/i.test(text)) {
+    add(`${file}: homepage component contains inline visual styling; move colors, borders, radii and shadows to canonical stylesheets`);
   }
 }
 const globals = existing.find((x) => x.file === 'src/styles/globals.css')?.text || '';
