@@ -943,21 +943,29 @@
 
 .live-profiles-actions {
   display: grid;
-  gap: 8px;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid rgba(247,244,238,.12);
+  border-radius: var(--home-radius);
 }
 
 .live-profile-action {
   display: flex;
-  min-height: 72px;
+  min-height: 96px;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 14px 18px;
+  padding: 20px 22px;
   background: rgba(247,244,238,.025);
-  border: 1px solid rgba(247,244,238,.10);
-  border-radius: var(--home-radius-sm);
+  border: 0;
+  border-bottom: 1px solid rgba(247,244,238,.12);
+  border-radius: 0;
   color: var(--parchment);
   text-decoration: none;
+}
+
+.live-profile-action:last-child {
+  border-bottom: 0;
 }
 
 .live-profile-action.primary {
@@ -970,8 +978,9 @@
   flex-direction: column;
   gap: 4px;
   color: var(--parchment);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
+  line-height: 1.2;
 }
 
 .live-profile-action small {
@@ -982,6 +991,14 @@
 }
 
 .live-profile-action b {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: 1px solid rgba(201,168,76,.34);
+  border-radius: 50%;
   color: var(--gold);
   font-size: 20px;
   font-weight: 300;
@@ -990,6 +1007,7 @@
 .live-profile-action:hover,
 .live-profile-action:focus-visible {
   background: rgba(201,168,76,.10);
+  transform: translateY(-1px);
   border-color: rgba(201,168,76,.52);
   outline: none;
 }
@@ -1263,6 +1281,9 @@
 }
 
 @media (max-width: 900px) {
+  .live-profiles-actions { border-radius: var(--home-radius); }
+  .live-profile-action { min-height: 88px; padding: 18px; }
+
   .home-redesign-root > section:not(.hero) {
     padding-block: var(--space-section-tight);
   }
