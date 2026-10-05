@@ -563,6 +563,46 @@
   line-height: 1.65;
 }
 
+.home-pathway-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: auto;
+  padding: 0 18px;
+  border: 1px solid var(--valoria-brass);
+  border-radius: var(--btn-radius);
+  background: transparent;
+  color: var(--dark-mid);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color .24s cubic-bezier(.22,1,.36,1), border-color .24s cubic-bezier(.22,1,.36,1), color .24s cubic-bezier(.22,1,.36,1), transform .24s cubic-bezier(.22,1,.36,1);
+}
+
+.home-pathway-card.is-primary .home-pathway-cta {
+  border-color: rgba(201,168,76,.48);
+  color: var(--gold);
+}
+
+.home-pathway-card:hover .home-pathway-cta,
+.home-pathway-card:focus-visible .home-pathway-cta {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--dark-mid);
+}
+
+.home-pathway-card.is-primary:hover .home-pathway-cta,
+.home-pathway-card.is-primary:focus-visible .home-pathway-cta {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--dark-mid);
+}
+
 .home-pathway-card.is-primary > p {
   color: rgba(247,244,238,.68);
 }
@@ -786,8 +826,8 @@
   display: flex;
   min-height: 48px;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: center;
+  gap: 8px;
   margin-top: 16px;
   padding: 0 16px;
   background: var(--gold);
@@ -1439,4 +1479,10 @@
   .vi-scroll-card,
   .valu-conversion .vcc-bottom-cta {
   }
+}
+
+
+@media (hover: none), (pointer: coarse) {
+  .home-pathway-card:hover .home-pathway-cta,
+  .home-pathway-card:focus-visible .home-pathway-cta { transform: none; }
 }
