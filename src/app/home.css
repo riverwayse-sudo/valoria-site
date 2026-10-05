@@ -277,3 +277,224 @@
   }
 }
 
+
+
+/* ── VALU CONVERSION — canonical composition ─────────────────────────────
+   Root-cause fix: page.jsx uses .valu-conversion-shell/.vcc-* markup, but
+   the previous stylesheet only contained legacy .valu-inner/.radar-card
+   rules. These rules define the actual composition used by the JSX.
+*/
+.valu-conversion{
+  background:var(--dark);
+  color:var(--parchment);
+  overflow:hidden;
+}
+.valu-conversion .valu-conversion-shell{
+  display:grid;
+  grid-template-columns:minmax(0,1.08fr) minmax(360px,.82fr);
+  gap:clamp(40px,6vw,88px);
+  align-items:center;
+}
+.valu-conversion-intro{
+  min-width:0;
+}
+.valu-conversion-intro .eyebrow{
+  margin-bottom:18px;
+}
+.valu-conversion-intro .eyebrow-text{
+  color:var(--gold)!important;
+}
+.valu-conversion .valu-title{
+  max-width:720px;
+  font-size:clamp(42px,5vw,68px);
+  line-height:1.02;
+  margin:0 0 20px;
+}
+.valu-conversion .valu-desc{
+  max-width:680px;
+  margin:0 0 22px;
+  color:rgba(247,244,238,.68);
+}
+.valu-conversion-proof{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:0 0 26px;
+  color:rgba(247,244,238,.55);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.13em;
+}
+.valu-conversion-proof b{
+  color:var(--gold);
+  font-weight:800;
+}
+.valu-conversion-proof i{
+  color:rgba(201,168,76,.45);
+  font-style:normal;
+}
+.valu-conversion .home-dual-actions{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:16px;
+  margin-bottom:22px;
+}
+.valu-conversion .valu-conversion-note{
+  max-width:620px;
+  margin:0;
+  color:rgba(247,244,238,.42);
+  font-size:12px;
+  line-height:1.65;
+  font-style:italic;
+}
+.valu-conversion-card{
+  min-width:0;
+  width:100%;
+  padding:28px;
+  border:1px solid rgba(201,168,76,.2);
+  border-radius:14px;
+  background:rgba(201,168,76,.045);
+}
+.vcc-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding-bottom:16px;
+  border-bottom:1px solid rgba(201,168,76,.12);
+}
+.vcc-top span,
+.vcc-top strong{
+  font-size:8px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.vcc-top span{color:rgba(201,168,76,.52)}
+.vcc-top strong{color:var(--gold)}
+.vcc-radar{
+  position:relative;
+  width:min(100%,360px);
+  aspect-ratio:1;
+  margin:14px auto 10px;
+}
+.vcc-radar-svg{
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+.vcc-radar-grid polygon,
+.vcc-radar-grid line{
+  fill:none;
+  stroke:rgba(201,168,76,.18);
+  stroke-width:.55;
+}
+.vcc-radar-area{
+  fill:rgba(201,168,76,.14);
+  stroke:var(--gold);
+  stroke-width:1.1;
+}
+.vcc-radar-points circle{
+  fill:var(--gold);
+}
+.vcc-radar-labels text{
+  fill:rgba(247,244,238,.58);
+  font-family:var(--font);
+  font-size:3.3px;
+  font-weight:700;
+  letter-spacing:.15px;
+}
+.vcc-radar-center{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  color:var(--parchment);
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.16em;
+}
+.vcc-steps{
+  display:flex;
+  flex-direction:column;
+  border-top:1px solid rgba(201,168,76,.12);
+}
+.vcc-step{
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr);
+  gap:12px;
+  align-items:start;
+  padding:13px 0;
+  border-bottom:1px solid rgba(201,168,76,.08);
+}
+.vcc-step > span{
+  color:rgba(201,168,76,.6);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.08em;
+}
+.vcc-step b{
+  display:block;
+  color:var(--parchment);
+  font-size:12px;
+  line-height:1.3;
+  font-weight:600;
+}
+.vcc-step small{
+  display:block;
+  margin-top:3px;
+  color:rgba(247,244,238,.45);
+  font-size:10px;
+  line-height:1.45;
+}
+.vcc-bottom-cta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:48px;
+  padding-top:16px;
+  color:var(--gold);
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-decoration:none;
+}
+.vcc-bottom-cta span{font-size:16px}
+@media(max-width:900px){
+  .valu-conversion .valu-conversion-shell{
+    grid-template-columns:1fr;
+    gap:44px;
+  }
+  .valu-conversion-card{
+    max-width:620px;
+  }
+}
+@media(max-width:640px){
+  .valu-conversion{
+    padding-top:56px;
+    padding-bottom:56px;
+  }
+  .valu-conversion .valu-title{
+    font-size:clamp(36px,9vw,48px);
+  }
+  .valu-conversion .valu-desc{
+    font-size:15px;
+  }
+  .valu-conversion .home-dual-actions{
+    align-items:stretch;
+  }
+  .valu-conversion .home-dual-actions .btn-gold,
+  .valu-conversion .home-dual-actions .text-link{
+    width:100%;
+    justify-content:center;
+  }
+  .valu-conversion-card{
+    padding:20px;
+  }
+  .vcc-radar{
+    width:min(100%,300px);
+  }
+}
