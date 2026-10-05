@@ -3,6 +3,7 @@ import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
+import HomepageEvents from '@/components/HomepageEvents'
 import { BRAND } from '@/lib/brand'
 import './home.css'
 
@@ -97,6 +98,7 @@ export default function HomePage() {
       </section>
 
       <LiveProfilesScroll />
+      <HomepageEvents />
     </main>
     <Footer />
   </>
