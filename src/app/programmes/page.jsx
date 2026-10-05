@@ -57,21 +57,21 @@ export default function ProgrammesPage() {
           <div className="page-section-inner">
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE FIVE PROGRAMMES</span></div>
-              <h2 className="section-title" style={{ marginBottom: '40px' }}>Built on PRIME.<br /><em>Measured against it too.</em></h2>
+              <h2 className="section-title" className="section-title programmes-clusters-title">Built on PRIME.<br /><em>Measured against it too.</em></h2>
             </Reveal>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+            <div className="programmes-grid">
               {PRIME_CLUSTERS.map((c) => {
                 const detail = CLUSTER_DETAIL[c.letter]
                 return (
                   <Reveal key={c.letter}>
-                    <div className="card-gold" style={{ "--card-color": c.color }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                        <div className="cluster-letter" style={{ color: c.color, fontSize: '28px', lineHeight: 1 }}>{c.letter}</div>
+                    <div className="card-gold programme-card">
+                      <div className="programme-head">
+                        <div className="cluster-letter programme-letter">{c.letter}</div>
                         <div className="cluster-name">{c.name} Programme</div>
                       </div>
-                      <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(201,168,76,.5)', marginBottom: '8px', textTransform: 'uppercase' }}>Focus areas</div>
-                      <p className="cluster-desc" style={{ marginBottom: '16px' }}>{detail?.focus}</p>
-                      <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(201,168,76,.5)', marginBottom: '8px', textTransform: 'uppercase' }}>Outcome</div>
+                      <div className="programme-label">Focus areas</div>
+                      <p className="cluster-desc programme-focus">{detail?.focus}</p>
+                      <div className="programme-label">Outcome</div>
                       <p className="cluster-desc">{detail?.outcome}</p>
                     </div>
                   </Reveal>
@@ -87,10 +87,10 @@ export default function ProgrammesPage() {
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WHY MEASUREMENT MATTERS</span></div>
               <h2 className="section-title">Development that<br /><em>shows up in the numbers.</em></h2>
-              <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px' }}>
+              <p className="page-copy">
                 Because Valoria Develop programmes run on the same PRIME framework as the VALU Index, the before-and-after measurement is built in. Teams take the VALU Index before the programme. They retake it 90 days after. The cluster score movement is your ROI — visible, specific, and comparable across the cohort.
               </p>
-              <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px', marginTop: '16px' }}>
+              <p className="page-copy page-copy-spaced">
                 Most organisations spend training budgets and then rely on a Net Promoter Score to know if it worked. Valoria Develop gives you a five-cluster score instead.
               </p>
             </Reveal>
