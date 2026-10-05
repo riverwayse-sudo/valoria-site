@@ -720,3 +720,22 @@
 .hero-slider{padding-top:clamp(72px,6vw,92px)}
 @media(max-width:1180px){.hero-slider{padding-top:88px}.hero-slider .hero-title{font-size:clamp(32px,4.8vw,50px)}}
 @media(max-width:640px){.hero-slider{padding-top:76px}.hero-slider .hero-title{font-size:clamp(30px,8.5vw,44px);line-height:1.08}}
+
+
+/* HERO RESPONSIVE HEIGHT CONTRACT — content must define height on compact viewports.
+   The previous 100svh + absolute-slide + overflow:hidden combination could clip
+   the second CTA when the hero copy wrapped. */
+@media(max-width:900px){
+  .hero-slider{min-height:auto;overflow:visible;padding-bottom:76px}
+  .hero-slider .hero-slides{min-height:auto;height:auto}
+  .hero-slider .hero-slide{position:relative;inset:auto;display:none;min-height:auto;overflow:visible}
+  .hero-slider .hero-slide.is-active{display:flex}
+  .hero-slider .hero-inner{min-height:auto}
+}
+@media(max-width:640px){
+  .hero-slider{padding-bottom:84px}
+  .hero-slider .hero-inner{padding-block:32px 24px}
+  .hero-slider .hero-actions{width:100%;margin-bottom:0}
+  .hero-slider .hero-actions > *{max-width:100%;}
+  .hero-slider .hero-event-slide .hero-inner{padding-block:32px 24px}
+}
