@@ -82,30 +82,7 @@ export default function Nav() {
   }
 
   return <>
-    <style>{`
-      nav.vi-nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:0 var(--pad);height:68px;display:flex;align-items:center;justify-content:space-between;background:var(--nav-bg);border-bottom:1px solid rgba(201,168,76,.08);transition:background .3s,box-shadow .3s}
-      nav.vi-nav.scrolled{background:rgba(15,15,26,.97);backdrop-filter:blur(16px);border-color:rgba(201,168,76,.14);box-shadow:0 8px 30px rgba(0,0,0,.12)}
-      .nav-logo{display:flex;align-items:center;line-height:0;flex:none}.nav-logo img{height:42px;width:190px;object-fit:contain;object-position:left center}
-      .nav-links{display:flex;align-items:center;gap:1px;list-style:none;margin:0;padding:0}.nav-links>li{position:relative}
-      .nav-link{font-size:11px;color:var(--dim);text-decoration:none;letter-spacing:.07em;padding:10px 12px;transition:color .2s,background .2s;border-radius:999px;white-space:nowrap}
-      .nav-link:hover,.nav-link.active{color:var(--parchment);background:rgba(255,255,255,.035)}
-      .nav-trigger{font:inherit;border:0;background:transparent;cursor:pointer;display:inline-flex;align-items:center;gap:6px}.nav-chevron{font-size:9px;opacity:.5;transition:transform .2s}.nav-trigger[aria-expanded="true"] .nav-chevron{transform:rotate(180deg)}
-      .nav-dropdown{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(-5px);width:510px;padding:18px;background:rgba(15,15,26,.985);border:1px solid rgba(201,168,76,.16);border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.38);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s,transform .18s,visibility .18s}
-      .nav-dropdown.open{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}
-      .nav-dropdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.nav-dropdown-single{grid-template-columns:1fr}
-      .nav-dropdown-label{font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:rgba(201,168,76,.65);margin:2px 10px 8px}
-      .nav-dropdown-link{display:block;color:var(--parchment);text-decoration:none;padding:10px;border-radius:10px;font-size:13px;transition:background .2s,color .2s}.nav-dropdown-link:hover,.nav-dropdown-link.active{background:rgba(201,168,76,.08);color:var(--gold-light)}
-      .nav-dropdown-description{display:block;color:rgba(247,244,238,.45);font-size:10px;line-height:1.45;margin-top:3px}
-      .nav-cta{padding:10px 20px;background:var(--gold);color:var(--dark)!important;border-radius:var(--btn-radius);font-size:10px;font-weight:800;letter-spacing:.12em;text-decoration:none;margin-left:7px;white-space:nowrap;transition:transform .2s,background .2s}.nav-cta:hover{background:var(--gold-light);transform:translateY(-1px)}
-      .nav-burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:0}.nav-burger span{display:block;width:22px;height:1.5px;background:var(--parchment);transition:.3s}.nav-burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}.nav-burger.open span:nth-child(2){opacity:0}.nav-burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
-      .nav-mobile{display:none;position:fixed;inset:68px 0 0;background:rgba(10,10,20,.985);z-index:199;padding:22px var(--pad) 48px;overflow:auto;backdrop-filter:blur(20px)}.nav-mobile.open{display:flex;flex-direction:column}
-      .nav-mobile a,.nav-mobile button{font:300 18px var(--font);color:var(--dim);text-decoration:none;padding:14px 0;border:0;border-bottom:1px solid rgba(255,255,255,.05);background:none;text-align:left}.nav-mobile a.active{color:var(--gold-light)}
-      .m-label{font-size:9px;font-weight:800;letter-spacing:.18em;color:rgba(201,168,76,.55);margin:18px 0 2px;text-transform:uppercase}.m-label:first-child{margin-top:0}
-      .m-cta{margin-top:24px!important;padding:16px 20px!important;background:var(--gold)!important;color:var(--dark)!important;text-align:center!important;font-size:11px!important;font-weight:800!important;letter-spacing:.12em!important;border:0!important;border-radius:var(--btn-radius)!important}.nav-signout{cursor:pointer}
-      .nav-account{display:flex;align-items:center;gap:2px}.nav-account .nav-link{padding-inline:10px}
-      @media(max-width:1080px){.nav-links{display:none}.nav-burger{display:flex}}
-      @media(min-width:1081px){.nav-mobile{display:none!important}}
-    `}</style>
+    
 
     <nav className={`vi-nav${scrolled ? ' scrolled' : ''}`} aria-label="Primary navigation">
       <Link href="/" className="nav-logo" aria-label="Valoria Institute home"><img src="/logo.png" alt="Valoria Institute" /></Link>
