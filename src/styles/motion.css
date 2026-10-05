@@ -46,6 +46,9 @@
   to { opacity: 1; transform: translate3d(0,0,0); }
 }
 
+.home-pathway-cta,
+.valu-conversion .vcc-bottom-cta,
+.live-profile-action,
 .btn-gold,
 .btn-secondary,
 .btn-tertiary,
