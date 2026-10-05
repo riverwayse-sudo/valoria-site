@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import Nav from '@/components/Nav'
+import Footer from '@/components/Footer'
 import { useMemo, useState } from 'react'
 import styles from './MarketplaceDirectory.module.css'
 
@@ -30,12 +32,9 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     })
   },[rows,activeTrack,query,industry])
 
-  return <main className={styles.page}>
-    <header className={styles.header}>
-      <Link href="/" className={styles.logo} aria-label="Valoria Institute"><img src="/logo.png?v=20260926-marketplace" alt="Valoria Institute" /></Link>
-      <div className={styles.headerTitle}>MARKETPLACE</div>
-      <Link href="/dashboard" className={styles.dashboard}>DASHBOARD →</Link>
-    </header>
+  return <div className={styles.page}>
+    <Nav />
+    <main>
     <section className={styles.hero}>
       <div className={styles.container}>
         <p className={styles.eyebrow}>THE AFRICAN TALENT BUREAU</p>
@@ -64,7 +63,9 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
           <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
       </div>
     </section>
-  </main>
+    </main>
+    <Footer />
+  </div>
 }
 
 function labelValues(value) {
