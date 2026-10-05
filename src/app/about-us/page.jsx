@@ -1,3 +1,4 @@
+// Vercel build verification: corrected JSX is now the staging source of truth.
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
