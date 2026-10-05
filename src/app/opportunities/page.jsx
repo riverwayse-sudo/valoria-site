@@ -1,10 +1,12 @@
 'use client'
 import {useEffect,useState} from 'react'
 import Link from 'next/link'
+import Nav from '@/components/Nav'
+import Footer from '@/components/Footer'
 export default function OpportunitiesPage(){
  const [items,setItems]=useState([]),[matches,setMatches]=useState([]),[loading,setLoading]=useState(true),[error,setError]=useState('')
  useEffect(()=>{(async()=>{try{const [allRes,matchRes]=await Promise.all([fetch('/api/opportunities'),fetch('/api/opportunities/matches')]);const all=await allRes.json().catch(()=>({}));const personal=await matchRes.json().catch(()=>({}));if(!allRes.ok)throw new Error(all.error||'Opportunities could not be loaded.');setItems(all.opportunities||[]);if(matchRes.ok)setMatches(personal.matches||[]);else if(matchRes.status!==401)setError(personal.error||'Personalized matches could not be loaded.')}catch(e){setError(e.message||'Opportunities could not be loaded.')}finally{setLoading(false)}})()},[])
- return <main className="opportunities-page">
+ return <><Nav/><main className="opportunities-page">
   <section className="opportunities-hero"><div className="opportunities-shell">
    <div className="opportunities-kicker">VALORIA OPPORTUNITIES</div>
    <h1 className="opportunities-title">Work that meets<br/>your capability.</h1>
@@ -18,5 +20,5 @@ export default function OpportunitiesPage(){
       <h2 className="opportunity-card-title">{o.title}</h2><p className="opportunity-card-org">{o.organisation_name}</p><p className="opportunity-card-copy">{o.summary||o.description.slice(0,150)}</p>
     </Link>)}</div>}
   </div></section>
- </main>
+ </main><Footer/></>
 }
