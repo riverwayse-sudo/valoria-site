@@ -82,17 +82,20 @@ if (/\.reveal\s*\{|@keyframes\s+fade-up|\.au\s*\{[^}]*animation/i.test(globals))
   add('src/styles/globals.css: legacy reveal/entrance motion competes with canonical motion.css');
 }
 const homeCss = existing.find((x) => x.file === 'src/app/home.css')?.text || '';
-if (/\b(?:transition|animation)\s*:/i.test(homeCss)) add('src/app/home.css: motion declarations must live in src/styles/motion.css');
-if (/@keyframes\s+(scrollBounce|heroSlideFade)/.test(homeCss)) {
-  add('src/app/home.css: legacy hero keyframes compete with canonical motion.css');
-}
+if (/\b(?:transition|animation|transform)\s*:/i.test(homeCss)) add('src/app/home.css: motion declarations (transition/animation/transform) must live in src/styles/motion.css');
+if (/\bopacity\s*:/i.test(homeCss)) add('src/app/home.css: opacity is motion/state presentation and must live in src/styles/motion.css');
+if (/@keyframes\s+/.test(homeCss)) add('src/app/home.css: keyframes are prohibited; motion.css is the sole animation authority');
+const spacingTokens = ['--space-section','--space-section-tight','--space-content'];
+for (const token of spacingTokens) if (!homeCss.includes(token)) add(`src/app/home.css: missing canonical homepage spacing token ${token}`);
+if (!/\.home-redesign-root\s*>\s*section:not\(\.hero\)/.test(homeCss)) add('src/app/home.css: major homepage sections must inherit the canonical section-spacing rule');
+if (!/\.home-redesign-root\s+\.container\s*\{/.test(homeCss)) add('src/app/home.css: homepage container contract is missing');
 
 const negativeMargin = existing.filter(({ file, text }) => homepageFiles.includes(file) && /margin(?:-(?:top|right|bottom|left))?\s*:\s*-\\d/.test(text));
 for (const { file } of negativeMargin) add(`${file}: negative margin detected; justify or remove before production`);
 
 if (violations.length) {
-  console.error('\nValoria design check FAILED\n');
+  console.error('\nValoria design check FAILED — production promotion blocked\n');
   for (const violation of [...new Set(violations)]) console.error('• ' + violation);
   process.exit(1);
 }
-console.log('Valoria design check passed.');
+console.log('Valoria design check passed — enforced systems are clean.');
