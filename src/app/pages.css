@@ -95,3 +95,38 @@
   .insight-card h2{margin-top:48px;font-size:30px}
   .events-list-head .section-title{font-size:38px}
 }
+
+
+/* FINAL PUBLIC PAGE GEOMETRY — authoritative overrides */
+.insights-page .page-section-inner,
+.events-page .page-section-inner { width:min(1200px,calc(100% - 48px)); max-width:1200px; margin-inline:auto; }
+.insights-page .page-hero-inner,
+.events-page .page-hero-inner { width:min(1200px,calc(100% - 48px)); max-width:1200px; margin-inline:auto; }
+.insights-hero,
+.events-hero { padding-top:clamp(120px,11vw,168px); padding-bottom:clamp(72px,8vw,104px); }
+.insights-hero .page-title,
+.events-hero .page-title { max-width:900px; }
+.insights-hero .page-sub,
+.events-hero .page-sub { max-width:680px; }
+.insights-list { padding-block:clamp(72px,8vw,112px); }
+.insights-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.insight-card { min-width:0; min-height:360px; padding:clamp(28px,3vw,40px); }
+.insight-card h2 { max-width:440px; }
+.events-list { padding-block:clamp(72px,8vw,112px); }
+.events-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.event-card { min-width:0; }
+.events-replay { padding-block:clamp(80px,9vw,120px); }
+@media(max-width:900px){
+  .insights-page .page-section-inner,
+  .events-page .page-section-inner,
+  .insights-page .page-hero-inner,
+  .events-page .page-hero-inner { width:calc(100% - 36px); }
+  .insights-grid,.events-grid { grid-template-columns:1fr; }
+}
+@media(max-width:640px){
+  .insights-page .page-section-inner,
+  .events-page .page-section-inner,
+  .insights-page .page-hero-inner,
+  .events-page .page-hero-inner { width:calc(100% - 32px); }
+  .insight-card { min-height:320px; padding:24px; }
+}
