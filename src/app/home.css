@@ -14,7 +14,7 @@
 .home-redesign-root {
   background: var(--dark);
   color: var(--parchment);
-  overflow: clip;
+  overflow: visible;
 }
 
 .home-redesign-root > section:not(.hero) {
@@ -293,8 +293,12 @@
   font-style: italic;
 }
 
-.hero-slider .hero-mobile-card {
+ .hero-slider .hero-mobile-card {
   display: none;
+}
+
+.hero-slider .hmc-bar {
+  background: var(--gold);
 }
 
 .hero-slider .hero-slider-controls {
