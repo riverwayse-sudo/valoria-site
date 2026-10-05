@@ -37,7 +37,7 @@ for (const file of changed) {
   check(/console\.log\s*\(/i, "DEBUG_OUTPUT", "Remove debug logging from production source.");
 
   if (!/tokens|theme|design-system/i.test(file)) {
-    check(/#[0-9a-fA-F]{6}\b/g, "RAW_COLOR", "Use canonical Valoria design tokens instead of page/component-local hex values.");
+    check(/#[0-9a-fA-F]{6}\b/, "RAW_COLOR", "Use canonical Valoria design tokens instead of page/component-local hex values.");
     check(/\b(?:teal|purple|violet|amber|coral)\b/i, "LEGACY_COLOR", "Do not reintroduce legacy PRIME/accent color systems.");
   }
 
