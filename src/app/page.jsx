@@ -5,7 +5,6 @@ import HeroSlider from '@/components/HeroSlider'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import { BRAND } from '@/lib/brand'
 import './home.css'
-import './home-redesign.css'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
