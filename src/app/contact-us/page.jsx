@@ -34,15 +34,15 @@ export default function ContactPage() {
               </div>
             </Reveal>
             <Reveal>
-              <div className="info-card" style={{ marginBottom: '20px' }}>
+              <div className="info-card" className="info-card contact-direct-card">
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">EMAIL DIRECTLY</span></div>
-                <a href={`mailto:${BRAND.email}`} style={{ color: 'var(--gold)', fontSize: '18px', textDecoration: 'none', fontWeight: 400 }}>{BRAND.email}</a>
-                <p style={{ color: 'var(--dim)', fontWeight: 300, fontSize: '13px', marginTop: '14px' }}>We respond within two business days.</p>
+                <a href={`mailto:${BRAND.email}`} className="contact-email">{BRAND.email}</a>
+                <p className="contact-note">We respond within two business days.</p>
               </div>
               <div className="info-card">
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">LOCATION</span></div>
-                <p style={{ color: 'var(--parchment)', fontSize: '18px', fontWeight: 300 }}>{BRAND.location}</p>
-                <p style={{ color: 'var(--dim)', fontWeight: 300, fontSize: '13px', marginTop: '14px' }}>A {BRAND.copyrightEntity} initiative. {BRAND.compliance}.</p>
+                <p className="contact-location">{BRAND.location}</p>
+                <p className="contact-note">A {BRAND.copyrightEntity} initiative. {BRAND.compliance}.</p>
               </div>
             </Reveal>
           </div>
@@ -52,7 +52,7 @@ export default function ContactPage() {
           <Reveal>
             <h2 className="section-title">Specific entry point<br /><em>in mind?</em></h2>
             <p className="page-sub">Prefer email? Go straight to the team that handles it.</p>
-            <div className="page-hero-actions" style={{ justifyContent: 'center' }}>
+            <div className="page-hero-actions" className="page-hero-actions page-hero-actions-centered">
               <a href={`mailto:${BRAND.email}?subject=Hiring%20Enquiry%20-%20ATB%20Connect`} className="btn-outline">HIRING ENQUIRY</a>
               <a href={`mailto:${BRAND.email}?subject=Speaker%20Booking%20-%20ATB%20Spotlight`} className="btn-outline">SPEAKER BOOKING</a>
               <a href={`mailto:${BRAND.email}?subject=Training%20Enquiry%20-%20Valoria%20Develop`} className="btn-outline">TRAINING ENQUIRY</a>
