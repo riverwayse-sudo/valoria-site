@@ -171,3 +171,34 @@ nav.vi-nav.scrolled,
   .ps-card:hover,.ps-card-cta:hover { transform: none; }
   .vi-scroll-track { animation: none; }
 }
+
+
+/* Event component motion — canonical motion authority */
+.session-showcase-actions button,
+.session-showcase-actions a,
+.session-showcase-dot,
+.session-showcase-progress span,
+.session-series-card,
+.session-series-flyer img,
+.flyer-expand,
+.session-series-primary,
+.session-series-secondary {
+  transition:
+    transform var(--motion-standard) var(--motion-ease),
+    opacity var(--motion-standard) var(--motion-ease),
+    background-color var(--motion-standard) var(--motion-ease),
+    border-color var(--motion-standard) var(--motion-ease),
+    color var(--motion-standard) var(--motion-ease),
+    width var(--motion-standard) var(--motion-ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .session-showcase-actions button,
+  .session-showcase-actions a,
+  .session-showcase-dot,
+  .session-showcase-progress span,
+  .session-series-card,
+  .session-series-flyer img,
+  .flyer-expand,
+  .session-series-primary,
+  .session-series-secondary { transition:none; }
+}
