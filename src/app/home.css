@@ -695,13 +695,13 @@
 .home-redesign-root > section:not(.hero){margin:0;padding-block:var(--space-section)}
 .home-redesign-root > section + section{border-top:1px solid rgba(201,168,76,.08)}
 .home-redesign-root .container{width:min(1200px,calc(100% - 48px));margin-inline:auto}
-.home-section-heading{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(280px,.95fr);gap:clamp(40px,7vw,96px);align-items:end;margin-bottom:clamp(40px,5vw,64px)}
-.home-section-heading>p{max-width:520px;margin:0}
+.home-section-heading{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;gap:18px;text-align:center;margin-bottom:clamp(40px,5vw,64px)}
+.home-section-heading>p{max-width:680px;margin:0 auto;text-align:center}
 .home-pathway-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,2vw,24px)}
 .valu-conversion-shell{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.8fr);gap:clamp(48px,8vw,112px);align-items:center}
 .valu-conversion-intro{max-width:680px}
 .valu-conversion-card{width:100%;max-width:520px;margin-inline:auto}
-@media(max-width:900px){.home-redesign-root > section:not(.hero){padding-block:var(--space-section-tight)}.home-section-heading,.valu-conversion-shell{grid-template-columns:1fr;gap:32px}.home-section-heading{margin-bottom:36px}.home-pathway-grid{grid-template-columns:1fr}.valu-conversion-card{max-width:620px}}
+@media(max-width:900px){.home-redesign-root > section:not(.hero){padding-block:var(--space-section-tight)}.home-section-heading,.valu-conversion-shell{grid-template-columns:1fr;gap:24px}.home-section-heading{margin-bottom:36px}.home-section-heading>p{max-width:620px}.home-pathway-grid{grid-template-columns:1fr}.valu-conversion-card{max-width:620px}}
 @media(max-width:640px){.home-redesign-root .container{width:min(100% - 36px,1200px)}.home-redesign-root > section:not(.hero){padding-block:64px}.home-section-heading{gap:20px;margin-bottom:28px}.valu-conversion-shell{gap:28px}.hero-slider{min-height:calc(100svh - 0px);padding-top:68px}.hero-slider .hero-slides{min-height:calc(100svh - 68px)}.hero-slider .hero-inner{padding-block:40px 56px}.hero-slider .hero-slide{align-items:flex-start}.hero-slider .hero-title{font-size:clamp(44px,12vw,62px)}}
 
 
