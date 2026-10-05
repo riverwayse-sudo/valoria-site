@@ -58,7 +58,7 @@
 }
 
 .home-section-heading h2 em {
-  color: #9A7428;
+  color: var(--valoria-gold-deep);
   font-style: italic;
   font-weight: 400;
 }
@@ -521,7 +521,7 @@
 }
 
 .home-pathway-number {
-  color: #9A7428;
+  color: var(--valoria-gold-deep);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: .18em;
@@ -654,7 +654,7 @@
   max-width: 500px;
   justify-self: end;
   padding: 24px;
-  background: #11111F;
+  background: var(--valoria-ink-card);
   border: 1px solid rgba(201,168,76,.24);
   border-radius: var(--home-radius);
   box-shadow: 0 18px 60px rgba(0,0,0,.16);
@@ -713,7 +713,7 @@
 
 .valu-conversion .vcc-radar-points circle {
   fill: var(--gold);
-  stroke: #11111F;
+  stroke: var(--valoria-ink-card);
   stroke-width: .8;
 }
 
@@ -808,7 +808,7 @@
 /* LIVE REGISTRY */
 .live-profiles {
   padding-top: var(--space-section);
-  background: #0F0F1A;
+  background: var(--valoria-void);
   border-top: 1px solid rgba(201,168,76,.10);
 }
 
