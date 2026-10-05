@@ -15,8 +15,6 @@ export const metadata = {
   alternates: { canonical: 'https://valoriainstitute.com/facilitators' },
 }
 
-const color = '#C9A84C'
-
 const HOW_IT_WORKS = [
   { step: '01', title: 'Tell us what you need.', body: 'Submit an enquiry through the platform or contact us directly. Tell us which cluster your team needs to close — Presence, Relationships, Intelligence, Mastery, or Enterprise — and the context: team size, delivery format, timeline.' },
   { step: '02', title: 'We match you with a certified facilitator.', body: 'Every facilitator in Valoria Develop is PRIME-certified and has taken the VALU Index themselves. We match based on the cluster you need, the facilitator\'s specialisation, and the commercial context.' },
@@ -40,7 +38,7 @@ export default function FacilitatorsPage() {
         {/* HERO */}
         <section className="page-hero">
           <div className="page-hero-inner">
-            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text" style={{ color }}>03 &nbsp;&middot;&nbsp; FOR TRAINING BUYERS</span></div>
+            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text" >03 &nbsp;&middot;&nbsp; FOR TRAINING BUYERS</span></div>
             <h1 className="page-title">Don&apos;t train on theory.<br /><em>Train on the framework.</em></h1>
             <p className="page-sub">
               Valoria Develop is Valoria Institute’s development pathway. Programmes are mapped to the PRIME capability architecture and designed to close defined development gaps with intention.
@@ -58,10 +56,10 @@ export default function FacilitatorsPage() {
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE PROBLEM WITH MOST TRAINING</span></div>
               <h2 className="section-title">PRIME is the architecture.<br /><em>Facilitators are the delivery.</em></h2>
-              <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px' }}>
+              <p className="page-copy">
                 Most corporate training programmes fail the same way: they run on generic content, delivered by trainers who weren&apos;t assessed against the same standard being taught, and measured by attendance sheets rather than capability movement. Six weeks later, nothing has changed except the training budget.
               </p>
-              <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px', marginTop: '16px' }}>
+              <p className="page-copy page-copy-spaced">
                 Valoria-certified facilitators teach to the same five PRIME clusters the VALU Index measures your team against. Development closes the exact gaps the assessment surfaced. And because before-and-after scores run on the same framework, you can see what actually moved.
               </p>
             </Reveal>
@@ -75,7 +73,7 @@ export default function FacilitatorsPage() {
                   'In-person, virtual, or hybrid delivery — confirmed at commissioning',
                 ].map((t, i) => (
                   <li key={i}>
-                    <span className="dot"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+                    <span className="dot"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
                     {t}
                   </li>
                 ))}
@@ -88,15 +86,15 @@ export default function FacilitatorsPage() {
         <section className="page-section alt">
           <div className="page-section-inner">
             <Reveal>
-              <div className="eyebrow" style={{ justifyContent: 'center' }}><div className="eyebrow-line" /><span className="eyebrow-text">HOW COMMISSIONING WORKS</span><div className="eyebrow-line" /></div>
-              <h2 className="section-title" style={{ textAlign: 'center', marginBottom: '40px' }}>From gap identification<br /><em>to measurable outcome.</em></h2>
+              <div className="eyebrow" className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">HOW COMMISSIONING WORKS</span><div className="eyebrow-line" /></div>
+              <h2 className="section-title" className="section-title section-title-centered">From gap identification<br /><em>to measurable outcome.</em></h2>
             </Reveal>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+            <div className="facilitator-grid">
               {HOW_IT_WORKS.map(s => (
                 <Reveal key={s.step}>
                   <div className="card-gold">
-                    <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '.16em', color: 'rgba(29,158,117,.6)', marginBottom: '12px' }}>{s.step}</div>
-                    <div className="cluster-name" style={{ marginBottom: '10px' }}>{s.title}</div>
+                    <div className="facilitator-step">{s.step}</div>
+                    <div className="cluster-name" className="cluster-name cluster-name-spaced">{s.title}</div>
                     <p className="cluster-desc">{s.body}</p>
                   </div>
                 </Reveal>
@@ -111,18 +109,18 @@ export default function FacilitatorsPage() {
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WHAT MAKES IT DIFFERENT</span></div>
               <h2 className="section-title">Not a training programme.<br /><em>A development system.</em></h2>
-              <p style={{ color: 'var(--dim)', fontWeight: 300, lineHeight: 1.8, fontSize: '15px' }}>
+              <p className="page-copy">
                 The difference between a training programme and a development system is measurement. Valoria Develop is built around the same five PRIME clusters the VALU Index runs on — so there is a measurable standard before, during, and after.
               </p>
             </Reveal>
             <Reveal>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div className="facilitator-diff-list">
                 {DIFF.map((d, i) => (
-                  <div key={i} style={{ display: 'flex', gap: '16px' }}>
-                    <div style={{ width: '6px', height: '6px', background: color, borderRadius: '50%', flexShrink: 0, marginTop: '6px' }} />
+                  <div key={i} className="facilitator-diff">
+                    <div className="facilitator-dot" />
                     <div>
-                      <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--parchment)', marginBottom: '6px' }}>{d.label}</div>
-                      <p style={{ fontSize: '13px', color: 'var(--dim)', fontWeight: 300, lineHeight: 1.6, margin: 0 }}>{d.desc}</p>
+                      <div className="facilitator-diff-title">{d.label}</div>
+                      <p className="facilitator-diff-copy">{d.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -134,10 +132,10 @@ export default function FacilitatorsPage() {
         {/* CTA */}
         <section className="page-section alt cta-banner">
           <Reveal>
-            <div className="eyebrow" style={{ justifyContent: 'center' }}><div className="eyebrow-line" /><span className="eyebrow-text">FOR TRAINING BUYERS</span><div className="eyebrow-line" /></div>
+            <div className="eyebrow" className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">FOR TRAINING BUYERS</span><div className="eyebrow-line" /></div>
             <h2 className="section-title">Commission a programme<br /><em>against the standard.</em></h2>
             <p className="page-sub">Valoria Develop runs through a direct conversation for now — tell us the cluster, the team, and the context, and we&apos;ll match you with the right facilitator.</p>
-            <div className="page-hero-actions" style={{ justifyContent: 'center' }}>
+            <div className="page-hero-actions" className="eyebrow eyebrow-center">
               <a href="/contact-us" className="btn-gold">COMMISSION A PROGRAMME</a>
               <a href="/programmes" className="btn-outline">SEE PROGRAMMES BY CLUSTER</a>
             </div>
