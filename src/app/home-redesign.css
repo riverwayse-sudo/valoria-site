@@ -1,0 +1,181 @@
+/* HOMEPAGE REDESIGN — staging-only structural correction.
+   Principle: fewer sections, clearer hierarchy, no duplicate propositions, no squeezed content. */
+
+.home-redesign-root { isolation:isolate; }
+
+/* 1. HERO: stop the viewport from becoming a giant empty stage. */
+.hero.hero-slider {
+  min-height: min(82vh, 820px) !important;
+  padding-top: 72px !important;
+  padding-bottom: 64px !important;
+}
+.hero-slider .hero-slides { min-height: min(72vh, 680px) !important; }
+.hero-slider .hero-slide { min-height: min(72vh, 680px) !important; }
+.hero-slider .hero-event-panel { min-height: 0 !important; height:auto !important; }
+.hero-slider .hero-inner { align-items:center; }
+.hero-slider .hero-title { font-size:clamp(44px,5.7vw,76px) !important; }
+.hero-slider .hero-event-slide .hero-title { max-width:680px; }
+.hero-slider .hero-sub,.hero-slider .hero-event-copy { max-width:590px; }
+.hero-slider .hero-slider-controls { bottom:24px; }
+@media (max-width:800px) {
+  .hero.hero-slider { min-height:auto !important; padding:42px 24px 72px !important; }
+  .hero-slider .hero-slides,
+  .hero-slider .hero-slide { min-height:auto !important; }
+  .hero-slider .hero-inner { gap:28px !important; }
+  .hero-slider .hero-title { font-size:clamp(40px,11vw,58px) !important; }
+}
+
+/* 2. START-HERE PATHWAYS: one clear decision surface.
+   Explicitly overrides global card tokens that previously leaked parchment/dark styles. */
+.home-pathways {
+  background:#F7F4EE !important;
+  color:#1A1A2E !important;
+  border-top:1px solid #D4C9A8 !important;
+  border-bottom:1px solid #D4C9A8 !important;
+  padding:clamp(72px,8vw,112px) 0 !important;
+}
+.home-pathways .container { max-width:1240px; }
+.home-pathways .home-section-heading {
+  display:grid !important;
+  grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr) !important;
+  gap:clamp(32px,6vw,96px) !important;
+  align-items:end !important;
+  margin-bottom:48px !important;
+}
+.home-pathways .eyebrow-text { color:#9A7428 !important; }
+.home-pathways .eyebrow-line { background:#C9A84C !important; }
+.home-pathways .home-section-heading h2 {
+  color:#1A1A2E !important;
+  font-size:clamp(42px,5.5vw,72px) !important;
+  line-height:1 !important;
+  letter-spacing:-.035em !important;
+}
+.home-pathways .home-section-heading h2 em { color:#9A7428 !important; }
+.home-pathways .home-section-heading > p {
+  color:#555565 !important;
+  font-size:16px !important;
+  line-height:1.7 !important;
+  max-width:500px !important;
+}
+.home-pathway-grid {
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:1px !important;
+  background:#D4C9A8 !important;
+  border:1px solid #D4C9A8 !important;
+  border-radius:18px !important;
+  overflow:hidden !important;
+}
+.home-pathways .home-pathway-card {
+  min-width:0 !important;
+  min-height:360px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  padding:32px 30px 28px !important;
+  background:#FAFAF7 !important;
+  color:#1A1A2E !important;
+  border:0 !important;
+  border-radius:0 !important;
+  text-decoration:none !important;
+}
+.home-pathways .home-pathway-card.is-primary {
+  background:#1A1A2E !important;
+  color:#F7F4EE !important;
+}
+.home-pathways .home-pathway-number { color:#9A7428 !important; font-size:11px !important; letter-spacing:.18em !important; }
+.home-pathways .home-pathway-label { color:#77778A !important; font-size:10px !important; font-weight:800 !important; letter-spacing:.16em !important; }
+.home-pathways .home-pathway-card.is-primary .home-pathway-label { color:#D4C9A8 !important; }
+.home-pathways .home-pathway-card h3 {
+  color:#1A1A2E !important;
+  font-size:clamp(24px,2.4vw,34px) !important;
+  line-height:1.12 !important;
+  letter-spacing:-.02em !important;
+  margin:18px 0 14px !important;
+}
+.home-pathways .home-pathway-card.is-primary h3 { color:#F7F4EE !important; }
+.home-pathways .home-pathway-card > p {
+  color:#555565 !important;
+  font-size:15px !important;
+  line-height:1.7 !important;
+  margin:0 !important;
+}
+.home-pathways .home-pathway-card.is-primary > p { color:rgba(247,244,238,.68) !important; }
+.home-pathways .home-pathway-cta {
+  margin-top:auto !important;
+  padding-top:26px !important;
+  color:#9A7428 !important;
+  font-size:10px !important;
+  font-weight:800 !important;
+  letter-spacing:.15em !important;
+}
+.home-pathways .home-pathway-card.is-primary .home-pathway-cta { color:#C9A84C !important; }
+.home-pathways .home-pathway-card:hover,
+.home-pathways .home-pathway-card:focus-visible { transform:none !important; box-shadow:inset 0 0 0 2px #C9A84C !important; outline:none !important; }
+@media(max-width:900px) {
+  .home-pathways .home-section-heading { grid-template-columns:1fr !important; }
+  .home-pathway-grid { grid-template-columns:1fr !important; }
+  .home-pathways .home-pathway-card { min-height:290px !important; }
+}
+
+/* 3. VALU: make the assessment the obvious conversion section, not a dense split card. */
+.valu-section.valu-conversion {
+  background:#1A1A2E !important;
+  padding:clamp(76px,9vw,120px) 0 !important;
+  border-top:0 !important;
+}
+.valu-conversion .valu-conversion-shell {
+  max-width:1240px !important;
+  display:grid !important;
+  grid-template-columns:minmax(0,1.05fr) minmax(360px,.75fr) !important;
+  gap:clamp(48px,8vw,112px) !important;
+  align-items:center !important;
+}
+.valu-conversion .valu-conversion-intro { min-width:0 !important; }
+.valu-conversion .valu-title {
+  max-width:780px !important;
+  font-size:clamp(42px,5.5vw,72px) !important;
+  color:#F7F4EE !important;
+}
+.valu-conversion .valu-desc { max-width:650px !important; color:rgba(247,244,238,.68) !important; }
+.valu-conversion-card {
+  min-width:0 !important;
+  min-height:0 !important;
+  padding:28px !important;
+  background:#11111F !important;
+  border:1px solid rgba(201,168,76,.28) !important;
+  border-radius:20px !important;
+}
+.valu-conversion .home-dual-actions { display:flex !important; flex-wrap:wrap !important; gap:14px !important; align-items:center !important; }
+@media(max-width:900px) {
+  .valu-conversion .valu-conversion-shell { grid-template-columns:1fr !important; }
+  .valu-conversion-card { max-width:720px !important; width:100% !important; margin:0 auto !important; }
+}
+
+/* 4. REGISTRY: keep it as proof, not another sales page. */
+.live-profiles {
+  background:#0F0F1A !important;
+  padding-top:clamp(72px,8vw,104px) !important;
+}
+.live-profiles-shell { max-width:1240px !important; }
+.live-profiles-title { font-size:clamp(40px,5.2vw,68px) !important; }
+.vi-scroll-card { width:min(390px,78vw) !important; }
+.live-profiles-professional-cta { max-width:1240px !important; }
+
+/* 5. The old Promise + Entry Points were duplicative after Pathways + Registry.
+   They are removed from the DOM in page.jsx; these guards prevent legacy styles from
+   reappearing if another component references them. */
+.alignment, .entry-points { display:none !important; }
+
+/* 6. Mobile: never allow editorial grids to become cramped. */
+@media(max-width:640px) {
+  .home-pathways { padding:64px 0 !important; }
+  .home-pathways .container { padding-inline:18px !important; }
+  .home-pathways .home-section-heading h2 { font-size:42px !important; }
+  .home-pathways .home-pathway-card { padding:28px 24px !important; }
+  .valu-section.valu-conversion { padding:64px 0 !important; }
+  .valu-conversion .container { padding-inline:20px !important; }
+  .valu-conversion .valu-title { font-size:42px !important; }
+  .valu-conversion .home-dual-actions { align-items:stretch !important; flex-direction:column !important; }
+  .valu-conversion .home-dual-actions .btn-gold { width:100% !important; }
+  .live-profiles-shell { grid-template-columns:1fr !important; padding-inline:20px !important; }
+}
