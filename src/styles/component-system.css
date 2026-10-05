@@ -41,3 +41,8 @@ footer.vi-footer{background:var(--dark-mid);border-top:1px solid rgba(201,168,76
   .nav-logo img{width:156px;height:38px}
   .nav-mobile{padding-inline:20px}
 }
+/* NAVBAR CONTENT-SAFE GEOMETRY */
+.navbar{width:100%;box-sizing:border-box;z-index:1000}
+.navbar .nav-inner{width:min(1240px,calc(100% - 40px));margin-inline:auto;box-sizing:border-box}
+@media(max-width:1260px){.navbar .nav-inner{width:min(1180px,calc(100% - 32px))}.nav-link,.nav-trigger{white-space:nowrap}}
+@media(max-width:1180px){.navbar .nav-inner{width:calc(100% - 32px)}.nav-desktop{display:none}.nav-burger{display:flex}}
