@@ -2,7 +2,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import EventPoster from '@/components/EventPoster'
 import EventRegistrationTrigger from '@/components/EventRegistrationTrigger'
-import { PROFESSIONAL_STANDARD_SERIES, getSessionState } from '@/lib/professionalStandardSeries'
+import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
 import { BRAND } from '@/lib/brand'
 
 export const metadata = {
@@ -10,7 +10,47 @@ export const metadata = {
   description: 'Conversations, sessions and professional standards from Valoria Institute.',
 }
 
+function SessionCard({ session, state }) {
+  const isEnded = state === 'ended'
+  const isComingSoon = state === 'coming-soon'
+
+  return (
+    <article className={`event-card ${isEnded ? 'is-ended' : ''} ${state === 'registration-open' ? 'is-next' : ''}`} id={`session-${session.id}`}>
+      <EventPoster session={session} />
+      <div className="event-card-copy">
+        <div className="event-card-top">
+          <span>SESSION {session.id}</span>
+          <b>{isEnded ? 'COMPLETED' : isComingSoon ? 'COMING SOON' : state === 'live' ? 'LIVE NOW' : 'NEXT SESSION'}</b>
+        </div>
+        <h3>{session.title}</h3>
+        <p>{session.description}</p>
+        <div className="event-card-meta">
+          <strong>{formatSessionDate(session)}</strong>
+          <span>VIRTUAL · 90 MINUTES{session.speaker ? ` · ${session.speaker}` : ''}</span>
+        </div>
+        {!isEnded && state === 'registration-open' && <EventRegistrationTrigger session={session} />}
+      </div>
+    </article>
+  )
+}
+
 export default function EventsPage() {
+  const upcoming = PROFESSIONAL_STANDARD_SERIES.filter(session => {
+    if (session.replay) return false
+    const state = getSessionState(session)
+    return state === 'registration-open' || state === 'live'
+  })
+
+  const completed = PROFESSIONAL_STANDARD_SERIES.filter(session => {
+    if (session.replay) return false
+    return getSessionState(session) === 'ended'
+  })
+
+  const comingSoon = PROFESSIONAL_STANDARD_SERIES.filter(session => {
+    if (session.replay) return false
+    return getSessionState(session) === 'coming-soon'
+  })
+
   return (
     <>
       <Nav />
@@ -27,33 +67,57 @@ export default function EventsPage() {
           <div className="page-section-inner">
             <div className="events-list-head">
               <div>
-                <div className="page-kicker events-list-kicker">UPCOMING</div>
-                <h2 className="section-title">What is next.</h2>
+                <div className="page-kicker events-list-kicker">NEXT SESSION</div>
+                <h2 className="section-title">{upcoming.length ? 'What is next.' : 'The next conversation is coming.'}</h2>
               </div>
               <p>Focused conversations built around the capabilities that distinguish professional value.</p>
             </div>
-            <div className="events-grid">
-              {PROFESSIONAL_STANDARD_SERIES.filter(s => !s.replay).map(session => {
-                const state = getSessionState(session)
-                return (
-                  <article className="event-card" id={`session-${session.id}`} key={session.id}>
-                    <EventPoster session={session} />
-                    <div className="event-card-copy">
-                      <div className="event-card-top"><span>SESSION {session.id}</span><b>{session.dateApproved ? 'UPCOMING' : 'COMING SOON'}</b></div>
-                      <h3>{session.title}</h3>
-                      <p>{session.description}</p>
-                      <div className="event-card-meta">
-                        <strong>{session.dateApproved ? new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Lagos', month: 'long', day: '2-digit', year: 'numeric' }).format(new Date(session.start)) : 'DATE TO BE CONFIRMED'}</strong>
-                        <span>VIRTUAL · 90 MINUTES{session.speaker ? ` · ${session.speaker}` : ''}</span>
-                      </div>
-                      {state === 'registration-open' && <EventRegistrationTrigger session={session} />}
-                    </div>
-                  </article>
-                )
-              })}
-            </div>
+
+            {upcoming.length > 0 ? (
+              <div className="events-grid">
+                {upcoming.map(session => <SessionCard key={session.id} session={session} state={getSessionState(session)} />)}
+              </div>
+            ) : (
+              <div className="events-empty-state">
+                <span className="page-kicker">STAY WITH THE SERIES</span>
+                <h3>The next session will be announced here.</h3>
+                <p>Valoria events move through the Professional Standard Series in sequence. Return here for the next confirmed conversation.</p>
+              </div>
+            )}
+
+            {comingSoon.length > 0 && (
+              <div className="events-secondary">
+                <div className="events-list-head events-secondary-head">
+                  <div>
+                    <div className="page-kicker events-list-kicker">LATER IN THE SERIES</div>
+                    <h2 className="section-title">Coming soon.</h2>
+                  </div>
+                  <p>Future sessions appear here only after their dates are confirmed.</p>
+                </div>
+                <div className="events-grid">
+                  {comingSoon.map(session => <SessionCard key={session.id} session={session} state="coming-soon" />)}
+                </div>
+              </div>
+            )}
           </div>
         </section>
+
+        {completed.length > 0 && (
+          <section className="page-section events-history" id="past-sessions">
+            <div className="page-section-inner">
+              <div className="events-list-head">
+                <div>
+                  <div className="page-kicker events-list-kicker">PAST SESSIONS</div>
+                  <h2 className="section-title">What came before.</h2>
+                </div>
+                <p>Completed conversations remain part of the Valoria professional standard record.</p>
+              </div>
+              <div className="events-grid">
+                {completed.map(session => <SessionCard key={session.id} session={session} state="ended" />)}
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="page-section events-replay" id="session-01">
           <div className="page-section-inner replay-grid">
