@@ -13,22 +13,17 @@ export const metadata = {
 function SessionCard({ session, state }) {
   const isEnded = state === 'ended'
   const isComingSoon = state === 'coming-soon'
+  const isNext = state === 'registration-open' || state === 'live'
 
   return (
-    <article className={`event-card ${isEnded ? 'is-ended' : ''} ${state === 'registration-open' ? 'is-next' : ''}`} id={`session-${session.id}`}>
+    <article className={`event-card event-card--editorial ${isEnded ? 'is-ended' : ''} ${isNext ? 'is-next' : ''}`} id={`session-${session.id}`}>
       <EventPoster session={session} />
-      <div className="event-card-copy">
-        <div className="event-card-top">
-          <span>SESSION {session.id}</span>
-          <b>{isEnded ? 'COMPLETED' : isComingSoon ? 'COMING SOON' : state === 'live' ? 'LIVE NOW' : 'NEXT SESSION'}</b>
+      <div className="event-editorial-footer">
+        <div className="event-editorial-copy">
+          <span>{isEnded ? 'COMPLETED SESSION' : isComingSoon ? 'COMING SOON' : state === 'live' ? 'LIVE NOW' : 'REGISTRATION OPEN'}</span>
+          <p>{session.description}</p>
         </div>
-        <h3>{session.title}</h3>
-        <p>{session.description}</p>
-        <div className="event-card-meta">
-          <strong>{formatSessionDate(session)}</strong>
-          <span>VIRTUAL · 90 MINUTES{session.speaker ? ` · ${session.speaker}` : ''}</span>
-        </div>
-        {!isEnded && state === 'registration-open' && <EventRegistrationTrigger session={session} />}
+        {!isEnded && !isComingSoon && <EventRegistrationTrigger session={session} />}
       </div>
     </article>
   )
@@ -132,6 +127,25 @@ export default function EventsPage() {
         </section>
       </main>
       <Footer />
+      <style>{`
+  .events-page .events-list{padding-top:70px}
+  .events-page .events-list-head{margin-bottom:34px}
+  .events-page .events-grid{grid-template-columns:minmax(0,920px);justify-content:center}
+  .events-page .event-card--editorial{background:#FAFAF7;border:1px solid rgba(26,26,46,.14);box-shadow:none;overflow:hidden}
+  .events-page .event-card--editorial:hover{transform:none;border-color:rgba(201,168,76,.55)}
+  .events-page .event-card--editorial .event-poster{min-height:620px}
+  .events-page .event-editorial-footer{display:grid;grid-template-columns:1fr auto;gap:35px;align-items:end;padding:28px 32px 30px;border-top:1px solid rgba(26,26,46,.12)}
+  .events-page .event-editorial-copy>span{font-size:9px;font-weight:800;letter-spacing:.16em;color:#8a6b27}
+  .events-page .event-editorial-copy p{max-width:680px;margin:10px 0 0;font-size:15px;line-height:1.65;color:#555565}
+  .events-page .event-editorial-footer .event-register-button{min-width:190px;margin:0}
+  .events-page .events-secondary{margin-top:75px}
+  .events-page .events-history{padding-top:90px}
+  @media(max-width:800px){
+    .events-page .event-card--editorial .event-poster{min-height:560px}
+    .events-page .event-editorial-footer{grid-template-columns:1fr;padding:24px 22px}
+    .events-page .event-editorial-footer .event-register-button{width:100%}
+  }
+`}</style>
     </>
   )
 }
