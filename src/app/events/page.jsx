@@ -2,7 +2,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import EventPoster from '@/components/EventPoster'
 import EventRegistrationTrigger from '@/components/EventRegistrationTrigger'
-import { PROFESSIONAL_STANDARD_SERIES, getSessionState } from '@/lib/professionalStandardSeries'
+import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
 import { BRAND } from '@/lib/brand'
 
 export const metadata = {
@@ -10,28 +10,123 @@ export const metadata = {
   description: 'Conversations, sessions and professional standards from Valoria Institute.',
 }
 
+function SessionCard({ session, state }) {
+  const isEnded = state === 'ended'
+  const isComingSoon = state === 'coming-soon'
+  const isNext = state === 'registration-open' || state === 'live'
+
+  return (
+    <article className={`event-card event-card--editorial ${isEnded ? 'is-ended' : ''} ${isNext ? 'is-next' : ''}`} id={`session-${session.id}`}>
+      <EventPoster session={session} />
+      <div className="event-editorial-footer">
+        <div className="event-editorial-copy">
+          <span>{isEnded ? 'COMPLETED SESSION' : isComingSoon ? 'COMING SOON' : state === 'live' ? 'LIVE NOW' : 'REGISTRATION OPEN'}</span>
+          <p>{session.description}</p>
+        </div>
+        {!isEnded && !isComingSoon && <EventRegistrationTrigger session={session} />}
+      </div>
+    </article>
+  )
+}
+
 export default function EventsPage() {
+  const upcoming = PROFESSIONAL_STANDARD_SERIES.filter(session => {
+    if (session.replay) return false
+    const state = getSessionState(session)
+    return state === 'registration-open' || state === 'live'
+  })
+
+  const completed = PROFESSIONAL_STANDARD_SERIES.filter(session => {
+    if (session.replay) return false
+    return getSessionState(session) === 'ended'
+  })
+
+  const comingSoon = PROFESSIONAL_STANDARD_SERIES.filter(session => {
+    if (session.replay) return false
+    return getSessionState(session) === 'coming-soon'
+  })
+
   return (
     <>
       <Nav />
       <main className="events-page">
-        <section className="events-hero"><div className="events-wrap"><div className="events-kicker">VALORIA INSTITUTE · EVENTS</div><h1>Conversations that shape<br /><em>professional standard.</em></h1><p>Live sessions, recorded conversations and practical ideas for professionals building capability, influence and opportunity.</p></div></section>
-        <section className="events-list"><div className="events-wrap"><div className="events-list-head"><div><span>UPCOMING</span><h2>What is next.</h2></div><p>Focused conversations built around the capabilities that distinguish professional value.</p></div>
-          <div className="events-grid">{PROFESSIONAL_STANDARD_SERIES.filter(s => !s.replay).map(session => { const state = getSessionState(session); return <article className="event-card" id={`session-${session.id}`} key={session.id}>
-            <EventPoster session={session} />
-            <div className="event-card-copy"><div className="event-card-top"><span>SESSION {session.id}</span><b>{session.dateApproved ? 'UPCOMING' : 'COMING SOON'}</b></div><h3>{session.title}</h3><p>{session.description}</p><div className="event-card-meta"><strong>{session.dateApproved ? new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Lagos', month: 'long', day: '2-digit', year: 'numeric' }).format(new Date(session.start)) : 'DATE TO BE CONFIRMED'}</strong><span>VIRTUAL · 90 MINUTES{session.speaker ? ` · ${session.speaker}` : ''}</span></div>{state === 'registration-open' && <EventRegistrationTrigger session={session} />}</div>
-          </article> })}</div>
-        </div></section>
-        <section className="events-replay" id="session-01"><div className="events-wrap replay-grid"><div><div className="events-kicker">SESSION 01 · REPLAY</div><h2>Why being good at your job is no longer <em>enough.</em></h2><p>The opening Valoria conversation on professional worth, visibility, influence and the infrastructure required to turn capability into recognised opportunity.</p><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer">START YOUR VALU INDEX →</a></div><div className="replay-video"><iframe src="https://www.youtube.com/embed/B9dD22vTErI" title="Valoria Institute Session 01 replay" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div></div></section>
-      </main><Footer />
-      <style>{`
-        .events-page{background:#F7F4EE;color:#1A1A2E}.events-wrap{width:min(1240px,calc(100% - 48px));margin:0 auto}.events-hero{padding:170px 0 105px;background:#0F0F1A;color:#F7F4EE}.events-kicker{font-size:10px;font-weight:800;letter-spacing:.2em;color:#C9A84C;text-transform:uppercase}.events-hero h1,.events-replay h2{font-family:var(--font);font-size:clamp(54px,7vw,92px);font-weight:300;line-height:.98;letter-spacing:-.045em;margin:22px 0}.events-hero em,.events-replay em{font-style:italic;color:#C9A84C}.events-hero p{font-size:19px;line-height:1.7;color:rgba(247,244,238,.55);max-width:700px}
-        .events-list{padding:105px 0}.events-list-head{display:flex;justify-content:space-between;align-items:end;gap:40px;margin-bottom:50px}.events-list-head span{font-size:10px;font-weight:800;letter-spacing:.2em;color:#8a6b27}.events-list-head h2{font-family:var(--font);font-size:56px;font-weight:300;line-height:1;margin:15px 0 0}.events-list-head p{max-width:430px;color:#5b5b6a;line-height:1.6}.events-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px}.event-card{background:#FAFAF7;border:1px solid rgba(26,26,46,.16);display:flex;flex-direction:column;overflow:hidden;transition:transform .45s cubic-bezier(.2,.8,.2,1),border-color .3s}.event-card:hover{transform:translateY(-6px);border-color:rgba(201,168,76,.7)}
-        .event-poster{position:relative;min-height:570px;overflow:hidden;padding:28px;display:flex;flex-direction:column;justify-content:space-between;background:#1A1A2E;color:#F7F4EE}.poster-noise{position:absolute;inset:0;opacity:.07;background-image:radial-gradient(rgba(255,255,255,.8) .7px,transparent .7px);background-size:7px 7px;pointer-events:none}.poster-top,.poster-bottom,.poster-main,.poster-session{position:relative;z-index:1}.poster-top{display:flex;justify-content:space-between;align-items:flex-start;font-size:9px;font-weight:800;line-height:1.55;letter-spacing:.19em}.poster-brand{text-align:right;color:#C9A84C;line-height:1.05;font-size:17px;letter-spacing:.08em}.poster-brand small{font-size:6px;letter-spacing:.22em;color:#F7F4EE}.poster-rule{position:absolute;top:86px;left:28px;width:64px;height:2px;background:#C9A84C}.poster-session{margin-top:34px;font-size:9px;letter-spacing:.19em;color:#D4C9A8}.poster-session span{padding:0 7px;color:#C9A84C}.poster-main{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin-top:auto;margin-bottom:35px}.poster-title{max-width:88%}.poster-title h3{font-family:var(--font);font-size:clamp(38px,4.2vw,57px);font-weight:500;line-height:.98;letter-spacing:-.045em;margin:0}.poster-title p{font-family:var(--font);font-size:clamp(25px,2.6vw,38px);font-weight:300;line-height:1.02;letter-spacing:-.035em;color:#C9A84C;margin:12px 0 0}.poster-mark{position:absolute;right:-28px;bottom:-38px;width:165px;height:165px;border:1px solid rgba(201,168,76,.5);border-radius:50%;display:flex;align-items:center;justify-content:center;transform:rotate(-16deg)}.poster-mark span{font-family:var(--font);font-size:92px;font-weight:300;color:rgba(247,244,238,.07);letter-spacing:-.08em}.poster-mark i{position:absolute;width:95px;height:1px;background:#C9A84C;transform:rotate(52deg)}.poster-bottom{border-top:1px solid rgba(247,244,238,.2);padding-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:18px}.poster-outcomes>span,.poster-details span{display:block;font-size:7px;font-weight:800;letter-spacing:.18em;color:#D4C9A8;margin-bottom:9px}.poster-outcomes div{font-size:10px;line-height:1.55;margin:3px 0}.poster-outcomes b{display:inline-block;width:24px;color:#C9A84C;font-size:8px;letter-spacing:.08em}.poster-details{border-left:1px solid rgba(247,244,238,.2);padding-left:18px}.poster-details div+div{margin-top:13px}.poster-details b{display:block;font-family:var(--font);font-size:14px;font-weight:500;margin-bottom:3px}.poster-details span{margin:0;color:rgba(247,244,238,.5)}
-        .event-card-copy{padding:24px 26px 26px}.event-card-top{display:flex;justify-content:space-between;font-size:9px;font-weight:800;letter-spacing:.12em}.event-card-top b{color:#9a7428}.event-card-copy h3{font-family:var(--font);font-size:32px;font-weight:500;line-height:1.08;margin:18px 0 10px}.event-card-copy p{font-size:15px;line-height:1.7;color:#555565;margin:0}.event-card-meta{margin-top:22px;padding-top:18px;border-top:1px solid rgba(26,26,46,.12);display:flex;justify-content:space-between;gap:15px;font-size:8px;letter-spacing:.1em;color:#666676}.event-register-button{margin-top:18px;min-height:48px;background:#1A1A2E;color:#F7F4EE;border:1px solid #1A1A2E;font:800 10px var(--font);letter-spacing:.12em;cursor:pointer;transition:background .25s,color .25s}.event-register-button:hover{background:#C9A84C;color:#1A1A2E}
-        .events-replay{padding:115px 0;background:#0F0F1A;color:#F7F4EE}.replay-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:70px;align-items:center}.events-replay h2{font-size:clamp(44px,5vw,68px)}.events-replay p{font-size:17px;line-height:1.75;color:rgba(247,244,238,.5)}.events-replay a{display:inline-block;margin-top:20px;color:#C9A84C;text-decoration:none;font-size:10px;font-weight:800;letter-spacing:.12em}.replay-video{aspect-ratio:16/9;border:1px solid rgba(201,168,76,.2)}.replay-video iframe{width:100%;height:100%;border:0}
-        @media(max-width:800px){.events-wrap{width:min(100% - 36px,1240px)}.events-hero{padding:135px 0 80px}.events-list,.events-replay{padding:80px 0}.events-list-head,.replay-grid{display:block}.events-list-head p{margin-top:20px}.events-grid{grid-template-columns:1fr}.event-poster{min-height:540px}.event-card-copy h3{font-size:28px}.poster-title h3{font-size:46px}.poster-title p{font-size:30px}.replay-video{margin-top:40px}.events-hero h1,.events-replay h2{font-size:50px}}
-      `}</style>
+        <section className="page-hero events-hero">
+          <div className="page-hero-inner">
+            <div className="page-kicker">VALORIA INSTITUTE · EVENTS</div>
+            <h1 className="page-title">Conversations that shape<br /><em>professional standard.</em></h1>
+            <p className="page-sub">Live sessions, recorded conversations and practical ideas for professionals building capability, influence and opportunity.</p>
+          </div>
+        </section>
+
+        <section className="page-section events-list">
+          <div className="page-section-inner">
+            <div className="events-list-head">
+              <div>
+                <div className="page-kicker events-list-kicker">NEXT SESSION</div>
+                <h2 className="section-title">{upcoming.length ? 'What is next.' : 'The next conversation is coming.'}</h2>
+              </div>
+              <p>Focused conversations built around the capabilities that distinguish professional value.</p>
+            </div>
+
+            {upcoming.length > 0 ? (
+              <div className="events-grid">
+                {upcoming.map(session => <SessionCard key={session.id} session={session} state={getSessionState(session)} />)}
+              </div>
+            ) : (
+              <div className="events-empty-state">
+                <span className="page-kicker">STAY WITH THE SERIES</span>
+                <h3>The next session will be announced here.</h3>
+                <p>Valoria events move through the Professional Standard Series in sequence. Return here for the next confirmed conversation.</p>
+              </div>
+            )}
+
+            {comingSoon.length > 0 && (
+              <div className="events-secondary">
+                <div className="events-list-head events-secondary-head">
+                  <div>
+                    <div className="page-kicker events-list-kicker">LATER IN THE SERIES</div>
+                    <h2 className="section-title">Coming soon.</h2>
+                  </div>
+                  <p>Future sessions appear here only after their dates are confirmed.</p>
+                </div>
+                <div className="events-grid">
+                  {comingSoon.map(session => <SessionCard key={session.id} session={session} state="coming-soon" />)}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {completed.length > 0 && (
+          <section className="page-section events-history" id="past-sessions">
+            <div className="page-section-inner">
+              <div className="events-list-head">
+                <div>
+                  <div className="page-kicker events-list-kicker">PAST SESSIONS</div>
+                  <h2 className="section-title">What came before.</h2>
+                </div>
+                <p>Completed conversations remain part of the Valoria professional standard record.</p>
+              </div>
+              <div className="events-grid">
+                {completed.map(session => <SessionCard key={session.id} session={session} state="ended" />)}
+              </div>
+            </div>
+          </section>
+        )}
+
+        <section className="page-section events-replay" id="session-01">
+          <div className="page-section-inner replay-grid">
+            <div>
+              <div className="page-kicker">SESSION 01 · REPLAY</div>
+              <h2 className="section-title">Why being good at your job is no longer <em>enough.</em></h2>
+              <p className="page-sub">The opening Valoria conversation on professional worth, visibility, influence and the infrastructure required to turn capability into recognised opportunity.</p>
+              <a className="btn-gold" href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer">START YOUR VALU INDEX →</a>
+            </div>
+            <div className="replay-video"><iframe src="https://www.youtube.com/embed/B9dD22vTErI" title="Valoria Institute Session 01 replay" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
+          </div>
+        </section>
+      </main>
+      <Footer />
     </>
   )
 }

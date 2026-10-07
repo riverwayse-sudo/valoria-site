@@ -10,6 +10,9 @@
   --valoria-linen: #EDE8DC;
   --valoria-brass: #D4C9A8;
   --valoria-ivory: #FAFAF7;
+  --valoria-gold-deep: #9A7428;
+  --valoria-void: #0F0F1A;
+  --valoria-ink-card: #11111F;
   --dark: var(--valoria-midnight);
   --dark-mid: var(--valoria-slate);
   --dark-card: var(--valoria-parchment);
@@ -19,6 +22,9 @@
   --nav-bg: var(--valoria-midnight);
   --card-color: var(--valoria-gold);
   --btn-radius: 9999px;
+  --vi-card-radius: 22px;
+  --vi-card-radius-sm: 16px;
+  --vi-control-height: 48px;
   --font: 'Raleway', sans-serif;
   --font-display: 'Raleway', sans-serif;
 }
@@ -39,11 +45,14 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif; }
   background: var(--valoria-parchment) !important;
   color: var(--valoria-slate) !important;
   border: 1px solid var(--valoria-brass) !important;
-  border-radius: var(--vi-card-radius, 22px) !important;
-  box-shadow: none !important;
+  border-radius: var(--vi-card-radius) !important;
+  box-shadow: 0 8px 30px rgba(26,26,46,.06) !important;
+  transition: background-color .24s cubic-bezier(.22,1,.36,1), border-color .24s cubic-bezier(.22,1,.36,1), box-shadow .24s cubic-bezier(.22,1,.36,1), transform .24s cubic-bezier(.22,1,.36,1) !important;
 }
 .card:hover, .vi-card:hover, .card-gold:hover, .waitlist-card:hover {
   border-color: var(--valoria-gold) !important;
+  box-shadow: 0 14px 36px rgba(26,26,46,.12) !important;
+  transform: translateY(-2px) !important;
 }
 .vi-card-grid {
   border-radius: var(--vi-card-radius, 22px) !important;
@@ -205,3 +214,11 @@ input, textarea, select { font-family: 'Raleway', sans-serif !important; }
 :focus-visible { outline: 2px solid var(--valoria-gold); outline-offset: 3px; }
 
 @media (max-width: 767px) { .container { padding-left: 24px; padding-right: 24px; } }
+
+
+/* HARD CONTROL + CARD CONSISTENCY — canonical interaction geometry. */
+.card, .vi-card, .card-gold, .waitlist-card { border-radius: var(--vi-card-radius) !important; }
+.btn-gold, .btn-primary, .btn-secondary, .btn-tertiary, .btn-outline, .btn-ghost, .wl-btn, .nav-cta, .valu-btn-gold, .valu-btn-ghost { text-align:center !important; align-items:center !important; justify-content:center !important; border-radius:var(--btn-radius) !important; }
+.ps-card-cta, .live-profile-action { display:inline-flex; align-items:center; justify-content:center; min-height:var(--vi-control-height); border-radius:var(--btn-radius); text-align:center; transition:background-color .24s cubic-bezier(.22,1,.36,1),border-color .24s cubic-bezier(.22,1,.36,1),color .24s cubic-bezier(.22,1,.36,1),transform .24s cubic-bezier(.22,1,.36,1),box-shadow .24s cubic-bezier(.22,1,.36,1); }
+.ps-card-cta:hover, .ps-card-cta:focus-visible, .live-profile-action:hover, .live-profile-action:focus-visible { background:rgba(201,168,76,.12); border-color:var(--valoria-gold); color:var(--valoria-gold); transform:translateY(-2px); }
+@media (hover:none), (pointer:coarse) { .card:hover, .vi-card:hover, .card-gold:hover, .waitlist-card:hover { transform:none !important; } }

@@ -14,24 +14,45 @@ const MILESTONES = [
   { key:'opportunity', title:'Find opportunities', short:'OPPORTUNITY', description:'See opportunities that fit what you do.', href:'/opportunities', icon:'08' },
 ]
 
+const STAGE_ORDER = [
+  'signed_up',
+  'taster_started',
+  'taster_completed',
+  'full_valu_started',
+  'full_valu_completed',
+  'marketplace_profile_created',
+  'profile_incomplete',
+  'profile_complete',
+  'capability_eligibility',
+  'marketplace_enhanced',
+]
+
+function stageAtLeast(stage, target) {
+  return STAGE_ORDER.indexOf(stage) >= STAGE_ORDER.indexOf(target)
+}
+
 function buildCards(state) {
+  const stage = state?.journey?.stage || 'signed_up'
   const completed = {
-    connect: !!state?.connect?.complete,
-    assess: !!state?.assessment?.complete,
-    report: !!state?.report?.complete,
+    connect: true,
+    assess: stageAtLeast(stage, 'full_valu_completed'),
+    report: !!state?.report?.ready,
     profile: !!state?.profile?.complete,
     capability: !!state?.capability?.complete,
     eligibility: !!state?.eligibility?.complete,
-    listed: !!state?.marketplace?.complete,
-    opportunity: !!state?.opportunity?.complete,
+    listed: stage === 'marketplace_enhanced',
+    opportunity: false,
   }
-  const firstOpen = MILESTONES.find(m => !completed[m.key])?.key || 'opportunity'
+
+  const nextKey = state?.next || 'assess'
+
   return MILESTONES.map((m, index) => {
     const complete = completed[m.key]
-    const current = !complete && m.key === firstOpen
+    const current = m.key === nextKey && !complete
     const locked = !complete && !current
     let href = m.href
     let action = complete ? 'VIEW' : current ? 'CONTINUE' : 'LOCKED'
+
     if (m.key === 'assess' && complete) href='/dashboard'
     if (m.key === 'report' && complete) href='/report'
     if (m.key === 'profile' && complete) href='/profile/edit'
@@ -39,6 +60,7 @@ function buildCards(state) {
     if (m.key === 'eligibility' && complete) href='/profile/passport'
     if (m.key === 'listed' && complete) href='/marketplace'
     if (m.key === 'opportunity' && complete) href='/opportunities'
+
     return { ...m, index, complete, current, locked, href, action }
   })
 }
@@ -67,7 +89,7 @@ export default function ValoriaJourneyCards({ compact=false }) {
   const cards = useMemo(() => buildCards(state), [state])
   const current = cards.find(c => c.current) || cards[cards.length - 1]
   const completedCount = cards.filter(c => c.complete).length
-  const progress = Math.round(completedCount / cards.length * 100)
+  const progress = Number(state?.journey?.progressPercent ?? Math.round(completedCount / cards.length * 100))
 
   if (loading || !user) return null
 
@@ -77,11 +99,11 @@ export default function ValoriaJourneyCards({ compact=false }) {
         <div>
           <div className={styles.eyebrow}>YOUR JOURNEY</div>
           <h2>{current?.title || 'You are on your way'}</h2>
-          <p>{current?.description || 'Your next step is ready.'}</p>
+          <p>{state?.journey?.nextAction || current?.description || 'Your next step is ready.'}</p>
         </div>
         <div className={styles.progress}>
-          <strong>{completedCount}<span>/{cards.length}</span></strong>
-          <span>STEPS DONE</span>
+          <strong>{progress}<span>%</span></strong>
+          <span>JOURNEY PROGRESS</span>
         </div>
       </div>
 
@@ -105,7 +127,7 @@ export default function ValoriaJourneyCards({ compact=false }) {
       </div>
 
       <div className={styles.next}>
-        <span><b>YOUR NEXT STEP</b> {current?.title}</span>
+        <span><b>YOUR NEXT STEP</b> {state?.journey?.nextAction || current?.title}</span>
         {current && !current.locked && <Link href={current.href} className={styles.primaryAction}>CONTINUE →</Link>}
       </div>
     </section>

@@ -1,8 +1,7 @@
-function deriveJourneyState({ assessment, profile, capabilities = [], activation, documents = [], opportunity }) {
-  const assessmentScore = Number(assessment?.total_score ?? profile?.valu_index ?? 0)
+function deriveJourneyState({ journey = null, assessment, profile, capabilities = [], activation, documents = [], opportunity }) {
+  const assessmentScore = assessment?.total_score ?? profile?.valu_index ?? null
   const hasAssessment = !!(assessment?.completed_at || profile?.assessment_completed_at || profile?.valu_index != null)
-  const assessmentCurrent = hasAssessment && assessmentScore >= 35 &&
-    (!assessment?.expires_at || new Date(assessment.expires_at).getTime() > Date.now())
+  const assessmentCurrent = hasAssessment && (!assessment?.expires_at || new Date(assessment.expires_at).getTime() > Date.now())
 
   const reportStatus = assessment?.report_status ||
     (assessment?.ai_report ? 'READY' : hasAssessment ? 'PENDING' : 'NOT_STARTED')
@@ -21,7 +20,7 @@ function deriveJourneyState({ assessment, profile, capabilities = [], activation
   if (!profile?.photo_url?.trim()) profileMissing.push('Your profile photo')
   if (!profile?.cv_url?.trim()) profileMissing.push('Your CV')
 
-  const profileReady = profile?.profile_complete === true && profileMissing.length === 0 && assessmentCurrent
+  const profileReady = profile?.profile_complete === true && profileMissing.length === 0
   const activeCapabilities = capabilities.filter(c => c.is_active)
   const eligibleCapabilities = activeCapabilities.filter(c =>
     c.eligible_for_listing || c.eligibility_status === 'eligible' || c.eligibility_status === 'listed'
@@ -35,68 +34,74 @@ function deriveJourneyState({ assessment, profile, capabilities = [], activation
   const capabilitySelected = activeCapabilities.length > 0
   const eligibilityComplete = profileReady && capabilitySelected && eligibleCapabilities.length > 0
   const listed = listedCapabilities.length > 0 && eligibilityComplete
-  const opportunityAccess = listed
+  const opportunityAccess = !!journey?.marketplace_ready || listed
   const opportunityEngaged = !!opportunity
-  const valueActivationReady = !!activation && ['ready', 'activated'].includes(activation.status)
-  const valueActivationComplete = activation?.status === 'activated'
 
-  let next = 'assess'
-  let recoveryReason = null
-  if (!hasAssessment) {
-    next = 'assess'
-    recoveryReason = 'No completed VALU assessment is linked to this account.'
-  } else if (!reportReady) {
-    next = 'report'
-    recoveryReason = 'Your VALU assessment is complete, but the report is not ready yet.'
-  } else if (!valueActivationReady) {
-    next = 'report'
-    recoveryReason = 'Your VALU report is available; activate the value plan to continue.'
-  } else if (!profileReady) {
-    next = 'profile'
-    recoveryReason = profileMissing.length
-      ? `Complete your professional profile: ${profileMissing.join(', ')}.`
-      : 'Your professional profile still needs to be completed against the current VALU state.'
-  } else if (!capabilitySelected) {
-    next = 'capability'
-    recoveryReason = 'Choose at least one active capability/path.'
-  } else if (!eligibilityComplete) {
-    next = 'eligibility'
-    recoveryReason = capabilityMissing.length
-      ? `Complete the outstanding capability requirements: ${capabilityMissing.join(', ')}.`
-      : 'Complete capability eligibility requirements.'
-  } else if (!listed) {
-    next = 'listed'
-    recoveryReason = 'Your capability is eligible but has not completed the marketplace listing transition.'
-  } else {
-    next = 'opportunity'
-    recoveryReason = opportunityEngaged
-      ? 'Your opportunity journey is active; continue with the latest engagement.'
-      : 'You are listed and can now review matched opportunities.'
+  const journeyStage = journey?.journey_stage || (
+    !hasAssessment ? 'signed_up' :
+    profile ? (profileReady ? 'capability_eligibility' : 'profile_incomplete') :
+    'full_valu_completed'
+  )
+
+  const stageNext = {
+    signed_up: 'assess',
+    taster_started: 'assess',
+    taster_completed: 'assess',
+    full_valu_started: 'assess',
+    full_valu_completed: 'profile',
+    marketplace_profile_created: 'profile',
+    profile_incomplete: 'profile',
+    profile_complete: 'capability',
+    capability_eligibility: capabilitySelected && !eligibilityComplete ? 'eligibility' : 'capability',
+    marketplace_enhanced: 'opportunity',
   }
+  const next = stageNext[journeyStage] || 'assess'
+
+  const recoveryReason = journey?.next_action ||
+    ({
+      assess: 'Continue your VALU journey.',
+      profile: 'Complete your professional profile.',
+      capability: 'Add your capability.',
+      eligibility: 'Complete your capability eligibility.',
+      opportunity: 'Explore your Valoria opportunities.',
+    }[next] || 'Continue your Valoria journey.')
 
   return {
+    journey: {
+      stage: journeyStage,
+      progressPercent: Number(journey?.progress_percent ?? 0),
+      stageStartedAt: journey?.stage_started_at || null,
+      nextAction: journey?.next_action || null,
+      lifecycleState: journey?.lifecycle_state || null,
+      stateVersion: Number(journey?.state_version ?? 1),
+    },
     assessment: {
       complete: hasAssessment,
       current: assessmentCurrent,
       reportStatus,
       reportReady,
       reportDelivered,
-      score: assessment?.total_score ?? profile?.valu_index ?? null,
+      score: assessmentScore,
       designation: assessment?.designation || profile?.designation || null,
     },
     report: {
-      complete: reportReady && valueActivationComplete,
+      complete: reportReady && !!activation?.status && activation.status === 'activated',
       ready: reportReady,
       delivered: reportDelivered,
       status: reportStatus,
-      valueActivationReady,
-      valueActivationComplete,
+      valueActivationReady: !!activation && ['ready', 'activated'].includes(activation.status),
+      valueActivationComplete: activation?.status === 'activated',
       activation: activation || null,
     },
     profile: { complete: profileReady, missing: profileMissing },
     capability: { complete: capabilitySelected, capabilities: activeCapabilities, eligible: eligibleCapabilities, missing: capabilityMissing },
     eligibility: { complete: eligibilityComplete, missing: [...new Set([...profileMissing, ...capabilityMissing])], capabilities: eligibleCapabilities },
-    marketplace: { complete: listed, capabilities: listedCapabilities },
+    marketplace: {
+      complete: opportunityAccess,
+      profileCreated: !!profile && hasAssessment,
+      capabilities: listedCapabilities,
+      enhanced: journeyStage === 'marketplace_enhanced',
+    },
     opportunity: { complete: opportunityAccess, access: opportunityAccess, engaged: opportunityEngaged, latest: opportunity || null },
     passport: {
       capabilities: activeCapabilities,
