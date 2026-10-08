@@ -12,7 +12,8 @@ const supabase = createClient(
 )
 
 export default async function ProfilePage({ params, searchParams }) {
-  const { id } = params
+  const { id } = await params
+  const resolvedSearchParams = await searchParams
 
   // Public profile IDs are UUIDs. Prevent reserved/non-profile paths from
   // reaching Supabase as UUID filters (e.g. /profile/applications).
@@ -39,5 +40,5 @@ export default async function ProfilePage({ params, searchParams }) {
     _source: 'real',
   } : null
 
-  return <ProfileClient id={id} searchParams={searchParams} initialProfile={initialProfile} />
+  return <ProfileClient id={id} searchParams={resolvedSearchParams} initialProfile={initialProfile} />
 }
