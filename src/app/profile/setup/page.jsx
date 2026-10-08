@@ -90,7 +90,7 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Up to 3 roles. Helps people understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organisation' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:true })
   if (isCandidate) s.push({ key:'certifications', kind:'text', section:'Expertise', title:'Any certifications or credentials?', sub:'Comma separated.', placeholder:'PMP, Google Analytics, HubSpot Marketing', required:true })
 
-  s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'Profiles with a photo receive significantly more introduction requests.', required:true })
+  s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'Optional. Valoria will show a default professional avatar until you add your own photo.', required:false })
   s.push({ key:'cv_url', kind:'cv', section:'Media', title:'Upload your CV.', sub:'PDF or Word. We use this to auto-summarise your background on your profile.', required:true })
   // Candidates don't get asked for this — video links are a Speaker/
   // Facilitator thing (per the owner's 31 Jul note: "candidates don't get
