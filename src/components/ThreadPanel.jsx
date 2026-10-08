@@ -275,7 +275,7 @@ function MessageView({ thread, currentUserId, onBack, onNewMessage }) {
           overflow: 'hidden',
           flexShrink: 0,
         }}>
-          <ValoriaAvatar src={otherParty?.photo_url} seed={otherParty?.id || otherParty?.professional_id || otherParty?.display_name} alt={otherParty?.display_name ? `${otherParty.display_name}'s profile avatar` : 'Profile avatar'} size={42} />
+          <ValoriaAvatar src={otherParty?.photo_url} seed={otherParty?.id || otherParty?.professional_id || otherParty?.display_name} alt={otherParty?.display_name ? `${otherParty.display_name}'s profile avatar` : 'Profile avatar'} size={32} />
         </div>
         
         <div style={{ flex: 1, minWidth: 0 }}>
