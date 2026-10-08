@@ -166,6 +166,7 @@ export default function ResetPasswordPage() {
                 )}
               </div>
 
+              <p style={S.passwordHint}>{passwordPolicyMessage()}</p>
               {error && <div style={S.errorBox}>{error}</div>}
 
               <button
