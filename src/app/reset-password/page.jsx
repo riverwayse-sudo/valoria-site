@@ -127,8 +127,7 @@ export default function ResetPasswordPage() {
             <p style={S.sub}>Choose a strong password that meets Valoria's security policy.</p>
 
             <form onSubmit={handleReset} style={S.form}>
-              <p style={S.passwordHint}>{passwordPolicyMessage()}</p>
-              <div style={S.field}
+              <div style={S.field}>
                 <label style={S.label}>New Password</label>
                 <input
                   type="password"
