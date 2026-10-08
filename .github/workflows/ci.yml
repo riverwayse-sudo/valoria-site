@@ -22,6 +22,12 @@ jobs:
         run: npm ci
       - name: Run excellence and profile regression guards
         run: npm run excellence:check
+      - name: Lint critical profile routes for undefined identifiers
+        run: >-
+          npx --yes eslint@8.57.1 --no-eslintrc --env browser,node,es2021
+          --parser-options '{"ecmaVersion":"latest","sourceType":"module","ecmaFeatures":{"jsx":true}}'
+          --rule 'no-undef:error'
+          'src/app/profile/[id]/page.jsx' 'src/app/profile/[id]/ProfileClient.jsx'
       - name: Run unit tests
         run: npm test -- --runInBand
         env:
