@@ -226,7 +226,7 @@ export function SessionTimer({ session }) {
   const state = getSessionState(session, now), index = PROFESSIONAL_STANDARD_SERIES.findIndex(item => item.id === session.id), previous = index > 0 ? PROFESSIONAL_STANDARD_SERIES[index - 1] : null
   const target = state === 'locked' && previous ? new Date(previous.end).getTime() : state === 'registration-open' ? new Date(session.start).getTime() : state === 'live' ? new Date(session.end).getTime() : null
   if (state === 'coming-soon') return <div className="session-timer session-timer-open"><span>COMING SOON · DATE TO BE CONFIRMED</span></div>
-  if (state === 'ended') return <div className="session-timer session-timer-ended">SESSION ENDED</div>
+  if (state === 'ended') return <div className="session-timer session-timer-ended">CONVERSATION ENDED</div>
   if (state === 'live') return <div className="session-timer session-timer-live">● LIVE NOW <Countdown target={target} label="ENDS IN" live /></div>
-  return <div className={`session-timer ${state === 'locked' ? 'session-timer-locked' : 'session-timer-open'}`}><Countdown target={target} label={state === 'locked' ? 'REGISTRATION OPENS IN' : 'SESSION STARTS IN'} /></div>
+  return <div className={`session-timer ${state === 'locked' ? 'session-timer-locked' : 'session-timer-open'}`}><Countdown target={target} label={state === 'locked' ? 'REGISTRATION OPENS IN' : 'CONVERSATION STARTS IN'} /></div>
 }
