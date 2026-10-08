@@ -58,7 +58,7 @@ async function sendEmail(row:any, config:any){
       subject:`Your Valoria meeting link — ${config.event_title}`,
       htmlContent:html,
       tags:["valoria","meeting-link","calendar-invite",row.source,config.event_session_id],
-      attachment:[{content:calendarBase64,name:"valoria-strategic-thinking.ics"}]
+      attachment:[{content:calendarBase64,name:`valoria-session-${config.event_session_id}.ics`}]
     })
   })
   const text = await response.text()
@@ -73,10 +73,6 @@ Deno.serve(async(req)=>{
     const sourceFilter=typeof payload?.source==="string" ? payload.source : null
 
     const source=sourceFilter ?? "event_registration"
-    const {data:configs,error:configError}=await db.from("lead_automation_configs").select("*").eq("source",source).eq("enabled",true).not("meeting_link","is",null).limit(1)
-    if(configError) throw configError
-    const config=configs?.[0]
-    if(!config) throw new Error("EVENT_AUTOMATION_NOT_CONFIGURED")
     const {data:rows,error}=await db
       .from("lead_captures")
       .select("*")
@@ -95,6 +91,25 @@ Deno.serve(async(req)=>{
       const attempt=Number(row.automation_attempt_count??0)+1
       await db.from("lead_captures").update({automation_attempt_count:attempt,automation_last_attempt_at:new Date().toISOString()}).eq("id",row.id)
       try{
+        // Event registrations must resolve automation by the registered session.
+        // Never fall back to the first enabled event configuration: that can send
+        // a previous event's meeting details/assets to a new registrant.
+        const configQuery = db.from("lead_automation_configs")
+          .select("*")
+          .eq("source",source)
+          .eq("enabled",true)
+          .not("meeting_link","is",null)
+          .limit(1)
+        const {data:configs,error:configError} = source === "event_registration" && row.event_session_id
+          ? await configQuery.eq("event_session_id",row.event_session_id)
+          : await configQuery
+        if(configError) throw configError
+        const config=configs?.[0]
+        if(!config) throw new Error(
+          source === "event_registration"
+            ? `EVENT_AUTOMATION_NOT_CONFIGURED_FOR_SESSION_${row.event_session_id || "UNKNOWN"}`
+            : "EVENT_AUTOMATION_NOT_CONFIGURED"
+        )
         await sendEmail(row,config)
         await db.from("lead_captures").update({automation_sent:true,automation_sent_at:new Date().toISOString(),automation_last_error:null,automation_next_attempt_at:new Date().toISOString()}).eq("id",row.id)
         sent++
