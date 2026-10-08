@@ -129,7 +129,6 @@ export async function GET(request) {
     if (!profile.display_name) missing.push('your name')
     if (!profile.headline) missing.push('your headline')
     if (!profile.bio) missing.push('your bio')
-    if (!profile.photo_url) missing.push('your profile photo')
     if (!profile.active_tracks?.length) missing.push('your path')
     if (!profile.industry) missing.push('your industry')
     if (!profile.username) missing.push('your username')
