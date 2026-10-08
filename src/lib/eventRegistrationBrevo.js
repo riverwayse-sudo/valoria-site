@@ -18,7 +18,7 @@ export async function syncEventRegistrationToBrevo({ email, fullName, role, orga
       ROLE: role || '',
       ORGANISATION: organisation || '',
       WHATSAPP: whatsapp || '',
-      EVENT_NAME: `The Professional Standard Series — Session ${session.id}`,
+      EVENT_NAME: `The Professional Standard Series — ${session.title}`,
       EVENT_SESSION: session.id,
       EVENT_TITLE: session.title,
       EVENT_DATE: session.start,
@@ -47,9 +47,9 @@ export async function syncEventRegistrationToBrevo({ email, fullName, role, orga
       sender: { name: FROM_NAME, email: FROM_EMAIL },
       to: [{ email, name: fullNameSafe }],
       replyTo: { email: FROM_EMAIL, name: FROM_NAME },
-      subject: `You're registered for Session ${session.id}, ${firstName || 'there'}.`,
-      htmlContent: `<div style="font-family:Arial,sans-serif;background:#0F0F1A;color:#F7F4EE;padding:40px"><div style="max-width:560px;margin:auto;background:#1A1A2E;border:1px solid rgba(201,168,76,.25);padding:40px"><p style="color:#C9A84C;letter-spacing:.16em;font-size:11px;font-weight:700">VALORIA INSTITUTE</p><h1 style="font-weight:400">You're registered.</h1><p>Hi ${first},</p><p>Your registration for <strong>Session ${session.id}: ${title}</strong> is confirmed.</p><p style="color:#C9A84C">Virtual · 90 minutes</p><p>We'll send the access details and important updates to this email address.</p><p style="margin-top:28px"><a href="${journeyUrl || '#'}" style="display:inline-block;background:#C9A84C;color:#1A1A2E;padding:14px 20px;text-decoration:none;font-weight:700">CONTINUE YOUR VALORIA JOURNEY →</a></p></div></div>`,
-      tags: ['professional-standard-series', `session-${session.id}`],
+      subject: `You're registered for ${firstName || 'there'}.`,
+      htmlContent: `<div style="font-family:Arial,sans-serif;background:#0F0F1A;color:#F7F4EE;padding:40px"><div style="max-width:560px;margin:auto;background:#1A1A2E;border:1px solid rgba(201,168,76,.25);padding:40px"><p style="color:#C9A84C;letter-spacing:.16em;font-size:11px;font-weight:700">VALORIA INSTITUTE</p><h1 style="font-weight:400">You're registered.</h1><p>Hi ${first},</p><p>Your registration for <strong>${title}</strong> is confirmed.</p><p style="color:#C9A84C">Virtual · 90 minutes</p><p>We'll send the access details and important updates to this email address.</p><p style="margin-top:28px"><a href="${journeyUrl || '#'}" style="display:inline-block;background:#C9A84C;color:#1A1A2E;padding:14px 20px;text-decoration:none;font-weight:700">CONTINUE YOUR VALORIA JOURNEY →</a></p></div></div>`,
+      tags: ['professional-standard-series', 'event-registration'],
     }),
   })
 
