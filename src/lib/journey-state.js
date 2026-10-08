@@ -17,7 +17,6 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
   if (!profile?.phone?.trim()) profileMissing.push('Your phone number')
   if (!profile?.location?.trim()) profileMissing.push('Your location')
   if (!Array.isArray(profile?.languages) || profile.languages.length === 0) profileMissing.push('At least one language')
-  if (!profile?.photo_url?.trim()) profileMissing.push('Your profile photo')
   if (!profile?.cv_url?.trim()) profileMissing.push('Your CV')
 
   const profileReady = profile?.profile_complete === true && profileMissing.length === 0
