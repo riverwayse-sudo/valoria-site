@@ -6,6 +6,7 @@ const GOLD='#C9A84C', DARK='#0F0F1A', PARCH='#F7F4EE'
 export default function ValuCompletionNudge(){
   const [show,setShow]=useState(false)
   const [assessed,setAssessed]=useState(false)
+  const [assessmentStarted,setAssessmentStarted]=useState(false)
 
   useEffect(()=>{
     let active=true
@@ -17,14 +18,17 @@ export default function ValuCompletionNudge(){
       const {data:{user}}=await supabase.auth.getUser()
       if(!user||!active)return
 
-      const [{data:profile},{data:assessment}]=await Promise.all([
+      const [{data:profile},{data:assessment},{data:latestSession}]=await Promise.all([
         supabase.from('professional_profiles').select('profile_complete').eq('id',user.id).maybeSingle(),
-        supabase.from('valu_assessments').select('id,total_score,completed_at').eq('user_id',user.id).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle()
+        supabase.from('valu_assessments').select('id,total_score,completed_at').eq('user_id',user.id).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle(),
+        supabase.from('assessment_sessions').select('id,completed_at,updated_at').eq('user_id',user.id).order('updated_at',{ascending:false}).limit(1).maybeSingle()
       ])
 
       if(!profile||profile.profile_complete)return
       const fullAssessmentComplete=!!assessment?.completed_at && Number(assessment?.total_score||0)>=35
       if(active){
+        const started = !!latestSession?.id && !latestSession?.completed_at
+        setAssessmentStarted(started)
         setAssessed(fullAssessmentComplete)
         setShow(true)
       }
@@ -43,16 +47,18 @@ export default function ValuCompletionNudge(){
   return <div style={S.overlay} role="dialog" aria-modal="true" aria-label={assessed?'Your Valoria marketplace profile':'Complete your professional profile'}>
     <div style={S.card}>
       <button onClick={dismiss} aria-label="Close" style={S.close}>×</button>
-      <div style={S.eyebrow}>{assessed?'VALU ASSESSMENT COMPLETE':'YOUR PROFESSIONAL PROFILE'}</div>
+      <div style={S.eyebrow}>{assessed?'VALU ASSESSMENT COMPLETE':assessmentStarted?'ASSESSMENT IN PROGRESS':'YOUR NEXT STEP'}</div>
       <h2 style={S.title}>
-        {assessed?'You are now discoverable.':'Your VALU journey is underway.'}
+        {assessed?'You are now discoverable.':assessmentStarted?'Continue your VALU assessment.':'Start your VALU journey.'}
       </h2>
       <p style={S.copy}>
         {assessed
-          ? 'Your professional presence is already in the Valoria marketplace. Complete your profile to unlock enhanced marketplace access and give employers and opportunity partners more context.'
-          : 'Complete your full VALU assessment and professional profile to establish your professional presence in the Valoria ecosystem.'}
+          ? 'Your professional presence is already in the Valoria marketplace. Complete your profile to add more context and unlock enhanced marketplace access.'
+          : assessmentStarted
+            ? 'You have already started VALU. Continue from where you left off; your progress is saved.'
+            : 'Start your VALU assessment to understand your professional signal and take the next step in your Valoria journey.'}
       </p>
-      <a href="/profile/setup" style={S.button}>COMPLETE MY PROFILE →</a>
+      <a href={assessed?"/profile/setup":"/valu/start"} style={S.button}>{assessed?"COMPLETE MY PROFILE":"CONTINUE VALU"} →</a>
       <button onClick={dismiss} style={S.later}>Remind me later</button>
     </div>
   </div>
