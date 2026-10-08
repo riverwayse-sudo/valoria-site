@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "test": "jest",
-    "design:check": "node scripts/design-check.js"
+    "design:check": "node scripts/design-check.js",
+    "excellence:check": "node scripts/excellence-check.js"
   },
   "dependencies": {
     "@next/third-parties": "^14.2.35",
