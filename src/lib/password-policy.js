@@ -1,4 +1,4 @@
-export const PASSWORD_POLICY = Object.freeze({
+const PASSWORD_POLICY = Object.freeze({
   minLength: 12,
   requiresUppercase: true,
   requiresLowercase: true,
@@ -12,7 +12,7 @@ const COMMON_PASSWORDS = new Set([
   'admin123!', 'letmein123!', 'changeme123!',
 ])
 
-export function validatePassword(password = '') {
+function validatePassword(password = '') {
   const value = String(password)
   const errors = []
 
@@ -38,6 +38,8 @@ export function validatePassword(password = '') {
   return { valid: errors.length === 0, errors }
 }
 
-export function passwordPolicyMessage() {
+function passwordPolicyMessage() {
   return 'Use at least 12 characters with uppercase, lowercase, a number, and a symbol. Avoid common passwords.'
 }
+
+module.exports = { PASSWORD_POLICY, validatePassword, passwordPolicyMessage }
