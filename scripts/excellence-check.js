@@ -33,6 +33,52 @@ for (const dir of sourceRoots) {
   }
 }
 
+// Runtime regression guards for the public profile route. Next's production
+// build does not reliably catch unresolved identifiers in client components,
+// so keep these critical route invariants explicit and run them in CI.
+const profileRoutePath = path.join(root, 'src/app/profile/[id]/page.jsx');
+const profileClientPath = path.join(root, 'src/app/profile/[id]/ProfileClient.jsx');
+if (!fs.existsSync(profileRoutePath)) {
+  violations.push('public profile route missing: src/app/profile/[id]/page.jsx');
+}
+if (!fs.existsSync(profileClientPath)) {
+  violations.push('public profile client missing: src/app/profile/[id]/ProfileClient.jsx');
+}
+if (fs.existsSync(profileRoutePath)) {
+  const route = fs.readFileSync(profileRoutePath, 'utf8');
+  if (!/const\s*\{\s*id\s*\}\s*=\s*await\s+params\b/.test(route)) {
+    violations.push('public profile route must await Next.js 15 async params before reading id');
+  }
+  if (!/const\s+resolvedSearchParams\s*=\s*await\s+searchParams\b/.test(route)) {
+    violations.push('public profile route must await Next.js 15 async searchParams');
+  }
+  if (!/\.eq\(\s*['"]visibility['"]\s*,\s*['"]public['"]\s*\)/.test(route) ||
+      !/\.eq\(\s*['"]listing_status['"]\s*,\s*['"]listed['"]\s*\)/.test(route)) {
+    violations.push('public profile route must enforce public visibility and listed status');
+  }
+  if (/\.eq\(\s*['"]profile_complete['"]/.test(route)) {
+    violations.push('public profile route must not confuse profile completion with public listing eligibility');
+  }
+  if (!/return\s*<ProfileClient\b/.test(route) || !/initialProfile=\{initialProfile\}/.test(route)) {
+    violations.push('public profile route must pass its server-fetched profile into ProfileClient');
+  }
+}
+if (fs.existsSync(profileClientPath)) {
+  const client = fs.readFileSync(profileClientPath, 'utf8');
+  // Helpers invoked by the profile client must remain declared in this module.
+  // This catches the exact production crash: getAvatarLetters is not defined.
+  for (const helper of ['getInitials', 'getAvatarLetters', 'getYouTubeId', 'rankedClusterStrengths']) {
+    const invoked = new RegExp('\\b' + helper + '\\s*\\(').test(client);
+    const declared = new RegExp('function\\s+' + helper + '\\s*\\(').test(client);
+    if (invoked && !declared) violations.push('ProfileClient references missing helper: ' + helper);
+  }
+  for (const component of ['PrimeRadarChart', 'Section']) {
+    if (!new RegExp('function\\s+' + component + '\\s*\\(').test(client)) {
+      violations.push('ProfileClient component/helper missing: ' + component);
+    }
+  }
+}
+
 const pkg = JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
 if (!pkg.scripts?.['design:check']) violations.push('package.json: design:check gate missing');
 if (!fs.existsSync(path.join(root, 'src/lib/password-policy.js'))) violations.push('authentication control missing: src/lib/password-policy.js');
