@@ -21,13 +21,13 @@ export default function EventPoster({ session }) {
         <span className="poster-brand">VALORIA<br /><small>INSTITUTE</small></span>
       </div>
       <div className="poster-rule" />
-      <div className="poster-session">SESSION {session.id} <span>·</span> {session.cluster}</div>
+      <div className="poster-session">{session.cluster}</div>
       <div className="poster-main">
         <div className="poster-title">
           <h3>{lead}{titleParts.length > 1 && ':'}</h3>
           {rest && <p>{rest}</p>}
         </div>
-        <div className="poster-mark" aria-hidden="true"><span>{session.id}</span><i /></div>
+        <div className="poster-mark" aria-hidden="true"><i /></div>
       </div>
       <div className="poster-bottom">
         <div className="poster-outcomes">
