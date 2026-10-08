@@ -14,6 +14,12 @@ function getInitials(name) {
   if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
   return words.slice(0, 3).map(w => w[0].toUpperCase()).join('.') + '.'
 }
+function getAvatarLetters(name) {
+  if (!name) return '?'
+  const words = name.trim().split(/\s+/).filter(Boolean)
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
+  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
+}
 function getYouTubeId(url) {
   if (!url) return null
   const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
