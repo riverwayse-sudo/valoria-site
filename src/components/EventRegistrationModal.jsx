@@ -119,9 +119,7 @@ export default function EventRegistrationModal({ session, onClose }) {
         .event-modal-event-panel:after{content:'';position:absolute;width:320px;height:320px;border:1px solid rgba(201,168,76,.15);border-radius:50%;right:-190px;bottom:-150px;box-shadow:0 0 0 70px rgba(201,168,76,.025),0 0 0 140px rgba(201,168,76,.018);pointer-events:none}
         .event-modal-panel-content{position:relative;z-index:1}
         .event-modal-kicker{font-size:9px;font-weight:800;letter-spacing:.2em;color:rgba(201,168,76,.8);text-transform:uppercase;margin-bottom:22px}
-        .event-modal-session-no{display:flex;align-items:center;gap:9px;font-size:9px;font-weight:800;letter-spacing:.16em;color:rgba(247,244,238,.42);text-transform:uppercase;margin-bottom:18px}
-        .event-modal-session-no:before{content:'';width:24px;height:1px;background:rgba(201,168,76,.6)}
-        .event-modal-event-panel h2{font-family:var(--font);font-size:clamp(30px,4vw,48px);font-weight:300;line-height:1.06;letter-spacing:-.025em;margin:0 0 20px;color:var(--parchment)}
+                .event-modal-event-panel h2{font-family:var(--font);font-size:clamp(30px,4vw,48px);font-weight:300;line-height:1.06;letter-spacing:-.025em;margin:0 0 20px;color:var(--parchment)}
         .event-modal-event-panel h2 em{font-style:italic;color:var(--gold);font-weight:300}
         .event-modal-description{font-size:13px;font-weight:300;line-height:1.75;color:rgba(247,244,238,.56);margin:0;max-width:430px}
         .event-modal-event-meta{display:grid;gap:11px;margin-top:28px;padding-top:22px;border-top:1px solid rgba(201,168,76,.14)}
@@ -179,7 +177,7 @@ export default function EventRegistrationModal({ session, onClose }) {
           <section className="event-modal-event-panel">
             <div className="event-modal-panel-content">
               <div className="event-modal-kicker">THE PROFESSIONAL STANDARD SERIES</div>
-              <div className="event-modal-session-no">SESSION {session.id} · {session.cluster}</div>
+              <div className="event-modal-kicker">{session.cluster}</div>
               <h2 id="event-modal-title">{session.title}</h2>
               <p id="event-modal-description" className="event-modal-description">{session.description}</p>
               <div className="event-modal-event-meta">
@@ -188,7 +186,7 @@ export default function EventRegistrationModal({ session, onClose }) {
               </div>
               {session.speaker && <div className="event-modal-speaker">Featuring<strong>{session.speaker}</strong></div>}
             </div>
-            {!isEnded && <Countdown target={target} label={isLive ? 'SESSION ENDS IN' : 'SESSION STARTS IN'} live={isLive} />}
+            {!isEnded && <Countdown target={target} label={isLive ? 'CONVERSATION ENDS IN' : 'CONVERSATION STARTS IN'} live={isLive} />}
           </section>
 
           <section className="event-modal-form-panel">
