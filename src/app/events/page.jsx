@@ -54,7 +54,7 @@ export default function EventsPage() {
           <div className="page-hero-inner">
             <div className="page-kicker">VALORIA INSTITUTE · EVENTS</div>
             <h1 className="page-title">Conversations that shape<br /><em>professional standard.</em></h1>
-            <p className="page-sub">Live sessions, recorded conversations and practical ideas for professionals building capability, influence and opportunity.</p>
+            <p className="page-sub">Live conversations, recorded replays and practical ideas for professionals building capability, influence and opportunity.</p>
           </div>
         </section>
 
@@ -62,7 +62,7 @@ export default function EventsPage() {
           <div className="page-section-inner">
             <div className="events-list-head">
               <div>
-                <div className="page-kicker events-list-kicker">NEXT SESSION</div>
+                <div className="page-kicker events-list-kicker">NEXT CONVERSATION</div>
                 <h2 className="section-title">{upcoming.length ? 'What is next.' : 'The next conversation is coming.'}</h2>
               </div>
               <p>Focused conversations built around the capabilities that distinguish professional value.</p>
@@ -75,7 +75,7 @@ export default function EventsPage() {
             ) : (
               <div className="events-empty-state">
                 <span className="page-kicker">STAY WITH THE SERIES</span>
-                <h3>The next session will be announced here.</h3>
+                <h3>The next conversation will be announced here.</h3>
                 <p>Valoria conversations move through the Professional Standard Series. Return here for the next confirmed conversation.</p>
               </div>
             )}
@@ -87,7 +87,7 @@ export default function EventsPage() {
                     <div className="page-kicker events-list-kicker">LATER IN THE SERIES</div>
                     <h2 className="section-title">Coming soon.</h2>
                   </div>
-                  <p>Future sessions appear here only after their dates are confirmed.</p>
+                  <p>Future conversations appear here only after their dates are confirmed.</p>
                 </div>
                 <div className="events-grid">
                   {comingSoon.map(session => <SessionCard key={session.id} session={session} state="coming-soon" />)}
