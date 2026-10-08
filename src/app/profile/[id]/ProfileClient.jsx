@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import EnquiryForm from '@/components/EnquiryForm'
+import ValoriaAvatar from '@/components/ValoriaAvatar'
 
 // ─── helpers ─────────────────────────────────────────────
 function getInitials(name) {
@@ -12,12 +13,6 @@ function getInitials(name) {
   const words = name.trim().split(/\s+/).filter(Boolean)
   if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
   return words.slice(0, 3).map(w => w[0].toUpperCase()).join('.') + '.'
-}
-function getAvatarLetters(name) {
-  if (!name) return '?'
-  const words = name.trim().split(/\s+/).filter(Boolean)
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
-  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
 }
 function getYouTubeId(url) {
   if (!url) return null
@@ -128,7 +123,6 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
   const [loading, setLoading]     = useState(!initialProfile)
   const [notFound, setNotFound]   = useState(false)
   const [activeVideo, setActiveVideo] = useState(null)
-  const [avatarError, setAvatarError] = useState(false)
   const [copied, setCopied] = useState(false)
   const [currentUser, setCurrentUser] = useState(null)
   const [certificates, setCertificates] = useState([])
@@ -334,19 +328,9 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
             {/* Avatar — static ring, no longer spins the photo */}
             <div style={{ width:'148px', height:'148px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
               <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
-                <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: (p.photo_url && !avatarError) ? undefined : `linear-gradient(145deg,${MID},${DARK})`, overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'36px', fontWeight:700, color: GOLD, letterSpacing:'.04em' }}>
-                  {p.photo_url && !avatarError
-                    ? <img
-                        src={p.photo_url}
-                        alt={p.display_name ? `${p.display_name}'s photo` : 'Profile photo'}
-                        loading="lazy"
-                        decoding="async"
-                        onError={() => setAvatarError(true)}
-                        style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center' }}
-                      />
-                    : avatarLetters}
-                </div>
-              </div>
+                <div style={{ width:'100%', height:'100%', borderRadius:'50%', overflow:'hidden' }}>
+                  <ValoriaAvatar src={p.photo_url} seed={p.id || p.atb_id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={136} />
+                </div>             </div>
             </div>
 
             {/* ID block */}
