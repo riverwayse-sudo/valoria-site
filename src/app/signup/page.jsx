@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
+import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/password-policy'
 
 const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
@@ -47,6 +48,11 @@ export default function SignupPage() {
     e.preventDefault()
     if (form.password !== form.confirmPassword) {
       setError("Passwords don't match — please check and try again.")
+      return
+    }
+    const passwordCheck = validatePassword(form.password)
+    if (!passwordCheck.valid) {
+      setError(passwordCheck.errors.join(' '))
       return
     }
     setLoading(true)
@@ -193,7 +199,7 @@ export default function SignupPage() {
                 { key: 'name', label: 'Full Name', type: 'text', placeholder: 'Your full name' },
                 { key: 'company', label: userType === 'organiser' ? 'Organisation / Event Company' : 'Company Name', type: 'text', placeholder: userType === 'organiser' ? 'e.g. Lagos Event Group' : 'e.g. Zenith Capital Ltd' },
                 { key: 'email', label: 'Work Email Address', type: 'email', placeholder: 'you@company.com' },
-                { key: 'password', label: 'Password', type: 'password', placeholder: 'Minimum 8 characters' },
+                { key: 'password', label: 'Password', type: 'password', placeholder: `Minimum ${PASSWORD_POLICY.minLength} characters` },
                 { key: 'confirmPassword', label: 'Confirm Password', type: 'password', placeholder: 'Re-enter your password' },
               ].map(field => (
                 <div key={field.key} style={S.field}>
@@ -204,7 +210,7 @@ export default function SignupPage() {
                     value={form[field.key]}
                     onChange={e => setForm({ ...form, [field.key]: e.target.value })}
                     required
-                    minLength={field.key === 'password' ? 8 : undefined}
+                    minLength={field.key === 'password' ? PASSWORD_POLICY.minLength : undefined}
                     style={{
                       ...S.input,
                       borderColor: field.key === 'confirmPassword' && form.confirmPassword
@@ -218,6 +224,7 @@ export default function SignupPage() {
               ))}
 
               {error && <div style={S.errorBox}>{error}</div>}
+              <p style={S.passwordHint}>{passwordPolicyMessage()}</p>
 
               <button type="submit" disabled={loading}
                 style={{ ...S.btnGold, opacity: loading ? 0.7 : 1, border: 'none', cursor: loading ? 'default' : 'pointer' }}>
@@ -265,6 +272,7 @@ const S = {
   input: { padding: '12px 14px', background: 'rgba(255,255,255,.04)', border: '1px solid', borderRadius: '6px', color: PARCHMENT, fontSize: '14px', fontFamily: "'Raleway',sans-serif", outline: 'none', width: '100%', boxSizing: 'border-box' },
   btnGold: { display: 'block', width: '100%', padding: '16px', background: GOLD, color: MIDNIGHT, fontSize: '12px', fontWeight: 700, letterSpacing: '.14em', borderRadius: '999px', textAlign: 'center', textDecoration: 'none', fontFamily: "'Raleway',sans-serif", marginTop: '8px', cursor: 'pointer' },
   errorBox: { padding: '12px 14px', background: 'rgba(216,90,48,.12)', border: '1px solid rgba(216,90,48,.3)', borderRadius: '6px', fontSize: '13px', color: '#F09595' },
+  passwordHint: { fontSize: '11px', color: 'rgba(247,244,238,.32)', lineHeight: 1.5, margin: '-8px 0 0' },
   terms: { fontSize: '12px', color: 'rgba(247,244,238,.35)', textAlign: 'center', lineHeight: 1.6 },
   loginLink: { marginTop: '24px', fontSize: '13px', color: 'rgba(247,244,238,.4)', textAlign: 'center' },
 }
