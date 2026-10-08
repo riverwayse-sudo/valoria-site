@@ -17,7 +17,7 @@ export const NAVIGATION = {
         {
           label: 'Connect',
           items: [
-            { label: 'Events', href: '/events', description: 'Join Valoria conversations and sessions.' },
+            { label: 'Events', href: '/events', description: 'Join Valoria conversations and events.' },
             { label: 'Insights', href: '/insights', description: 'Ideas for the modern professional.' },
             { label: 'Contact', href: '/contact-us', description: 'Speak with the Valoria team.' },
           ],
