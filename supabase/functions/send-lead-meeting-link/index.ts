@@ -26,9 +26,9 @@ async function sendEmail(row:any, config:any){
   const end=new Date(config.event_end)
   const icsDate=(d)=>d.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z")
   const uid="valoria-"+config.event_session_id+"-"+String(row.email).trim().toLowerCase().replace(/[^a-z0-9]/g,"")
-  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Valoria Institute//Events//EN","CALSCALE:GREGORIAN","METHOD:PUBLISH","BEGIN:VEVENT","UID:"+uid,"DTSTAMP:"+icsDate(new Date()),"DTSTART:"+icsDate(start),"DTEND:"+icsDate(end),"SUMMARY:"+config.event_title,"DESCRIPTION:Join the Valoria Institute session: "+config.meeting_link,"LOCATION:"+config.meeting_link,"STATUS:CONFIRMED","END:VEVENT","END:VCALENDAR"].join("\r\n")
+  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Valoria Institute//Events//EN","CALSCALE:GREGORIAN","METHOD:PUBLISH","BEGIN:VEVENT","UID:"+uid,"DTSTAMP:"+icsDate(new Date()),"DTSTART:"+icsDate(start),"DTEND:"+icsDate(end),"SUMMARY:"+config.event_title,"DESCRIPTION:Join the Valoria Institute conversation: "+config.meeting_link,"LOCATION:"+config.meeting_link,"STATUS:CONFIRMED","END:VEVENT","END:VCALENDAR"].join("\r\n")
   const calendarBase64=btoa(unescape(encodeURIComponent(ics)))
-  const googleCalendarUrl="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(config.event_title)+"&dates="+icsDate(start)+"/"+icsDate(end)+"&details="+encodeURIComponent("Join the session: "+config.meeting_link)+"&location="+encodeURIComponent(config.meeting_link)
+  const googleCalendarUrl="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(config.event_title)+"&dates="+icsDate(start)+"/"+icsDate(end)+"&details="+encodeURIComponent("Join the conversation: "+config.meeting_link)+"&location="+encodeURIComponent(config.meeting_link)
   const html = `<div style="margin:0;padding:40px 20px;background:#1A1A2E;font-family:Arial,sans-serif;color:#F7F4EE">
     <div style="max-width:560px;margin:0 auto;background:#1A1A2E;border:1px solid rgba(201,168,76,.25);padding:40px">
       <div style="font-size:11px;font-weight:700;letter-spacing:.18em;color:#C9A84C">VALORIA INSTITUTE</div>
@@ -36,15 +36,15 @@ async function sendEmail(row:any, config:any){
       <p style="font-size:14px;line-height:1.8;color:rgba(247,244,238,.68)">Hi ${firstName},</p>
       <p style="font-size:14px;line-height:1.8;color:rgba(247,244,238,.68)">You're registered for <strong style="color:#F7F4EE">${title}</strong>.</p>
       <div style="margin:24px 0;padding:18px;border:1px solid rgba(201,168,76,.18);background:rgba(201,168,76,.04)">
-        <div style="font-size:10px;letter-spacing:.15em;color:rgba(201,168,76,.7);font-weight:700">SESSION</div>
+        <div style="font-size:10px;letter-spacing:.15em;color:rgba(201,168,76,.7);font-weight:700">EVENT</div>
         <div style="font-size:15px;margin-top:8px;color:#F7F4EE">${date}</div>
         <div style="font-size:15px;margin-top:4px;color:#F7F4EE">${time} WAT</div>
       </div>
       <p style="text-align:center;margin:30px 0">
-        <a href="${meeting}" style="display:inline-block;background:#C9A84C;color:#1A1A2E;padding:15px 28px;text-decoration:none;font-weight:700;letter-spacing:.08em;font-size:12px">JOIN THE SESSION →</a>
+        <a href="${meeting}" style="display:inline-block;background:#C9A84C;color:#1A1A2E;padding:15px 28px;text-decoration:none;font-weight:700;letter-spacing:.08em;font-size:12px">JOIN THE CONVERSATION →</a>
       </p>
       <p style="text-align:center;margin:10px 0 24px"><a href="${googleCalendarUrl}" style="display:inline-block;border:1px solid #C9A84C;color:#C9A84C;padding:12px 20px;text-decoration:none;font-weight:700;font-size:11px;letter-spacing:.06em">ADD TO GOOGLE CALENDAR</a></p>
-      <p style="font-size:11px;line-height:1.7;color:rgba(247,244,238,.4)">A calendar invitation is attached to this email. Save it to your calendar so you have the session time and meeting link available.<br/><br/>We look forward to seeing you.</p>
+      <p style="font-size:11px;line-height:1.7;color:rgba(247,244,238,.4)">A calendar invitation is attached to this email. Save it to your calendar so you have the event time and meeting link available.<br/><br/>We look forward to seeing you.</p>
     </div>
   </div>`
 
@@ -58,7 +58,7 @@ async function sendEmail(row:any, config:any){
       subject:`Your Valoria meeting link — ${config.event_title}`,
       htmlContent:html,
       tags:["valoria","meeting-link","calendar-invite",row.source,config.event_session_id],
-      attachment:[{content:calendarBase64,name:`valoria-session-${config.event_session_id}.ics`}]
+      attachment:[{content:calendarBase64,name:`valoria-event-${config.event_session_id}.ics`}]
     })
   })
   const text = await response.text()
