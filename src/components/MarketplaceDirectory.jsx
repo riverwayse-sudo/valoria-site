@@ -5,6 +5,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { useMemo, useState } from 'react'
 import styles from './MarketplaceDirectory.module.css'
+import ValoriaAvatar from '@/components/ValoriaAvatar'
 
 const TRACKS = [
   ['all','All', '/marketplace'],
@@ -78,7 +79,6 @@ function labelValues(value) {
 }
 
 function Profile({p}) {
-  const initials = displayText(p.display_initials) || 'V'
   const caps=[...(p.capabilities||p.tracks||[p.track])].map(normalize).filter(Boolean)
   const capabilityLabels = [...new Set(caps.map(c => c === 'candidate' ? 'TALENT' : c === 'speaker' ? 'SPEAKER' : c === 'facilitator' ? 'FACILITATOR' : c.toUpperCase()))]
   const skillTags=labelValues(p.skills)
@@ -88,7 +88,7 @@ function Profile({p}) {
   const bio=displayText(p.bio)
   return <article className={styles.card}>
     <div className={styles.identity}>
-      <div className={styles.avatar}>{p.photo_url ? <img src={p.photo_url} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" /> : initials}</div>
+      <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
       <div>
         <small>PROFILE ID</small>
         <strong>{displayText(p.atb_id || p.professional_id || 'UNASSIGNED')}</strong>
