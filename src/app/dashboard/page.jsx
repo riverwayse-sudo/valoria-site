@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
+import ValoriaAvatar from '@/components/ValoriaAvatar'
 
 // ─── brand tokens — same system as the public profile page ─────────────────
 const GOLD    = '#C9A84C'
@@ -65,13 +66,13 @@ function completenessFields(tracks) {
     facilitator: ['programme_types', 'fee_range'],
     candidate:   ['preferred_industry', 'industry', 'notice_period'],
   }
-  const base = ['display_name', 'headline', 'bio', 'photo_url', 'username', 'phone']
+  const base = ['display_name', 'headline', 'bio', 'username', 'phone']
   const trackFields = (tracks && tracks.length ? tracks : ['candidate'])
     .flatMap(t => sets[t] || sets.candidate)
   return [...new Set([...base, ...trackFields])]
 }
 const COMPLETENESS_LABELS = {
-  display_name: 'Name', headline: 'Headline', bio: 'Bio', photo_url: 'Profile photo',
+  display_name: 'Name', headline: 'Headline', bio: 'Bio',
   username: 'Username', phone: 'Phone number', topics: 'Topics', tier: 'Speaking tier',
   fee_range: 'Fee range', programme_types: 'Programme types', preferred_industry: 'Preferred industry',
   industry: 'Industry', notice_period: 'Notice period',
@@ -257,7 +258,6 @@ export default function DashboardPage() {
     ? `LISTED IN ${listedCapabilities.length} ${listedCapabilities.length === 1 ? 'PATH' : 'PATHS'}`
     : 'PROFILE IN DEVELOPMENT'
   const initials    = getInitials(p.display_name)
-  const avatarLetters = getAvatarLetters(p.display_name)
   const firstName   = p.display_name ? p.display_name.split(' ')[0] : 'there'
   const atbId       = p.atb_id || null
   // Facilitator and speaker both quote a fee_range; candidate quotes salary.
@@ -349,12 +349,9 @@ export default function DashboardPage() {
             {isSupply && (
               <div style={{ width:'132px', height:'132px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
                 <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
-                  <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: (p.photo_url && !avatarError) ? undefined : `linear-gradient(145deg,${MID},${DARK})`, overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'32px', fontWeight:700, color: GOLD, letterSpacing:'.04em' }}>
-                    {p.photo_url && !avatarError
-                      ? <img src={p.photo_url} alt={p.display_name ? `${p.display_name}'s photo` : 'Profile photo'} loading="lazy" decoding="async" onError={() => setAvatarError(true)} style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center' }} />
-                      : avatarLetters}
-                  </div>
-                </div>
+                  <div style={{ width:'100%', height:'100%', borderRadius:'50%', overflow:'hidden' }}>
+                    <ValoriaAvatar src={p.photo_url} seed={p.id || user?.id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={132} />
+                  </div>          </div>
               </div>
             )}
 
