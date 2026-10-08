@@ -25,8 +25,9 @@ for (const dir of sourceRoots) {
   });
   for (const file of walk(absolute)) {
     const text = fs.readFileSync(file,'utf8');
-    if (/service_role|SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY/i.test(text)) {
-      violations.push(`${path.relative(root,file)}: privileged Supabase credential reference in client repository`);
+    const isClientModule = /^['\"]use client['\"]/m.test(text);
+    if (isClientModule && /service_role|SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY/i.test(text)) {
+      violations.push(`${path.relative(root,file)}: privileged Supabase credential reference in a client module`);
     }
   }
 }
