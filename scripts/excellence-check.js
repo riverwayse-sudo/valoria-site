@@ -8,6 +8,7 @@ const requiredDocs = [
   'MOTION_CONSTITUTION.md',
   'docs/FINAL_QA_GATE.md',
   'docs/PRODUCTION_PARITY_GATE.md',
+  'docs/AUTHENTICATION_SECURITY.md',
 ];
 const violations = [];
 
@@ -34,6 +35,7 @@ for (const dir of sourceRoots) {
 
 const pkg = JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
 if (!pkg.scripts?.['design:check']) violations.push('package.json: design:check gate missing');
+if (!fs.existsSync(path.join(root, 'src/lib/password-policy.js'))) violations.push('authentication control missing: src/lib/password-policy.js');
 if (!pkg.scripts?.test) violations.push('package.json: test gate missing');
 
 if (violations.length) {

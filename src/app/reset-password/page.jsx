@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/password-policy'
 
 const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
@@ -66,8 +67,9 @@ export default function ResetPasswordPage() {
       setError("Passwords don't match — please check and try again.")
       return
     }
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters.')
+    const passwordCheck = validatePassword(password)
+    if (!passwordCheck.valid) {
+      setError(passwordCheck.errors.join(' '))
       return
     }
     setLoading(true)
@@ -122,18 +124,18 @@ export default function ResetPasswordPage() {
             <h1 style={S.title}>
               Set your<br /><em style={{ color: GOLD, fontStyle: 'italic' }}>new password.</em>
             </h1>
-            <p style={S.sub}>Choose a strong password of at least 8 characters.</p>
+            <p style={S.sub}>Choose a strong password that meets Valoria's security policy.</p>
 
             <form onSubmit={handleReset} style={S.form}>
               <div style={S.field}>
                 <label style={S.label}>New Password</label>
                 <input
                   type="password"
-                  placeholder="Minimum 8 characters"
+                  placeholder={`Minimum ${PASSWORD_POLICY.minLength} characters`}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   required
-                  minLength={8}
+                  minLength={PASSWORD_POLICY.minLength}
                   autoFocus
                   style={S.input}
                 />
@@ -163,6 +165,7 @@ export default function ResetPasswordPage() {
                 )}
               </div>
 
+              <p style={S.passwordHint}>{passwordPolicyMessage()}</p>
               {error && <div style={S.errorBox}>{error}</div>}
 
               <button
@@ -192,6 +195,7 @@ const S = {
   field: { display: 'flex', flexDirection: 'column', gap: '6px' },
   label: { fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: DIM, textTransform: 'uppercase' },
   input: { padding: '12px 14px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.2)', borderRadius: '6px', color: PARCHMENT, fontSize: '14px', fontFamily: "'Raleway',sans-serif", outline: 'none', transition: 'border-color .2s' },
+  passwordHint: { fontSize: '11px', color: 'rgba(247,244,238,.32)', lineHeight: 1.5, margin: '-8px 0 0' },
   btnGold: { display: 'block', width: '100%', padding: '16px', background: GOLD, color: MIDNIGHT, fontSize: '12px', fontWeight: 700, letterSpacing: '.14em', borderRadius: '999px', textAlign: 'center', textDecoration: 'none', fontFamily: "'Raleway',sans-serif", marginTop: '4px' },
   errorBox: { padding: '12px 14px', background: 'rgba(216,90,48,.12)', border: '1px solid rgba(216,90,48,.3)', borderRadius: '6px', fontSize: '13px', color: '#F09595' },
 }
