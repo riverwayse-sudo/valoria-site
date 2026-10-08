@@ -1,4 +1,4 @@
-import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/password-policy'
+const { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } = require('@/lib/password-policy')
 
 describe('password security policy', () => {
   test('requires a 12-character mixed password', () => {
