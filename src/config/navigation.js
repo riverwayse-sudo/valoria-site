@@ -10,16 +10,14 @@ export const NAVIGATION = {
           label: 'Discover',
           items: [
             { label: 'Marketplace', href: '/marketplace', description: 'Discover professionals and their capabilities.' },
-            { label: 'Speakers', href: '/speakers', description: 'Find speakers for your next conversation or event.' },
             { label: 'Facilitators', href: '/facilitators', description: 'Find people who can lead the room.' },
             { label: 'Programmes', href: '/programmes', description: 'Develop capability with structured learning.' },
           ],
         },
         {
-          label: 'Ideas & Community',
+          label: 'Ideas',
           items: [
             { label: 'Insights', href: '/insights', description: 'Perspectives on professional capability, leadership and work.' },
-            { label: 'Contact', href: '/contact-us', description: 'Speak with the Valoria team.' },
           ],
         },
       ],
@@ -54,11 +52,9 @@ export const NAVIGATION = {
   mobile: {
     explore: [
       { label: 'Marketplace', href: '/marketplace' },
-      { label: 'Speakers', href: '/speakers' },
       { label: 'Facilitators', href: '/facilitators' },
       { label: 'Programmes', href: '/programmes' },
       { label: 'Insights', href: '/insights' },
-      { label: 'Contact', href: '/contact-us' },
     ],
     valu: [
       { label: 'About the VALU Index', href: '/valu' },
