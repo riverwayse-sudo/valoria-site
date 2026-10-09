@@ -20,7 +20,7 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
       NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder_key
       SUPABASE_SERVICE_ROLE_KEY: placeholder_service_role_key
-      ANTHROPIC_API_KEY: placeholder_anthropic_key
+      ANTHROPIC_API_KEY: ''
       ANTHROPIC_CHAT_MODEL: claude-sonnet-4-6
       BREVO_API_KEY: placeholder_brevo_key
       SUPPORT_NOTIFICATION_EMAIL: info@valoriainstitute.com
