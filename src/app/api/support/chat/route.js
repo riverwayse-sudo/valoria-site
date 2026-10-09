@@ -80,7 +80,7 @@ export async function POST(request) {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: process.env.ANTHROPIC_CHAT_MODEL || 'claude-sonnet-4-20250514',
+        model: process.env.ANTHROPIC_CHAT_MODEL || 'claude-sonnet-4-6',
         max_tokens: 650,
         system: SYSTEM_PROMPT,
         messages,
