@@ -12,7 +12,7 @@ const dimensions = [
   ['R', 'Relationships', 'How effectively you build trust, collaborate and create value through professional relationships.'],
   ['I', 'Intelligence', 'How you think, interpret complexity and exercise sound professional judgement.'],
   ['M', 'Mastery', 'How consistently you deliver, deepen capability and maintain professional standards.'],
-  ['E', 'Enterprise', 'How you create value, recognise opportunity and think beyond the immediate task.'],
+  ['E', 'Enterprise', 'How you create. Enterprise measures the capacity to generate value beyond a task — through commercial thinking, creative problem-solving, and the ability to influence and collaborate in new ways.'],
 ]
 
 export default function ValuPage() {
