@@ -21,7 +21,7 @@ export async function POST(request) {
     const allowedCategories = new Set(['website', 'account', 'assessment', 'profile', 'event', 'other'])
     const requestedCategory = String(body?.category || 'other').trim()
     const category = allowedCategories.has(requestedCategory) ? requestedCategory : 'other'
-    const summary = String(body?.summary || '').replace(/[\\r\\n]+/g, ' ').trim().slice(0, 180)
+    const summary = String(body?.summary || '').replace(/[\r\n]+/g, ' ').trim().slice(0, 180)
     const details = String(body?.details || '').replace(/\u0000/g, '').trim().slice(0, 3500)
     const email = String(body?.email || '').trim().slice(0, 254)
     const pagePath = String(body?.pagePath || '/').trim().slice(0, 300)
