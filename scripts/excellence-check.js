@@ -9,6 +9,9 @@ const requiredDocs = [
   'docs/FINAL_QA_GATE.md',
   'docs/PRODUCTION_PARITY_GATE.md',
   'docs/AUTHENTICATION_SECURITY.md',
+  'docs/ENGINEERING_REFERENCE_ADOPTION.md',
+  'docs/OWASP_ASVS_BASELINE.md',
+  'docs/SUPPORT_ASSISTANT_OPERATIONS.md',
 ];
 const violations = [];
 
@@ -76,6 +79,49 @@ if (fs.existsSync(profileClientPath)) {
     if (!new RegExp('function\\s+' + component + '\\s*\\(').test(client)) {
       violations.push('ProfileClient component/helper missing: ' + component);
     }
+  }
+}
+
+// Support assistant regression and secret-boundary guards.
+const supportRequiredFiles = [
+  'src/components/ValoriaSupportAssistant.jsx',
+  'src/app/api/support/chat/route.js',
+  'src/app/api/support/report/route.js',
+  'src/lib/support-notifications.js',
+  'src/lib/support-rate-limit.js',
+];
+for (const file of supportRequiredFiles) {
+  if (!fs.existsSync(path.join(root, file))) violations.push('support assistant control missing: ' + file);
+}
+const supportClientPath = path.join(root, 'src/components/ValoriaSupportAssistant.jsx');
+if (fs.existsSync(supportClientPath)) {
+  const client = fs.readFileSync(supportClientPath, 'utf8');
+  if (/ANTHROPIC_API_KEY|BREVO_API_KEY|SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY/.test(client)) {
+    violations.push('support assistant client must not reference server-only credentials');
+  }
+  if (!client.includes('/api/support/chat') || !client.includes('/api/support/report')) {
+    violations.push('support assistant must retain chat and issue-report endpoints');
+  }
+}
+const supportChatPath = path.join(root, 'src/app/api/support/chat/route.js');
+if (fs.existsSync(supportChatPath)) {
+  const chat = fs.readFileSync(supportChatPath, 'utf8');
+  for (const required of ['allowSupportRequest', 'ANTHROPIC_API_KEY', 'sendSupportNotification', 'MAX_MESSAGE_CHARS']) {
+    if (!chat.includes(required)) violations.push('support chat API missing required safeguard: ' + required);
+  }
+}
+const supportReportPath = path.join(root, 'src/app/api/support/report/route.js');
+if (fs.existsSync(supportReportPath)) {
+  const report = fs.readFileSync(supportReportPath, 'utf8');
+  for (const required of ['allowSupportRequest', 'escapeEmailHtml', 'sendSupportNotification', 'website']) {
+    if (!report.includes(required)) violations.push('support report API missing required safeguard: ' + required);
+  }
+}
+const envExamplePath = path.join(root, '.env.example');
+if (fs.existsSync(envExamplePath)) {
+  const envExample = fs.readFileSync(envExamplePath, 'utf8');
+  for (const key of ['ANTHROPIC_CHAT_MODEL', 'BREVO_API_KEY', 'SUPPORT_NOTIFICATION_EMAIL']) {
+    if (!new RegExp('^' + key + '=', 'm').test(envExample)) violations.push('.env.example missing support setting: ' + key);
   }
 }
 
