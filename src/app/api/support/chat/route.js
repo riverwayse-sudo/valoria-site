@@ -2,7 +2,7 @@ import { sendSupportNotification, escapeEmailHtml } from '@/lib/support-notifica
 import { allowSupportRequest, supportClientKey } from '@/lib/support-rate-limit'
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 20
+export const maxDuration = 10
 
 const MAX_MESSAGES = 10
 const MAX_MESSAGE_CHARS = 1800
@@ -72,6 +72,7 @@ async function notifyChatFailure({ reason, pagePath }) {
     subject: 'Valoria website chatbot issue',
     text: `The Valoria support chatbot could not complete a response.\nReason: ${safeReason}\nPage: ${safePath}\nTime: ${new Date().toISOString()}\n\nNo conversation transcript was included.`,
     html: `<div style="font-family:Arial,sans-serif;color:#1A1A2E"><h2>Website chatbot issue</h2><p><strong>Reason:</strong> ${escapeEmailHtml(safeReason)}</p><p><strong>Page:</strong> ${escapeEmailHtml(safePath)}</p><p><strong>Time:</strong> ${escapeEmailHtml(new Date().toISOString())}</p><p>No conversation transcript was included in this alert.</p></div>`,
+    timeoutMs: 2500,
   })
 }
 
@@ -122,7 +123,7 @@ export async function POST(request) {
         system: SYSTEM_PROMPT,
         messages,
       }),
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(6000),
     })
 
     if (!response.ok) {
