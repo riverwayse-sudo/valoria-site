@@ -94,7 +94,7 @@ export default function ValoriaSupportAssistant() {
   return (
     <div className="valoria-support" id="valoria-support-assistant">
       {open && (
-        <section className="valoria-support-panel" id="valoria-support-panel" aria-label="Valoria website assistant" >
+        <section className="valoria-support-panel" id="valoria-support-panel" aria-label="Valoria website assistant">
           <header className="valoria-support-header">
             <div className="valoria-support-mark" aria-hidden="true">V</div>
             <div className="valoria-support-heading">
