@@ -34,7 +34,7 @@ export default function HomePage() {
               <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">START HERE</span></div>
               <h2 id="pathways-title">What brings you<br/><em>to Valoria?</em></h2>
             </div>
-            <p>Choose the path that matches what you need today. One institutional standard connects professional development, visibility and opportunity.</p>
+            <p>Choose the path that matches what you need today. One professional standard connects development, visibility and opportunity.</p>
           </Reveal>
 
           <Reveal className="home-pathway-grid" as="div">
