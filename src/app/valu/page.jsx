@@ -61,7 +61,7 @@ export default function ValuPage() {
       <section className="valu-outcome">
         <div className="valu-wrap valu-outcome-grid">
           <div><div className="valu-kicker valu-dark"><span /> WHAT YOU DO NEXT</div><h2>Your result is a starting point, not a label.</h2></div>
-          <div><p>The 9-question Intelligence taster gives you directional insight. To establish the authoritative marketplace record, create your professional account, complete the full VALU assessment and finish your professional profile. Subject to the normal governance checks, your eligible capability can then enter the marketplace.</p><p>The full 54-question VALU Index assessment establishes the official score and designation. Deeper assessment, development and opportunity pathways remain available afterwards.</p><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-inline">START THE VALU INDEX →</a></div>
+          <div><p>The 9-question Intelligence taster gives you directional insight. To establish the authoritative marketplace record, create your professional account, complete the full 54-question VALU Index and finish your professional profile. When applicable eligibility and review requirements are met, your capability can enter the marketplace.</p><p>The full 54-question VALU Index assessment establishes the official score and designation. Deeper assessment, development and opportunity pathways remain available afterwards.</p><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-inline">START THE VALU INDEX →</a></div>
         </div>
       </section>
 
