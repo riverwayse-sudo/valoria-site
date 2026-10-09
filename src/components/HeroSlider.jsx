@@ -41,7 +41,7 @@ export default function HeroSlider() {
               <h1 className="hero-title au d2">Talent is not<br />the problem.<br /><em>Infrastructure is.</em></h1>
               <p className="hero-sub au d3">Valoria Institute builds the infrastructure through which African professional merit is developed, surfaced and connected to opportunity with precision.</p>
               <div className="hero-actions au d4"><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START THE VALU INDEX</a><MarketplaceCTA className="btn-outline">EXPLORE THE BUREAU</MarketplaceCTA></div>
-              <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">84</div><div className="hmc-right"><div className="hmc-desig">FORCE TO ALIGN WITH · ✦✦✦</div><div className="hmc-bars">{bars.map((w, i) => <div key={i} className={`hmc-bar score-${w}`} />)}</div></div></div></div>
+              <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">84</div><div className="hmc-right"><div className="hmc-desig">FORCE TO ALIGN WITH · ✦✦</div><div className="hmc-bars">{bars.map((w, i) => <div key={i} className={`hmc-bar score-${w}`} />)}</div></div></div></div>
             </div>
             <div className="valu-card au d4" aria-label="Illustrative VALU profile">
               <div className="vc-label">VALU INDEX · ILLUSTRATIVE PROFILE</div><div className="vc-score"><span className="vc-num">84</span><span className="vc-denom">/ 100</span></div><div className="vc-desig">DISTINGUISHED · ✦✦</div>
