@@ -11,7 +11,7 @@ export function escapeEmailHtml(value = '') {
     .replace(/'/g, '&#39;')
 }
 
-export async function sendSupportNotification({ subject, text, html, replyTo }) {
+export async function sendSupportNotification({ subject, text, html, replyTo, timeoutMs = 8000 }) {
   const apiKey = process.env.BREVO_API_KEY
   if (!apiKey) {
     console.error('Support notification not sent: BREVO_API_KEY is not configured.')
@@ -36,7 +36,7 @@ export async function sendSupportNotification({ subject, text, html, replyTo }) 
       method: 'POST',
       headers: { 'api-key': apiKey, 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(timeoutMs),
     })
     if (!response.ok) {
       const detail = await response.text().catch(() => '')
