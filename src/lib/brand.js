@@ -3,7 +3,7 @@
 
 export const BRAND = {
   name: 'Valoria Institute',
-  tagline: 'Worth. Built.',
+  tagline: 'Worth, Built.',
   belief: 'Talent is not the problem. Infrastructure is.',
   promise: ['Develop', 'Surface', 'Connect'],
   email: 'info@valoriainstitute.com',
@@ -20,17 +20,19 @@ export const COLORS = {
 }
 
 export const PRIME_CLUSTERS = [
-  { letter: 'P', name: 'Presence', color: COLORS.gold, subtitle: 'How you show up', skills: ['Communication', 'Executive Presence', 'Composure Under Scrutiny'] },
-  { letter: 'R', name: 'Relationships', color: COLORS.gold, subtitle: 'How you connect', skills: ['Trust-Building', 'Collaborative Intelligence', 'Network Quality'] },
-  { letter: 'I', name: 'Intelligence', color: COLORS.gold, subtitle: 'How you think', skills: ['Critical Thinking', 'Analytical Depth', 'Decision-Making', 'Cognitive Agility'] },
-  { letter: 'M', name: 'Mastery', color: COLORS.gold, subtitle: 'How you deliver', skills: ['Execution Discipline', 'Accountability', 'Resilience', 'Adaptability'] },
-  { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you build', skills: ['Commercial Thinking', 'Systems Building', 'Venture Mindset'] },
+  { letter: 'P', name: 'Presence', color: COLORS.gold, subtitle: 'How you show up', skills: ['Communication', 'Negotiation', 'Personal Brand & Executive Presence'] },
+  { letter: 'R', name: 'Relationships', color: COLORS.gold, subtitle: 'How you connect', skills: ['Emotional Intelligence', 'Conflict Resolution', 'People Development', 'Stakeholder Management'] },
+  { letter: 'I', name: 'Intelligence', color: COLORS.gold, subtitle: 'How you think', skills: ['Critical Thinking', 'Strategic Thinking', 'Business Acumen', 'AI Fluency'] },
+  { letter: 'M', name: 'Mastery', color: COLORS.gold, subtitle: 'How you deliver', skills: ['Execution & Accountability', 'Resilience & Self-Leadership', 'Adaptability'] },
+  { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you create', skills: ['Commercial Creativity', 'Influence Without Authority', 'Human-AI Collaboration'] },
 ]
 
 export const TIER_DESIGNATIONS = [
-  { min: 90, name: 'Elite', stars: '✦✦✦' },
-  { min: 75, name: 'Distinguished', stars: '✦✦' },
-  { min: 55, name: 'Proficient', stars: '✦' },
+  { min: 80, name: 'Force to Align With', stars: '✦✦✦' },
+  { min: 65, name: 'Emerging Force', stars: '✦✦' },
+  { min: 50, name: 'Developing Professional', stars: '✦' },
+  { min: 35, name: 'Building Foundations', stars: '✧' },
+  { min: 0, name: 'At the Starting Point', stars: '·' },
 ]
 
 export const ENTRY_POINTS = [
