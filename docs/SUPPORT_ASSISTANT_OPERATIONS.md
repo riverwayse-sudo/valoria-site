@@ -4,11 +4,12 @@
 - Provides website guidance about VALU, PRIME, professional profiles, marketplace pathways, events, and Insights.
 - Does not access private account records or assessment responses.
 - Offers a visitor-submitted issue form that emails the Valoria support inbox.
-- Sends an operational alert when the chatbot provider is misconfigured, returns an error, or returns no answer. Alerts intentionally omit the conversation transcript.
+- Works without a paid AI API key using a curated guided-answer fallback; when an AI provider is configured, it can answer in natural language.
+- Sends a throttled operational alert when a configured chatbot provider returns an error or no answer. Alerts intentionally omit the conversation transcript.
 
 ## Required environment variables
-- `ANTHROPIC_API_KEY`: server-only key for chatbot responses.
-- `ANTHROPIC_CHAT_MODEL`: optional model override; defaults to `claude-sonnet-4-6`.
+- `ANTHROPIC_API_KEY`: optional server-only key for natural-language chatbot responses. Without it, curated guided answers remain available.
+- `ANTHROPIC_CHAT_MODEL`: optional model override; defaults to `claude-sonnet-4-6` when the API key is configured.
 - `BREVO_API_KEY`: server-only key for issue and failure notification email.
 - `SUPPORT_NOTIFICATION_EMAIL`: optional support recipient; defaults to `info@valoriainstitute.com`.
 
@@ -26,6 +27,6 @@ Configure these in Vercel project environment settings for Preview and Productio
 ## Operational verification
 1. In a Vercel Preview deployment, ask a general question and confirm a response.
 2. Submit a clearly labelled test issue and verify receipt at the configured inbox.
-3. Temporarily test missing/invalid provider configuration only in Preview and confirm a chatbot-failure email arrives.
+3. Test the guided fallback with `ANTHROPIC_API_KEY` absent; if a provider key is configured, test a provider failure only in Preview and confirm a throttled chatbot-failure email arrives.
 4. Verify that invalid requests are rejected and that no real API keys are present in build logs or browser bundles.
 5. Remove any test report from operational records if required by the support process.
