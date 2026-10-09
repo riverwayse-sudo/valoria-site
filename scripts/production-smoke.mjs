@@ -6,7 +6,7 @@ const checks = [
   ['marketplace', '/marketplace', 200],
   ['employer dashboard', '/employer/dashboard', 200],
   ['opportunities API', '/api/opportunities', 200],
-  ['journey state unauthenticated', '/api/journey/state', 200],
+  ['journey state unauthenticated', '/api/journey/state', 401],
   ['matches unauthenticated', '/api/opportunities/matches', 401],
   ['outcomes unauthenticated', '/api/outcomes', 401],
   ['journey diagnostics unauthenticated', '/api/journey/diagnostics', 401],
@@ -27,7 +27,7 @@ for (const [name, path, expected] of checks) {
 }
 
 const home = await fetch(base + '/').then(r => r.text())
-for (const marker of ['START MY VALU SNAPSHOT', 'See who is already discoverable.']) {
+for (const marker of ['START MY VALU SNAPSHOT', 'What brings you']) {
   const ok = home.includes(marker)
   console.log(`${ok ? 'PASS' : 'FAIL'} homepage marker: ${marker}`)
   if (!ok) failed++
