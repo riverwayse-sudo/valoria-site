@@ -170,7 +170,7 @@ export default function ValoriaSupportAssistant() {
         </section>
       )}
 
-      <button ref={launcherRef} className={`valoria-support-launcher ${open ? 'is-open' : ''}`} type="button" aria-expanded={open} aria-controls="valoria-support-panel" onClick={() => setOpen(value => !value)}>
+      <button ref={launcherRef} className={`valoria-support-launcher ${open ? 'is-open' : ''}`} type="button" aria-expanded={open} aria-controls={open ? 'valoria-support-panel' : undefined} onClick={() => setOpen(value => !value)}>
         <span className="valoria-support-launcher-icon" aria-hidden="true">{open ? '×' : '✦'}</span>
         <span>{open ? 'Close assistant' : 'Chat with Valoria'}</span>
       </button>
