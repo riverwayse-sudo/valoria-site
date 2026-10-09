@@ -1,0 +1,74 @@
+.valoria-support {
+  --support-midnight: var(--valoria-midnight, #1A1A2E);
+  --support-gold: var(--valoria-gold, #C9A84C);
+  --support-parchment: var(--valoria-parchment, #F7F4EE);
+  --support-slate: var(--valoria-slate, #2E2E4A);
+  --support-brass: var(--valoria-brass, #D4C9A8);
+  position: fixed;
+  z-index: 1200;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(20px, env(safe-area-inset-bottom));
+  color: var(--support-midnight);
+  font-family: 'Raleway', sans-serif;
+}
+.valoria-support button, .valoria-support input, .valoria-support textarea, .valoria-support select { font: inherit; }
+.valoria-support button:focus-visible, .valoria-support a:focus-visible, .valoria-support input:focus-visible, .valoria-support textarea:focus-visible, .valoria-support select:focus-visible {
+  outline: 3px solid var(--support-gold);
+  outline-offset: 3px;
+}
+.valoria-support-launcher {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 0 20px; border: 1px solid var(--support-gold);
+  border-radius: 9999px; background: var(--support-midnight); color: var(--support-parchment);
+  box-shadow: 0 8px 28px rgba(0,0,0,.22); font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.valoria-support-launcher:hover { background: var(--support-slate); }
+.valoria-support-launcher-icon { display: inline-flex; align-items: center; justify-content: center; width: 23px; height: 23px; color: var(--support-gold); font-size: 22px; line-height: 1; }
+.valoria-support-panel {
+  position: absolute; right: 0; bottom: 66px; display: flex; flex-direction: column;
+  width: min(390px, calc(100vw - 28px)); height: min(620px, calc(100dvh - 112px));
+  overflow: hidden; border: 1px solid var(--support-brass); border-radius: 18px;
+  background: var(--support-parchment); box-shadow: 0 20px 70px rgba(0,0,0,.32);
+}
+.valoria-support-header { display: flex; align-items: center; gap: 11px; padding: 16px; background: var(--support-midnight); color: var(--support-parchment); }
+.valoria-support-mark { display: grid; place-items: center; flex: 0 0 38px; width: 38px; height: 38px; border: 1px solid var(--support-gold); border-radius: 50%; color: var(--support-gold); font-size: 18px; font-weight: 800; }
+.valoria-support-heading { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; }
+.valoria-support-heading strong { font-size: 14px; letter-spacing: .02em; }
+.valoria-support-heading span { color: #D4C9A8; font-size: 11px; }
+.valoria-support-icon-button { width: 34px; height: 34px; border: 1px solid rgba(247,244,238,.35); border-radius: 50%; background: transparent; color: white; font-size: 24px; cursor: pointer; }
+.valoria-support-tabs { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--support-brass); background: #EDE8DC; }
+.valoria-support-tabs button { padding: 12px 8px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--support-slate); font-size: 12px; font-weight: 700; cursor: pointer; }
+.valoria-support-tabs button.active { border-bottom-color: var(--support-gold); color: var(--support-midnight); }
+.valoria-support-messages { display: flex; flex: 1; flex-direction: column; gap: 12px; overflow-y: auto; padding: 16px 14px; }
+.valoria-support-message { max-width: 91%; padding: 11px 12px; border: 1px solid var(--support-brass); border-radius: 12px; background: white; overflow-wrap: anywhere; }
+.valoria-support-message.user { align-self: flex-end; border-color: var(--support-midnight); background: var(--support-midnight); color: white; }
+.valoria-support-sender { display: block; margin-bottom: 4px; color: #80621F; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.valoria-support-message.user .valoria-support-sender { color: var(--support-gold); }
+.valoria-support-message p { margin: 0; font-size: 13px; line-height: 1.6; white-space: pre-wrap; }
+.valoria-support-thinking { color: var(--support-slate); font-size: 12px; font-style: italic; }
+.valoria-support-prompts { display: flex; flex-wrap: wrap; gap: 7px; padding: 0 14px 12px; }
+.valoria-support-prompts button { padding: 8px 10px; border: 1px solid var(--support-brass); border-radius: 999px; background: white; color: var(--support-slate); font-size: 11px; text-align: left; cursor: pointer; }
+.valoria-support-prompts button:hover { border-color: var(--support-gold); }
+.valoria-support-compose { display: flex; align-items: end; gap: 8px; padding: 12px; border-top: 1px solid var(--support-brass); background: white; }
+.valoria-support-compose textarea { flex: 1; min-width: 0; resize: vertical; min-height: 42px; max-height: 100px; padding: 10px; border: 1px solid #B9B3A5; border-radius: 8px; background: #FAFAF7; color: var(--support-midnight); font-size: 13px; }
+.valoria-support-compose button, .valoria-support-submit-report { min-height: 42px; padding: 0 15px; border: 0; border-radius: 999px; background: var(--support-gold); color: var(--support-midnight); font-size: 12px; font-weight: 800; cursor: pointer; }
+.valoria-support-compose button:disabled, .valoria-support-submit-report:disabled { opacity: .55; cursor: wait; }
+.valoria-support-report { flex: 1; overflow-y: auto; padding: 16px; }
+.valoria-support-report > p { margin: 0 0 14px; color: var(--support-slate); font-size: 12px; line-height: 1.55; }
+.valoria-support-report label { display: flex; flex-direction: column; gap: 6px; margin: 0 0 12px; color: var(--support-midnight); font-size: 11px; font-weight: 700; }
+.valoria-support-report input, .valoria-support-report textarea, .valoria-support-report select { width: 100%; min-height: 40px; padding: 10px; border: 1px solid #B9B3A5; border-radius: 8px; background: white; color: var(--support-midnight); font-size: 12px; }
+.valoria-support-report textarea { resize: vertical; }
+.valoria-support-report .valoria-support-submit-report { width: 100%; margin-top: 2px; }
+.valoria-support-honeypot { position: absolute !important; left: -10000px !important; width: 1px !important; height: 1px !important; overflow: hidden !important; }
+.valoria-support-success { margin-top: 10px !important; padding: 10px; border: 1px solid #6D8B74; border-radius: 8px; background: #EEF5EF; color: #24482C !important; }
+.valoria-support-error { margin: 0; padding: 10px 14px; border-top: 1px solid #B75A54; background: #FFF0EE; color: #842B25; font-size: 12px; line-height: 1.5; }
+.valoria-support-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-top: 1px solid var(--support-brass); background: #EDE8DC; }
+.valoria-support-footer span { color: #4C4B5F; font-size: 10px; line-height: 1.45; }
+.valoria-support-footer a { flex: 0 0 auto; color: #6D5013; font-size: 11px; font-weight: 800; text-decoration: underline; }
+.valoria-support .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media (max-width: 480px) {
+  .valoria-support { right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); }
+  .valoria-support-panel { right: -2px; width: min(390px, calc(100vw - 24px)); height: min(650px, calc(100dvh - 96px)); }
+  .valoria-support-launcher { min-height: 48px; padding: 0 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .valoria-support *, .valoria-support *::before, .valoria-support *::after { scroll-behavior: auto !important; transition: none !important; } }
