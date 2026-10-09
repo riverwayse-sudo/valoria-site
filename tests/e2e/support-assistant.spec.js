@@ -49,3 +49,11 @@ test('support assistant closes with Escape and restores launcher focus', async (
   await expect(page.getByRole('region', { name: 'Valoria website assistant' })).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Chat with Valoria' })).toBeFocused()
 })
+
+test('guided VALU answers work without an external AI credential', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Chat with Valoria' }).click()
+  await page.getByLabel('Your message').fill('How does VALU work?')
+  await page.getByRole('button', { name: 'Send message' }).click()
+  await expect(page.getByText(/15-question Snapshot/)).toBeVisible()
+})
