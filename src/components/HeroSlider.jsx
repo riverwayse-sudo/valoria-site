@@ -59,12 +59,12 @@ export default function HeroSlider() {
               <p className="hero-event-copy">The Professional Standard Series brings practical conversations on the capabilities that turn professional performance into recognised opportunity.</p>
               <div className="hero-event-meta">{formatSessionDate(upcomingSession)} · 10:00 AM WAT · VIRTUAL · 90 MINUTES</div>
               <div className="hero-actions">
-                <button type="button" className="btn-gold hero-register-cta" onClick={openRegistration} disabled={!canRegister}>REGISTER FOR THIS SESSION →</button>
+                <button type="button" className="btn-gold hero-register-cta" onClick={openRegistration} disabled={!canRegister}>REGISTER FOR THIS CONVERSATION →</button>
                 <a href="/events" className="btn-outline">VIEW ALL EVENTS →</a>
               </div>
             </div>
             <aside className="hero-event-panel" aria-label={`Upcoming event: ${upcomingSession.title}`}>
-              <div className="hero-event-number">{upcomingSession.id}</div>
+              
               <div className="hero-event-cluster">{upcomingSession.cluster}</div>
               <h2>{upcomingSession.title}</h2>
               <p>{upcomingSession.description}</p>
