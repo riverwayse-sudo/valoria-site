@@ -81,10 +81,10 @@ export default function ValuStartPage() {
           <div className="vs-kicker dark"><span /> HOW IT WORKS</div>
           <h2>Assess. Understand. Build.<br /><em>Then become discoverable.</em></h2>
           <div className="vs-journey-grid">
-            <article><span>01</span><h3>Assess</h3><p>Complete the initial 9-question VALU Index assessment.</p></article>
-            <article><span>02</span><h3>Understand</h3><p>Receive directional insight through the PRIME framework.</p></article>
-            <article><span>03</span><h3>Build</h3><p>Create your professional profile and define what you bring.</p></article>
-            <article><span>04</span><h3>Discover</h3><p>Subject to governance checks, become discoverable through the marketplace.</p></article>
+            <article><span>01</span><h3>Assess</h3><p>Complete the 9-question VALU taster (Intelligence cluster). See your scores across four skills and a preview of the remaining four clusters.</p></article>
+            <article><span>02</span><h3>Understand</h3><p>Complete the full 54-question VALU Index across all five PRIME clusters. This is the score that appears on your marketplace profile.</p></article>
+            <article><span>03</span><h3>Build</h3><p>Create your account, complete your professional profile, and declare your modalities: candidate, speaker or facilitator.</p></article>
+            <article><span>04</span><h3>Discover</h3><p>Meet the platform's profile standard and enter the Valoria marketplace.</p></article>
           </div>
         </div>
       </section>
