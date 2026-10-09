@@ -23,12 +23,12 @@ export default function ValuPage() {
         <div className="valu-wrap">
           <div className="valu-kicker"><span /> THE VALU INDEX</div>
           <h1>Where do you stand<br /><em>as a professional?</em></h1>
-          <p className="valu-lede">The VALU Index is Valoria's professional readiness diagnostic. It gives you a structured starting point for understanding your professional profile across the five dimensions of PRIME.</p>
+          <p className="valu-lede">The VALU Index is Valoria's professional capability assessment. Begin with a 9-question Intelligence taster, then complete the full 54-question assessment across all five PRIME clusters for your official result.</p>
           <div className="valu-actions">
             <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-btn valu-btn-gold">TAKE THE VALU INDEX <span>→</span></a>
             <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW IT WORKS <span>↓</span></a>
           </div>
-          <div className="valu-meta"><span>15 QUESTIONS</span><i>·</i><span>INITIAL ASSESSMENT</span><i>·</i><span>BUILT AROUND PRIME</span></div>
+          <div className="valu-meta"><span>9 QUESTIONS</span><i>·</i><span>INTELLIGENCE TASTER</span><i>·</i><span>BUILT AROUND PRIME</span></div>
         </div>
       </section>
 
@@ -42,12 +42,11 @@ export default function ValuPage() {
       <section className="valu-process">
         <div className="valu-wrap">
           <div className="valu-kicker"><span /> THE JOURNEY</div>
-          <h2>Four steps from<br /><em>assessment to opportunity.</em></h2>
+          <h2>Three steps from<br /><em>insight to opportunity.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Take the assessment</h3><p>Answer the initial 15-question VALU Index assessment.</p></article>
-            <article><b>02</b><h3>Understand your profile</h3><p>See your directional result through the PRIME framework.</p></article>
-            <article><b>03</b><h3>Create your record</h3><p>Create your professional account and complete the authoritative VALU assessment.</p></article>
-            <article><b>04</b><h3>Become discoverable</h3><p>Complete your professional profile, clear the governance gates and enter the relevant marketplace.</p></article>
+            <article><b>01</b><h3>Take the taster</h3><p>Answer 9 Intelligence questions for a directional starting point. The taster does not produce an official VALU Index score.</p></article>
+            <article><b>02</b><h3>Complete the full VALU Index</h3><p>Complete the 54-question assessment across all five PRIME clusters to establish your official assessment result.</p></article>
+            <article><b>03</b><h3>Build your professional profile</h3><p>Complete your profile and relevant capability details. Discoverability follows applicable eligibility and review requirements.</p></article>
           </div>
         </div>
       </section>
@@ -62,11 +61,11 @@ export default function ValuPage() {
       <section className="valu-outcome">
         <div className="valu-wrap valu-outcome-grid">
           <div><div className="valu-kicker valu-dark"><span /> WHAT YOU DO NEXT</div><h2>Your result is a starting point, not a label.</h2></div>
-          <div><p>The initial 15-question VALU snapshot gives you directional insight. To establish the authoritative marketplace record, create your professional account, complete the full VALU assessment and finish your professional profile. Subject to the normal governance checks, your eligible capability can then enter the marketplace.</p><p>The full VALU assessment establishes the authoritative marketplace score. Deeper assessment, development and opportunity pathways remain available afterwards.</p><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-inline">START THE VALU INDEX →</a></div>
+          <div><p>The 9-question Intelligence taster gives you directional insight. To establish the authoritative marketplace record, create your professional account, complete the full VALU assessment and finish your professional profile. Subject to the normal governance checks, your eligible capability can then enter the marketplace.</p><p>The full 54-question VALU Index assessment establishes the official score and designation. Deeper assessment, development and opportunity pathways remain available afterwards.</p><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-inline">START THE VALU INDEX →</a></div>
         </div>
       </section>
 
-      <section className="valu-final"><div className="valu-wrap"><div className="valu-kicker"><span /> WORTH. BUILT.</div><h2>Start by understanding<br /><em>where you stand.</em></h2><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-btn valu-btn-gold">TAKE THE VALU INDEX <span>→</span></a></div></section>
+      <section className="valu-final"><div className="valu-wrap"><div className="valu-kicker"><span /> WORTH, BUILT.</div><h2>Start by understanding<br /><em>where you stand.</em></h2><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-btn valu-btn-gold">TAKE THE VALU INDEX <span>→</span></a></div></section>
     </main>
     <Footer />
   </>
