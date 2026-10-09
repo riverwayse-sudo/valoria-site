@@ -25,6 +25,25 @@ function getYouTubeId(url) {
   return m ? m[1] : null
 }
 const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Mastery', E:'Enterprise' }
+const CAPABILITY_BADGES = {
+  candidate: { label:'PROFESSIONAL', sublabel:'CAREER · TALENT', icon:'◆' },
+  speaker: { label:'SPEAKER', sublabel:'KNOWLEDGE · COMMUNICATION', icon:'◈' },
+  facilitator: { label:'FACILITATOR', sublabel:'PEOPLE · PROGRESS', icon:'◇' },
+}
+function assessmentProfileSummary(clusterScores, designation) {
+  if (!clusterScores || typeof clusterScores !== 'object') return null
+  const ranked = Object.entries(clusterScores)
+    .filter(([,v]) => Number.isFinite(Number(v)))
+    .map(([letter,v]) => [letter, Number(v)])
+    .sort((a,b) => b[1] - a[1])
+  if (!ranked.length) return null
+  const top = ranked.slice(0,2).map(([l]) => CLUSTER_NAMES[l] || l)
+  const lowest = ranked[ranked.length - 1]?.[0]
+  const strength = top.length > 1 ? top[0] + ' and ' + top[1] : top[0]
+  const development = lowest && ranked.length > 2 ? ' ' + (CLUSTER_NAMES[lowest] || lowest) + ' is the clearest area for continued development.' : ''
+  const tier = designation ? ' Overall designation: ' + String(designation).replace(/_/g,' ') + '.' : ''
+  return 'The VALU Index indicates strongest capability across ' + strength + '.' + development + tier
+}
 // Short, positive-framed line per PRIME cluster — used by the "Key
 // Strengths" card to turn a raw cluster score into something a buyer can
 // actually read as a strength, rather than just a number on the radar chart.
@@ -281,6 +300,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
     : (isFacilitator ? 'facilitator' : isSpeaker ? 'speaker' : 'candidate')
   const tags        = displayTrack === 'facilitator' ? (p.programme_types || []) : displayTrack === 'speaker' ? (p.topics || []) : (p.skills || [])
   const isOwnProfile = !!(currentUser && currentUser.id === p.id)
+  const assessmentSummary = assessmentProfileSummary(p.cluster_scores, p.designation)
 
   const stats = [
     { label:'Location',   value: p.location || '—' },
@@ -358,9 +378,16 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                 <span style={{ fontSize:'14px', fontWeight:400, color: GOLD, letterSpacing:'.04em' }}>
                   {p.headline || (displayTrack === 'facilitator' ? 'Valoria Facilitator' : displayTrack === 'speaker' ? 'Valoria Speaker' : 'Valoria Professional')}
                 </span>
-                <span style={{ fontSize:'11px', letterSpacing:'.06em', background: MID, border:`1px solid ${GLINE2}`, padding:'4px 10px', borderRadius:'4px', color: DIM }}>
-                  {initials} · Verified {displayTrack === 'facilitator' ? 'Facilitator' : displayTrack === 'speaker' ? 'Speaker' : 'Professional'}
-                </span>
+              </div>
+              <div style={{ display:'flex', gap:'7px', flexWrap:'wrap', marginTop:'10px' }}>
+                {tracks.map(track => {
+                  const badge=CAPABILITY_BADGES[track]
+                  if (!badge) return null
+                  return <span key={track} title={badge.sublabel} style={{ display:'inline-flex', alignItems:'center', gap:'7px', border:`1px solid ${GLINE2}`, background:'rgba(201,168,76,.06)', padding:'6px 9px', color:PARCH }}>
+                    <b style={{ color:GOLD, fontSize:'11px' }}>{badge.icon}</b>
+                    <span><strong style={{ display:'block', fontSize:'9px', letterSpacing:'.12em' }}>{badge.label}</strong><small style={{ display:'block', fontSize:'7px', color:DIM, letterSpacing:'.08em', marginTop:'2px' }}>{badge.sublabel}</small></span>
+                  </span>
+                })}
               </div>
               {p.current_job_title && (
                 <div style={{ fontSize:'12px', fontWeight:300, color: DIM, marginTop:'4px' }}>{p.current_job_title}</div>
@@ -552,6 +579,16 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                 </div>
               ) : null
             })()}
+
+            {/* Assessment Profile — derived from the completed VALU Index, not user-written copy. */}
+            {assessmentSummary && (
+              <Section label="Assessment Profile">
+                <div style={{ background:MID, border:`1px solid ${GLINE}`, padding:'22px' }}>
+                  <p style={{ fontSize:'15px', fontWeight:400, color:PARCH, lineHeight:1.8, margin:0 }}>{assessmentSummary}</p>
+                  <p style={{ fontSize:'10px', color:'rgba(247,244,238,.38)', lineHeight:1.6, margin:'12px 0 0', letterSpacing:'.04em' }}>Derived from the completed VALU Index. This is separate from the professional's self-written biography.</p>
+                </div>
+              </Section>
+            )}
 
             {/* About — a brief introduction in the professional's own words.
                 The VALU Index summary used to live here, but that's now
