@@ -39,3 +39,13 @@ test('support APIs reject invalid requests without attempting email delivery', a
   })
   expect(report.status()).toBe(400)
 })
+
+test('support assistant closes with Escape and restores launcher focus', async ({ page }) => {
+  await page.goto('/')
+  const launcher = page.getByRole('button', { name: 'Chat with Valoria' })
+  await launcher.click()
+  await expect(page.getByText(/Welcome to Valoria Institute/)).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('region', { name: 'Valoria website assistant' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Chat with Valoria' })).toBeFocused()
+})
