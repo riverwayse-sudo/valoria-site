@@ -53,6 +53,9 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder_key
           SUPABASE_SERVICE_ROLE_KEY=placeholder_service_role_key
           ANTHROPIC_API_KEY=placeholder_anthropic_key
+          ANTHROPIC_CHAT_MODEL=claude-sonnet-4-20250514
+          BREVO_API_KEY=placeholder_brevo_key
+          SUPPORT_NOTIFICATION_EMAIL=info@valoriainstitute.com
           EOF
       - name: Run production build
         run: npm run build
@@ -90,7 +93,7 @@ jobs:
           echo "No .env committed ✓"
       - name: Check required env keys present in .env.example
         run: |
-          REQUIRED="NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_ROLE_KEY ANTHROPIC_API_KEY"
+          REQUIRED="NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_ROLE_KEY ANTHROPIC_API_KEY ANTHROPIC_CHAT_MODEL BREVO_API_KEY SUPPORT_NOTIFICATION_EMAIL"
           for KEY in $REQUIRED; do
             grep -q "^$KEY=" .env.example || { echo "ERROR: $KEY missing"; exit 1; }
             echo "$KEY found ✓"
