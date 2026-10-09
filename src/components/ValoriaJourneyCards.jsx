@@ -7,10 +7,10 @@ const MILESTONES = [
   { key:'connect', title:'Join Valoria', short:'START', description:'Your Valoria account is ready.', href:'/profile/onboarding', icon:'01' },
   { key:'assess', title:'Complete VALU', short:'VALU', description:'See your professional signal.', href:'/journey/continue?stage=assess', icon:'02' },
   { key:'report', title:'Understand your result', short:'RESULT', description:'Read what your VALU result means.', href:'/report', icon:'03' },
-  { key:'profile', title:'Build your profile', short:'PROFILE', description:'Tell people about your work.', href:'/profile/setup', icon:'04' },
-  { key:'capability', title:'Show what you can do', short:'CAPABILITY', description:'Choose the capability you want Valoria to show.', href:'/profile/setup', icon:'05' },
-  { key:'eligibility', title:'Get ready to be listed', short:'READY', description:'Complete the checks for your capability.', href:'/profile/setup', icon:'06' },
-  { key:'listed', title:'Become discoverable', short:'REGISTRY', description:'Your eligible capability can appear in the Registry.', href:'/marketplace', icon:'07' },
+  { key:'profile', title:'Complete your profile', short:'PROFILE', description:'Add your professional details and unlock enhanced marketplace access.', href:'/profile/setup', icon:'04' },
+  { key:'capability', title:'Choose your capability', short:'CAPABILITY', description:'Tell Valoria what you want to be discovered for.', href:'/profile/setup', icon:'05' },
+  { key:'eligibility', title:'Finish your capability setup', short:'READY', description:'Complete the remaining requirements for your capability.', href:'/profile/passport', icon:'06' },
+  { key:'listed', title:'You are discoverable', short:'REGISTRY', description:'Your professional presence is available in the marketplace.', href:'/marketplace', icon:'07' },
   { key:'opportunity', title:'Find opportunities', short:'OPPORTUNITY', description:'See opportunities that fit what you do.', href:'/opportunities', icon:'08' },
 ]
 
@@ -40,7 +40,7 @@ function buildCards(state) {
     profile: !!state?.profile?.complete,
     capability: !!state?.capability?.complete,
     eligibility: !!state?.eligibility?.complete,
-    listed: stage === 'marketplace_enhanced',
+    listed: stageAtLeast(stage, 'marketplace_profile_created'),
     opportunity: false,
   }
 
@@ -97,7 +97,7 @@ export default function ValoriaJourneyCards({ compact=false }) {
     <section aria-label="Your Valoria Journey" className={styles.journey + (compact ? ' '+styles.compact : '')}>
       <div className={styles.head}>
         <div>
-          <div className={styles.eyebrow}>YOUR JOURNEY</div>
+          <div className={styles.eyebrow}>YOUR NEXT STEPS</div>
           <h2>{current?.title || 'You are on your way'}</h2>
           <p>{state?.journey?.nextAction || current?.description || 'Your next step is ready.'}</p>
         </div>
@@ -127,7 +127,7 @@ export default function ValoriaJourneyCards({ compact=false }) {
       </div>
 
       <div className={styles.next}>
-        <span><b>YOUR NEXT STEP</b> {state?.journey?.nextAction || current?.title}</span>
+        <span><b>NEXT</b> {state?.journey?.nextAction || current?.title}</span>
         {current && !current.locked && <Link href={current.href} className={styles.primaryAction}>CONTINUE →</Link>}
       </div>
     </section>

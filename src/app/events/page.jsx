@@ -7,7 +7,7 @@ import { BRAND } from '@/lib/brand'
 
 export const metadata = {
   title: 'Events — Valoria Institute',
-  description: 'Conversations, sessions and professional standards from Valoria Institute.',
+  description: 'Conversations and professional standards from Valoria Institute.',
 }
 
 function SessionCard({ session, state }) {
@@ -16,11 +16,11 @@ function SessionCard({ session, state }) {
   const isNext = state === 'registration-open' || state === 'live'
 
   return (
-    <article className={`event-card event-card--editorial ${isEnded ? 'is-ended' : ''} ${isNext ? 'is-next' : ''}`} id={`session-${session.id}`}>
+    <article className={`event-card event-card--editorial ${isEnded ? 'is-ended' : ''} ${isNext ? 'is-next' : ''}`} id={`event-${session.id}`}>
       <EventPoster session={session} />
       <div className="event-editorial-footer">
         <div className="event-editorial-copy">
-          <span>{isEnded ? 'COMPLETED SESSION' : isComingSoon ? 'COMING SOON' : state === 'live' ? 'LIVE NOW' : 'REGISTRATION OPEN'}</span>
+          <span>{isEnded ? 'COMPLETED' : isComingSoon ? 'COMING SOON' : state === 'live' ? 'LIVE NOW' : 'REGISTRATION OPEN'}</span>
           <p>{session.description}</p>
         </div>
         {!isEnded && !isComingSoon && <EventRegistrationTrigger session={session} />}
@@ -54,7 +54,7 @@ export default function EventsPage() {
           <div className="page-hero-inner">
             <div className="page-kicker">VALORIA INSTITUTE · EVENTS</div>
             <h1 className="page-title">Conversations that shape<br /><em>professional standard.</em></h1>
-            <p className="page-sub">Live sessions, recorded conversations and practical ideas for professionals building capability, influence and opportunity.</p>
+            <p className="page-sub">Live conversations, recorded replays and practical ideas for professionals building capability, influence and opportunity.</p>
           </div>
         </section>
 
@@ -62,7 +62,7 @@ export default function EventsPage() {
           <div className="page-section-inner">
             <div className="events-list-head">
               <div>
-                <div className="page-kicker events-list-kicker">NEXT SESSION</div>
+                <div className="page-kicker events-list-kicker">NEXT CONVERSATION</div>
                 <h2 className="section-title">{upcoming.length ? 'What is next.' : 'The next conversation is coming.'}</h2>
               </div>
               <p>Focused conversations built around the capabilities that distinguish professional value.</p>
@@ -75,8 +75,8 @@ export default function EventsPage() {
             ) : (
               <div className="events-empty-state">
                 <span className="page-kicker">STAY WITH THE SERIES</span>
-                <h3>The next session will be announced here.</h3>
-                <p>Valoria events move through the Professional Standard Series in sequence. Return here for the next confirmed conversation.</p>
+                <h3>The next conversation will be announced here.</h3>
+                <p>Valoria conversations move through the Professional Standard Series. Return here for the next confirmed conversation.</p>
               </div>
             )}
 
@@ -87,7 +87,7 @@ export default function EventsPage() {
                     <div className="page-kicker events-list-kicker">LATER IN THE SERIES</div>
                     <h2 className="section-title">Coming soon.</h2>
                   </div>
-                  <p>Future sessions appear here only after their dates are confirmed.</p>
+                  <p>Future conversations appear here only after their dates are confirmed.</p>
                 </div>
                 <div className="events-grid">
                   {comingSoon.map(session => <SessionCard key={session.id} session={session} state="coming-soon" />)}
@@ -98,11 +98,11 @@ export default function EventsPage() {
         </section>
 
         {completed.length > 0 && (
-          <section className="page-section events-history" id="past-sessions">
+          <section className="page-section events-history" id="past-conversations">
             <div className="page-section-inner">
               <div className="events-list-head">
                 <div>
-                  <div className="page-kicker events-list-kicker">PAST SESSIONS</div>
+                  <div className="page-kicker events-list-kicker">PAST CONVERSATIONS</div>
                   <h2 className="section-title">What came before.</h2>
                 </div>
                 <p>Completed conversations remain part of the Valoria professional standard record.</p>
@@ -114,15 +114,15 @@ export default function EventsPage() {
           </section>
         )}
 
-        <section className="page-section events-replay" id="session-01">
+        <section className="page-section events-replay" id="replay">
           <div className="page-section-inner replay-grid">
             <div>
-              <div className="page-kicker">SESSION 01 · REPLAY</div>
+              <div className="page-kicker">REPLAY</div>
               <h2 className="section-title">Why being good at your job is no longer <em>enough.</em></h2>
               <p className="page-sub">The opening Valoria conversation on professional worth, visibility, influence and the infrastructure required to turn capability into recognised opportunity.</p>
               <a className="btn-gold" href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer">START YOUR VALU INDEX →</a>
             </div>
-            <div className="replay-video"><iframe src="https://www.youtube.com/embed/B9dD22vTErI" title="Valoria Institute Session 01 replay" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
+            <div className="replay-video"><iframe src="https://www.youtube.com/embed/B9dD22vTErI" title="Valoria Institute replay" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
           </div>
         </section>
       </main>

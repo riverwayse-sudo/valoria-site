@@ -17,10 +17,9 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
   if (!profile?.phone?.trim()) profileMissing.push('Your phone number')
   if (!profile?.location?.trim()) profileMissing.push('Your location')
   if (!Array.isArray(profile?.languages) || profile.languages.length === 0) profileMissing.push('At least one language')
-  if (!profile?.photo_url?.trim()) profileMissing.push('Your profile photo')
   if (!profile?.cv_url?.trim()) profileMissing.push('Your CV')
 
-  const profileReady = profile?.profile_complete === true && profileMissing.length === 0
+  const profileReady = profile?.profile_complete === true && profileMissing.length === 0 && assessmentCurrent
   const activeCapabilities = capabilities.filter(c => c.is_active)
   const eligibleCapabilities = activeCapabilities.filter(c =>
     c.eligible_for_listing || c.eligibility_status === 'eligible' || c.eligibility_status === 'listed'
@@ -54,12 +53,21 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
     profile_complete: 'capability',
     capability_eligibility: capabilitySelected && !eligibilityComplete ? 'eligibility' : 'capability',
     marketplace_enhanced: 'opportunity',
+    listed: 'opportunity',
   }
-  const next = stageNext[journeyStage] || 'assess'
+  let next = stageNext[journeyStage] || 'assess'
+
+  // The derived state must reflect authoritative data, not stale journey labels.
+  // Report generation/activation is a hard gate before profile progression.
+  if (hasAssessment && !reportReady) next = 'report'
+  else if (hasAssessment && reportReady && activation?.status !== 'activated') next = 'report'
+  else if (profileReady && eligibleCapabilities.length > 0 && !listed) next = 'listed'
+  else if (listed) next = 'opportunity'
 
   const recoveryReason = journey?.next_action ||
     ({
-      assess: 'Continue your VALU journey.',
+      assess: hasAssessment ? 'Continue your VALU journey.' : 'No completed VALU assessment yet — start your VALU assessment.',
+      report: reportReady ? 'Activate your Valoria report to continue.' : 'Your VALU report is being prepared.',
       profile: 'Complete your professional profile.',
       capability: 'Add your capability.',
       eligibility: 'Complete your capability eligibility.',

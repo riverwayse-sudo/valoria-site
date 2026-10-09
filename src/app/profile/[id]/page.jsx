@@ -12,7 +12,8 @@ const supabase = createClient(
 )
 
 export default async function ProfilePage({ params, searchParams }) {
-  const { id } = params
+  const { id } = await params
+  const resolvedSearchParams = await searchParams
 
   // Public profile IDs are UUIDs. Prevent reserved/non-profile paths from
   // reaching Supabase as UUID filters (e.g. /profile/applications).
@@ -24,7 +25,6 @@ export default async function ProfilePage({ params, searchParams }) {
     .from('professional_profiles')
     .select('id, display_name, headline, current_job_title, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, cv_summary, programme_types, profile_complete, visibility, listing_status')
     .eq('id', id)
-    .eq('profile_complete', true)
     .eq('visibility', 'public')
     .eq('listing_status', 'listed')
     .maybeSingle()
@@ -40,5 +40,5 @@ export default async function ProfilePage({ params, searchParams }) {
     _source: 'real',
   } : null
 
-  return <ProfileClient id={id} searchParams={searchParams} initialProfile={initialProfile} />
+  return <ProfileClient id={id} searchParams={resolvedSearchParams} initialProfile={initialProfile} />
 }

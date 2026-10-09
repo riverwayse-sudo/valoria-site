@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
+import ValoriaAvatar from '@/components/ValoriaAvatar'
 
 // ─── brand tokens — same system as the public profile page ─────────────────
 const GOLD    = '#C9A84C'
@@ -65,13 +66,13 @@ function completenessFields(tracks) {
     facilitator: ['programme_types', 'fee_range'],
     candidate:   ['preferred_industry', 'industry', 'notice_period'],
   }
-  const base = ['display_name', 'headline', 'bio', 'photo_url', 'username', 'phone']
+  const base = ['display_name', 'headline', 'bio', 'username', 'phone']
   const trackFields = (tracks && tracks.length ? tracks : ['candidate'])
     .flatMap(t => sets[t] || sets.candidate)
   return [...new Set([...base, ...trackFields])]
 }
 const COMPLETENESS_LABELS = {
-  display_name: 'Name', headline: 'Headline', bio: 'Bio', photo_url: 'Profile photo',
+  display_name: 'Name', headline: 'Headline', bio: 'Bio',
   username: 'Username', phone: 'Phone number', topics: 'Topics', tier: 'Speaking tier',
   fee_range: 'Fee range', programme_types: 'Programme types', preferred_industry: 'Preferred industry',
   industry: 'Industry', notice_period: 'Notice period',
@@ -257,7 +258,6 @@ export default function DashboardPage() {
     ? `LISTED IN ${listedCapabilities.length} ${listedCapabilities.length === 1 ? 'PATH' : 'PATHS'}`
     : 'PROFILE IN DEVELOPMENT'
   const initials    = getInitials(p.display_name)
-  const avatarLetters = getAvatarLetters(p.display_name)
   const firstName   = p.display_name ? p.display_name.split(' ')[0] : 'there'
   const atbId       = p.atb_id || null
   // Facilitator and speaker both quote a fee_range; candidate quotes salary.
@@ -349,12 +349,9 @@ export default function DashboardPage() {
             {isSupply && (
               <div style={{ width:'132px', height:'132px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
                 <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
-                  <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: (p.photo_url && !avatarError) ? undefined : `linear-gradient(145deg,${MID},${DARK})`, overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'32px', fontWeight:700, color: GOLD, letterSpacing:'.04em' }}>
-                    {p.photo_url && !avatarError
-                      ? <img src={p.photo_url} alt={p.display_name ? `${p.display_name}'s photo` : 'Profile photo'} loading="lazy" decoding="async" onError={() => setAvatarError(true)} style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center' }} />
-                      : avatarLetters}
-                  </div>
-                </div>
+                  <div style={{ width:'100%', height:'100%', borderRadius:'50%', overflow:'hidden' }}>
+                    <ValoriaAvatar src={p.photo_url} seed={p.id || user?.id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={132} />
+                  </div>          </div>
               </div>
             )}
 
@@ -750,16 +747,18 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
   const capabilityReady = capabilities.some(c => c.is_active)
   const eligibilityReady = capabilities.some(c => c.is_active && (c.eligible_for_listing || c.eligibility_status === 'eligible' || c.eligibility_status === 'listed'))
   const listedReady = capabilities.some(c => c.is_active && c.eligible_for_listing === true && c.eligibility_status === 'listed')
-  const stages = [
-    { title:'VALU', done:assessmentDone },
-    { title:'PROFILE', done:profileComplete },
-    { title:'CAPABILITY', done:capabilityReady },
-    { title:'READY', done:eligibilityReady },
-    { title:'REGISTRY', done:listedReady },
+
+  const steps = [
+    { key:'valu', label:'VALU', plain:'Assessment', done:assessmentDone },
+    { key:'profile', label:'PROFILE', plain:'Profile', done:profileComplete },
+    { key:'capability', label:'CAPABILITY', plain:'Capability', done:capabilityReady },
+    { key:'eligibility', label:'READY', plain:'Ready', done:eligibilityReady },
+    { key:'listed', label:'REGISTRY', plain:'Discoverable', done:listedReady },
   ]
-  const next = stages.find(s => !s.done) || { title:'OPPORTUNITIES', done:true }
+
+  const next = steps.find(step => !step.done)
   const nextHref = !assessmentDone
-    ? 'https://valoriainstitute.com/valu/assessment/'
+    ? '/valu/start'
     : !profileComplete
       ? '/profile/setup'
       : !capabilityReady
@@ -770,30 +769,60 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
             ? '/marketplace'
             : '/opportunities'
 
+  const heading = !assessmentDone
+    ? 'Start with VALU.'
+    : !profileComplete
+      ? 'Your profile is the next step.'
+      : !capabilityReady
+        ? 'Tell Valoria what you do.'
+        : !eligibilityReady
+          ? 'Finish your capability setup.'
+          : !listedReady
+            ? 'Your marketplace presence is ready.'
+            : 'You are ready for opportunities.'
+
+  const explanation = !assessmentDone
+    ? 'Complete your VALU assessment to establish your professional signal.'
+    : !profileComplete
+      ? 'You are already discoverable. Complete your profile to add more context and unlock enhanced marketplace access.'
+      : !capabilityReady
+        ? 'Choose the capability you want Valoria to present in the marketplace.'
+        : !eligibilityReady
+          ? 'Complete the remaining checks for your capability.'
+          : !listedReady
+            ? 'Your capability is ready to appear in the Registry.'
+            : 'Explore opportunities that fit what you do.'
+
   return (
     <section aria-label="Your Valoria journey" style={{ maxWidth:'1100px', margin:'26px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
-      <div style={{ background:'rgba(26,26,46,.7)', border:`1px solid ${GLINE}`, padding:'20px 22px' }}>
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', gap:18, flexWrap:'wrap' }}>
-          <div>
-            <div style={{ fontSize:'9px', letterSpacing:'.18em', fontWeight:800, color:GOLD }}>YOUR JOURNEY</div>
-            <div style={{ fontSize:'20px', fontWeight:400, color:PARCH, marginTop:7 }}>
-              {next.done ? 'You are ready for opportunities.' : `Next: ${next.title.charAt(0)+next.title.slice(1).toLowerCase()}`}
-            </div>
-            <div style={{ fontSize:'12px', color:DIM, marginTop:5 }}>You do not need to understand everything. Just take the next step.</div>
+      <div style={{ background:'rgba(26,26,46,.7)', border:`1px solid ${GLINE}`, padding:'22px 24px', borderRadius:'12px' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:20, flexWrap:'wrap' }}>
+          <div style={{ minWidth:0, flex:1 }}>
+            <div style={{ fontSize:'9px', letterSpacing:'.18em', fontWeight:800, color:GOLD }}>YOUR NEXT STEP</div>
+            <div style={{ fontSize:'21px', fontWeight:500, color:PARCH, marginTop:7, lineHeight:1.25 }}>{heading}</div>
+            <div style={{ fontSize:'13px', color:DIM, marginTop:7, lineHeight:1.6, maxWidth:'680px' }}>{explanation}</div>
           </div>
-          <Link href={nextHref} style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'9px', fontWeight:800, letterSpacing:'.12em' }}>CONTINUE →</Link>
+          <Link href={nextHref} style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>
+            {next ? (next.key === 'valu' ? 'START VALU' : `CONTINUE ${next.plain.toUpperCase()}`) : 'VIEW OPPORTUNITIES'} →
+          </Link>
         </div>
-        <div style={{ display:'flex', alignItems:'center', marginTop:22, padding:'0 4px' }} aria-label="Journey progress">
-          {stages.map((stage,i) => (
-            <div key={stage.title} style={{ display:'flex', alignItems:'center', flex: i < stages.length-1 ? 1 : '0 0 auto' }}>
-              <div title={stage.done ? `${stage.title}: done` : `${stage.title}: not done`} style={{ width:stage.done ? 30 : 24, height:stage.done ? 30 : 24, borderRadius:'50%', border:`1px solid ${stage.done ? GOLD : 'rgba(247,244,238,.18)'}`, background:stage.done ? GOLD : 'rgba(26,26,46,.8)', color:stage.done ? DARK : 'rgba(247,244,238,.35)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'8px', fontWeight:800, flexShrink:0 }}>{stage.done ? '✓' : i+1}</div>
-              {i < stages.length-1 && <div style={{ height:1, flex:1, background:stage.done ? 'rgba(201,168,76,.45)' : 'rgba(247,244,238,.1)', margin:'0 7px' }} />}
+
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(5,minmax(0,1fr))', gap:'8px', marginTop:22 }} aria-label="Journey progress">
+          {steps.map((step, index) => (
+            <div key={step.key} style={{ minWidth:0 }}>
+              <div style={{ height:'4px', borderRadius:'99px', background:step.done ? GOLD : 'rgba(247,244,238,.12)' }} />
+              <div style={{ marginTop:8, fontSize:'9px', fontWeight:800, letterSpacing:'.08em', color:step.done ? GOLD : 'rgba(247,244,238,.38)' }}>
+                {step.done ? '✓ ' : `${index + 1} · `}{step.plain.toUpperCase()}
+              </div>
             </div>
           ))}
         </div>
-        <div style={{ display:'flex', justifyContent:'space-between', marginTop:9, padding:'0 1px' }}>
-          {stages.map(stage => <span key={stage.title} style={{ fontSize:'7px', fontWeight:800, letterSpacing:'.1em', color:stage.done ? GOLD : 'rgba(247,244,238,.3)' }}>{stage.title}</span>)}
-        </div>
+
+        {assessmentDone && !profileComplete && (
+          <div style={{ marginTop:16, padding:'12px 14px', background:'rgba(201,168,76,.06)', border:'1px solid rgba(201,168,76,.16)', borderRadius:'8px', fontSize:'12px', color:DIM, lineHeight:1.55 }}>
+            <strong style={{ color:PARCH }}>Already discoverable.</strong> Your completed VALU assessment has created your marketplace presence. Your profile is the next thing to complete.
+          </div>
+        )}
       </div>
     </section>
   )

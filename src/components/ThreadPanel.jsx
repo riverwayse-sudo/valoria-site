@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
+import ValoriaAvatar from '@/components/ValoriaAvatar'
 
 // ─── brand tokens ─────────────────────────────────────────────────────────────
 const GOLD    = '#C9A84C'
@@ -12,12 +13,6 @@ const FAINT   = 'rgba(247,244,238,.15)'
 const GLINE   = 'rgba(201,168,76,.12)'
 const GLINE2  = 'rgba(201,168,76,.28)'
 
-function getAvatarLetters(name) {
-  if (!name) return '?'
-  const words = name.trim().split(/\s+/).filter(Boolean)
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
-  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
-}
 
 function formatTime(dateStr) {
   const date = new Date(dateStr)
@@ -85,11 +80,7 @@ function ThreadList({ threads, onSelect, activeThreadId }) {
                     flexShrink: 0,
                     overflow: 'hidden',
                   }}>
-                    {otherParty?.photo_url ? (
-                      <img src={otherParty.photo_url} alt={otherParty.display_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      getAvatarLetters(otherParty?.display_name)
-                    )}
+                    <ValoriaAvatar src={otherParty?.photo_url} seed={otherParty?.id || otherParty?.professional_id || otherParty?.display_name} alt={otherParty?.display_name ? `${otherParty.display_name}'s profile avatar` : 'Profile avatar'} size={42} />
                   </div>
                   
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -284,11 +275,7 @@ function MessageView({ thread, currentUserId, onBack, onNewMessage }) {
           overflow: 'hidden',
           flexShrink: 0,
         }}>
-          {otherParty?.photo_url ? (
-            <img src={otherParty.photo_url} alt={otherParty.display_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          ) : (
-            getAvatarLetters(otherParty?.display_name)
-          )}
+          <ValoriaAvatar src={otherParty?.photo_url} seed={otherParty?.id || otherParty?.professional_id || otherParty?.display_name} alt={otherParty?.display_name ? `${otherParty.display_name}'s profile avatar` : 'Profile avatar'} size={32} />
         </div>
         
         <div style={{ flex: 1, minWidth: 0 }}>

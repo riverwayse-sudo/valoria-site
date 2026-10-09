@@ -42,7 +42,7 @@ export default function HomepageEvents() {
           <div className="home-events-video">
             <iframe
               src="https://www.youtube.com/embed/B9dD22vTErI"
-              title="Valoria Institute Session 01 replay"
+              title="Valoria Institute replay"
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
@@ -84,7 +84,7 @@ export default function HomepageEvents() {
         </div>
 
         <div className="home-events-footer">
-          <span>PAST SESSIONS · REPLAYS · UPCOMING PROGRAMMES</span>
+          <span>PAST CONVERSATIONS · REPLAYS · UPCOMING PROGRAMMES</span>
           <a href="/events">VIEW ALL EVENTS <span aria-hidden="true">→</span></a>
         </div>
       </div>

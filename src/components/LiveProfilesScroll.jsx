@@ -1,13 +1,10 @@
 import Link from 'next/link'
+import ValoriaAvatar from '@/components/ValoriaAvatar'
 
 const TRACK_META = {
   candidate: { label: 'Talent', href: '/marketplace/talent' },
   speaker: { label: 'Speaker', href: '/marketplace/speakers' },
   facilitator: { label: 'Facilitator', href: '/marketplace/facilitators' },
-}
-
-function letters(value) {
-  return value ? value.replace(/\./g, '').toUpperCase() : 'V'
 }
 
 async function getHomepageProfiles() {
@@ -94,10 +91,10 @@ export default async function LiveProfilesScroll() {
                     aria-label={`Discover more ${meta.label.toLowerCase()} professionals`}
                   >
                     <div className="vi-scroll-avatar" aria-hidden="true">
-                      {profile.photo_url ? <img src={profile.photo_url} alt="" loading="lazy" /> : <span>{letters(profile.display_initials)}</span>}
+                      <ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} />
                     </div>
                     <div className="vi-scroll-copy">
-                      <div className="vi-scroll-topline"><span>{profile.atb_id || letters(profile.display_initials)}</span><i>LIVE</i></div>
+                      <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>LIVE</i></div>
                       <div className="vi-scroll-headline">{profile.headline || 'Valoria Professional'}</div>
                       <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
                     </div>
