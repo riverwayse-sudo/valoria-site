@@ -8,7 +8,7 @@
 
 ## Required environment variables
 - `ANTHROPIC_API_KEY`: server-only key for chatbot responses.
-- `ANTHROPIC_CHAT_MODEL`: optional model override; defaults to `claude-sonnet-4-20250514`.
+- `ANTHROPIC_CHAT_MODEL`: optional model override; defaults to `claude-sonnet-4-6`.
 - `BREVO_API_KEY`: server-only key for issue and failure notification email.
 - `SUPPORT_NOTIFICATION_EMAIL`: optional support recipient; defaults to `info@valoriainstitute.com`.
 
