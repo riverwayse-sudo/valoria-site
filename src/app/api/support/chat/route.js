@@ -1,11 +1,11 @@
 import { sendSupportNotification, escapeEmailHtml } from '@/lib/support-notifications'
+import { allowSupportRequest, supportClientKey } from '@/lib/support-rate-limit'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 20
 
 const MAX_MESSAGES = 10
 const MAX_MESSAGE_CHARS = 1800
-const SITE_URL = 'https://valoriainstitute.com'
 
 const SYSTEM_PROMPT = `You are the Valoria Institute website guide: concise, calm, precise, and institutionally warm.
 
@@ -44,6 +44,9 @@ async function notifyChatFailure({ reason, pagePath }) {
 export async function POST(request) {
   let pagePath = '/'
   try {
+    if (!allowSupportRequest(supportClientKey(request), 12, 60_000)) {
+      return Response.json({ error: 'Please wait a moment before sending another message.' }, { status: 429 })
+    }
     const length = Number(request.headers.get('content-length') || 0)
     if (length > 24000) return Response.json({ error: 'This message is too large. Please shorten it and try again.' }, { status: 413 })
 
