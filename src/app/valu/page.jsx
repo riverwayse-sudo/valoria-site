@@ -44,9 +44,10 @@ export default function ValuPage() {
           <div className="valu-kicker"><span /> THE JOURNEY</div>
           <h2>Three steps from<br /><em>insight to opportunity.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Take the taster</h3><p>Answer 9 Intelligence questions for a directional starting point. The taster does not produce an official VALU Index score.</p></article>
-            <article><b>02</b><h3>Complete the full VALU Index</h3><p>Complete the 54-question assessment across all five PRIME clusters to establish your official assessment result.</p></article>
-            <article><b>03</b><h3>Build your professional profile</h3><p>Complete your profile and relevant capability details. Discoverability follows applicable eligibility and review requirements.</p></article>
+            <article><b>01</b><h3>Take the taster</h3><p>Complete the 9-question VALU taster (Intelligence cluster). See your scores across four skills and a preview of the remaining four clusters.</p></article>
+            <article><b>02</b><h3>Complete the full VALU Index</h3><p>Take the full 54-question VALU Index across all five PRIME clusters. This is the score that appears on your marketplace profile.</p></article>
+            <article><b>03</b><h3>Build your professional profile</h3><p>Create your account, complete your professional profile, and declare your modalities: candidate, speaker or facilitator.</p></article>
+            <article><b>04</b><h3>Become discoverable</h3><p>Meet the platform's profile standard and enter the Valoria marketplace.</p></article>
           </div>
         </div>
       </section>
