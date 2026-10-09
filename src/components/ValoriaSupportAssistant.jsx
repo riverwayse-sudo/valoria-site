@@ -23,10 +23,23 @@ export default function ValoriaSupportAssistant() {
   const [reportStatus, setReportStatus] = useState('')
   const endRef = useRef(null)
   const inputRef = useRef(null)
+  const launcherRef = useRef(null)
 
   useEffect(() => {
     if (open && view === 'chat') inputRef.current?.focus()
   }, [open, view])
+
+  useEffect(() => {
+    if (!open) return
+    const closeOnEscape = event => {
+      if (event.key === 'Escape') {
+        setOpen(false)
+        launcherRef.current?.focus()
+      }
+    }
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [open])
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
@@ -81,7 +94,7 @@ export default function ValoriaSupportAssistant() {
   return (
     <div className="valoria-support" id="valoria-support-assistant">
       {open && (
-        <section className="valoria-support-panel" aria-label="Valoria website assistant" aria-modal="false">
+        <section className="valoria-support-panel" id="valoria-support-panel" aria-label="Valoria website assistant" >
           <header className="valoria-support-header">
             <div className="valoria-support-mark" aria-hidden="true">V</div>
             <div className="valoria-support-heading">
@@ -157,7 +170,7 @@ export default function ValoriaSupportAssistant() {
         </section>
       )}
 
-      <button className={`valoria-support-launcher ${open ? 'is-open' : ''}`} type="button" aria-expanded={open} aria-controls="valoria-support-assistant" onClick={() => setOpen(value => !value)}>
+      <button ref={launcherRef} className={`valoria-support-launcher ${open ? 'is-open' : ''}`} type="button" aria-expanded={open} aria-controls="valoria-support-panel" onClick={() => setOpen(value => !value)}>
         <span className="valoria-support-launcher-icon" aria-hidden="true">{open ? '×' : '✦'}</span>
         <span>{open ? 'Close assistant' : 'Chat with Valoria'}</span>
       </button>
