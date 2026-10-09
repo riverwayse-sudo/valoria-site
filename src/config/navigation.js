@@ -7,16 +7,11 @@ export const NAVIGATION = {
       label: 'Explore',
       groups: [
         {
-          label: 'Discover',
+          label: '',
           items: [
             { label: 'Marketplace', href: '/marketplace', description: 'Discover professionals and their capabilities.' },
             { label: 'Facilitators', href: '/facilitators', description: 'Find people who can lead the room.' },
             { label: 'Programmes', href: '/programmes', description: 'Develop capability with structured learning.' },
-          ],
-        },
-        {
-          label: 'Ideas',
-          items: [
             { label: 'Insights', href: '/insights', description: 'Perspectives on professional capability, leadership and work.' },
           ],
         },
