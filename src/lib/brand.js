@@ -27,11 +27,49 @@ export const PRIME_CLUSTERS = [
   { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you build', skills: ['Commercial Thinking', 'Systems Building', 'Venture Mindset'] },
 ]
 
+// VALU Index values are points out of 100, not percentages.
+// A taster completion grants Basic marketplace access only; it does not create an
+// official VALU Index score or merit tier. Full assessment completion unlocks
+// the official points score and score-earned designation.
+export const VALU_SCORE = {
+  unit: 'points',
+  maximum: 100,
+  displaySuffix: '/100',
+}
+
+export const MARKETPLACE_ACCESS_LEVELS = {
+  BASIC: {
+    id: 'basic',
+    label: 'Basic',
+    source: 'taster',
+    officialIndex: false,
+    meritTier: false,
+    access: 'limited',
+  },
+  FULL: {
+    id: 'full',
+    label: 'Full VALU Index',
+    source: 'full_assessment',
+    officialIndex: true,
+    meritTier: true,
+    access: 'full',
+  },
+}
+
+// Merit tiers are credentials earned through the full VALU Index assessment.
+// Do not assign a merit tier to a taster-only/basic listing.
 export const TIER_DESIGNATIONS = [
-  { min: 90, name: 'Elite', stars: '✦✦✦' },
-  { min: 75, name: 'Distinguished', stars: '✦✦' },
-  { min: 55, name: 'Proficient', stars: '✦' },
+  { min: 90, max: 100, name: 'Elite', stars: '✦✦✦' },
+  { min: 75, max: 89, name: 'Distinguished', stars: '✦✦' },
+  { min: 55, max: 74, name: 'Proficient', stars: '✦' },
 ]
+
+export function getValuTier(points, assessmentLevel = 'full') {
+  if (assessmentLevel !== 'full' || points == null || !Number.isFinite(Number(points))) return null
+  const score = Number(points)
+  if (score < 0 || score > VALU_SCORE.maximum) return null
+  return TIER_DESIGNATIONS.find(tier => score >= tier.min && score <= tier.max) || null
+}
 
 export const ENTRY_POINTS = [
   {
