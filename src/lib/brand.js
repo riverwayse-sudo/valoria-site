@@ -28,9 +28,11 @@ export const PRIME_CLUSTERS = [
 ]
 
 export const TIER_DESIGNATIONS = [
-  { min: 90, name: 'Elite', stars: '✦✦✦' },
-  { min: 75, name: 'Distinguished', stars: '✦✦' },
-  { min: 55, name: 'Proficient', stars: '✦' },
+  { min: 80, name: 'Force to Align With', stars: '✦✦✦' },
+  { min: 65, name: 'Emerging Force', stars: '✦✦' },
+  { min: 50, name: 'Developing Professional', stars: '✦' },
+  { min: 35, name: 'Building Foundations', stars: '✧' },
+  { min: 0, name: 'At the Starting Point', stars: '·' },
 ]
 
 export const ENTRY_POINTS = [
