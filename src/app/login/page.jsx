@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import Nav from '@/components/Nav'
 
 const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
@@ -198,7 +199,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={styles.page}>
+    <>
+      <Nav />
+      <div style={styles.page}>
       <div style={styles.card}>
         <div style={styles.eyebrow}>
           <div style={styles.eyebrowLine} />
@@ -262,7 +265,8 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }
 
