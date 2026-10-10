@@ -130,3 +130,17 @@ begin
   end if;
 end;
 $function$;
+
+
+-- Rebuild the existing public roster so every current card receives the report-derived field.
+do $backfill$
+declare
+  roster_row record;
+begin
+  for roster_row in
+    select professional_id from public.marketplace_public_roster
+  loop
+    perform public.refresh_marketplace_public_roster(roster_row.professional_id);
+  end loop;
+end;
+$backfill$;
