@@ -59,10 +59,12 @@ export const MARKETPLACE_ACCESS_LEVELS = {
 // Merit tiers are credentials earned through the full VALU Index assessment.
 // Do not assign a merit tier to a taster-only/basic listing.
 export const TIER_DESIGNATIONS = [
-  { level: 4, min: 90, max: 100, name: 'Elite', stars: '✦✦✦✦' },
-  { level: 3, min: 75, max: 89, name: 'Distinguished', stars: '✦✦✦' },
-  { level: 2, min: 55, max: 74, name: 'Proficient', stars: '✦✦' },
-  { level: 1, min: 0, max: 54, name: 'Foundation', stars: '✦' },
+  // Canonical badge treatments from Brand Guidelines VI-BG-2026-001.
+  // Standard is a recognised on-platform tier; no star treatment is specified in the manual.
+  { level: 4, min: 90, max: 100, name: 'Elite', stars: '✦✦✦', badgeClass: 'elite' },
+  { level: 3, min: 75, max: 89, name: 'Distinguished', stars: '✦✦', badgeClass: 'distinguished' },
+  { level: 2, min: 55, max: 74, name: 'Proficient', stars: '✦', badgeClass: 'proficient' },
+  { level: 1, min: 35, max: 54, name: 'Standard', stars: '', badgeClass: 'standard' },
 ]
 
 export function getValuTier(points, assessmentLevel = 'full') {
