@@ -6,6 +6,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import EnquiryForm from '@/components/EnquiryForm'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
+import { getValuTier } from '@/lib/brand'
 
 // ─── helpers ─────────────────────────────────────────────
 function getInitials(name) {
@@ -286,7 +287,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
     { label:'Location',   value: p.location || '—' },
     { label:'Industry',   value: p.industry || '—' },
     { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
-    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} / 100` : 'Not assessed', href: p.valu_score != null ? '#valu-card' : null },
+    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Basic · Snapshot', href: p.valu_score != null ? '#valu-card' : null },
   ]
 
   return (
