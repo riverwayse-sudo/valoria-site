@@ -30,7 +30,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
       if(industry && displayText(p.industry) !== industry) return false
       if(!q) return true
-      return [p.atb_id,p.headline,p.current_job_title,p.bio,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
+      return [p.atb_id,p.headline,p.current_job_title,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
     })
   },[rows,activeTrack,query,industry])
 
@@ -86,33 +86,45 @@ function Profile({p}) {
     title:c === 'candidate' ? 'PROFESSIONAL' : c === 'speaker' ? 'SPEAKER' : c === 'facilitator' ? 'FACILITATOR' : c.toUpperCase(),
     detail:c === 'candidate' ? 'CAREER · TALENT' : c === 'speaker' ? 'KNOWLEDGE · COMMUNICATION' : c === 'facilitator' ? 'PEOPLE · PROGRESS' : '',
   }))
-  const career=displayText(p.headline || p.current_job_title || '')
   const specialisation=displayText(p.industry || '')
-  const isBasic = p.assessment_access === 'basic' || p.valu_index == null
-  const tier = !isBasic ? getValuTier(p.valu_index, 'full') : null
+  // Fail closed: only an explicitly full assessment can expose an official score/designation.
+  const isFullAssessment = p.assessment_access === 'full' && p.valu_index != null
+  const isBasic = !isFullAssessment
+  const tier = isFullAssessment ? getValuTier(p.valu_index, 'full') : null
   const profileId = displayText(p.atb_id || 'PROFILE ID PENDING')
+  // This text is sourced from the canonical VALU Index report projection, never the member's bio/headline.
+  const assessmentSummary = isFullAssessment ? displayText(p.assessment_summary || '') : ''
   return <article className={styles.card}>
     <div className={styles.identity}>
       <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
       <div className={styles.identityCopy}>
-        <small>PROFILE ID</small>
+        <small>ATB PROFILE ID</small>
         <strong>{profileId}</strong>
         <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : '✓ VALORIA ASSESSED'}</span>
       </div>
     </div>
-    {career && <p className={styles.career}>{career}</p>}
-    {specialisation && <p className={styles.specialisation}>{specialisation}</p>}
+    <p className={styles.specialisation} title={specialisation}>{specialisation || 'Professional capability'}</p>
+    <div className={styles.assessmentInsight}>
+      <small>VALU INDEX ASSESSMENT INSIGHT</small>
+      {isFullAssessment
+        ? (assessmentSummary
+          ? <p className={styles.assessmentSummary} title={assessmentSummary}>{assessmentSummary}</p>
+          : <p className={styles.assessmentPending}>Assessment insight is being prepared.</p>)
+        : <p className={styles.assessmentPending}>Complete the full VALU Index assessment to unlock this insight.</p>}
+    </div>
     <div className={styles.signalRow}>
-      {!isBasic && p.valu_index != null && <div className={styles.scoreBlock}>
+      <div className={styles.scoreBlock}>
         <small>VALU INDEX</small>
-        <strong>{p.valu_index}<span> POINTS</span></strong>
-      </div>}
-      {!isBasic && tier && <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>
-        {tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}
-        <span>{tier.name}</span>
-      </span>}
+        <strong>{isFullAssessment ? <>{p.valu_index}<span> POINTS</span></> : <span className={styles.snapshotScore}>SNAPSHOT</span>}</strong>
+      </div>
+      {isFullAssessment && tier
+        ? <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>
+            {tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}
+            <span>{tier.name}</span>
+          </span>
+        : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>FULL ASSESSMENT<br/>PENDING</span>}
     </div>
     {capabilityBadges.length > 0 && <div className={styles.capabilities}>{capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)}</div>}
-    <Link href={`/profile/${p.id}`} className={styles.view}>VIEW PROFILE <span aria-hidden="true">→</span></Link>
+    <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE</Link>
   </article>
 }
