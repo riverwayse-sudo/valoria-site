@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
 const GOLD='#C9A84C', DARK='#0F0F1A', PARCH='#F7F4EE'
@@ -7,6 +7,7 @@ export default function ValuCompletionNudge(){
   const [show,setShow]=useState(false)
   const [assessed,setAssessed]=useState(false)
   const [assessmentStarted,setAssessmentStarted]=useState(false)
+  const closeButtonRef=useRef(null)
 
   useEffect(()=>{
     let active=true
@@ -25,7 +26,7 @@ export default function ValuCompletionNudge(){
       ])
 
       if(!profile||profile.profile_complete)return
-      const fullAssessmentComplete=!!assessment?.completed_at && Number(assessment?.total_score||0)>=35
+      const fullAssessmentComplete=!!assessment?.completed_at
       if(active){
         const started = !!latestSession?.id && !latestSession?.completed_at
         setAssessmentStarted(started)
@@ -37,6 +38,14 @@ export default function ValuCompletionNudge(){
     return()=>{active=false}
   },[])
 
+  useEffect(()=>{
+    if(!show)return undefined
+    closeButtonRef.current?.focus()
+    const onKeyDown=(event)=>{if(event.key==='Escape')dismiss()}
+    window.addEventListener('keydown',onKeyDown)
+    return()=>window.removeEventListener('keydown',onKeyDown)
+  },[show])
+
   if(!show)return null
 
   function dismiss(){
@@ -44,21 +53,21 @@ export default function ValuCompletionNudge(){
     setShow(false)
   }
 
-  return <div style={S.overlay} role="dialog" aria-modal="true" aria-label={assessed?'Your Valoria marketplace profile':'Complete your professional profile'}>
+  return <div style={S.overlay} role="dialog" aria-modal="true" aria-labelledby="valu-nudge-title">
     <div style={S.card}>
-      <button onClick={dismiss} aria-label="Close" style={S.close}>×</button>
-      <div style={S.eyebrow}>{assessed?'VALU ASSESSMENT COMPLETE':assessmentStarted?'ASSESSMENT IN PROGRESS':'YOUR NEXT STEP'}</div>
-      <h2 style={S.title}>
-        {assessed?'You are now discoverable.':assessmentStarted?'Continue your VALU assessment.':'Start your VALU journey.'}
+      <button ref={closeButtonRef} onClick={dismiss} aria-label="Close" style={S.close}>×</button>
+      <div style={S.eyebrow}>{assessed?'VALU INDEX ASSESSMENT COMPLETE':assessmentStarted?'ASSESSMENT IN PROGRESS':'YOUR NEXT STEP'}</div>
+      <h2 id="valu-nudge-title" style={S.title}>
+        {assessed?'Your VALU Index assessment is complete.':assessmentStarted?'Continue your VALU Index assessment.':'Start your VALU Index assessment.'}
       </h2>
       <p style={S.copy}>
         {assessed
-          ? 'Your professional presence is already in the Valoria marketplace. Complete your profile to add more context and unlock enhanced marketplace access.'
+          ? 'Your professional profile is ready to complete. Finish your details to establish your marketplace presence. Eligibility and public listing are determined separately by Valoria’s requirements.'
           : assessmentStarted
-            ? 'You have already started VALU. Continue from where you left off; your progress is saved.'
-            : 'Start your VALU assessment to understand your professional signal and take the next step in your Valoria journey.'}
+            ? 'You have already started the VALU Index assessment. Continue where you left off; your progress is saved.'
+            : 'Start the VALU Index assessment to understand your professional capability and take the next step with Valoria.'}
       </p>
-      <a href={assessed?"/profile/setup":"/valu/start"} style={S.button}>{assessed?"COMPLETE MY PROFILE":"CONTINUE VALU"} →</a>
+      <a href={assessed?"/profile/setup":"/valu/start"} style={S.button}>{assessed?"COMPLETE MY PROFILE":assessmentStarted?"CONTINUE THE VALU INDEX":"START THE VALU INDEX"} →</a>
       <button onClick={dismiss} style={S.later}>Remind me later</button>
     </div>
   </div>
