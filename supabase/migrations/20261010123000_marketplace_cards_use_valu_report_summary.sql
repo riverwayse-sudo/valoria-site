@@ -73,7 +73,7 @@ begin
     -- This is report text, not an AI-generated rewrite or member-entered profile copy.
     report_match := regexp_match(
       coalesce(report_text, ''),
-      '(?is)##[[:space:]]*WHAT YOU ARE GOOD AT[[:space:]]*(.*?)(?=\n[[:space:]]*---|\n[[:space:]]*##[[:space:]]*WHERE YOU ARE LOSING GROUND)'
+      '(?is)##[[:space:]]*WHAT YOU ARE GOOD AT[[:space:]]*(.*?)[[:space:]]*---'
     );
     report_section := coalesce(report_match[1], '');
     report_section := regexp_replace(report_section, '^[[:space:]]*[-*][[:space:]]*', '', 'g');
