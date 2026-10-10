@@ -89,6 +89,8 @@ export default async function LiveProfilesScroll() {
                     className="vi-scroll-card"
                     data-marketplace-intent={primaryTrack}
                     aria-label={`Discover more ${meta.label.toLowerCase()} professionals`}
+                    aria-hidden={index >= unique.length ? true : undefined}
+                    tabIndex={index >= unique.length ? -1 : undefined}
                   >
                     <div className="vi-scroll-avatar" aria-hidden="true">
                       <ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} />
@@ -99,7 +101,7 @@ export default async function LiveProfilesScroll() {
                       <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
                     </div>
                     <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'}`}>
-                      <span className="vi-scroll-score-label">VALU</span>
+                      <span className="vi-scroll-score-label">VALU INDEX</span>
                       <strong>{profile.valu_index ?? '—'}</strong>
                       <span className="vi-scroll-score-max">/100</span>
                     </div>
@@ -129,7 +131,7 @@ export default async function LiveProfilesScroll() {
           <small>WANT TO BE DISCOVERED?</small>
           <strong>Build the professional record that makes your capability visible.</strong>
         </div>
-        <Link href="/valu">START WITH VALU <span>→</span></Link>
+        <Link href="/valu">START WITH VALU INDEX <span>→</span></Link>
       </div></section>
   )
 }
