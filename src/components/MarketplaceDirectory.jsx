@@ -6,6 +6,7 @@ import Footer from '@/components/Footer'
 import { useMemo, useState } from 'react'
 import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
+import { getValuTier } from '@/lib/brand'
 
 const TRACKS = [
   ['all','All', '/marketplace'],
@@ -86,6 +87,8 @@ function Profile({p}) {
   const tags=capabilityLabels.length ? capabilityLabels : skillTags.length ? skillTags : topicTags
   const career=displayText(p.headline || p.current_job_title || p.designation || 'Valoria Professional')
   const bio=displayText(p.bio)
+  const isBasic = p.assessment_access === 'basic' || p.valu_index == null
+  const tier = !isBasic ? getValuTier(p.valu_index, 'full') : null
   return <article className={styles.card}>
     <div className={styles.identity}>
       <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
@@ -94,10 +97,10 @@ function Profile({p}) {
         <strong>{displayText(p.atb_id || p.professional_id || 'UNASSIGNED')}</strong>
         <em>✓ VALORIA ASSESSED</em>
       </div>
-      {p.valu_index != null && <div className={styles.valu}><small>VALU</small><b>{p.valu_index}</b><span>/100</span></div>}
+      {(p.valu_index != null || isBasic) && <div className={styles.valu}><small>VALU INDEX</small>{isBasic ? <><b style={{fontSize:'14px',letterSpacing:'.08em'}}>BASIC</b><span>SNAPSHOT</span></> : <><b>{p.valu_index}</b><span>POINTS</span></>}</div>}
     </div>
     <p className={styles.career}>{career}</p>
-    {tags.length > 0 && <div className={styles.capabilities}>{tags.map(tag=><span key={tag}>{displayText(tag)}</span>)}</div>}
+    {tags.length > 0 && <div className={styles.capabilities}>{tags.map(tag=><span key={tag}>{displayText(tag)}</span>)}{isBasic ? <span>BASIC · SNAPSHOT</span> : tier ? <span>{tier.name.toUpperCase()} · {tier.stars}</span> : null}</div>}
     {bio && <p className={styles.bio}>{bio.length>220 ? bio.slice(0,220)+'…' : bio}</p>}
     <Link href={`/profile/${p.id}`} className={styles.view}>VIEW PROFILE →</Link>
   </article>
