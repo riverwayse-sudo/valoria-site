@@ -15,8 +15,14 @@ declare
   assessment_ok boolean := false;
   t record;
   report_text text;
-  report_section text;
-  report_match text[];
+  canonical_valu_index numeric;
+  canonical_cluster_scores jsonb;
+  canonical_designation text;
+  valid_dimension_count integer := 0;
+  strongest_dimension text;
+  weakest_dimension text;
+  strongest_score numeric;
+  weakest_score numeric;
   assessment_summary text;
 begin
   delete from public.marketplace_public_roster where professional_id = p_professional_id;
@@ -64,8 +70,9 @@ begin
        order by case x when 'talent' then 1 when 'speaker' then 2 when 'facilitator' then 3 else 9 end
     );
 
-    -- Use the same person's latest current, completed VALU report.
-    select v.ai_report into report_text
+    -- One canonical source for the score, PRIME evidence, tier and descriptor.
+    select v.total_score, v.cluster_scores, v.designation, v.ai_report
+      into canonical_valu_index, canonical_cluster_scores, canonical_designation, report_text
       from public.valu_assessments v
      where v.user_id = p_professional_id
        and v.completed_at is not null
@@ -74,18 +81,48 @@ begin
      order by v.completed_at desc, v.created_at desc
      limit 1;
 
-    -- Use the report's opening assessment interpretation paragraph as the card summary.
-    -- Remove the heading and retain only the first report paragraph, never profile-authored copy.
-    report_section := regexp_replace(coalesce(report_text, ''), '^##[^\n]*\n+', '', 's');
-    report_section := split_part(report_section, E'\n\n', 1);
-    report_section := regexp_replace(report_section, '\*\*|__|[*_#]', '', 'g');
-    report_section := regexp_replace(report_section, '[[:space:]]+', ' ', 'g');
-    report_section := nullif(trim(report_section), '');
-    assessment_summary := case
-      when report_section is null then null
-      when length(report_section) <= 320 then report_section
-      else left(report_section, 317) || '…'
-    end;
+    -- Derive the public descriptor only from structured PRIME scores.
+    -- The participant-facing AI coaching report is not suitable marketplace copy.
+    if jsonb_typeof(canonical_cluster_scores) = 'object' then
+      select count(*) into valid_dimension_count
+        from jsonb_each_text(canonical_cluster_scores) s
+       where s.key in ('P','R','I','M','E')
+         and s.value ~ '^[0-9]+([.][0-9]+)?$';
+
+      if valid_dimension_count = 5 then
+        select case s.key
+                 when 'P' then 'Presence' when 'R' then 'Relationships'
+                 when 'I' then 'Intelligence' when 'M' then 'Mastery'
+                 when 'E' then 'Enterprise'
+               end, s.value::numeric
+          into strongest_dimension, strongest_score
+          from jsonb_each_text(canonical_cluster_scores) s
+         where s.key in ('P','R','I','M','E')
+           and s.value ~ '^[0-9]+([.][0-9]+)?$'
+         order by s.value::numeric desc, array_position(array['P','R','I','M','E'], s.key)
+         limit 1;
+
+        select case s.key
+                 when 'P' then 'Presence' when 'R' then 'Relationships'
+                 when 'I' then 'Intelligence' when 'M' then 'Mastery'
+                 when 'E' then 'Enterprise'
+               end, s.value::numeric
+          into weakest_dimension, weakest_score
+          from jsonb_each_text(canonical_cluster_scores) s
+         where s.key in ('P','R','I','M','E')
+           and s.value ~ '^[0-9]+([.][0-9]+)?$'
+         order by s.value::numeric asc, array_position(array['P','R','I','M','E'], s.key)
+         limit 1;
+
+        assessment_summary := case
+          when strongest_score = weakest_score
+            then 'A professional with a balanced profile across the five PRIME dimensions.'
+          else 'A professional whose assessed profile is strongest in '
+            || strongest_dimension || ', with ' || weakest_dimension
+            || ' as a development priority.'
+        end;
+      end if;
+    end if;
 
     insert into public.marketplace_public_roster(
       professional_id, full_name, bio, location, languages, headline, current_job_title,
@@ -99,7 +136,7 @@ begin
       caps[1],
       case when 'talent'=any(caps) then 'candidate' when 'speaker'=any(caps) then 'speaker' when 'facilitator'=any(caps) then 'facilitator' end,
       caps, p.atb_id, p.display_initials, p.photo_url, p.industry, p.skills, p.topics,
-      p.programme_types, p.availability, p.valu_index, p.cluster_scores, p.designation,
+      p.programme_types, p.availability, canonical_valu_index, canonical_cluster_scores, canonical_designation,
       p.fee_range, p.salary_expectation, p.availability_status, now(), 'full', assessment_summary
     );
     return;
