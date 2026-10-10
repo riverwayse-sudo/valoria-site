@@ -103,12 +103,8 @@ function Profile({p}) {
   const isBasic = !isFullAssessment
   const tier = isFullAssessment ? getValuTier(p.valu_index, 'full') : null
   const profileId = displayText(p.atb_id || 'PROFILE ID PENDING')
-  // PRIME dimension scores are the structured assessment signal; never infer them from profile copy.
-  const primeScores = isFullAssessment && p.cluster_scores && typeof p.cluster_scores === 'object'
-    ? PRIME_DIMENSIONS.map(d => ({ ...d, score: Number(p.cluster_scores[d.key]) })).filter(d => Number.isFinite(d.score))
-    : []
-  const primeRanked = [...primeScores].sort((a, b) => b.score - a.score)
-  const leadingDimension = primeRanked[0] || null
+  // Public descriptor is generated from verified structured PRIME results in the canonical roster.
+  const assessmentSummary = isFullAssessment ? displayText(p.assessment_summary || '') : ''
   return <article className={styles.card}>
     <div className={styles.identity}>
       <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
@@ -124,26 +120,13 @@ function Profile({p}) {
     </div>
     <div className={styles.primePanel}>
       <div className={styles.primePanelHead}>
-        <small>PRIME ASSESSMENT PROFILE</small>
-        {leadingDimension && <span>LEADING SIGNAL</span>}
+        <small>VALU CAPABILITY PROFILE</small>
       </div>
-      {leadingDimension ? <>
-        <div className={styles.leadingSignal}>
-          <strong>{leadingDimension.label}</strong>
-          <b>{leadingDimension.score}<small>/100</small></b>
-        </div>
-        <p className={styles.leadingMeaning}>{leadingDimension.meaning}</p>
-        <div className={styles.primeBars} aria-label="PRIME dimension scores">
-          {PRIME_DIMENSIONS.map(d => {
-            const item = primeScores.find(score => score.key === d.key)
-            return <div className={styles.primeBarRow} key={d.key} title={item ? `${d.label}: ${item.score} out of 100` : `${d.label}: score unavailable`}>
-              <span>{d.key}</span>
-              <div className={styles.primeBarTrack}><i style={{ width: item ? `${Math.max(0, Math.min(100, item.score))}%` : '0%' }} /></div>
-              <b>{item ? item.score : '—'}</b>
-            </div>
-          })}
-        </div>
-      </> : <p className={styles.assessmentPending}>{isFullAssessment ? 'PRIME dimension breakdown is not available for this record.' : 'Complete the full VALU Index assessment to unlock your PRIME profile.'}</p>}
+      <p className={styles.assessmentDescriptor}>
+        {assessmentSummary || (isFullAssessment
+          ? 'Capability descriptor unavailable: verified PRIME dimension findings are missing.'
+          : 'Complete the full VALU Index assessment to receive a capability descriptor.')}
+      </p>
     </div>
     <div className={styles.signalRow}>
       <div className={styles.scoreBlock}>
