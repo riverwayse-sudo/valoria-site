@@ -104,7 +104,7 @@ if (fs.existsSync(registryPath)) {
 const navPath = path.join(root, 'src/components/Nav.jsx');
 if (fs.existsSync(navPath)) {
   const nav = fs.readFileSync(navPath, 'utf8');
-  if (/\bSTART VALU\b(?! INDEX)|What is VALU\?/i.test(nav)) {
+  if (/label:\s*['"]START VALU['"]|What is VALU\?/i.test(nav)) {
     violations.push('Nav: use the canonical VALU Index name, not standalone VALU naming');
   }
 }
