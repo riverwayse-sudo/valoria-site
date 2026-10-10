@@ -24,8 +24,8 @@ export const NAVIGATION = {
         {
           label: 'Understand',
           items: [
-            { label: 'About the VALU Index', href: '/valu', description: 'Understand the index and the assessment journey.' },
-            { label: 'Start Assessment', href: BRAND.assessmentUrl, external: true, description: 'Begin your VALU Index assessment.' },
+            { label: 'About the VALU Index', href: '/valu', description: 'Understand the VALU Index and its assessment journey.' },
+            { label: 'Start the VALU Index', href: BRAND.assessmentUrl, external: true, description: 'Begin your VALU Index assessment.' },
           ],
         },
       ],
@@ -54,7 +54,7 @@ export const NAVIGATION = {
     ],
     valu: [
       { label: 'About the VALU Index', href: '/valu' },
-      { label: 'Start Assessment', href: BRAND.assessmentUrl, external: true },
+      { label: 'Start the VALU Index', href: BRAND.assessmentUrl, external: true },
     ],
     about: [
       { label: 'About Valoria', href: '/about-us' },
