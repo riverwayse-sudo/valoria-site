@@ -18,6 +18,7 @@ const TRACKS = [
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
 
+
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
   const [query,setQuery] = useState('')
   const [industry,setIndustry] = useState('')
@@ -86,13 +87,16 @@ function Profile({p}) {
     title:c === 'candidate' ? 'PROFESSIONAL' : c === 'speaker' ? 'SPEAKER' : c === 'facilitator' ? 'FACILITATOR' : c.toUpperCase(),
     detail:c === 'candidate' ? 'CAREER · TALENT' : c === 'speaker' ? 'KNOWLEDGE · COMMUNICATION' : c === 'facilitator' ? 'PEOPLE · PROGRESS' : '',
   }))
-  const specialisation=displayText(p.industry || '')
+  const headlineFallback = displayText(p.headline || '')
+  const conciseHeadlineRole = headlineFallback.length <= 45 && !/[.!?]/.test(headlineFallback) && !/^(i|we|my|our)\b/i.test(headlineFallback) && !/\bfocused on\b/i.test(headlineFallback) ? headlineFallback : ''
+  const roleTitle = displayText(p.current_job_title || '') || conciseHeadlineRole || 'Professional capability'
+  const industryLabel = displayText(p.industry || '') || 'Industry not specified'
   // Fail closed: only an explicitly full assessment can expose an official score/designation.
   const isFullAssessment = p.assessment_access === 'full' && p.valu_index != null
   const isBasic = !isFullAssessment
   const tier = isFullAssessment ? getValuTier(p.valu_index, 'full') : null
   const profileId = displayText(p.atb_id || 'PROFILE ID PENDING')
-  // This text is sourced from the canonical VALU Index report projection, never the member's bio/headline.
+  // Public descriptor is generated from verified structured PRIME results in the canonical roster.
   const assessmentSummary = isFullAssessment ? displayText(p.assessment_summary || '') : ''
   return <article className={styles.card}>
     <div className={styles.identity}>
@@ -103,14 +107,19 @@ function Profile({p}) {
         <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : '✓ VALORIA ASSESSED'}</span>
       </div>
     </div>
-    <p className={styles.specialisation} title={specialisation}>{specialisation || 'Professional capability'}</p>
-    <div className={styles.assessmentInsight}>
-      <small>VALU INDEX ASSESSMENT INSIGHT</small>
-      {isFullAssessment
-        ? (assessmentSummary
-          ? <p className={styles.assessmentSummary} title={assessmentSummary}>{assessmentSummary}</p>
-          : <p className={styles.assessmentPending}>Assessment insight is being prepared.</p>)
-        : <p className={styles.assessmentPending}>Complete the full VALU Index assessment to unlock this insight.</p>}
+    <div className={styles.roleIndustry}>
+      <p className={styles.roleTitle} title={roleTitle}>{roleTitle}</p>
+      <p className={styles.industryLine} title={industryLabel}>{industryLabel}</p>
+    </div>
+    <div className={styles.primePanel}>
+      <div className={styles.primePanelHead}>
+        <small>VALU CAPABILITY PROFILE</small>
+      </div>
+      <p className={styles.assessmentDescriptor}>
+        {assessmentSummary || (isFullAssessment
+          ? 'Capability descriptor unavailable: verified PRIME dimension findings are missing.'
+          : 'Complete the full VALU Index assessment to receive a capability descriptor.')}
+      </p>
     </div>
     <div className={styles.signalRow}>
       <div className={styles.scoreBlock}>
