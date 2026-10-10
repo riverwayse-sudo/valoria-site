@@ -169,3 +169,48 @@
 .view{flex-basis:30px;height:30px;min-height:30px;max-height:30px;padding-top:8px}
 .assessmentInsight{display:none}
 @media(max-width:520px){.primePanel{flex-basis:132px;height:132px;min-height:132px;max-height:132px}.roleIndustry{height:36px;min-height:36px;max-height:36px}}
+
+
+/* Refinement pass: stronger hierarchy, darker contrast, cleaner alignment. */
+.identity{grid-template-columns:58px minmax(0,1fr);gap:12px;align-items:center}
+.identityCopy{min-width:0;gap:5px}
+.identityCopy>small{font-size:8px;line-height:1.1;font-weight:900;letter-spacing:.13em;color:#6F5A26}
+.identityCopy>strong{font-size:12px;line-height:1.25;font-weight:900;letter-spacing:.025em;color:#1A1A2E}
+.assessedStatus,.snapshotStatus{width:max-content;max-width:100%;padding:4px 7px;border-radius:3px;font-size:7px;line-height:1.1;font-weight:900;letter-spacing:.08em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.assessedStatus{background:#1A1A2E;color:#FAFAF7}
+.snapshotStatus{background:#EDE8DC;color:#5D4A1E}
+.roleIndustry{gap:4px;border-left:3px solid #C9A84C;padding-left:9px}
+.roleTitle{font-size:13px;line-height:1.2;font-weight:900;letter-spacing:-.015em;color:#1A1A2E}
+.industryLine{font-size:9px;line-height:1.2;font-weight:800;letter-spacing:.065em;text-transform:uppercase;color:#5D5A52}
+.primePanel{padding:10px 12px;background:#F7F4EE;border:1px solid #D4C9A8;border-top:3px solid #C9A84C;border-radius:5px}
+.primePanelHead small{font-size:8px;font-weight:900;letter-spacing:.1em;color:#5D4A1E}
+.primePanelHead span{font-size:7px;font-weight:900;letter-spacing:.06em;color:#5D5A52}
+.leadingSignal{margin-top:6px}
+.leadingSignal strong{font-size:14px;font-weight:900;letter-spacing:-.01em}
+.leadingSignal>b{font-size:15px;font-weight:900}
+.leadingSignal>b small{font-size:8px;font-weight:800}
+.leadingMeaning{font-size:8px;line-height:1.3;font-weight:700;color:#5D5A52;margin:3px 0 6px}
+.primeBars{gap:4px}
+.primeBarRow{grid-template-columns:12px minmax(0,1fr) 22px;gap:6px;height:8px}
+.primeBarRow>span{font-size:7px;font-weight:900;color:#4B4A46}
+.primeBarRow>b{font-size:7px;font-weight:900;color:#1A1A2E}
+.primeBarTrack{height:5px;background:#E3DDCF}
+.primeBarTrack i{background:#B58D2E}
+.signalRow{align-items:center;border-top:1px solid #E3DDCF;border-bottom:1px solid #E3DDCF}
+.scoreBlock>small{font-size:8px;line-height:1.2;font-weight:900;letter-spacing:.12em;color:#6F5A26}
+.scoreBlock>strong{font-size:23px;line-height:1;font-weight:900;letter-spacing:-.035em;color:#1A1A2E}
+.scoreBlock>strong span{font-size:8px;font-weight:900;letter-spacing:.08em}
+.tierBadge{font-size:10px;line-height:1.2;font-weight:900;letter-spacing:.01em}
+.tierStars{font-size:12px;letter-spacing:.06em}
+.capabilities{display:flex;align-items:flex-start;gap:5px;flex-wrap:wrap}
+.capabilities .capabilityBadge{border:1px solid #D4C9A8;background:#F7F4EE;border-radius:4px;padding:5px 7px}
+.capabilityBadge strong{font-size:8px;line-height:1.15;font-weight:900;letter-spacing:.06em;color:#1A1A2E}
+.capabilityBadge small{font-size:6px;line-height:1.2;font-weight:800;letter-spacing:.045em;color:#5D5A52}
+.view{display:flex;align-items:center;justify-content:space-between;padding:0 12px!important;background:#1A1A2E;color:#FAFAF7;border-radius:4px;font-size:9px;line-height:1;font-weight:900;letter-spacing:.12em;text-decoration:none}
+.view:hover{background:#2E2E4A;color:#FAFAF7;transform:none}
+@media(max-width:520px){
+  .identity{grid-template-columns:52px minmax(0,1fr);gap:10px}
+  .roleTitle{font-size:12px}
+  .primePanel{padding:9px 10px}
+  .scoreBlock>strong{font-size:21px}
+}
