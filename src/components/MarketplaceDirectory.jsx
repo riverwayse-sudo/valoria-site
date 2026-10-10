@@ -97,13 +97,13 @@ function Profile({p}) {
   const clusterLabels = Object.fromEntries(PRIME_CLUSTERS.map(cluster => [cluster.letter, cluster.name]))
   const strongestClusters = isFullAssessment
     ? Object.entries(clusterScores)
-        .filter(([letter, score]) => clusterLabels[letter] && Number.isFinite(Number(score)))
+        .filter(([letter, score]) => clusterLabels[letter] && score != null && Number.isFinite(Number(score)))
         .sort((a, b) => Number(b[1]) - Number(a[1]))
         .slice(0, 2)
-        .map(([letter]) => clusterLabels[letter])
+        .map(([letter, score]) => `${clusterLabels[letter]} ${Number(score)}`)
     : []
   const assessmentSummary = strongestClusters.length
-    ? `Assessment strengths: ${strongestClusters.join(' · ')}`
+    ? `PRIME strengths: ${strongestClusters.join(' · ')}`
     : ''
   return <article className={styles.card}>
     <div className={styles.identity}>
