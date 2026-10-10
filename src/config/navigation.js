@@ -49,6 +49,7 @@ export const NAVIGATION = {
       { label: 'Marketplace', href: '/marketplace' },
       { label: 'Facilitators', href: '/facilitators' },
       { label: 'Programmes', href: '/programmes' },
+      { label: 'Events', href: '/events' },
       { label: 'Insights', href: '/insights' },
     ],
     valu: [
