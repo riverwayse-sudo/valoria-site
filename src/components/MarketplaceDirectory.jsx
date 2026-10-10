@@ -18,6 +18,14 @@ const TRACKS = [
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
 
+const PRIME_DIMENSIONS = [
+  { key: 'P', label: 'Presence', meaning: 'How you show up' },
+  { key: 'R', label: 'Relationships', meaning: 'How you create trust' },
+  { key: 'I', label: 'Intelligence', meaning: 'How you think' },
+  { key: 'M', label: 'Mastery', meaning: 'How you apply capability' },
+  { key: 'E', label: 'Enterprise', meaning: 'How you create value' },
+]
+
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
   const [query,setQuery] = useState('')
   const [industry,setIndustry] = useState('')
@@ -95,8 +103,12 @@ function Profile({p}) {
   const isBasic = !isFullAssessment
   const tier = isFullAssessment ? getValuTier(p.valu_index, 'full') : null
   const profileId = displayText(p.atb_id || 'PROFILE ID PENDING')
-  // This text is sourced from the canonical VALU Index report projection, never the member's bio/headline.
-  const assessmentSummary = isFullAssessment ? displayText(p.assessment_summary || '') : ''
+  // PRIME dimension scores are the structured assessment signal; never infer them from profile copy.
+  const primeScores = isFullAssessment && p.cluster_scores && typeof p.cluster_scores === 'object'
+    ? PRIME_DIMENSIONS.map(d => ({ ...d, score: Number(p.cluster_scores[d.key]) })).filter(d => Number.isFinite(d.score))
+    : []
+  const primeRanked = [...primeScores].sort((a, b) => b.score - a.score)
+  const leadingDimension = primeRanked[0] || null
   return <article className={styles.card}>
     <div className={styles.identity}>
       <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
@@ -110,13 +122,28 @@ function Profile({p}) {
       <p className={styles.roleTitle} title={roleTitle}>{roleTitle}</p>
       <p className={styles.industryLine} title={industryLabel}>{industryLabel}</p>
     </div>
-    <div className={styles.assessmentInsight}>
-      <small>VALU INDEX ASSESSMENT INSIGHT</small>
-      {isFullAssessment
-        ? (assessmentSummary
-          ? <p className={styles.assessmentSummary} title={assessmentSummary}>{assessmentSummary}</p>
-          : <p className={styles.assessmentPending}>Assessment insight is being prepared.</p>)
-        : <p className={styles.assessmentPending}>Complete the full VALU Index assessment to unlock this insight.</p>}
+    <div className={styles.primePanel}>
+      <div className={styles.primePanelHead}>
+        <small>PRIME ASSESSMENT PROFILE</small>
+        {leadingDimension && <span>LEADING SIGNAL</span>}
+      </div>
+      {leadingDimension ? <>
+        <div className={styles.leadingSignal}>
+          <strong>{leadingDimension.label}</strong>
+          <b>{leadingDimension.score}<small>/100</small></b>
+        </div>
+        <p className={styles.leadingMeaning}>{leadingDimension.meaning}</p>
+        <div className={styles.primeBars} aria-label="PRIME dimension scores">
+          {PRIME_DIMENSIONS.map(d => {
+            const item = primeScores.find(score => score.key === d.key)
+            return <div className={styles.primeBarRow} key={d.key} title={item ? `${d.label}: ${item.score} out of 100` : `${d.label}: score unavailable`}>
+              <span>{d.key}</span>
+              <div className={styles.primeBarTrack}><i style={{ width: item ? `${Math.max(0, Math.min(100, item.score))}%` : '0%' }} /></div>
+              <b>{item ? item.score : '—'}</b>
+            </div>
+          })}
+        </div>
+      </> : <p className={styles.assessmentPending}>{isFullAssessment ? 'PRIME dimension breakdown is not available for this record.' : 'Complete the full VALU Index assessment to unlock your PRIME profile.'}</p>}
     </div>
     <div className={styles.signalRow}>
       <div className={styles.scoreBlock}>
