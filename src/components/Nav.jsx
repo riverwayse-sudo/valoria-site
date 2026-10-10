@@ -96,7 +96,7 @@ export default function Nav() {
             <div className={`nav-dropdown${openMenu === item.label ? ' open' : ''}${item.groups.length === 1 ? ' nav-dropdown-single' : ''}`}>
               <div className={`nav-dropdown-grid${item.groups.length === 1 ? ' nav-dropdown-single' : ''}`}>
                 {item.groups.map((group) => <div key={group.label}>
-                  <div className="nav-dropdown-label">{group.label}</div>
+                  {group.label && <div className="nav-dropdown-label">{group.label}</div>}
                   {group.items.map((entry) => <div key={entry.label}>{renderItem(entry)}{entry.description && <span className="nav-dropdown-description">{entry.description}</span>}</div>)}
                 </div>)}
               </div>

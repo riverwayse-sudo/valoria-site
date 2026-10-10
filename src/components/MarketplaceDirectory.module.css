@@ -23,3 +23,18 @@
   .card,.card::after,.avatar,.capabilities span,.view,.view::after,.tabs a,.controls input,.controls select,.controls button{transition:none!important}
   .card:hover,.tabs a:hover,.controls button:hover,.capabilities span:hover{transform:none}
 }
+
+.capabilityBadge{gap:7px!important;align-items:center!important;border-radius:6px!important;background:#FAFAF7!important;padding:7px 9px!important}
+.capabilityBadge>b{font-size:10px;color:#C9A84C}
+.capabilityBadge span{display:flex!important;flex-direction:column;align-items:flex-start;gap:2px}
+.capabilityBadge strong{font-size:7px;letter-spacing:.1em}
+.capabilityBadge small{font-size:6px;letter-spacing:.06em;color:#6F6A60;font-weight:700}
+.assessmentSummary{margin-top:14px;padding-top:13px;border-top:1px solid #D4C9A8}
+.assessmentSummary small{display:block;font-size:7px;letter-spacing:.16em;color:#C9A84C;font-weight:900}
+.assessmentSummary p{font-family:var(--font);font-size:10px;line-height:1.65;color:#6F6A60;margin:6px 0 0}
+
+
+.accessRow{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 0}
+.accessBadge,.tierBadge{display:inline-flex;align-items:center;min-height:22px;padding:0 9px;border:1px solid rgba(201,168,76,.34);border-radius:999px;font-size:8px;font-weight:800;letter-spacing:.10em}
+.accessBadge{color:#6b5a22;background:rgba(201,168,76,.08)}
+.tierBadge{color:#1A1A2E;background:#EDE8DC}

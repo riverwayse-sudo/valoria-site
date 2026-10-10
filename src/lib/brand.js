@@ -3,7 +3,7 @@
 
 export const BRAND = {
   name: 'Valoria Institute',
-  tagline: 'Worth. Built.',
+  tagline: 'Worth, Built.',
   belief: 'Talent is not the problem. Infrastructure is.',
   promise: ['Develop', 'Surface', 'Connect'],
   email: 'info@valoriainstitute.com',
@@ -20,18 +20,54 @@ export const COLORS = {
 }
 
 export const PRIME_CLUSTERS = [
-  { letter: 'P', name: 'Presence', color: COLORS.gold, subtitle: 'How you show up', skills: ['Communication', 'Executive Presence', 'Composure Under Scrutiny'] },
-  { letter: 'R', name: 'Relationships', color: COLORS.gold, subtitle: 'How you connect', skills: ['Trust-Building', 'Collaborative Intelligence', 'Network Quality'] },
-  { letter: 'I', name: 'Intelligence', color: COLORS.gold, subtitle: 'How you think', skills: ['Critical Thinking', 'Analytical Depth', 'Decision-Making', 'Cognitive Agility'] },
-  { letter: 'M', name: 'Mastery', color: COLORS.gold, subtitle: 'How you deliver', skills: ['Execution Discipline', 'Accountability', 'Resilience', 'Adaptability'] },
-  { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you build', skills: ['Commercial Thinking', 'Systems Building', 'Venture Mindset'] },
+  { letter: 'P', name: 'Presence', color: COLORS.gold, subtitle: 'How you show up', skills: ['Communication', 'Negotiation', 'Personal Brand & Executive Presence'] },
+  { letter: 'R', name: 'Relationships', color: COLORS.gold, subtitle: 'How you connect', skills: ['Emotional Intelligence', 'Conflict Resolution', 'People Development', 'Stakeholder Management'] },
+  { letter: 'I', name: 'Intelligence', color: COLORS.gold, subtitle: 'How you think', skills: ['Critical Thinking', 'Strategic Thinking', 'Business Acumen', 'AI Fluency'] },
+  { letter: 'M', name: 'Mastery', color: COLORS.gold, subtitle: 'How you deliver', skills: ['Execution & Accountability', 'Resilience & Self-Leadership', 'Adaptability'] },
+  { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you create', skills: ['Commercial Creativity', 'Influence Without Authority', 'Human-AI Collaboration'] },
 ]
 
+// VALU Index results are points out of 100, not percentages.
+// Taster completion grants Basic marketplace access; only the full assessment
+// earns an official Index score and a merit tier.
+export const VALU_SCORE = {
+  unit: 'points',
+  maximum: 100,
+  displaySuffix: '/100',
+}
+
+export const MARKETPLACE_ACCESS_LEVELS = {
+  BASIC: {
+    id: 'basic',
+    label: 'Basic',
+    source: 'taster',
+    officialIndex: false,
+    meritTier: false,
+    access: 'limited',
+  },
+  FULL: {
+    id: 'full',
+    label: 'Full VALU Index',
+    source: 'full_assessment',
+    officialIndex: true,
+    meritTier: true,
+    access: 'full',
+  },
+}
+
+// Merit tiers are earned only through the full VALU Index assessment.
 export const TIER_DESIGNATIONS = [
-  { min: 90, name: 'Elite', stars: '✦✦✦' },
-  { min: 75, name: 'Distinguished', stars: '✦✦' },
-  { min: 55, name: 'Proficient', stars: '✦' },
+  { min: 90, max: 100, name: 'Elite', stars: '✦✦✦' },
+  { min: 75, max: 89, name: 'Distinguished', stars: '✦✦' },
+  { min: 55, max: 74, name: 'Proficient', stars: '✦' },
 ]
+
+export function getValuTier(points, assessmentLevel = 'full') {
+  if (assessmentLevel !== 'full' || points == null || !Number.isFinite(Number(points))) return null
+  const score = Number(points)
+  if (score < 0 || score > VALU_SCORE.maximum) return null
+  return TIER_DESIGNATIONS.find(tier => score >= tier.min && score <= tier.max) || null
+}
 
 export const ENTRY_POINTS = [
   {

@@ -1,9 +1,11 @@
 const SITE_URL = 'https://valoriainstitute.com'
+import { INSIGHTS } from '@/content/insights'
 
 export default async function sitemap() {
   const now = new Date()
   const pages = [
     { path: '', priority: 1.0, changeFrequency: 'weekly' },
+    { path: '/insights', priority: 0.85, changeFrequency: 'weekly' },
     { path: '/marketplace', priority: 0.95, changeFrequency: 'daily' },
     { path: '/marketplace/talent', priority: 0.9, changeFrequency: 'daily' },
     { path: '/marketplace/speakers', priority: 0.9, changeFrequency: 'daily' },
@@ -20,6 +22,7 @@ export default async function sitemap() {
     { path: '/terms-of-use', priority: 0.3, changeFrequency: 'yearly' },
   ]
   const staticEntries = pages.map(p => ({ url: `${SITE_URL}${p.path}`, lastModified: now, changeFrequency: p.changeFrequency, priority: p.priority }))
+  const insightEntries = INSIGHTS.map(item => ({ url: `${SITE_URL}/insights/${item.slug}`, lastModified: new Date(item.updatedAt), changeFrequency: 'monthly', priority: 0.75 }))
   let profileEntries = []
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -27,14 +30,10 @@ export default async function sitemap() {
     if (supabaseUrl && supabaseKey) {
       const { createClient } = await import('@supabase/supabase-js')
       const client = createClient(supabaseUrl, supabaseKey)
-      const { data, error } = await client
-        .from('professional_profiles')
-        .select('id,updated_at')
-        .eq('listing_status', 'listed')
-        .neq('visibility', 'private')
+      const { data, error } = await client.from('professional_profiles').select('id,updated_at').eq('listing_status', 'listed').neq('visibility', 'private')
       if (error) console.error('sitemap: profile fetch failed:', error)
       profileEntries = (data || []).map(p => ({ url: `${SITE_URL}/profile/${p.id}`, lastModified: p.updated_at ? new Date(p.updated_at) : now, changeFrequency: 'weekly', priority: .6 }))
     }
   } catch { /* Build-time Supabase failure must not break sitemap generation. */ }
-  return [...staticEntries, ...profileEntries]
+  return [...staticEntries, ...insightEntries, ...profileEntries]
 }

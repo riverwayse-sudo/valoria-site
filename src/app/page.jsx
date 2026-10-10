@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export const metadata = {
-  title: 'Valoria Institute — Worth. Built.',
+  title: 'Valoria Institute — Worth, Built.',
   description: 'Valoria Institute builds the infrastructure that develops, surfaces and connects professional merit to opportunity.'
 }
 
@@ -34,7 +34,7 @@ export default function HomePage() {
               <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">START HERE</span></div>
               <h2 id="pathways-title">What brings you<br/><em>to Valoria?</em></h2>
             </div>
-            <p>Choose the path that matches what you need today. One institutional standard connects professional development, visibility and opportunity.</p>
+            <p>Choose the path that matches what you need today. One professional standard connects development, visibility and opportunity.</p>
           </Reveal>
 
           <Reveal className="home-pathway-grid" as="div">
@@ -54,14 +54,14 @@ export default function HomePage() {
       <section className="valu-section valu-conversion" id="valu" aria-labelledby="home-valu-title">
         <div className="container valu-conversion-shell">
           <Reveal className="valu-conversion-intro">
-            <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">START WITH VALU</span></div>
+            <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">START WITH THE VALU INDEX</span></div>
             <h2 id="home-valu-title" className="valu-title">Before you build your next move, <em>know where you stand.</em></h2>
-            <p className="valu-desc">The VALU Index gives you a directional picture of your professional capability across Presence, Relationships, Intelligence, Mastery and Enterprise — so you can see what to strengthen, what to surface and what to build next.</p>
+            <p className="valu-desc">The 9-question Intelligence taster gives you a directional starting point. Complete the full 54-question VALU Index for an assessment across all five PRIME clusters.</p>
             <div className="valu-conversion-proof" aria-label="Assessment details">
-              <span><b>15</b> QUESTIONS</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
+              <span><b>9</b> QUESTIONS</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span>FULL INDEX · 5 CLUSTERS</span>
             </div>
             <div className="home-dual-actions">
-              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START MY VALU SNAPSHOT <span aria-hidden="true">→</span></a>
+              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START THE VALU TASTER <span aria-hidden="true">→</span></a>
               <a href="/valu" className="text-link">SEE HOW VALU WORKS <span aria-hidden="true">→</span></a>
             </div>
             <p className="valu-conversion-note">Your first result is directional. It is the starting signal for the wider Valoria journey — not a label and not the end of the process.</p>
@@ -88,11 +88,11 @@ export default function HomePage() {
               <div className="vcc-radar-center">VALU</div>
             </div>
             <div className="vcc-steps">
-              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>15-question snapshot</small></div></div>
-              <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Full VALU assessment + profile</small></div></div>
+              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>9-question Intelligence taster</small></div></div>
+              <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Full 54-question VALU Index + profile</small></div></div>
               <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Capability, eligibility and marketplace</small></div></div>
             </div>
-            <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="vcc-bottom-cta">BEGIN THE FIRST 15 QUESTIONS <span>→</span></a>
+            <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="vcc-bottom-cta">BEGIN THE VALU TASTER <span>→</span></a>
           </Reveal>
         </div>
       </section>

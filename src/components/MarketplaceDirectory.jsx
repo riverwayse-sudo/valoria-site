@@ -5,17 +5,40 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { useMemo, useState } from 'react'
 import styles from './MarketplaceDirectory.module.css'
-import ValoriaAvatar from '@/components/ValoriaAvatar'
 
 const TRACKS = [
   ['all','All', '/marketplace'],
-  ['candidate','Talent','/marketplace/talent'],
-  ['speaker','Speakers','/marketplace/speakers'],
-  ['facilitator','Facilitators','/marketplace/facilitators'],
+  ['candidate','Professional','/marketplace/talent'],
+  ['speaker','Speaker','/marketplace/speakers'],
+  ['facilitator','Facilitator','/marketplace/facilitators'],
 ]
 
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
+
+const CAPABILITY_BADGES = {
+  candidate: { label:'PROFESSIONAL', sublabel:'CAREER · TALENT', icon:'◆' },
+  speaker: { label:'SPEAKER', sublabel:'KNOWLEDGE · COMMUNICATION', icon:'◈' },
+  facilitator: { label:'FACILITATOR', sublabel:'PEOPLE · PROGRESS', icon:'◇' },
+}
+
+const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Mastery', E:'Enterprise' }
+
+function assessmentSummary(p) {
+  const scores = p?.cluster_scores
+  if (!scores || typeof scores !== 'object') return 'Assessment summary will appear after the VALU Index is completed.'
+  const ranked = Object.entries(scores)
+    .filter(([,v]) => Number.isFinite(Number(v)))
+    .map(([letter,v]) => [letter, Number(v)])
+    .sort((a,b) => b[1] - a[1])
+  if (!ranked.length) return 'Assessment summary will appear after the VALU Index is completed.'
+  const strongest = ranked.slice(0, 2).map(([l]) => CLUSTER_NAMES[l] || l)
+  const developing = ranked[ranked.length - 1]?.[0]
+  const designation = displayText(p.designation).replace(/_/g,' ')
+  const strengthText = strongest.length > 1 ? 'strongest across ' + strongest[0] + ' and ' + strongest[1] : 'strongest in ' + strongest[0]
+  const developmentText = developing && ranked.length > 2 ? ' ' + (CLUSTER_NAMES[developing] || developing) + ' is the clearest area for continued development.' : ''
+  return 'The VALU Index indicates a profile ' + strengthText + '.' + developmentText + (designation ? ' Overall designation: ' + designation + '.' : '')
+}
 
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
   const [query,setQuery] = useState('')
@@ -40,7 +63,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       <div className={styles.container}>
         <p className={styles.eyebrow}>THE AFRICAN TALENT BUREAU</p>
         <h1>{activeTrack === 'all' ? <>Find capability.<br/><i>Engage confidently.</i></> : <>{TRACKS.find(t=>t[0]===activeTrack)?.[1]}<br/><i>on Valoria.</i></>}</h1>
-        <p className={styles.lede}>A curated directory of professionals who have completed the Valoria assessment and meet the Institute's marketplace requirements.</p>
+        <p className={styles.lede}>A curated directory of professionals with a Valoria marketplace presence. Basic profiles preserve the snapshot journey; Full profiles carry the official VALU Index result.</p>
         <nav className={styles.tabs}>{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
       </div>
     </section>
@@ -79,26 +102,34 @@ function labelValues(value) {
 }
 
 function Profile({p}) {
+  const initials = displayText(p.display_initials) || 'V'
   const caps=[...(p.capabilities||p.tracks||[p.track])].map(normalize).filter(Boolean)
-  const capabilityLabels = [...new Set(caps.map(c => c === 'candidate' ? 'TALENT' : c === 'speaker' ? 'SPEAKER' : c === 'facilitator' ? 'FACILITATOR' : c.toUpperCase()))]
-  const skillTags=labelValues(p.skills)
-  const topicTags=labelValues(p.topics)
-  const tags=capabilityLabels.length ? capabilityLabels : skillTags.length ? skillTags : topicTags
   const career=displayText(p.headline || p.current_job_title || p.designation || 'Valoria Professional')
-  const bio=displayText(p.bio)
+  const summary=assessmentSummary(p)
   return <article className={styles.card}>
     <div className={styles.identity}>
-      <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
+      <div className={styles.avatar}>{p.photo_url ? <img src={p.photo_url} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" /> : initials}</div>
       <div>
         <small>PROFILE ID</small>
         <strong>{displayText(p.atb_id || p.professional_id || 'UNASSIGNED')}</strong>
-        <em>✓ VALORIA ASSESSED</em>
+        <em>{p.marketplace_access_level === 'full' ? '✓ FULL VALU INDEX' : '✓ BASIC MARKETPLACE'}</em>
       </div>
-      {p.valu_index != null && <div className={styles.valu}><small>VALU</small><b>{p.valu_index}</b><span>/100</span></div>}
+      {p.marketplace_access_level === 'full' && p.valu_index != null && <div className={styles.valu}><small>VALU INDEX</small><b>{p.valu_index}</b><span>/100</span></div>}
     </div>
-    <p className={styles.career}>{career}</p>
-    {tags.length > 0 && <div className={styles.capabilities}>{tags.map(tag=><span key={tag}>{displayText(tag)}</span>)}</div>}
-    {bio && <p className={styles.bio}>{bio.length>220 ? bio.slice(0,220)+'…' : bio}</p>}
+    <div className={styles.accessRow}><span className={styles.accessBadge}>{p.marketplace_access_level === 'full' ? 'FULL VALU INDEX' : 'BASIC'}</span>{p.marketplace_access_level === 'full' && p.valu_tier && <span className={styles.tierBadge}>{p.valu_tier}</span>}</div>\n    <p className={styles.career}>{career}</p>
+    <div className={styles.capabilities} aria-label="Valoria capability badges">
+      {caps.map(cap => {
+        const badge=CAPABILITY_BADGES[cap]
+        if (!badge) return null
+        return <span key={cap} title={badge.sublabel} className={styles.capabilityBadge}>
+          <b>{badge.icon}</b><span><strong>{badge.label}</strong><small>{badge.sublabel}</small></span>
+        </span>
+      })}
+    </div>
+    <div className={styles.assessmentSummary}>
+      <small>ASSESSMENT PROFILE</small>
+      <p>{summary}</p>
+    </div>
     <Link href={`/profile/${p.id}`} className={styles.view}>VIEW PROFILE →</Link>
   </article>
 }

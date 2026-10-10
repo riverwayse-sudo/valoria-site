@@ -17,10 +17,11 @@ const CLUSTERS = [
 ];
 
 const DESIGNATIONS = [
-  { min: 90, name: "Elite",         stars: "✦✦✦", color: "#1A1A2E", bg: "#C9A84C" },
-  { min: 75, name: "Distinguished", stars: "✦✦",  color: "#C9A84C", bg: "#1A1A2E" },
-  { min: 55, name: "Proficient",    stars: "✦",   color: "#2E2E4A", bg: "#EDE8DC" },
-  { min: 35, name: "Standard",      stars: "",    color: "#2E2E4A", bg: "#F7F4EE" },
+  { min: 80, name: "Force to Align With", stars: "✦✦", color: "#1A1A2E", bg: "#C9A84C" },
+  { min: 65, name: "Emerging Force", stars: "✦✦", color: "#C9A84C", bg: "#1A1A2E" },
+  { min: 50, name: "Developing Professional", stars: "✦", color: "#2E2E4A", bg: "#EDE8DC" },
+  { min: 35, name: "Building Foundations", stars: "✦", color: "#2E2E4A", bg: "#F7F4EE" },
+  { min: 0, name: "At the Starting Point", stars: "·", color: "#2E2E4A", bg: "#F7F4EE" },
 ];
 
 const SKILL_MAX_RAW = 12;

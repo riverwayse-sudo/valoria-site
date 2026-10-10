@@ -17,11 +17,11 @@ const dimensions = [
 ]
 
 const faqs = [
-  ['How long does it take?', 'The initial VALU snapshot is a focused 15-question directional experience. It does not establish the authoritative marketplace score.'],
+  ['How long does it take?', 'The initial VALU snapshot is a focused 9-question directional experience. It does not establish the authoritative marketplace score.'],
   ['Who is it for?', 'It is designed for African professionals who want a clearer view of their current professional capability and a stronger foundation for development, visibility and opportunity.'],
   ['Is it free?', 'Yes. The initial VALU Index is free to take. It is the entry point into the wider Valoria professional ecosystem.'],
   ['Does the result define me?', 'No. Your initial result is directional, not a permanent label. It gives you a starting point for understanding where you are and deciding what to build next.'],
-  ['What happens after I finish?', 'You can create your professional account, complete your profile and, subject to Valoria’s normal governance checks, become discoverable through the professional marketplace.'],
+  ['What happens after I finish?', 'You can create your professional account, complete your profile and, subject to Valoria’s profile standard, become discoverable through the professional marketplace.'],
   ['Is there a deeper assessment?', 'Yes. The initial assessment is the acquisition and orientation layer. A deeper VALU assessment is available for more advanced professional intelligence and opportunity pathways.'],
 ]
 
@@ -42,7 +42,7 @@ export default function ValuStartPage() {
                 <a href={assessmentUrl} className="vs-btn vs-primary">START YOUR VALU INDEX <b>→</b></a>
                 <a href="#how" className="vs-btn vs-secondary">SEE HOW IT WORKS <b>↓</b></a>
               </div>
-              <div className="vs-proof"><span>15 QUESTIONS</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
+              <div className="vs-proof"><span>9 QUESTIONS</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
             </div>
             <div className="vs-score" aria-label="Illustrative VALU Index result">
               <div className="vs-score-top"><span>VALU INDEX</span><span>01</span></div>
@@ -81,10 +81,10 @@ export default function ValuStartPage() {
           <div className="vs-kicker dark"><span /> HOW IT WORKS</div>
           <h2>Assess. Understand. Build.<br /><em>Then become discoverable.</em></h2>
           <div className="vs-journey-grid">
-            <article><span>01</span><h3>Assess</h3><p>Complete the initial 15-question VALU Index assessment.</p></article>
-            <article><span>02</span><h3>Understand</h3><p>Receive directional insight through the PRIME framework.</p></article>
-            <article><span>03</span><h3>Build</h3><p>Create your professional profile and define what you bring.</p></article>
-            <article><span>04</span><h3>Discover</h3><p>Subject to governance checks, become discoverable through the marketplace.</p></article>
+            <article><span>01</span><h3>Assess</h3><p>Complete the 9-question VALU taster (Intelligence cluster). See your scores across four skills and a preview of the remaining four clusters.</p></article>
+            <article><span>02</span><h3>Understand</h3><p>Complete the full 54-question VALU Index across all five PRIME clusters. This is the score that appears on your marketplace profile.</p></article>
+            <article><span>03</span><h3>Build</h3><p>Create your account, complete your professional profile, and declare your modalities: candidate, speaker or facilitator.</p></article>
+            <article><span>04</span><h3>Discover</h3><p>Meet the platform's profile standard and enter the Valoria marketplace.</p></article>
           </div>
         </div>
       </section>
