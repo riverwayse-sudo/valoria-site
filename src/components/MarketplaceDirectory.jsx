@@ -86,7 +86,8 @@ function Profile({p}) {
     title:c === 'candidate' ? 'PROFESSIONAL' : c === 'speaker' ? 'SPEAKER' : c === 'facilitator' ? 'FACILITATOR' : c.toUpperCase(),
     detail:c === 'candidate' ? 'CAREER · TALENT' : c === 'speaker' ? 'KNOWLEDGE · COMMUNICATION' : c === 'facilitator' ? 'PEOPLE · PROGRESS' : '',
   }))
-  const specialisation=displayText(p.industry || '')
+  const roleTitle = displayText(p.current_job_title || '') || 'Professional capability'
+  const industryLabel = displayText(p.industry || '') || 'Industry not specified'
   // Fail closed: only an explicitly full assessment can expose an official score/designation.
   const isFullAssessment = p.assessment_access === 'full' && p.valu_index != null
   const isBasic = !isFullAssessment
@@ -103,7 +104,10 @@ function Profile({p}) {
         <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : '✓ VALORIA ASSESSED'}</span>
       </div>
     </div>
-    <p className={styles.specialisation} title={specialisation}>{specialisation || 'Professional capability'}</p>
+    <div className={styles.roleIndustry}>
+      <p className={styles.roleTitle} title={roleTitle}>{roleTitle}</p>
+      <p className={styles.industryLine} title={industryLabel}>{industryLabel}</p>
+    </div>
     <div className={styles.assessmentInsight}>
       <small>VALU INDEX ASSESSMENT INSIGHT</small>
       {isFullAssessment
