@@ -86,25 +86,14 @@ function Profile({p}) {
     title:c === 'candidate' ? 'PROFESSIONAL' : c === 'speaker' ? 'SPEAKER' : c === 'facilitator' ? 'FACILITATOR' : c.toUpperCase(),
     detail:c === 'candidate' ? 'CAREER · TALENT' : c === 'speaker' ? 'KNOWLEDGE · COMMUNICATION' : c === 'facilitator' ? 'PEOPLE · PROGRESS' : '',
   }))
-  const career=displayText(p.headline || p.current_job_title || '')
   const specialisation=displayText(p.industry || '')
   // Fail closed: only an explicitly full assessment can expose an official score/designation.
   const isFullAssessment = p.assessment_access === 'full' && p.valu_index != null
   const isBasic = !isFullAssessment
   const tier = isFullAssessment ? getValuTier(p.valu_index, 'full') : null
   const profileId = displayText(p.atb_id || 'PROFILE ID PENDING')
-  const clusterScores = p.cluster_scores && typeof p.cluster_scores === 'object' && !Array.isArray(p.cluster_scores) ? p.cluster_scores : {}
-  const clusterLabels = Object.fromEntries(PRIME_CLUSTERS.map(cluster => [cluster.letter, cluster.name]))
-  const strongestClusters = isFullAssessment
-    ? Object.entries(clusterScores)
-        .filter(([letter, score]) => clusterLabels[letter] && score != null && Number.isFinite(Number(score)))
-        .sort((a, b) => Number(b[1]) - Number(a[1]))
-        .slice(0, 2)
-        .map(([letter, score]) => `${clusterLabels[letter]} ${Number(score)}`)
-    : []
-  const assessmentSummary = strongestClusters.length
-    ? `PRIME strengths: ${strongestClusters.join(' · ')}`
-    : ''
+  // This text is sourced from the canonical VALU Index report projection, never the member's bio/headline.
+  const assessmentSummary = isFullAssessment ? displayText(p.assessment_summary || '') : ''
   return <article className={styles.card}>
     <div className={styles.identity}>
       <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
@@ -114,9 +103,13 @@ function Profile({p}) {
         <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : '✓ VALORIA ASSESSED'}</span>
       </div>
     </div>
-    {career && <p className={styles.career}>{career}</p>}
     {specialisation && <p className={styles.specialisation}>{specialisation}</p>}
-    {assessmentSummary && <p className={styles.assessmentSummary}>{assessmentSummary}</p>}
+    {isFullAssessment && <div className={styles.assessmentInsight}>
+      <small>VALU INDEX ASSESSMENT INSIGHT</small>
+      {assessmentSummary
+        ? <p className={styles.assessmentSummary}>{assessmentSummary}</p>
+        : <p className={styles.assessmentPending}>Assessment insight is being prepared.</p>}
+    </div>}
     {isFullAssessment && <div className={styles.signalRow}>
       <div className={styles.scoreBlock}>
         <small>VALU INDEX</small>
