@@ -214,3 +214,22 @@
   .primePanel{padding:9px 10px}
   .scoreBlock>strong{font-size:21px}
 }
+
+
+/* Evidence-based descriptor: one concise sentence, consistent across every card. */
+.assessmentDescriptor{
+  margin:10px 0 0;
+  color:#29283B;
+  font-size:12px;
+  line-height:1.55;
+  font-weight:700;
+  letter-spacing:-.01em;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
+  overflow:hidden;
+  min-height:56px;
+}
+@media(max-width:640px){
+  .assessmentDescriptor{font-size:11px;line-height:1.5;min-height:50px}
+}
