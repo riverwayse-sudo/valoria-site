@@ -109,7 +109,7 @@ function Profile({p}) {
     <div className={styles.identity}>
       <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
       <div className={styles.identityCopy}>
-        <small>PROFILE ID</small>
+        <small>ATB PROFILE ID</small>
         <strong>{profileId}</strong>
         <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : '✓ VALORIA ASSESSED'}</span>
       </div>
@@ -128,6 +128,6 @@ function Profile({p}) {
       </span>}
     </div>}
     {capabilityBadges.length > 0 && <div className={styles.capabilities}>{capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)}</div>}
-    <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE <span aria-hidden="true">→</span></Link>
+    <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE</Link>
   </article>
 }
