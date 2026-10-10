@@ -23,3 +23,36 @@
   .card,.card::after,.avatar,.capabilities span,.view,.view::after,.tabs a,.controls input,.controls select,.controls button{transition:none!important}
   .card:hover,.tabs a:hover,.controls button:hover,.capabilities span:hover{transform:none}
 }
+
+
+/* Brand-manual profile card: concise identity, capability and score-earned credential. */
+.card{background:#F7F4EE;border:1px solid #D4C9A8;border-radius:8px;box-shadow:none;min-height:0;padding:20px}
+.card:hover{background:#FAFAF7;box-shadow:none}
+.identity{grid-template-columns:58px minmax(0,1fr);gap:12px;padding-right:0;align-items:center}
+.identityCopy{min-width:0}
+.identity strong{font-size:10px;line-height:1.45;letter-spacing:.035em}
+.assessedStatus,.snapshotStatus{display:inline-flex!important;align-items:center;gap:4px;margin-top:7px!important;font-size:7px!important;font-weight:800;letter-spacing:.075em;line-height:1.4}
+.assessedStatus{color:#2E2E4A!important}
+.snapshotStatus{color:#6F6A60!important}
+.career{font-size:13px;line-height:1.4;color:#1A1A2E;font-weight:800;margin:16px 0 0;min-height:0}
+.specialisation{font-family:var(--font);font-size:10px;line-height:1.45;color:#6F6A60;margin:4px 0 0}
+.signalRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px;padding:12px 0;border-top:1px solid #D4C9A8;border-bottom:1px solid #D4C9A8;min-width:0}
+.scoreBlock{display:flex;flex-direction:column;gap:4px;min-width:0}
+.scoreBlock>small{font-family:var(--font);font-size:7px;letter-spacing:.14em;font-weight:800;color:#6F6A60}
+.scoreBlock>strong{font-family:var(--font);font-size:23px;line-height:1;font-weight:900;color:#1A1A2E}
+.scoreBlock>strong span{font-size:8px;letter-spacing:.08em}
+.basicAccess{font-size:15px!important;letter-spacing:.07em}
+.snapshotLabel{font-family:var(--font);font-size:7px;letter-spacing:.1em;color:#6F6A60;font-weight:800}
+.tierBadge{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:112px;max-width:145px;min-height:42px;padding:7px 11px;border-radius:6px;font-family:var(--font);font-size:9px;line-height:1.2;font-weight:900;letter-spacing:.04em;text-align:center;flex-shrink:0}
+.tierStars{font-size:10px;letter-spacing:.1em;line-height:1}
+.standard{background:#F7F4EE;color:#2E2E4A;border:1px solid #D4C9A8}
+.proficient{background:#EDE8DC;color:#2E2E4A;border:1px solid #D4C9A8}
+.distinguished{background:#1A1A2E;color:#C9A84C;border:1px solid #1A1A2E}
+.elite{background:#C9A84C;color:#1A1A2E;border:1px solid #C9A84C}
+.capabilities{gap:6px;margin-top:13px}
+.capabilities .capabilityBadge{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:0;white-space:normal;padding:7px 9px;border-radius:6px;background:#EDE8DC;border:1px solid #D4C9A8;color:#1A1A2E}
+.capabilityBadge strong{font-family:var(--font);font-size:7px;line-height:1.2;font-weight:900;letter-spacing:.07em}
+.capabilityBadge small{font-family:var(--font);font-size:6px;line-height:1.25;font-weight:700;letter-spacing:.035em;color:#6F6A60}
+.view{margin-top:16px;padding-top:13px;font-size:8px}
+.view span{font-size:12px}
+@media(max-width:900px){.card{padding:18px}.signalRow{gap:8px}.tierBadge{min-width:100px}}
