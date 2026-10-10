@@ -14,7 +14,7 @@ async function getHomepageProfiles() {
   const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }
   try {
     const [profilesResponse, countResponse] = await Promise.all([
-      fetch(`${url}/rest/v1/rpc/get_homepage_professional_previews`, { method: 'POST', headers, body: '{}', cache: 'no-store' }),
+      fetch(`${url}/rest/v1/rpc/get_homepage_professional_previews_v2`, { method: 'POST', headers, body: '{}', cache: 'no-store' }),
       fetch(`${url}/rest/v1/rpc/get_homepage_professional_count`, { method: 'POST', headers, body: '{}', cache: 'no-store' }),
     ])
     const profilesPayload = profilesResponse.ok ? await profilesResponse.json() : []
@@ -97,7 +97,7 @@ export default async function LiveProfilesScroll() {
                     </div>
                     <div className="vi-scroll-copy">
                       <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>LIVE</i></div>
-                      <div className="vi-scroll-headline">{profile.headline || 'Valoria Professional'}</div>
+                      <div className="vi-scroll-headline">{profile.assessment_summary || 'Assessment-based capability descriptor unavailable.'}</div>
                       <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
                     </div>
                     <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'}`}>
