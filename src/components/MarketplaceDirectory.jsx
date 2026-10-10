@@ -81,27 +81,43 @@ function labelValues(value) {
 
 function Profile({p}) {
   const caps=[...(p.capabilities||p.tracks||[p.track])].map(normalize).filter(Boolean)
-  const capabilityLabels = [...new Set(caps.map(c => c === 'candidate' ? 'TALENT' : c === 'speaker' ? 'SPEAKER' : c === 'facilitator' ? 'FACILITATOR' : c.toUpperCase()))]
-  const skillTags=labelValues(p.skills)
-  const topicTags=labelValues(p.topics)
-  const tags=capabilityLabels.length ? capabilityLabels : skillTags.length ? skillTags : topicTags
-  const career=displayText(p.headline || p.current_job_title || p.designation || 'Valoria Professional')
-  const bio=displayText(p.bio)
+  const capabilityBadges = [...new Set(caps)].map(c => ({
+    key:c,
+    title:c === 'candidate' ? 'PROFESSIONAL' : c === 'speaker' ? 'SPEAKER' : c === 'facilitator' ? 'FACILITATOR' : c.toUpperCase(),
+    detail:c === 'candidate' ? 'CAREER · TALENT' : c === 'speaker' ? 'KNOWLEDGE · COMMUNICATION' : c === 'facilitator' ? 'PEOPLE · PROGRESS' : '',
+  }))
+  const career=displayText(p.headline || p.current_job_title || '')
+  const specialisation=displayText(p.industry || '')
   const isBasic = p.assessment_access === 'basic' || p.valu_index == null
   const tier = !isBasic ? getValuTier(p.valu_index, 'full') : null
+  const profileId = displayText(p.atb_id || 'PROFILE ID PENDING')
   return <article className={styles.card}>
     <div className={styles.identity}>
       <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
-      <div>
+      <div className={styles.identityCopy}>
         <small>PROFILE ID</small>
-        <strong>{displayText(p.atb_id || p.professional_id || 'UNASSIGNED')}</strong>
-        <em>✓ VALORIA ASSESSED</em>
+        <strong>{profileId}</strong>
+        <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : '✓ VALORIA ASSESSED'}</span>
       </div>
-      {(p.valu_index != null || isBasic) && <div className={styles.valu}><small>VALU INDEX</small>{isBasic ? <><b style={{fontSize:'14px',letterSpacing:'.08em'}}>BASIC</b><span>SNAPSHOT</span></> : <><b>{p.valu_index}</b><span>POINTS</span></>}</div>}
     </div>
-    <p className={styles.career}>{career}</p>
-    {tags.length > 0 && <div className={styles.capabilities}>{tags.map(tag=><span key={tag}>{displayText(tag)}</span>)}{isBasic ? <span>BASIC · SNAPSHOT</span> : tier ? <span>{tier.name.toUpperCase()} · {tier.stars}</span> : null}</div>}
-    {bio && <p className={styles.bio}>{bio.length>220 ? bio.slice(0,220)+'…' : bio}</p>}
-    <Link href={`/profile/${p.id}`} className={styles.view}>VIEW PROFILE →</Link>
+    {career && <p className={styles.career}>{career}</p>}
+    {specialisation && <p className={styles.specialisation}>{specialisation}</p>}
+    <div className={styles.signalRow}>
+      {!isBasic && p.valu_index != null && <div className={styles.scoreBlock}>
+        <small>VALU INDEX</small>
+        <strong>{p.valu_index}<span> POINTS</span></strong>
+      </div>}
+      {isBasic && <div className={styles.scoreBlock}>
+        <small>MARKETPLACE ACCESS</small>
+        <strong className={styles.basicAccess}>BASIC</strong>
+        <span className={styles.snapshotLabel}>SNAPSHOT</span>
+      </div>}
+      {!isBasic && tier && <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>
+        {tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}
+        <span>{tier.name}</span>
+      </span>}
+    </div>
+    {capabilityBadges.length > 0 && <div className={styles.capabilities}>{capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)}</div>}
+    <Link href={`/profile/${p.id}`} className={styles.view}>VIEW PROFILE <span aria-hidden="true">→</span></Link>
   </article>
 }
