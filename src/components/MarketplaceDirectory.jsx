@@ -18,13 +18,6 @@ const TRACKS = [
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
 
-const PRIME_DIMENSIONS = [
-  { key: 'P', label: 'Presence', meaning: 'How you show up' },
-  { key: 'R', label: 'Relationships', meaning: 'How you create trust' },
-  { key: 'I', label: 'Intelligence', meaning: 'How you think' },
-  { key: 'M', label: 'Mastery', meaning: 'How you apply capability' },
-  { key: 'E', label: 'Enterprise', meaning: 'How you create value' },
-]
 
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
   const [query,setQuery] = useState('')
