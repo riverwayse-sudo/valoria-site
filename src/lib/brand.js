@@ -62,7 +62,7 @@ export const TIER_DESIGNATIONS = [
   // Canonical five-designation system from the 9 October 2026 founder-approved content brief.
   // Scores below 35 are not marketplace-listable and therefore receive no public card designation.
   { level: 4, min: 80, max: 100, name: 'Force to Align With', stars: '✦✦', badgeClass: 'forceToAlignWith' },
-  { level: 3, min: 65, max: 79, name: 'Emerging Force', stars: '✦', badgeClass: 'emergingForce' },
+  { level: 3, min: 65, max: 79, name: 'Emerging Force', stars: '', badgeClass: 'emergingForce' },
   { level: 2, min: 50, max: 64, name: 'Developing Professional', stars: '', badgeClass: 'developingProfessional' },
   { level: 1, min: 35, max: 49, name: 'Building Foundations', stars: '', badgeClass: 'buildingFoundations' },
 ]
