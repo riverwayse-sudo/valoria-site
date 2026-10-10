@@ -59,3 +59,10 @@
 
 .career{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .specialisation{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;overflow:hidden}
+
+/* Canonical marketplace-card corrections: assessment signal + current five-designation system. */
+.assessmentSummary{font-family:var(--font);font-size:9px;line-height:1.5;color:#2E2E4A;margin:10px 0 0;padding:9px 10px;border-left:2px solid #C9A84C;background:#EDE8DC;overflow-wrap:anywhere}
+.forceToAlignWith{background:#1A1A2E;color:#C9A84C;border:1px solid #C9A84C}
+.emergingForce{background:#EDE8DC;color:#1A1A2E;border:1px solid #C9A84C}
+.developingProfessional{background:#F7F4EE;color:#2E2E4A;border:1px solid #D4C9A8}
+.buildingFoundations{background:#FAFAF7;color:#6F6A60;border:1px solid #D4C9A8}
