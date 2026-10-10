@@ -14,7 +14,7 @@ async function getHomepageProfiles() {
   const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }
   try {
     const [profilesResponse, countResponse] = await Promise.all([
-      fetch(`${url}/rest/v1/rpc/get_homepage_professional_previews`, { method: 'POST', headers, body: '{}', cache: 'no-store' }),
+      fetch(`${url}/rest/v1/rpc/get_homepage_professional_previews_v2`, { method: 'POST', headers, body: '{}', cache: 'no-store' }),
       fetch(`${url}/rest/v1/rpc/get_homepage_professional_count`, { method: 'POST', headers, body: '{}', cache: 'no-store' }),
     ])
     const profilesPayload = profilesResponse.ok ? await profilesResponse.json() : []
@@ -89,17 +89,19 @@ export default async function LiveProfilesScroll() {
                     className="vi-scroll-card"
                     data-marketplace-intent={primaryTrack}
                     aria-label={`Discover more ${meta.label.toLowerCase()} professionals`}
+                    aria-hidden={index >= unique.length ? true : undefined}
+                    tabIndex={index >= unique.length ? -1 : undefined}
                   >
                     <div className="vi-scroll-avatar" aria-hidden="true">
                       <ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} />
                     </div>
                     <div className="vi-scroll-copy">
                       <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>LIVE</i></div>
-                      <div className="vi-scroll-headline">{profile.headline || 'Valoria Professional'}</div>
+                      <div className="vi-scroll-headline">{profile.assessment_summary || 'Assessment-based capability descriptor unavailable.'}</div>
                       <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
                     </div>
                     <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'}`}>
-                      <span className="vi-scroll-score-label">VALU</span>
+                      <span className="vi-scroll-score-label">VALU INDEX</span>
                       <strong>{profile.valu_index ?? '—'}</strong>
                       <span className="vi-scroll-score-max">/100</span>
                     </div>
@@ -129,7 +131,7 @@ export default async function LiveProfilesScroll() {
           <small>WANT TO BE DISCOVERED?</small>
           <strong>Build the professional record that makes your capability visible.</strong>
         </div>
-        <Link href="/valu">START WITH VALU <span>→</span></Link>
+        <Link href="/valu">START WITH VALU INDEX <span>→</span></Link>
       </div></section>
   )
 }

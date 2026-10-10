@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "npm run design:check",
+    "prebuild": "npm run design:check && npm run excellence:check",
     "build": "next build",
     "start": "next start",
     "test": "jest",
