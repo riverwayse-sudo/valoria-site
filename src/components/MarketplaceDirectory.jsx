@@ -86,7 +86,9 @@ function Profile({p}) {
     title:c === 'candidate' ? 'PROFESSIONAL' : c === 'speaker' ? 'SPEAKER' : c === 'facilitator' ? 'FACILITATOR' : c.toUpperCase(),
     detail:c === 'candidate' ? 'CAREER · TALENT' : c === 'speaker' ? 'KNOWLEDGE · COMMUNICATION' : c === 'facilitator' ? 'PEOPLE · PROGRESS' : '',
   }))
-  const roleTitle = displayText(p.current_job_title || '') || 'Professional capability'
+  const headlineFallback = displayText(p.headline || '')
+  const conciseHeadlineRole = headlineFallback.length <= 45 && !/[.!?]/.test(headlineFallback) && !/^(i|we|my|our)\b/i.test(headlineFallback) && !/\bfocused on\b/i.test(headlineFallback) ? headlineFallback : ''
+  const roleTitle = displayText(p.current_job_title || '') || conciseHeadlineRole || 'Professional capability'
   const industryLabel = displayText(p.industry || '') || 'Industry not specified'
   // Fail closed: only an explicitly full assessment can expose an official score/designation.
   const isFullAssessment = p.assessment_access === 'full' && p.valu_index != null
