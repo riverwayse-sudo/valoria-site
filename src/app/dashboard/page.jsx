@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
+import { getValuTier } from '@/lib/brand'
 
 // ─── brand tokens — same system as the public profile page ─────────────────
 const GOLD    = '#C9A84C'
@@ -273,7 +274,7 @@ export default function DashboardPage() {
     { label:'Industry',   value: p.industry || '—' },
     { label:'Experience', value: p.years_experience || p.experience_years ? `${p.years_experience || p.experience_years} yrs` : '—' },
     { label: compLabel,   value: compensation || '—' },
-    { label:'VALU Index', value: p.valu_index != null ? `${p.valu_index} / 100` : 'Not assessed', href: p.valu_index != null ? '#valu-card' : null },
+    { label:'VALU Index', value: p.valu_index != null ? `${p.valu_index} points` : 'Basic · Snapshot', href: p.valu_index != null ? '#valu-card' : null },
     { label:'Profile Views', value: profileViewCount != null ? String(profileViewCount) : '—' },
   ] : []
 
@@ -495,7 +496,7 @@ export default function DashboardPage() {
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'14px' }}>VALU Index</div>
                 {p.valu_index != null ? (
                   <>
-                    <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_index}<span style={{ fontSize:'20px', color: DIM, fontWeight:400 }}>/100</span></div>
+                    <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_index}<span style={{ fontSize:'18px', color: DIM, fontWeight:400 }}> points</span></div>{getValuTier(p.valu_index,'full') && <div style={{fontSize:'11px',fontWeight:800,color:GOLD,letterSpacing:'.1em',marginBottom:'14px'}}>{getValuTier(p.valu_index,'full').name.toUpperCase()} · {getValuTier(p.valu_index,'full').stars}</div>}
                     {p.designation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{p.designation.replace(/_/g,' ')}</div>}
                     {p.cluster_scores && (
                       <div>
