@@ -12,7 +12,8 @@ export const NAVIGATION = {
             { label: 'Marketplace', href: '/marketplace', description: 'Discover professionals and their capabilities.' },
             { label: 'Facilitators', href: '/facilitators', description: 'Find people who can lead the room.' },
             { label: 'Programmes', href: '/programmes', description: 'Develop capability with structured learning.' },
-            { label: 'Insights', href: '/insights', description: 'Perspectives on professional capability, leadership and work.' },
+            { label: 'Events', href: '/events', description: 'Join Valoria conversations and events.' },
+            { label: 'Insights', href: '/insights', description: 'Ideas and perspectives for the modern professional.' },
           ],
         },
       ],
@@ -29,7 +30,6 @@ export const NAVIGATION = {
         },
       ],
     },
-    { label: 'Events', href: '/events' },
     {
       label: 'About',
       groups: [
