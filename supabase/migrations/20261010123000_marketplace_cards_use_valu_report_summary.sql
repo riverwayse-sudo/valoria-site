@@ -69,16 +69,11 @@ begin
      order by v.completed_at desc, v.created_at desc
      limit 1;
 
-    -- Extract the report's own "What You Are Good At" opening paragraph.
-    -- This is report text, not an AI-generated rewrite or member-entered profile copy.
-    report_match := regexp_match(
-      coalesce(report_text, ''),
-      '(?is)##[[:space:]]*WHAT YOU ARE GOOD AT[[:space:]]*(.*?)[[:space:]]*---'
-    );
-    report_section := coalesce(report_match[1], '');
-    report_section := regexp_replace(report_section, '^[[:space:]]*[-*][[:space:]]*', '', 'g');
+    -- Use the report's opening assessment interpretation paragraph as the card summary.
+    -- Remove the heading and retain only the first report paragraph, never profile-authored copy.
+    report_section := regexp_replace(coalesce(report_text, ''), '^##[^\n]*\n+', '', 's');
+    report_section := split_part(report_section, E'\n\n', 1);
     report_section := regexp_replace(report_section, '\*\*|__|[*_#]', '', 'g');
-    report_section := regexp_replace(report_section, E'\n[[:space:]]*\n.*$', '', 's');
     report_section := regexp_replace(report_section, '[[:space:]]+', ' ', 'g');
     report_section := nullif(trim(report_section), '');
     assessment_summary := case
