@@ -131,3 +131,15 @@
   .avatar{width:52px;height:52px}
   .assessmentInsight{flex-basis:112px;height:112px;min-height:112px;max-height:112px}
 }
+
+
+/* Consistent two-line professional identity: role from canonical job title, industry separately. */
+.roleIndustry{box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:3px;height:40px;min-height:40px;max-height:40px;margin-top:8px;overflow:hidden}
+.roleTitle,.industryLine{font-family:var(--font);display:block;max-width:100%;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.roleTitle{font-size:11px;line-height:1.35;font-weight:800;color:#1A1A2E}
+.industryLine{font-size:8px;line-height:1.3;font-weight:700;letter-spacing:.04em;color:#6F6A60}
+.specialisation{display:none}
+.assessmentInsight{margin-top:8px;flex-basis:108px;height:108px;min-height:108px;max-height:108px}
+.signalRow{margin-top:8px}
+.capabilities{margin-top:8px}
+@media(max-width:520px){.roleIndustry{height:40px;min-height:40px;max-height:40px}.assessmentInsight{flex-basis:108px;height:108px;min-height:108px;max-height:108px}}
