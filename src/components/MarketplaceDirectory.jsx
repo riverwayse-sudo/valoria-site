@@ -6,7 +6,7 @@ import Footer from '@/components/Footer'
 import { useMemo, useState } from 'react'
 import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { getValuTier, PRIME_CLUSTERS } from '@/lib/brand'
+import { getValuTier } from '@/lib/brand'
 
 const TRACKS = [
   ['all','All', '/marketplace'],
