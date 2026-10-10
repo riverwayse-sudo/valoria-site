@@ -56,3 +56,6 @@
 .view{margin-top:16px;padding-top:13px;font-size:8px}
 .view span{font-size:12px}
 @media(max-width:900px){.card{padding:18px}.signalRow{gap:8px}.tierBadge{min-width:100px}}
+
+.career{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.specialisation{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;overflow:hidden}
