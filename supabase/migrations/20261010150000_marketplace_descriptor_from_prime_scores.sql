@@ -82,6 +82,11 @@ begin
      order by v.completed_at desc, v.created_at desc
      limit 1;
 
+    -- Retain an already-projected verified result if legacy ownership linkage is incomplete.
+    canonical_valu_index := coalesce(canonical_valu_index, p.valu_index);
+    canonical_cluster_scores := coalesce(canonical_cluster_scores, p.cluster_scores);
+    canonical_designation := coalesce(canonical_designation, p.designation);
+
     -- Derive the public descriptor only from structured PRIME scores.
     -- The participant-facing AI coaching report is not suitable marketplace copy.
     if jsonb_typeof(canonical_cluster_scores) = 'object' then
