@@ -79,6 +79,35 @@ if (fs.existsSync(profileClientPath)) {
   }
 }
 
+// Product-level regression guards for the VALU Index journey and looping registry.
+const nudgePath = path.join(root, 'src/components/ValuCompletionNudge.jsx');
+if (fs.existsSync(nudgePath)) {
+  const nudge = fs.readFileSync(nudgePath, 'utf8');
+  if (!/const fullAssessmentComplete\s*=\s*!!assessment\?\.completed_at/.test(nudge)) {
+    violations.push('ValuCompletionNudge: full-assessment completion must not be gated by the 35-point listing threshold');
+  }
+  if (/fullAssessmentComplete\s*=\s*!!assessment\?\.completed_at\s*&&/.test(nudge)) {
+    violations.push('ValuCompletionNudge: assessment completion and marketplace eligibility must remain separate states');
+  }
+  if (!nudge.includes('aria-labelledby="valu-nudge-title"') || !nudge.includes('closeButtonRef.current?.focus()')) {
+    violations.push('ValuCompletionNudge: dialog must have an accessible title and move focus into the dialog');
+  }
+}
+const registryPath = path.join(root, 'src/components/LiveProfilesScroll.jsx');
+if (fs.existsSync(registryPath)) {
+  const registry = fs.readFileSync(registryPath, 'utf8');
+  if (!registry.includes('aria-hidden={index >= unique.length ? true : undefined}') ||
+      !registry.includes('tabIndex={index >= unique.length ? -1 : undefined}')) {
+    violations.push('LiveProfilesScroll: decorative marquee duplicates must be hidden from assistive navigation');
+  }
+}
+const navPath = path.join(root, 'src/components/Nav.jsx');
+if (fs.existsSync(navPath)) {
+  const nav = fs.readFileSync(navPath, 'utf8');
+  if (/\bSTART VALU\b(?! INDEX)|What is VALU\?/i.test(nav)) {
+    violations.push('Nav: use the canonical VALU Index name, not standalone VALU naming');
+  }
+}
 const pkg = JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
 if (!pkg.scripts?.['design:check']) violations.push('package.json: design:check gate missing');
 if (!fs.existsSync(path.join(root, 'src/lib/password-policy.js'))) violations.push('authentication control missing: src/lib/password-policy.js');
