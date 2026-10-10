@@ -1,0 +1,41 @@
+/* VALORIA NAVIGATION AWAKENING — refinement layer only. Preserves the existing nav structure and brand tokens. */
+.vi-nav{
+  height:80px;
+  padding-inline:clamp(20px,4vw,56px);
+  border-bottom-color:rgba(212,201,168,.28);
+  box-shadow:0 8px 28px rgba(15,15,26,.14);
+}
+.nav-logo img{width:182px;height:42px;}
+.nav-links{gap:4px;}
+.nav-link,.nav-trigger{min-height:40px;display:inline-flex;align-items:center;}
+.nav-link{padding-inline:11px;}
+.nav-trigger{padding:10px 11px;}
+.nav-chevron{transition:transform .2s ease,opacity .2s ease;}
+.nav-trigger[aria-expanded="true"] .nav-chevron{transform:rotate(180deg);opacity:.9;}
+.nav-dropdown{
+  top:calc(100% + 8px);
+  width:min(520px,calc(100vw - 32px));
+  padding:12px;
+  border-radius:12px;
+  box-shadow:0 20px 55px rgba(15,15,26,.30);
+  transition:opacity .18s ease,transform .18s ease,visibility .18s ease;
+}
+.nav-dropdown-grid{gap:8px;}
+.nav-dropdown-link{padding:11px 12px;}
+.nav-dropdown-description{max-width:360px;}
+.nav-cta{min-height:40px;display:inline-flex;align-items:center;padding-inline:18px;margin-left:8px;}
+.nav-mobile{top:80px;}
+@media (max-width:1240px){
+  .nav-links{display:none;}
+  .nav-burger{display:flex;}
+}
+@media (min-width:1241px){
+  .nav-mobile{display:none!important;}
+}
+@media (max-width:560px){
+  .vi-nav{padding-inline:16px;}
+  .nav-logo img{width:156px;height:38px;}
+}
+@media (prefers-reduced-motion:reduce){
+  .nav-chevron,.nav-dropdown{transition:none;}
+}
