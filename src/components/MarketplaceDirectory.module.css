@@ -93,3 +93,41 @@
   .card{height:420px;min-height:420px;max-height:420px;padding:18px}
   .assessmentInsight{min-height:105px}
 }
+
+
+/* Strict card contract: identical dimensions and fixed content slots on every directory card. */
+.grid{grid-auto-rows:430px;align-items:stretch}
+.card{box-sizing:border-box;width:100%;height:430px;min-height:430px;max-height:430px;padding:18px;overflow:hidden;display:flex;flex-direction:column;gap:0;transform:none!important}
+.card:hover{transform:none!important}
+.card::after{display:none}
+.identity{height:66px;min-height:66px;max-height:66px;overflow:hidden}
+.identityCopy{overflow:hidden}
+.identity strong{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
+.specialisation{height:16px;min-height:16px;max-height:16px;margin:8px 0 0;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.assessmentInsight{box-sizing:border-box;flex:0 0 112px;height:112px;min-height:112px;max-height:112px;margin:10px 0 0;padding:9px 10px;overflow:hidden}
+.assessmentInsight>small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.assessmentSummary{font-size:9px;line-height:1.5;margin-top:6px;-webkit-line-clamp:4;overflow-wrap:anywhere}
+.assessmentPending{font-size:9px;line-height:1.5;margin-top:6px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.signalRow{box-sizing:border-box;flex:0 0 64px;height:64px;min-height:64px;max-height:64px;margin-top:10px;padding:8px 0;overflow:hidden}
+.scoreBlock>strong{white-space:nowrap}
+.snapshotScore{font-size:11px!important;letter-spacing:.06em}
+.snapshotTier{font-size:8px;color:#6F6A60;background:#EDE8DC;border:1px solid #D4C9A8}
+.capabilities{box-sizing:border-box;flex:0 0 44px;height:44px;min-height:44px;max-height:44px;margin-top:10px;overflow:hidden;align-content:flex-start}
+.capabilities .capabilityBadge{max-width:100%;box-sizing:border-box;padding:6px 8px;overflow:hidden}
+.capabilityBadge strong,.capabilityBadge small{display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.view{box-sizing:border-box;flex:0 0 32px;height:32px;min-height:32px;max-height:32px;margin-top:auto;padding-top:10px;overflow:hidden;white-space:nowrap}
+@media(max-width:1100px){
+  .grid{grid-auto-rows:430px}
+  .card{height:430px;min-height:430px;max-height:430px}
+}
+@media(max-width:900px){
+  .grid{grid-auto-rows:430px}
+  .card{height:430px;min-height:430px;max-height:430px;padding:18px}
+}
+@media(max-width:520px){
+  .grid{grid-auto-rows:430px}
+  .card{height:430px;min-height:430px;max-height:430px;padding:16px}
+  .identity{grid-template-columns:52px minmax(0,1fr);gap:10px}
+  .avatar{width:52px;height:52px}
+  .assessmentInsight{flex-basis:112px;height:112px;min-height:112px;max-height:112px}
+}
