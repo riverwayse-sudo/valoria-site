@@ -103,23 +103,27 @@ function Profile({p}) {
         <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : '✓ VALORIA ASSESSED'}</span>
       </div>
     </div>
-    {specialisation && <p className={styles.specialisation}>{specialisation}</p>}
-    {isFullAssessment && <div className={styles.assessmentInsight}>
+    <p className={styles.specialisation} title={specialisation}>{specialisation || 'Professional capability'}</p>
+    <div className={styles.assessmentInsight}>
       <small>VALU INDEX ASSESSMENT INSIGHT</small>
-      {assessmentSummary
-        ? <p className={styles.assessmentSummary}>{assessmentSummary}</p>
-        : <p className={styles.assessmentPending}>Assessment insight is being prepared.</p>}
-    </div>}
-    {isFullAssessment && <div className={styles.signalRow}>
+      {isFullAssessment
+        ? (assessmentSummary
+          ? <p className={styles.assessmentSummary} title={assessmentSummary}>{assessmentSummary}</p>
+          : <p className={styles.assessmentPending}>Assessment insight is being prepared.</p>)
+        : <p className={styles.assessmentPending}>Complete the full VALU Index assessment to unlock this insight.</p>}
+    </div>
+    <div className={styles.signalRow}>
       <div className={styles.scoreBlock}>
         <small>VALU INDEX</small>
-        <strong>{p.valu_index}<span> POINTS</span></strong>
+        <strong>{isFullAssessment ? <>{p.valu_index}<span> POINTS</span></> : <span className={styles.snapshotScore}>SNAPSHOT</span>}</strong>
       </div>
-      {tier && <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>
-        {tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}
-        <span>{tier.name}</span>
-      </span>}
-    </div>}
+      {isFullAssessment && tier
+        ? <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>
+            {tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}
+            <span>{tier.name}</span>
+          </span>
+        : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>FULL ASSESSMENT<br/>PENDING</span>}
+    </div>
     {capabilityBadges.length > 0 && <div className={styles.capabilities}>{capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)}</div>}
     <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE</Link>
   </article>
