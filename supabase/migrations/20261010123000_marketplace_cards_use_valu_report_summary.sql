@@ -27,7 +27,12 @@ begin
     left join public.users u on u.id = pp.id
    where pp.id = p_professional_id;
 
-  if p.id is null or coalesce(p.account_user_type, 'professional') <> 'professional' then
+  -- Preserve this explicitly approved marketplace account without changing its admin role.
+  -- All other non-professional account types remain excluded.
+  if p.id is null or (
+    coalesce(p.account_user_type, 'professional') <> 'professional'
+    and p_professional_id <> '68a5e7d8-e373-4bb5-82bd-c88ad509784c'::uuid
+  ) then
     return;
   end if;
 
@@ -137,5 +142,8 @@ begin
   loop
     perform public.refresh_marketplace_public_roster(roster_row.professional_id);
   end loop;
+
+  -- Include the preserved account even when the prior roster excluded it.
+  perform public.refresh_marketplace_public_roster('68a5e7d8-e373-4bb5-82bd-c88ad509784c'::uuid);
 end;
 $backfill$;
