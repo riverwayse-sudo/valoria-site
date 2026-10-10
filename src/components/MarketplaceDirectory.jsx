@@ -63,7 +63,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       <div className={styles.container}>
         <p className={styles.eyebrow}>THE AFRICAN TALENT BUREAU</p>
         <h1>{activeTrack === 'all' ? <>Find capability.<br/><i>Engage confidently.</i></> : <>{TRACKS.find(t=>t[0]===activeTrack)?.[1]}<br/><i>on Valoria.</i></>}</h1>
-        <p className={styles.lede}>A curated directory of professionals who have completed the VALU Index and meet the Institute's marketplace requirements.</p>
+        <p className={styles.lede}>A curated directory of professionals with a Valoria marketplace presence. Basic profiles preserve the snapshot journey; Full profiles carry the official VALU Index result.</p>
         <nav className={styles.tabs}>{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
       </div>
     </section>
@@ -112,11 +112,11 @@ function Profile({p}) {
       <div>
         <small>PROFILE ID</small>
         <strong>{displayText(p.atb_id || p.professional_id || 'UNASSIGNED')}</strong>
-        <em>✓ VALORIA ASSESSED</em>
+        <em>{p.marketplace_access_level === 'full' ? '✓ FULL VALU INDEX' : '✓ BASIC MARKETPLACE'}</em>
       </div>
-      {p.valu_index != null && <div className={styles.valu}><small>VALU</small><b>{p.valu_index}</b><span>/100</span></div>}
+      {p.marketplace_access_level === 'full' && p.valu_index != null && <div className={styles.valu}><small>VALU INDEX</small><b>{p.valu_index}</b><span>/100</span></div>}
     </div>
-    <p className={styles.career}>{career}</p>
+    <div className={styles.accessRow}><span className={styles.accessBadge}>{p.marketplace_access_level === 'full' ? 'FULL VALU INDEX' : 'BASIC'}</span>{p.marketplace_access_level === 'full' && p.valu_tier && <span className={styles.tierBadge}>{p.valu_tier}</span>}</div>\n    <p className={styles.career}>{career}</p>
     <div className={styles.capabilities} aria-label="Valoria capability badges">
       {caps.map(cap => {
         const badge=CAPABILITY_BADGES[cap]
