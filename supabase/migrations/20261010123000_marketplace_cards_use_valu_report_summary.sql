@@ -21,6 +21,7 @@ declare
   valid_dimension_count integer := 0;
   strongest_dimension text;
   weakest_dimension text;
+  descriptor_phrase text;
   strongest_score numeric;
   weakest_score numeric;
   assessment_summary text;
@@ -114,12 +115,18 @@ begin
          order by s.value::numeric asc, array_position(array['P','R','I','M','E'], s.key)
          limit 1;
 
+        descriptor_phrase := case strongest_dimension
+          when 'Presence' then 'A presence-led professional'
+          when 'Relationships' then 'A relationship-centred professional'
+          when 'Intelligence' then 'An analytically oriented professional'
+          when 'Mastery' then 'A mastery-focused professional'
+          when 'Enterprise' then 'An enterprise-minded professional'
+        end;
+
         assessment_summary := case
           when strongest_score = weakest_score
-            then 'A professional with a balanced profile across the five PRIME dimensions.'
-          else 'A professional whose assessed profile is strongest in '
-            || strongest_dimension || ', with ' || weakest_dimension
-            || ' as a development priority.'
+            then 'A well-balanced capability profile across the five PRIME dimensions.'
+          else descriptor_phrase || ', with further development in ' || weakest_dimension || '.'
         end;
       end if;
     end if;
