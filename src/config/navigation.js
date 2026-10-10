@@ -7,19 +7,12 @@ export const NAVIGATION = {
       label: 'Explore',
       groups: [
         {
-          label: 'Discover',
+          label: '',
           items: [
-            { label: 'Marketplace', href: '/marketplace', description: 'Discover verified professionals.' },
+            { label: 'Marketplace', href: '/marketplace', description: 'Discover professionals and their capabilities.' },
             { label: 'Facilitators', href: '/facilitators', description: 'Find people who can lead the room.' },
             { label: 'Programmes', href: '/programmes', description: 'Develop capability with structured learning.' },
-          ],
-        },
-        {
-          label: 'Connect',
-          items: [
-            { label: 'Events', href: '/events', description: 'Join Valoria conversations and events.' },
-            { label: 'Insights', href: '/insights', description: 'Ideas for the modern professional.' },
-            { label: 'Contact', href: '/contact-us', description: 'Speak with the Valoria team.' },
+            { label: 'Insights', href: '/insights', description: 'Perspectives on professional capability, leadership and work.' },
           ],
         },
       ],
@@ -30,14 +23,13 @@ export const NAVIGATION = {
         {
           label: 'Understand',
           items: [
-            { label: 'What is VALU?', href: '/valu', description: 'Understand the index and the journey.' },
+            { label: 'About the VALU Index', href: '/valu', description: 'Understand the index and the assessment journey.' },
             { label: 'Start Assessment', href: BRAND.assessmentUrl, external: true, description: 'Begin your VALU Index assessment.' },
           ],
         },
       ],
     },
     { label: 'Events', href: '/events' },
-    { label: 'Insights', href: '/insights' },
     {
       label: 'About',
       groups: [
@@ -57,12 +49,11 @@ export const NAVIGATION = {
       { label: 'Marketplace', href: '/marketplace' },
       { label: 'Facilitators', href: '/facilitators' },
       { label: 'Programmes', href: '/programmes' },
-      { label: 'Events', href: '/events' },
       { label: 'Insights', href: '/insights' },
     ],
     valu: [
-      { label: 'What is VALU?', href: '/valu' },
-      { label: 'Start the VALU Index', href: BRAND.assessmentUrl, external: true },
+      { label: 'About the VALU Index', href: '/valu' },
+      { label: 'Start Assessment', href: BRAND.assessmentUrl, external: true },
     ],
     about: [
       { label: 'About Valoria', href: '/about-us' },
