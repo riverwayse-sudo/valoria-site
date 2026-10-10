@@ -107,11 +107,6 @@ function Profile({p}) {
         <small>VALU INDEX</small>
         <strong>{p.valu_index}<span> POINTS</span></strong>
       </div>}
-      {isBasic && <div className={styles.scoreBlock}>
-        <small>MARKETPLACE ACCESS</small>
-        <strong className={styles.basicAccess}>BASIC</strong>
-        <span className={styles.snapshotLabel}>SNAPSHOT</span>
-      </div>}
       {!isBasic && tier && <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>
         {tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}
         <span>{tier.name}</span>
