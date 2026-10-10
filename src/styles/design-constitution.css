@@ -1,0 +1,59 @@
+/* VALORIA DESIGN CONSTITUTION — enforcement layer
+   Principle: evolve, don't replace. This layer standardises experience without
+   changing Valoria's established navy/gold/cream identity. */
+:root{
+  --vi-space-1:8px;
+  --vi-space-2:12px;
+  --vi-space-3:16px;
+  --vi-space-4:24px;
+  --vi-space-5:32px;
+  --vi-space-6:48px;
+  --vi-space-7:64px;
+  --vi-space-8:96px;
+  --vi-content:1160px;
+  --vi-content-wide:1360px;
+  --vi-motion-fast:160ms;
+  --vi-motion-standard:220ms;
+  --vi-motion-slow:360ms;
+  --vi-motion-ease:cubic-bezier(.22,1,.36,1);
+}
+html{scroll-padding-top:88px}
+img,svg,video{max-width:100%}
+button,a,input,textarea,select{font-family:var(--font)}
+:where(a,button,input,textarea,select):focus-visible{
+  outline:2px solid var(--gold-light);
+  outline-offset:3px;
+}
+:where(button,a)[aria-disabled="true"]{cursor:not-allowed}
+:where(h1,h2,h3,h4,h5,h6){text-wrap:balance}
+:where(p){text-wrap:pretty}
+:where(.container){width:100%;max-width:var(--vi-content);margin-inline:auto}
+:where(.section,.section-wrap){width:100%}
+:where(.btn-gold,.btn-secondary,.btn-tertiary,.btn-ghost,.btn-outline,.nav-cta,.m-cta){
+  -webkit-tap-highlight-color:transparent;
+}
+:where(.btn-gold,.btn-secondary,.btn-tertiary,.btn-ghost,.btn-outline){
+  min-height:48px;
+}
+:where(.card,.vi-card,.vi-card-grid){isolation:isolate}
+:where(.vi-card-grid){max-width:100%}
+::selection{background:rgba(201,168,76,.28);color:var(--parchment)}
+/* Prevent accidental horizontal overflow from decorative or oversized children. */
+body{overflow-x:clip}
+@media(max-width:900px){
+  :where(.container){padding-inline:var(--pad)}
+}
+@media(max-width:640px){
+  :where(.btn-gold,.btn-secondary,.btn-tertiary,.btn-ghost,.btn-outline){
+    min-height:46px;padding-inline:20px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+    scroll-behavior:auto!important;
+  }
+}
