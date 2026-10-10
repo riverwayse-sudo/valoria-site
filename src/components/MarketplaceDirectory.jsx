@@ -6,7 +6,7 @@ import Footer from '@/components/Footer'
 import { useMemo, useState } from 'react'
 import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { getValuTier } from '@/lib/brand'
+import { getValuTier, PRIME_CLUSTERS } from '@/lib/brand'
 
 const TRACKS = [
   ['all','All', '/marketplace'],
@@ -30,7 +30,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
       if(industry && displayText(p.industry) !== industry) return false
       if(!q) return true
-      return [p.atb_id,p.headline,p.current_job_title,p.bio,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
+      return [p.atb_id,p.headline,p.current_job_title,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
     })
   },[rows,activeTrack,query,industry])
 
@@ -88,9 +88,23 @@ function Profile({p}) {
   }))
   const career=displayText(p.headline || p.current_job_title || '')
   const specialisation=displayText(p.industry || '')
-  const isBasic = p.assessment_access === 'basic' || p.valu_index == null
-  const tier = !isBasic ? getValuTier(p.valu_index, 'full') : null
+  // Fail closed: only an explicitly full assessment can expose an official score/designation.
+  const isFullAssessment = p.assessment_access === 'full' && p.valu_index != null
+  const isBasic = !isFullAssessment
+  const tier = isFullAssessment ? getValuTier(p.valu_index, 'full') : null
   const profileId = displayText(p.atb_id || 'PROFILE ID PENDING')
+  const clusterScores = p.cluster_scores && typeof p.cluster_scores === 'object' && !Array.isArray(p.cluster_scores) ? p.cluster_scores : {}
+  const clusterLabels = Object.fromEntries(PRIME_CLUSTERS.map(cluster => [cluster.letter, cluster.name]))
+  const strongestClusters = isFullAssessment
+    ? Object.entries(clusterScores)
+        .filter(([letter, score]) => clusterLabels[letter] && Number.isFinite(Number(score)))
+        .sort((a, b) => Number(b[1]) - Number(a[1]))
+        .slice(0, 2)
+        .map(([letter]) => clusterLabels[letter])
+    : []
+  const assessmentSummary = strongestClusters.length
+    ? `Assessment strengths: ${strongestClusters.join(' · ')}`
+    : ''
   return <article className={styles.card}>
     <div className={styles.identity}>
       <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
@@ -102,17 +116,18 @@ function Profile({p}) {
     </div>
     {career && <p className={styles.career}>{career}</p>}
     {specialisation && <p className={styles.specialisation}>{specialisation}</p>}
-    <div className={styles.signalRow}>
-      {!isBasic && p.valu_index != null && <div className={styles.scoreBlock}>
+    {assessmentSummary && <p className={styles.assessmentSummary}>{assessmentSummary}</p>}
+    {isFullAssessment && <div className={styles.signalRow}>
+      <div className={styles.scoreBlock}>
         <small>VALU INDEX</small>
         <strong>{p.valu_index}<span> POINTS</span></strong>
-      </div>}
-      {!isBasic && tier && <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>
+      </div>
+      {tier && <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>
         {tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}
         <span>{tier.name}</span>
       </span>}
-    </div>
+    </div>}
     {capabilityBadges.length > 0 && <div className={styles.capabilities}>{capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)}</div>}
-    <Link href={`/profile/${p.id}`} className={styles.view}>VIEW PROFILE <span aria-hidden="true">→</span></Link>
+    <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE <span aria-hidden="true">→</span></Link>
   </article>
 }
