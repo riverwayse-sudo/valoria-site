@@ -71,3 +71,25 @@
 .assessmentInsight>small{display:block;font-family:var(--font);font-size:8px;line-height:1.4;font-weight:700;letter-spacing:.12em;color:#6F5A26;text-transform:uppercase}
 .assessmentSummary{font-family:var(--font);font-size:10px;line-height:1.65;color:#1A1A2E;margin:7px 0 0;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 .assessmentPending{font-family:var(--font);font-size:10px;line-height:1.5;color:#6F6A60;margin:7px 0 0}
+
+
+/* Equal-size directory cards: keep every profile silhouette and grid row consistent. */
+.grid{grid-auto-rows:1fr;align-items:stretch}
+.card{box-sizing:border-box;height:100%;min-height:430px;max-height:430px;overflow:hidden;transform:none!important;display:flex;flex-direction:column}
+.card:hover{transform:none!important}
+.card::after{display:none}
+.assessmentInsight{flex:0 0 auto;min-height:105px;box-sizing:border-box}
+.assessmentSummary{-webkit-line-clamp:4;min-height:0}
+.capabilities{min-height:44px;align-content:flex-start}
+.view{flex:0 0 auto;margin-top:auto}
+@media(max-width:1100px){
+  .card{min-height:420px;max-height:420px}
+}
+@media(max-width:900px){
+  .grid{grid-auto-rows:auto}
+  .card{height:420px;min-height:420px;max-height:420px}
+}
+@media(max-width:520px){
+  .card{height:420px;min-height:420px;max-height:420px;padding:18px}
+  .assessmentInsight{min-height:105px}
+}
