@@ -82,29 +82,28 @@ function Profile({ p }) {
   }))
   const career = displayText(p.current_job_title || p.headline || '')
   const industry = displayText(p.industry || '')
-  // Official scores and designations are available only to full VALU Index assessments.
   const isFullAssessment = p.assessment_access === 'full' && p.valu_index != null
   const tier = isFullAssessment ? getValuTier(p.valu_index, 'full') : null
   const profileId = displayText(p.atb_id || 'PROFILE ID PENDING')
-  // Assessment insight comes from the canonical VALU Index report, never participant-written copy.
   const assessmentSummary = isFullAssessment ? displayText(p.assessment_summary || '') : ''
 
   return <article className={styles.card}>
     <div className={styles.cardTop}>
-      <div className={styles.identity}>
-        <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={54} className={styles.avatar} />
-        <div className={styles.identityCopy}>
-          <small>ATB PROFILE ID</small>
-          <strong title={profileId}>{profileId}</strong>
-          <span className={isFullAssessment ? styles.assessedStatus : styles.snapshotStatus}>
-            {isFullAssessment ? '✓ FULL VALU INDEX' : 'SNAPSHOT · IN PROGRESS'}
-          </span>
+      <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={58} className={styles.avatar} />
+      <div className={styles.identityCopy}>
+        <small>ATB PROFILE ID</small>
+        <strong className={styles.profileId} title={profileId}>{profileId}</strong>
+        <div className={styles.scoreLine} aria-label={isFullAssessment ? `VALU Index score ${p.valu_index} points` : 'Full VALU Index pending'}>
+          <strong>{isFullAssessment ? p.valu_index : '—'}</strong>
+          <span>{isFullAssessment ? 'VALU INDEX POINTS' : 'SCORE PENDING'}</span>
         </div>
       </div>
-      <div className={styles.scoreMark} aria-label={isFullAssessment ? `VALU Index score ${p.valu_index} points` : 'Full VALU Index pending'}>
-        <small>VALU</small>
-        <strong>{isFullAssessment ? p.valu_index : '—'}</strong>
-        <span>{isFullAssessment ? 'POINTS' : 'PENDING'}</span>
+    </div>
+
+    <div className={styles.capabilityBlock}>
+      <span className={styles.microLabel}>LISTED AS</span>
+      <div className={styles.capabilities} aria-label="Marketplace listings">
+        {capabilityBadges.map(badge => <span className={styles.capabilityBadge} key={badge.key}>{badge.title}</span>)}
       </div>
     </div>
 
@@ -118,18 +117,18 @@ function Profile({ p }) {
       {isFullAssessment
         ? assessmentSummary
           ? <p className={styles.assessmentSummary} title={assessmentSummary}>{assessmentSummary}</p>
-          : <p className={styles.assessmentPending}>Your assessment insight is being prepared.</p>
+          : <p className={styles.assessmentPending}>Assessment insight is being prepared.</p>
         : <p className={styles.assessmentPending}>Complete the full assessment to unlock your insight.</p>}
     </div>
 
     <div className={styles.cardBottom}>
-      <div className={styles.credentialRow}>
+      <div className={styles.statusRow}>
+        <span className={isFullAssessment ? styles.assessedStatus : styles.snapshotStatus}>
+          {isFullAssessment ? '✓ FULL VALU INDEX' : 'SNAPSHOT · IN PROGRESS'}
+        </span>
         {tier
           ? <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>{tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}{tier.name}</span>
-          : <span className={styles.pendingBadge}>FULL ASSESSMENT PENDING</span>}
-        <div className={styles.capabilities} aria-label="Professional capabilities">
-          {capabilityBadges.map(badge => <span className={styles.capabilityBadge} key={badge.key}>{badge.title}</span>)}
-        </div>
+          : <span className={styles.pendingBadge}>TIER PENDING</span>}
       </div>
       <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>View profile <span aria-hidden="true">↗</span></Link>
     </div>
