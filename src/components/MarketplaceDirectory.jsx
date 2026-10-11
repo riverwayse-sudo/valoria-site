@@ -9,122 +9,128 @@ import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { getValuTier } from '@/lib/brand'
 
 const TRACKS = [
-  ['all','All', '/marketplace'],
-  ['candidate','Talent','/marketplace/talent'],
-  ['speaker','Speakers','/marketplace/speakers'],
-  ['facilitator','Facilitators','/marketplace/facilitators'],
+  ['all', 'All', '/marketplace'],
+  ['candidate', 'Talent', '/marketplace/talent'],
+  ['speaker', 'Speakers', '/marketplace/speakers'],
+  ['facilitator', 'Facilitators', '/marketplace/facilitators'],
 ]
 
-const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
-const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
+const normalize = value => String(value || '').toLowerCase() === 'talent' ? 'candidate' : String(value || '').toLowerCase()
+const displayText = value => String(value ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
 
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
-  const [query,setQuery] = useState('')
-  const [industry,setIndustry] = useState('')
-  const industries = useMemo(() => [...new Set(rows.map(r=>displayText(r.industry)).filter(Boolean))].sort(), [rows])
+  const [query, setQuery] = useState('')
+  const [industry, setIndustry] = useState('')
+  const industries = useMemo(() => [...new Set(rows.map(row => displayText(row.industry)).filter(Boolean))].sort(), [rows])
 
   const results = useMemo(() => {
-    const q=query.trim().toLowerCase()
-    return rows.filter(p => {
-      const caps=[...(p.capabilities || p.tracks || [p.track])].map(normalize)
-      if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
-      if(industry && displayText(p.industry) !== industry) return false
-      if(!q) return true
-      return [p.atb_id,p.headline,p.current_job_title,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
+    const search = query.trim().toLowerCase()
+    return rows.filter(profile => {
+      const capabilities = [...(profile.capabilities || profile.tracks || [profile.track])].map(normalize)
+      if (activeTrack !== 'all' && !capabilities.includes(activeTrack)) return false
+      if (industry && displayText(profile.industry) !== industry) return false
+      if (!search) return true
+      return [profile.atb_id, profile.headline, profile.current_job_title, profile.industry, ...(profile.skills || []), ...(profile.topics || [])]
+        .some(value => displayText(value).toLowerCase().includes(search))
     })
-  },[rows,activeTrack,query,industry])
+  }, [rows, activeTrack, query, industry])
 
   return <div className={styles.page}>
     <Nav />
     <main>
-    <section className={styles.hero}>
-      <div className={styles.container}>
-        <p className={styles.eyebrow}>THE AFRICAN TALENT BUREAU</p>
-        <h1>{activeTrack === 'all' ? <>Find capability.<br/><i>Engage confidently.</i></> : <>{TRACKS.find(t=>t[0]===activeTrack)?.[1]}<br/><i>on Valoria.</i></>}</h1>
-        <p className={styles.lede}>A curated directory of professionals who have completed the Valoria assessment and meet the Institute's marketplace requirements.</p>
-        <nav className={styles.tabs}>{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
-      </div>
-    </section>
-    <section className={styles.controls}>
-      <div className={styles.containerControl}>
-        <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search professionals, skills or industries…" aria-label="Search marketplace"/>
-        <select value={industry} onChange={e=>setIndustry(e.target.value)} aria-label="Filter by industry">
-          <option value="">All industries</option>
-          {industries.map(v=><option key={v} value={v}>{v}</option>)}
-        </select>
-        {(query || industry) && <button onClick={()=>{setQuery('');setIndustry('')}}>CLEAR</button>}
-      </div>
-    </section>
-    <section className={styles.directory}>
-      <div className={styles.container}>
-        <div className={styles.directoryHead}>
-          <div><p className={styles.eyebrow}>VERIFIED DIRECTORY</p><h2>{results.length} {results.length===1?'professional':'professionals'}</h2></div>
-          <span>VALU INDEX × PRIME</span>
+      <section className={styles.hero}>
+        <div className={styles.container}>
+          <p className={styles.eyebrow}>THE AFRICAN TALENT BUREAU</p>
+          <h1>{activeTrack === 'all' ? <>Find capability.<br /><i>Engage confidently.</i></> : <>{TRACKS.find(track => track[0] === activeTrack)?.[1]}<br /><i>on Valoria.</i></>}</h1>
+          <p className={styles.lede}>A curated directory of professionals who have completed the Valoria assessment and meet the Institute's marketplace requirements.</p>
+          <nav className={styles.tabs} aria-label="Marketplace categories">
+            {TRACKS.map(([id, label, href]) => <Link key={id} href={href} className={activeTrack === id ? styles.activeTab : ''} aria-current={activeTrack === id ? 'page' : undefined}>{label}<b>{counts[id] || 0}</b></Link>)}
+          </nav>
         </div>
-        {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p}/>)}</div> :
-          <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
-      </div>
-    </section>
+      </section>
+      <section className={styles.controls}>
+        <div className={styles.containerControl}>
+          <input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search professionals, skills or industries…" aria-label="Search marketplace" />
+          <select value={industry} onChange={event => setIndustry(event.target.value)} aria-label="Filter by industry">
+            <option value="">All industries</option>
+            {industries.map(value => <option key={value} value={value}>{value}</option>)}
+          </select>
+          {(query || industry) && <button onClick={() => { setQuery(''); setIndustry('') }}>CLEAR</button>}
+        </div>
+      </section>
+      <section className={styles.directory}>
+        <div className={styles.container}>
+          <div className={styles.directoryHead}>
+            <div><p className={styles.eyebrow}>VERIFIED DIRECTORY</p><h2>{results.length} {results.length === 1 ? 'professional' : 'professionals'}</h2></div>
+            <span>VALU INDEX <i>×</i> PRIME</span>
+          </div>
+          {results.length
+            ? <div className={styles.grid}>{results.map(profile => <Profile key={profile.professional_id || profile.id} p={profile} />)}</div>
+            : <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
+        </div>
+      </section>
     </main>
     <Footer />
   </div>
 }
 
-function labelValues(value) {
-  if (!Array.isArray(value)) return []
-  return [...new Set(value.map(item => {
-    if (typeof item === 'string') return displayText(item)
-    if (!item || typeof item !== 'object') return ''
-    return displayText(item.label ?? item.name ?? item.skill_name ?? item.title ?? item.value)
-  }).filter(Boolean))]
-}
-
-function Profile({p}) {
-  const caps=[...(p.capabilities||p.tracks||[p.track])].map(normalize).filter(Boolean)
-  const capabilityBadges = [...new Set(caps)].map(c => ({
-    key:c,
-    title:c === 'candidate' ? 'PROFESSIONAL' : c === 'speaker' ? 'SPEAKER' : c === 'facilitator' ? 'FACILITATOR' : c.toUpperCase(),
-    detail:c === 'candidate' ? 'CAREER · TALENT' : c === 'speaker' ? 'KNOWLEDGE · COMMUNICATION' : c === 'facilitator' ? 'PEOPLE · PROGRESS' : '',
+function Profile({ p }) {
+  const capabilities = [...new Set([...(p.capabilities || p.tracks || [p.track])].map(normalize).filter(Boolean))]
+  const capabilityBadges = capabilities.map(capability => ({
+    key: capability,
+    title: capability === 'candidate' ? 'PROFESSIONAL' : capability === 'speaker' ? 'SPEAKER' : capability === 'facilitator' ? 'FACILITATOR' : capability.toUpperCase(),
   }))
-  const specialisation=displayText(p.industry || '')
-  // Fail closed: only an explicitly full assessment can expose an official score/designation.
+  const career = displayText(p.current_job_title || p.headline || '')
+  const industry = displayText(p.industry || '')
   const isFullAssessment = p.assessment_access === 'full' && p.valu_index != null
-  const isBasic = !isFullAssessment
   const tier = isFullAssessment ? getValuTier(p.valu_index, 'full') : null
   const profileId = displayText(p.atb_id || 'PROFILE ID PENDING')
-  // This text is sourced from the canonical VALU Index report projection, never the member's bio/headline.
   const assessmentSummary = isFullAssessment ? displayText(p.assessment_summary || '') : ''
+
   return <article className={styles.card}>
-    <div className={styles.identity}>
-      <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
+    <div className={styles.cardTop}>
+      <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={58} className={styles.avatar} />
       <div className={styles.identityCopy}>
         <small>ATB PROFILE ID</small>
-        <strong>{profileId}</strong>
-        <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : '✓ VALORIA ASSESSED'}</span>
+        <strong className={styles.profileId} title={profileId}>{profileId}</strong>
+        <div className={styles.scoreLine} aria-label={isFullAssessment ? `VALU Index score ${p.valu_index} points` : 'Full VALU Index pending'}>
+          <strong>{isFullAssessment ? p.valu_index : '—'}</strong>
+          <span>{isFullAssessment ? 'VALU INDEX POINTS' : 'SCORE PENDING'}</span>
+        </div>
       </div>
     </div>
-    <p className={styles.specialisation} title={specialisation}>{specialisation || 'Professional capability'}</p>
+
+    <div className={styles.capabilityBlock}>
+      <span className={styles.microLabel}>LISTED AS</span>
+      <div className={styles.capabilities} aria-label="Marketplace listings">
+        {capabilityBadges.map(badge => <span className={styles.capabilityBadge} key={badge.key}>{badge.title}</span>)}
+      </div>
+    </div>
+
+    <div className={styles.roleBlock}>
+      <p className={styles.role} title={career}>{career || 'Professional capability'}</p>
+      {industry && <p className={styles.industry} title={industry}>{industry}</p>}
+    </div>
+
     <div className={styles.assessmentInsight}>
-      <small>VALU INDEX ASSESSMENT INSIGHT</small>
+      <div className={styles.sectionLabel}><span>VALU INDEX INSIGHT</span><span className={styles.insightRule} /></div>
       {isFullAssessment
-        ? (assessmentSummary
+        ? assessmentSummary
           ? <p className={styles.assessmentSummary} title={assessmentSummary}>{assessmentSummary}</p>
-          : <p className={styles.assessmentPending}>Assessment insight is being prepared.</p>)
-        : <p className={styles.assessmentPending}>Complete the full VALU Index assessment to unlock this insight.</p>}
+          : <p className={styles.assessmentPending}>Assessment insight is being prepared.</p>
+        : <p className={styles.assessmentPending}>Complete the full assessment to unlock your insight.</p>}
     </div>
-    <div className={styles.signalRow}>
-      <div className={styles.scoreBlock}>
-        <small>VALU INDEX</small>
-        <strong>{isFullAssessment ? <>{p.valu_index}<span> POINTS</span></> : <span className={styles.snapshotScore}>SNAPSHOT</span>}</strong>
+
+    <div className={styles.cardBottom}>
+      <div className={styles.statusRow}>
+        <span className={isFullAssessment ? styles.assessedStatus : styles.snapshotStatus}>
+          {isFullAssessment ? '✓ FULL VALU INDEX' : 'SNAPSHOT · IN PROGRESS'}
+        </span>
+        {tier
+          ? <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>{tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}{tier.name}</span>
+          : <span className={styles.pendingBadge}>TIER PENDING</span>}
       </div>
-      {isFullAssessment && tier
-        ? <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>
-            {tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}
-            <span>{tier.name}</span>
-          </span>
-        : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>FULL ASSESSMENT<br/>PENDING</span>}
+      <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>View profile <span aria-hidden="true">↗</span></Link>
     </div>
-    {capabilityBadges.length > 0 && <div className={styles.capabilities}>{capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)}</div>}
-    <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE</Link>
   </article>
 }
