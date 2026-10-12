@@ -6,7 +6,7 @@ import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from
 import { BRAND } from '@/lib/brand'
 
 export const metadata = {
-  title: 'Events — Valoria Institute',
+  title: 'Events',
   description: 'Conversations and professional standards from Valoria Institute.',
 }
 
