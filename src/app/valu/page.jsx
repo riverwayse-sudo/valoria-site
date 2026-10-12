@@ -5,6 +5,8 @@ import { BRAND } from '@/lib/brand'
 export const metadata = {
   title: 'VALU Index',
   description: 'Understand where you stand as a professional through the VALU Index and the PRIME framework.',
+  alternates: { canonical: 'https://valoriainstitute.com/valu' },
+  openGraph: { url: 'https://valoriainstitute.com/valu' },
 }
 
 const dimensions = [
