@@ -41,6 +41,20 @@ export async function GET(request) {
     if (!session) continue
     attempted += 1
     try {
+      const token = crypto.randomUUID().replaceAll('-', '') + crypto.randomUUID().replaceAll('-', '')
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      const { data: reentry } = await admin.from('valoria_reentry_links').insert({
+        token,
+        entry_point: 'event_registration',
+        target_stage: 'assess',
+        source: 'professional_standard_event_registration',
+        source_id: row.session_id,
+        expires_at: expiresAt,
+      }).select('token').single()
+      const journeyUrl = reentry?.token
+        ? `${process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'}/journey/continue?token=${encodeURIComponent(reentry.token)}`
+        : `${process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'}/journey`
+
       const result = await syncEventRegistrationToBrevo({
         email: row.email,
         fullName: row.full_name,
@@ -48,7 +62,7 @@ export async function GET(request) {
         organisation: row.organisation || '',
         whatsapp: row.whatsapp || '',
         session,
-        journeyUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'}/journey`,
+        journeyUrl,
       })
       await admin.from('professional_standard_event_registrations').update({
         brevo_synced: result.synced,
