@@ -21,7 +21,7 @@ export async function GET(request) {
   const { data: rows, error } = await admin
     .from('professional_standard_event_registrations')
     .select('session_id,full_name,email,role,organisation,whatsapp,brevo_synced,brevo_attempt_count')
-    .eq('brevo_synced', false)
+    .or('brevo_synced.eq.false,confirmation_email_sent.eq.false')
     .lt('brevo_attempt_count', 10)
     .order('created_at', { ascending: true })
     .limit(100)
@@ -42,6 +42,7 @@ export async function GET(request) {
         organisation: row.organisation || '',
         whatsapp: row.whatsapp || '',
         session,
+        journeyUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'}/journey`,
       })
       await admin.from('professional_standard_event_registrations').update({
         brevo_synced: result.synced,
