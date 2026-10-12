@@ -4,7 +4,7 @@ import Reveal from '@/components/Reveal'
 import { PRIME_CLUSTERS } from '@/lib/brand'
 import '../pages.css'
 
-export const metadata = { title: 'The PRIME Framework — Valoria Institute', description: 'PRIME is Valoria Institute’s proprietary capability architecture across Presence, Relationships, Intelligence, Mastery and Enterprise.', keywords: ['PRIME framework', 'VALU Index', 'African professional capability'], alternates: { canonical: 'https://valoriainstitute.com/prime' } }
+export const metadata = { title: 'The PRIME Framework', description: 'PRIME is Valoria Institute’s proprietary capability architecture across Presence, Relationships, Intelligence, Mastery and Enterprise.', keywords: ['PRIME framework', 'VALU Index', 'African professional capability'], alternates: { canonical: 'https://valoriainstitute.com/prime' } }
 
 const CLUSTER_DATA = {
   P: { body: 'How you show up. Presence measures whether professional capability is communicated with clarity, credibility and composure when the stakes are real.', signals: ['Communication', 'Executive Presence', 'Composure Under Scrutiny'] },
