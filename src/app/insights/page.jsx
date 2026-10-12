@@ -2,7 +2,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 
 export const metadata = {
-  title: 'Insights — Valoria Institute',
+  title: 'Insights',
   description: 'Perspectives on professional capability, leadership, influence and opportunity from Valoria Institute.',
 }
 
