@@ -24,7 +24,7 @@ function SessionCard({ session, state }) {
           <span>{isEnded ? 'COMPLETED' : isComingSoon ? 'COMING SOON' : state === 'live' ? 'LIVE NOW' : 'REGISTRATION OPEN'}</span>
           <p>{session.description}</p>
         </div>
-        {!isEnded && !isComingSoon && <div className="event-editorial-actions"><EventRegistrationTrigger session={session} />{session.id === '03' && <a className="event-register-button event-meet-button" href="https://meet.google.com/fmo-wxgs-cir" target="_blank" rel="noopener noreferrer">JOIN GOOGLE MEET →</a>}</div>}
+        {!isEnded && !isComingSoon && <div className="event-editorial-actions"><EventRegistrationTrigger session={session} />{session.id === '03' && <a className="btn-gold" href="https://meet.google.com/fmo-wxgs-cir" target="_blank" rel="noopener noreferrer">JOIN GOOGLE MEET →</a>}</div>}
       </div>
     </article>
   )
