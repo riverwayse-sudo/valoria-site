@@ -8,6 +8,8 @@ import { BRAND } from '@/lib/brand'
 export const metadata = {
   title: 'Events',
   description: 'Conversations and professional standards from Valoria Institute.',
+  alternates: { canonical: 'https://valoriainstitute.com/events' },
+  openGraph: { url: 'https://valoriainstitute.com/events' },
 }
 
 function SessionCard({ session, state }) {
