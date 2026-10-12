@@ -3,7 +3,7 @@ import Footer from '@/components/Footer'
 import { BRAND } from '@/lib/brand'
 
 export const metadata = {
-  title: 'VALU Index — Valoria Institute',
+  title: 'VALU Index',
   description: 'Understand where you stand as a professional through the VALU Index and the PRIME framework.',
 }
 
