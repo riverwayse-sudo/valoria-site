@@ -5,7 +5,7 @@ import { PRIME_CLUSTERS } from '@/lib/brand'
 import '../pages.css'
 
 export const metadata = {
-  title: 'Development Programmes — Valoria Institute',
+  title: 'Development Programmes',
   description: 'Five PRIME-mapped development programmes delivered by certified facilitators. Each programme targets a specific cluster — so development closes the exact gaps your VALU Index assessment surfaced.',
   keywords: ['PRIME programmes', 'professional development Nigeria', 'capability training Africa', 'VALU Index development', 'Valoria Develop programmes'],
   openGraph: {
