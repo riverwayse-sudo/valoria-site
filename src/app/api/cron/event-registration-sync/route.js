@@ -18,9 +18,15 @@ export async function GET(request) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  const retryableSessionIds = Object.values(EVENT_SESSIONS)
+    .filter(session => Date.parse(session.start) > Date.now())
+    .map(session => session.id)
+  if (!retryableSessionIds.length) return Response.json({ ok: true, attempted: 0, synced: 0 })
+
   const { data: rows, error } = await admin
     .from('professional_standard_event_registrations')
     .select('session_id,full_name,email,role,organisation,whatsapp,brevo_synced,brevo_attempt_count')
+    .in('session_id', retryableSessionIds)
     .or('brevo_synced.eq.false,confirmation_email_sent.eq.false')
     .lt('brevo_attempt_count', 10)
     .order('created_at', { ascending: true })
