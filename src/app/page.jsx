@@ -12,7 +12,8 @@ export const revalidate = 0
 
 export const metadata = {
   title: 'Valoria Institute — Worth. Built.',
-  description: 'Valoria Institute builds the infrastructure that develops, surfaces and connects professional merit to opportunity.'
+  description: 'Valoria Institute builds the infrastructure that develops, surfaces and connects professional merit to opportunity.',
+  alternates: { canonical: 'https://valoriainstitute.com/' },
 }
 
 const pathwayCards = [
