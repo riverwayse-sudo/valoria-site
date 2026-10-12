@@ -5,7 +5,6 @@ export const metadata = {
   title: 'Insights',
   description: 'Perspectives on professional capability, leadership, influence and opportunity from Valoria Institute.',
   alternates: { canonical: 'https://valoriainstitute.com/insights' },
-  openGraph: { url: 'https://valoriainstitute.com/insights' },
 }
 
 const pieces = [
