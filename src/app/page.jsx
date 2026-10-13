@@ -4,6 +4,7 @@ import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import HomepageEvents from '@/components/HomepageEvents'
+import HomepageEventPopup from '@/components/HomepageEventPopup'
 import { BRAND } from '@/lib/brand'
 import './home.css'
 
@@ -25,6 +26,7 @@ const pathwayCards = [
 export default function HomePage() {
   return <>
     <Nav />
+    <HomepageEventPopup />
     <main id="main-content" className="home-redesign-root">
       <HeroSlider />
 
