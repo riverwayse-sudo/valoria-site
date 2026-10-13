@@ -25,7 +25,10 @@ export default function HomepageEventPopup() {
       if (window.sessionStorage.getItem(DISMISS_KEY) === '1') return undefined
     } catch {}
 
-    const timer = window.setTimeout(() => setOpen(true), 2200)
+    const timer = window.setTimeout(() => {
+      try { window.sessionStorage.setItem(DISMISS_KEY, '1') } catch {}
+      setOpen(true)
+    }, 2200)
     return () => window.clearTimeout(timer)
   }, [])
 
@@ -52,7 +55,7 @@ export default function HomepageEventPopup() {
       if (event.target === event.currentTarget) close()
     }}>
       <section className="homepage-event-popup" role="dialog" aria-modal="true" aria-labelledby="homepage-event-popup-title">
-        <button className="homepage-event-popup-close" type="button" onClick={close} aria-label="Close event announcement">×</button>
+        <button className="homepage-event-popup-close" type="button" onClick={close} aria-label="Close event announcement" autoFocus>×</button>
         <div className="homepage-event-popup-poster">
           <EventPoster session={SESSION} />
         </div>
