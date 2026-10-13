@@ -48,7 +48,7 @@ export default function HomepageEventPopup() {
   if (!SESSION || !open) return null
 
   return (
-    <div className="homepage-event-popup-backdrop" onMouseDown={(event) => {
+    <div className="events-page homepage-event-popup-backdrop" onMouseDown={(event) => {
       if (event.target === event.currentTarget) close()
     }}>
       <section className="homepage-event-popup" role="dialog" aria-modal="true" aria-labelledby="homepage-event-popup-title">
