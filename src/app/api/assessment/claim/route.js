@@ -34,6 +34,7 @@ export async function POST(request){
      candidate=(owned||[]).find(a=>norm(a.name)===norm(t.name)&&norm(a.role)===norm(t.role))||null
    }
    if(!candidate)return Response.json({error:'No completed assessment is securely connected to this snapshot. The records have been preserved for manual reconciliation.'},{status:404})
+   if(norm(candidate.name)!==norm(t.name)||norm(candidate.role)!==norm(t.role))return Response.json({error:'The completed assessment does not match this snapshot identity. The records were left unchanged for manual reconciliation.'},{status:409})
    if(candidate.user_id&&candidate.user_id!==user.id)return Response.json({error:'This assessment is already connected to another account.'},{status:409})
    linkMethod='taster_handoff'
  } else {
