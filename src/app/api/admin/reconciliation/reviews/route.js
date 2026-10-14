@@ -1,0 +1,83 @@
+import { createClient } from '@supabase/supabase-js'
+
+function db() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  return url && key ? createClient(url, key, { auth: { persistSession:false, autoRefreshToken:false } }) : null
+}
+async function requireAdmin(request) {
+  const supabase = db()
+  if (!supabase) return { supabase:null, response:Response.json({error:'Service not configured.'},{status:503}) }
+  const token=(request.headers.get('authorization')||'').replace(/^Bearer\s+/i,'')
+  if(!token) return {supabase,response:Response.json({error:'Not authenticated.'},{status:401})}
+  const {data,error}=await supabase.auth.getUser(token)
+  if(error||!data?.user?.id) return {supabase,response:Response.json({error:'Not authenticated.'},{status:401})}
+  const {data:admin}=await supabase.from('admin_users').select('id').eq('id',data.user.id).maybeSingle()
+  if(!admin) return {supabase,response:Response.json({error:'Admin access required.'},{status:403})}
+  return {supabase,user:data.user}
+}
+const SOURCE_TYPES=new Set(['assessment','taster','profile'])
+const CANDIDATE_TYPES=new Set(['assessment','taster','profile','account'])
+const DECISIONS=new Set(['verified_match','candidate_match','conflict','unmatched','resolved_no_link'])
+const EVIDENCE_TYPES=new Set(['stable_id','authenticated_account','verified_email','submission_log','release_log','admin_documentation','manual_review','other'])
+const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+export async function GET(request) {
+  const {supabase,response}=await requireAdmin(request)
+  if(response) return response
+  const url=new URL(request.url)
+  const sourceRecordType=url.searchParams.get('sourceRecordType')
+  const sourceRecordId=url.searchParams.get('sourceRecordId')
+  let query=supabase.from('identity_reconciliation_reviews').select('id,source_record_type,source_record_id,candidate_record_type,candidate_record_id,decision,evidence_type,evidence_reference,notes,reviewed_by,reviewed_at,created_at').order('reviewed_at',{ascending:false}).limit(500)
+  if(sourceRecordType && SOURCE_TYPES.has(sourceRecordType)) query=query.eq('source_record_type',sourceRecordType)
+  if(sourceRecordId && UUID.test(sourceRecordId)) query=query.eq('source_record_id',sourceRecordId)
+  const {data,error}=await query
+  if(error) return Response.json({error:'Could not load the reconciliation review ledger.'},{status:500})
+  return Response.json({reviews:data||[]})
+}
+
+export async function POST(request) {
+  const {supabase,response,user}=await requireAdmin(request)
+  if(response) return response
+  let body
+  try { body=await request.json() } catch { return Response.json({error:'Invalid request body.'},{status:400}) }
+  const sourceRecordType=String(body?.sourceRecordType||'')
+  const sourceRecordId=String(body?.sourceRecordId||'')
+  const candidateRecordType=body?.candidateRecordType ? String(body.candidateRecordType) : null
+  const candidateRecordId=body?.candidateRecordId ? String(body.candidateRecordId) : null
+  const decision=String(body?.decision||'')
+  const evidenceType=String(body?.evidenceType||'')
+  const evidenceReference=body?.evidenceReference ? String(body.evidenceReference).trim() : null
+  const notes=String(body?.notes||'').trim()
+  if(!SOURCE_TYPES.has(sourceRecordType)||!UUID.test(sourceRecordId)) return Response.json({error:'A valid source record type and ID are required.'},{status:400})
+  if(!DECISIONS.has(decision)||!EVIDENCE_TYPES.has(evidenceType)) return Response.json({error:'Choose a valid decision and evidence type.'},{status:400})
+  if(!notes||notes.length>3000) return Response.json({error:'Review notes are required and must be 3,000 characters or fewer.'},{status:400})
+  if((candidateRecordType&&!CANDIDATE_TYPES.has(candidateRecordType))||(candidateRecordId&&!UUID.test(candidateRecordId))||Boolean(candidateRecordType)!==Boolean(candidateRecordId)) return Response.json({error:'Candidate type and UUID must be supplied together.'},{status:400})
+  if(evidenceReference&&evidenceReference.length>500) return Response.json({error:'Evidence reference must be 500 characters or fewer.'},{status:400})
+  if(decision==='verified_match'&&(!candidateRecordId||!evidenceReference||!['stable_id','authenticated_account','verified_email','submission_log','release_log','admin_documentation'].includes(evidenceType))) return Response.json({error:'A verified match requires a candidate and traceable evidence.'},{status:400})
+  if(decision==='resolved_no_link'&&candidateRecordId) return Response.json({error:'A no-link resolution cannot name a candidate.'},{status:400})
+
+  const sourceTable={assessment:'valu_assessments',taster:'taster_sessions',profile:'professional_profiles'}[sourceRecordType]
+  const {data:source,error:sourceError}=await supabase.from(sourceTable).select('id').eq('id',sourceRecordId).maybeSingle()
+  if(sourceError) return Response.json({error:'Could not verify the source record.'},{status:500})
+  if(!source) return Response.json({error:'Source record does not exist.'},{status:404})
+  if(candidateRecordId) {
+    if(candidateRecordType==='account') {
+      const {data:account,error}=await supabase.auth.admin.getUserById(candidateRecordId)
+      if(error||!account?.user) return Response.json({error:'Candidate account does not exist.'},{status:404})
+    } else {
+      const table={assessment:'valu_assessments',taster:'taster_sessions',profile:'professional_profiles'}[candidateRecordType]
+      const {data:candidate,error}=await supabase.from(table).select('id').eq('id',candidateRecordId).maybeSingle()
+      if(error) return Response.json({error:'Could not verify the candidate record.'},{status:500})
+      if(!candidate) return Response.json({error:'Candidate record does not exist.'},{status:404})
+    }
+  }
+  const {data,error}=await supabase.from('identity_reconciliation_reviews').insert({
+    source_record_type:sourceRecordType,source_record_id:sourceRecordId,
+    candidate_record_type:candidateRecordType,candidate_record_id:candidateRecordId,
+    decision,evidence_type:evidenceType,evidence_reference:evidenceReference,
+    notes,reviewed_by:user.id
+  }).select('id,source_record_type,source_record_id,candidate_record_type,candidate_record_id,decision,evidence_type,evidence_reference,notes,reviewed_by,reviewed_at').single()
+  if(error) return Response.json({error:'Review could not be saved to the audit ledger.'},{status:500})
+  return Response.json({ok:true,review:data},{status:201})
+}
