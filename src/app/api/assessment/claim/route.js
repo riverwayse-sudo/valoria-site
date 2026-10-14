@@ -18,9 +18,23 @@ export async function POST(request){
    const metadataName=user.user_metadata?.display_name||user.user_metadata?.full_name||''
    if(metadataName&&t.name&&norm(metadataName)!==norm(t.name))return Response.json({error:'The account identity does not match the saved Valoria snapshot.'},{status:403})
    taster=t
-   const {data:byTaster,error:assessmentError}=await sb.from('valu_assessments').select('id,user_id,total_score,completed_at,assessment_version,scoring_version,rubric_version').eq('taster_id',requestedTaster).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle()
+   const {data:byTaster,error:assessmentError}=await sb.from('valu_assessments').select('id,user_id,name,role,total_score,completed_at,assessment_version,scoring_version,rubric_version,taster_id').eq('taster_id',requestedTaster).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle()
    if(assessmentError)return Response.json({error:assessmentError.message},{status:500})
    candidate=byTaster
+
+   // Legacy full assessments may already belong to this authenticated account
+   // but predate persisted taster_id. Recover only through the immutable user_id,
+   // never through name-only or date-only matching.
+   if(!candidate){
+     const {data:owned,error:ownedError}=await sb.from('valu_assessments')
+       .select('id,user_id,name,role,total_score,completed_at,assessment_version,scoring_version,rubric_version,taster_id')
+       .eq('user_id',user.id).is('taster_id',null).not('completed_at','is',null)
+       .order('completed_at',{ascending:false}).limit(10)
+     if(ownedError)return Response.json({error:ownedError.message},{status:500})
+     candidate=(owned||[]).find(a=>norm(a.name)===norm(t.name)&&norm(a.role)===norm(t.role))||null
+   }
+   if(!candidate)return Response.json({error:'No completed assessment is securely connected to this snapshot. The records have been preserved for manual reconciliation.'},{status:404})
+   if(candidate.user_id&&candidate.user_id!==user.id)return Response.json({error:'This assessment is already connected to another account.'},{status:409})
    linkMethod='taster_handoff'
  } else {
    const {data:a,error}=await sb.from('valu_assessments').select('id,user_id,total_score,completed_at,assessment_version,scoring_version,rubric_version,taster_id').ilike('email',email).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(10)
@@ -29,11 +43,17 @@ export async function POST(request){
  }
  if(!candidate)return Response.json({error:'No previous completed VALU assessment could be securely matched to this account.'},{status:404})
  if(candidate.user_id&&candidate.user_id!==user.id)return Response.json({error:'This assessment is already connected to another account.'},{status:409})
- if(!candidate.user_id){
-   const {error:uerr}=await sb.from('valu_assessments').update({user_id:user.id}).eq('id',candidate.id).is('user_id',null)
+ if(!candidate.user_id || (requestedTaster && !candidate.taster_id)){
+   const patch={user_id:user.id}
+   if(requestedTaster && !candidate.taster_id)patch.taster_id=requestedTaster
+   let update=sb.from('valu_assessments').update(patch).eq('id',candidate.id)
+   if(!candidate.user_id)update=update.is('user_id',null)
+   if(requestedTaster && !candidate.taster_id)update=update.is('taster_id',null)
+   const {error:uerr}=await update
    if(uerr)return Response.json({error:uerr.message},{status:500})
-   const {data:linked,error:verifyError}=await sb.from('valu_assessments').select('id,user_id').eq('id',candidate.id).maybeSingle()
-   if(verifyError||linked?.user_id!==user.id)return Response.json({error:'The assessment claim could not be verified. Please retry.'},{status:502})
+   const {data:linked,error:verifyError}=await sb.from('valu_assessments').select('id,user_id,taster_id').eq('id',candidate.id).maybeSingle()
+   if(verifyError||linked?.user_id!==user.id||(requestedTaster&&linked?.taster_id!==requestedTaster))return Response.json({error:'The assessment claim could not be verified. Please retry.'},{status:502})
+   candidate={...candidate,user_id:linked.user_id,taster_id:linked.taster_id}
  }
  if(taster){
    const {error:terr}=await sb.from('taster_sessions').update({user_id:user.id,linked_at:new Date().toISOString()}).eq('id',taster.id).is('user_id',null)
