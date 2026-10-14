@@ -79,6 +79,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(protocol).toContain('Do not promote to production')
   })
 
+  test('taster account linking stitches a completed assessment and exposes its outcome', () => {
+    const source = read('src/app/api/link-taster/route.js')
+    expect(source).toContain("eq('taster_id', tasterId)")
+    expect(source).toContain("eq('user_id', user.id)")
+    expect(source).toContain("assessmentLinkStatus = 'linked'")
+    expect(source).toContain("assessment_identity_links")
+    expect(source).toContain("assessmentLinkStatus,")
+  })
+
   test('legacy full assessment recovery uses the authenticated user and matching snapshot identity', () => {
     const source = read('src/app/api/assessment/claim/route.js')
     expect(source).toContain("eq('user_id',user.id).is('taster_id',null)")
