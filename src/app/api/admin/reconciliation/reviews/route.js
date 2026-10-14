@@ -8,7 +8,7 @@ function db() {
 async function requireAdmin(request) {
   const supabase = db()
   if (!supabase) return { supabase:null, response:Response.json({error:'Service not configured.'},{status:503}) }
-  const token=(request.headers.get('authorization')||'').replace(/^Bearer\\s+/i,'')
+  const token=(request.headers.get('authorization')||'').replace(/^Bearer\s+/i,'')
   if(!token) return {supabase,response:Response.json({error:'Not authenticated.'},{status:401})}
   const {data,error}=await supabase.auth.getUser(token)
   if(error||!data?.user?.id) return {supabase,response:Response.json({error:'Not authenticated.'},{status:401})}
