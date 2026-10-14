@@ -26,7 +26,7 @@ export async function GET(request){
     supabase.from('professional_capabilities').select('professional_id,capability,is_active,eligibility_status,eligible_for_listing,missing_requirements'),
     supabase.from('professional_documents').select('professional_id,status,document_type,created_at'),
     supabase.from('marketplace_public_roster').select('professional_id,capabilities,track'),
-    supabase.from('taster_sessions').select('id,user_id,name,role,experience,completed_at,created_at,linked_at').not('completed_at','is',null).order('completed_at',{ascending:false}),
+    supabase.from('taster_sessions').select('id,user_id,name,role,experience,taster_version,taster_version_source,completed_at,created_at,linked_at').not('completed_at','is',null).order('completed_at',{ascending:false}),
     supabase.from('assessment_identity_links').select('assessment_id,user_id,link_method')
   ])
   if([journeyRes,assessmentRes,profileRes,capabilityRes,documentRes,rosterRes,tasterRes,identityLinkRes].some(result=>result.error)) {
