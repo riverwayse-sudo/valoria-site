@@ -60,6 +60,52 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).not.toContain('getUserById(userId)')
   })
 
+  test('taster identity proof comes from authenticated account fields, not request body', () => {
+    const source = read('src/app/api/link-taster/route.js')
+    expect(source).toContain('user.user_metadata?.display_name')
+    expect(source).toContain("from('professional_profiles')")
+    expect(source).toContain('Never trust a name supplied in this request')
+    expect(source).toContain("if (!priorEvent)")
+    expect(source).not.toContain('|| name\n')
+  })
+
+  test('admin reconciliation exposes missing taster links and identity conflicts without name-only auto-linking', () => {
+    const source = read('src/app/api/admin/reconciliation/route.js')
+    expect(source).toContain("select('id,user_id,taster_id,email,name,role,total_score,completed_at,assessment_version,scoring_version')")
+    expect(source).toContain('identityReconciliation')
+    expect(source).toContain('assessmentsMissingTasterIdDetails')
+    expect(source).toContain('identityLinkConflictDetails')
+    expect(source).toContain('exact_owner_identity_candidate')
+    expect(source).toContain('no_stable_taster_match')
+  })
+
+  test('assessment session schema and reconciliation protocol are governed explicitly', () => {
+    const migration = read('supabase/migrations/20261014153000_assessment_sessions_owner_read_contract.sql')
+    const protocol = read('docs/participant-journey-reconciliation-protocol.md')
+    expect(migration).toContain('add column if not exists user_id')
+    expect(migration).toContain('assessment_sessions_owner_read')
+    expect(migration).toContain('using ((select auth.uid()) = user_id)')
+    expect(protocol).toContain('Names, role, date proximity, score similarity')
+    expect(protocol).toContain('Do not promote to production')
+  })
+
+  test('taster account linking stitches a completed assessment and exposes its outcome', () => {
+    const source = read('src/app/api/link-taster/route.js')
+    expect(source).toContain("eq('taster_id', tasterId)")
+    expect(source).toContain("eq('user_id', user.id)")
+    expect(source).toContain("assessmentLinkStatus = 'linked'")
+    expect(source).toContain("assessment_identity_links")
+    expect(source).toContain("assessmentLinkStatus,")
+  })
+
+  test('legacy full assessment recovery uses the authenticated user and matching snapshot identity', () => {
+    const source = read('src/app/api/assessment/claim/route.js')
+    expect(source).toContain("eq('user_id',user.id).is('taster_id',null)")
+    expect(source).toContain('norm(a.name)===norm(t.name)')
+    expect(source).toContain("patch.taster_id=requestedTaster")
+    expect(source).toContain('manual reconciliation')
+  })
+
   test('assessment identity handoff is server-side and email-bound', () => {
     const source = read('src/app/api/link-assessment/route.js')
     expect(source).toContain('userClient.auth.getUser()')

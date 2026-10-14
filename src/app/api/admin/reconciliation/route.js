@@ -19,15 +19,19 @@ async function requireAdmin(request) {
 export async function GET(request){
   const {supabase,response}=await requireAdmin(request)
   if(response) return response
-  const [journeyRes, assessmentRes, profileRes, capabilityRes, documentRes, rosterRes] = await Promise.all([
+  const [journeyRes, assessmentRes, profileRes, capabilityRes, documentRes, rosterRes, tasterRes, identityLinkRes] = await Promise.all([
     supabase.from('professional_journey_directory').select('*').order('updated_at',{ascending:false}),
-    supabase.from('valu_assessments').select('id,user_id,email,name,role,total_score,completed_at,assessment_version,scoring_version').not('completed_at','is',null).order('completed_at',{ascending:false}),
+    supabase.from('valu_assessments').select('id,user_id,taster_id,email,name,role,total_score,completed_at,assessment_version,scoring_version').not('completed_at','is',null).order('completed_at',{ascending:false}),
     supabase.from('professional_profiles').select('id,display_name,headline,profile_complete,active_tracks,photo_url,current_job_title,updated_at'),
     supabase.from('professional_capabilities').select('professional_id,capability,is_active,eligibility_status,eligible_for_listing,missing_requirements'),
     supabase.from('professional_documents').select('professional_id,status,document_type,created_at'),
-    supabase.from('marketplace_public_roster').select('professional_id,capabilities,track')
+    supabase.from('marketplace_public_roster').select('professional_id,capabilities,track'),
+    supabase.from('taster_sessions').select('id,user_id,name,role,experience,completed_at,created_at,linked_at').not('completed_at','is',null).order('completed_at',{ascending:false}),
+    supabase.from('assessment_identity_links').select('assessment_id,user_id,link_method')
   ])
-  if(journeyRes.error) return Response.json({error:journeyRes.error.message},{status:500})
+  if([journeyRes,assessmentRes,profileRes,capabilityRes,documentRes,rosterRes,tasterRes,identityLinkRes].some(result=>result.error)) {
+    return Response.json({error:'The reconciliation report could not load every required source. No records were changed.'},{status:500})
+  }
   const profiles=profileRes.data||[]
   const profileMap=new Map(profiles.map(p=>[p.id,p]))
   const documentMap=new Map()
@@ -82,15 +86,54 @@ export async function GET(request){
   counts.public_talent=(rosterRes.data||[]).filter(r=>r.track==='candidate').length
   counts.public_speakers=(rosterRes.data||[]).filter(r=>r.track==='speaker').length
   counts.public_facilitators=(rosterRes.data||[]).filter(r=>r.track==='facilitator').length
-  const orphanedAssessments=(assessmentRes.data||[]).filter(a=>!a.user_id)
+  const completedAssessments=assessmentRes.data||[]
+  const completedTasters=tasterRes.data||[]
+  const identityLinks=identityLinkRes.data||[]
+  const assessmentById=new Map(completedAssessments.map(a=>[a.id,a]))
+  const normalise=(value)=>String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()
+  const missingTasterLinks=completedAssessments.filter(a=>!a.taster_id).map(a=>{
+    const exactOwnerCandidates=a.user_id?completedTasters.filter(t=>
+      t.user_id===a.user_id &&
+      normalise(t.name)===normalise(a.name) &&
+      normalise(t.role)===normalise(a.role)
+    ):[]
+    return {
+      assessment_id:a.id,user_id:a.user_id,name:a.name,role:a.role,
+      completed_at:a.completed_at,assessment_version:a.assessment_version,
+      classification:exactOwnerCandidates.length===1?'exact_owner_identity_candidate':exactOwnerCandidates.length>1?'multiple_exact_owner_candidates':'no_stable_taster_match',
+      candidate_taster_ids:exactOwnerCandidates.map(t=>t.id)
+    }
+  })
+  const unlinkedCompletedTasters=completedTasters.filter(t=>!t.user_id).map(t=>({
+    taster_id:t.id,name:t.name,role:t.role,experience:t.experience,completed_at:t.completed_at,created_at:t.created_at
+  }))
+  const identityLinkConflicts=identityLinks.filter(link=>{
+    const assessment=assessmentById.get(link.assessment_id)
+    return assessment && assessment.user_id && assessment.user_id!==link.user_id
+  }).map(link=>({assessment_id:link.assessment_id,assessment_user_id:assessmentById.get(link.assessment_id)?.user_id,identity_link_user_id:link.user_id,link_method:link.link_method}))
+  const orphanedAssessments=completedAssessments.filter(a=>!a.user_id)
   const {data:userList}=await supabase.auth.admin.listUsers({page:1,perPage:1000})
   const accounts=(userList?.users||[]).map(u=>({id:u.id,email:u.email||null,name:profileMap.get(u.id)?.display_name||u.user_metadata?.full_name||u.user_metadata?.name||null}))
-  const normalise=(value)=>String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()
   const reconciliations=orphanedAssessments.map(a=>{
     const target=normalise(a.name)
     const candidates=target?accounts.filter(x=>normalise(x.name)===target):[]
     const classification=candidates.length===1?'name_match_requires_review':candidates.length>1?'multiple_name_matches':'no_account_match'
     return {id:a.id,email:a.email,name:a.name,role:a.role,total_score:a.total_score,completed_at:a.completed_at,assessment_version:a.assessment_version,classification,candidates}
   })
-  return Response.json({rows,counts,orphanedAssessments:reconciliations})
+  return Response.json({
+    rows,
+    counts,
+    orphanedAssessments:reconciliations,
+    identityReconciliation:{
+      completedTasters:completedTasters.length,
+      unlinkedCompletedTasters:unlinkedCompletedTasters.length,
+      completedAssessments:completedAssessments.length,
+      assessmentsMissingTasterId:missingTasterLinks.length,
+      exactOwnerIdentityCandidates:missingTasterLinks.filter(x=>x.classification==='exact_owner_identity_candidate').length,
+      identityLinkConflicts:identityLinkConflicts.length,
+      assessmentsMissingTasterIdDetails:missingTasterLinks,
+      unlinkedCompletedTasterDetails:unlinkedCompletedTasters,
+      identityLinkConflictDetails:identityLinkConflicts
+    }
+  })
 }
