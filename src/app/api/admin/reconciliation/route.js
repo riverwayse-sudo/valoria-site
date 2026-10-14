@@ -29,8 +29,8 @@ export async function GET(request){
     supabase.from('taster_sessions').select('id,user_id,name,role,experience,completed_at,created_at,linked_at').not('completed_at','is',null).order('completed_at',{ascending:false}),
     supabase.from('assessment_identity_links').select('assessment_id,user_id,link_method')
   ])
-  if(journeyRes.error || tasterRes.error || identityLinkRes.error) {
-    return Response.json({error:'The reconciliation report could not load all identity sources. No records were changed.'},{status:500})
+  if([journeyRes,assessmentRes,profileRes,capabilityRes,documentRes,rosterRes,tasterRes,identityLinkRes].some(result=>result.error)) {
+    return Response.json({error:'The reconciliation report could not load every required source. No records were changed.'},{status:500})
   }
   const profiles=profileRes.data||[]
   const profileMap=new Map(profiles.map(p=>[p.id,p]))
