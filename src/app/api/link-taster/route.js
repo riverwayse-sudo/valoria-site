@@ -56,9 +56,25 @@ export async function POST(request) {
     return NextResponse.json({ error: 'This snapshot is already linked to another account.' }, { status: 409 })
   }
 
-  const metadataName = user.user_metadata?.display_name || user.user_metadata?.full_name || name
-  if (norm(metadataName) !== norm(taster.name)) {
-    return NextResponse.json({ error: 'The account name must match the saved snapshot name.' }, { status: 403 })
+  const { data: existingProfile, error: profileError } = await admin
+    .from('professional_profiles')
+    .select('display_name')
+    .eq('id', user.id)
+    .maybeSingle()
+  if (profileError) {
+    return NextResponse.json({ error: 'Could not verify the account profile.' }, { status: 502 })
+  }
+
+  // Only compare identity fields already stored on the authenticated account.
+  // Never trust a name supplied in this request as proof of ownership.
+  const accountName = user.user_metadata?.display_name
+    || user.user_metadata?.full_name
+    || existingProfile?.display_name
+    || ''
+  if (!accountName || !taster.name || norm(accountName) !== norm(taster.name)) {
+    return NextResponse.json({
+      error: 'We could not verify this snapshot against the signed-in account. Please use the same account used at signup or contact Valoria support.',
+    }, { status: 403 })
   }
   if (role && norm(role) !== norm(taster.role)) {
     return NextResponse.json({ error: 'The account role must match the saved snapshot role.' }, { status: 403 })
@@ -86,17 +102,31 @@ export async function POST(request) {
     return NextResponse.json({ error: 'The existing snapshot link is incomplete. Please contact Valoria support.' }, { status: 409 })
   }
 
-  // Record the handoff idempotently at the journey-state level. The event log is
-  // supplementary; the persisted taster ownership remains the source of truth.
-  const { error: eventError } = await admin.from('valoria_journey_events').insert({
-    user_id: user.id,
-    event_key: 'taster_linked',
-    source: 'taster_session',
-    source_id: tasterId,
-    metadata: { link_method: 'verified_taster_id_name_match', completed: !!taster.completed_at },
-  })
-  if (eventError) {
-    return NextResponse.json({ error: 'Snapshot linked, but the journey event could not be recorded. Please retry the journey step.' }, { status: 502 })
+  // Make ordinary retries idempotent. Ownership on taster_sessions is canonical;
+  // the event log is supplementary and may already contain a prior successful handoff.
+  const { data: priorEvent, error: priorEventError } = await admin
+    .from('valoria_journey_events')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('event_key', 'taster_linked')
+    .eq('source', 'taster_session')
+    .eq('source_id', tasterId)
+    .limit(1)
+    .maybeSingle()
+  if (priorEventError) {
+    return NextResponse.json({ error: 'Snapshot linked, but the journey event could not be checked. Please retry the journey step.' }, { status: 502 })
+  }
+  if (!priorEvent) {
+    const { error: eventError } = await admin.from('valoria_journey_events').insert({
+      user_id: user.id,
+      event_key: 'taster_linked',
+      source: 'taster_session',
+      source_id: tasterId,
+      metadata: { link_method: 'verified_account_identity_match', completed: !!taster.completed_at },
+    })
+    if (eventError) {
+      return NextResponse.json({ error: 'Snapshot linked, but the journey event could not be recorded. Please retry the journey step.' }, { status: 502 })
+    }
   }
 
   const { data: journey, error: journeyError } = await admin.rpc('refresh_professional_journey', {
