@@ -28,7 +28,7 @@ const TEXT = { color: PARCH }
 function Section({ title, children, dirty, saving, saved, onSave }) {
   return (
     <div style={S.section}>
-      <div style={S.sectionHead}>
+      <div className="profile-edit-section-head" style={S.sectionHead}>
         <h2 style={S.sectionTitle}>{title}</h2>
         <button
           onClick={onSave}
@@ -257,7 +257,7 @@ function EditPageInner() {
 
         <Section title="Basics" dirty={dirty.basics} saving={saving.basics} saved={saved.basics}
           onSave={() => saveSection('basics', ['display_name','username','phone','current_job_title','headline','industry','preferred_industry','location','experience_years'])}>
-          <div style={S.grid2}>
+          <div className="profile-edit-grid2" style={S.grid2}>
             <Field label="Name"><TextInput value={form.display_name} onChange={v => setField('basics','display_name',v)} /></Field>
             <Field label="Username" error={form.username && !VALIDATORS.username(form.username) ? validatorError('username') : null}>
               <TextInput value={form.username} onChange={v => setField('basics','username',v)} />
@@ -401,10 +401,10 @@ function EditPageInner() {
           .profile-edit-container { padding: 22px 16px !important; }
           .profile-edit-container > section { padding: 18px 16px !important; border-radius: 6px !important; }
           .profile-edit-container h2 { font-size: 14px !important; }
-          .profile-edit-container .grid2 { grid-template-columns: minmax(0, 1fr) !important; gap: 0 !important; }
+           .profile-edit-container .profile-edit-grid2 { grid-template-columns: minmax(0, 1fr) !important; gap: 0 !important; }
           .profile-edit-container input, .profile-edit-container textarea { min-width: 0; }
           .profile-edit-container button { max-width: 100%; }
-          .profile-edit-container .section-head { flex-wrap: wrap; }
+           .profile-edit-container .profile-edit-section-head { flex-wrap: wrap; gap: 10px; }
         }
       `}</style>
     </div>
