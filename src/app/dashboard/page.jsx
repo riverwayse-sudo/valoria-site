@@ -300,7 +300,7 @@ export default function DashboardPage() {
           <Link href="/" style={{ lineHeight:0 }}>
             <img src="/logo.png" alt="Valoria Institute" style={{ height:'40px', width:'auto' }} />
           </Link>
-          <nav style={{ display:'flex', gap:'22px', alignItems:'center' }}>
+          <nav className="dv-nav" style={{ display:'flex', gap:'22px', alignItems:'center' }}>
             <MarketplaceCTA style={{ fontSize:'12px', color: DIM, textDecoration:'none' }}>Marketplace</MarketplaceCTA>
             {isSupply && <Link href="/profile/edit" style={{ fontSize:'12px', color: DIM, textDecoration:'none' }}>Edit Profile</Link>}
             <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')}
@@ -330,17 +330,6 @@ export default function DashboardPage() {
           )}
           <div style={{ position:'absolute', inset:0, background:`linear-gradient(180deg, transparent 35%, ${DARK} 100%)` }} />
         </div>
-
-        {/* VALORIA PROGRESSION / UNLOCK SYSTEM */}
-        {isSupply && (
-          <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'26px clamp(20px,4vw,40px) 0' }}>
-            <AccessProgressCard
-              profile={p}
-              assessment={assessment}
-              capabilities={capabilities}
-            />
-          </div>
-        )}
 
         {/* HEADER BLOCK */}
         <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'0 clamp(20px,4vw,40px)' }}>
@@ -405,6 +394,17 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* VALORIA PROGRESSION / UNLOCK SYSTEM — follows identity, never overlaps it */}
+        {isSupply && (
+          <div style={{ maxWidth:'1100px', margin:'24px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+            <AccessProgressCard
+              profile={p}
+              assessment={assessment}
+              capabilities={capabilities}
+            />
+          </div>
+        )}
 
         {/* Journey guidance is already presented by AccessProgressCard above.
             Keep one authoritative next-step panel to avoid duplicate CTAs. */}
@@ -729,7 +729,10 @@ export default function DashboardPage() {
         }
         @media (max-width: 640px) {
           .dv-stat-strip { flex-wrap: wrap !important; }
-          .dv-header-block { margin-top: -60px !important; }
+          .dv-header-block { margin-top: 18px !important; gap: 16px !important; align-items: flex-start !important; }
+          .dv-nav { gap: 8px !important; }
+          .dv-nav a, .dv-nav button { font-size: 10px !important; padding: 7px 9px !important; }
+          .dv-header-block > div:last-child { width: 100%; padding-bottom: 0 !important; }
         }
       `}</style>
     </>
