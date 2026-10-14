@@ -77,6 +77,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('identityLinkConflictDetails')
     expect(source).toContain('exact_owner_identity_candidate')
     expect(source).toContain('no_stable_taster_match')
+    expect(source).toContain('taster_version_source')
+    expect(source).toContain('taster_version')
   })
 
   test('assessment session schema and reconciliation protocol are governed explicitly', () => {
