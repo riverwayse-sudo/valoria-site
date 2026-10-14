@@ -62,8 +62,11 @@ export async function POST(request){
    const {data:linkedTaster,error:verifyTaster}=await sb.from('taster_sessions').select('id,user_id,linked_at').eq('id',taster.id).maybeSingle()
    if(verifyTaster||linkedTaster?.user_id!==user.id||!linkedTaster?.linked_at)return Response.json({error:'The previous snapshot claim could not be verified. Please retry.'},{status:502})
  }
+ const {data:existingIdentity,error:identityLookupError}=await sb.from('assessment_identity_links').select('assessment_id,user_id').eq('assessment_id',candidate.id).maybeSingle()
+ if(identityLookupError)return Response.json({error:'Assessment linked, but the identity record could not be checked.'},{status:502})
+ if(existingIdentity&&existingIdentity.user_id!==user.id)return Response.json({error:'The assessment identity record belongs to another account. Valoria support must review it.'},{status:409})
  const {error:identityError}=await sb.from('assessment_identity_links').upsert({assessment_id:candidate.id,user_id:user.id,link_method:linkMethod,linked_by:user.id},{onConflict:'assessment_id'})
- if(identityError)return Response.json({error:'Assessment linked, but the identity record could not be persisted.',detail:identityError.message},{status:502})
+ if(identityError)return Response.json({error:'Assessment linked, but the identity record could not be persisted.'},{status:502})
  const {data:journey, error:journeyError}=await sb.rpc('refresh_professional_journey',{p_user_id:user.id})
  if(journeyError)return Response.json({error:'Assessment linked, but journey state could not be refreshed.',detail:journeyError.message},{status:502})
  const {error:auditError}=await sb.from('platform_audit_events').insert({actor_user_id:user.id,subject_user_id:user.id,entity_type:'assessment',entity_id:candidate.id,action:'claimed_existing_assessment',after_state:{score:candidate.total_score,completed_at:candidate.completed_at,assessment_version:candidate.assessment_version,link_method:linkMethod,taster_id:candidate.taster_id||taster?.id||null}})
