@@ -146,35 +146,35 @@ export async function POST(request) {
     } else if (norm(assessmentCandidate.name) !== norm(taster.name) || norm(assessmentCandidate.role) !== norm(taster.role)) {
       assessmentLinkStatus = 'identity_mismatch_manual_review'
     } else {
-      const assessmentPatch = { user_id: user.id }
-      if (!assessmentCandidate.taster_id) assessmentPatch.taster_id = tasterId
-      let assessmentUpdate = admin.from('valu_assessments')
-        .update(assessmentPatch)
-        .eq('id', assessmentCandidate.id)
-      if (!assessmentCandidate.user_id) assessmentUpdate = assessmentUpdate.is('user_id', null)
-      if (!assessmentCandidate.taster_id) assessmentUpdate = assessmentUpdate.is('taster_id', null)
-      const { error: assessmentUpdateError } = await assessmentUpdate
-      if (assessmentUpdateError) {
-        return NextResponse.json({ error: 'Snapshot linked, but the full assessment could not be attached safely.' }, { status: 502 })
-      }
-
-      const { data: verifiedAssessment, error: verifyAssessmentError } = await admin
-        .from('valu_assessments')
-        .select('id,user_id,taster_id')
-        .eq('id', assessmentCandidate.id)
+      const { data: existingIdentity, error: identityLookupError } = await admin
+        .from('assessment_identity_links')
+        .select('assessment_id,user_id')
+        .eq('assessment_id', assessmentCandidate.id)
         .maybeSingle()
-      if (verifyAssessmentError || verifiedAssessment?.user_id !== user.id || verifiedAssessment?.taster_id !== tasterId) {
+      if (identityLookupError) {
+        return NextResponse.json({ error: 'Assessment linked, but its identity audit record could not be checked.' }, { status: 502 })
+      }
+      if (existingIdentity && existingIdentity.user_id !== user.id) {
         assessmentLinkStatus = 'conflict_manual_review'
       } else {
-        const { data: existingIdentity, error: identityLookupError } = await admin
-          .from('assessment_identity_links')
-          .select('assessment_id,user_id')
-          .eq('assessment_id', assessmentCandidate.id)
-          .maybeSingle()
-        if (identityLookupError) {
-          return NextResponse.json({ error: 'Assessment linked, but its identity audit record could not be checked.' }, { status: 502 })
+        const assessmentPatch = { user_id: user.id }
+        if (!assessmentCandidate.taster_id) assessmentPatch.taster_id = tasterId
+        let assessmentUpdate = admin.from('valu_assessments')
+          .update(assessmentPatch)
+          .eq('id', assessmentCandidate.id)
+        if (!assessmentCandidate.user_id) assessmentUpdate = assessmentUpdate.is('user_id', null)
+        if (!assessmentCandidate.taster_id) assessmentUpdate = assessmentUpdate.is('taster_id', null)
+        const { error: assessmentUpdateError } = await assessmentUpdate
+        if (assessmentUpdateError) {
+          return NextResponse.json({ error: 'Snapshot linked, but the full assessment could not be attached safely.' }, { status: 502 })
         }
-        if (existingIdentity && existingIdentity.user_id !== user.id) {
+
+        const { data: verifiedAssessment, error: verifyAssessmentError } = await admin
+          .from('valu_assessments')
+          .select('id,user_id,taster_id')
+          .eq('id', assessmentCandidate.id)
+          .maybeSingle()
+        if (verifyAssessmentError || verifiedAssessment?.user_id !== user.id || verifiedAssessment?.taster_id !== tasterId) {
           assessmentLinkStatus = 'conflict_manual_review'
         } else {
           const { error: identityError } = await admin.from('assessment_identity_links').upsert({
