@@ -79,6 +79,14 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(protocol).toContain('Do not promote to production')
   })
 
+  test('legacy full assessment recovery uses the authenticated user and matching snapshot identity', () => {
+    const source = read('src/app/api/assessment/claim/route.js')
+    expect(source).toContain("eq('user_id',user.id).is('taster_id',null)")
+    expect(source).toContain('norm(a.name)===norm(t.name)')
+    expect(source).toContain("patch.taster_id=requestedTaster")
+    expect(source).toContain('manual reconciliation')
+  })
+
   test('assessment identity handoff is server-side and email-bound', () => {
     const source = read('src/app/api/link-assessment/route.js')
     expect(source).toContain('userClient.auth.getUser()')
