@@ -8,6 +8,7 @@
 - `valu_assessments` are authoritative full VALU Index assessments. Preserve stored scores, answers, assessment/scoring/rubric versions, completion times and reports.
 - `professional_journey` is derived state, not an identity source. Refresh it only after ownership is verified.
 - `marketplace_public_roster` is a projection/cache, not the canonical source of identity.
+- Each new taster must carry a server-stamped taster_version; legacy rows with no proven version remain legacy_unknown until immutable release evidence verifies them.
 - A display name, role, score similarity or date proximity alone is not sufficient evidence to merge or link records.
 
 ## Linking protocol
