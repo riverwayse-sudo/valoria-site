@@ -102,6 +102,96 @@ export async function POST(request) {
     return NextResponse.json({ error: 'The existing snapshot link is incomplete. Please contact Valoria support.' }, { status: 409 })
   }
 
+  // Stitch a completed full assessment to the now-verified account. New submissions
+  // normally already carry taster_id; this also repairs the common signup-after-assessment
+  // path where the assessment exists but user_id was null at submission time.
+  let assessmentLinkStatus = 'no_completed_assessment';
+  let assessmentCandidate = null;
+  const { data: byTaster, error: byTasterError } = await admin
+    .from('valu_assessments')
+    .select('id,user_id,taster_id,email,name,role,total_score,completed_at,assessment_version')
+    .eq('taster_id', tasterId)
+    .not('completed_at', 'is', null)
+    .order('completed_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (byTasterError) {
+    return NextResponse.json({ error: 'Snapshot linked, but the full assessment could not be checked.' }, { status: 502 })
+  }
+  assessmentCandidate = byTaster
+
+  if (!assessmentCandidate) {
+    const { data: ownedLegacy, error: ownedLegacyError } = await admin
+      .from('valu_assessments')
+      .select('id,user_id,taster_id,email,name,role,total_score,completed_at,assessment_version')
+      .eq('user_id', user.id)
+      .is('taster_id', null)
+      .not('completed_at', 'is', null)
+      .order('completed_at', { ascending: false })
+      .limit(10)
+    if (ownedLegacyError) {
+      return NextResponse.json({ error: 'Snapshot linked, but legacy assessment recovery could not be checked.' }, { status: 502 })
+    }
+    assessmentCandidate = (ownedLegacy || []).find(a =>
+      norm(a.name) === norm(taster.name) && norm(a.role) === norm(taster.role)
+    ) || null
+  }
+
+  if (assessmentCandidate) {
+    if (assessmentCandidate.user_id && assessmentCandidate.user_id !== user.id) {
+      // Preserve the taster claim, but never transfer a full assessment from another account.
+      assessmentLinkStatus = 'conflict_manual_review'
+    } else if (assessmentCandidate.taster_id && assessmentCandidate.taster_id !== tasterId) {
+      assessmentLinkStatus = 'conflict_manual_review'
+    } else if (norm(assessmentCandidate.name) !== norm(taster.name) || norm(assessmentCandidate.role) !== norm(taster.role)) {
+      assessmentLinkStatus = 'identity_mismatch_manual_review'
+    } else {
+      const assessmentPatch = { user_id: user.id }
+      if (!assessmentCandidate.taster_id) assessmentPatch.taster_id = tasterId
+      let assessmentUpdate = admin.from('valu_assessments')
+        .update(assessmentPatch)
+        .eq('id', assessmentCandidate.id)
+      if (!assessmentCandidate.user_id) assessmentUpdate = assessmentUpdate.is('user_id', null)
+      if (!assessmentCandidate.taster_id) assessmentUpdate = assessmentUpdate.is('taster_id', null)
+      const { error: assessmentUpdateError } = await assessmentUpdate
+      if (assessmentUpdateError) {
+        return NextResponse.json({ error: 'Snapshot linked, but the full assessment could not be attached safely.' }, { status: 502 })
+      }
+
+      const { data: verifiedAssessment, error: verifyAssessmentError } = await admin
+        .from('valu_assessments')
+        .select('id,user_id,taster_id')
+        .eq('id', assessmentCandidate.id)
+        .maybeSingle()
+      if (verifyAssessmentError || verifiedAssessment?.user_id !== user.id || verifiedAssessment?.taster_id !== tasterId) {
+        assessmentLinkStatus = 'conflict_manual_review'
+      } else {
+        const { data: existingIdentity, error: identityLookupError } = await admin
+          .from('assessment_identity_links')
+          .select('assessment_id,user_id')
+          .eq('assessment_id', assessmentCandidate.id)
+          .maybeSingle()
+        if (identityLookupError) {
+          return NextResponse.json({ error: 'Assessment linked, but its identity audit record could not be checked.' }, { status: 502 })
+        }
+        if (existingIdentity && existingIdentity.user_id !== user.id) {
+          assessmentLinkStatus = 'conflict_manual_review'
+        } else {
+          const { error: identityError } = await admin.from('assessment_identity_links').upsert({
+            assessment_id: assessmentCandidate.id,
+            user_id: user.id,
+            link_method: 'verified_taster_handoff',
+            linked_by: user.id,
+          }, { onConflict: 'assessment_id' })
+          if (identityError) {
+            return NextResponse.json({ error: 'Assessment linked, but its identity audit record could not be saved.' }, { status: 502 })
+          }
+          assessmentLinkStatus = 'linked'
+        }
+      }
+    }
+  }
+
   // Make ordinary retries idempotent. Ownership on taster_sessions is canonical;
   // the event log is supplementary and may already contain a prior successful handoff.
   const { data: priorEvent, error: priorEventError } = await admin
@@ -145,6 +235,7 @@ export async function POST(request) {
       tasterLinked: true,
       journeyRefreshed: true,
       journey,
+      assessmentLinkStatus,
       next: '/profile/setup',
     },
   })
