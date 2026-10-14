@@ -69,6 +69,16 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).not.toContain('|| name\n')
   })
 
+  test('admin reconciliation exposes missing taster links and identity conflicts without name-only auto-linking', () => {
+    const source = read('src/app/api/admin/reconciliation/route.js')
+    expect(source).toContain("select('id,user_id,taster_id,email,name,role,total_score,completed_at,assessment_version,scoring_version')")
+    expect(source).toContain('identityReconciliation')
+    expect(source).toContain('assessmentsMissingTasterIdDetails')
+    expect(source).toContain('identityLinkConflictDetails')
+    expect(source).toContain('exact_owner_identity_candidate')
+    expect(source).toContain('no_stable_taster_match')
+  })
+
   test('assessment session schema and reconciliation protocol are governed explicitly', () => {
     const migration = read('supabase/migrations/20261014153000_assessment_sessions_owner_read_contract.sql')
     const protocol = read('docs/participant-journey-reconciliation-protocol.md')
