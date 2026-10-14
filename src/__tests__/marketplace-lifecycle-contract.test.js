@@ -60,6 +60,25 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).not.toContain('getUserById(userId)')
   })
 
+  test('taster identity proof comes from authenticated account fields, not request body', () => {
+    const source = read('src/app/api/link-taster/route.js')
+    expect(source).toContain('user.user_metadata?.display_name')
+    expect(source).toContain("from('professional_profiles')")
+    expect(source).toContain('Never trust a name supplied in this request')
+    expect(source).toContain("if (!priorEvent)")
+    expect(source).not.toContain('|| name\n')
+  })
+
+  test('assessment session schema and reconciliation protocol are governed explicitly', () => {
+    const migration = read('supabase/migrations/20261014153000_assessment_sessions_owner_read_contract.sql')
+    const protocol = read('docs/participant-journey-reconciliation-protocol.md')
+    expect(migration).toContain('add column if not exists user_id')
+    expect(migration).toContain('assessment_sessions_owner_read')
+    expect(migration).toContain('using ((select auth.uid()) = user_id)')
+    expect(protocol).toContain('Names, role, date proximity, score similarity')
+    expect(protocol).toContain('Do not promote to production')
+  })
+
   test('assessment identity handoff is server-side and email-bound', () => {
     const source = read('src/app/api/link-assessment/route.js')
     expect(source).toContain('userClient.auth.getUser()')
