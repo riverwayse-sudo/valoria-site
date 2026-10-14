@@ -54,7 +54,7 @@ export async function POST(request) {
   if(!notes||notes.length>3000) return Response.json({error:'Review notes are required and must be 3,000 characters or fewer.'},{status:400})
   if((candidateRecordType&&!CANDIDATE_TYPES.has(candidateRecordType))||(candidateRecordId&&!UUID.test(candidateRecordId))||Boolean(candidateRecordType)!==Boolean(candidateRecordId)) return Response.json({error:'Candidate type and UUID must be supplied together.'},{status:400})
   if(evidenceReference&&evidenceReference.length>500) return Response.json({error:'Evidence reference must be 500 characters or fewer.'},{status:400})
-  if(decision==='verified_match'&&(!candidateRecordId||!['stable_id','authenticated_account','verified_email','submission_log','release_log','admin_documentation'].includes(evidenceType))) return Response.json({error:'A verified match requires a candidate and traceable evidence.'},{status:400})
+  if(decision==='verified_match'&&(!candidateRecordId||!evidenceReference||!['stable_id','authenticated_account','verified_email','submission_log','release_log','admin_documentation'].includes(evidenceType))) return Response.json({error:'A verified match requires a candidate and traceable evidence.'},{status:400})
   if(decision==='resolved_no_link'&&candidateRecordId) return Response.json({error:'A no-link resolution cannot name a candidate.'},{status:400})
 
   const sourceTable={assessment:'valu_assessments',taster:'taster_sessions',profile:'professional_profiles'}[sourceRecordType]
