@@ -141,6 +141,30 @@ export default function LoginPage() {
         }
       }
 
+      // Recover any legacy taster records whose corroborated contact email matches
+      // this confirmed account. A zero-match response is non-blocking for ordinary login.
+      if (session?.access_token) {
+        try {
+          const recoveryRes = await fetch('/api/claim-taster', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+            body: JSON.stringify({}),
+          })
+          const recovery = await recoveryRes.json().catch(() => ({}))
+          if (recoveryRes.ok && recovery.linked > 0) {
+            const { data: recoveredProfile } = await supabase
+              .from('professional_profiles')
+              .select('id, display_name')
+              .eq('id', user.id)
+              .maybeSingle()
+            redirectAfterLogin(recoveredProfile?.display_name ? '/dashboard' : '/profile/onboarding')
+            return
+          }
+        } catch (recoveryError) {
+          console.warn('Legacy taster recovery was deferred:', recoveryError)
+        }
+      }
+
       // Buyers (employer/organiser) live in `profiles`, professionals in
       // `professional_profiles` — these are two entirely separate tables.
       // Checking only professional_profiles meant every buyer account (zero
