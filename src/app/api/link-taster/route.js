@@ -115,6 +115,11 @@ export async function POST(request) {
     return NextResponse.json({ error: 'The existing snapshot link is incomplete. Please contact Valoria support.' }, { status: 409 })
   }
 
+  const { error: identityProjectionError } = await admin.from('taster_identity_candidates')
+    .update({ identity_status: 'account_linked', linked_user_id: user.id, resolution_notes: 'Claimed through confirmed-email authentication and saved snapshot identity verification.', last_reconciled_at: new Date().toISOString() })
+    .eq('taster_id', tasterId).is('linked_user_id', null)
+  if (identityProjectionError) return NextResponse.json({ error: 'Snapshot linked, but the identity record could not be updated.' }, { status: 502 })
+
   // Stitch a completed full assessment to the now-verified account. New submissions
   // normally already carry taster_id; this also repairs the common signup-after-assessment
   // path where the assessment exists but user_id was null at submission time.
