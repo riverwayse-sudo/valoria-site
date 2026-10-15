@@ -19,7 +19,7 @@ export async function POST(request) {
   const email = user.email.trim().toLowerCase()
   const { data: candidates, error: lookupError } = await admin.from('taster_identity_candidates')
     .select('taster_id,candidate_name,candidate_role')
-    .eq('candidate_email', email).eq('identity_status', 'contact_candidate').is('linked_user_id', null).limit(50)
+    .eq('candidate_email', email).in('identity_status', ['contact_candidate', 'unresolved']).is('linked_user_id', null).limit(50)
   if (lookupError) return NextResponse.json({ error: 'Could not retrieve snapshot recovery records.' }, { status: 502 })
   const linked = [], conflicts = []
 
