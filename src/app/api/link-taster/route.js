@@ -52,6 +52,19 @@ export async function POST(request) {
 
   if (tasterError) return NextResponse.json({ error: 'Could not verify the saved snapshot.' }, { status: 502 })
   if (!taster) return NextResponse.json({ error: 'Snapshot result not found.' }, { status: 404 })
+  if (!user.email_confirmed_at) return NextResponse.json({ error: 'Verify your email before linking a saved VALU snapshot.' }, { status: 403 })
+  const { data: identityCandidate, error: candidateLookupError } = await admin
+    .from('taster_identity_candidates')
+    .select('candidate_email,linked_user_id')
+    .eq('taster_id', tasterId)
+    .maybeSingle()
+  if (candidateLookupError) return NextResponse.json({ error: 'Could not verify snapshot identity evidence.' }, { status: 502 })
+  if (identityCandidate?.candidate_email && norm(identityCandidate.candidate_email) !== norm(user.email)) {
+    return NextResponse.json({ error: 'The saved snapshot email evidence does not match this account. Valoria support must review the identity before linking.' }, { status: 403 })
+  }
+  if (identityCandidate?.linked_user_id && identityCandidate.linked_user_id !== user.id) {
+    return NextResponse.json({ error: 'This snapshot evidence is already connected to another account.' }, { status: 409 })
+  }
   if (taster.user_id && taster.user_id !== user.id) {
     return NextResponse.json({ error: 'This snapshot is already linked to another account.' }, { status: 409 })
   }
