@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createValuHandoffToken } from '@/lib/valu-handoff-token'
 
-function norm(value) { return String(value || '').trim().toLowerCase().replace(/\\s+/g, ' ') }
+function norm(value) { return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ') }
 
 function getAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
