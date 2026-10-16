@@ -90,9 +90,11 @@ export async function GET(request){
   const completedAssessments=assessmentRes.data||[]
   const completedTasters=tasterRes.data||[]
   const identityLinks=identityLinkRes.data||[]
-  const tasterCandidateMap=new Map((tasterCandidateRes.data||[]).map(candidate=>[candidate.taster_id,candidate]))
+  const tasterCandidateRows=tasterCandidateRes.data||[]
+  const tasterCandidateMap=new Map(tasterCandidateRows.map(candidate=>[candidate.taster_id,candidate]))
   const assessmentById=new Map(completedAssessments.map(a=>[a.id,a]))
   const normalise=(value)=>String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()
+  const normaliseEmail=(value)=>String(value||'').trim().toLowerCase()
   const missingTasterLinks=completedAssessments.filter(a=>!a.taster_id).map(a=>{
     const exactOwnerCandidates=a.user_id?completedTasters.filter(t=>
       t.user_id===a.user_id &&
@@ -103,7 +105,22 @@ export async function GET(request){
       assessment_id:a.id,user_id:a.user_id,name:a.name,role:a.role,
       completed_at:a.completed_at,assessment_version:a.assessment_version,
       classification:exactOwnerCandidates.length===1?'exact_owner_identity_candidate':exactOwnerCandidates.length>1?'multiple_exact_owner_candidates':'no_stable_taster_match',
-      candidate_taster_ids:exactOwnerCandidates.map(t=>t.id)
+      candidate_taster_ids:exactOwnerCandidates.map(t=>t.id),
+      contactEvidenceCandidates:tasterCandidateRows.filter(candidate=>normaliseEmail(candidate.candidate_email)!==''&&normaliseEmail(candidate.candidate_email)===normaliseEmail(a.email)).map(candidate=>{
+        const taster=completedTasters.find(t=>t.id===candidate.taster_id)||null
+        return {
+          taster_id:candidate.taster_id,identity_status:candidate.identity_status,
+          candidate_name:candidate.candidate_name,candidate_role:candidate.candidate_role,
+          evidence_sources:candidate.evidence_sources||[],evidence_source_count:candidate.evidence_source_count||0,
+          same_contact_taster_count:candidate.same_contact_taster_count,
+          linked_account_matches_assessment:Boolean(a.user_id&&candidate.linked_user_id===a.user_id),
+          taster_owner_matches_assessment:Boolean(a.user_id&&taster?.user_id===a.user_id),
+          candidate_name_matches_assessment:Boolean(normalise(candidate.candidate_name)&&normalise(candidate.candidate_name)===normalise(a.name)),
+          candidate_role_matches_assessment:Boolean(normalise(candidate.candidate_role)&&normalise(candidate.candidate_role)===normalise(a.role)),
+          taster_name_matches_assessment:Boolean(normalise(taster?.name)&&normalise(taster.name)===normalise(a.name)),
+          taster_role_matches_assessment:Boolean(normalise(taster?.role)&&normalise(taster.role)===normalise(a.role))
+        }
+      })
     }
   })
   const unlinkedCompletedTasters=completedTasters.filter(t=>!t.user_id).map(t=>{
