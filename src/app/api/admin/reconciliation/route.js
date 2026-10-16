@@ -19,7 +19,7 @@ async function requireAdmin(request) {
 export async function GET(request){
   const {supabase,response}=await requireAdmin(request)
   if(response) return response
-  const [journeyRes, assessmentRes, profileRes, capabilityRes, documentRes, rosterRes, tasterRes, identityLinkRes] = await Promise.all([
+  const [journeyRes, assessmentRes, profileRes, capabilityRes, documentRes, rosterRes, tasterRes, identityLinkRes, tasterCandidateRes] = await Promise.all([
     supabase.from('professional_journey_directory').select('*').order('updated_at',{ascending:false}),
     supabase.from('valu_assessments').select('id,user_id,taster_id,email,name,role,total_score,completed_at,assessment_version,scoring_version').not('completed_at','is',null).order('completed_at',{ascending:false}),
     supabase.from('professional_profiles').select('id,display_name,headline,profile_complete,active_tracks,photo_url,current_job_title,updated_at'),
@@ -27,9 +27,10 @@ export async function GET(request){
     supabase.from('professional_documents').select('professional_id,status,document_type,created_at'),
     supabase.from('marketplace_public_roster').select('professional_id,capabilities,track'),
     supabase.from('taster_sessions').select('id,user_id,name,role,experience,taster_version,taster_version_source,completed_at,created_at,linked_at').not('completed_at','is',null).order('completed_at',{ascending:false}),
-    supabase.from('assessment_identity_links').select('assessment_id,user_id,link_method')
+    supabase.from('assessment_identity_links').select('assessment_id,user_id,link_method'),
+    supabase.from('taster_identity_candidates').select('taster_id,candidate_name,candidate_role,candidate_email,evidence_source_count,evidence_sources,same_contact_taster_count,identity_status,linked_user_id,resolution_notes,first_reconciled_at,last_reconciled_at')
   ])
-  if([journeyRes,assessmentRes,profileRes,capabilityRes,documentRes,rosterRes,tasterRes,identityLinkRes].some(result=>result.error)) {
+  if([journeyRes,assessmentRes,profileRes,capabilityRes,documentRes,rosterRes,tasterRes,identityLinkRes,tasterCandidateRes].some(result=>result.error)) {
     return Response.json({error:'The reconciliation report could not load every required source. No records were changed.'},{status:500})
   }
   const profiles=profileRes.data||[]
@@ -89,6 +90,7 @@ export async function GET(request){
   const completedAssessments=assessmentRes.data||[]
   const completedTasters=tasterRes.data||[]
   const identityLinks=identityLinkRes.data||[]
+  const tasterCandidateMap=new Map((tasterCandidateRes.data||[]).map(candidate=>[candidate.taster_id,candidate]))
   const assessmentById=new Map(completedAssessments.map(a=>[a.id,a]))
   const normalise=(value)=>String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()
   const missingTasterLinks=completedAssessments.filter(a=>!a.taster_id).map(a=>{
@@ -104,9 +106,19 @@ export async function GET(request){
       candidate_taster_ids:exactOwnerCandidates.map(t=>t.id)
     }
   })
-  const unlinkedCompletedTasters=completedTasters.filter(t=>!t.user_id).map(t=>({
-    taster_id:t.id,name:t.name,role:t.role,experience:t.experience,completed_at:t.completed_at,created_at:t.created_at
-  }))
+  const unlinkedCompletedTasters=completedTasters.filter(t=>!t.user_id).map(t=>{
+    const candidate=tasterCandidateMap.get(t.id)||null
+    return {
+      taster_id:t.id,name:t.name,role:t.role,experience:t.experience,completed_at:t.completed_at,created_at:t.created_at,
+      identity_candidate:candidate?{
+        candidate_name:candidate.candidate_name,candidate_role:candidate.candidate_role,candidate_email:candidate.candidate_email,
+        evidence_source_count:candidate.evidence_source_count,evidence_sources:candidate.evidence_sources||[],
+        same_contact_taster_count:candidate.same_contact_taster_count,identity_status:candidate.identity_status,
+        linked_user_id:candidate.linked_user_id,resolution_notes:candidate.resolution_notes,
+        first_reconciled_at:candidate.first_reconciled_at,last_reconciled_at:candidate.last_reconciled_at
+      }:null
+    }
+  })
   const identityLinkConflicts=identityLinks.filter(link=>{
     const assessment=assessmentById.get(link.assessment_id)
     return assessment && assessment.user_id && assessment.user_id!==link.user_id
