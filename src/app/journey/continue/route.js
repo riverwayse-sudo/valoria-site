@@ -7,7 +7,7 @@ const SB_URL=process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const SERVICE=process.env.SUPABASE_SERVICE_ROLE_KEY
 const ASSESSMENT_ORIGIN='https://valoriainstitute.com/valu/assessment/'
-const norm=value=>String(value||'').trim().toLowerCase().replace(/\\s+/g,' ')
+const norm=value=>String(value||'').trim().toLowerCase().replace(/\s+/g,' ')
 
 async function getUser(request){
  if(!SB_URL||!SB_ANON)return null
