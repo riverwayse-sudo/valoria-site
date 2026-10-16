@@ -45,3 +45,10 @@ The confirmed-email taster claim endpoint must be safe to retry after any partia
 - It appends a new `verified_match` decision when the confirmed-email claim completes or repairs a prior decision. It does not overwrite an earlier `unmatched` or `conflict` review.
 - It reruns journey refresh and marketplace readiness for already-linked records as well as newly linked records, allowing retries to repair stale projections.
 - Claim eligibility still requires a confirmed account email that matches the corroborated candidate email and a normalized name/role match with the original taster record. This route never uses assessment score or date proximity as identity proof.
+
+
+## Signed full-assessment handoff
+
+A full assessment must be launched from an authenticated Valoria account. The site issues a signed, four-hour handoff bound to the authenticated user ID and exact completed taster ID. The token is placed in the URL fragment (not the HTTP query), removed from the visible URL on page load, and sent only in request bodies. The assessment API verifies the signature, audience, expiry, taster ID, owner, confirmed account email, and saved name/role before accepting a score or attaching it to a profile.
+
+Direct links without a valid handoff—including previously sent recovery-email links—must stop before displaying the questions and offer the signup/sign-in route. Reminder emails for already-linked tasters route through `/journey/continue?stage=assess&taster_id=...`, which authenticates the user and issues a fresh token. Re-submitting the same completed assessment for the same owner and snapshot returns the canonical stored result, allowing a fresh handoff to retry attachment without creating a duplicate score.
