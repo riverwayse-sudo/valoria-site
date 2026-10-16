@@ -35,3 +35,13 @@ The queue defaults to open work and supports all-record and closed-without-link 
 
 ## Contact-candidate evidence
 The admin report may surface candidate contact records from `taster_identity_candidates`, including lead capture, event registration, and waitlist sources. These records are leads for investigation, not canonical identity links. The queue compares candidate email, linked account ownership, and name/role consistency against the assessment and taster session. A mismatch must remain open for human review; exact email or account-owner alignment alone does not override contradictory name/role evidence.
+
+
+## Authenticated recovery retry contract
+
+The confirmed-email taster claim endpoint must be safe to retry after any partial write:
+- It may process both unclaimed candidates and candidates already linked to the same authenticated user, so a prior failure after ownership persistence does not strand the remaining steps.
+- It must never take over a taster or candidate already owned by another account, and must stop when the latest review verifies a different account.
+- It appends a new `verified_match` decision when the confirmed-email claim completes or repairs a prior decision. It does not overwrite an earlier `unmatched` or `conflict` review.
+- It reruns journey refresh and marketplace readiness for already-linked records as well as newly linked records, allowing retries to repair stale projections.
+- Claim eligibility still requires a confirmed account email that matches the corroborated candidate email and a normalized name/role match with the original taster record. This route never uses assessment score or date proximity as identity proof.
