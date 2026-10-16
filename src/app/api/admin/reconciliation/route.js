@@ -19,7 +19,7 @@ async function requireAdmin(request) {
 export async function GET(request){
   const {supabase,response}=await requireAdmin(request)
   if(response) return response
-  const [journeyRes, assessmentRes, profileRes, capabilityRes, documentRes, rosterRes, tasterRes, identityLinkRes] = await Promise.all([
+  const [journeyRes, assessmentRes, profileRes, capabilityRes, documentRes, rosterRes, tasterRes, identityLinkRes, tasterCandidateRes] = await Promise.all([
     supabase.from('professional_journey_directory').select('*').order('updated_at',{ascending:false}),
     supabase.from('valu_assessments').select('id,user_id,taster_id,email,name,role,total_score,completed_at,assessment_version,scoring_version').not('completed_at','is',null).order('completed_at',{ascending:false}),
     supabase.from('professional_profiles').select('id,display_name,headline,profile_complete,active_tracks,photo_url,current_job_title,updated_at'),
@@ -27,9 +27,10 @@ export async function GET(request){
     supabase.from('professional_documents').select('professional_id,status,document_type,created_at'),
     supabase.from('marketplace_public_roster').select('professional_id,capabilities,track'),
     supabase.from('taster_sessions').select('id,user_id,name,role,experience,taster_version,taster_version_source,completed_at,created_at,linked_at').not('completed_at','is',null).order('completed_at',{ascending:false}),
-    supabase.from('assessment_identity_links').select('assessment_id,user_id,link_method')
+    supabase.from('assessment_identity_links').select('assessment_id,user_id,link_method'),
+    supabase.from('taster_identity_candidates').select('taster_id,candidate_name,candidate_role,candidate_email,evidence_source_count,evidence_sources,same_contact_taster_count,identity_status,linked_user_id,resolution_notes,first_reconciled_at,last_reconciled_at')
   ])
-  if([journeyRes,assessmentRes,profileRes,capabilityRes,documentRes,rosterRes,tasterRes,identityLinkRes].some(result=>result.error)) {
+  if([journeyRes,assessmentRes,profileRes,capabilityRes,documentRes,rosterRes,tasterRes,identityLinkRes,tasterCandidateRes].some(result=>result.error)) {
     return Response.json({error:'The reconciliation report could not load every required source. No records were changed.'},{status:500})
   }
   const profiles=profileRes.data||[]
@@ -89,8 +90,11 @@ export async function GET(request){
   const completedAssessments=assessmentRes.data||[]
   const completedTasters=tasterRes.data||[]
   const identityLinks=identityLinkRes.data||[]
+  const tasterCandidateRows=tasterCandidateRes.data||[]
+  const tasterCandidateMap=new Map(tasterCandidateRows.map(candidate=>[candidate.taster_id,candidate]))
   const assessmentById=new Map(completedAssessments.map(a=>[a.id,a]))
   const normalise=(value)=>String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()
+  const normaliseEmail=(value)=>String(value||'').trim().toLowerCase()
   const missingTasterLinks=completedAssessments.filter(a=>!a.taster_id).map(a=>{
     const exactOwnerCandidates=a.user_id?completedTasters.filter(t=>
       t.user_id===a.user_id &&
@@ -101,12 +105,37 @@ export async function GET(request){
       assessment_id:a.id,user_id:a.user_id,name:a.name,role:a.role,
       completed_at:a.completed_at,assessment_version:a.assessment_version,
       classification:exactOwnerCandidates.length===1?'exact_owner_identity_candidate':exactOwnerCandidates.length>1?'multiple_exact_owner_candidates':'no_stable_taster_match',
-      candidate_taster_ids:exactOwnerCandidates.map(t=>t.id)
+      candidate_taster_ids:exactOwnerCandidates.map(t=>t.id),
+      contactEvidenceCandidates:tasterCandidateRows.filter(candidate=>normaliseEmail(candidate.candidate_email)!==''&&normaliseEmail(candidate.candidate_email)===normaliseEmail(a.email)).map(candidate=>{
+        const taster=completedTasters.find(t=>t.id===candidate.taster_id)||null
+        return {
+          taster_id:candidate.taster_id,identity_status:candidate.identity_status,
+          candidate_name:candidate.candidate_name,candidate_role:candidate.candidate_role,
+          evidence_sources:candidate.evidence_sources||[],evidence_source_count:candidate.evidence_source_count||0,
+          same_contact_taster_count:candidate.same_contact_taster_count,
+          linked_account_matches_assessment:Boolean(a.user_id&&candidate.linked_user_id===a.user_id),
+          taster_owner_matches_assessment:Boolean(a.user_id&&taster?.user_id===a.user_id),
+          candidate_name_matches_assessment:Boolean(normalise(candidate.candidate_name)&&normalise(candidate.candidate_name)===normalise(a.name)),
+          candidate_role_matches_assessment:Boolean(normalise(candidate.candidate_role)&&normalise(candidate.candidate_role)===normalise(a.role)),
+          taster_name_matches_assessment:Boolean(normalise(taster?.name)&&normalise(taster.name)===normalise(a.name)),
+          taster_role_matches_assessment:Boolean(normalise(taster?.role)&&normalise(taster.role)===normalise(a.role))
+        }
+      })
     }
   })
-  const unlinkedCompletedTasters=completedTasters.filter(t=>!t.user_id).map(t=>({
-    taster_id:t.id,name:t.name,role:t.role,experience:t.experience,completed_at:t.completed_at,created_at:t.created_at
-  }))
+  const unlinkedCompletedTasters=completedTasters.filter(t=>!t.user_id).map(t=>{
+    const candidate=tasterCandidateMap.get(t.id)||null
+    return {
+      taster_id:t.id,name:t.name,role:t.role,experience:t.experience,completed_at:t.completed_at,created_at:t.created_at,
+      identity_candidate:candidate?{
+        candidate_name:candidate.candidate_name,candidate_role:candidate.candidate_role,candidate_email:candidate.candidate_email,
+        evidence_source_count:candidate.evidence_source_count,evidence_sources:candidate.evidence_sources||[],
+        same_contact_taster_count:candidate.same_contact_taster_count,identity_status:candidate.identity_status,
+        linked_user_id:candidate.linked_user_id,resolution_notes:candidate.resolution_notes,
+        first_reconciled_at:candidate.first_reconciled_at,last_reconciled_at:candidate.last_reconciled_at
+      }:null
+    }
+  })
   const identityLinkConflicts=identityLinks.filter(link=>{
     const assessment=assessmentById.get(link.assessment_id)
     return assessment && assessment.user_id && assessment.user_id!==link.user_id
@@ -114,6 +143,13 @@ export async function GET(request){
   const orphanedAssessments=completedAssessments.filter(a=>!a.user_id)
   const {data:userList}=await supabase.auth.admin.listUsers({page:1,perPage:1000})
   const accounts=(userList?.users||[]).map(u=>({id:u.id,email:u.email||null,name:profileMap.get(u.id)?.display_name||u.user_metadata?.full_name||u.user_metadata?.name||null}))
+  const accountsByEmail=new Map((userList?.users||[]).filter(u=>u.email).map(u=>[String(u.email).trim().toLowerCase(),u]))
+  for(const taster of unlinkedCompletedTasters){
+    const email=String(taster.identity_candidate?.candidate_email||'').trim().toLowerCase()
+    if(!email) continue
+    const account=accountsByEmail.get(email)
+    taster.identity_candidate.account_email_match_status=!account?'no_account_email_match':account.email_confirmed_at?'confirmed_account_email_candidate':'unconfirmed_account_email_candidate'
+  }
   const reconciliations=orphanedAssessments.map(a=>{
     const target=normalise(a.name)
     const candidates=target?accounts.filter(x=>normalise(x.name)===target):[]

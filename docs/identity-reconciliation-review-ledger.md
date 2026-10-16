@@ -23,3 +23,15 @@ The `identity_reconciliation_reviews` table has RLS enabled, and direct access i
 4. Keep conflicts and unsupported matches unresolved; do not auto-link by name.
 5. Apply identity corrections only through the separately protected reconciliation action after evidence review, then verify journey, profile, capability and roster projections.
 6. Keep historical taster version `legacy_unknown` unless release/deployment evidence supports an admin-verified version.
+
+## Queue-state rules
+The admin queue uses the latest review per source record:
+- No review: not reviewed.
+- `candidate_match`, `conflict`, or `unmatched`: open; more evidence or follow-up is still required.
+- `verified_match`: open until the separately protected identity correction has been applied and verified. A verified relationship is not proof that the database link has already been written.
+- `resolved_no_link`: closed for investigation only; the underlying record remains unlinked by design.
+
+The queue defaults to open work and supports all-record and closed-without-link views. Summary counts are based on the latest review per source, not the number of audit entries, so repeated reviews do not inflate the source count.
+
+## Contact-candidate evidence
+The admin report may surface candidate contact records from `taster_identity_candidates`, including lead capture, event registration, and waitlist sources. These records are leads for investigation, not canonical identity links. The queue compares candidate email, linked account ownership, and name/role consistency against the assessment and taster session. A mismatch must remain open for human review; exact email or account-owner alignment alone does not override contradictory name/role evidence.

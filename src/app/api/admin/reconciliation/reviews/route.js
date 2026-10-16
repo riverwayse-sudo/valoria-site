@@ -33,7 +33,20 @@ export async function GET(request) {
   if(sourceRecordId && UUID.test(sourceRecordId)) query=query.eq('source_record_id',sourceRecordId)
   const {data,error}=await query
   if(error) return Response.json({error:'Could not load the reconciliation review ledger.'},{status:500})
-  return Response.json({reviews:data||[]})
+  const reviews=data||[]
+  const latestBySource={}
+  for(const review of reviews){
+    const key=review.source_record_type+':'+review.source_record_id
+    if(!latestBySource[key]) latestBySource[key]=review
+  }
+  const latest=Object.values(latestBySource)
+  const summary={reviewed_sources:latest.length,verified_match:0,candidate_match:0,conflict:0,unmatched:0,resolved_no_link:0,open:0,closed:0}
+  for(const review of latest){
+    summary[review.decision]=(summary[review.decision]||0)+1
+    if(review.decision==='resolved_no_link') summary.closed++
+    else summary.open++
+  }
+  return Response.json({reviews,latestBySource,summary})
 }
 
 export async function POST(request) {
