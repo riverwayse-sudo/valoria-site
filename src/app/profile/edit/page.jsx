@@ -28,7 +28,7 @@ const TEXT = { color: PARCH }
 function Section({ title, children, dirty, saving, saved, onSave }) {
   return (
     <div style={S.section}>
-      <div style={S.sectionHead}>
+      <div className="profile-edit-section-head" style={S.sectionHead}>
         <h2 style={S.sectionTitle}>{title}</h2>
         <button
           onClick={onSave}
@@ -246,18 +246,18 @@ function EditPageInner() {
 
   return (
     <div style={S.page}>
-      <header style={S.header}>
+      <header className="profile-edit-header" style={S.header}>
         <Link href={`/profile/${user.id}`} style={S.backLink}>← Back to your profile</Link>
         <div style={S.headerTitle}>Edit Profile</div>
         <div style={{ width: '140px' }} />
       </header>
 
-      <div style={S.container}>
+      <div className="profile-edit-container" style={S.container}>
         {errorMsg && <div style={S.errorBanner}>{errorMsg}</div>}
 
         <Section title="Basics" dirty={dirty.basics} saving={saving.basics} saved={saved.basics}
           onSave={() => saveSection('basics', ['display_name','username','phone','current_job_title','headline','industry','preferred_industry','location','experience_years'])}>
-          <div style={S.grid2}>
+          <div className="profile-edit-grid2" style={S.grid2}>
             <Field label="Name"><TextInput value={form.display_name} onChange={v => setField('basics','display_name',v)} /></Field>
             <Field label="Username" error={form.username && !VALIDATORS.username(form.username) ? validatorError('username') : null}>
               <TextInput value={form.username} onChange={v => setField('basics','username',v)} />
@@ -389,6 +389,24 @@ function EditPageInner() {
           </Field>
         </Section>
       </div>
+      <style>{`
+        .profile-edit-header { gap: 16px; }
+        .profile-edit-container { min-width: 0; }
+        .profile-edit-container > * { min-width: 0; }
+        @media (max-width: 640px) {
+          .profile-edit-header { height: auto !important; min-height: 64px; padding: 12px 16px !important; gap: 10px !important; }
+          .profile-edit-header > a:first-child { width: auto !important; max-width: 42%; font-size: 11px !important; line-height: 1.4; }
+          .profile-edit-header > div { font-size: 11px !important; text-align: center; }
+          .profile-edit-header > div:last-child { display: none; }
+          .profile-edit-container { padding: 22px 16px !important; }
+          .profile-edit-container > section { padding: 18px 16px !important; border-radius: 6px !important; }
+          .profile-edit-container h2 { font-size: 14px !important; }
+           .profile-edit-container .profile-edit-grid2 { grid-template-columns: minmax(0, 1fr) !important; gap: 0 !important; }
+          .profile-edit-container input, .profile-edit-container textarea { min-width: 0; }
+          .profile-edit-container button { max-width: 100%; }
+           .profile-edit-container .profile-edit-section-head { flex-wrap: wrap; gap: 10px; }
+        }
+      `}</style>
     </div>
   )
 }

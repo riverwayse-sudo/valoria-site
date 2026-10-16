@@ -300,7 +300,7 @@ export default function DashboardPage() {
           <Link href="/" style={{ lineHeight:0 }}>
             <img src="/logo.png" alt="Valoria Institute" style={{ height:'40px', width:'auto' }} />
           </Link>
-          <nav style={{ display:'flex', gap:'22px', alignItems:'center' }}>
+          <nav className="dv-nav" style={{ display:'flex', gap:'22px', alignItems:'center' }}>
             <MarketplaceCTA style={{ fontSize:'12px', color: DIM, textDecoration:'none' }}>Marketplace</MarketplaceCTA>
             {isSupply && <Link href="/profile/edit" style={{ fontSize:'12px', color: DIM, textDecoration:'none' }}>Edit Profile</Link>}
             <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')}
@@ -311,7 +311,7 @@ export default function DashboardPage() {
         </header>
 
         {/* COVER BANNER */}
-        <div style={{ position:'relative', height:'280px', overflow:'hidden', background:`radial-gradient(ellipse 800px 400px at 10% 30%, rgba(201,168,76,.22), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 70%, rgba(201,168,76,.1), transparent 55%), linear-gradient(155deg, ${MID} 0%, ${DARK} 70%)` }}>
+        <div style={{ position:'relative', height:'176px', overflow:'hidden', background:`radial-gradient(ellipse 800px 400px at 10% 30%, rgba(201,168,76,.22), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 70%, rgba(201,168,76,.1), transparent 55%), linear-gradient(155deg, ${MID} 0%, ${DARK} 70%)` }}>
           <svg viewBox="0 0 1200 280" preserveAspectRatio="none" style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:.45 }}>
             <g stroke="#C9A84C" strokeOpacity=".18" strokeWidth="1" fill="none">
               <path d="M0,240 C300,160 500,280 800,180 S1100,240 1200,160"/>
@@ -331,27 +331,16 @@ export default function DashboardPage() {
           <div style={{ position:'absolute', inset:0, background:`linear-gradient(180deg, transparent 35%, ${DARK} 100%)` }} />
         </div>
 
-        {/* VALORIA PROGRESSION / UNLOCK SYSTEM */}
-        {isSupply && (
-          <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'26px clamp(20px,4vw,40px) 0' }}>
-            <AccessProgressCard
-              profile={p}
-              assessment={assessment}
-              capabilities={capabilities}
-            />
-          </div>
-        )}
-
         {/* HEADER BLOCK */}
         <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'0 clamp(20px,4vw,40px)' }}>
-          <div className="dv-header-block" style={{ display:'flex', alignItems:'flex-end', gap:'24px', marginTop:'-80px', position:'relative', zIndex:5, flexWrap:'wrap' }}>
+          <div className="dv-header-block" style={{ display:'flex', alignItems:'flex-end', gap:'24px', marginTop:'24px', position:'relative', zIndex:5, flexWrap:'wrap' }}>
 
             {/* Avatar — individual professionals only; employer/organiser accounts are businesses, not people */}
             {isSupply && (
-              <div style={{ width:'132px', height:'132px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
+              <div style={{ width:'112px', height:'112px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
                 <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
                   <div style={{ width:'100%', height:'100%', borderRadius:'50%', overflow:'hidden' }}>
-                    <ValoriaAvatar src={p.photo_url} seed={p.id || user?.id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={132} />
+                    <ValoriaAvatar src={p.photo_url} seed={p.id || user?.id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={112} />
                   </div>          </div>
               </div>
             )}
@@ -406,13 +395,19 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* VALORIA PROGRESSION / UNLOCK SYSTEM — follows identity, never overlaps it */}
         {isSupply && (
-          <ProgressiveCompletion
-            profile={p}
-            capabilities={capabilities}
-            listedCapabilities={listedCapabilities}
-          />
+          <div style={{ maxWidth:'1100px', margin:'24px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+            <AccessProgressCard
+              profile={p}
+              assessment={assessment}
+              capabilities={capabilities}
+            />
+          </div>
         )}
+
+        {/* Journey guidance is already presented by AccessProgressCard above.
+            Keep one authoritative next-step panel to avoid duplicate CTAs. */}
 
         {/* FIXED: previously a profile with no active_tracks yet (fresh off
             claim-listing, before /profile/setup) silently fell through
@@ -734,7 +729,10 @@ export default function DashboardPage() {
         }
         @media (max-width: 640px) {
           .dv-stat-strip { flex-wrap: wrap !important; }
-          .dv-header-block { margin-top: -60px !important; }
+          .dv-header-block { margin-top: 18px !important; gap: 16px !important; align-items: flex-start !important; }
+          .dv-nav { gap: 8px !important; }
+          .dv-nav a, .dv-nav button { font-size: 10px !important; padding: 7px 9px !important; }
+          .dv-header-block > div:last-child { width: 100%; padding-bottom: 0 !important; }
         }
       `}</style>
     </>

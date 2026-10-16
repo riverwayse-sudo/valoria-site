@@ -333,7 +333,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
           <div className="vi-header-block" style={{ display:'flex', alignItems:'flex-end', gap:'24px', marginTop:'-80px', position:'relative', zIndex:5, flexWrap:'wrap' }}>
 
             {/* Avatar — static ring, no longer spins the photo */}
-            <div style={{ width:'148px', height:'148px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
+            <div className="vi-avatar-frame" style={{ width:'148px', height:'148px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
               <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
                 <div style={{ width:'100%', height:'100%', borderRadius:'50%', overflow:'hidden' }}>
                   <ValoriaAvatar src={p.photo_url} seed={p.id || p.atb_id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={136} />
@@ -697,12 +697,62 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
           background: rgba(201,168,76,.04);
         }
         @media (max-width: 860px) {
-          .vi-profile-grid { grid-template-columns: 1fr !important; }
+          .vi-profile-grid {
+            grid-template-columns: minmax(0, 1fr) !important;
+            gap: 28px !important;
+          }
         }
         @media (max-width: 640px) {
           .vi-stat-strip { flex-wrap: wrap !important; }
-          .vi-header-block { margin-top: -60px !important; }
-          .vi-cta-intro { flex-direction: column !important; align-items: flex-start !important; }
+          .vi-stat-strip > * { flex: 1 1 42% !important; min-width: 0 !important; }
+          .vi-header-block {
+            margin-top: -36px !important;
+            align-items: flex-start !important;
+            gap: 16px !important;
+          }
+          .vi-avatar-frame {
+            width: 104px !important;
+            height: 104px !important;
+          }
+          .vi-header-block > div:nth-child(2) {
+            flex: 1 1 calc(100% - 120px) !important;
+            min-width: 0 !important;
+            padding-bottom: 0 !important;
+            align-self: center !important;
+          }
+          .vi-header-block > div:nth-child(2) > div:first-child {
+            overflow-wrap: anywhere;
+            font-size: clamp(18px, 5vw, 24px) !important;
+          }
+          .vi-header-block > div:nth-child(2) span {
+            max-width: 100%;
+            overflow-wrap: anywhere;
+          }
+          .vi-profile-grid {
+            margin-top: 28px !important;
+            margin-bottom: 48px !important;
+            padding-left: 18px !important;
+            padding-right: 18px !important;
+          }
+          .vi-cta-intro {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            padding: 20px !important;
+            gap: 16px !important;
+          }
+          .vi-cta-intro button,
+          .vi-cta-intro a {
+            max-width: 100%;
+            white-space: normal !important;
+            text-align: center;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .vi-header-block *, .vi-stat-strip * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            scroll-behavior: auto !important;
+          }
         }
       `}</style>
     </>
