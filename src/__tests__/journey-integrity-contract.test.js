@@ -88,6 +88,17 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(source).toContain(".eq('taster_id', tasterId)")
   })
 
+  test('assessment handoff issuance refuses contact-owner and role conflicts', () => {
+    const handoff = read('src/app/api/valu-handoff/route.js')
+    const continuation = read('src/app/journey/continue/route.js')
+    expect(handoff).toContain('candidate?.linked_user_id && candidate.linked_user_id !== user.id')
+    expect(handoff).toContain('candidate?.candidate_email')
+    expect(handoff).toContain('candidate?.candidate_role')
+    expect(continuation).toContain('candidate?.linked_user_id&&candidate.linked_user_id!==user.id')
+    expect(continuation).toContain('candidate?.candidate_email')
+    expect(continuation).toContain('candidate?.candidate_role')
+  })
+
   test('value activation is idempotent and does not silently lose its audit event', () => {
     const source = read('src/app/api/journey/value-activation/route.js')
     expect(source).toContain('alreadyActivated')
