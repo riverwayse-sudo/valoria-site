@@ -126,6 +126,13 @@ export async function GET(request){
   const orphanedAssessments=completedAssessments.filter(a=>!a.user_id)
   const {data:userList}=await supabase.auth.admin.listUsers({page:1,perPage:1000})
   const accounts=(userList?.users||[]).map(u=>({id:u.id,email:u.email||null,name:profileMap.get(u.id)?.display_name||u.user_metadata?.full_name||u.user_metadata?.name||null}))
+  const accountsByEmail=new Map((userList?.users||[]).filter(u=>u.email).map(u=>[String(u.email).trim().toLowerCase(),u]))
+  for(const taster of unlinkedCompletedTasters){
+    const email=String(taster.identity_candidate?.candidate_email||'').trim().toLowerCase()
+    if(!email) continue
+    const account=accountsByEmail.get(email)
+    taster.identity_candidate.account_email_match_status=!account?'no_account_email_match':account.email_confirmed_at?'confirmed_account_email_candidate':'unconfirmed_account_email_candidate'
+  }
   const reconciliations=orphanedAssessments.map(a=>{
     const target=normalise(a.name)
     const candidates=target?accounts.filter(x=>normalise(x.name)===target):[]
