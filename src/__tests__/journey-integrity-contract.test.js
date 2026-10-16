@@ -62,6 +62,12 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
   })
 
+  test('professional signup sends the user through authenticated continuation for the full assessment', () => {
+    const source = read('src/app/professional-signup/page.jsx')
+    expect(source).toContain('https://valoriainstitute.com/journey/continue?stage=assess&taster_id=')
+    expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
+  })
+
   test('value activation is idempotent and does not silently lose its audit event', () => {
     const source = read('src/app/api/journey/value-activation/route.js')
     expect(source).toContain('alreadyActivated')
