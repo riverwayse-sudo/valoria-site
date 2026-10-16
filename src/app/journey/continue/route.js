@@ -7,6 +7,7 @@ const SB_URL=process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const SERVICE=process.env.SUPABASE_SERVICE_ROLE_KEY
 const ASSESSMENT_ORIGIN='https://valoriainstitute.com/valu/assessment/'
+const norm=value=>String(value||'').trim().toLowerCase().replace(/\\s+/g,' ')
 
 async function getUser(request){
  if(!SB_URL||!SB_ANON)return null
@@ -37,6 +38,12 @@ async function stageTarget(request,stage,user){
  const {data:taster,error}=await query.maybeSingle()
  if(error)return '/journey'
  if(!taster)return '/profile/claim-assessment'
+ const {data:candidate,error:candidateError}=await admin.from('taster_identity_candidates')
+  .select('candidate_email,candidate_role,linked_user_id').eq('taster_id',taster.id).maybeSingle()
+ if(candidateError)return '/profile/claim-assessment'
+ if(candidate?.linked_user_id&&candidate.linked_user_id!==user.id)return '/profile/claim-assessment'
+ if(candidate?.candidate_email&&norm(candidate.candidate_email)!==norm(user.email))return '/profile/claim-assessment'
+ if(candidate?.candidate_role&&norm(candidate.candidate_role)!==norm(taster.role))return '/profile/claim-assessment'
  let handoffToken
  try { handoffToken=createValuHandoffToken(user.id,taster.id) } catch { return '/journey' }
  const destination=new URL(ASSESSMENT_ORIGIN)
