@@ -52,7 +52,8 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(handoff).toContain('createValuHandoffToken(user.id, taster.id)')
     expect(handoff).toContain('destination.hash')
     expect(continuation).toContain('createValuHandoffToken(user.id,taster.id)')
-    expect(continuation).toContain("login.searchParams.set('returnTo',returnTo)")
+    expect(continuation).toContain("login.searchParams.set('returnTo','/journey/continue?'+continuationParams.toString())")
+    expect(continuation).toContain("destinationParams.set('resume',resumeToken)")
     expect(continuation).not.toContain("return NextResponse.redirect(new URL(ASSESSMENT_ORIGIN+'/',request.url))")
   })
 
@@ -60,6 +61,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     const source = read('src/app/api/cron/valu-reminders/route.js')
     expect(source).toContain('/journey/continue?stage=assess&taster_id=')
     expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
+    expect(source).toContain('email_confirmed_at')
   })
 
   test('professional signup sends the user through authenticated continuation for the full assessment', () => {
