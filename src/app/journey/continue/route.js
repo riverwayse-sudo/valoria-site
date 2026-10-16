@@ -40,7 +40,10 @@ async function stageTarget(request,stage,user){
  let handoffToken
  try { handoffToken=createValuHandoffToken(user.id,taster.id) } catch { return '/journey' }
  const destination=new URL(ASSESSMENT_ORIGIN)
- destination.search=new URLSearchParams({full:'1',taster_id:taster.id,name:taster.name||'',role:taster.role||'',experience:taster.experience||''}).toString()
+ const destinationParams=new URLSearchParams({full:'1',taster_id:taster.id,name:taster.name||'',role:taster.role||'',experience:taster.experience||''})
+ const resumeToken=request.nextUrl.searchParams.get('resume')?.trim()
+ if(resumeToken)destinationParams.set('resume',resumeToken)
+ destination.search=destinationParams.toString()
  destination.hash=new URLSearchParams({handoff_token:handoffToken}).toString()
  return destination.toString()
 }
@@ -54,9 +57,12 @@ export async function GET(request){
   if(!user){
    if(stage==='assess'){
     const login=new URL('/login',request.url)
+    const continuationParams=new URLSearchParams({stage:'assess'})
     const requestedTasterId=request.nextUrl.searchParams.get('taster_id')?.trim()
-    const returnTo='/journey/continue?stage=assess'+(requestedTasterId?'&taster_id='+encodeURIComponent(requestedTasterId):'')
-    login.searchParams.set('returnTo',returnTo)
+    const resumeToken=request.nextUrl.searchParams.get('resume')?.trim()
+    if(requestedTasterId)continuationParams.set('taster_id',requestedTasterId)
+    if(resumeToken)continuationParams.set('resume',resumeToken)
+    login.searchParams.set('returnTo','/journey/continue?'+continuationParams.toString())
     return NextResponse.redirect(login)
    }
    const signup=new URL('/signup',request.url)
