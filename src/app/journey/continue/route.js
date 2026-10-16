@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
+import { createValuHandoffToken } from '@/lib/valu-handoff-token'
 
 const SB_URL=process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const SERVICE=process.env.SUPABASE_SERVICE_ROLE_KEY
-const ASSESSMENT_ORIGIN='https://valoriainstitute.com/valu/assessment'
+const ASSESSMENT_ORIGIN='https://valoriainstitute.com/valu/assessment/'
 
 async function getUser(request){
  if(!SB_URL||!SB_ANON)return null
@@ -26,12 +27,25 @@ async function stageTarget(request,stage,user){
   opportunity:'/opportunities'
  }
  if(stage!=='assess')return routes[stage]||'/journey'
- if(!user||!SERVICE||!SB_URL)return ASSESSMENT_ORIGIN+'/'
+ if(!user||!SERVICE||!SB_URL)return '/login'
+ if(!user.email_confirmed_at)return '/login'
  const admin=createClient(SB_URL,SERVICE,{auth:{persistSession:false,autoRefreshToken:false}})
- const {data:taster}=await admin.from('taster_sessions').select('id,name,role,experience').eq('user_id',user.id).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle()
- if(!taster)return ASSESSMENT_ORIGIN+'/'
- const params=new URLSearchParams({full:'1',taster_id:taster.id,name:taster.name||'',role:taster.role||'',experience:taster.experience||''})
- return ASSESSMENT_ORIGIN+'/?'+params.toString()
+ const requestedTasterId=request.nextUrl.searchParams.get('taster_id')?.trim()
+ let query=admin.from('taster_sessions').select('id,name,role,experience,completed_at').eq('user_id',user.id).not('completed_at','is',null)
+ if(requestedTasterId) query=query.eq('id',requestedTasterId)
+ else query=query.order('completed_at',{ascending:false}).limit(1)
+ const {data:taster,error}=await query.maybeSingle()
+ if(error)return '/journey'
+ if(!taster)return '/profile/claim-assessment'
+ let handoffToken
+ try { handoffToken=createValuHandoffToken(user.id,taster.id) } catch { return '/journey' }
+ const destination=new URL(ASSESSMENT_ORIGIN)
+ const destinationParams=new URLSearchParams({full:'1',taster_id:taster.id,name:taster.name||'',role:taster.role||'',experience:taster.experience||''})
+ const resumeToken=request.nextUrl.searchParams.get('resume')?.trim()
+ if(resumeToken)destinationParams.set('resume',resumeToken)
+ destination.search=destinationParams.toString()
+ destination.hash=new URLSearchParams({handoff_token:handoffToken}).toString()
+ return destination.toString()
 }
 
 export async function GET(request){
@@ -41,7 +55,16 @@ export async function GET(request){
  if(stage&&!token){
   const user=await getUser(request)
   if(!user){
-   if(stage==='assess')return NextResponse.redirect(new URL(ASSESSMENT_ORIGIN+'/',request.url))
+   if(stage==='assess'){
+    const login=new URL('/login',request.url)
+    const continuationParams=new URLSearchParams({stage:'assess'})
+    const requestedTasterId=request.nextUrl.searchParams.get('taster_id')?.trim()
+    const resumeToken=request.nextUrl.searchParams.get('resume')?.trim()
+    if(requestedTasterId)continuationParams.set('taster_id',requestedTasterId)
+    if(resumeToken)continuationParams.set('resume',resumeToken)
+    login.searchParams.set('returnTo','/journey/continue?'+continuationParams.toString())
+    return NextResponse.redirect(login)
+   }
    const signup=new URL('/signup',request.url)
    signup.searchParams.set('returnTo','/journey/continue?stage='+encodeURIComponent(stage))
    return NextResponse.redirect(signup)
@@ -57,10 +80,9 @@ export async function GET(request){
 
  const user=await getUser(request)
  if(!user){
-  if(link.target_stage==='assess')return NextResponse.redirect(new URL(ASSESSMENT_ORIGIN+'/',request.url))
-  const signup=new URL('/signup',request.url)
-  signup.searchParams.set('returnTo','/journey/continue?token='+encodeURIComponent(token))
-  return NextResponse.redirect(signup)
+  const login=new URL('/login',request.url)
+  login.searchParams.set('returnTo','/journey/continue?token='+encodeURIComponent(token))
+  return NextResponse.redirect(login)
  }
  if(link.user_id&&link.user_id!==user.id)return NextResponse.redirect(new URL('/journey',request.url))
 
