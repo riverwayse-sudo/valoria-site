@@ -79,6 +79,15 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(source).toContain('Keep the pending ID so the user can retry')
   })
 
+  test('unowned snapshots require exact email evidence and legacy assessments are never auto-linked by name/role', () => {
+    const source = read('src/app/api/link-taster/route.js')
+    expect(source).toContain('identityCandidate?.candidate_role')
+    expect(source).toContain('if (!taster.user_id && (!identityCandidate?.candidate_email')
+    expect(source).toContain("assessmentLinkStatus = 'legacy_assessment_requires_review'")
+    expect(source).not.toContain("assessmentCandidate = (ownedLegacy || []).find")
+    expect(source).toContain(".eq('taster_id', tasterId)")
+  })
+
   test('value activation is idempotent and does not silently lose its audit event', () => {
     const source = read('src/app/api/journey/value-activation/route.js')
     expect(source).toContain('alreadyActivated')
