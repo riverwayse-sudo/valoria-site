@@ -32,3 +32,6 @@ The admin queue uses the latest review per source record:
 - `resolved_no_link`: closed for investigation only; the underlying record remains unlinked by design.
 
 The queue defaults to open work and supports all-record and closed-without-link views. Summary counts are based on the latest review per source, not the number of audit entries, so repeated reviews do not inflate the source count.
+
+## Contact-candidate evidence
+The admin report may surface candidate contact records from `taster_identity_candidates`, including lead capture, event registration, and waitlist sources. These records are leads for investigation, not canonical identity links. The queue compares candidate email, linked account ownership, and name/role consistency against the assessment and taster session. A mismatch must remain open for human review; exact email or account-owner alignment alone does not override contradictory name/role evidence.
