@@ -70,6 +70,15 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
   })
 
+  test('pending snapshot claim survives a failed link attempt so the user can retry', () => {
+    const source = read('src/app/login/page.jsx')
+    const failedLink = source.indexOf('if (!linkRes.ok)')
+    const clearPending = source.indexOf("localStorage.removeItem('pending_taster_id')")
+    expect(failedLink).toBeGreaterThan(-1)
+    expect(clearPending).toBeGreaterThan(failedLink)
+    expect(source).toContain('Keep the pending ID so the user can retry')
+  })
+
   test('value activation is idempotent and does not silently lose its audit event', () => {
     const source = read('src/app/api/journey/value-activation/route.js')
     expect(source).toContain('alreadyActivated')
