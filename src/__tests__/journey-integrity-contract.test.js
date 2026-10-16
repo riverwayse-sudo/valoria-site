@@ -41,6 +41,27 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(source).toContain('sync_professional_listing_status')
   })
 
+  test('full VALU launch links are signed, time-limited, and bound to the authenticated snapshot owner', () => {
+    const signer = read('src/lib/valu-handoff-token.js')
+    const handoff = read('src/app/api/valu-handoff/route.js')
+    const continuation = read('src/app/journey/continue/route.js')
+    expect(signer).toContain('createHmac')
+    expect(signer).toContain('valu-full-assessment')
+    expect(signer).toContain('TOKEN_TTL_SECONDS')
+    expect(handoff).toContain('user.email_confirmed_at')
+    expect(handoff).toContain('createValuHandoffToken(user.id, taster.id)')
+    expect(handoff).toContain('destination.hash')
+    expect(continuation).toContain('createValuHandoffToken(user.id,taster.id)')
+    expect(continuation).toContain("login.searchParams.set('returnTo',returnTo)")
+    expect(continuation).not.toContain("return NextResponse.redirect(new URL(ASSESSMENT_ORIGIN+'/',request.url))")
+  })
+
+  test('assessment reminder links require account continuation instead of anonymous assessment submission', () => {
+    const source = read('src/app/api/cron/valu-reminders/route.js')
+    expect(source).toContain('/journey/continue?stage=assess&taster_id=')
+    expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
+  })
+
   test('value activation is idempotent and does not silently lose its audit event', () => {
     const source = read('src/app/api/journey/value-activation/route.js')
     expect(source).toContain('alreadyActivated')
