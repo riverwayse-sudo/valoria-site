@@ -55,18 +55,24 @@ export async function POST(request) {
   if (!user.email_confirmed_at) return NextResponse.json({ error: 'Verify your email before linking a saved VALU snapshot.' }, { status: 403 })
   const { data: identityCandidate, error: candidateLookupError } = await admin
     .from('taster_identity_candidates')
-    .select('candidate_email,linked_user_id')
+    .select('candidate_email,candidate_role,linked_user_id,identity_status')
     .eq('taster_id', tasterId)
     .maybeSingle()
   if (candidateLookupError) return NextResponse.json({ error: 'Could not verify snapshot identity evidence.' }, { status: 502 })
   if (identityCandidate?.candidate_email && norm(identityCandidate.candidate_email) !== norm(user.email)) {
     return NextResponse.json({ error: 'The saved snapshot email evidence does not match this account. Valoria support must review the identity before linking.' }, { status: 403 })
   }
+  if (identityCandidate?.candidate_role && norm(identityCandidate.candidate_role) !== norm(taster.role)) {
+    return NextResponse.json({ error: 'The saved snapshot role conflicts with the contact evidence. Valoria support must review the identity before linking.' }, { status: 403 })
+  }
   if (identityCandidate?.linked_user_id && identityCandidate.linked_user_id !== user.id) {
     return NextResponse.json({ error: 'This snapshot evidence is already connected to another account.' }, { status: 409 })
   }
   if (taster.user_id && taster.user_id !== user.id) {
     return NextResponse.json({ error: 'This snapshot is already linked to another account.' }, { status: 409 })
+  }
+  if (!taster.user_id && (!identityCandidate?.candidate_email || norm(identityCandidate.candidate_email) !== norm(user.email))) {
+    return NextResponse.json({ error: 'This snapshot has no matching verified email evidence. Valoria support must review the identity before linking.' }, { status: 403 })
   }
 
   const { data: existingProfile, error: profileError } = await admin
@@ -115,14 +121,26 @@ export async function POST(request) {
     return NextResponse.json({ error: 'The existing snapshot link is incomplete. Please contact Valoria support.' }, { status: 409 })
   }
 
-  const { error: identityProjectionError } = await admin.from('taster_identity_candidates')
-    .update({ identity_status: 'account_linked', linked_user_id: user.id, resolution_notes: 'Claimed through confirmed-email authentication and saved snapshot identity verification.', last_reconciled_at: new Date().toISOString() })
-    .eq('taster_id', tasterId).is('linked_user_id', null)
-  if (identityProjectionError) return NextResponse.json({ error: 'Snapshot linked, but the identity record could not be updated.' }, { status: 502 })
+  if (identityCandidate) {
+    const { data: projectedCandidate, error: identityProjectionError } = await admin.from('taster_identity_candidates')
+      .update({ identity_status: 'account_linked', linked_user_id: user.id, resolution_notes: 'Claimed through confirmed-email authentication, exact candidate-email match, and saved snapshot identity verification.', last_reconciled_at: new Date().toISOString() })
+      .eq('taster_id', tasterId)
+      .or(`linked_user_id.is.null,linked_user_id.eq.${user.id}`)
+      .select('taster_id,linked_user_id,identity_status')
+      .maybeSingle()
+    if (identityProjectionError) return NextResponse.json({ error: 'Snapshot linked, but the identity record could not be updated.' }, { status: 502 })
+    if (!projectedCandidate) {
+      const { data: currentCandidate, error: currentCandidateError } = await admin.from('taster_identity_candidates')
+        .select('linked_user_id,identity_status').eq('taster_id', tasterId).maybeSingle()
+      if (currentCandidateError) return NextResponse.json({ error: 'Could not verify the snapshot identity state.' }, { status: 502 })
+      if (currentCandidate?.linked_user_id !== user.id || currentCandidate.identity_status !== 'account_linked') {
+        return NextResponse.json({ error: 'Snapshot linked, but identity evidence still needs review. Please retry or contact Valoria support.' }, { status: 409 })
+      }
+    }
+  }
 
-  // Stitch a completed full assessment to the now-verified account. New submissions
-  // normally already carry taster_id; this also repairs the common signup-after-assessment
-  // path where the assessment exists but user_id was null at submission time.
+  // Attach a full assessment automatically only when its exact taster_id already matches.
+  // Legacy rows with no taster_id are never linked by name/role alone; they remain for manual review.
   let assessmentLinkStatus = 'no_completed_assessment';
   let assessmentCandidate = null;
   const { data: byTaster, error: byTasterError } = await admin
@@ -150,9 +168,10 @@ export async function POST(request) {
     if (ownedLegacyError) {
       return NextResponse.json({ error: 'Snapshot linked, but legacy assessment recovery could not be checked.' }, { status: 502 })
     }
-    assessmentCandidate = (ownedLegacy || []).find(a =>
+    const legacyNameRoleCandidate = (ownedLegacy || []).some(a =>
       norm(a.name) === norm(taster.name) && norm(a.role) === norm(taster.role)
-    ) || null
+    )
+    if (legacyNameRoleCandidate) assessmentLinkStatus = 'legacy_assessment_requires_review'
   }
 
   if (assessmentCandidate) {
