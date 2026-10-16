@@ -43,7 +43,7 @@ export async function GET(request) {
   const summary={reviewed_sources:latest.length,verified_match:0,candidate_match:0,conflict:0,unmatched:0,resolved_no_link:0,open:0,closed:0}
   for(const review of latest){
     summary[review.decision]=(summary[review.decision]||0)+1
-    if(review.decision==='verified_match'||review.decision==='resolved_no_link') summary.closed++
+    if(review.decision==='resolved_no_link') summary.closed++
     else summary.open++
   }
   return Response.json({reviews,latestBySource,summary})
