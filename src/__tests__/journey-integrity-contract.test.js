@@ -29,6 +29,18 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(source).toContain('auditError')
   })
 
+  test('legacy taster claim retries partial writes and appends audit decisions without overwriting history', () => {
+    const source = read('src/app/api/claim-taster/route.js')
+    expect(source).toContain("'account_linked'")
+    expect(source).toContain("candidate.linked_user_id !== user.id")
+    expect(source).toContain("order('created_at', { ascending: false })")
+    expect(source).toContain("from('identity_reconciliation_reviews').insert({")
+    expect(source).not.toContain('.update(reviewData)')
+    expect(source).toContain('processed.length')
+    expect(source).toContain('refresh_professional_journey')
+    expect(source).toContain('sync_professional_listing_status')
+  })
+
   test('value activation is idempotent and does not silently lose its audit event', () => {
     const source = read('src/app/api/journey/value-activation/route.js')
     expect(source).toContain('alreadyActivated')
