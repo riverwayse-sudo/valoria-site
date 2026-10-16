@@ -296,11 +296,11 @@ export default function DashboardPage() {
         <div style={{ position:'fixed', top:0, left:0, right:0, height:'3px', background:GOLD, opacity:.9, zIndex:201, pointerEvents:'none' }} />
 
         {/* HEADER NAV */}
-        <header style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 clamp(20px,4vw,40px)', height:'64px', background: MID, borderBottom:`1px solid ${GLINE}`, position:'sticky', top:0, zIndex:100 }}>
+        <header className="dv-dashboard-header" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px 24px', padding:'10px clamp(16px,4vw,40px)', minHeight:'64px', background: MID, borderBottom:`1px solid ${GLINE}`, position:'sticky', top:0, zIndex:100 }}>
           <Link href="/" style={{ lineHeight:0 }}>
             <img src="/logo.png" alt="Valoria Institute" style={{ height:'40px', width:'auto' }} />
           </Link>
-          <nav className="dv-nav" style={{ display:'flex', gap:'22px', alignItems:'center' }}>
+          <nav className="dv-nav" aria-label="Dashboard navigation" style={{ display:'flex', gap:'22px', alignItems:'center', flexWrap:'wrap', justifyContent:'flex-end', minWidth:0 }}>
             <MarketplaceCTA style={{ fontSize:'12px', color: DIM, textDecoration:'none' }}>Marketplace</MarketplaceCTA>
             {isSupply && <Link href="/profile/edit" style={{ fontSize:'12px', color: DIM, textDecoration:'none' }}>Edit Profile</Link>}
             <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')}
@@ -323,7 +323,7 @@ export default function DashboardPage() {
             <polygon points="80,200 120,260 80,240 40,260" fill="rgba(201,168,76,.08)"/>
           </svg>
           {isSupply && (
-            <div style={{ position:'absolute', top:'20px', right:'28px', display:'flex', alignItems:'center', gap:'7px', background:'rgba(26,26,46,.75)', border:`1px solid ${GLINE2}`, padding:'7px 16px 7px 12px', borderRadius:'999px', fontSize:'11px', letterSpacing:'.1em', textTransform:'uppercase', color: isVisible ? '#1D9E75' : GOLD, backdropFilter:'blur(8px)' }}>
+            <div className="dv-listing-badge" style={{ position:'absolute', top:'20px', right:'clamp(16px,4vw,28px)', display:'flex', alignItems:'center', gap:'7px', background:'rgba(26,26,46,.88)', border:`1px solid ${GLINE2}`, padding:'7px 16px 7px 12px', borderRadius:'999px', fontSize:'11px', letterSpacing:'.1em', textTransform:'uppercase', color: isVisible ? '#1D9E75' : GOLD, backdropFilter:'blur(8px)', maxWidth:'calc(100% - 32px)' }}>
               <div style={{ width:'7px', height:'7px', borderRadius:'50%', background: isVisible ? '#1D9E75' : '#888', boxShadow: isVisible ? '0 0 0 0 rgba(29,158,117,.6)' : 'none', animation: isVisible ? 'dv-pulse 2s infinite' : 'none' }} />
               {listingLabel}
             </div>
@@ -337,7 +337,7 @@ export default function DashboardPage() {
 
             {/* Avatar — individual professionals only; employer/organiser accounts are businesses, not people */}
             {isSupply && (
-              <div style={{ width:'112px', height:'112px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
+              <div className="dv-avatar-frame" style={{ width:'112px', height:'112px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
                 <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
                   <div style={{ width:'100%', height:'100%', borderRadius:'50%', overflow:'hidden' }}>
                     <ValoriaAvatar src={p.photo_url} seed={p.id || user?.id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={112} />
@@ -726,13 +726,26 @@ export default function DashboardPage() {
         }
         @media (max-width: 860px) {
           .dv-grid { grid-template-columns: 1fr !important; }
+          .dv-dashboard-header { align-items: center; }
         }
         @media (max-width: 640px) {
-          .dv-stat-strip { flex-wrap: wrap !important; }
+          .dv-dashboard-header { flex-wrap: wrap; row-gap: 10px !important; padding-top: 12px !important; padding-bottom: 12px !important; }
+          .dv-dashboard-header > a { flex: 0 0 auto; }
+          .dv-nav { flex: 1 1 100%; width: 100%; gap: 8px !important; justify-content: flex-start !important; }
+          .dv-nav a, .dv-nav button { font-size: 10px !important; padding: 7px 9px !important; white-space: nowrap; }
+          .dv-listing-badge { top: 12px !important; right: 12px !important; max-width: calc(100% - 24px) !important; font-size: 9px !important; padding: 6px 10px !important; }
           .dv-header-block { margin-top: 18px !important; gap: 16px !important; align-items: flex-start !important; }
-          .dv-nav { gap: 8px !important; }
-          .dv-nav a, .dv-nav button { font-size: 10px !important; padding: 7px 9px !important; }
+          .dv-avatar-frame { width: 88px !important; height: 88px !important; }
+          .dv-avatar-frame > div { width: 100% !important; height: 100% !important; }
+          .dv-header-block > div:nth-child(2) { flex: 1 1 calc(100% - 104px) !important; min-width: 0 !important; padding-bottom: 0 !important; overflow-wrap: anywhere; }
           .dv-header-block > div:last-child { width: 100%; padding-bottom: 0 !important; }
+          .dv-header-block > div:last-child button, .dv-header-block > div:last-child a { justify-content: center; }
+          .dv-stat-strip > * { flex: 1 1 45% !important; padding: 14px 10px !important; border-right: none !important; border-bottom: 1px solid ${GLINE} !important; min-width: 0; overflow-wrap: anywhere; }
+        }
+        @media (max-width: 380px) {
+          .dv-avatar-frame { width: 72px !important; height: 72px !important; }
+          .dv-header-block > div:nth-child(2) { flex-basis: calc(100% - 88px) !important; }
+          .dv-header-block > div:nth-child(2) > div:nth-child(2) { font-size: 20px !important; overflow-wrap: anywhere; }
         }
       `}</style>
     </>
