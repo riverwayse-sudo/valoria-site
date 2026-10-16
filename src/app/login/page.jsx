@@ -68,7 +68,6 @@ export default function LoginPage() {
       // Complete a professional VALU snapshot handoff that was paused for email confirmation.
       const pendingTasterId = localStorage.getItem('pending_taster_id')
       if (pendingTasterId && session?.access_token) {
-        localStorage.removeItem('pending_taster_id')
         const linkRes = await fetch('/api/link-taster', {
           method: 'POST',
           headers: {
@@ -79,10 +78,12 @@ export default function LoginPage() {
         })
         const linkData = await linkRes.json().catch(() => ({}))
         if (!linkRes.ok) {
+          // Keep the pending ID so the user can retry after a transient failure.
           setError(linkData.error || 'Your VALU result could not be linked to this account.')
           setLoading(false)
           return
         }
+        localStorage.removeItem('pending_taster_id')
         // Restore any completed full VALU assessment attached to the same taster.
         // A taster-only record is still valid; in that case the claim endpoint
         // simply reports that no completed assessment exists and onboarding continues.
