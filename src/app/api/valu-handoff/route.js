@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createValuHandoffToken } from '@/lib/valu-handoff-token'
 
 function getAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -16,8 +17,16 @@ export async function GET(request) {
   if (!token) return NextResponse.json({ error:'Unauthorized' }, { status:401 })
   const { data: userData, error:userError } = await admin.auth.getUser(token)
   if (userError || !userData?.user) return NextResponse.json({ error:'Unauthorized' }, { status:401 })
-  const { data:taster } = await admin.from('taster_sessions').select('id,name,role,experience').eq('user_id', userData.user.id).order('linked_at',{ascending:false}).limit(1).maybeSingle()
+  const user = userData.user
+  if (!user.email_confirmed_at) return NextResponse.json({ error:'Confirm your email before opening the full VALU assessment.' }, { status:403 })
+  const { data:taster, error:tasterError } = await admin.from('taster_sessions').select('id,name,role,experience,completed_at').eq('user_id', user.id).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle()
+  if (tasterError) return NextResponse.json({ error:'Could not verify your completed VALU snapshot.' }, { status:502 })
   if (!taster) return NextResponse.json({ url:'https://valoriainstitute.com/valu/assessment/' })
-  await admin.from('valoria_journey_events').insert({ user_id:userData.user.id, event_key:'assessment_handoff', source:'taster_session', source_id:taster.id, metadata:{ destination:'valoriainstitute.com/valu/assessment', mode:'full' } })
-  return NextResponse.json({ url:`https://valoriainstitute.com/valu/assessment/?full=1&taster_id=${encodeURIComponent(taster.id)}&name=${encodeURIComponent(taster.name||'')}&role=${encodeURIComponent(taster.role||'')}&experience=${encodeURIComponent(taster.experience||'')}` })
+  let handoffToken
+  try { handoffToken = createValuHandoffToken(user.id, taster.id) } catch { return NextResponse.json({ error:'Secure VALU handoff is unavailable.' }, { status:503 }) }
+  await admin.from('valoria_journey_events').insert({ user_id:user.id, event_key:'assessment_handoff', source:'taster_session', source_id:taster.id, metadata:{ destination:'valoriainstitute.com/valu/assessment', mode:'full', token_ttl_seconds:14400 } })
+  const destination = new URL('https://valoriainstitute.com/valu/assessment/')
+  destination.search = new URLSearchParams({ full:'1', taster_id:taster.id, name:taster.name||'', role:taster.role||'', experience:taster.experience||'' }).toString()
+  destination.hash = new URLSearchParams({ handoff_token:handoffToken }).toString()
+  return NextResponse.json({ url:destination.toString() }, { headers:{'Cache-Control':'no-store','Referrer-Policy':'no-referrer'} })
 }
