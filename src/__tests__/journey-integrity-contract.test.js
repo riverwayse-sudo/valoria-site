@@ -219,7 +219,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(apply).toContain("assessment.user_id!==t.user_id")
     expect(apply).toContain(".is('taster_id',null)")
     expect(apply).toContain("admin_applied_verified_taster_link")
-    expect(reviews).toContain("review.application_state='applied'")
+    expect(reviews).toContain("review.application_state=applied?'applied'")
     expect(page).toContain('applyTasterLink')
     expect(page).toContain('REVIEW EVIDENCE FIRST')
   })
