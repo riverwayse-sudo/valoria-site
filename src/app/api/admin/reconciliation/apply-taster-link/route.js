@@ -50,8 +50,13 @@ export async function POST(request) {
   }
   const {data:confirmed,error:verifyError}=await supabase.from('valu_assessments').select('id,user_id,taster_id').eq('id',assessmentId).maybeSingle()
   if(verifyError||!confirmed||confirmed.user_id!==t.user_id||confirmed.taster_id!==tasterId) return Response.json({error:'Could not confirm the applied link.'},{status:502})
-  const {error:auditError}=await supabase.from('platform_audit_events').insert({actor_user_id:user.id,subject_user_id:t.user_id,entity_type:'valu_assessment',entity_id:assessmentId,action:'admin_applied_verified_taster_link',before_state:{taster_id:a.taster_id,user_id:a.user_id},after_state:{taster_id:tasterId,user_id:t.user_id},reason:'Review '+review.id+'; '+review.evidence_type+': '+review.evidence_reference+'. '+String(review.notes||'').slice(0,1200)})
-  if(auditError) return Response.json({ok:false,applied:true,error:'Link is verified but audit logging failed. Retry to complete the audit record.'},{status:502})
+  const auditReason='Review '+review.id+'; '+review.evidence_type+': '+review.evidence_reference+'. '+String(review.notes||'').slice(0,1200)
+  const {data:priorAudit,error:priorAuditError}=await supabase.from('platform_audit_events').select('id').eq('entity_type','valu_assessment').eq('entity_id',assessmentId).eq('action','admin_applied_verified_taster_link').ilike('reason','Review '+review.id+';%').limit(1).maybeSingle()
+  if(priorAuditError) return Response.json({ok:false,applied:true,error:'Could not verify the audit trail. Retry after checking audit state.'},{status:502})
+  if(!priorAudit) {
+    const {error:auditError}=await supabase.from('platform_audit_events').insert({actor_user_id:user.id,subject_user_id:t.user_id,entity_type:'valu_assessment',entity_id:assessmentId,action:'admin_applied_verified_taster_link',before_state:{taster_id:a.taster_id,user_id:a.user_id},after_state:{taster_id:tasterId,user_id:t.user_id},reason:auditReason})
+    if(auditError) return Response.json({ok:false,applied:true,error:'Link is verified but audit logging failed. Retry to complete the audit record.'},{status:502})
+  }
   const {error:journeyError}=await supabase.rpc('refresh_professional_journey',{p_user_id:t.user_id})
   if(journeyError) return Response.json({ok:false,applied:true,audited:true,error:'Link is applied and audited, but journey refresh failed. Retry to refresh journey state.'},{status:502})
   return Response.json({ok:true,applied:true,audited:true,assessmentId,tasterId})
