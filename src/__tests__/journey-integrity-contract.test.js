@@ -241,6 +241,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(monitor).toContain('CRON_SECRET')
     expect(monitor).toContain('rpc/run_valu_reconciliation_health')
     expect(monitor).toContain('rpc/record_valu_reconciliation_health_snapshot')
+    expect(monitor).toContain('missing_taster_link_assessments_without_verified_taster_review')
     expect(monitor).toContain('platform_notifications')
     expect(monitor).not.toContain("from('valu_assessments').update")
     expect(config).toContain('/api/cron/reconciliation-health')

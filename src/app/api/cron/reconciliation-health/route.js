@@ -12,6 +12,7 @@ const CRON_SECRET = process.env.CRON_SECRET
 const ALERT_METRICS = [
   ['completed_assessments_missing_taster_id', 'completed assessments missing a snapshot link'],
   ['missing_taster_link_assessments_without_review', 'missing-link assessments without a review entry'],
+  ['missing_taster_link_assessments_without_verified_taster_review', 'missing-link assessments without a verified taster review'],
   ['completed_assessment_taster_owner_conflicts', 'assessment/snapshot owner or identity conflicts'],
   ['assessment_identity_owner_conflicts', 'assessment identity-audit owner conflicts'],
   ['completed_assessments_missing_assessment_identity_audit_link', 'assessments missing their account identity-audit link'],
