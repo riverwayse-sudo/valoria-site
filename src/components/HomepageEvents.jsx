@@ -12,7 +12,7 @@ function labelForState(state) {
 }
 
 export default function HomepageEvents() {
-  const [active, setActive] = useState(0)
+  const [active, setActive] = useState(() => Math.max(0, sessions.findIndex((session) => session.youtubeVideoId)))
   const [paused, setPaused] = useState(false)
   const current = sessions[active]
   const state = getSessionState(current)
@@ -41,8 +41,8 @@ export default function HomepageEvents() {
         <div className="home-events-feature" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
           <div className="home-events-video">
             <iframe
-              src="https://www.youtube.com/embed/B9dD22vTErI"
-              title="Valoria Institute replay"
+              src={`https://www.youtube.com/embed/${current.youtubeVideoId || 'B9dD22vTErI'}`}
+              title={current.title + ' — Valoria Institute'}
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
@@ -85,6 +85,7 @@ export default function HomepageEvents() {
 
         <div className="home-events-footer">
           <span>PAST CONVERSATIONS · REPLAYS · UPCOMING PROGRAMMES</span>
+          <a href="/events#webinar">WATCH THE WEBINAR <span aria-hidden="true">→</span></a>
           <a href="/events">VIEW ALL EVENTS <span aria-hidden="true">→</span></a>
         </div>
       </div>
