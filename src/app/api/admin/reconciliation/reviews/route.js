@@ -21,6 +21,7 @@ const CANDIDATE_TYPES=new Set(['assessment','taster','profile','account'])
 const DECISIONS=new Set(['verified_match','candidate_match','conflict','unmatched','resolved_no_link'])
 const EVIDENCE_TYPES=new Set(['stable_id','authenticated_account','verified_email','submission_log','release_log','admin_documentation','manual_review','other'])
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const norm=value=>String(value||'').trim().toLowerCase().replace(/\\s+/g,' ')
 
 export async function GET(request) {
   const {supabase,response}=await requireAdmin(request)
@@ -56,7 +57,7 @@ export async function GET(request) {
   for(const review of linkReviews){
     const assessment=assessmentsById[review.source_record_id]
     const taster=tastersById[review.candidate_record_id]
-    const applied=Boolean(assessment&&taster&&assessment.taster_id===taster.id&&assessment.user_id&&assessment.user_id===taster.user_id&&String(assessment.name||'').trim().toLowerCase()===String(taster.name||'').trim().toLowerCase()&&String(assessment.role||'').trim().toLowerCase()===String(taster.role||'').trim().toLowerCase())
+    const applied=Boolean(assessment&&taster&&assessment.taster_id===taster.id&&assessment.user_id&&assessment.user_id===taster.user_id&&norm(assessment.name)===norm(taster.name)&&norm(assessment.role)===norm(taster.role))
     review.application_state=applied?'applied':'awaiting_link'
   }
   const summary={reviewed_sources:latest.length,verified_match:0,candidate_match:0,conflict:0,unmatched:0,resolved_no_link:0,applied:0,open:0,closed:0}
