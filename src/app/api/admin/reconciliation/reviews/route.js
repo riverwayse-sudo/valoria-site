@@ -21,7 +21,7 @@ const CANDIDATE_TYPES=new Set(['assessment','taster','profile','account'])
 const DECISIONS=new Set(['verified_match','candidate_match','conflict','unmatched','resolved_no_link'])
 const EVIDENCE_TYPES=new Set(['stable_id','authenticated_account','verified_email','submission_log','release_log','admin_documentation','manual_review','other'])
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-const norm=value=>String(value||'').trim().toLowerCase().replace(/\\s+/g,' ')
+const norm=value=>String(value||'').trim().toLowerCase().replace(/\s+/g,' ')
 
 export async function GET(request) {
   const {supabase,response}=await requireAdmin(request)
