@@ -41,7 +41,7 @@ export default function HomepageEvents() {
         <div className="home-events-feature" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
           <div className="home-events-video">
             <iframe
-              src="https://www.youtube.com/embed/B9dD22vTErI"
+              src={`https://www.youtube.com/embed/${current.youtubeVideoId || 'B9dD22vTErI'}`}
               title="Valoria Institute replay"
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -85,6 +85,7 @@ export default function HomepageEvents() {
 
         <div className="home-events-footer">
           <span>PAST CONVERSATIONS · REPLAYS · UPCOMING PROGRAMMES</span>
+          <a href="/events#webinar">WATCH THE WEBINAR <span aria-hidden="true">→</span></a>
           <a href="/events">VIEW ALL EVENTS <span aria-hidden="true">→</span></a>
         </div>
       </div>
