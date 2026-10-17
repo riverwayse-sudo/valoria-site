@@ -12,7 +12,7 @@ function labelForState(state) {
 }
 
 export default function HomepageEvents() {
-  const [active, setActive] = useState(0)
+  const [active, setActive] = useState(() => Math.max(0, sessions.findIndex((session) => session.youtubeVideoId)))
   const [paused, setPaused] = useState(false)
   const current = sessions[active]
   const state = getSessionState(current)
