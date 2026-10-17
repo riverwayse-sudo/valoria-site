@@ -52,3 +52,10 @@ The confirmed-email taster claim endpoint must be safe to retry after any partia
 A full assessment must be launched from an authenticated Valoria account. The site issues a signed, four-hour handoff bound to the authenticated user ID and exact completed taster ID. The token is placed in the URL fragment (not the HTTP query), removed from the visible URL on page load, and sent only in request bodies. The assessment API verifies the signature, audience, expiry, taster ID, owner, confirmed account email, and saved name/role before accepting a score or attaching it to a profile.
 
 Direct links without a valid handoff—including previously sent recovery-email links—must stop before displaying the questions and offer the signup/sign-in route. Reminder emails for already-linked tasters route through `/journey/continue?stage=assess&taster_id=...`, which authenticates the user and issues a fresh token. Re-submitting the same completed assessment for the same owner and snapshot returns the canonical stored result, allowing a fresh handoff to retry attachment without creating a duplicate score.
+
+
+## Claim eligibility and legacy assessment rule
+
+A new taster ownership claim requires a confirmed account email that exactly matches the stored contact candidate, plus a match to the account's stored name and the candidate's role when present. Missing contact-email evidence, a role discrepancy, or a different linked account stops the claim and leaves it for manual review. Existing ownership by the same account can be retried to repair projection state.
+
+A completed full assessment with an exact matching `taster_id` can be attached after ownership verification. A legacy full assessment with `taster_id IS NULL` is never attached merely because account ID, name, and role appear to match. The account may be linked to the taster, but the legacy assessment stays in the reconciliation queue with `legacy_assessment_requires_review` until a separate evidence-backed review confirms the relationship.
