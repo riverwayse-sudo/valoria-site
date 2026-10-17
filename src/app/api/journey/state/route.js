@@ -16,9 +16,14 @@ export async function GET(request) {
     cookies: { getAll: () => request.cookies.getAll(), setAll: () => {} },
   })
 
+  // Detect a genuinely absent session before verifying any presented session.
+  // getSession() is used only for presence; getUser() remains the authority for identity.
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+  if (sessionError) return NextResponse.json({ error: 'Authentication could not be verified.' }, { status: 401 })
+  if (!session) return NextResponse.json({ authenticated: false, state: null })
+
   const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError) return NextResponse.json({ error: 'Authentication could not be verified.' }, { status: 401 })
-  if (!user) return NextResponse.json({ authenticated: false, state: null })
+  if (authError || !user) return NextResponse.json({ error: 'Authentication could not be verified.' }, { status: 401 })
 
   const admin = createClient(SB_URL, SERVICE, {
     auth: { persistSession: false, autoRefreshToken: false },
