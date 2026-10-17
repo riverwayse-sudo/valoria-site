@@ -206,4 +206,21 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(dashboard).not.toContain('OBJECTIVES CLEARED')
   })
 
+
+  test('identity reconciliation cannot change owners or attach a taster without a verified, traceable review', () => {
+    const claim = read('src/app/api/admin/reconciliation/claim/route.js')
+    const apply = read('src/app/api/admin/reconciliation/apply-taster-link/route.js')
+    const reviews = read('src/app/api/admin/reconciliation/reviews/route.js')
+    const page = read('src/app/admin/reconciliation/page.jsx')
+    expect(claim).toContain("review.decision!=='verified_match'")
+    expect(claim).toContain("review.candidate_record_type!=='account'")
+    expect(claim).toContain('target.user.email_confirmed_at')
+    expect(apply).toContain("review.candidate_record_type!=='taster'")
+    expect(apply).toContain("assessment.user_id!==t.user_id")
+    expect(apply).toContain(".is('taster_id',null)")
+    expect(apply).toContain("admin_applied_verified_taster_link")
+    expect(reviews).toContain("review.application_state='applied'")
+    expect(page).toContain('applyTasterLink')
+    expect(page).toContain('REVIEW EVIDENCE FIRST')
+  })
 })
