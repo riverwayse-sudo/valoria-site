@@ -98,7 +98,7 @@ export async function POST(request) {
   const {error:journeyError}=await supabase.rpc('refresh_professional_journey',{p_user_id:targetUserId})
   if(journeyError) return Response.json({error:journeyError.message},{status:500})
 
-  await supabase.from('platform_audit_events').insert({
+  const {error:auditError}=await supabase.from('platform_audit_events').insert({
     actor_user_id:user.id,
     subject_user_id:targetUserId,
     entity_type:'valu_assessment',
@@ -108,6 +108,7 @@ export async function POST(request) {
     after_state:{user_id:targetUserId,assessment_id:assessmentId},
     reason,
   })
+  if(auditError) return Response.json({ok:false,applied:true,error:'Assessment ownership is updated, but audit logging failed. Retry reconciliation to complete the audit trail.'},{status:502})
 
-  return Response.json({ok:true,assessmentId,targetUserId})
+  return Response.json({ok:true,assessmentId,targetUserId,audited:true})
 }
