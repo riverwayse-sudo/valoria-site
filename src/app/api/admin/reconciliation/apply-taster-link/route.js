@@ -42,7 +42,8 @@ export async function POST(request) {
   if(ce) return Response.json({error:'Could not verify contact evidence.'},{status:500})
   if(c?.linked_user_id&&c.linked_user_id!==t.user_id) return Response.json({error:'Contact evidence is linked to a different account.'},{status:409})
   const matches=norm(a.name)===norm(t.name)&&norm(a.role)===norm(t.role)&&(!c?.candidate_name||norm(c.candidate_name)===norm(a.name))&&(!c?.candidate_role||norm(c.candidate_role)===norm(a.role))&&(!c?.candidate_email||!a.email||String(c.candidate_email).trim().toLowerCase()===String(a.email).trim().toLowerCase())
-  if(!matches&&!discrepancyEvidence.has(review.evidence_type)) return Response.json({error:'Identity fields conflict. Traceable submission/release logs or admin documentation must explicitly resolve the discrepancy.'},{status:409})
+  const documentedDiscrepancy=discrepancyEvidence.has(review.evidence_type)&&String(review.notes||'').trim().length>=20
+  if(!matches&&!documentedDiscrepancy) return Response.json({error:'Identity fields conflict. A traceable submission/release log or admin document plus a written explanation of at least 20 characters is required.'},{status:409})
   if(a.taster_id!==tasterId) {
     const {data:updated,error:ue}=await supabase.from('valu_assessments').update({taster_id:tasterId}).eq('id',assessmentId).eq('user_id',t.user_id).is('taster_id',null).select('id,user_id,taster_id')
     if(ue) return Response.json({error:'Could not apply the reviewed link.'},{status:500})
