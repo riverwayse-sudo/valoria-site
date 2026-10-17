@@ -59,3 +59,15 @@ Direct links without a valid handoff—including previously sent recovery-email 
 A new taster ownership claim requires a confirmed account email that exactly matches the stored contact candidate, plus a match to the account's stored name and the candidate's role when present. Missing contact-email evidence, a role discrepancy, or a different linked account stops the claim and leaves it for manual review. Existing ownership by the same account can be retried to repair projection state.
 
 A completed full assessment with an exact matching `taster_id` can be attached after ownership verification. A legacy full assessment with `taster_id IS NULL` is never attached merely because account ID, name, and role appear to match. The account may be linked to the taster, but the legacy assessment stays in the reconciliation queue with `legacy_assessment_requires_review` until a separate evidence-backed review confirms the relationship.
+
+
+## Applying a verified assessment-to-snapshot link
+
+A verified_match review is an approval decision, not a write operation. The admin apply endpoint requires the latest review to name the exact assessment and taster, include a traceable evidence reference, and use an allowed evidence type. It verifies that both records are completed, already belong to the same authenticated account, and have no conflicting snapshot owner. It never transfers ownership or changes a score.
+
+Name, role, or contact discrepancies require a traceable submission log, release log, or admin documentation that explicitly explains the discrepancy. Contact-email alignment alone is insufficient. The endpoint writes an audit event, refreshes the canonical professional journey, and verifies the persisted link. The review queue marks a link as applied only after the stored assessment-to-taster reference, account owner, name, and role agree. If audit or journey refresh fails, the operation reports the partial state and remains retryable.
+
+Admin assessment-owner reconciliation also requires a latest verified_match review naming the exact account, traceable evidence, and a confirmed target account email. The UI disables direct linking until that review exists.
+
+
+Applying a verified snapshot-owner link requires a latest verified-match review naming the exact account, traceable evidence, a confirmed account email, and a completed snapshot. The endpoint never overwrites an existing different owner. If contact evidence is missing or conflicts, a submission log, release log, or admin documentation must explicitly resolve the discrepancy. It confirms the saved owner, updates the candidate projection, writes an audit event, and refreshes journey state; failed projection, audit, or refresh steps remain retryable and the review stays open until persisted state confirms the correction.
