@@ -57,6 +57,11 @@ export async function POST(request) {
   if(!review || review.decision!=='verified_match' || review.candidate_record_type!=='account' || review.candidate_record_id!==targetUserId || !review.evidence_reference || !allowedEvidence.includes(review.evidence_type)) {
     return Response.json({error:'A latest verified-match review naming this exact account and traceable evidence is required before changing assessment ownership.'},{status:409})
   }
+  const assessmentEmailMatches=Boolean(assessment.email&&target.user.email&&String(assessment.email).trim().toLowerCase()===String(target.user.email).trim().toLowerCase())
+  const documentedDiscrepancy=['submission_log','release_log','admin_documentation'].includes(review.evidence_type)&&String(review.notes||'').trim().length>=20
+  if(!assessmentEmailMatches&&!documentedDiscrepancy) {
+    return Response.json({error:'Assessment and confirmed account emails do not match. A traceable submission/release log or admin document plus a written explanation of at least 20 characters is required.'},{status:409})
+  }
 
   const {data:existing,error:existingError}=await supabase
     .from('valu_assessments')
