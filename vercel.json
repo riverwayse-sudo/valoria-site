@@ -11,6 +11,10 @@
     {
       "path": "/api/cron/event-registration-sync",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/reconciliation-health",
+      "schedule": "0 7 * * *"
     }
   ]
 }
