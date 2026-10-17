@@ -42,7 +42,7 @@ export default function HomepageEvents() {
           <div className="home-events-video">
             <iframe
               src={`https://www.youtube.com/embed/${current.youtubeVideoId || 'B9dD22vTErI'}`}
-              title="Valoria Institute replay"
+              title={current.title + ' — Valoria Institute'}
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
