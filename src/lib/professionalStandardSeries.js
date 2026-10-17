@@ -19,7 +19,7 @@ export const PROFESSIONAL_STANDARD_SERIES = [
     title: 'Execution Without Burnout: Why High Performers Plateau',
     description: 'A practical examination of the gap between being busy and creating impact, including the indispensability trap and how high performers can build a more sustainable operating model.',
     start: '2026-10-17T10:00:00+01:00', end: '2026-10-17T11:30:00+01:00', dateApproved: true,
-    speaker: 'Temi Adetokunbo', flyerPosition: 'right',
+    speaker: 'Temi Adetokunbo', flyerPosition: 'right', youtubeVideoId: 'm2ElTyJy6dg',
   },
   {
     id: '04', cluster: 'RELATIONSHIPS',
