@@ -35,12 +35,28 @@ export async function POST(request) {
     .from('valu_assessments')
     .select('id,user_id,email,name,role,total_score,completed_at,assessment_version,scoring_version')
     .eq('id',assessmentId).maybeSingle()
-  if(assessmentError) return Response.json({error:assessmentError.message},{status:500})
+  if(assessmentError) return Response.json({error:'Could not verify the assessment.'},{status:500})
   if(!assessment) return Response.json({error:'Assessment not found.'},{status:404})
+  if(!assessment.completed_at) return Response.json({error:'Only completed historical assessments can be reconciled.'},{status:409})
   if(assessment.user_id && assessment.user_id!==targetUserId) return Response.json({error:'Assessment is already owned by another account.'},{status:409})
 
   const {data:target,error:targetError}=await supabase.auth.admin.getUserById(targetUserId)
   if(targetError||!target?.user) return Response.json({error:'Target account not found.'},{status:404})
+  if(!target.user.email_confirmed_at) return Response.json({error:'The target account email must be confirmed before reconciliation.'},{status:409})
+
+  const {data:review,error:reviewError}=await supabase
+    .from('identity_reconciliation_reviews')
+    .select('id,decision,candidate_record_type,candidate_record_id,evidence_type,evidence_reference,reviewed_at')
+    .eq('source_record_type','assessment')
+    .eq('source_record_id',assessmentId)
+    .order('reviewed_at',{ascending:false})
+    .limit(1)
+    .maybeSingle()
+  if(reviewError) return Response.json({error:'Could not verify the identity review ledger.'},{status:500})
+  const allowedEvidence=['stable_id','authenticated_account','verified_email','submission_log','release_log','admin_documentation']
+  if(!review || review.decision!=='verified_match' || review.candidate_record_type!=='account' || review.candidate_record_id!==targetUserId || !review.evidence_reference || !allowedEvidence.includes(review.evidence_type)) {
+    return Response.json({error:'A latest verified-match review naming this exact account and traceable evidence is required before changing assessment ownership.'},{status:409})
+  }
 
   const {data:existing,error:existingError}=await supabase
     .from('valu_assessments')
@@ -58,12 +74,18 @@ export async function POST(request) {
   },{status:409})
 
   const before={user_id:assessment.user_id}
-  const {error:linkError}=await supabase
-    .from('valu_assessments')
-    .update({user_id:targetUserId})
-    .eq('id',assessmentId)
-    .is('user_id',null)
-  if(linkError) return Response.json({error:linkError.message},{status:500})
+  if(assessment.user_id!==targetUserId) {
+    const {data:linkedRows,error:linkError}=await supabase
+      .from('valu_assessments')
+      .update({user_id:targetUserId})
+      .eq('id',assessmentId)
+      .is('user_id',null)
+      .select('id,user_id')
+    if(linkError) return Response.json({error:'Assessment ownership could not be updated.'},{status:500})
+    if(!linkedRows?.some(row=>row.id===assessmentId&&row.user_id===targetUserId)) {
+      return Response.json({error:'Assessment ownership changed during reconciliation. Reload the record and review it again.'},{status:409})
+    }
+  }
 
   const {error:identityError}=await supabase.from('assessment_identity_links').upsert({
     assessment_id:assessmentId,
