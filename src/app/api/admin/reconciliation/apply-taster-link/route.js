@@ -7,7 +7,7 @@ function db() {
 async function requireAdmin(request) {
   const supabase=db()
   if(!supabase) return {response:Response.json({error:'Service unavailable.'},{status:503})}
-  const token=(request.headers.get('authorization')||'').replace(/^Bearer\\s+/i,'')
+  const token=(request.headers.get('authorization')||'').replace(/^Bearer\s+/i,'')
   if(!token) return {response:Response.json({error:'Not authenticated.'},{status:401})}
   const {data,error}=await supabase.auth.getUser(token)
   if(error||!data?.user?.id) return {response:Response.json({error:'Not authenticated.'},{status:401})}
@@ -16,7 +16,7 @@ async function requireAdmin(request) {
   return {supabase,user:data.user}
 }
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-const norm=v=>String(v||'').trim().toLowerCase().replace(/\\s+/g,' ')
+const norm=v=>String(v||'').trim().toLowerCase().replace(/\s+/g,' ')
 const traceable=new Set(['stable_id','authenticated_account','verified_email','submission_log','release_log','admin_documentation'])
 const discrepancyEvidence=new Set(['submission_log','release_log','admin_documentation'])
 
