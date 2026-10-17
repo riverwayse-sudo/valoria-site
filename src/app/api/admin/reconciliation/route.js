@@ -145,10 +145,16 @@ export async function GET(request){
   const accounts=(userList?.users||[]).map(u=>({id:u.id,email:u.email||null,name:profileMap.get(u.id)?.display_name||u.user_metadata?.full_name||u.user_metadata?.name||null}))
   const accountsByEmail=new Map((userList?.users||[]).filter(u=>u.email).map(u=>[String(u.email).trim().toLowerCase(),u]))
   for(const taster of unlinkedCompletedTasters){
+    if(taster.identity_candidate){
+      taster.identity_candidate.candidate_account_user_id=null
+      taster.identity_candidate.account_email_confirmed=false
+    }
     const email=String(taster.identity_candidate?.candidate_email||'').trim().toLowerCase()
     if(!email) continue
     const account=accountsByEmail.get(email)
     taster.identity_candidate.account_email_match_status=!account?'no_account_email_match':account.email_confirmed_at?'confirmed_account_email_candidate':'unconfirmed_account_email_candidate'
+    taster.identity_candidate.candidate_account_user_id=account?.id||null
+    taster.identity_candidate.account_email_confirmed=Boolean(account?.email_confirmed_at)
   }
   const reconciliations=orphanedAssessments.map(a=>{
     const target=normalise(a.name)
