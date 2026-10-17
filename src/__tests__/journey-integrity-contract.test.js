@@ -221,6 +221,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(apply).toContain("admin_applied_verified_taster_link")
     expect(reviews).toContain("review.application_state=applied?'applied'")
     expect(page).toContain('applyTasterLink')
-    expect(page).toContain('REVIEW EVIDENCE FIRST')
+    expect(page).toContain('REVIEW ACCOUNT')
+    expect(page).toContain('LINK LOCKED')
   })
 })
