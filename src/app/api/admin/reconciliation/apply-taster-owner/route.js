@@ -42,7 +42,8 @@ export async function POST(request) {
   if(candidateError) return Response.json({error:'Could not verify contact evidence.'},{status:500})
   if(candidate?.linked_user_id&&candidate.linked_user_id!==userId) return Response.json({error:'Contact evidence is linked to a different account.'},{status:409})
   const fieldsMatch=(!candidate?.candidate_name||norm(candidate.candidate_name)===norm(taster.name))&&(!candidate?.candidate_role||norm(candidate.candidate_role)===norm(taster.role))&&(!candidate?.candidate_email||email(candidate.candidate_email)===email(account.user.email))
-  if(!fieldsMatch&&!discrepancyEvidence.has(review.evidence_type)) return Response.json({error:'Contact evidence conflicts. Traceable submission/release logs or admin documentation must explicitly resolve the discrepancy.'},{status:409})
+  const documentedDiscrepancy=discrepancyEvidence.has(review.evidence_type)&&String(review.notes||'').trim().length>=20
+  if(!fieldsMatch&&!documentedDiscrepancy) return Response.json({error:'Contact evidence conflicts. A traceable submission/release log or admin document plus a written explanation of at least 20 characters is required.'},{status:409})
   if(!taster.user_id) {
     const {data:updated,error:updateError}=await supabase.from('taster_sessions').update({user_id:userId}).eq('id',tasterId).is('user_id',null).select('id,user_id')
     if(updateError) return Response.json({error:'Snapshot ownership could not be updated.'},{status:500})
