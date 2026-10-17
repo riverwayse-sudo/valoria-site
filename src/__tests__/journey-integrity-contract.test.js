@@ -234,4 +234,15 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(page).toContain('REVIEW ACCOUNT')
     expect(page).toContain('LINK LOCKED')
   })
+
+  test('daily reconciliation monitor is scheduled, authenticated, and read-only with respect to identity links', () => {
+    const monitor = read('src/app/api/cron/reconciliation-health/route.js')
+    const config = read('vercel.json')
+    expect(monitor).toContain('CRON_SECRET')
+    expect(monitor).toContain('rpc/run_valu_reconciliation_health')
+    expect(monitor).toContain('rpc/record_valu_reconciliation_health_snapshot')
+    expect(monitor).toContain('platform_notifications')
+    expect(monitor).not.toContain("from('valu_assessments').update")
+    expect(config).toContain('/api/cron/reconciliation-health')
+  })
 })
