@@ -71,3 +71,6 @@ Admin assessment-owner reconciliation also requires a latest verified_match revi
 
 
 Applying a verified snapshot-owner link requires a latest verified-match review naming the exact account, traceable evidence, a confirmed account email, and a completed snapshot. The endpoint never overwrites an existing different owner. If contact evidence is missing or conflicts, a submission log, release log, or admin documentation must explicitly resolve the discrepancy. It confirms the saved owner, updates the candidate projection, writes an audit event, and refreshes journey state; failed projection, audit, or refresh steps remain retryable and the review stays open until persisted state confirms the correction.
+
+
+Discrepancy override control: if saved names, roles, or emails conflict, the latest verified review must use submission_log, release_log, or admin_documentation evidence and include a written explanation of at least 20 characters. The apply endpoints reject a discrepancy override without that explanation. Assessment-owner reconciliation also requires an exact match to the target account's confirmed email unless this documented exception applies.
