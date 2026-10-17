@@ -24,13 +24,15 @@ function SessionCard({ session, state }) {
           <span>{isEnded ? 'COMPLETED' : isComingSoon ? 'COMING SOON' : state === 'live' ? 'LIVE NOW' : 'REGISTRATION OPEN'}</span>
           <p>{session.description}</p>
         </div>
-        {!isEnded && !isComingSoon && <div className="event-editorial-actions"><EventRegistrationTrigger session={session} />{session.id === '03' && <a className="btn-gold" href="https://meet.google.com/fmo-wxgs-cir" target="_blank" rel="noopener noreferrer">JOIN GOOGLE MEET →</a>}</div>}
+        {!isEnded && !isComingSoon && <div className="event-editorial-actions"><EventRegistrationTrigger session={session} />{session.id === '03' && <a className="btn-gold" href="#webinar">WATCH ON VALORIA →</a>}</div>}
       </div>
     </article>
   )
 }
 
 export default function EventsPage() {
+  const webinar = PROFESSIONAL_STANDARD_SERIES.find(session => session.id === '03' && session.youtubeVideoId)
+  const webinarState = webinar ? getSessionState(webinar) : null
   const upcoming = PROFESSIONAL_STANDARD_SERIES.filter(session => {
     if (session.replay) return false
     const state = getSessionState(session)
@@ -58,6 +60,37 @@ export default function EventsPage() {
             <p className="page-sub">Live conversations, recorded replays and practical ideas for professionals building capability, influence and opportunity.</p>
           </div>
         </section>
+
+
+        {webinar && (
+          <section className="page-section events-webinar" id="webinar" aria-labelledby="webinar-title">
+            <div className="page-section-inner">
+              <div className="events-list-head">
+                <div>
+                  <div className="page-kicker events-list-kicker">{webinarState === 'live' ? 'LIVE WEBINAR' : webinarState === 'ended' ? 'EVENT STREAM' : 'FEATURED WEBINAR'}</div>
+                  <h2 className="section-title" id="webinar-title">{webinar.title}</h2>
+                </div>
+                <p>{webinar.speaker} · {formatSessionDate(webinar)} · 10:00 AM WAT · 90 minutes</p>
+              </div>
+              <div style={{ width: '100%', maxWidth: 1080, margin: '0 auto' }}>
+                <div style={{ position: 'relative', aspectRatio: '16 / 9', width: '100%', overflow: 'hidden', background: '#11111b', border: '1px solid rgba(201,168,76,.28)' }}>
+                  <iframe
+                    src={`https://www.youtube.com/embed/${webinar.youtubeVideoId}`}
+                    title={webinar.title + ' — Valoria Institute livestream'}
+                    loading="eager"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                  />
+                </div>
+                <p style={{ marginTop: 14, fontSize: 14, lineHeight: 1.7 }}>
+                  If the video does not load, <a href={`https://youtube.com/live/${webinar.youtubeVideoId}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C9A84C', textDecoration: 'underline' }}>watch the webinar directly on YouTube</a>.
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="page-section events-list">
           <div className="page-section-inner">
