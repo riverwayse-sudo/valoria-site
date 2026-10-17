@@ -42,17 +42,20 @@ export async function GET(request) {
   }
   const latest=Object.values(latestBySource)
   const linkReviews=latest.filter(review=>review.source_record_type==='assessment'&&review.decision==='verified_match'&&review.candidate_record_type==='taster'&&review.candidate_record_id)
+  const ownerReviews=latest.filter(review=>review.source_record_type==='taster'&&review.decision==='verified_match'&&review.candidate_record_type==='account'&&review.candidate_record_id)
   const assessmentIds=[...new Set(linkReviews.map(review=>review.source_record_id))]
-  const tasterIds=[...new Set(linkReviews.map(review=>review.candidate_record_id))]
-  const assessmentsById={},tastersById={}
-  if(assessmentIds.length&&tasterIds.length){
-    const [assessmentRows,tasterRows]=await Promise.all([
-      supabase.from('valu_assessments').select('id,user_id,taster_id,name,role').in('id',assessmentIds),
-      supabase.from('taster_sessions').select('id,user_id,name,role').in('id',tasterIds),
+  const tasterIds=[...new Set([...linkReviews.map(review=>review.candidate_record_id),...ownerReviews.map(review=>review.source_record_id)])]
+  const assessmentsById={},tastersById={},candidateByTasterId={}
+  if(assessmentIds.length||tasterIds.length){
+    const [assessmentRows,tasterRows,candidateRows]=await Promise.all([
+      assessmentIds.length ? supabase.from('valu_assessments').select('id,user_id,taster_id,name,role').in('id',assessmentIds) : Promise.resolve({data:[],error:null}),
+      tasterIds.length ? supabase.from('taster_sessions').select('id,user_id,name,role,completed_at').in('id',tasterIds) : Promise.resolve({data:[],error:null}),
+      tasterIds.length ? supabase.from('taster_identity_candidates').select('taster_id,linked_user_id').in('taster_id',tasterIds) : Promise.resolve({data:[],error:null}),
     ])
-    if(assessmentRows.error||tasterRows.error) return Response.json({error:'Could not confirm whether reviewed links have been applied.'},{status:500})
+    if(assessmentRows.error||tasterRows.error||candidateRows.error) return Response.json({error:'Could not confirm whether reviewed identity corrections have been applied.'},{status:500})
     for(const row of assessmentRows.data||[]) assessmentsById[row.id]=row
     for(const row of tasterRows.data||[]) tastersById[row.id]=row
+    for(const row of candidateRows.data||[]) candidateByTasterId[row.taster_id]=row
   }
   for(const review of linkReviews){
     const assessment=assessmentsById[review.source_record_id]
@@ -60,11 +63,17 @@ export async function GET(request) {
     const applied=Boolean(assessment&&taster&&assessment.taster_id===taster.id&&assessment.user_id&&assessment.user_id===taster.user_id&&norm(assessment.name)===norm(taster.name)&&norm(assessment.role)===norm(taster.role))
     review.application_state=applied?'applied':'awaiting_link'
   }
+  for(const review of ownerReviews){
+    const taster=tastersById[review.source_record_id]
+    const candidate=candidateByTasterId[review.source_record_id]
+    const applied=Boolean(taster&&taster.completed_at&&taster.user_id===review.candidate_record_id&&(!candidate||candidate.linked_user_id===review.candidate_record_id))
+    review.application_state=applied?'owner_applied':'awaiting_owner_link'
+  }
   const summary={reviewed_sources:latest.length,verified_match:0,candidate_match:0,conflict:0,unmatched:0,resolved_no_link:0,applied:0,open:0,closed:0}
   for(const review of latest){
     summary[review.decision]=(summary[review.decision]||0)+1
-    if(review.application_state==='applied') summary.applied++
-    if(review.decision==='resolved_no_link'||review.application_state==='applied') summary.closed++
+    if(review.application_state==='applied'||review.application_state==='owner_applied') summary.applied++
+    if(review.decision==='resolved_no_link'||review.application_state==='applied'||review.application_state==='owner_applied') summary.closed++
     else summary.open++
   }
   return Response.json({reviews,latestBySource,summary})
