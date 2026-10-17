@@ -5,6 +5,8 @@ import EventRegistrationTrigger from '@/components/EventRegistrationTrigger'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
 import { BRAND } from '@/lib/brand'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Events',
   description: 'Conversations and professional standards from Valoria Institute.',
