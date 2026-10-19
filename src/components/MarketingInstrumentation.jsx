@@ -37,13 +37,31 @@ export default function MarketingInstrumentation() {
         track('valu_start_click', { cta_label: label, destination: url.pathname, ...utm })
       } else if (url.pathname.startsWith('/marketplace')) {
         track('marketplace_click', { cta_label: label, destination: url.pathname, ...utm })
+      } else if (url.hostname === 'www.youtube.com' && url.searchParams.get('v') === 'm2ElTyJy6dg') {
+        track('webinar_replay_click', { cta_label: label, video_id: 'm2ElTyJy6dg', ...utm })
       } else if (url.pathname === '/signup' || url.pathname.includes('/professional-signup')) {
         track('signup_start', { cta_label: label, destination: url.pathname, ...utm })
       }
     }
 
     document.addEventListener('click', onClick, true)
-    return () => document.removeEventListener('click', onClick, true)
+
+    let sectionObserver
+    const replaySection = document.getElementById('events')
+    if (replaySection && 'IntersectionObserver' in window) {
+      sectionObserver = new IntersectionObserver((entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          track('webinar_section_view', { section_id: 'events', ...utm })
+          sectionObserver.disconnect()
+        }
+      }, { threshold: 0.35 })
+      sectionObserver.observe(replaySection)
+    }
+
+    return () => {
+      document.removeEventListener('click', onClick, true)
+      sectionObserver?.disconnect()
+    }
   }, [])
 
   return null
