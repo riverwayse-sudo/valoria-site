@@ -822,7 +822,6 @@
   font-weight: 800;
   letter-spacing: .12em;
   text-decoration: none;
-  transition: background .2s ease, color .2s ease, transform .2s ease;
 }
 .home-events-watch-link:hover,
 .home-events-watch-link:focus-visible {
@@ -850,11 +849,6 @@
 .home-events-secondary-link:focus-visible,
 .home-events-footer a:focus-visible {
   outline-offset: 4px;
-}
-@media (prefers-reduced-motion: reduce) {
-  .home-events-watch-link {
-    transition: none;
-  }
 }
 @media (max-width: 900px) {
   .home-events-feature {
