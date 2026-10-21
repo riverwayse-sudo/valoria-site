@@ -34,5 +34,5 @@ drop policy if exists career_applications_no_client_access on public.career_appl
 create policy career_applications_no_client_access on public.career_applications for all to anon, authenticated using (false) with check (false);
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('career-applications','career-applications',false,4194304,array['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
-on conflict (id) do update set public=false,file_size_limit=5242880,allowed_mime_types=excluded.allowed_mime_types;
+on conflict (id) do update set public=false,file_size_limit=4194304,allowed_mime_types=excluded.allowed_mime_types;
 -- Do not create client Storage policies. Upload and access use the server-only service role.
