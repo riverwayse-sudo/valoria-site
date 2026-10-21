@@ -15,7 +15,7 @@ create table if not exists public.career_applications (
   cv_storage_path text not null,
   cv_original_name text not null,
   cv_content_type text not null check (cv_content_type in ('application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document')),
-  cv_size_bytes bigint not null check (cv_size_bytes > 0 and cv_size_bytes <= 5242880),
+  cv_size_bytes bigint not null check (cv_size_bytes > 0 and cv_size_bytes <= 4194304),
   privacy_consent boolean not null default false check (privacy_consent = true),
   status text not null default 'new' check (status in ('new','reviewing','shortlisted','interview','rejected','hired')),
   source text not null default 'website-careers',
@@ -33,6 +33,6 @@ revoke all on public.career_applications from anon, authenticated;
 drop policy if exists career_applications_no_client_access on public.career_applications;
 create policy career_applications_no_client_access on public.career_applications for all to anon, authenticated using (false) with check (false);
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('career-applications','career-applications',false,5242880,array['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+values ('career-applications','career-applications',false,4194304,array['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
 on conflict (id) do update set public=false,file_size_limit=5242880,allowed_mime_types=excluded.allowed_mime_types;
 -- Do not create client Storage policies. Upload and access use the server-only service role.
