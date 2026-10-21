@@ -7,7 +7,7 @@ export default function CareerApplicationForm() {
  async function submit(e){
   e.preventDefault();setError('')
   if(!cv){setError('Please attach your CV to continue.');return}
-  if(cv.size>5*1024*1024){setError('Your CV must be 5 MB or smaller.');return}
+  if(cv.size>4*1024*1024){setError('Your CV must be 4 MB or smaller.');return}
   const allowed=['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document']
   if(!allowed.includes(cv.type)){setError('Upload your CV as a PDF, DOC or DOCX file.');return}
   setBusy(true)
@@ -31,7 +31,7 @@ export default function CareerApplicationForm() {
   <div className="career-field"><label htmlFor="experience">Relevant experience <b>*</b></label><textarea id="experience" name="experience" required minLength={30} maxLength={3000} rows={4} placeholder="Summarise your experience in partnerships, business development or relationship management." value={form.experience} onChange={change}/></div>
   <div className="career-field"><label htmlFor="achievement">A partnership or business-development outcome <b>*</b></label><textarea id="achievement" name="achievement" required minLength={30} maxLength={3000} rows={4} placeholder="Describe a relationship or opportunity you helped turn into a measurable result." value={form.achievement} onChange={change}/></div>
   <div className="career-field"><label htmlFor="motivation">Why Valoria Institute? <b>*</b></label><textarea id="motivation" name="motivation" required minLength={20} maxLength={2000} rows={3} placeholder="Tell us what interests you about this role." value={form.motivation} onChange={change}/></div>
-  <div className="career-field"><label htmlFor="cv">CV / résumé <b>*</b></label><input id="cv" name="cv" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required onChange={e=>setCv(e.target.files?.[0]||null)}/><small>PDF, DOC or DOCX · Maximum 5 MB · Required</small></div>
+  <div className="career-field"><label htmlFor="cv">CV / résumé <b>*</b></label><input id="cv" name="cv" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required onChange={e=>setCv(e.target.files?.[0]||null)}/><small>PDF, DOC or DOCX · Maximum 4 MB · Required</small></div>
   <div className="career-honeypot" aria-hidden="true"><label htmlFor="website">Leave this field empty</label><input id="website" name="website" tabIndex="-1" autoComplete="off" value={form.website} onChange={change}/></div>
   <label className="career-consent"><input type="checkbox" name="consent" checked={form.consent} onChange={change} required/><span>I consent to Valoria Institute processing the information and CV I submit for recruitment purposes, in line with its <a href="/privacypolicy" target="_blank" rel="noreferrer">Privacy Policy</a>. <b>*</b></span></label>
   {error&&<p className="career-error" role="alert">{error}</p>}
