@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import { randomUUID } from 'node:crypto'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
-const MAX_CV_BYTES=5*1024*1024
+const MAX_CV_BYTES=4*1024*1024
 const BUCKET='career-applications'
 const ALLOWED_TYPES=new Map([
  ['application/pdf','pdf'],
