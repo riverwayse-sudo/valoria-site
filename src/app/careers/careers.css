@@ -27,3 +27,36 @@
 .career-role-detail-grid .careers-form-heading h3{font-size:clamp(25px,3vw,34px);font-weight:500;margin:12px 0}
 @media(max-width:900px){.career-role-detail-grid{grid-template-columns:1fr}.career-role-detail-grid .careers-form-panel{position:static;max-width:none}.career-role-summary{align-items:flex-start}}
 @media(max-width:640px){.career-role-summary{flex-direction:column;gap:22px;padding:24px 20px}.career-role-toggle{width:100%;justify-content:space-between}.career-role-expanded{padding:20px 14px}.career-role-detail-grid .careers-form-panel{padding:23px 18px}}
+
+
+/* Compact, readable careers page: description and application open independently */
+.careers-hero-compact .page-title{max-width:760px;font-size:clamp(38px,5vw,64px)}
+.careers-hero-compact .page-sub{max-width:660px;margin-bottom:0}
+.careers-content-compact{padding-top:clamp(30px,5vw,56px);padding-bottom:clamp(36px,5vw,64px)}
+.careers-roles-compact{max-width:900px}
+.career-role-card-compact{background:#FAFAF7;border:1px solid rgba(26,26,46,.12);border-radius:10px;overflow:hidden;box-shadow:0 10px 30px rgba(26,26,46,.045)}
+.career-role-summary-compact{padding:clamp(22px,3.4vw,34px);display:flex}
+.career-role-summary-compact .career-role-main{gap:10px}
+.career-role-summary-compact .career-role-title{font-size:clamp(25px,3vw,34px)}
+.career-role-summary-compact .career-role-description{max-width:620px}
+.career-disclosure{border-top:1px solid rgba(26,26,46,.1)}
+.career-disclosure>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px clamp(22px,3.4vw,34px);cursor:pointer;font-size:13px;font-weight:800;color:#1A1A2E}
+.career-disclosure>summary::-webkit-details-marker{display:none}
+.career-disclosure>summary::marker{content:""}
+.career-disclosure>summary>span:first-child{display:flex;flex-direction:column;gap:5px}
+.career-disclosure>summary small{font-size:11px;font-weight:500;line-height:1.5;color:rgba(26,26,46,.58)}
+.career-disclosure>summary:hover{background:rgba(201,168,76,.08)}
+.career-disclosure-icon{display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;border:1px solid rgba(201,168,76,.6);border-radius:50%;font-size:20px;font-weight:400;color:#71591F;transition:transform .18s ease}
+.career-disclosure[open]>summary{background:#EDE8DC}
+.career-disclosure[open] .career-disclosure-icon{transform:rotate(45deg)}
+.career-description-content{padding:22px clamp(22px,3.4vw,34px) 28px;background:#F7F4EE;color:rgba(26,26,46,.82);font-size:14px;line-height:1.75}
+.career-description-content>p:first-child{margin:0 0 20px;max-width:720px}
+.career-description-content h3{font-size:14px;font-weight:800;color:#1A1A2E;margin:22px 0 8px}
+.career-description-content ul{padding-left:19px;margin:0;display:grid;gap:5px}
+.career-description-content li{padding-left:3px}
+.career-description-content .career-description-assessment{margin:20px 0 0;padding:13px 15px;background:#EDE8DC;border-left:2px solid #C9A84C;font-size:12px}
+.career-apply-content{padding:22px clamp(16px,3vw,30px) 28px;background:#1A1A2E}
+.career-apply-intro{font-size:12px;line-height:1.7;color:rgba(247,244,238,.7);margin:0 0 20px}
+.career-apply-content .career-form{max-width:640px}
+.career-no-openings-note{text-align:center;font-size:11px;line-height:1.7;color:rgba(26,26,46,.5);margin:18px 0 0}
+@media(max-width:640px){.career-role-summary-compact{padding:22px 18px}.career-disclosure>summary{padding:16px 18px}.career-description-content{padding:18px}.career-apply-content{padding:18px 14px}.career-apply-content .career-form-panel{padding:0;box-shadow:none;border-radius:0}}
