@@ -14,6 +14,7 @@ export default async function sitemap() {
     { path: '/programmes', priority: 0.6, changeFrequency: 'monthly' },
     { path: '/about-us', priority: 0.6, changeFrequency: 'monthly' },
     { path: '/contact-us', priority: 0.5, changeFrequency: 'yearly' },
+    { path: '/careers', priority: 0.8, changeFrequency: 'weekly' },
     { path: '/signup', priority: 0.6, changeFrequency: 'yearly' },
     { path: '/login', priority: 0.3, changeFrequency: 'yearly' },
     { path: '/privacypolicy', priority: 0.3, changeFrequency: 'yearly' },
