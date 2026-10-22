@@ -39,6 +39,7 @@ export const NAVIGATION = {
             { label: 'About Valoria', href: '/about-us', description: 'The institution behind the infrastructure.' },
             { label: 'PRIME Framework', href: '/prime', description: 'The framework behind professional capability.' },
             { label: 'Contact', href: '/contact-us', description: 'Get in touch with Valoria.' },
+            { label: 'Careers', href: '/careers', description: 'Explore opportunities to join Valoria.' },
           ],
         },
       ],
@@ -60,6 +61,7 @@ export const NAVIGATION = {
       { label: 'About Valoria', href: '/about-us' },
       { label: 'PRIME Framework', href: '/prime' },
       { label: 'Contact', href: '/contact-us' },
+      { label: 'Careers', href: '/careers' },
     ],
   },
 }
