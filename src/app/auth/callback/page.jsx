@@ -64,11 +64,13 @@ function AuthCallbackFlow() {
           const linkRes = await fetch('/api/link-taster', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
-            body: JSON.stringify({ taster_id: pendingTasterId }),
+            body: JSON.stringify({ taster_id: pendingTasterId, name: localStorage.getItem('pending_taster_name') || undefined, role: localStorage.getItem('pending_taster_role') || undefined }),
           })
           const data = await linkRes.json().catch(() => ({}))
           if (!linkRes.ok) throw new Error(data.error || 'Your VALU result could not be linked yet.')
           localStorage.removeItem('pending_taster_id')
+          localStorage.removeItem('pending_taster_name')
+          localStorage.removeItem('pending_taster_role')
           if (!cancelled) router.replace('/profile/onboarding')
           return
         }
