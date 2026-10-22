@@ -835,7 +835,7 @@ function WelcomeModal({ firstName, isSupply, isOrganiser, pct, onClose }) {
   const beats = isSupply ? [
     { eyebrow:'PROFILE LIVE', title:`You did it, ${firstName}.`, body:`${pct}% complete — your profile is officially part of the Valoria marketplace.`, icon:'✓' },
     { eyebrow:"YOU'RE IN GOOD COMPANY", title:'Welcome to Valoria.', body:"Every professional here is independently assessed. You're not just listed — you're verified.", icon:'◈' },
-    { eyebrow:'WHAT HAPPENS NEXT', title:'Buyers are browsing right now.', body:"Your next introduction could land today. We'll let you know the moment someone reaches out.", icon:'→' },
+    { eyebrow:'WHAT HAPPENS NEXT', title:'Your next opportunity could start today.', body:'Stay visible to the right people. We’ll let you know when someone expresses interest in connecting with you.', icon:'→' },
   ] : [
     { eyebrow:"YOU'RE IN", title:`Welcome, ${firstName}.`, body:'Your account is set up and ready to go.', icon:'✓' },
     { eyebrow:'WHAT YOU HAVE ACCESS TO', title:'Welcome to Valoria.', body:`You now have access to Africa's independently verified ${isOrganiser ? 'speaker' : 'professional'} network.`, icon:'◈' },
