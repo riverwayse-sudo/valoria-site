@@ -22,22 +22,17 @@ function AuthCallbackFlow() {
         const code = params.get('code')
         let { data: { session } } = await supabase.auth.getSession()
         if (!session?.access_token && code) {
-          // The browser client normally processes the URL during initialization.
-          // Exchange explicitly only if that automatic exchange did not create a session.
           const { error } = await supabase.auth.exchangeCodeForSession(code)
           if (error) throw error
           const result = await supabase.auth.getSession()
           session = result.data.session
         }
         if (!session?.access_token) {
-          // Allow any in-flight URL session handling to finish before showing an error.
           await new Promise(resolve => setTimeout(resolve, 700))
           const result = await supabase.auth.getSession()
           session = result.data.session
         }
-        if (!session?.access_token) {
-          throw new Error('Your email link was accepted, but a secure session was not created. Please request a fresh confirmation email.')
-        }
+        if (!session?.access_token) throw new Error('Your email link was accepted, but a secure session was not created. Please request a fresh confirmation email.')
 
         const { data: { user }, error: userError } = await supabase.auth.getUser()
         if (userError || !user) throw userError || new Error('Your account session could not be verified.')
@@ -81,15 +76,7 @@ function AuthCallbackFlow() {
 
         const { data: buyerProfile } = await supabase.from('profiles').select('id').eq('id', user.id).maybeSingle()
         if (cancelled) return
-        if (buyerProfile) {
-          setMessage('Email confirmed. You’re signed in. Taking you to your account…')
-          await new Promise(resolve => setTimeout(resolve, 900))
-          if (!cancelled) router.replace('/dashboard?welcome=profile')
-          return
-        }
-        const { data: profile } = await supabase.from('professional_profiles').select('id, display_name').eq('id', user.id).maybeSingle()
-        if (cancelled) return
-        setMessage('Email confirmed. You’re signed in. Taking you to your account…')
+        setMessage(buyerProfile ? 'Email confirmed. You’re signed in. Taking you to your dashboard…' : 'Email confirmed. You’re signed in. Taking you to your dashboard…')
         await new Promise(resolve => setTimeout(resolve, 900))
         if (!cancelled) router.replace('/dashboard?welcome=profile')
       } catch (error) {
