@@ -57,7 +57,7 @@ function AuthCallbackFlow() {
           sessionStorage.removeItem('pending_identity_hash')
           setMessage('Email confirmed. You’re signed in and your VALU assessment is connected.')
           await new Promise(resolve => setTimeout(resolve, 900))
-          if (!cancelled) router.replace(`/profile/${user.id}?fresh=true`)
+          if (!cancelled) router.replace('/dashboard?welcome=profile')
           return
         }
 
@@ -75,7 +75,7 @@ function AuthCallbackFlow() {
           localStorage.removeItem('pending_taster_role')
           setMessage('Email confirmed. You’re signed in and your VALU snapshot is connected.')
           await new Promise(resolve => setTimeout(resolve, 900))
-          if (!cancelled) router.replace('/profile/onboarding')
+          if (!cancelled) router.replace('/dashboard?welcome=profile')
           return
         }
 
@@ -84,14 +84,14 @@ function AuthCallbackFlow() {
         if (buyerProfile) {
           setMessage('Email confirmed. You’re signed in. Taking you to your account…')
           await new Promise(resolve => setTimeout(resolve, 900))
-          if (!cancelled) router.replace('/dashboard')
+          if (!cancelled) router.replace('/dashboard?welcome=profile')
           return
         }
         const { data: profile } = await supabase.from('professional_profiles').select('id, display_name').eq('id', user.id).maybeSingle()
         if (cancelled) return
         setMessage('Email confirmed. You’re signed in. Taking you to your account…')
         await new Promise(resolve => setTimeout(resolve, 900))
-        if (!cancelled) router.replace(profile?.display_name ? '/dashboard' : '/profile/onboarding')
+        if (!cancelled) router.replace('/dashboard?welcome=profile')
       } catch (error) {
         if (cancelled) return
         setFailed(true)
