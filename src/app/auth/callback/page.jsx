@@ -20,14 +20,17 @@ function AuthCallbackFlow() {
     async function finishConfirmation() {
       try {
         const code = params.get('code')
-        if (code) {
+        let { data: { session } } = await supabase.auth.getSession()
+        if (!session?.access_token && code) {
+          // The browser client normally processes the URL during initialization.
+          // Exchange explicitly only if that automatic exchange did not create a session.
           const { error } = await supabase.auth.exchangeCodeForSession(code)
           if (error) throw error
+          const result = await supabase.auth.getSession()
+          session = result.data.session
         }
-
-        let { data: { session } } = await supabase.auth.getSession()
         if (!session?.access_token) {
-          // Allow the browser client to finish processing a verification redirect.
+          // Allow any in-flight URL session handling to finish before showing an error.
           await new Promise(resolve => setTimeout(resolve, 700))
           const result = await supabase.auth.getSession()
           session = result.data.session
