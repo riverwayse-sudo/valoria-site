@@ -55,6 +55,8 @@ function AuthCallbackFlow() {
           const data = await linkRes.json().catch(() => ({}))
           if (!linkRes.ok) throw new Error(data.error || 'Your assessment could not be linked yet.')
           sessionStorage.removeItem('pending_identity_hash')
+          setMessage('Email confirmed. You’re signed in and your VALU assessment is connected.')
+          await new Promise(resolve => setTimeout(resolve, 900))
           if (!cancelled) router.replace(`/profile/${user.id}?fresh=true`)
           return
         }
@@ -71,6 +73,8 @@ function AuthCallbackFlow() {
           localStorage.removeItem('pending_taster_id')
           localStorage.removeItem('pending_taster_name')
           localStorage.removeItem('pending_taster_role')
+          setMessage('Email confirmed. You’re signed in and your VALU snapshot is connected.')
+          await new Promise(resolve => setTimeout(resolve, 900))
           if (!cancelled) router.replace('/profile/onboarding')
           return
         }
@@ -78,12 +82,16 @@ function AuthCallbackFlow() {
         const { data: buyerProfile } = await supabase.from('profiles').select('id').eq('id', user.id).maybeSingle()
         if (cancelled) return
         if (buyerProfile) {
-          router.replace('/dashboard')
+          setMessage('Email confirmed. You’re signed in. Taking you to your account…')
+          await new Promise(resolve => setTimeout(resolve, 900))
+          if (!cancelled) router.replace('/dashboard')
           return
         }
         const { data: profile } = await supabase.from('professional_profiles').select('id, display_name').eq('id', user.id).maybeSingle()
         if (cancelled) return
-        router.replace(profile?.display_name ? '/dashboard' : '/profile/onboarding')
+        setMessage('Email confirmed. You’re signed in. Taking you to your account…')
+        await new Promise(resolve => setTimeout(resolve, 900))
+        if (!cancelled) router.replace(profile?.display_name ? '/dashboard' : '/profile/onboarding')
       } catch (error) {
         if (cancelled) return
         setFailed(true)
@@ -97,7 +105,10 @@ function AuthCallbackFlow() {
   return (
     <main style={{ minHeight: '100vh', background: DARK, color: PARCHMENT, display: 'grid', placeItems: 'center', padding: 24, fontFamily: "'Raleway', Arial, sans-serif" }}>
       <section style={{ width: '100%', maxWidth: 520, padding: 'clamp(28px, 5vw, 52px)', border: '1px solid rgba(201,168,76,.25)', borderRadius: 16, background: '#1A1A2E', textAlign: 'center' }}>
-        <img src="/logo.png" alt="Valoria Institute" style={{ width: 170, maxWidth: '70%', height: 'auto', objectFit: 'contain', margin: '0 auto 30px', display: 'block' }} />
+        <div style={{ margin: '0 auto 30px', textAlign: 'center' }} aria-label="Valoria Institute">
+          <div style={{ color: GOLD, fontSize: 12, letterSpacing: '.24em', fontWeight: 800 }}>VALORIA INSTITUTE</div>
+          <div style={{ color: PARCHMENT, fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 15, marginTop: 7 }}>Worth. Built.</div>
+        </div>
         <div aria-live="polite" role={failed ? 'alert' : 'status'}>
           <div style={{ color: GOLD, fontSize: 11, letterSpacing: '.18em', fontWeight: 700, marginBottom: 14 }}>{failed ? 'CONFIRMATION NEEDS ATTENTION' : 'VALORIA ACCOUNT'}</div>
           <h1 style={{ fontSize: 30, lineHeight: 1.2, fontWeight: 500, margin: '0 0 14px' }}>{failed ? 'We could not finish the handoff.' : 'You’re almost there.'}</h1>
