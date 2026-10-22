@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [resetSent, setResetSent] = useState(false)
+  const [emailConfirmed, setEmailConfirmed] = useState(false)
   const [resetting, setResetting] = useState(false)
   const [redirecting, setRedirecting] = useState(false)
   const [returnTo, setReturnTo] = useState('')
@@ -23,6 +24,7 @@ export default function LoginPage() {
     const params = new URLSearchParams(window.location.search)
     const identityHash = params.get('identity_hash')
     const requestedReturnTo = params.get('returnTo') || ''
+    if (params.get('email_confirmed') === '1') setEmailConfirmed(true)
     if (requestedReturnTo.startsWith('/')) setReturnTo(requestedReturnTo)
     const pendingTasterId = params.get('pending_taster_id')
     if (pendingTasterId) localStorage.setItem('pending_taster_id', pendingTasterId)
@@ -238,6 +240,12 @@ export default function LoginPage() {
           Welcome<br /><em style={{ color: GOLD, fontStyle: 'italic' }}>back.</em>
         </h1>
         <p style={styles.sub}>Sign in to your Valoria Institute account.</p>
+
+        {emailConfirmed && (
+          <div role="status" aria-live="polite" style={{ ...styles.successBox, marginBottom: '20px' }}>
+            <strong>Email address confirmed.</strong><br />Your Valoria account is verified. Sign in below to continue your VALU journey.
+          </div>
+        )}
 
         <form onSubmit={handleLogin} style={styles.form}>
           <div style={styles.field}>
