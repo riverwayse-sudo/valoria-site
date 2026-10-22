@@ -63,7 +63,9 @@ export default function SignupPage() {
         password: form.password,
         options: {
           data: { display_name: form.name, user_type: userType },
-          emailRedirectTo: `${window.location.origin}${returnTo || '/dashboard'}`,
+          // Never derive auth redirects from window.location.origin: signups on a
+          // Vercel preview would otherwise send confirmation emails to that preview.
+          emailRedirectTo: 'https://valoriainstitute.com/auth/callback',
         },
       })
       if (signupError) throw signupError
@@ -98,7 +100,7 @@ export default function SignupPage() {
           <div style={{ fontSize: '28px', color: GOLD, textAlign: 'center', marginBottom: '16px' }}>✦</div>
           <h2 style={S.title}>Account created.</h2>
           <p style={S.sub}>
-            Check your email and click the confirmation link to activate your account. Then start searching the marketplace.
+            Check your email and click the confirmation link to activate your account. You’ll be signed in and taken to your Valoria dashboard to continue.
           </p>
           {returnTo ? (
             <a href={returnTo} style={S.btnGold}>CONTINUE YOUR VALORIA JOURNEY →</a>
