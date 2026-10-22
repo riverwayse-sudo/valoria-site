@@ -29,14 +29,15 @@ export default function ValuStartPage() {
   const assessmentUrl = BRAND.assessmentUrl
 
   return <>
+    
     <Nav />
     <main className="valu-start">
-      <section className="vs-hero">
+      <section className="vs-hero" style={{ paddingBlock: "clamp(2rem, 4.5vw, 3.75rem)" }}>
         <div className="vs-shell">
           <div className="vs-kicker"><span /> THE VALU INDEX</div>
-          <div className="vs-hero-grid">
+          <div className="vs-hero-grid" style={{ alignItems: "center", gap: "clamp(1.75rem, 4vw, 4rem)" }}>
             <div>
-              <h1>Your CV tells people what you’ve done.<br /><em>VALU shows what you can become.</em></h1>
+              <h1 style={{ maxWidth: "12.5ch", fontSize: "clamp(1.85rem, 3.1vw, 3.1rem)", lineHeight: 1.12, letterSpacing: "-0.045em", marginBlock: "0 1.1rem" }}>Your CV tells people what you’ve done.<br /><em>VALU shows what you can become.</em></h1>
               <p className="vs-lede">A professional diagnostic built around PRIME to give you a clearer starting point for understanding your capability, direction and professional presence.</p>
               <div className="vs-actions">
                 <a href={assessmentUrl} className="vs-btn vs-primary">START YOUR VALU INDEX <b>→</b></a>
@@ -44,7 +45,7 @@ export default function ValuStartPage() {
               </div>
               <div className="vs-proof"><span>15 QUESTIONS</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
             </div>
-            <div className="vs-score" aria-label="Illustrative VALU Index result">
+            <div className="vs-score" style={{ borderRadius: "22px", overflow: "hidden", minWidth: 0 }} aria-label="Illustrative VALU Index result">
               <div className="vs-score-top"><span>VALU INDEX</span><span>01</span></div>
               <div className="vs-ring"><strong>74</strong><small>INDEX</small></div>
               <div className="vs-bars">{dimensions.map(([letter, title], i) => <div key={letter} className="vs-bar"><span>{letter}</span><div><i className={`vs-bar-fill score-${i + 1}`} /></div><b>{title}</b></div>)}</div>
