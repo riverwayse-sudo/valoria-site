@@ -29,55 +29,15 @@ export default function ValuStartPage() {
   const assessmentUrl = BRAND.assessmentUrl
 
   return <>
-    <style jsx global>{`
-      /* VALU start: compact, content-led hero and consistent Valoria card geometry */
-      .valu-start .vs-hero {
-        padding-block: clamp(2.5rem, 5vw, 4.25rem) !important;
-      }
-      .valu-start .vs-hero-grid {
-        align-items: center;
-        gap: clamp(2rem, 4vw, 4rem);
-      }
-      .valu-start .vs-hero h1 {
-        max-width: 12.5ch;
-        font-size: clamp(2.35rem, 4.25vw, 4.25rem);
-        line-height: 1.06;
-        letter-spacing: -0.045em;
-        margin-block: 0 1.1rem;
-      }
-      .valu-start .vs-lede {
-        max-width: 39rem;
-        margin-bottom: 1.4rem;
-      }
-      .valu-start .vs-score {
-        border-radius: 22px !important;
-        overflow: hidden;
-        min-width: 0;
-      }
-      @media (max-width: 768px) {
-        .valu-start .vs-hero {
-          padding-block: 2rem 2.5rem !important;
-        }
-        .valu-start .vs-hero-grid {
-          gap: 1.75rem;
-        }
-        .valu-start .vs-hero h1 {
-          max-width: 15ch;
-          font-size: clamp(2.15rem, 8vw, 3.25rem);
-        }
-        .valu-start .vs-score {
-          border-radius: 22px !important;
-        }
-      }
-    `}</style>
+    
     <Nav />
     <main className="valu-start">
-      <section className="vs-hero">
+      <section className="vs-hero" style={{ paddingBlock: "clamp(2rem, 4.5vw, 3.75rem)" }}>
         <div className="vs-shell">
           <div className="vs-kicker"><span /> THE VALU INDEX</div>
-          <div className="vs-hero-grid">
+          <div className="vs-hero-grid" style={{ alignItems: "center", gap: "clamp(1.75rem, 4vw, 4rem)" }}>
             <div>
-              <h1>Your CV tells people what you’ve done.<br /><em>VALU shows what you can become.</em></h1>
+              <h1 style={{ maxWidth: "12.5ch", fontSize: "clamp(2.35rem, 4.25vw, 4.25rem)", lineHeight: 1.06, letterSpacing: "-0.045em", marginBlock: "0 1.1rem" }}>Your CV tells people what you’ve done.<br /><em>VALU shows what you can become.</em></h1>
               <p className="vs-lede">A professional diagnostic built around PRIME to give you a clearer starting point for understanding your capability, direction and professional presence.</p>
               <div className="vs-actions">
                 <a href={assessmentUrl} className="vs-btn vs-primary">START YOUR VALU INDEX <b>→</b></a>
@@ -85,7 +45,7 @@ export default function ValuStartPage() {
               </div>
               <div className="vs-proof"><span>15 QUESTIONS</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
             </div>
-            <div className="vs-score" aria-label="Illustrative VALU Index result">
+            <div className="vs-score" style={{ borderRadius: "22px", overflow: "hidden", minWidth: 0 }} aria-label="Illustrative VALU Index result">
               <div className="vs-score-top"><span>VALU INDEX</span><span>01</span></div>
               <div className="vs-ring"><strong>74</strong><small>INDEX</small></div>
               <div className="vs-bars">{dimensions.map(([letter, title], i) => <div key={letter} className="vs-bar"><span>{letter}</span><div><i className={`vs-bar-fill score-${i + 1}`} /></div><b>{title}</b></div>)}</div>
