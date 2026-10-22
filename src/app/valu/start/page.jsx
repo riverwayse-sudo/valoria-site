@@ -29,6 +29,47 @@ export default function ValuStartPage() {
   const assessmentUrl = BRAND.assessmentUrl
 
   return <>
+    <style jsx global>{`
+      /* VALU start: compact, content-led hero and consistent Valoria card geometry */
+      .valu-start .vs-hero {
+        padding-block: clamp(2.5rem, 5vw, 4.25rem) !important;
+      }
+      .valu-start .vs-hero-grid {
+        align-items: center;
+        gap: clamp(2rem, 4vw, 4rem);
+      }
+      .valu-start .vs-hero h1 {
+        max-width: 12.5ch;
+        font-size: clamp(2.35rem, 4.25vw, 4.25rem);
+        line-height: 1.06;
+        letter-spacing: -0.045em;
+        margin-block: 0 1.1rem;
+      }
+      .valu-start .vs-lede {
+        max-width: 39rem;
+        margin-bottom: 1.4rem;
+      }
+      .valu-start .vs-score {
+        border-radius: 22px !important;
+        overflow: hidden;
+        min-width: 0;
+      }
+      @media (max-width: 768px) {
+        .valu-start .vs-hero {
+          padding-block: 2rem 2.5rem !important;
+        }
+        .valu-start .vs-hero-grid {
+          gap: 1.75rem;
+        }
+        .valu-start .vs-hero h1 {
+          max-width: 15ch;
+          font-size: clamp(2.15rem, 8vw, 3.25rem);
+        }
+        .valu-start .vs-score {
+          border-radius: 22px !important;
+        }
+      }
+    `}</style>
     <Nav />
     <main className="valu-start">
       <section className="vs-hero">
