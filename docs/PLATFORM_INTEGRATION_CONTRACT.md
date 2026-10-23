@@ -134,3 +134,16 @@ stay semantically identical:
 * Marketplace eligibility is the 35-point threshold only; it is not listing
   status. Pathways are the Development Pathway bands, not the retired
   PCP/PRIME Programme/Cluster/Sprint names.
+
+### Verification
+
+```bash
+npm run verify:scoring-parity            # uses /workspace/repos/valoria-platform
+npm run verify:scoring-parity -- <path>  # explicit platform checkout
+```
+
+Runs the site engine and the canonical platform engine over the **real
+58-question bank** and compares every returned field; it skips with a clear
+message when the platform repo is not checked out. In-repo, the golden vectors
+in `src/__tests__/scoring-parity-vectors.json` pin the same behaviour without
+needing the platform repo. Last run: 10 cases / 190 fields / 0 mismatches.
