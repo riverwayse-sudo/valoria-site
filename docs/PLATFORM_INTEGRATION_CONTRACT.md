@@ -145,6 +145,16 @@ correct scope, before trusting a staging run:
 | `BREVO_API_KEY`, `BREVO_FROM_EMAIL`, `BREVO_LIST_ID`, `BREVO_WEBINAR_LIST_ID` | server only | transactional email and webinar list adds |
 | `SUPABASE_URL` | server only | fallback for the reconciliation-health cron |
 
+The **platform** repo needs its own site origin, or its auth redirects and
+journey links fall back to production. It resolves, in order:
+`VALORIA_SITE_URL` → `SITE_ORIGIN` → `NEXT_PUBLIC_SITE_URL` → `VERCEL_URL` →
+production. Set `VALORIA_SITE_URL` on the platform staging project to the staging
+origin so a staging registration is confirmed back onto staging.
+
+`valoria-site` sends a *fixed* set of variables to the assessment host. If the
+platform later needs a site origin it does not already have, it is
+`VALORIA_SITE_URL`.
+
 Do not set `VERCEL_ENV` by hand — Vercel provides it. `VALORIA_PLATFORM_ROOT`
 and `VALORIA_SITE_ROOT` are test-only.
 
