@@ -7,7 +7,7 @@ Next.js 15 public website for Valoria Institute, plus authenticated journeys
 
 ```bash
 npm run build            # prebuild runs design:check + excellence:check first
-npx jest                 # unit/contract suite (currently 11 suites / 249 tests)
+npx jest                 # unit/contract suite (currently 13 suites / 287 tests)
 npm run design:check     # static design-system gate
 npm run excellence:check # static quality gate
 npm run verify:scoring-parity   # cross-repo VALU scoring parity (see below)
@@ -61,6 +61,22 @@ Tests are CommonJS (`require`), run by Jest with no config file. `src/lib`
 helpers are CommonJS specifically so they are directly unit-testable. Prefer
 testing real code paths over mocks; the regression suites assert against actual
 source and real helper behaviour.
+
+A substring assertion is not a behavioural test. Asserting that a file contains
+`58-question`, or that it mentions a header name, passes whether or not the code
+works. That style shipped real bugs on both sides of this integration: a
+`ReferenceError` on every first submission, an endpoint that read
+`req.headers.authorization` on a Web `Headers` object and 401'd every caller,
+and a rate limit whose rejection branch could not be returned from its handler.
+When a check matters, execute the code — for server routes, stub only
+`global.fetch` and invoke the real handler.
+
+Golden vectors have the same limitation as substring checks if the fixtures do
+not reach the changed code. A single option's score changed from 4 to 3 passed
+every scoring test, because the golden picks only ever took the first, middle
+and last option of each question. The platform now also pins a SHA-256 digest
+over the bank's scoring-relevant fields. If you add goldens, check they fail
+when the thing they describe changes.
 
 ## Do not
 
