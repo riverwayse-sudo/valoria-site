@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import Nav from '@/components/Nav'
 import { passwordResetUrl } from '@/lib/site-url'
+import { safeReturnPath, safeReturnPathOr } from '@/lib/safe-redirect'
 import { BRAND } from '@/lib/brand'
 
 const GOLD = '#C9A84C'
@@ -29,8 +30,10 @@ export default function LoginPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const identityHash = params.get('identity_hash')
-    const requestedReturnTo = params.get('returnTo') || ''
-    if (requestedReturnTo.startsWith('/')) setReturnTo(requestedReturnTo)
+    // safeReturnPath rejects protocol-relative and off-origin values; a bare
+    // startsWith('/') guard let '//evil.com' through.
+    const requestedReturnTo = safeReturnPath(params.get('returnTo'))
+    if (requestedReturnTo) setReturnTo(requestedReturnTo)
     const pendingTasterId = params.get('pending_taster_id')
     if (pendingTasterId) localStorage.setItem('pending_taster_id', pendingTasterId)
     // Presence of the flag is what matters, not its value.
@@ -55,7 +58,7 @@ export default function LoginPage() {
   }, [])
 
   function redirectAfterLogin(defaultPath) {
-    const target = returnTo && returnTo.startsWith('/') ? returnTo : defaultPath
+    const target = safeReturnPathOr(returnTo, defaultPath)
     window.location.href = target
   }
 

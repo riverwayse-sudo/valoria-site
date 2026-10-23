@@ -147,9 +147,14 @@ correct scope, before trusting a staging run:
 
 The **platform** repo needs its own site origin, or its auth redirects and
 journey links fall back to production. It resolves, in order:
-`VALORIA_SITE_URL` → `SITE_ORIGIN` → `NEXT_PUBLIC_SITE_URL` → `VERCEL_URL` →
-production. Set `VALORIA_SITE_URL` on the platform staging project to the staging
-origin so a staging registration is confirmed back onto staging.
+`VALORIA_SITE_URL` → `SITE_ORIGIN` → `NEXT_PUBLIC_SITE_URL` → production. Set
+`VALORIA_SITE_URL` on the platform staging project to the staging origin so a
+staging registration is confirmed back onto staging.
+
+`VERCEL_URL` is deliberately not used: the platform and the site are separate
+Vercel projects, so it would name the platform host rather than the site. A
+non-production deployment with no origin configured logs an error naming
+`VALORIA_SITE_URL` rather than silently mailing a production link.
 
 `valoria-site` sends a *fixed* set of variables to the assessment host. If the
 platform later needs a site origin it does not already have, it is

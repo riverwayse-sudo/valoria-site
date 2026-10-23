@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
 import { BRAND } from '@/lib/brand'
 import { authCallbackUrl } from '@/lib/site-url'
+import { safeReturnPath } from '@/lib/safe-redirect'
 import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/password-policy'
 
 const GOLD = '#C9A84C'
@@ -34,8 +35,9 @@ const BUYER_TYPES = [
 
 export default function SignupPage() {
   useEffect(() => {
-    const value = new URLSearchParams(window.location.search).get('returnTo') || ''
-    setReturnTo(value.startsWith('/') ? value : '')
+    // safeReturnPath rejects protocol-relative and off-origin values; a bare
+    // startsWith('/') guard let '//evil.com' through.
+    setReturnTo(safeReturnPath(new URLSearchParams(window.location.search).get('returnTo')) || '')
   }, [])
 
   const [step, setStep] = useState(1)
