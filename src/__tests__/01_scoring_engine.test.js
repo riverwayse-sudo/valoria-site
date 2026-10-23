@@ -87,9 +87,33 @@ describe("getDesignation", () => {
 });
 
 describe("getPathway", () => {
-  const cases = [[100,"PCP Certification"],[80,"PCP Certification"],[79,"PRIME Programme"],[65,"PRIME Programme"],[64,"PRIME Cluster"],[50,"PRIME Cluster"],[49,"PRIME Sprint"],[35,"PRIME Sprint"],[0,"PRIME Sprint"]];
+  // Canonical VALU v4 pathway bands (Advanced / Cluster / Foundation /
+  // Assessment Follow-up). These replaced the retired "PCP Certification",
+  // "PRIME Programme", "PRIME Cluster" and "PRIME Sprint" names — see the
+  // scoringEngine header note on the drift this file previously carried.
+  const cases = [
+    [100, "Advanced Development Pathway"],
+    [90, "Advanced Development Pathway"],
+    [89, "Advanced Development Pathway"],
+    [75, "Advanced Development Pathway"],
+    [74, "Cluster Development Pathway"],
+    [65, "Cluster Development Pathway"],
+    [64, "Cluster Development Pathway"],
+    [55, "Cluster Development Pathway"],
+    [54, "Foundation Development Pathway"],
+    [50, "Foundation Development Pathway"],
+    [49, "Foundation Development Pathway"],
+    [35, "Foundation Development Pathway"],
+    [34, "Assessment Follow-up Pathway"],
+    [0, "Assessment Follow-up Pathway"],
+  ];
   test.each(cases)("score %i → %s", (score, expected) => expect(getPathway(score)).toBe(expected));
-  test("PRIME Sprint boundary is < 50", () => { expect(getPathway(50)).toBe("PRIME Cluster"); expect(getPathway(49)).toBe("PRIME Sprint"); });
+  test("Foundation band boundary is >= 35 and < 55", () => {
+    expect(getPathway(55)).toBe("Cluster Development Pathway");
+    expect(getPathway(54)).toBe("Foundation Development Pathway");
+    expect(getPathway(35)).toBe("Foundation Development Pathway");
+    expect(getPathway(34)).toBe("Assessment Follow-up Pathway");
+  });
 });
 
 describe("seededShuffle", () => {

@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import Nav from '@/components/Nav'
+import { passwordResetUrl } from '@/lib/site-url'
+import { BRAND } from '@/lib/brand'
 
 const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
@@ -17,6 +19,11 @@ export default function LoginPage() {
   const [resetting, setResetting] = useState(false)
   const [redirecting, setRedirecting] = useState(false)
   const [returnTo, setReturnTo] = useState('')
+  // Set when the user arrives back from Supabase email confirmation
+  // (?email_confirmed=1). Their address is verified; the only remaining step is
+  // to sign in. Without this the page looked identical to a first visit, so a
+  // freshly confirmed user had no confirmation that anything had happened.
+  const [emailConfirmed, setEmailConfirmed] = useState(false)
 
   // Check for identity_hash in URL (from email confirmation redirect)
   useEffect(() => {
@@ -26,6 +33,8 @@ export default function LoginPage() {
     if (requestedReturnTo.startsWith('/')) setReturnTo(requestedReturnTo)
     const pendingTasterId = params.get('pending_taster_id')
     if (pendingTasterId) localStorage.setItem('pending_taster_id', pendingTasterId)
+    // Presence of the flag is what matters, not its value.
+    if (params.has('email_confirmed')) setEmailConfirmed(true)
 
     if (identityHash) {
       // Store identity_hash in sessionStorage to use after login
@@ -212,7 +221,7 @@ export default function LoginPage() {
     setError('')
     try {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(form.email, {
-        redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/reset-password` : 'https://valoriainstitute.com/reset-password',
+        redirectTo: passwordResetUrl(),
       })
       if (resetError) throw resetError
       setResetSent(true)
@@ -263,6 +272,11 @@ export default function LoginPage() {
             />
           </div>
 
+          {emailConfirmed && (
+            <div style={styles.successBox} role="status" aria-live="polite">
+              Your email address is verified. Sign in below to continue to your dashboard.
+            </div>
+          )}
           {error && <div style={styles.errorBox}>{error}</div>}
           {resetSent && (
             <div style={styles.successBox}>
@@ -286,7 +300,7 @@ export default function LoginPage() {
           </p>
           <p style={{ margin: 0 }}>
             Talent or speaker?{' '}
-            <a href="https://valoriainstitute.com/valu/assessment/" target="_blank" rel="noopener noreferrer" style={{ color: GOLD }}>Take the VALU Index</a>
+            <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" style={{ color: GOLD }}>Take the VALU Index</a>
           </p>
         </div>
       </div>

@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
+import { BRAND } from '@/lib/brand'
+import { authCallbackUrl } from '@/lib/site-url'
 import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/password-policy'
 
 const GOLD = '#C9A84C'
@@ -63,9 +65,12 @@ export default function SignupPage() {
         password: form.password,
         options: {
           data: { display_name: form.name, user_type: userType },
-          // Never derive auth redirects from window.location.origin: signups on a
-          // Vercel preview would otherwise send confirmation emails to that preview.
-          emailRedirectTo: 'https://valoriainstitute.com/auth/callback',
+          // Environment-specific, allowlisted callback. Never derive auth
+          // redirects from an arbitrary host at request time, and never hardcode
+          // the production domain: a staging/preview signup would otherwise send
+          // its confirmation email to production. getSiteOrigin() prefers
+          // NEXT_PUBLIC_SITE_URL and falls back to the current origin.
+          emailRedirectTo: authCallbackUrl(),
         },
       })
       if (signupError) throw signupError
@@ -141,7 +146,7 @@ export default function SignupPage() {
                 If you're a professional or speaker, your account is created through the VALU Index — the assessment is the entry point, not a separate signup.
               </p>
               <a
-                href="https://valoriainstitute.com/valu/assessment/"
+                href={BRAND.assessmentUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ display: 'inline-block', padding: '10px 20px', background: GOLD, color: MIDNIGHT, fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', borderRadius: '999px', textDecoration: 'none' }}

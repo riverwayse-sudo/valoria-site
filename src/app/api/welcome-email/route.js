@@ -10,6 +10,8 @@
 // CTA) as part of report delivery in the assessment app's send-email.js.
 // A second one would just be redundant.
 
+import { siteUrl } from '@/lib/site-url'
+
 const BREVO_KEY = process.env.BREVO_API_KEY
 const FROM_EMAIL = 'info@valoriainstitute.com'
 const FROM_NAME  = 'Valoria Institute'
@@ -52,7 +54,7 @@ export async function POST(request) {
         <li style="margin-bottom:6px;">Request an introduction to anyone you'd like to connect with — Valoria facilitates every introduction personally</li>
         <li>Check your dashboard any time to track requests you've sent</li>
       </ul>
-      <a href="https://valoriainstitute.com/marketplace" style="display:inline-block;margin-top:8px;padding:12px 24px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.08em;">BROWSE THE MARKETPLACE</a>
+      <a href="${siteUrl('/marketplace')}" style="display:inline-block;margin-top:8px;padding:12px 24px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.08em;">BROWSE THE MARKETPLACE</a>
       <p style="margin:28px 0 0;font-size:12px;color:#8A8578;">— The Valoria Institute team</p>
     </div>`
 

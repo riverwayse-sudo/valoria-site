@@ -5,13 +5,14 @@
 // FACILITATOR" buttons were plain mailto: links — no DB record, no admin
 // visibility, no way to measure conversion. This is the fix.
 
-import { createClient } from '@supabase/supabase-js'
+import { getPrivilegedClient } from '@/lib/supabase-server'
 
 function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) throw new Error('Supabase server configuration is missing.')
-  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+  // Enquiries are a public write surface (anyone can request an intro) but not a
+  // public read surface: the inserted row carries buyer contact details and is
+  // read back by the admin dashboard. getPrivilegedClient() requires the
+  // service role and fails closed.
+  return getPrivilegedClient()
 }
 
 const BREVO_KEY = process.env.BREVO_API_KEY

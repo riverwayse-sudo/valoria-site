@@ -16,7 +16,11 @@
 // the 15-min sweep picks it up instead, so we don't want the login flow to
 // hang or fail waiting on this.
 
-const ASSESSMENT_ORIGIN = 'https://assessment.valoriainstitute.com'
+// The assessment app origin is the same upstream the site proxies
+// /valu/assessment/* to (see next.config.js). Read it from the same variable so
+// there is one source of truth per environment; the production value is only a
+// fallback for environments that do not set it.
+const ASSESSMENT_ORIGIN = process.env.VALU_UPSTREAM_ORIGIN || 'https://assessment.valoriainstitute.com'
 
 export async function POST(request) {
   let identity_hash

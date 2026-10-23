@@ -7,7 +7,22 @@ const SB_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 export async function middleware(request) {
   const { pathname } = request.nextUrl
 
-  if (pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname === '/favicon.ico' || pathname.match(/\.(png|jpg|jpeg|svg|ico|webp|woff|woff2|ttf)$/)) return NextResponse.next()
+  // The VALU assessment SPA is an external application rewritten in via
+  // next.config.js. Its HTML shell requests hashed /valu/assessment/assets/*.js
+  // and *.css files, and the matcher below deliberately excludes only
+  // _next/static and _next/image — so those requests were reaching this
+  // middleware. Two problems followed:
+  //   1. the static-extension allowlist covered images and fonts but not
+  //      js/css/mjs/map/json, so the assets were not recognised as static;
+  //   2. the middleware then made an unguarded supabase.auth.getUser() call on
+  //      every one of those requests, so any auth/network failure threw and the
+  //      asset came back as a 500 — the page rendered but appeared broken.
+  // This site's middleware has no business gating a proxied third-party app:
+  // bypass the whole prefix outright.
+  if (pathname === '/valu/assessment' || pathname.startsWith('/valu/assessment/')) return NextResponse.next()
+
+  const STATIC_ASSET = /\.(?:png|jpe?g|gif|svg|ico|webp|avif|bmp|js|mjs|cjs|jsx|css|map|json|txt|xml|webmanifest|woff2?|ttf|otf|eot|wasm)$/
+  if (pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname === '/favicon.ico' || STATIC_ASSET.test(pathname)) return NextResponse.next()
   if (!SB_URL || !SB_ANON_KEY) return NextResponse.next()
 
   let response = NextResponse.next({ request: { headers: request.headers } })
@@ -23,7 +38,18 @@ export async function middleware(request) {
     },
   })
 
-  const { data: { user } } = await supabase.auth.getUser()
+  // A transient Supabase/network failure must not turn every page on the site
+  // into a 500. If the identity cannot be resolved, treat the request as
+  // unauthenticated and keep going: public pages still render, while the admin
+  // guard below still fails closed by redirecting to login. Previously this
+  // call was unguarded, so an auth outage produced site-wide 500s.
+  let user = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data?.user || null
+  } catch {
+    user = null
+  }
 
   if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
     const loginUrl = new URL('/admin/login', request.url)
@@ -75,4 +101,8 @@ export async function middleware(request) {
   return response
 }
 
-export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'] }
+// Belt-and-braces with the in-function bypass: keep the proxied VALU
+// assessment app out of the middleware matcher entirely so its hashed
+// /valu/assessment/assets/*.js and *.css bundle requests never reach the
+// Supabase auth path (which is what turned them into 500s).
+export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico|valu/assessment).*)'] }
