@@ -233,14 +233,17 @@ describe('proxied VALU assessment assets are never gated by site middleware', ()
   // broken. The middleware must bypass the whole prefix and must not let an
   // auth error throw.
   const middleware = read('src/middleware.js')
+  const routingSource = read('src/lib/middleware-routing.js')
 
   test('the whole /valu/assessment prefix is bypassed before any auth call', () => {
-    expect(middleware).toMatch(/pathname\s*===\s*'\/valu\/assessment'/)
-    expect(middleware).toMatch(/pathname\.startsWith\('\/valu\/assessment\/'\)/)
-    // Compare positions in the executable code only — the explanatory comment
-    // above the guard also names the prefix and the auth call.
+    // The bypass decision now lives in src/lib/middleware-routing.js (extracted
+    // so it is unit-testable — see resilience-regressions.test.js for the
+    // behavioural coverage). middleware.js must delegate to it before touching
+    // Supabase.
+    expect(routingSource).toMatch(/pathname\s*===\s*ASSESSMENT_PREFIX/)
+    expect(routingSource).toMatch(/pathname\.startsWith\(ASSESSMENT_PREFIX \+ '\/'\)/)
     const code = middleware.replace(/\/\/[^\n]*/g, '')
-    const bypassAt = code.indexOf("startsWith('/valu/assessment/')")
+    const bypassAt = code.indexOf('shouldBypassAuth(pathname)')
     const authAt = code.indexOf('supabase.auth.getUser()')
     expect(bypassAt).toBeGreaterThan(-1)
     expect(authAt).toBeGreaterThan(-1)
@@ -248,7 +251,7 @@ describe('proxied VALU assessment assets are never gated by site middleware', ()
   })
 
   test('the static-asset allowlist covers the SPA bundle types (js, css, mjs, map)', () => {
-    const allowlist = middleware.match(/const STATIC_ASSET = (\/.*\/)$/m)
+    const allowlist = routingSource.match(/const STATIC_ASSET = (\/.*\/)$/m)
     expect(allowlist).not.toBeNull()
     for (const ext of ['js', 'mjs', 'css', 'map', 'json', 'woff2']) {
       expect(allowlist[1]).toContain(ext)
