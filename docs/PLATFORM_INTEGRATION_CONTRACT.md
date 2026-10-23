@@ -191,6 +191,25 @@ such as `<project>-git-<branch>-<team>.vercel.app` does not necessarily resolve.
 | platform → site | `{site-origin}/login?email_confirmed=1` | post-confirmation |
 | platform → site | `{site-origin}/journey/continue?stage=assess&taster_id=…` | reminders |
 
+### Internal service calls stay on the platform's own origin
+
+The platform's report pipeline (`generate-and-send-report.js`,
+`finalize-report.js`, `sweep-unsent-reports.js`) calls its own
+`/api/send-email` route. That route lives in the **platform** deployment, not on
+the site: the site has no `/api/send-email` handler, and its `/valu/assessment`
+rewrite points *back* at the platform.
+
+`generate-and-send-report.js` previously built this URL from a site origin
+(`SITE_ORIGIN`, defaulting to production). Delivery therefore 404'd and every
+report landed in `FAILED`. It now resolves the origin from the incoming request
+(`new URL(req.url).origin`), matching the other two callers, so the internal
+call follows the deployment that is actually running. `SITE_ORIGIN` remains a
+valid input to `lib/site-url.js` for building links the *user* follows; it must
+not be used to reach the platform's own API.
+
+Rule: a call from one platform route to another platform route resolves against
+`req.url`. `lib/site-url.js` is only for destinations on the site.
+
 Never hardcode a preview deployment host as a permanent destination. Use
 `NEXT_PUBLIC_SITE_URL` (site) and `VALU_UPSTREAM_ORIGIN` / `VALU_ASSESSMENT_URL`
 (assessment origin) per environment.
