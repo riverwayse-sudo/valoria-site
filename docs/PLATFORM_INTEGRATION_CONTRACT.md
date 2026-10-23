@@ -75,6 +75,31 @@ identity evidence. Destination comes from `VALU_ASSESSMENT_URL`
 3. Never accept an anonymous `full=1` submission — the full assessment is only
    reachable through the account handoff.
 
+### Submission endpoint contract (`valoria-platform/api/submit-assessment.js`)
+
+* `POST` with `{ name, role, experience, answers, timings, shuffleMap,
+  taster_id, handoff_token }`. The server re-scores from the canonical bank; the
+  browser never supplies score-bearing options or ownership.
+* `action: 'verify-handoff'` performs the same token/identity/confirmation
+  checks and returns `{ ok: true, expires_at }` for the resume path.
+* Success returns `{ identity_hash, report_token, results }`; a repeat for the
+  same verified owner returns `alreadyCompleted: true` with the existing token.
+* The token format is `base64url(payload).base64url(hmac-sha256(payload))`, HMAC
+  key = `SUPABASE_SERVICE_ROLE_KEY`, `aud = 'valu-full-assessment'`, TTL 4h.
+  Site creator: `valoria-site/src/lib/valu-handoff-token.js`; platform verifier:
+  `valoria-platform/valoria-final/lib/valu-handoff-token.js`. Verified
+  interoperable in both directions, including rejection of wrong-snapshot,
+  tampered, missing and expired tokens.
+
+**Testing requirement:** the platform's existing contract tests for this endpoint
+read the file as text and assert substrings. That style cannot catch control-flow
+bugs, and one shipped: a `const` declared inside a `try` and read after it threw
+`ReferenceError` on every first-time submission *after* the row was written, so
+participants were charged a completed assessment and shown a save failure.
+`valoria-final/src/__tests__/09_submit_assessment_runtime.test.js` now executes
+the real handler with only `global.fetch` stubbed. Keep runtime coverage for any
+change to this endpoint; do not rely on substring assertions alone.
+
 ---
 
 ## 3. Email confirmation contract
