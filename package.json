@@ -9,7 +9,8 @@
     "start": "next start",
     "test": "jest",
     "design:check": "node scripts/design-check.js",
-    "excellence:check": "node scripts/excellence-check.js"
+    "excellence:check": "node scripts/excellence-check.js",
+    "verify:scoring-parity": "node scripts/verify-scoring-parity.mjs"
   },
   "dependencies": {
     "@next/third-parties": "15.5.27",
