@@ -127,6 +127,43 @@ Supabase confirmation emails must redirect to the site callback:
   `{site-origin}/auth/callback`.
 * Set the site env var `NEXT_PUBLIC_SITE_URL` to the staging origin on staging.
 
+### Staging environment variables (Vercel) — do not apply without authorisation
+
+`.env.example` is the contract for *which* variables exist; it does not prove a
+deployment has them. Confirm each of these on the staging project, with the
+correct scope, before trusting a staging run:
+
+| Variable | Scope | Why it matters |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | all | every Supabase call; a malformed value used to 500 the routes |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | all | browser auth and middleware session refresh |
+| `SUPABASE_SERVICE_ROLE_KEY` | server only | privileged routes; must never be exposed as `NEXT_PUBLIC_` |
+| `NEXT_PUBLIC_SITE_URL` | all | auth redirects and handoff callbacks; must be the staging origin |
+| `VALU_UPSTREAM_ORIGIN` | all | `/valu/assessment/*` rewrite target |
+| `VALU_ASSESSMENT_URL` | all | handoff destination |
+| `CRON_SECRET` | server only | guards the cron routes |
+| `BREVO_API_KEY`, `BREVO_FROM_EMAIL`, `BREVO_LIST_ID`, `BREVO_WEBINAR_LIST_ID` | server only | transactional email and webinar list adds |
+| `SUPABASE_URL` | server only | fallback for the reconciliation-health cron |
+
+Do not set `VERCEL_ENV` by hand — Vercel provides it. `VALORIA_PLATFORM_ROOT`
+and `VALORIA_SITE_ROOT` are test-only.
+
+### Known blocker: preview deployments are protected
+
+Preview deployments currently answer `302` to
+`https://vercel.com/sso-api?url=…` and then `https://vercel.com/login`
+(Vercel Deployment Protection), so an unauthenticated client cannot reach them.
+Resolve before any automated staging run, by either:
+
+* generating a **Protection Bypass for Automation** secret and sending it as
+  `x-vercel-protection-bypass` (header or query param), or
+* setting Vercel Authentication to **Only Production Deployments** or
+  **Disabled** for previews.
+
+The per-commit preview URL is available from the GitHub deployment status for a
+commit (`environment_url`), not from guessing the branch alias — a branch alias
+such as `<project>-git-<branch>-<team>.vercel.app` does not necessarily resolve.
+
 ---
 
 ## 4. Callback / redirect summary
