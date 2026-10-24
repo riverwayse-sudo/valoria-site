@@ -254,6 +254,49 @@ describe('welcome-email: open mail relay is closed', () => {
     process.env.BREVO_API_KEY = saved
     jest.resetModules()
   })
+
+  test('no real email is sent by any test in this suite', () => {
+    // global.fetch is a jest mock for the whole file, so a Brevo call can never
+    // leave the process. Assert the boundary is still mocked rather than real.
+    expect(jest.isMockFunction(global.fetch)).toBe(true)
+  })
+})
+
+// ── signup: welcome-email failure must not block account creation ─────────
+//
+// Static contract. The signup page is a client component; its send is
+// fire-and-forget and its failure only sets a retry flag. What matters is that
+// the account-creation path does not depend on the email outcome, and that a
+// refused send leaves a visible, recoverable retry instead of vanishing.
+describe('signup: welcome email is a recoverable courtesy', () => {
+  const signup = require('fs').readFileSync(
+    require('path').join(process.cwd(), 'src/app/signup/page.jsx'),
+    'utf8',
+  )
+
+  test('account creation does not depend on the welcome-email result', () => {
+    // setSuccess must not be gated on the fetch outcome, and the initial send
+    // (inside handleSignup) must not be awaited. The retry handler, further
+    // down, is allowed to await because it reports its own state.
+    const successIndex = signup.indexOf('setSuccess(true)')
+    const fetchIndex = signup.indexOf("fetch('/api/welcome-email'")
+    expect(fetchIndex).toBeGreaterThan(-1)
+    expect(successIndex).toBeGreaterThan(fetchIndex)
+    const signupSend = signup.slice(fetchIndex, successIndex)
+    expect(signupSend).not.toContain('await ')
+  })
+
+  test('a refused send surfaces a retry instead of being discarded', () => {
+    expect(signup).toContain('setWelcomePending(true)')
+    expect(signup).toContain('welcomePending')
+    expect(signup).toContain('retryWelcomeEmail')
+    expect(signup).toContain("fetch('/api/welcome-email'")
+  })
+
+  test('the retry re-sends for the same account id', () => {
+    expect(signup).toContain('signupUserId')
+    expect(signup).toContain('setSignupUserId(data.user.id)')
+  })
 })
 
 // ── trigger-report ────────────────────────────────────────────────────────
