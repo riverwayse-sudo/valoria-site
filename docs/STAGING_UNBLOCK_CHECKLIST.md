@@ -160,6 +160,14 @@ must not hardcode the production domain.
 do. If it is absent, `/api/welcome-email` returns `503` by design (it fails
 closed).
 
+`/api/careers/applications` now calls it too. That route is a public POST that
+writes up to 4 MB to storage and sends two Brevo emails, so it was the last
+unmetered public form; it now applies an IP budget and a per-address budget, and
+**fails closed** — a limiter outage returns `503` rather than allowing an
+unmetered write. Confirm `check_rate_limit` is present before deploying, or
+career applications will be refused (no data is written, so a retry after the
+function is restored succeeds).
+
 **Verification.**
 
 ```bash
@@ -179,10 +187,13 @@ Confirm the staging database has the migrations the branch expects, in
 particular:
 
 * `20261016121500_fix_taster_submission_ambiguous_reference.sql` — the snapshot
-  submission RPC. Note the current `submit-taster.js` sends
-  `results.normalisedScores` (undefined) as `p_cluster_scores`, which this
-  function rejects; see the PR reconciliation doc. Snapshot submission will fail
-  until PR #60 (or the folded equivalent) lands.
+  submission RPC. The handler bug that made snapshot submission fail on `main`
+  (`p_cluster_scores: results.normalisedScores`, a key `computeTasterResult()`
+  never returns, so `JSON.stringify` dropped it and the RPC rejected the whole
+  submission with `22023`) is **already corrected on this remediation branch**:
+  `submit-taster.js` now sends `results.points`, and the payload's ten keys match
+  the function signature exactly. Covered by `18_submit_taster_runtime.test.js`.
+  PR #60 is therefore not a prerequisite for this branch.
 * `20261021145000_require_assessment_version_provenance.sql` — assessment
   version provenance.
 
