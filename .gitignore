@@ -9,3 +9,6 @@ install_feedback*.bat
 *.pptx
 !public/*.png
 ".vercel" 
+
+# Local scratch dir for scripts/verify-rate-limit-migration.mjs (PGlite).
+.pglite-verify/

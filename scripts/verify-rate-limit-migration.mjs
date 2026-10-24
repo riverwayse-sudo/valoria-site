@@ -23,26 +23,35 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
-import { createRequire } from 'node:module'
+import { pathToFileURL } from 'node:url'
 
 const MIGRATION = 'supabase/migrations/20261023120000_check_rate_limit_protocol.sql'
 const root = process.cwd()
-const require = createRequire(import.meta.url)
 
-function loadPGlite() {
-  try {
-    return require('@electric-sql/pglite').PGlite
-  } catch {
-    console.log('PGlite not present; provisioning with --no-save (package.json is not modified)...')
-    execFileSync('npm', ['install', '--no-save', '--no-audit', '--no-fund', '@electric-sql/pglite'], {
-      cwd: root,
-      stdio: 'inherit',
-    })
-    // Resolve from the repo root explicitly. A plain require() can miss a module
-    // that was installed moments ago in the same process, and Node's cache for
-    // the package path is what fails, not the filesystem.
-    return require(require.resolve('@electric-sql/pglite', { paths: [root] })).PGlite
+// PGlite is installed into its own directory rather than the project's
+// node_modules. A `--no-save` install into node_modules is not resolvable from
+// the running process (the module appears on disk after Node has already
+// resolved the path), and it would leave a stray dependency behind. A dedicated
+// directory keeps the project's dependency tree and package.json untouched, and
+// the entry point is then loaded by absolute path.
+const CACHE_DIR = path.join(root, '.pglite-verify')
+const ENTRY = path.join(CACHE_DIR, 'node_modules', '@electric-sql', 'pglite', 'dist', 'index.js')
+
+async function loadPGlite() {
+  if (!fs.existsSync(ENTRY)) {
+    console.log('PGlite not present; provisioning into .pglite-verify (package.json is not modified)...')
+    fs.mkdirSync(CACHE_DIR, { recursive: true })
+    execFileSync(
+      'npm',
+      ['install', '--no-save', '--no-audit', '--no-fund', '--prefix', CACHE_DIR, '@electric-sql/pglite'],
+      { cwd: root, stdio: 'inherit' }
+    )
   }
+  if (!fs.existsSync(ENTRY)) {
+    throw new Error(`PGlite installed but its entry point is missing at ${ENTRY}`)
+  }
+  const mod = await import(pathToFileURL(ENTRY).href)
+  return mod.PGlite || mod.default?.PGlite
 }
 
 const results = []
@@ -51,7 +60,7 @@ function check(label, ok, detail = '') {
   console.log(`  ${ok ? 'PASS' : 'FAIL'}  ${label}${detail ? ` — ${detail}` : ''}`)
 }
 
-const PGlite = loadPGlite()
+const PGlite = await loadPGlite()
 const sql = fs.readFileSync(path.join(root, MIGRATION), 'utf8')
 const db = new PGlite()
 
