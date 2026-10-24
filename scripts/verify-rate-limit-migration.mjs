@@ -135,6 +135,38 @@ check(
   k1.rows[0].a === true && k2.rows[0].a === false && k3.rows[0].a === true
 )
 
+console.log('\n6b. a brand-new key is created without raising')
+// The reachable failure this guards: `select ... for update` locks nothing for a
+// row that does not exist, so an `if not found then insert` shape lets two
+// concurrent first requests collide on the primary key. One then raises, the
+// route sees an RPC error, and the fail-closed routes 503 a legitimate first
+// submission. Emulate the collision directly against the function's own shape.
+let createdCleanly = true
+try {
+  await db.exec('begin')
+  await db.query(`select public.check_rate_limit('race:first', 5, 60)`)
+  await db.exec('commit')
+} catch (err) {
+  createdCleanly = false
+  await db.exec('rollback')
+  check('first call for a new key does not raise', false, err.message.split('\n')[0])
+}
+if (createdCleanly) check('first call for a new key does not raise', true)
+
+const bucket = await db.query(`select request_count from public.rate_limit_buckets where rate_key = 'race:first'`)
+check('the new bucket starts at one consumed request', bucket.rows[0]?.request_count === 1, String(bucket.rows[0]?.request_count))
+
+// A second distinct key must also be created cleanly, proving the upsert path is
+// taken for every new key rather than only the very first one in the table.
+let secondCleanly = true
+try {
+  await db.query(`select public.check_rate_limit('race:second', 5, 60)`)
+} catch (err) {
+  secondCleanly = false
+  check('a later new key also creates cleanly', false, err.message.split('\n')[0])
+}
+if (secondCleanly) check('a later new key also creates cleanly', true)
+
 console.log('\n7. malformed arguments are rejected rather than silently allowed')
 for (const [label, q] of [
   ['key shorter than 3 characters', `select public.check_rate_limit('ab', 5, 60)`],

@@ -26,6 +26,13 @@
 -- here) both increment and report in one statement, and the name records that.
 -- This function must only *check* — the callers read the boolean and decide
 -- themselves — so a name implying consumption would mislead.
+--
+-- First-request concurrency: `select ... for update` locks nothing when the row
+-- does not exist yet, so a plain `if not found then insert` lets two concurrent
+-- first requests for the same brand-new key both reach the insert, and one
+-- raises a unique violation. The route then sees an RPC error and takes its
+-- failure fallback (503 on the two fail-closed routes). The upsert below makes
+-- row creation atomic, and the following `for update` then serialises callers.
 
 create table if not exists public.rate_limit_buckets (
   rate_key text primary key,
@@ -61,21 +68,23 @@ begin
     raise exception 'invalid rate limit window';
   end if;
 
-  -- `for update` serialises concurrent callers on the same key so the
-  -- read-then-write below cannot lose a request. Without it two simultaneous
-  -- submissions could both read count = limit - 1 and both be allowed.
+  -- Create the bucket if it is missing. `on conflict do nothing` makes this safe
+  -- when two first requests for the same new key arrive together: one inserts,
+  -- the other becomes a no-op instead of raising a unique violation. A bare
+  -- `if not found then insert` cannot do this, because the preceding
+  -- `select ... for update` locks nothing for a row that does not yet exist.
+  insert into public.rate_limit_buckets(rate_key, window_started_at, request_count, updated_at)
+  values (p_key, v_now, 0, v_now)
+  on conflict (rate_key) do nothing;
+
+  -- Now the row exists, so this lock is real and serialises concurrent callers
+  -- on the same key. Without it two simultaneous submissions could both read
+  -- count = limit - 1 and both be allowed.
   select * into v_row
   from public.rate_limit_buckets
   where rate_key = p_key
   for update;
 
-  if not found then
-    insert into public.rate_limit_buckets(rate_key, window_started_at, request_count, updated_at)
-    values (p_key, v_now, 1, v_now);
-    return true;
-  end if;
-
-  -- Window elapsed: reset and allow.
   if v_row.window_started_at <= v_now - make_interval(secs => p_window_seconds) then
     update public.rate_limit_buckets
     set window_started_at = v_now, request_count = 1, updated_at = v_now

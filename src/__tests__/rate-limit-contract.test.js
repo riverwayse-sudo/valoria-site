@@ -98,10 +98,28 @@ describe('check_rate_limit database contract', () => {
   })
 
   test('concurrent callers cannot both be allowed past the budget', () => {
-    const sql = read(MIGRATION)
+    const sql = read(MIGRATION).replace(/--[^\n]*/g, '')
     // A plain select-then-update loses a concurrent request; the row must be
     // locked for the duration of the check.
     expect(sql).toMatch(/select \* into v_row[\s\S]*?for update/i)
+  })
+
+  test('a brand-new key is created atomically, not with a bare insert', () => {
+    const sql = read(MIGRATION).replace(/--[^\n]*/g, '')
+    // `select ... for update` locks nothing when the row does not exist yet, so
+    // an `if not found then insert` shape lets two concurrent first requests for
+    // the same new key both reach the insert. One then raises a unique violation,
+    // the route sees an RPC error, and the two fail-closed routes return 503 on
+    // a legitimate first submission. Row creation must be conflict-tolerant.
+    expect(sql).toMatch(/insert into\s+public\.rate_limit_buckets[\s\S]*?on conflict\s*\(\s*rate_key\s*\)\s*do nothing/i)
+    expect(sql).not.toMatch(/if not found then\s*\n\s*insert into/i)
+
+    // Ordering matters: the upsert has to run before the locking select,
+    // otherwise the lock is still taken against a row that may not exist.
+    const insertAt = sql.search(/insert into\s+public\.rate_limit_buckets/i)
+    const lockAt = sql.search(/for update/i)
+    expect(insertAt).toBeGreaterThan(-1)
+    expect(lockAt).toBeGreaterThan(insertAt)
   })
 
   test('a spent budget is refused without extending the window', () => {
