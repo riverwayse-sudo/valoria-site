@@ -362,7 +362,11 @@ describe('trigger-report: unauthenticated relay and token disclosure are closed'
     })
 
     const res = await triggerReport.POST(
-      jsonRequest('https://site.test/api/trigger-report', { report_token: VALID_TOKEN }, { Authorization: 'Bearer good' })
+      jsonRequest('https://site.test/api/trigger-report', { report_token: VALID_TOKEN }, {
+        Authorization: 'Bearer good',
+        'x-forwarded-for': '198.51.100.24, 10.0.0.2',
+        'x-real-ip': '203.0.113.10',
+      })
     )
 
     expect(res.status).toBe(200)
@@ -373,7 +377,9 @@ describe('trigger-report: unauthenticated relay and token disclosure are closed'
     const [url, init] = global.fetch.mock.calls[0]
     expect(url).toBe('https://assessment.test/api/generate-and-send-report')
     expect(JSON.parse(init.body)).toEqual({ report_token: VALID_TOKEN })
-    expect(init.headers['x-forwarded-for']).toBe('203.0.113.10')
+    // Use the first platform-normalized forwarded address consistently, not
+    // x-real-ip when both headers are present.
+    expect(init.headers['x-forwarded-for']).toBe('198.51.100.24')
   })
 
   test('never forwards an identity_hash on the unauthenticated path', async () => {
