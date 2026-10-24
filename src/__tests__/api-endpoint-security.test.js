@@ -1,0 +1,280 @@
+// Regression tests for the two audit findings on public API endpoints:
+//   - src/app/api/welcome-email/route.js  (open mail relay + HTML injection)
+//   - src/app/api/trigger-report/route.js (dead + public report_token leak)
+//
+// These execute the real route handlers. Only the network boundary is mocked
+// (global.fetch for Brevo and the assessment upstream) and the Supabase client
+// helper, so no email is sent and no upstream is contacted. Request/Response
+// are Node globals.
+
+process.env.BREVO_API_KEY = 'test-brevo-key'
+process.env.VALU_UPSTREAM_ORIGIN = 'https://assessment.test'
+
+jest.mock('@/lib/supabase-server', () => ({
+  getPrivilegedClient: jest.fn(),
+  hasPrivilegedCredentials: jest.fn(() => true),
+}))
+
+const { getPrivilegedClient } = require('@/lib/supabase-server')
+
+const welcomeEmail = require('@/app/api/welcome-email/route')
+const triggerReport = require('@/app/api/trigger-report/route')
+
+function jsonRequest(url, body, headers = {}) {
+  return new Request(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...headers },
+    body: typeof body === 'string' ? body : JSON.stringify(body),
+  })
+}
+
+function supabaseStub({ rpcData = true, rpcError = null, user = { id: 'u1' }, authError = null, rpcThrows = false } = {}) {
+  return {
+    rpc: jest.fn(async () => {
+      if (rpcThrows) throw new Error('rpc exploded')
+      return { data: rpcData, error: rpcError }
+    }),
+    auth: { getUser: jest.fn(async () => ({ data: { user: authError ? null : user }, error: authError })) },
+  }
+}
+
+beforeEach(() => {
+  jest.clearAllMocks()
+  global.fetch = jest.fn()
+})
+
+afterAll(() => {
+  delete global.fetch
+})
+
+// ── welcome-email ─────────────────────────────────────────────────────────
+
+describe('welcome-email: open mail relay is closed', () => {
+  test('a legitimate signup still receives the welcome email', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    global.fetch.mockResolvedValue({ ok: true, status: 200, text: async () => '' })
+
+    const res = await welcomeEmail.POST(
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada Lovelace' })
+    )
+
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ ok: true })
+    expect(global.fetch).toHaveBeenCalledTimes(1)
+    const [url, init] = global.fetch.mock.calls[0]
+    expect(url).toBe('https://api.brevo.com/v3/smtp/email')
+    const sent = JSON.parse(init.body)
+    expect(sent.to[0].email).toBe('buyer@example.com')
+    expect(sent.htmlContent).toContain('Hi Ada,')
+  })
+
+  test('rejects an invalid recipient without contacting Brevo', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    for (const email of ['not-an-email', '', 'a@b', null, 123, 'x'.repeat(300) + '@example.com']) {
+      const res = await welcomeEmail.POST(
+        jsonRequest('https://site.test/api/welcome-email', { email, name: 'Ada' })
+      )
+      expect(res.status).toBe(400)
+    }
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('rejects an oversized name', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    const res = await welcomeEmail.POST(
+      jsonRequest('https://site.test/api/welcome-email', {
+        email: 'buyer@example.com',
+        name: 'x'.repeat(121),
+      })
+    )
+    expect(res.status).toBe(400)
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('escapes the recipient name instead of injecting it into the email HTML', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    global.fetch.mockResolvedValue({ ok: true, status: 200, text: async () => '' })
+
+    await welcomeEmail.POST(
+      jsonRequest('https://site.test/api/welcome-email', {
+        email: 'buyer@example.com',
+        // Space-free, so the whole payload survives the first-name split and
+        // actually reaches the interpolated HTML.
+        name: '<svg/onload=alert(1)>',
+      })
+    )
+
+    const sent = JSON.parse(global.fetch.mock.calls[0][1].body)
+    expect(sent.htmlContent).not.toContain('<svg')
+    expect(sent.htmlContent).not.toContain('onload=alert(1)>')
+    expect(sent.htmlContent).toContain('&lt;svg/onload=alert(1)&gt;')
+  })
+
+  test('rate-limits repeated sends from one connection', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub({ rpcData: false }))
+    const res = await welcomeEmail.POST(
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada' })
+    )
+    expect(res.status).toBe(429)
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('fails closed when the rate limiter itself errors', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub({ rpcData: null, rpcError: { message: 'boom' } }))
+    const res = await welcomeEmail.POST(
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada' })
+    )
+    expect(res.status).toBe(503)
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('fails closed when the limiter RPC throws or credentials are absent', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub({ rpcThrows: true }))
+    let res = await welcomeEmail.POST(
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada' })
+    )
+    expect(res.status).toBe(503)
+
+    getPrivilegedClient.mockImplementation(() => {
+      throw new Error('Privileged Supabase credentials are not configured for this environment.')
+    })
+    res = await welcomeEmail.POST(
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada' })
+    )
+    expect(res.status).toBe(503)
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('rejects a malformed body', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    const res = await welcomeEmail.POST(jsonRequest('https://site.test/api/welcome-email', 'not json'))
+    expect(res.status).toBe(400)
+  })
+
+  test('surfaces an upstream provider failure without claiming success', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    global.fetch.mockResolvedValue({ ok: false, status: 500, text: async () => 'provider down' })
+    const res = await welcomeEmail.POST(
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada' })
+    )
+    expect(res.status).toBe(502)
+    expect(await res.json()).toEqual({ ok: false, error: 'Send failed.' })
+  })
+
+  test('surfaces a network failure to the provider', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    global.fetch.mockRejectedValue(new Error('ECONNRESET'))
+    const res = await welcomeEmail.POST(
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada' })
+    )
+    expect(res.status).toBe(500)
+  })
+
+  test('reports 501 when email is not configured', async () => {
+    jest.resetModules()
+    const saved = process.env.BREVO_API_KEY
+    delete process.env.BREVO_API_KEY
+    const fresh = require('@/app/api/welcome-email/route')
+    const res = await fresh.POST(
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada' })
+    )
+    expect(res.status).toBe(501)
+    process.env.BREVO_API_KEY = saved
+    jest.resetModules()
+  })
+})
+
+// ── trigger-report ────────────────────────────────────────────────────────
+
+const VALID_TOKEN = 'a'.repeat(40)
+
+describe('trigger-report: unauthenticated relay and token disclosure are closed', () => {
+  test('requires a report_token', async () => {
+    for (const body of [{}, { identity_hash: 'fp_abc123' }, { report_token: 'short' }, { report_token: 42 }]) {
+      const res = await triggerReport.POST(jsonRequest('https://site.test/api/trigger-report', body))
+      expect(res.status).toBe(400)
+    }
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('rejects an anonymous caller even with a well-formed token', async () => {
+    const res = await triggerReport.POST(
+      jsonRequest('https://site.test/api/trigger-report', { report_token: VALID_TOKEN })
+    )
+    expect(res.status).toBe(401)
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('rejects an invalid or expired session token', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub({ authError: { message: 'invalid JWT' } }))
+    const res = await triggerReport.POST(
+      jsonRequest('https://site.test/api/trigger-report', { report_token: VALID_TOKEN }, { Authorization: 'Bearer bad' })
+    )
+    expect(res.status).toBe(401)
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('an authenticated caller relays the token upstream and does not receive it back', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    global.fetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ ok: true, reportReady: true, report_token: 'SECRET-TOKEN', results: { valuIndex: 61 } }),
+    })
+
+    const res = await triggerReport.POST(
+      jsonRequest('https://site.test/api/trigger-report', { report_token: VALID_TOKEN }, { Authorization: 'Bearer good' })
+    )
+
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body).toEqual({ ok: true, reportReady: true })
+    expect(JSON.stringify(body)).not.toContain('SECRET-TOKEN')
+
+    const [url, init] = global.fetch.mock.calls[0]
+    expect(url).toBe('https://assessment.test/api/generate-and-send-report')
+    expect(JSON.parse(init.body)).toEqual({ report_token: VALID_TOKEN })
+  })
+
+  test('never forwards an identity_hash on the unauthenticated path', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub({ authError: { message: 'no session' } }))
+    const res = await triggerReport.POST(
+      jsonRequest('https://site.test/api/trigger-report', { identity_hash: 'fp_guessable' })
+    )
+    expect(res.status).toBe(400)
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('rate-limits an authenticated caller enumerating tokens', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub({ rpcData: false }))
+    const res = await triggerReport.POST(
+      jsonRequest('https://site.test/api/trigger-report', { report_token: VALID_TOKEN }, { Authorization: 'Bearer good' })
+    )
+    expect(res.status).toBe(429)
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('maps an upstream rejection to 502 without leaking the upstream body', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    global.fetch.mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: async () => ({ ok: false, error: 'Valid report token is required' }),
+    })
+    const res = await triggerReport.POST(
+      jsonRequest('https://site.test/api/trigger-report', { report_token: VALID_TOKEN }, { Authorization: 'Bearer good' })
+    )
+    expect(res.status).toBe(502)
+    const body = await res.json()
+    expect(body.error).not.toContain('Valid report token')
+  })
+
+  test('reports 502 when the assessment app is unreachable', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    global.fetch.mockRejectedValue(new Error('ENOTFOUND'))
+    const res = await triggerReport.POST(
+      jsonRequest('https://site.test/api/trigger-report', { report_token: VALID_TOKEN }, { Authorization: 'Bearer good' })
+    )
+    expect(res.status).toBe(502)
+  })
+})

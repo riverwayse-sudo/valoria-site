@@ -9,39 +9,122 @@
 // {name}." branded email (with their score and a Complete Your Profile
 // CTA) as part of report delivery in the assessment app's send-email.js.
 // A second one would just be redundant.
+//
+// SECURITY (audit finding): this route is unauthenticated by design — the
+// caller is the signup page, which has no session yet, so requiring auth
+// would break the legitimate workflow. That means anyone who can reach the
+// deployment can ask Brevo to send a Valoria-branded message to an address
+// of their choosing: an open mail relay, useful for mail-bombing a third
+// party and for laundering spam through Valoria's sending reputation.
+// Two controls close that:
+//   1. A per-IP rate limit, reusing the site's existing `check_rate_limit`
+//      RPC (same pattern as waitlist/enquiries). It fails CLOSED: unlike a
+//      buyer's enquiry, a message that is never sent costs nothing and is
+//      recoverable, so an unavailable limiter must not become an open relay.
+//   2. The recipient's name is interpolated into the email HTML, so it is
+//      escaped. Previously it was not, so a name like `<img src=x
+//      onerror=...>` was injected into the message body.
 
 import { siteUrl } from '@/lib/site-url'
+import { getPrivilegedClient } from '@/lib/supabase-server'
 
 const BREVO_KEY = process.env.BREVO_API_KEY
 const FROM_EMAIL = 'info@valoriainstitute.com'
 const FROM_NAME  = 'Valoria Institute'
 
+// Matches the caps the other public forms enforce; keeps a hostile caller from
+// pushing an oversized payload through to the email provider.
+const MAX_NAME_LENGTH = 120
+const MAX_EMAIL_LENGTH = 254
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// Per-IP ceiling per hour. A buyer sends this once, so the limit only bites on abuse.
+const RATE_LIMIT_MAX = 5
+const RATE_LIMIT_WINDOW_SECONDS = 3600
+
+function escapeHtml(value) {
+  return String(value == null ? '' : value).replace(
+    /[&<>'"]/g,
+    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c])
+  )
+}
+
+function clientIp(request) {
+  return (
+    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+    request.headers.get('x-real-ip') ||
+    'unknown'
+  )
+}
+
+// Returns { allowed: true } only when the limiter actually confirmed the
+// request is within budget. Any other outcome (no credentials, RPC error,
+// budget exhausted) is reported as not allowed.
+async function withinRateLimit(request) {
+  let supabase
+  try {
+    supabase = getPrivilegedClient()
+  } catch (err) {
+    console.error('Welcome email rate limiter unavailable:', err.message)
+    return { allowed: false, exhausted: false }
+  }
+  try {
+    const { data, error } = await supabase.rpc('check_rate_limit', {
+      p_key: `welcome-email:${clientIp(request)}`,
+      p_max_count: RATE_LIMIT_MAX,
+      p_window_seconds: RATE_LIMIT_WINDOW_SECONDS,
+    })
+    if (error) {
+      console.error('Welcome email rate limit check failed:', error)
+      return { allowed: false, exhausted: false }
+    }
+    return { allowed: Boolean(data), exhausted: !data }
+  } catch (err) {
+    console.error('Welcome email rate limit check threw:', err)
+    return { allowed: false, exhausted: false }
+  }
+}
+
+function json(body, status) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
 export async function POST(request) {
   if (!BREVO_KEY) {
     console.error('Welcome email skipped: BREVO_API_KEY not configured.')
-    return new Response(JSON.stringify({ ok: false, error: 'Email not configured.' }), {
-      status: 501, headers: { 'Content-Type': 'application/json' },
-    })
+    return json({ ok: false, error: 'Email not configured.' }, 501)
   }
 
   let body
   try {
     body = await request.json()
   } catch {
-    return new Response(JSON.stringify({ ok: false, error: 'Invalid request body.' }), {
-      status: 400, headers: { 'Content-Type': 'application/json' },
-    })
+    return json({ ok: false, error: 'Invalid request body.' }, 400)
   }
 
   const { email, name } = body || {}
-  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!email || !emailRe.test(email)) {
-    return new Response(JSON.stringify({ ok: false, error: 'A valid email is required.' }), {
-      status: 400, headers: { 'Content-Type': 'application/json' },
-    })
+  if (typeof email !== 'string' || email.length > MAX_EMAIL_LENGTH || !EMAIL_RE.test(email)) {
+    return json({ ok: false, error: 'A valid email is required.' }, 400)
+  }
+  if (name != null && (typeof name !== 'string' || name.length > MAX_NAME_LENGTH)) {
+    return json({ ok: false, error: 'Name is too long.' }, 400)
   }
 
-  const firstName = (name || '').trim().split(/\s+/)[0] || 'there'
+  const rate = await withinRateLimit(request)
+  if (!rate.allowed) {
+    if (rate.exhausted) {
+      return json(
+        { ok: false, error: 'Too many requests from this connection — please try again later.' },
+        429
+      )
+    }
+    return json({ ok: false, error: 'Email service temporarily unavailable.' }, 503)
+  }
+
+  const firstName = escapeHtml((name || '').trim().split(/\s+/)[0] || 'there')
 
   const html = `
     <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;max-width:520px;margin:0 auto;">
@@ -73,17 +156,11 @@ export async function POST(request) {
     if (!res.ok) {
       const errText = await res.text().catch(() => '')
       console.error('Welcome email failed:', res.status, errText)
-      return new Response(JSON.stringify({ ok: false, error: 'Send failed.' }), {
-        status: 502, headers: { 'Content-Type': 'application/json' },
-      })
+      return json({ ok: false, error: 'Send failed.' }, 502)
     }
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200, headers: { 'Content-Type': 'application/json' },
-    })
+    return json({ ok: true }, 200)
   } catch (err) {
     console.error('Welcome email error:', err)
-    return new Response(JSON.stringify({ ok: false, error: 'Send failed.' }), {
-      status: 500, headers: { 'Content-Type': 'application/json' },
-    })
+    return json({ ok: false, error: 'Send failed.' }, 500)
   }
 }
