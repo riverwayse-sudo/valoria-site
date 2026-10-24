@@ -382,6 +382,27 @@ describe('trigger-report: unauthenticated relay and token disclosure are closed'
     expect(init.headers['x-forwarded-for']).toBe('198.51.100.24')
   })
 
+  test('uses x-real-ip when x-forwarded-for is absent or empty', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    global.fetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ ok: true, reportReady: true }),
+    })
+
+    const res = await triggerReport.POST(
+      jsonRequest('https://site.test/api/trigger-report', { report_token: VALID_TOKEN }, {
+        Authorization: 'Bearer good',
+        'x-forwarded-for': '',
+        'x-real-ip': '203.0.113.10',
+      })
+    )
+
+    expect(res.status).toBe(200)
+    const [, init] = global.fetch.mock.calls[0]
+    expect(init.headers['x-forwarded-for']).toBe('203.0.113.10')
+  })
+
   test('never forwards an identity_hash on the unauthenticated path', async () => {
     getPrivilegedClient.mockReturnValue(supabaseStub({ authError: { message: 'no session' } }))
     const res = await triggerReport.POST(
