@@ -5,13 +5,15 @@
 // FACILITATOR" buttons were plain mailto: links — no DB record, no admin
 // visibility, no way to measure conversion. This is the fix.
 
-import { createClient } from '@supabase/supabase-js'
+import { getPrivilegedClient } from '@/lib/supabase-server'
+import { siteUrl } from '@/lib/site-url'
 
 function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) throw new Error('Supabase server configuration is missing.')
-  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+  // Enquiries are a public write surface (anyone can request an intro) but not a
+  // public read surface: the inserted row carries buyer contact details and is
+  // read back by the admin dashboard. getPrivilegedClient() requires the
+  // service role and fails closed.
+  return getPrivilegedClient()
 }
 
 const BREVO_KEY = process.env.BREVO_API_KEY
@@ -34,7 +36,7 @@ async function notifyAdmin({ enquiryType, atbId, buyerName, buyerEmail, buyerCom
       <p><strong>From:</strong> ${buyerName} &lt;${buyerEmail}&gt;${buyerCompany ? ` — ${buyerCompany}` : ''}</p>
       <p><strong>Subject:</strong> ${subject || '(none given)'}</p>
       <p><strong>Message:</strong><br/>${(body || '').replace(/\n/g, '<br/>')}</p>
-      <p style="margin-top:20px;"><a href="https://valoriainstitute.com/admin">Review in admin dashboard</a></p>
+      <p style="margin-top:20px;"><a href="${siteUrl('/admin')}">Review in admin dashboard</a></p>
     </div>`
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
@@ -100,7 +102,7 @@ async function notifyProfessional({ professionalProfileId, enquiryType, atbId, b
       <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">NEW ${label.toUpperCase()}</p>
       <p>${buyerName}${buyerCompany ? ` from ${buyerCompany}` : ''} has requested an introduction through Valoria Institute.</p>
       <p>Valoria will review and be in touch with next steps — no action needed from you right now.</p>
-      <p style="margin-top:20px;"><a href="https://valoriainstitute.com${actionUrl}">View your profile</a></p>
+      <p style="margin-top:20px;"><a href="${siteUrl(actionUrl)}">View your profile</a></p>
     </div>`
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',

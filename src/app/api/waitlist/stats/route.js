@@ -5,13 +5,14 @@
 // claim. If Supabase is unreachable or empty, return null/[] and let the
 // component hide itself rather than fake data.
 
-import { createClient } from '@supabase/supabase-js'
+import { getPrivilegedClient } from '@/lib/supabase-server'
 
 function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) throw new Error('Supabase server configuration is missing.')
-  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+  // The waitlist table is not a public read surface: counts and recent-joiner
+  // names must not be readable with the anonymous key. getPrivilegedClient()
+  // requires the service role and fails closed, so a missing key degrades to
+  // "no ticker", not "anon reads".
+  return getPrivilegedClient()
 }
 
 const INTEREST_LABELS = {

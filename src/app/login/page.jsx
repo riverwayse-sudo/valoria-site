@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import Nav from '@/components/Nav'
+import { passwordResetUrl } from '@/lib/site-url'
+import { safeReturnPath, safeReturnPathOr } from '@/lib/safe-redirect'
+import { BRAND } from '@/lib/brand'
 
 const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
@@ -17,15 +20,25 @@ export default function LoginPage() {
   const [resetting, setResetting] = useState(false)
   const [redirecting, setRedirecting] = useState(false)
   const [returnTo, setReturnTo] = useState('')
+  // Set when the user arrives back from Supabase email confirmation
+  // (?email_confirmed=1). Their address is verified; the only remaining step is
+  // to sign in. Without this the page looked identical to a first visit, so a
+  // freshly confirmed user had no confirmation that anything had happened.
+  const [emailConfirmed, setEmailConfirmed] = useState(false)
 
   // Check for identity_hash in URL (from email confirmation redirect)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const identityHash = params.get('identity_hash')
-    const requestedReturnTo = params.get('returnTo') || ''
-    if (requestedReturnTo.startsWith('/')) setReturnTo(requestedReturnTo)
+    const reportToken = params.get('report_token')
+    // safeReturnPath rejects protocol-relative and off-origin values; a bare
+    // startsWith('/') guard let '//evil.com' through.
+    const requestedReturnTo = safeReturnPath(params.get('returnTo'))
+    if (requestedReturnTo) setReturnTo(requestedReturnTo)
     const pendingTasterId = params.get('pending_taster_id')
     if (pendingTasterId) localStorage.setItem('pending_taster_id', pendingTasterId)
+    // Presence of the flag is what matters, not its value.
+    if (params.has('email_confirmed')) setEmailConfirmed(true)
 
     if (identityHash) {
       // Store identity_hash in sessionStorage to use after login
@@ -37,16 +50,26 @@ export default function LoginPage() {
       // that instant trigger (see /api/trigger-report). Fire-and-forget —
       // the 15-min sweep-unsent-reports cron is the safety net if this
       // fails or the user never gets this far.
-      fetch('/api/trigger-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identity_hash: identityHash }),
-      }).catch(() => {})
+      //
+      // Send the report_token, never the identity_hash: the assessment app
+      // authorises public triggers by the opaque per-assessment token, and the
+      // identity_hash is a guessable name/role fingerprint that must not be
+      // forwarded as a credential. create-account and resend-confirmation
+      // already put report_token on this redirect, so it is present for
+      // legitimate confirmation links. This runs before sign-in, which is why
+      // the route cannot require a session.
+      if (reportToken) {
+        fetch('/api/trigger-report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ report_token: reportToken }),
+        }).catch(() => {})
+      }
     }
   }, [])
 
   function redirectAfterLogin(defaultPath) {
-    const target = returnTo && returnTo.startsWith('/') ? returnTo : defaultPath
+    const target = safeReturnPathOr(returnTo, defaultPath)
     window.location.href = target
   }
 
@@ -212,7 +235,7 @@ export default function LoginPage() {
     setError('')
     try {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(form.email, {
-        redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/reset-password` : 'https://valoriainstitute.com/reset-password',
+        redirectTo: passwordResetUrl(),
       })
       if (resetError) throw resetError
       setResetSent(true)
@@ -263,6 +286,11 @@ export default function LoginPage() {
             />
           </div>
 
+          {emailConfirmed && (
+            <div style={styles.successBox} role="status" aria-live="polite">
+              Your email address is verified. Sign in below to continue to your dashboard.
+            </div>
+          )}
           {error && <div style={styles.errorBox}>{error}</div>}
           {resetSent && (
             <div style={styles.successBox}>
@@ -286,7 +314,7 @@ export default function LoginPage() {
           </p>
           <p style={{ margin: 0 }}>
             Talent or speaker?{' '}
-            <a href="https://valoriainstitute.com/valu/assessment/" target="_blank" rel="noopener noreferrer" style={{ color: GOLD }}>Take the VALU Index</a>
+            <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" style={{ color: GOLD }}>Take the VALU Index</a>
           </p>
         </div>
       </div>

@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { getValuTier } from '@/lib/brand'
+import { BRAND, getValuTier } from '@/lib/brand'
 
 // ─── brand tokens — same system as the public profile page ─────────────────
 const GOLD    = '#C9A84C'
@@ -112,6 +112,7 @@ export default function DashboardPage() {
   const [profileViewCount, setProfileViewCount] = useState(null)
   const [capabilities, setCapabilities] = useState([])
   const [assessment, setAssessment] = useState(null)
+  const [assessmentInProgress, setAssessmentInProgress] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -137,13 +138,27 @@ export default function DashboardPage() {
         setCapabilities(capabilityRows || [])
         const { data: assessmentRow } = await supabase
           .from('valu_assessments')
-          .select('completed_at,total_score,designation,valu_index:total_score')
+          .select('completed_at,total_score,designation,cluster_scores,valu_index:total_score')
           .eq('user_id', user.id)
           .not('completed_at', 'is', null)
           .order('completed_at', { ascending: false })
           .limit(1)
           .maybeSingle()
         setAssessment(assessmentRow || null)
+
+        // A resumable assessment is a started session with no completed_at. Its
+        // existence must be checked independently of the completed assessment,
+        // so "resume the assessment" and "finish your profile" can both be shown
+        // at once. This is the same signal ValuCompletionNudge uses.
+        const { data: inProgressSession } = await supabase
+          .from('assessment_sessions')
+          .select('id,completed_at,updated_at')
+          .eq('user_id', user.id)
+          .is('completed_at', null)
+          .order('updated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+        setAssessmentInProgress(!!inProgressSession?.id)
 
         // head:true — only need the count header, not the rows themselves.
         // RLS (see pending-migrations/012_add_profile_views.sql) already
@@ -269,12 +284,22 @@ export default function DashboardPage() {
   const videos = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
   const trackLabels = { candidate: 'Candidate', speaker: 'Speaker', facilitator: 'Facilitator' }
 
+  // The VALU card, tier and progress tracker must all read from the authoritative
+  // completed assessment record. The professional_profiles row caches valu_index,
+  // designation and cluster_scores for listing/projection use, and can lag behind
+  // (or be cleared) independently — which is how a completed professional could
+  // see the progress card say "assessment done" while the VALU card said "not yet".
+  // The assessment record wins whenever it exists; the profile cache is a fallback.
+  const valuScore         = assessment?.total_score ?? p.valu_index ?? null
+  const valuDesignation   = assessment?.designation ?? p.designation ?? null
+  const valuClusterScores = p.cluster_scores || assessment?.cluster_scores || null
+
   const stats = isSupply ? [
     { label:'Location',   value: p.location || '—' },
     { label:'Industry',   value: p.industry || '—' },
     { label:'Experience', value: p.years_experience || p.experience_years ? `${p.years_experience || p.experience_years} yrs` : '—' },
     { label: compLabel,   value: compensation || '—' },
-    { label:'VALU Index', value: p.valu_index != null ? `${p.valu_index} points` : 'Basic · Snapshot', href: p.valu_index != null ? '#valu-card' : null },
+    { label:'VALU Index', value: valuScore != null ? `${valuScore} points` : 'Basic · Snapshot', href: valuScore != null ? '#valu-card' : null },
     { label:'Profile Views', value: profileViewCount != null ? String(profileViewCount) : '—' },
   ] : []
 
@@ -401,6 +426,7 @@ export default function DashboardPage() {
             <AccessProgressCard
               profile={p}
               assessment={assessment}
+              assessmentInProgress={assessmentInProgress}
               capabilities={capabilities}
             />
           </div>
@@ -489,14 +515,14 @@ export default function DashboardPage() {
               {/* VALU Index */}
               <div id="valu-card" style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px', scrollMarginTop:'96px' }}>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'14px' }}>VALU Index</div>
-                {p.valu_index != null ? (
+                {valuScore != null ? (
                   <>
-                    <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_index}<span style={{ fontSize:'18px', color: DIM, fontWeight:400 }}> points</span></div>{getValuTier(p.valu_index,'full') && <div style={{fontSize:'11px',fontWeight:800,color:GOLD,letterSpacing:'.1em',marginBottom:'14px'}}>{getValuTier(p.valu_index,'full').name.toUpperCase()} · {getValuTier(p.valu_index,'full').stars}</div>}
-                    {p.designation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{p.designation.replace(/_/g,' ')}</div>}
-                    {p.cluster_scores && (
+                    <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{valuScore}<span style={{ fontSize:'18px', color: DIM, fontWeight:400 }}> points</span></div>{getValuTier(valuScore,'full') && <div style={{fontSize:'11px',fontWeight:800,color:GOLD,letterSpacing:'.1em',marginBottom:'14px'}}>{getValuTier(valuScore,'full').name.toUpperCase()} · {getValuTier(valuScore,'full').stars}</div>}
+                    {valuDesignation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{String(valuDesignation).replace(/_/g,' ')}</div>}
+                    {valuClusterScores && (
                       <div>
                         {PRIME.map(({ letter, color }) => {
-                          const score = p.cluster_scores[letter]
+                          const score = valuClusterScores[letter]
                           if (score == null) return null
                           return (
                             <div key={letter} style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'11px' }}>
@@ -516,10 +542,21 @@ export default function DashboardPage() {
                     <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
                       You haven't completed your VALU Index assessment yet.
                     </p>
-                    <a href="https://valoriainstitute.com/valu/assessment/" target="_blank" rel="noopener noreferrer"
+                    <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer"
                       style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
                       TAKE THE ASSESSMENT
                     </a>
+                    {/* Resume, not restart. Assessment progress is persisted
+                        server-side, so a started-but-unfinished assessment has a
+                        resumable session. Surface it here so a professional can
+                        always continue from the dashboard instead of re-taking
+                        the 58 questions from question one. */}
+                    {assessmentInProgress && (
+                      <Link href="/valu/start"
+                        style={{ display:'block', marginTop:'10px', padding:'11px', background:GOLD, color:DARK, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
+                        RESUME YOUR ASSESSMENT
+                      </Link>
+                    )}
                   </>
                 )}
               </div>
@@ -740,7 +777,7 @@ export default function DashboardPage() {
 }
 
 // ── Welcome modal ────────────────────────────────────────────────────────────
-function AccessProgressCard({ profile, assessment, capabilities }) {
+function AccessProgressCard({ profile, assessment, assessmentInProgress, capabilities }) {
   const assessmentDone = !!assessment?.completed_at
   const profileComplete = !!profile?.profile_complete
   const capabilityReady = capabilities.some(c => c.is_active)
@@ -768,8 +805,35 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
             ? '/marketplace'
             : '/opportunities'
 
+  // Both of these are genuinely independent tasks. A confirmed user can have an
+  // unfinished assessment *and* an incomplete profile at the same time, and
+  // finishing one must never hide the other — which is what happened when the
+  // card rendered a single "next step" and stopped there. Render each
+  // outstanding action on its own line, each with its own state-aware verb.
+  const outstanding = []
+  if (!assessmentDone) {
+    outstanding.push({
+      key: 'assessment',
+      label: assessmentInProgress ? 'RESUME YOUR VALU ASSESSMENT' : 'START YOUR VALU ASSESSMENT',
+      href: '/valu/start',
+      text: assessmentInProgress
+        ? 'You have already started the 58-question VALU assessment. Your saved answers are waiting — continue where you left off.'
+        : 'Complete the 58-question VALU assessment to establish your professional signal.',
+    })
+  }
+  if (!profileComplete) {
+    outstanding.push({
+      key: 'profile',
+      label: 'COMPLETE YOUR PROFILE',
+      href: '/profile/setup',
+      text: assessmentDone
+        ? 'Your VALU result is in. Complete your profile details to establish your marketplace presence.'
+        : 'Tell Valoria about your work so people can understand what you do.',
+    })
+  }
+
   const heading = !assessmentDone
-    ? 'Start with VALU.'
+    ? (assessmentInProgress ? 'Your assessment is waiting.' : 'Start with VALU.')
     : !profileComplete
       ? 'Your profile is the next step.'
       : !capabilityReady
@@ -781,7 +845,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
             : 'You are ready for opportunities.'
 
   const explanation = !assessmentDone
-    ? 'Complete your VALU assessment to establish your professional signal.'
+    ? 'Two things establish your Valoria presence: the VALU assessment and your professional profile. Both are shown below.'
     : !profileComplete
       ? 'You are already discoverable. Complete your profile to add more context and unlock enhanced marketplace access.'
       : !capabilityReady
@@ -801,10 +865,28 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
             <div style={{ fontSize:'21px', fontWeight:500, color:PARCH, marginTop:7, lineHeight:1.25 }}>{heading}</div>
             <div style={{ fontSize:'13px', color:DIM, marginTop:7, lineHeight:1.6, maxWidth:'680px' }}>{explanation}</div>
           </div>
-          <Link href={nextHref} style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>
-            {next ? (next.key === 'valu' ? 'START VALU' : `CONTINUE ${next.plain.toUpperCase()}`) : 'VIEW OPPORTUNITIES'} →
-          </Link>
+          {outstanding.length === 0 && (
+            <Link href={nextHref} style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>
+              {next ? `CONTINUE ${next.plain.toUpperCase()}` : 'VIEW OPPORTUNITIES'} →
+            </Link>
+          )}
         </div>
+
+        {outstanding.length > 0 && (
+          <ul style={{ listStyle:'none', padding:0, margin:'18px 0 0', display:'grid', gap:'10px' }}>
+            {outstanding.map(item => (
+              <li key={item.key} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap', padding:'14px 16px', background:'rgba(201,168,76,.06)', border:'1px solid rgba(201,168,76,.16)', borderRadius:'8px' }}>
+                <div style={{ minWidth:0, flex:1 }}>
+                  <div style={{ fontSize:'12px', fontWeight:700, color:PARCH, letterSpacing:'.02em' }}>{item.label}</div>
+                  <div style={{ fontSize:'12px', color:DIM, marginTop:5, lineHeight:1.55 }}>{item.text}</div>
+                </div>
+                <Link href={item.href} style={{ flexShrink:0, padding:'10px 16px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>
+                  CONTINUE →
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
 
         <div style={{ display:'grid', gridTemplateColumns:'repeat(5,minmax(0,1fr))', gap:'8px', marginTop:22 }} aria-label="Journey progress">
           {steps.map((step, index) => (
@@ -1044,7 +1126,7 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
   const isListed = listedCapabilities.length > 0
 
   const current = !hasAssessment
-    ? { label:'See your signal', text:'Start VALU and understand where you stand.', href:'https://valoriainstitute.com/valu/assessment/' }
+    ? { label:'See your signal', text:'Start VALU and understand where you stand.', href:BRAND.assessmentUrl }
     : !hasProfile
       ? { label:'Build your profile', text:'Tell us about your work so people can understand you.', href:'/profile/onboarding' }
       : !hasCapability
