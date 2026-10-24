@@ -23,7 +23,7 @@ const triggerReport = require('@/app/api/trigger-report/route')
 function jsonRequest(url, body, headers = {}) {
   return new Request(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...headers },
+    headers: { 'Content-Type': 'application/json', 'x-real-ip': '203.0.113.10', ...headers },
     body: typeof body === 'string' ? body : JSON.stringify(body),
   })
 }
@@ -373,6 +373,7 @@ describe('trigger-report: unauthenticated relay and token disclosure are closed'
     const [url, init] = global.fetch.mock.calls[0]
     expect(url).toBe('https://assessment.test/api/generate-and-send-report')
     expect(JSON.parse(init.body)).toEqual({ report_token: VALID_TOKEN })
+    expect(init.headers['x-forwarded-for']).toBe('203.0.113.10')
   })
 
   test('never forwards an identity_hash on the unauthenticated path', async () => {
@@ -418,6 +419,18 @@ describe('trigger-report: unauthenticated relay and token disclosure are closed'
     )
     expect(res.status).toBe(200)
     expect(global.fetch).toHaveBeenCalledTimes(1)
+  })
+
+  test('fails closed when no client IP is available instead of sharing the upstream bucket', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    const res = await triggerReport.POST(
+      jsonRequest('https://site.test/api/trigger-report', { report_token: VALID_TOKEN }, {
+        Authorization: 'Bearer good',
+        'x-real-ip': '',
+      })
+    )
+    expect(res.status).toBe(503)
+    expect(global.fetch).not.toHaveBeenCalled()
   })
 
   test('maps an upstream rejection to 502 without leaking the upstream body', async () => {
