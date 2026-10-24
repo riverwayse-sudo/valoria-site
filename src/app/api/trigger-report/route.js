@@ -136,9 +136,12 @@ export async function POST(request) {
     // report-trigger-ip limiter gets a per-client key instead of "unknown"
     // for every proxied request. Prefer the platform-set x-real-ip value over
     // a potentially multi-hop forwarded chain; fail closed if neither exists.
+    // Prefer Vercel's platform-normalized X-Forwarded-For value. Keep the
+    // same precedence as welcome-email's clientIp() helper so the site limiter
+    // and the upstream limiter derive their keys from the same trusted source.
     const clientIp =
-      request.headers.get('x-real-ip')?.trim() ||
-      request.headers.get('x-forwarded-for')?.split(',')[0].trim()
+      request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+      request.headers.get('x-real-ip')?.trim()
     if (!clientIp) {
       console.error('trigger-report refused: client IP could not be determined')
       return json({ ok: false, error: 'Report service temporarily unavailable.' }, 503)
