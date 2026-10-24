@@ -34,6 +34,11 @@ export default function LoginPage() {
     // startsWith('/') guard let '//evil.com' through.
     const requestedReturnTo = safeReturnPath(params.get('returnTo'))
     if (requestedReturnTo) setReturnTo(requestedReturnTo)
+    // The confirmation link carries the report_token. Hold it until a session
+    // exists: the trigger route requires an authenticated caller, so firing it
+    // on page load could only ever produce a 401.
+    const reportToken = params.get('report_token')
+    if (reportToken) sessionStorage.setItem('pending_report_token', reportToken)
     const pendingTasterId = params.get('pending_taster_id')
     if (pendingTasterId) localStorage.setItem('pending_taster_id', pendingTasterId)
     // Presence of the flag is what matters, not its value.
@@ -42,24 +47,30 @@ export default function LoginPage() {
     if (identityHash) {
       // Store identity_hash in sessionStorage to use after login
       sessionStorage.setItem('pending_identity_hash', identityHash)
-
-      // Confirmation links used to land back on the assessment app, whose
-      // own client code fired report generation immediately on arrival.
-      // They now land here instead, so this same-origin proxy restores
-      // that instant trigger (see /api/trigger-report). Fire-and-forget —
-      // the 15-min sweep-unsent-reports cron is the safety net if this
-      // fails or the user never gets this far.
-      fetch('/api/trigger-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identity_hash: identityHash }),
-      }).catch(() => {})
     }
   }, [])
 
   function redirectAfterLogin(defaultPath) {
     const target = safeReturnPathOr(returnTo, defaultPath)
     window.location.href = target
+  }
+
+  // Restore the instant report trigger the confirmation link was built for.
+  // The route requires an authenticated caller, so this must run after a
+  // session exists, not on page load. Fire-and-forget: the 15-minute
+  // sweep-unsent-reports cron is the safety net, so a failure here must never
+  // block the sign-in journey.
+  function triggerPendingReport(accessToken) {
+    if (!accessToken) return
+    let reportToken = null
+    try { reportToken = sessionStorage.getItem('pending_report_token') } catch {}
+    if (!reportToken) return
+    try { sessionStorage.removeItem('pending_report_token') } catch {}
+    fetch('/api/trigger-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+      body: JSON.stringify({ report_token: reportToken }),
+    }).catch(() => {})
   }
 
   async function handleLogin(e) {
@@ -76,6 +87,7 @@ export default function LoginPage() {
       document.cookie = `vi_waitlist_v2=submitted; path=/; max-age=31536000`
       const { data: { user } } = await supabase.auth.getUser()
       const { data: { session } } = await supabase.auth.getSession()
+      triggerPendingReport(session?.access_token)
 
       // Complete a professional VALU snapshot handoff that was paused for email confirmation.
       const pendingTasterId = localStorage.getItem('pending_taster_id')

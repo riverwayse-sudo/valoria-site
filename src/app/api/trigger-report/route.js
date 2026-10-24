@@ -49,10 +49,13 @@
 // environments that do not set it.
 
 import { getPrivilegedClient } from '@/lib/supabase-server'
+import { isValidReportToken } from '@/lib/api-guard'
 
 const ASSESSMENT_ORIGIN = process.env.VALU_UPSTREAM_ORIGIN || 'https://assessment.valoriainstitute.com'
 
-const REPORT_TOKEN_RE = /^[A-Za-z0-9._~-]{16,512}$/
+// The token format is validated against the same definition the platform's
+// generate-and-send-report enforces, so this relay cannot forward a token the
+// assessment app will reject. See src/lib/api-guard.js.
 const RATE_LIMIT_MAX = 10
 const RATE_LIMIT_WINDOW_SECONDS = 3600
 
@@ -111,7 +114,7 @@ export async function POST(request) {
     return json({ ok: false, error: 'Invalid request body' }, 400)
   }
 
-  if (typeof reportToken !== 'string' || !REPORT_TOKEN_RE.test(reportToken)) {
+  if (!isValidReportToken(reportToken)) {
     return json({ ok: false, error: 'A valid report_token is required' }, 400)
   }
 

@@ -1,32 +1,37 @@
 // src/app/api/welcome-email/route.js
 //
 // Sends a Valoria-branded welcome email to new buyer accounts right after
-// signup — separate from Supabase's own bare confirmation-link email,
-// which has no branding or context. Buyers had no welcome treatment of any
-// kind before this; only the waitlist flow ever sent anything.
+// signup — separate from Supabase's own bare confirmation-link email, which has
+// no branding or context. Buyers had no welcome treatment of any kind before
+// this; only the waitlist flow ever sent anything.
 //
-// Professionals aren't included here — they already get a "Welcome,
-// {name}." branded email (with their score and a Complete Your Profile
-// CTA) as part of report delivery in the assessment app's send-email.js.
-// A second one would just be redundant.
+// Professionals aren't included here — they already get a "Welcome, {name}."
+// branded email (with their score and a Complete Your Profile CTA) as part of
+// report delivery in the assessment app's send-email.js. A second one would
+// just be redundant.
 //
-// SECURITY (audit finding): this route is unauthenticated by design — the
-// caller is the signup page, which has no session yet, so requiring auth
-// would break the legitimate workflow. That means anyone who can reach the
-// deployment can ask Brevo to send a Valoria-branded message to an address
-// of their choosing: an open mail relay, useful for mail-bombing a third
-// party and for laundering spam through Valoria's sending reputation.
-// Two controls close that:
-//   1. A per-IP rate limit, reusing the site's existing `check_rate_limit`
-//      RPC (same pattern as waitlist/enquiries). It fails CLOSED: unlike a
-//      buyer's enquiry, a message that is never sent costs nothing and is
-//      recoverable, so an unavailable limiter must not become an open relay.
-//   2. The recipient's name is interpolated into the email HTML, so it is
-//      escaped. Previously it was not, so a name like `<img src=x
-//      onerror=...>` was injected into the message body.
+// SECURITY (audit finding). This route is unauthenticated by design — the
+// caller is the signup page, which has no session yet, so requiring a session
+// would break the legitimate workflow. Three controls keep it from being an
+// open mail relay:
+//
+//   1. Recipient binding. The address must belong to an account that was just
+//      created. The caller sends the id returned by supabase.auth.signUp, and
+//      the server confirms the account exists, was created moments ago, and
+//      owns the requested address. Without this, any reachable caller could
+//      mail an address of their choosing.
+//   2. A per-IP rate limit (fail CLOSED), reusing the site's existing
+//      check_rate_limit RPC. Unlike a buyer's enquiry, a message that is never
+//      sent costs nothing and is recoverable, so an unavailable limiter must
+//      not become an open relay.
+//   3. A per-recipient limit, so a repeat request for the same new account is a
+//      no-op instead of a second email.
+//
+// The recipient's name is interpolated into the email HTML, so it is escaped.
 
-import { siteUrl } from '@/lib/site-url'
 import { getPrivilegedClient } from '@/lib/supabase-server'
+import { siteUrl } from '@/lib/site-url'
+import { signupEmailEligible } from '@/lib/api-guard'
 
 const BREVO_KEY = process.env.BREVO_API_KEY
 const FROM_EMAIL = 'info@valoriainstitute.com'
@@ -41,6 +46,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 // Per-IP ceiling per hour. A buyer sends this once, so the limit only bites on abuse.
 const RATE_LIMIT_MAX = 5
 const RATE_LIMIT_WINDOW_SECONDS = 3600
+// One welcome per address per day. A duplicate request is a no-op, not a resend.
+const RECIPIENT_LIMIT_WINDOW_SECONDS = 86400
 
 function escapeHtml(value) {
   return String(value == null ? '' : value).replace(
@@ -57,22 +64,15 @@ function clientIp(request) {
   )
 }
 
-// Returns { allowed: true } only when the limiter actually confirmed the
-// request is within budget. Any other outcome (no credentials, RPC error,
-// budget exhausted) is reported as not allowed.
-async function withinRateLimit(request) {
-  let supabase
-  try {
-    supabase = getPrivilegedClient()
-  } catch (err) {
-    console.error('Welcome email rate limiter unavailable:', err.message)
-    return { allowed: false, exhausted: false }
-  }
+// Returns { allowed: true } only when the limiter actually confirmed the request
+// is within budget. Any other outcome (no credentials, RPC error, budget
+// exhausted) is reported as not allowed, so an unavailable limiter fails closed.
+async function withinRateLimit(supabase, key, maxCount, windowSeconds) {
   try {
     const { data, error } = await supabase.rpc('check_rate_limit', {
-      p_key: `welcome-email:${clientIp(request)}`,
-      p_max_count: RATE_LIMIT_MAX,
-      p_window_seconds: RATE_LIMIT_WINDOW_SECONDS,
+      p_key: key,
+      p_max_count: maxCount,
+      p_window_seconds: windowSeconds,
     })
     if (error) {
       console.error('Welcome email rate limit check failed:', error)
@@ -82,6 +82,19 @@ async function withinRateLimit(request) {
   } catch (err) {
     console.error('Welcome email rate limit check threw:', err)
     return { allowed: false, exhausted: false }
+  }
+}
+
+// The auth user record for the account that just signed up. Returns null on any
+// failure so the caller fails closed rather than mailing an unverified address.
+async function lookupUser(supabase, userId) {
+  try {
+    const { data, error } = await supabase.auth.admin.getUserById(userId)
+    if (error || !data?.user) return null
+    return data.user
+  } catch (err) {
+    console.error('Welcome email account lookup failed:', err?.message || err)
+    return null
   }
 }
 
@@ -98,6 +111,14 @@ export async function POST(request) {
     return json({ ok: false, error: 'Email not configured.' }, 501)
   }
 
+  let supabase
+  try {
+    supabase = getPrivilegedClient()
+  } catch (err) {
+    console.error('Welcome email skipped:', err.message)
+    return json({ ok: false, error: 'Email service temporarily unavailable.' }, 503)
+  }
+
   let body
   try {
     body = await request.json()
@@ -105,23 +126,45 @@ export async function POST(request) {
     return json({ ok: false, error: 'Invalid request body.' }, 400)
   }
 
-  const { email, name } = body || {}
+  const { email, name, user_id: userId } = body || {}
   if (typeof email !== 'string' || email.length > MAX_EMAIL_LENGTH || !EMAIL_RE.test(email)) {
     return json({ ok: false, error: 'A valid email is required.' }, 400)
   }
   if (name != null && (typeof name !== 'string' || name.length > MAX_NAME_LENGTH)) {
     return json({ ok: false, error: 'Name is too long.' }, 400)
   }
+  if (typeof userId !== 'string' || !userId.trim()) {
+    return json({ ok: false, error: 'A valid account reference is required.' }, 400)
+  }
 
-  const rate = await withinRateLimit(request)
-  if (!rate.allowed) {
-    if (rate.exhausted) {
-      return json(
-        { ok: false, error: 'Too many requests from this connection — please try again later.' },
-        429
-      )
+  // Abuse controls first, so an unauthorised caller cannot reach the provider
+  // or the account lookup at volume.
+  const ipRate = await withinRateLimit(
+    supabase, `welcome-email-ip:${clientIp(request)}`, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_SECONDS
+  )
+  if (!ipRate.allowed) {
+    if (ipRate.exhausted) {
+      return json({ ok: false, error: 'Too many requests from this connection — please try again later.' }, 429)
     }
     return json({ ok: false, error: 'Email service temporarily unavailable.' }, 503)
+  }
+
+  const recipientRate = await withinRateLimit(
+    supabase, `welcome-email-to:${email.trim().toLowerCase()}`, 1, RECIPIENT_LIMIT_WINDOW_SECONDS
+  )
+  if (!recipientRate.allowed) {
+    if (recipientRate.exhausted) {
+      // Already welcomed this address today. Treat as success so the signup
+      // journey is unaffected, but send nothing.
+      return json({ ok: true, skipped: 'already_sent' }, 200)
+    }
+    return json({ ok: false, error: 'Email service temporarily unavailable.' }, 503)
+  }
+
+  // Recipient binding: the address must belong to an account created moments ago.
+  const user = await lookupUser(supabase, userId)
+  if (!signupEmailEligible(user, email)) {
+    return json({ ok: false, error: 'No new account matches this address.' }, 403)
   }
 
   const firstName = escapeHtml((name || '').trim().split(/\s+/)[0] || 'there')
@@ -154,13 +197,14 @@ export async function POST(request) {
       }),
     })
     if (!res.ok) {
-      const errText = await res.text().catch(() => '')
-      console.error('Welcome email failed:', res.status, errText)
+      // Provider status only. The response body can echo the recipient address,
+      // so it is never logged or returned.
+      console.error('Welcome email failed with status', res.status)
       return json({ ok: false, error: 'Send failed.' }, 502)
     }
     return json({ ok: true }, 200)
   } catch (err) {
-    console.error('Welcome email error:', err)
+    console.error('Welcome email error:', err?.message || err)
     return json({ ok: false, error: 'Send failed.' }, 500)
   }
 }

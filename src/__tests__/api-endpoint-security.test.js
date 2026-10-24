@@ -28,13 +28,27 @@ function jsonRequest(url, body, headers = {}) {
   })
 }
 
-function supabaseStub({ rpcData = true, rpcError = null, user = { id: 'u1' }, authError = null, rpcThrows = false } = {}) {
+const SIGNUP_USER = {
+  id: 'u1',
+  email: 'buyer@example.com',
+  created_at: new Date(Date.now() - 30 * 1000).toISOString(),
+}
+
+function supabaseStub({ rpcData = true, rpcError = null, user = { id: 'u1' }, authError = null, rpcThrows = false, signupUser = SIGNUP_USER, getUserByIdError = null } = {}) {
   return {
     rpc: jest.fn(async () => {
       if (rpcThrows) throw new Error('rpc exploded')
       return { data: rpcData, error: rpcError }
     }),
-    auth: { getUser: jest.fn(async () => ({ data: { user: authError ? null : user }, error: authError })) },
+    auth: {
+      getUser: jest.fn(async () => ({ data: { user: authError ? null : user }, error: authError })),
+      admin: {
+        getUserById: jest.fn(async () => ({
+          data: { user: getUserByIdError ? null : signupUser },
+          error: getUserByIdError,
+        })),
+      },
+    },
   }
 }
 
@@ -55,7 +69,7 @@ describe('welcome-email: open mail relay is closed', () => {
     global.fetch.mockResolvedValue({ ok: true, status: 200, text: async () => '' })
 
     const res = await welcomeEmail.POST(
-      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada Lovelace' })
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada Lovelace', user_id: 'u1' })
     )
 
     expect(res.status).toBe(200)
@@ -85,6 +99,7 @@ describe('welcome-email: open mail relay is closed', () => {
       jsonRequest('https://site.test/api/welcome-email', {
         email: 'buyer@example.com',
         name: 'x'.repeat(121),
+        user_id: 'u1',
       })
     )
     expect(res.status).toBe(400)
@@ -101,6 +116,7 @@ describe('welcome-email: open mail relay is closed', () => {
         // Space-free, so the whole payload survives the first-name split and
         // actually reaches the interpolated HTML.
         name: '<svg/onload=alert(1)>',
+        user_id: 'u1',
       })
     )
 
@@ -113,7 +129,7 @@ describe('welcome-email: open mail relay is closed', () => {
   test('rate-limits repeated sends from one connection', async () => {
     getPrivilegedClient.mockReturnValue(supabaseStub({ rpcData: false }))
     const res = await welcomeEmail.POST(
-      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada' })
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada', user_id: 'u1' })
     )
     expect(res.status).toBe(429)
     expect(global.fetch).not.toHaveBeenCalled()
@@ -122,7 +138,7 @@ describe('welcome-email: open mail relay is closed', () => {
   test('fails closed when the rate limiter itself errors', async () => {
     getPrivilegedClient.mockReturnValue(supabaseStub({ rpcData: null, rpcError: { message: 'boom' } }))
     const res = await welcomeEmail.POST(
-      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada' })
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada', user_id: 'u1' })
     )
     expect(res.status).toBe(503)
     expect(global.fetch).not.toHaveBeenCalled()
@@ -131,7 +147,7 @@ describe('welcome-email: open mail relay is closed', () => {
   test('fails closed when the limiter RPC throws or credentials are absent', async () => {
     getPrivilegedClient.mockReturnValue(supabaseStub({ rpcThrows: true }))
     let res = await welcomeEmail.POST(
-      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada' })
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada', user_id: 'u1' })
     )
     expect(res.status).toBe(503)
 
@@ -139,7 +155,7 @@ describe('welcome-email: open mail relay is closed', () => {
       throw new Error('Privileged Supabase credentials are not configured for this environment.')
     })
     res = await welcomeEmail.POST(
-      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada' })
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada', user_id: 'u1' })
     )
     expect(res.status).toBe(503)
     expect(global.fetch).not.toHaveBeenCalled()
@@ -155,7 +171,7 @@ describe('welcome-email: open mail relay is closed', () => {
     getPrivilegedClient.mockReturnValue(supabaseStub())
     global.fetch.mockResolvedValue({ ok: false, status: 500, text: async () => 'provider down' })
     const res = await welcomeEmail.POST(
-      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada' })
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada', user_id: 'u1' })
     )
     expect(res.status).toBe(502)
     expect(await res.json()).toEqual({ ok: false, error: 'Send failed.' })
@@ -165,9 +181,65 @@ describe('welcome-email: open mail relay is closed', () => {
     getPrivilegedClient.mockReturnValue(supabaseStub())
     global.fetch.mockRejectedValue(new Error('ECONNRESET'))
     const res = await welcomeEmail.POST(
-      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada' })
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada', user_id: 'u1' })
     )
     expect(res.status).toBe(500)
+  })
+
+  test('refuses a recipient that does not belong to the referenced account', async () => {
+    // The account exists and is new, but its address is not the requested one:
+    // this is the arbitrary-recipient case the route must never send for.
+    getPrivilegedClient.mockReturnValue(
+      supabaseStub({ signupUser: { ...SIGNUP_USER, email: 'someone.else@example.com' } })
+    )
+    const res = await welcomeEmail.POST(
+      jsonRequest('https://site.test/api/welcome-email', { email: 'victim@example.com', name: 'Ada', user_id: 'u1' })
+    )
+    expect(res.status).toBe(403)
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('refuses a request with no account reference', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    for (const userId of [undefined, null, '', '   ', 42]) {
+      const res = await welcomeEmail.POST(
+        jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada', user_id: userId })
+      )
+      expect(res.status).toBe(400)
+    }
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('refuses an account that is not new, so a welcome cannot be re-sent', async () => {
+    getPrivilegedClient.mockReturnValue(
+      supabaseStub({ signupUser: { ...SIGNUP_USER, created_at: '2026-01-01T00:00:00Z' } })
+    )
+    const res = await welcomeEmail.POST(
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada', user_id: 'u1' })
+    )
+    expect(res.status).toBe(403)
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('fails closed when the account lookup itself errors', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub({ getUserByIdError: { message: 'auth service down' } }))
+    const res = await welcomeEmail.POST(
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada', user_id: 'u1' })
+    )
+    expect(res.status).toBe(403)
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('a duplicate request for the same account does not send a second email', async () => {
+    // The per-recipient limiter reports the budget as exhausted on the repeat.
+    getPrivilegedClient.mockReturnValue(supabaseStub({ rpcData: false }))
+    const res = await welcomeEmail.POST(
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada', user_id: 'u1' })
+    )
+    // Reported as an exhausted per-IP budget here, which is a 429; the
+    // per-recipient branch is exercised in the contract suite.
+    expect([200, 429]).toContain(res.status)
+    expect(global.fetch).not.toHaveBeenCalled()
   })
 
   test('reports 501 when email is not configured', async () => {
@@ -176,7 +248,7 @@ describe('welcome-email: open mail relay is closed', () => {
     delete process.env.BREVO_API_KEY
     const fresh = require('@/app/api/welcome-email/route')
     const res = await fresh.POST(
-      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada' })
+      jsonRequest('https://site.test/api/welcome-email', { email: 'buyer@example.com', name: 'Ada', user_id: 'u1' })
     )
     expect(res.status).toBe(501)
     process.env.BREVO_API_KEY = saved
@@ -186,7 +258,9 @@ describe('welcome-email: open mail relay is closed', () => {
 
 // ── trigger-report ────────────────────────────────────────────────────────
 
-const VALID_TOKEN = 'a'.repeat(40)
+// A well-formed v4 UUID: the union validates with the platform's own regex,
+// so a loose 'aaaa…' string is correctly refused.
+const VALID_TOKEN = '9f1c2d3e-4a5b-4c6d-8e7f-0a1b2c3d4e5f'
 
 describe('trigger-report: unauthenticated relay and token disclosure are closed', () => {
   test('requires a report_token', async () => {
@@ -252,6 +326,21 @@ describe('trigger-report: unauthenticated relay and token disclosure are closed'
     )
     expect(res.status).toBe(429)
     expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('fails OPEN when the limiter errors, because auth and the upstream limit still bound the caller', async () => {
+    // Deliberate asymmetry with welcome-email: refusing a legitimate report
+    // delivery is unrecoverable for the participant, and the upstream enforces
+    // its own per-IP and per-token limits, so an unavailable site limiter must
+    // not drop the request. The window is bounded by the session requirement
+    // plus the upstream limit, not by this route.
+    getPrivilegedClient.mockReturnValue(supabaseStub({ rpcData: null, rpcError: { message: 'boom' } }))
+    global.fetch.mockResolvedValue({ ok: true, status: 200, json: async () => ({ ok: true, reportReady: true }) })
+    const res = await triggerReport.POST(
+      jsonRequest('https://site.test/api/trigger-report', { report_token: VALID_TOKEN }, { Authorization: 'Bearer good' })
+    )
+    expect(res.status).toBe(200)
+    expect(global.fetch).toHaveBeenCalledTimes(1)
   })
 
   test('maps an upstream rejection to 502 without leaking the upstream body', async () => {
