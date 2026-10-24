@@ -50,6 +50,27 @@ export default function LoginPage() {
     }
   }, [])
 
+  // A confirmation link may open in a browser that already has a valid session.
+  // In that case handleLogin will not run, so flush the pending report token
+  // once the existing session is available. triggerPendingReport removes the
+  // token synchronously before dispatching the request, preventing a refresh or
+  // a concurrent sign-in path from sending it twice in this tab.
+  useEffect(() => {
+    let cancelled = false
+    async function flushPendingReportForExistingSession() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!cancelled && session?.access_token) {
+          triggerPendingReport(session.access_token)
+        }
+      } catch (err) {
+        console.warn('Pending report delivery will be retried on sign-in:', err?.message || err)
+      }
+    }
+    flushPendingReportForExistingSession()
+    return () => { cancelled = true }
+  }, [])
+
   function redirectAfterLogin(defaultPath) {
     const target = safeReturnPathOr(returnTo, defaultPath)
     window.location.href = target
