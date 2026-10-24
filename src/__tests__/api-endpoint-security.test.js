@@ -263,9 +263,31 @@ describe('welcome-email: open mail relay is closed', () => {
 const VALID_TOKEN = '9f1c2d3e-4a5b-4c6d-8e7f-0a1b2c3d4e5f'
 
 describe('trigger-report: unauthenticated relay and token disclosure are closed', () => {
-  test('requires a report_token', async () => {
-    for (const body of [{}, { identity_hash: 'fp_abc123' }, { report_token: 'short' }, { report_token: 42 }]) {
+  test('every unauthenticated request is a 401, whatever the token looks like', async () => {
+    // Auth is checked before token shape, so there is no token-probing oracle:
+    // missing, malformed, well-formed and non-string tokens all look the same
+    // to an anonymous caller.
+    const bodies = [
+      {},
+      { identity_hash: 'fp_abc123' },
+      { report_token: 'short' },
+      { report_token: 42 },
+      { report_token: VALID_TOKEN },
+    ]
+    for (const body of bodies) {
       const res = await triggerReport.POST(jsonRequest('https://site.test/api/trigger-report', body))
+      expect(res.status).toBe(401)
+      expect((await res.json()).error).toBe('Authentication required')
+    }
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('an authenticated caller still needs a well-formed report_token', async () => {
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    for (const body of [{}, { identity_hash: 'fp_abc123' }, { report_token: 'short' }, { report_token: 42 }]) {
+      const res = await triggerReport.POST(
+        jsonRequest('https://site.test/api/trigger-report', body, { Authorization: 'Bearer good' })
+      )
       expect(res.status).toBe(400)
     }
     expect(global.fetch).not.toHaveBeenCalled()
@@ -314,6 +336,18 @@ describe('trigger-report: unauthenticated relay and token disclosure are closed'
     getPrivilegedClient.mockReturnValue(supabaseStub({ authError: { message: 'no session' } }))
     const res = await triggerReport.POST(
       jsonRequest('https://site.test/api/trigger-report', { identity_hash: 'fp_guessable' })
+    )
+    expect(res.status).toBe(401)
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  test('never forwards an identity_hash even for an authenticated caller', async () => {
+    // The signed-in caller is still refused an identity-only relay: the platform
+    // rejects identity-only calls that are not from an authorised worker, and a
+    // guessable fingerprint must not be forwarded as a credential.
+    getPrivilegedClient.mockReturnValue(supabaseStub())
+    const res = await triggerReport.POST(
+      jsonRequest('https://site.test/api/trigger-report', { identity_hash: 'fp_guessable' }, { Authorization: 'Bearer good' })
     )
     expect(res.status).toBe(400)
     expect(global.fetch).not.toHaveBeenCalled()

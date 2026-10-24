@@ -106,6 +106,15 @@ async function authenticate(request) {
 }
 
 export async function POST(request) {
+  // Authentication is checked before anything else, including token shape, so
+  // every unauthenticated request is a 401 and none of them can reach the
+  // upstream — no token probing, no relay. Delivery is tied to the caller's own
+  // completed assessment, so an anonymous caller must not use this route.
+  const user = await authenticate(request)
+  if (!user) {
+    return json({ ok: false, error: 'Authentication required' }, 401)
+  }
+
   let reportToken
   try {
     const body = await request.json()
@@ -116,13 +125,6 @@ export async function POST(request) {
 
   if (!isValidReportToken(reportToken)) {
     return json({ ok: false, error: 'A valid report_token is required' }, 400)
-  }
-
-  // Delivery is tied to the caller's own completed assessment, so an anonymous
-  // caller must not be able to reach the upstream trigger through this route.
-  const user = await authenticate(request)
-  if (!user) {
-    return json({ ok: false, error: 'Authentication required' }, 401)
   }
 
   if (!(await withinRateLimit(request))) {
