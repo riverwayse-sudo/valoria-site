@@ -216,3 +216,23 @@ confirm the dashboard loads with no assessment history.
 Until §1 is resolved, no automated client can reach a preview, so live
 acceptance cannot begin. That single item is the highest-priority operator
 action.
+---
+
+## 6. Re-verification 2026-10-23 (remediation candidate)
+
+Nothing in §1–§4 has been applied. Re-confirmed against the current heads
+(`valoria-site` `a8f4500`, `valoria-platform` `9e3bcf3`):
+
+* **§1 still blocks.** Both preview origins answer `302` to
+  `https://vercel.com/sso-api?url=…`, including the proxied assessment path
+  `/valu/assessment/`. No `x-vercel-protection-bypass` secret is provisioned in
+  the environment this work runs in, and none was requested or accepted in chat.
+  Automated staging acceptance therefore still cannot start.
+* **§2.2 `VALORIA_SITE_URL` now has a second, build-time effect.** The platform
+  candidate resolves the assessment app's outbound site links at **build** time
+  via Vite `define` (`vite.config.js` → `__SITE_ORIGIN__`). The variable must
+  therefore be present in the **Preview build** scope, not only at runtime; a
+  runtime-only value will not change the links baked into the bundle. Set it for
+  the Preview environment so the staging build inlines the staging origin.
+* **No production change was made.** Production Deployment Protection is
+  untouched, no environment variable was written, and both PRs remain draft.
