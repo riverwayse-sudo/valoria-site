@@ -80,6 +80,33 @@ describe('auth redirects are environment-specific, never hardcoded production ho
     expect(read('next.config.js')).toContain('process.env.VALU_UPSTREAM_ORIGIN')
   })
 
+  // The earlier version of this test only asserted the env var *appeared* in
+  // both files. That passed even while both concatenated the raw value, so a
+  // configured origin ending in a slash produced `https://host//api/...` and
+  // `https://host//` — a URL the assessment app does not route. Presence of a
+  // variable is not evidence that it is used correctly, so the assertion now
+  // checks the value is normalised before it is concatenated.
+  test('the proxy upstream is normalised before concatenation, not used raw', () => {
+    for (const file of ['src/app/api/trigger-report/route.js', 'next.config.js']) {
+      const source = read(file)
+      expect(source).toContain('normalizeOrigin(process.env.VALU_UPSTREAM_ORIGIN)')
+      // A bare template-literal concatenation of the un-normalised value is the
+      // exact shape of the defect.
+      expect(source).not.toMatch(/\$\{process\.env\.VALU_UPSTREAM_ORIGIN\}/)
+    }
+  })
+
+  test('normalizeOrigin strips a trailing slash and rejects a non-URL', () => {
+    const { normalizeOrigin } = require('@/lib/site-url')
+    expect(normalizeOrigin('https://staging.valoria.example/')).toBe('https://staging.valoria.example')
+    expect(normalizeOrigin('https://staging.valoria.example')).toBe('https://staging.valoria.example')
+    // A path or query on the origin is dropped: an origin is not a base path.
+    expect(normalizeOrigin('https://staging.valoria.example/valu?x=1')).toBe('https://staging.valoria.example')
+    expect(normalizeOrigin('not a url')).toBe(null)
+    expect(normalizeOrigin('')).toBe(null)
+    expect(normalizeOrigin(undefined)).toBe(null)
+  })
+
   test('no participant- or staff-routing link hardcodes the production origin', () => {
     // SEO canonicals, the sitemap and OpenGraph URLs legitimately name the
     // production domain and are excluded by scanning only href/src attributes

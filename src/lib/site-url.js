@@ -25,7 +25,7 @@
 
 const PRODUCTION_SITE_URL = 'https://valoriainstitute.com'
 
-function normalize(origin) {
+function normalizeOrigin(origin) {
   if (!origin) return null
   try {
     return new URL(origin).origin
@@ -35,10 +35,10 @@ function normalize(origin) {
 }
 
 function getSiteOrigin() {
-  const configured = normalize(process.env.NEXT_PUBLIC_SITE_URL)
+  const configured = normalizeOrigin(process.env.NEXT_PUBLIC_SITE_URL)
   if (configured) return configured
   if (typeof window !== 'undefined' && window.location && window.location.origin) {
-    return normalize(window.location.origin) || PRODUCTION_SITE_URL
+    return normalizeOrigin(window.location.origin) || PRODUCTION_SITE_URL
   }
   return PRODUCTION_SITE_URL
 }
@@ -65,6 +65,7 @@ function passwordResetUrl() {
 
 module.exports = {
   PRODUCTION_SITE_URL,
+  normalizeOrigin,
   getSiteOrigin,
   siteUrl,
   authCallbackUrl,
