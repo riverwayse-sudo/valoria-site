@@ -132,9 +132,21 @@ export async function POST(request) {
   }
 
   try {
+    // Forward a server-observed client address so the platform's upstream
+    // report-trigger-ip limiter gets a per-client key instead of "unknown"
+    // for every proxied request. Prefer the platform-set x-real-ip value over
+    // a potentially multi-hop forwarded chain; fail closed if neither exists.
+    const clientIp =
+      request.headers.get('x-real-ip')?.trim() ||
+      request.headers.get('x-forwarded-for')?.split(',')[0].trim()
+    if (!clientIp) {
+      console.error('trigger-report refused: client IP could not be determined')
+      return json({ ok: false, error: 'Report service temporarily unavailable.' }, 503)
+    }
+
     const res = await fetch(`${ASSESSMENT_ORIGIN}/api/generate-and-send-report`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-forwarded-for': clientIp },
       body: JSON.stringify({ report_token: reportToken }),
     })
     const data = await res.json().catch(() => null)
