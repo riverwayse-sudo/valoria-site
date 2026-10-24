@@ -406,3 +406,50 @@ describe('assessment entry points do not pin every environment to production', (
     expect(read('src/app/api/cron/valu-reminders/route.js')).toContain("siteUrl('/profile/setup')")
   })
 })
+
+// ── 4. Origin concatenation must not bypass the normalising helper ─────────
+// Two server routes built their redirect/journey URLs by concatenating
+// NEXT_PUBLIC_SITE_URL directly. That duplicated the resolution rules in
+// site-url.js and, worse, skipped its URL normalisation: a configured origin
+// with a trailing slash produced `https://host//reset-password`, a URL that is
+// not in the Supabase Auth redirect allowlist, so the invite/re-entry redirect
+// silently fell back to the Supabase Site URL instead of the intended page.
+describe('server routes resolve origins through the shared helper', () => {
+  test('admin invite uses passwordResetUrl(), not raw concatenation', () => {
+    const route = read('src/app/api/admin/create-admin/route.js')
+    expect(route).toContain('passwordResetUrl()')
+    expect(route).not.toMatch(/NEXT_PUBLIC_SITE_URL\s*\|\|\s*'https:\/\/valoriainstitute\.com'/)
+  })
+
+  test('event-registration re-entry links use siteUrl(), not raw concatenation', () => {
+    const route = read('src/app/api/cron/event-registration-sync/route.js')
+    expect(route).toContain("siteUrl(`/journey/continue?token=")
+    expect(route).toContain("siteUrl('/journey')")
+    expect(route).not.toMatch(/NEXT_PUBLIC_SITE_URL\s*\|\|\s*'https:\/\/valoriainstitute\.com'/)
+  })
+
+  test('no server route concatenates NEXT_PUBLIC_SITE_URL with a literal origin fallback', () => {
+    const { execSync } = require('child_process')
+    const hits = execSync(
+      "grep -rn \"NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'\" src/ --include=*.js --include=*.jsx --exclude-dir=__tests__ || true",
+      { cwd: root, encoding: 'utf8' }
+    ).trim()
+    expect(hits).toBe('')
+  })
+
+  test('a trailing slash in the configured origin does not produce a double slash', () => {
+    const previous = process.env.NEXT_PUBLIC_SITE_URL
+    try {
+      process.env.NEXT_PUBLIC_SITE_URL = 'https://staging.valoria.example/'
+      jest.resetModules()
+      const mod = require('../lib/site-url')
+      expect(mod.passwordResetUrl()).toBe('https://staging.valoria.example/reset-password')
+      expect(mod.siteUrl('/journey')).toBe('https://staging.valoria.example/journey')
+      expect(mod.passwordResetUrl()).not.toContain('//reset-password')
+    } finally {
+      if (previous === undefined) delete process.env.NEXT_PUBLIC_SITE_URL
+      else process.env.NEXT_PUBLIC_SITE_URL = previous
+      jest.resetModules()
+    }
+  })
+})

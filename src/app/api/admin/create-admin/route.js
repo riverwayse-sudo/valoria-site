@@ -12,6 +12,7 @@
 // generates, sees, or transmits a password.
 
 import { createClient } from '@supabase/supabase-js'
+import { passwordResetUrl } from '@/lib/site-url'
 
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -61,7 +62,7 @@ export async function POST(request) {
 
     const { data: invited, error: inviteErr } = await supabase.auth.admin.inviteUserByEmail(email, {
       data: { full_name: fullName || undefined },
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'}/reset-password`,
+      redirectTo: passwordResetUrl(),
     })
     if (inviteErr) {
       // Most likely cause: this email already has an auth.users account
