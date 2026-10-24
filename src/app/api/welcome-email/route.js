@@ -1,53 +1,52 @@
 // src/app/api/welcome-email/route.js
 //
 // Sends a Valoria-branded welcome email to new buyer accounts right after
-// signup — separate from Supabase's own bare confirmation-link email,
-// which has no branding or context. Buyers had no welcome treatment of any
-// kind before this; only the waitlist flow ever sent anything.
+// signup — separate from Supabase's own bare confirmation-link email, which has
+// no branding or context. Buyers had no welcome treatment of any kind before
+// this; only the waitlist flow ever sent anything.
 //
-// Professionals aren't included here — they already get a "Welcome,
-// {name}." branded email (with their score and a Complete Your Profile
-// CTA) as part of report delivery in the assessment app's send-email.js.
-// A second one would just be redundant.
+// Professionals aren't included here — they already get a "Welcome, {name}."
+// branded email (with their score and a Complete Your Profile CTA) as part of
+// report delivery in the assessment app's send-email.js. A second one would
+// just be redundant.
 //
-// SECURITY (audit finding): this route is public by design — the caller has
-// just created an account and has no session yet, so requiring a session would
-// break the signup journey. Before the fix it mailed any syntactically valid
-// address, with no rate limit, no eligibility condition and no duplicate
-// protection: an open relay for mail-bombing a third party and for laundering
-// spam through Valoria's sending reputation. It also interpolated the
-// caller-supplied name straight into the email HTML.
+// SECURITY (audit finding). This route is unauthenticated by design — the
+// caller is the signup page, which has no session yet, so requiring a session
+// would break the legitimate workflow. Three controls keep it from being an
+// open mail relay:
 //
-// Four controls, applied in this order:
-//   1. Per-IP rate limit (5/hour) — blunts bulk sending.
-//   2. Per-recipient limit (1/day) — a repeat welcome is a no-op, not a
-//      second email.
-//   3. Eligibility — the recipient must be the address of an account that was
-//      just created (see signupEmailEligible). This is the control that
-//      actually closes the relay.
-//   4. The name is HTML-escaped and length-capped before interpolation.
+//   1. Recipient binding. The address must belong to an account that was just
+//      created. The caller sends the id returned by supabase.auth.signUp, and
+//      the server confirms the account exists, was created moments ago, and
+//      owns the requested address. Without this, any reachable caller could
+//      mail an address of their choosing.
+//   2. A per-IP rate limit (fail CLOSED), reusing the site's existing
+//      check_rate_limit RPC. Unlike a buyer's enquiry, a message that is never
+//      sent costs nothing and is recoverable, so an unavailable limiter must
+//      not become an open relay.
+//   3. A per-recipient limit, so a repeat request for the same new account is a
+//      no-op instead of a second email.
 //
-// The limiter fails OPEN, matching the other public forms in this repo
-// (enquiries, waitlist): a limiter outage must not silently drop a real
-// signup's welcome email. That is safe here only because the eligibility check
-// in step 3 is independent of the limiter and fails closed on its own — an
-// arbitrary recipient is refused even if both limits are unavailable.
+// The recipient's name is interpolated into the email HTML, so it is escaped.
 
-import { siteUrl } from '@/lib/site-url'
 import { getPrivilegedClient } from '@/lib/supabase-server'
+import { siteUrl } from '@/lib/site-url'
 import { signupEmailEligible } from '@/lib/api-guard'
 
 const BREVO_KEY = process.env.BREVO_API_KEY
 const FROM_EMAIL = 'info@valoriainstitute.com'
 const FROM_NAME  = 'Valoria Institute'
 
+// Matches the caps the other public forms enforce; keeps a hostile caller from
+// pushing an oversized payload through to the email provider.
 const MAX_NAME_LENGTH = 120
 const MAX_EMAIL_LENGTH = 254
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-const IP_LIMIT_MAX = 5
-const IP_LIMIT_WINDOW_SECONDS = 3600
-const RECIPIENT_LIMIT_MAX = 1
+// Per-IP ceiling per hour. A buyer sends this once, so the limit only bites on abuse.
+const RATE_LIMIT_MAX = 5
+const RATE_LIMIT_WINDOW_SECONDS = 3600
+// One welcome per address per day. A duplicate request is a no-op, not a resend.
 const RECIPIENT_LIMIT_WINDOW_SECONDS = 86400
 
 function escapeHtml(value) {
@@ -65,35 +64,36 @@ function clientIp(request) {
   )
 }
 
-// Returns true when the request is within budget, or when the limiter cannot be
-// consulted (fail open — see the header note).
-async function withinLimit(key, maxCount, windowSeconds) {
+// Returns { allowed: true } only when the limiter actually confirmed the request
+// is within budget. Any other outcome (no credentials, RPC error, budget
+// exhausted) is reported as not allowed, so an unavailable limiter fails closed.
+async function withinRateLimit(supabase, key, maxCount, windowSeconds) {
   try {
-    const { data, error } = await getPrivilegedClient().rpc('check_rate_limit', {
+    const { data, error } = await supabase.rpc('check_rate_limit', {
       p_key: key,
       p_max_count: maxCount,
       p_window_seconds: windowSeconds,
     })
     if (error) {
-      console.error('welcome-email rate limit check failed:', error.message || 'unknown')
-      return true
+      console.error('Welcome email rate limit check failed:', error)
+      return { allowed: false, exhausted: false }
     }
-    return data !== false
+    return { allowed: Boolean(data), exhausted: !data }
   } catch (err) {
-    console.error('welcome-email rate limiter unavailable:', err?.message || 'unknown')
-    return true
+    console.error('Welcome email rate limit check threw:', err)
+    return { allowed: false, exhausted: false }
   }
 }
 
-// Looks up the auth user so eligibility can be decided on the account record
-// rather than on anything the caller supplied. Returns null on any failure, and
-// signupEmailEligible then refuses the request.
-async function lookupUser(userId) {
+// The auth user record for the account that just signed up. Returns null on any
+// failure so the caller fails closed rather than mailing an unverified address.
+async function lookupUser(supabase, userId) {
   try {
-    const { data, error } = await getPrivilegedClient().auth.admin.getUserById(userId)
-    if (error) return null
-    return data?.user || null
-  } catch {
+    const { data, error } = await supabase.auth.admin.getUserById(userId)
+    if (error || !data?.user) return null
+    return data.user
+  } catch (err) {
+    console.error('Welcome email account lookup failed:', err?.message || err)
     return null
   }
 }
@@ -111,6 +111,14 @@ export async function POST(request) {
     return json({ ok: false, error: 'Email not configured.' }, 501)
   }
 
+  let supabase
+  try {
+    supabase = getPrivilegedClient()
+  } catch (err) {
+    console.error('Welcome email skipped:', err.message)
+    return json({ ok: false, error: 'Email service temporarily unavailable.' }, 503)
+  }
+
   let body
   try {
     body = await request.json()
@@ -125,20 +133,36 @@ export async function POST(request) {
   if (name != null && (typeof name !== 'string' || name.length > MAX_NAME_LENGTH)) {
     return json({ ok: false, error: 'Name is too long.' }, 400)
   }
-
-  const normalizedEmail = email.trim().toLowerCase()
-  if (!(await withinLimit(`welcome-email-ip:${clientIp(request)}`, IP_LIMIT_MAX, IP_LIMIT_WINDOW_SECONDS))) {
-    return json(
-      { ok: false, error: 'Too many requests from this connection — please try again later.' },
-      429
-    )
-  }
-  if (!(await withinLimit(`welcome-email-to:${normalizedEmail}`, RECIPIENT_LIMIT_MAX, RECIPIENT_LIMIT_WINDOW_SECONDS))) {
-    // Already welcomed. Not an error, and deliberately not a resend.
-    return json({ ok: true, skipped: 'already_sent' })
+  if (typeof userId !== 'string' || !userId.trim()) {
+    return json({ ok: false, error: 'A valid account reference is required.' }, 400)
   }
 
-  const user = typeof userId === 'string' ? await lookupUser(userId) : null
+  // Abuse controls first, so an unauthorised caller cannot reach the provider
+  // or the account lookup at volume.
+  const ipRate = await withinRateLimit(
+    supabase, `welcome-email-ip:${clientIp(request)}`, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_SECONDS
+  )
+  if (!ipRate.allowed) {
+    if (ipRate.exhausted) {
+      return json({ ok: false, error: 'Too many requests from this connection — please try again later.' }, 429)
+    }
+    return json({ ok: false, error: 'Email service temporarily unavailable.' }, 503)
+  }
+
+  const recipientRate = await withinRateLimit(
+    supabase, `welcome-email-to:${email.trim().toLowerCase()}`, 1, RECIPIENT_LIMIT_WINDOW_SECONDS
+  )
+  if (!recipientRate.allowed) {
+    if (recipientRate.exhausted) {
+      // Already welcomed this address today. Treat as success so the signup
+      // journey is unaffected, but send nothing.
+      return json({ ok: true, skipped: 'already_sent' }, 200)
+    }
+    return json({ ok: false, error: 'Email service temporarily unavailable.' }, 503)
+  }
+
+  // Recipient binding: the address must belong to an account created moments ago.
+  const user = await lookupUser(supabase, userId)
   if (!signupEmailEligible(user, email)) {
     return json({ ok: false, error: 'No new account matches this address.' }, 403)
   }
@@ -173,14 +197,14 @@ export async function POST(request) {
       }),
     })
     if (!res.ok) {
-      // Provider status only. The response body can echo the recipient address
-      // and account details, so it is never logged or returned.
+      // Provider status only. The response body can echo the recipient address,
+      // so it is never logged or returned.
       console.error('Welcome email failed with status', res.status)
       return json({ ok: false, error: 'Send failed.' }, 502)
     }
     return json({ ok: true }, 200)
   } catch (err) {
-    console.error('Welcome email error:', err?.message || 'unknown')
+    console.error('Welcome email error:', err?.message || err)
     return json({ ok: false, error: 'Send failed.' }, 500)
   }
 }
