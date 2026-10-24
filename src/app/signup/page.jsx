@@ -47,6 +47,14 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [returnTo, setReturnTo] = useState('')
+  // The welcome email is a courtesy, not part of account creation. If the send
+  // is refused (limiter or provider unavailable) the account still exists, so we
+  // surface a recoverable retry instead of discarding the message silently.
+  const [welcomePending, setWelcomePending] = useState(false)
+  const [welcomeRetrying, setWelcomeRetrying] = useState(false)
+  // The id returned by signUp, kept so the success-screen retry can re-send the
+  // welcome for the same account rather than re-deriving it from the form.
+  const [signupUserId, setSignupUserId] = useState('')
 
   async function handleSignup(e) {
     e.preventDefault()
@@ -79,6 +87,7 @@ export default function SignupPage() {
       // Authenticated users must never be blocked by the waitlist gate.
       document.cookie = `vi_waitlist_v2=submitted; path=/; max-age=31536000`
       if (data.user) {
+        setSignupUserId(data.user.id)
         await supabase.from('profiles').upsert({
           id: data.user.id,
           display_name: form.name,
@@ -93,12 +102,42 @@ export default function SignupPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: form.email, name: form.name, user_id: data.user?.id }),
-      }).catch(err => console.error('Welcome email request failed:', err))
+      })
+        .then(res => {
+          // Only a 2xx confirms the message was accepted (200 also covers the
+          // already-sent case, which is a no-op). Anything else — a refused
+          // limiter (429/503) or a provider error (502) — leaves the buyer with
+          // a visible retry rather than a silently dropped email.
+          if (!res.ok) setWelcomePending(true)
+        })
+        .catch(err => {
+          console.error('Welcome email request failed:', err)
+          setWelcomePending(true)
+        })
       setSuccess(true)
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Retry the welcome email from the success screen. The account already
+  // exists, so this only re-attempts the message; the route re-checks
+  // eligibility and the limits, so a retry cannot become a relay or a resend.
+  async function retryWelcomeEmail() {
+    setWelcomeRetrying(true)
+    try {
+      const res = await fetch('/api/welcome-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email, name: form.name, user_id: signupUserId }),
+      })
+      if (res.ok) setWelcomePending(false)
+    } catch (err) {
+      console.error('Welcome email retry failed:', err)
+    } finally {
+      setWelcomeRetrying(false)
     }
   }
 
@@ -119,6 +158,21 @@ export default function SignupPage() {
           <a href="/dashboard" style={{ ...S.btnGold, background: 'transparent', border: '1px solid rgba(201,168,76,.3)', color: GOLD, marginTop: '10px', display: 'block', textAlign: 'center' }}>
             GO TO DASHBOARD
           </a>
+          {welcomePending && (
+            <div style={{ marginTop: '18px', paddingTop: '16px', borderTop: '1px solid rgba(201,168,76,.15)' }}>
+              <p style={{ fontSize: '12px', color: DIM, lineHeight: 1.6, margin: '0 0 10px' }}>
+                Your account is ready. We couldn’t send your welcome email just now — you can try again.
+              </p>
+              <button
+                type="button"
+                onClick={retryWelcomeEmail}
+                disabled={welcomeRetrying}
+                style={{ ...S.btnGold, background: 'transparent', border: '1px solid rgba(201,168,76,.3)', color: GOLD, cursor: welcomeRetrying ? 'default' : 'pointer' }}
+              >
+                {welcomeRetrying ? 'RETRYING…' : 'RESEND WELCOME EMAIL'}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     )

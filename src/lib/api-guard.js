@@ -2,20 +2,21 @@
 //
 // Request-guard primitives shared by public API routes.
 //
-// CommonJS, like the other unit-tested lib modules in this repo, so the logic
-// can be exercised directly. The route files that import it are ESM and are
-// covered by runtime tests (jest.config.js maps '@/' and transforms them), so
-// these helpers do not need to carry the whole contract on their own.
+// CommonJS on purpose: this repo's unit-tested lib modules are CJS and the jest
+// setup does not transform the ESM used by the route files themselves, so logic
+// that needs behavioural tests lives here and the routes import it.
+
+'use strict'
 
 // Must match the format the platform's generate-and-send-report validates
-// (valoria-final/api/generate-and-send-report.js:29). A token this guard
-// accepts is one the upstream will accept, so the site cannot forward a
-// request the assessment app is guaranteed to reject.
+// (api/generate-and-send-report.js). A token this guard accepts is one the
+// upstream will accept, so the site cannot forward a request the assessment
+// app will reject.
 const REPORT_TOKEN_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
-// The deterministic name/role fingerprint (valoria-final/src/lockEngine.js).
-// It is an identifier, not a secret: it is derived from user-supplied values,
-// so it must never be treated as proof of identity or as a credential.
+// The deterministic name/role fingerprint. It is an identifier, not a secret:
+// it is derived from user-supplied values, so it must never be treated as proof
+// of identity or as an authorization credential.
 const IDENTITY_HASH_RE = /^fp_[a-z0-9]{1,128}$/i
 
 function isValidReportToken(value) {
