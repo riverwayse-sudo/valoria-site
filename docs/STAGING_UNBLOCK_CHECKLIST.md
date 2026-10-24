@@ -196,6 +196,48 @@ particular:
   PR #60 is therefore not a prerequisite for this branch.
 * `20261021145000_require_assessment_version_provenance.sql` — assessment
   version provenance.
+* `20261023120000_check_rate_limit_protocol.sql` — **required, and previously
+  untracked.** Five routes call `supabase.rpc('check_rate_limit', ...)`:
+  `/api/waitlist`, `/api/enquiries`, `/api/session-registration`,
+  `/api/welcome-email` and `/api/careers/applications`. Until this migration was
+  added, no migration in either repository defined that function, so it can only
+  have existed as hand-applied DDL in whichever database the routes were first
+  tested against. Consequences on a database that lacks it:
+
+  | Route | Fallback | Result without the function |
+  |---|---|---|
+  | `/api/waitlist` | fails open | unmetered |
+  | `/api/enquiries` | fails open | unmetered |
+  | `/api/session-registration` | fails open | unmetered |
+  | `/api/welcome-email` | fails closed | `503` on every call |
+  | `/api/careers/applications` | fails closed | `503` on every call |
+
+  This must be applied **before** the branch is deployed to staging, or the
+  careers and welcome-email endpoints will refuse all requests. Verify with:
+
+  ```bash
+  npm run verify:rate-limit-migration   # executes the SQL against a real engine
+  ```
+
+  Then confirm in staging (service-role key, never a browser key):
+
+  ```bash
+  curl -s -X POST "<STAGING_SUPABASE_URL>/rest/v1/rpc/check_rate_limit" \
+    -H "apikey: <STAGING_SERVICE_ROLE_KEY>" \
+    -H "Authorization: Bearer <STAGING_SERVICE_ROLE_KEY>" \
+    -H "Content-Type: application/json" \
+    -d '{"p_key":"probe:203.0.113.1","p_max_count":2,"p_window_seconds":60}'
+  # Expect: true, then true, then false on a third call inside the window.
+  ```
+
+  Expected object: `public.check_rate_limit(p_key text, p_max_count integer,
+  p_window_seconds integer) returns boolean`, `security definer`,
+  `search_path` pinned, executable by `service_role` only, with
+  `public.rate_limit_buckets` unreadable by `anon` and `authenticated`.
+
+  Note this is a **new, additive** migration. It does not modify or reapply any
+  existing migration, and it does not touch the pre-existing
+  `consume_opportunity_submission_rate_limit` function or its table.
 
 ---
 
