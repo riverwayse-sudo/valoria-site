@@ -306,6 +306,14 @@ describe('login shows an accessible success notice after email confirmation', ()
     expect(login).toMatch(/role="status"[\s\S]{0,80}aria-live="polite"/)
     expect(login).toContain('Your email address is verified')
   })
+
+  test('a confirmation link flushes a pending report for an already-signed-in visitor', () => {
+    expect(login).toContain('flushPendingReportForExistingSession')
+    expect(login).toContain('supabase.auth.getSession()')
+    expect(login).toContain('if (!cancelled && session?.access_token)')
+    expect(login).toContain('triggerPendingReport(session.access_token)')
+    expect(login).toContain("sessionStorage.removeItem('pending_report_token')")
+  })
 })
 
 // ── 9. Dashboard exposes both outstanding actions (#129) ──────────────────
