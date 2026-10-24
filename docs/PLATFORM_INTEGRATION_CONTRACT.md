@@ -32,6 +32,28 @@ Public entry point is always the site-relative `/valu/assessment/`
 pins `https://valoriainstitute.com/valu/assessment/` sends staging and preview
 users to production.
 
+### Outbound links inside the assessment app
+
+The proxy means the assessment app is reached at the site's own origin, so every
+link it renders back into the site (sign in, sign up, journey continuation,
+report, profile setup) must be built from the deployment's origin, not the
+production literal. This was a real defect: eleven such links were hardcoded, so
+after completing a snapshot the "CONFIRM EMAIL & SIGN IN" and "Continue your
+journey" actions took a staging participant to production and the staging journey
+could never be completed.
+
+The app resolves its origin at **build** time. `vite.config.js` reads
+`VALORIA_SITE_URL` and injects it via Vite's `define` as `__SITE_ORIGIN__`;
+`src/siteOrigin.js` exposes it as `SITE_ORIGIN` and `siteUrl(path)`. Two
+consequences the operator and any future change must respect:
+
+* `VALORIA_SITE_URL` must be set for the **build** environment of the platform
+  project, not only at runtime. A build without it bakes in the production
+  origin.
+* It must not be read through `import.meta.env`: Jest transforms this app with
+  Babel, which rejects `import.meta` outright, so a helper reading it could not
+  be imported by a test. `define` substitutes the token before Babel sees it.
+
 ### Middleware rule (root cause of the asset incident)
 
 `valoria-site/src/middleware.js` must never run for `/valu/assessment*`. Its
