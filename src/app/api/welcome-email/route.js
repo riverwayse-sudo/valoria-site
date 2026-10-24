@@ -10,37 +10,45 @@
 // CTA) as part of report delivery in the assessment app's send-email.js.
 // A second one would just be redundant.
 //
-// SECURITY (audit finding): this route is unauthenticated by design — the
-// caller is the signup page, which has no session yet, so requiring auth
-// would break the legitimate workflow. That means anyone who can reach the
-// deployment can ask Brevo to send a Valoria-branded message to an address
-// of their choosing: an open mail relay, useful for mail-bombing a third
-// party and for laundering spam through Valoria's sending reputation.
-// Two controls close that:
-//   1. A per-IP rate limit, reusing the site's existing `check_rate_limit`
-//      RPC (same pattern as waitlist/enquiries). It fails CLOSED: unlike a
-//      buyer's enquiry, a message that is never sent costs nothing and is
-//      recoverable, so an unavailable limiter must not become an open relay.
-//   2. The recipient's name is interpolated into the email HTML, so it is
-//      escaped. Previously it was not, so a name like `<img src=x
-//      onerror=...>` was injected into the message body.
+// SECURITY (audit finding): this route is public by design — the caller has
+// just created an account and has no session yet, so requiring a session would
+// break the signup journey. Before the fix it mailed any syntactically valid
+// address, with no rate limit, no eligibility condition and no duplicate
+// protection: an open relay for mail-bombing a third party and for laundering
+// spam through Valoria's sending reputation. It also interpolated the
+// caller-supplied name straight into the email HTML.
+//
+// Four controls, applied in this order:
+//   1. Per-IP rate limit (5/hour) — blunts bulk sending.
+//   2. Per-recipient limit (1/day) — a repeat welcome is a no-op, not a
+//      second email.
+//   3. Eligibility — the recipient must be the address of an account that was
+//      just created (see signupEmailEligible). This is the control that
+//      actually closes the relay.
+//   4. The name is HTML-escaped and length-capped before interpolation.
+//
+// The limiter fails OPEN, matching the other public forms in this repo
+// (enquiries, waitlist): a limiter outage must not silently drop a real
+// signup's welcome email. That is safe here only because the eligibility check
+// in step 3 is independent of the limiter and fails closed on its own — an
+// arbitrary recipient is refused even if both limits are unavailable.
 
 import { siteUrl } from '@/lib/site-url'
 import { getPrivilegedClient } from '@/lib/supabase-server'
+import { signupEmailEligible } from '@/lib/api-guard'
 
 const BREVO_KEY = process.env.BREVO_API_KEY
 const FROM_EMAIL = 'info@valoriainstitute.com'
 const FROM_NAME  = 'Valoria Institute'
 
-// Matches the caps the other public forms enforce; keeps a hostile caller from
-// pushing an oversized payload through to the email provider.
 const MAX_NAME_LENGTH = 120
 const MAX_EMAIL_LENGTH = 254
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-// Per-IP ceiling per hour. A buyer sends this once, so the limit only bites on abuse.
-const RATE_LIMIT_MAX = 5
-const RATE_LIMIT_WINDOW_SECONDS = 3600
+const IP_LIMIT_MAX = 5
+const IP_LIMIT_WINDOW_SECONDS = 3600
+const RECIPIENT_LIMIT_MAX = 1
+const RECIPIENT_LIMIT_WINDOW_SECONDS = 86400
 
 function escapeHtml(value) {
   return String(value == null ? '' : value).replace(
@@ -57,31 +65,36 @@ function clientIp(request) {
   )
 }
 
-// Returns { allowed: true } only when the limiter actually confirmed the
-// request is within budget. Any other outcome (no credentials, RPC error,
-// budget exhausted) is reported as not allowed.
-async function withinRateLimit(request) {
-  let supabase
+// Returns true when the request is within budget, or when the limiter cannot be
+// consulted (fail open — see the header note).
+async function withinLimit(key, maxCount, windowSeconds) {
   try {
-    supabase = getPrivilegedClient()
-  } catch (err) {
-    console.error('Welcome email rate limiter unavailable:', err.message)
-    return { allowed: false, exhausted: false }
-  }
-  try {
-    const { data, error } = await supabase.rpc('check_rate_limit', {
-      p_key: `welcome-email:${clientIp(request)}`,
-      p_max_count: RATE_LIMIT_MAX,
-      p_window_seconds: RATE_LIMIT_WINDOW_SECONDS,
+    const { data, error } = await getPrivilegedClient().rpc('check_rate_limit', {
+      p_key: key,
+      p_max_count: maxCount,
+      p_window_seconds: windowSeconds,
     })
     if (error) {
-      console.error('Welcome email rate limit check failed:', error)
-      return { allowed: false, exhausted: false }
+      console.error('welcome-email rate limit check failed:', error.message || 'unknown')
+      return true
     }
-    return { allowed: Boolean(data), exhausted: !data }
+    return data !== false
   } catch (err) {
-    console.error('Welcome email rate limit check threw:', err)
-    return { allowed: false, exhausted: false }
+    console.error('welcome-email rate limiter unavailable:', err?.message || 'unknown')
+    return true
+  }
+}
+
+// Looks up the auth user so eligibility can be decided on the account record
+// rather than on anything the caller supplied. Returns null on any failure, and
+// signupEmailEligible then refuses the request.
+async function lookupUser(userId) {
+  try {
+    const { data, error } = await getPrivilegedClient().auth.admin.getUserById(userId)
+    if (error) return null
+    return data?.user || null
+  } catch {
+    return null
   }
 }
 
@@ -105,7 +118,7 @@ export async function POST(request) {
     return json({ ok: false, error: 'Invalid request body.' }, 400)
   }
 
-  const { email, name } = body || {}
+  const { email, name, user_id: userId } = body || {}
   if (typeof email !== 'string' || email.length > MAX_EMAIL_LENGTH || !EMAIL_RE.test(email)) {
     return json({ ok: false, error: 'A valid email is required.' }, 400)
   }
@@ -113,15 +126,21 @@ export async function POST(request) {
     return json({ ok: false, error: 'Name is too long.' }, 400)
   }
 
-  const rate = await withinRateLimit(request)
-  if (!rate.allowed) {
-    if (rate.exhausted) {
-      return json(
-        { ok: false, error: 'Too many requests from this connection — please try again later.' },
-        429
-      )
-    }
-    return json({ ok: false, error: 'Email service temporarily unavailable.' }, 503)
+  const normalizedEmail = email.trim().toLowerCase()
+  if (!(await withinLimit(`welcome-email-ip:${clientIp(request)}`, IP_LIMIT_MAX, IP_LIMIT_WINDOW_SECONDS))) {
+    return json(
+      { ok: false, error: 'Too many requests from this connection — please try again later.' },
+      429
+    )
+  }
+  if (!(await withinLimit(`welcome-email-to:${normalizedEmail}`, RECIPIENT_LIMIT_MAX, RECIPIENT_LIMIT_WINDOW_SECONDS))) {
+    // Already welcomed. Not an error, and deliberately not a resend.
+    return json({ ok: true, skipped: 'already_sent' })
+  }
+
+  const user = typeof userId === 'string' ? await lookupUser(userId) : null
+  if (!signupEmailEligible(user, email)) {
+    return json({ ok: false, error: 'No new account matches this address.' }, 403)
   }
 
   const firstName = escapeHtml((name || '').trim().split(/\s+/)[0] || 'there')
@@ -154,13 +173,14 @@ export async function POST(request) {
       }),
     })
     if (!res.ok) {
-      const errText = await res.text().catch(() => '')
-      console.error('Welcome email failed:', res.status, errText)
+      // Provider status only. The response body can echo the recipient address
+      // and account details, so it is never logged or returned.
+      console.error('Welcome email failed with status', res.status)
       return json({ ok: false, error: 'Send failed.' }, 502)
     }
     return json({ ok: true }, 200)
   } catch (err) {
-    console.error('Welcome email error:', err)
+    console.error('Welcome email error:', err?.message || 'unknown')
     return json({ ok: false, error: 'Send failed.' }, 500)
   }
 }

@@ -30,6 +30,7 @@ export default function LoginPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const identityHash = params.get('identity_hash')
+    const reportToken = params.get('report_token')
     // safeReturnPath rejects protocol-relative and off-origin values; a bare
     // startsWith('/') guard let '//evil.com' through.
     const requestedReturnTo = safeReturnPath(params.get('returnTo'))
@@ -49,11 +50,21 @@ export default function LoginPage() {
       // that instant trigger (see /api/trigger-report). Fire-and-forget —
       // the 15-min sweep-unsent-reports cron is the safety net if this
       // fails or the user never gets this far.
-      fetch('/api/trigger-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identity_hash: identityHash }),
-      }).catch(() => {})
+      //
+      // Send the report_token, never the identity_hash: the assessment app
+      // authorises public triggers by the opaque per-assessment token, and the
+      // identity_hash is a guessable name/role fingerprint that must not be
+      // forwarded as a credential. create-account and resend-confirmation
+      // already put report_token on this redirect, so it is present for
+      // legitimate confirmation links. This runs before sign-in, which is why
+      // the route cannot require a session.
+      if (reportToken) {
+        fetch('/api/trigger-report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ report_token: reportToken }),
+        }).catch(() => {})
+      }
     }
   }, [])
 
