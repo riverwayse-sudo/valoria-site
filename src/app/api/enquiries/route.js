@@ -6,6 +6,7 @@
 // visibility, no way to measure conversion. This is the fix.
 
 import { getPrivilegedClient } from '@/lib/supabase-server'
+import { siteUrl } from '@/lib/site-url'
 
 function getSupabase() {
   // Enquiries are a public write surface (anyone can request an intro) but not a
@@ -35,7 +36,7 @@ async function notifyAdmin({ enquiryType, atbId, buyerName, buyerEmail, buyerCom
       <p><strong>From:</strong> ${buyerName} &lt;${buyerEmail}&gt;${buyerCompany ? ` — ${buyerCompany}` : ''}</p>
       <p><strong>Subject:</strong> ${subject || '(none given)'}</p>
       <p><strong>Message:</strong><br/>${(body || '').replace(/\n/g, '<br/>')}</p>
-      <p style="margin-top:20px;"><a href="https://valoriainstitute.com/admin">Review in admin dashboard</a></p>
+      <p style="margin-top:20px;"><a href="${siteUrl('/admin')}">Review in admin dashboard</a></p>
     </div>`
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
@@ -101,7 +102,7 @@ async function notifyProfessional({ professionalProfileId, enquiryType, atbId, b
       <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">NEW ${label.toUpperCase()}</p>
       <p>${buyerName}${buyerCompany ? ` from ${buyerCompany}` : ''} has requested an introduction through Valoria Institute.</p>
       <p>Valoria will review and be in touch with next steps — no action needed from you right now.</p>
-      <p style="margin-top:20px;"><a href="https://valoriainstitute.com${actionUrl}">View your profile</a></p>
+      <p style="margin-top:20px;"><a href="${siteUrl(actionUrl)}">View your profile</a></p>
     </div>`
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',

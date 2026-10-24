@@ -79,6 +79,32 @@ describe('auth redirects are environment-specific, never hardcoded production ho
     expect(trigger).toContain('process.env.VALU_UPSTREAM_ORIGIN')
     expect(read('next.config.js')).toContain('process.env.VALU_UPSTREAM_ORIGIN')
   })
+
+  test('no participant- or staff-routing link hardcodes the production origin', () => {
+    // SEO canonicals, the sitemap and OpenGraph URLs legitimately name the
+    // production domain and are excluded by scanning only href/src attributes
+    // and navigation calls. A routing link built from the literal sends a
+    // staging participant (or the enquiries notification) to production.
+    const files = [
+      'src/app/api/enquiries/route.js',
+      'src/app/profile/setup/page.jsx',
+      'src/app/profile/[id]/ProfileClient.jsx',
+    ]
+    const offenders = []
+    for (const file of files) {
+      const source = read(file)
+      const pattern = /(href=|router\.(?:push|replace)\(|location\.(?:href|assign)=)\s*[^\n]*?["'`]https:\/\/valoriainstitute\.com/g
+      for (const m of source.match(pattern) || []) offenders.push(`${file}: ${m}`)
+    }
+    expect(offenders).toEqual([])
+  })
+
+  test('those links route through the shared siteUrl helper', () => {
+    expect(read('src/app/api/enquiries/route.js')).toContain("siteUrl('/admin')")
+    expect(read('src/app/api/enquiries/route.js')).toContain('siteUrl(actionUrl)')
+    expect(read('src/app/profile/setup/page.jsx')).toContain("siteUrl('/valu/assessment/')")
+    expect(read('src/app/profile/[id]/ProfileClient.jsx')).toContain("siteUrl('/valu/assessment/')")
+  })
 })
 
 // ── 2. Registration / authentication handoff ──────────────────────────────
