@@ -104,28 +104,91 @@ change to this endpoint; do not rely on substring assertions alone.
 
 ## 3. Email confirmation contract
 
-Supabase confirmation emails must redirect to the site callback:
+Supabase confirmation emails must redirect to the site callback. There are two
+shapes, and which one applies depends on where the participant was when the
+account was created.
+
+**Shape A — a snapshot or assessment already exists (identity evidence in hand).**
+The platform builds this in `api/create-account.js` and
+`api/resend-confirmation.js`:
 
 ```
-{site-origin}/auth/callback?code=<supabase-code>&pending_taster_id=<id>
+{site-origin}/auth/callback?identity_hash=<fp_...>&report_token=<uuid>
 ```
 
-* `src/lib/site-url.js` builds this via `authCallbackUrl()`. Resolution order:
-  `NEXT_PUBLIC_SITE_URL` → browser origin → production origin.
-* The callback exchanges the code for a session, links the pending
-  assessment/snapshot (`/api/link-assessment`, `/api/link-taster`) and routes to
-  `/dashboard?welcome=profile`. No second sign-in.
+**Shape B — the snapshot signup path, no identifier available.**
+
+```
+{site-origin}/auth/callback
+```
+
+In shape B the platform creates the account and sends the confirmation email
+*before* the snapshot is submitted, so the `taster_sessions` row does not exist
+when the link is generated and no identifier can travel through the redirect.
+This is why the callback page cannot rely on `pending_taster_id` here, and why
+the recovery is by email evidence instead: after the session is established,
+`src/app/auth/callback/page.jsx` calls `/api/claim-taster` with an empty body and
+the server matches the candidate by the authenticated, confirmed user's own
+email. A zero-match result is non-blocking.
+
+Do not "fix" shape B by adding an identifier to the redirect. A browser-supplied
+identifier is not proof of ownership, and the snapshot row does not exist yet.
+
+### Which parameter does what
+
+| Parameter | Consumed by | Meaning |
+| --- | --- | --- |
+| `code` | callback | Supabase PKCE exchange; produces the session |
+| `identity_hash` | callback → `/api/link-assessment` | name/role fingerprint of a completed full assessment |
+| `pending_taster_id` | callback → `/api/link-taster` | snapshot id, only when the row already existed |
+| `report_token` | **`/login`, not the callback** | proof-of-ownership token for a completed assessment |
+| `taster_id` | `/journey/continue` | resume/continuation target |
+
+`report_token` is deliberately not read by the callback page: `/login` forwards
+it to the platform, which validates it. The callback reads `identity_hash` and
+`pending_taster_id`, and otherwise falls through to the shape-B recovery.
+
+* `src/lib/site-url.js` builds the site's own URLs via `authCallbackUrl()`.
+  Resolution order: `NEXT_PUBLIC_SITE_URL` → browser origin → production.
 * After confirmation the platform/signup flow sends the user to
   `{site-origin}/login?email_confirmed=1`. The login page shows an accessible
   "your email is verified, sign in to continue" notice for that flag.
 
+### The platform must build the redirect from its own environment
+
+This was a real defect and is now fixed in the platform, but the contract is
+worth stating because it is easy to reintroduce. `api/create-account.js`,
+`api/resend-confirmation.js`, `api/assessment-progress.js`,
+`api/send-profile-reminder.js` and `api/send-email.js` previously either
+hardcoded `https://valoriainstitute.com` or read a single environment variable
+with a production fallback. The consequence on staging was a split-brain
+registration: the account was created in the staging database, the confirmation
+email pointed at production, and the participant was confirmed on one deployment
+and recorded on another. Setting `VALORIA_SITE_URL` alone did not help, because
+two of the modules never read it.
+
+All five now resolve through `lib/site-url.js` — `resolveSiteUrl()` — which
+honours `VALORIA_SITE_URL` → `SITE_ORIGIN` → `NEXT_PUBLIC_SITE_URL` →
+production, and logs an error on a non-production deployment with none set.
+`VERCEL_URL` is deliberately not used: the platform and the site are separate
+Vercel projects, so it would name the platform host.
+
+Preview deployment hosts are never a valid permanent destination. Use a stable
+staging origin in the allowlist, not a per-deployment URL.
+
 ### Operator actions (Supabase Auth) — do not apply without authorisation
 
-* Add the staging origin (and any stable preview origin) to the Auth
-  **redirect URL allowlist**.
+* Add the staging origin to the Auth **redirect URL allowlist**. Use the stable
+  staging origin, not a per-deployment preview host: Supabase silently falls back
+  to the project Site URL for any `redirect_to` that is not allowlisted, and the
+  callback then never fires.
 * Update the **Confirm signup** email template to redirect to
   `{site-origin}/auth/callback`.
 * Set the site env var `NEXT_PUBLIC_SITE_URL` to the staging origin on staging.
+* Set the platform env var `VALORIA_SITE_URL` to the staging origin on staging.
+  This is required, not optional: without it the platform's non-production
+  deployments fall back to production and log an error. Both variables name the
+  *site* origin — the platform must not use its own `VERCEL_URL`.
 
 ### Staging environment variables (Vercel) — do not apply without authorisation
 
