@@ -22,6 +22,7 @@ export default function LoginPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const identityHash = params.get('identity_hash')
+    const reportToken = params.get('report_token')
     const requestedReturnTo = params.get('returnTo') || ''
     if (requestedReturnTo.startsWith('/')) setReturnTo(requestedReturnTo)
     const pendingTasterId = params.get('pending_taster_id')
@@ -37,11 +38,19 @@ export default function LoginPage() {
       // that instant trigger (see /api/trigger-report). Fire-and-forget —
       // the 15-min sweep-unsent-reports cron is the safety net if this
       // fails or the user never gets this far.
-      fetch('/api/trigger-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identity_hash: identityHash }),
-      }).catch(() => {})
+      //
+      // Send the report_token, not the identity_hash: the assessment app
+      // authorises public report triggers by that opaque per-assessment
+      // token, and the identity_hash is a guessable name/role fingerprint.
+      // create-account and resend-confirmation already put report_token on
+      // this redirect, so it is present for legitimate confirmation links.
+      if (reportToken) {
+        fetch('/api/trigger-report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ report_token: reportToken }),
+        }).catch(() => {})
+      }
     }
   }, [])
 
