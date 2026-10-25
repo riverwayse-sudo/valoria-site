@@ -12,3 +12,6 @@ install_feedback*.bat
 
 # Local scratch dir for scripts/verify-rate-limit-migration.mjs (PGlite).
 .pglite-verify/
+
+# Scratch dir for the real-PostgreSQL concurrency verifier
+.pg-verify/

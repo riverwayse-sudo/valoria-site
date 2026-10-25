@@ -12,7 +12,8 @@
     "excellence:check": "node scripts/excellence-check.js",
     "verify:scoring-parity": "node scripts/verify-scoring-parity.mjs",
     "check:block-scope": "node scripts/find-block-scope-bugs.mjs src",
-    "verify:rate-limit-migration": "node scripts/verify-rate-limit-migration.mjs"
+    "verify:rate-limit-migration": "node scripts/verify-rate-limit-migration.mjs",
+    "verify:rate-limit-concurrency": "node scripts/verify-rate-limit-concurrency.mjs"
   },
   "dependencies": {
     "@next/third-parties": "15.5.27",
