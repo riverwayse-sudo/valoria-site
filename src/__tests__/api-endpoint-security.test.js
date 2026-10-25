@@ -303,7 +303,7 @@ describe('signup: welcome email is a recoverable courtesy', () => {
 
 // A well-formed v4 UUID: the union validates with the platform's own regex,
 // so a loose 'aaaa…' string is correctly refused.
-const VALID_TOKEN = '9f1c2d3e-4a5b-4c6d-8e7f-0a1b2c3d4e5f'
+const VALID_TOKEN = '00000000-0000-4000-8000-000000000001'
 
 describe('trigger-report: unauthenticated relay and token disclosure are closed', () => {
   test('every unauthenticated request is a 401, whatever the token looks like', async () => {
