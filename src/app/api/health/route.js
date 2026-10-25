@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { getPrivilegedClient } from '@/lib/supabase-server'
 
 export const dynamic = 'force-dynamic'
 
@@ -7,11 +7,11 @@ export async function GET() {
   const checks = { database: 'unknown', waitlist: 'unknown', profiles: 'unknown' }
 
   try {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    if (!url || !key) throw new Error('Supabase environment is not configured')
-
-    const supabase = createClient(url, key, { auth: { persistSession: false } })
+    // Health must exercise the same privileged path the rest of the server
+    // uses. Falling back to the anon key here would report "ok" while the
+    // service-role key is actually missing — hiding the exact misconfiguration
+    // this endpoint exists to catch. getPrivilegedClient() fails closed.
+    const supabase = getPrivilegedClient()
     const [waitlist, profiles] = await Promise.all([
       supabase.from('waitlist').select('id', { count: 'exact', head: true }),
       supabase.from('professional_profiles').select('id', { count: 'exact', head: true }),

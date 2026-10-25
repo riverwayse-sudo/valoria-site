@@ -9,7 +9,9 @@
     "start": "next start",
     "test": "jest",
     "design:check": "node scripts/design-check.js",
-    "excellence:check": "node scripts/excellence-check.js"
+    "excellence:check": "node scripts/excellence-check.js",
+    "verify:scoring-parity": "node scripts/verify-scoring-parity.mjs",
+    "check:block-scope": "node scripts/find-block-scope-bugs.mjs src"
   },
   "dependencies": {
     "@next/third-parties": "15.5.27",
@@ -20,6 +22,8 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@babel/parser": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
     "jest": "^30.4.2"
   },
   "engines": {
