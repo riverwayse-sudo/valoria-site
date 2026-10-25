@@ -11,6 +11,20 @@ const ALLOWED_TYPES=new Map([
 ])
 function db(){const url=process.env.NEXT_PUBLIC_SUPABASE_URL;const key=process.env.SUPABASE_SERVICE_ROLE_KEY;if(!url||!key)return null;return createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}})}
 function clean(value,max=3000){return String(value||'').trim().slice(0,max)}
+function clientIp(request){return request.headers.get('x-forwarded-for')?.split(',')[0].trim()||request.headers.get('x-real-ip')||'unknown'}
+// Fails CLOSED, unlike the welcome-email limiter. That route can fail open
+// because an independent eligibility check still refuses arbitrary recipients;
+// here the limiter is the only abuse control on a public POST that writes up to
+// 4 MB to storage and sends two emails. A limiter outage must therefore refuse
+// the request. Nothing is persisted before this point, so a genuine candidate
+// loses no data — they simply retry.
+async function withinLimit(supabase,key,maxCount,windowSeconds){
+ try{
+  const {data,error}=await supabase.rpc('check_rate_limit',{p_key:key,p_max_count:maxCount,p_window_seconds:windowSeconds})
+  if(error){console.error('Career application rate limit check failed:',error.message||'unknown');return 'error'}
+  return data===false?'exceeded':'ok'
+ }catch(err){console.error('Career application rate limiter unavailable:',err?.message||'unknown');return 'error'}
+}
 function escapeHtml(value){return String(value||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function validEmail(value){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)&&value.length<=254}
 export async function POST(request){
@@ -26,6 +40,14 @@ export async function POST(request){
  if(!extension||!cv.name.toLowerCase().endsWith('.'+extension))return Response.json({error:'CV must be a PDF, DOC or DOCX file.'},{status:400})
  const supabase=db()
  if(!supabase)return Response.json({error:'Application service is temporarily unavailable. Please try again later.'},{status:503})
+ // Rate limit before anything is written or emailed. Both budgets must pass;
+ // a limiter error refuses the request rather than allowing an unmetered write.
+ const ipBudget=await withinLimit(supabase,'careers-application-ip:'+clientIp(request),5,3600)
+ if(ipBudget==='exceeded')return Response.json({error:'Too many applications from this connection — please try again later.'},{status:429,headers:{'Retry-After':'3600'}})
+ if(ipBudget==='error')return Response.json({error:'We could not verify your application right now. Please try again shortly.'},{status:503})
+ const emailBudget=await withinLimit(supabase,'careers-application-email:'+email,3,86400)
+ if(emailBudget==='exceeded')return Response.json({error:'Too many applications for this email address — please try again later.'},{status:429,headers:{'Retry-After':'86400'}})
+ if(emailBudget==='error')return Response.json({error:'We could not verify your application right now. Please try again shortly.'},{status:503})
  const {data:existing,error:lookupError}=await supabase.from('career_applications').select('id').eq('email',email).eq('role_slug','partnerships-executive').maybeSingle()
  if(lookupError)return Response.json({error:'We could not verify your application. Please try again later.'},{status:503})
  if(existing)return Response.json({error:'An application for this role has already been received from this email address. Please contact career@valoriainstitute.com if you need assistance.'},{status:409})

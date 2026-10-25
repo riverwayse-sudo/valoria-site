@@ -176,7 +176,7 @@ describe("New user path", () => {
 
   test("result object produced after completion has correct pathway", () => {
     const result = simulateLiveResult({ valuIndex: 72 });
-    expect(result.pathway).toBe("PRIME Programme"); // 65–79
+    expect(result.pathway).toBe("Cluster Development Pathway"); // 55–74
   });
 });
 

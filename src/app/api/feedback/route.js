@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { getPrivilegedClient } from '@/lib/supabase-server'
 
 function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) throw new Error('Supabase server configuration is missing.')
-  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+  // Feedback is a public write surface but not a public read surface: rows carry
+  // respondent names/emails. getPrivilegedClient() requires the service role and
+  // fails closed rather than running the insert as the anonymous role.
+  return getPrivilegedClient()
 }
 
 export async function POST(req) {

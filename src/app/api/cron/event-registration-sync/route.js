@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { EVENT_SESSIONS, syncEventRegistrationToBrevo } from '@/lib/eventRegistrationBrevo'
+import { siteUrl } from '@/lib/site-url'
 
 function getAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -52,8 +53,8 @@ export async function GET(request) {
         expires_at: expiresAt,
       }).select('token').single()
       const journeyUrl = reentry?.token
-        ? `${process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'}/journey/continue?token=${encodeURIComponent(reentry.token)}`
-        : `${process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'}/journey`
+        ? siteUrl(`/journey/continue?token=${encodeURIComponent(reentry.token)}`)
+        : siteUrl('/journey')
 
       const result = await syncEventRegistrationToBrevo({
         email: row.email,
