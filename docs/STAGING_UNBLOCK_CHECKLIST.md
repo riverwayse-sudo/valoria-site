@@ -94,6 +94,7 @@ Auth allowlist entry will need updating per deploy.
 | `BREVO_FROM_EMAIL` / `BREVO_FROM_NAME` | Preview | staging sender | production sender | |
 | `CRON_SECRET` | Preview | staging-only random value | production value | Guards the cron routes. |
 | `SUPABASE_URL` | Preview | staging project URL | production URL | Fallback read by the reconciliation-health cron. |
+| `STAGING_SUPABASE_PROJECT_REF` | Preview | the staging project ref | unset | Names the one project a preview may write to. See §2.3. |
 
 ### 2.2 Platform project (`valoria-final`)
 
@@ -107,6 +108,51 @@ Auth allowlist entry will need updating per deploy.
 | `ANTHROPIC_API_KEY` | Preview | staging/test key | production key | Report generation. |
 | `RESEND_API_KEY` | Preview | staging/test key | production key | |
 | `CRON_SECRET` | Preview | staging-only random value | production value | Guards `/api/generate-and-send-report` worker path and the sweep routes. |
+| `STAGING_SUPABASE_PROJECT_REF` | Preview | the staging project ref | unset | Names the one project a preview may write to. See §2.3. |
+
+### 2.3 The write guard (`STAGING_SUPABASE_PROJECT_REF`)
+
+Both projects now refuse a privileged write unless the deployment is allowed to
+make it. This is the enforcement that was missing: preview deployments were
+configured with production Supabase credentials, so a preview built from any
+branch could write real participant data.
+
+The rule, in `lib/environment-guard.js` in each repository:
+
+1. `VERCEL_ENV=production` — allowed.
+2. `VERCEL_ENV` unset — allowed. Vercel always sets it on a deployment, so this
+   is local development or the test runner.
+3. Any other `VERCEL_ENV` (a preview) — allowed **only** when the Supabase URL in
+   use names the project in `STAGING_SUPABASE_PROJECT_REF`.
+
+It fails closed: no `STAGING_SUPABASE_PROJECT_REF`, no Supabase URL, or a URL
+whose project ref does not match all refuse the write with a `503` naming the
+reason. A refused write is visible; a silent write to production is not.
+
+**What the operator must set.** On the **Preview** scope of *both* projects, set
+`STAGING_SUPABASE_PROJECT_REF` to the staging project ref (the `xxxxxxxx` in
+`https://xxxxxxxx.supabase.co`). Leave it unset in the **Production** scope.
+
+Consequences to expect before it is set:
+
+* A preview deployment with `STAGING_SUPABASE_PROJECT_REF` unset refuses every
+  privileged write with `503`. This is the intended fail-closed behaviour, not a
+  bug. Read-only pages and the assessment resume GET are unaffected.
+* Once the staging variables in §2.1/§2.2 and this ref are all in place, a preview
+  is a genuine staging environment and the acceptance suite can run against it
+  without touching production.
+
+**Verification.** With the bypass from §1, a write to a preview must not be
+refused once the ref is set:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' -X POST \
+  -H "x-vercel-protection-bypass: <SECRET>" \
+  "https://<PLATFORM_PREVIEW_ORIGIN>/api/notifications"
+```
+
+Expect `401` (the app was reached and auth was enforced), **not** `503` with
+`Write refused`. Before the ref is set, `503` with `Write refused` is correct.
 
 **Verification (per project).** `vercel env ls` (or the dashboard) must show the
 Preview row for each variable. Then, with the bypass from §1:
