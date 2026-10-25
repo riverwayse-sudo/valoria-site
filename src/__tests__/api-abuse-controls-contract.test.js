@@ -24,7 +24,7 @@ function read(relative) {
 }
 
 // A well-formed v4 UUID, the shape the platform issues as report_token.
-const TOKEN = '9f1c2d3e-4a5b-4c6d-8e7f-0a1b2c3d4e5f'
+const TOKEN = '00000000-0000-4000-8000-000000000001'
 
 describe('F1 — report trigger requires the upstream capability', () => {
   test('accepts the opaque report token the assessment app authorises by', () => {
