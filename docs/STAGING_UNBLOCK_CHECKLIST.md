@@ -398,3 +398,140 @@ failures, response-after-write bugs, auth gaps and retry hazards. Findings:
   live schema as a tracked baseline migration, which requires reading the staging
   database — blocked by §3.1. Flagged as an open dependency, not closed.
 
+
+---
+
+## 7. Phase 5 addendum — corrections, and the exact access required
+
+Nothing below has been applied. This section corrects two inaccuracies in the
+earlier text and narrows B1 to a precise request.
+
+### 7.1 Correction — the platform has no `/api/health`
+
+§1 and §2.2 verify the bypass with `GET <PLATFORM_PREVIEW_ORIGIN>/api/health`.
+That route does not exist in the platform project (`valoria-final/api/` has
+`system-status.js` and `reconciliation-health.js`, neither named `health`). A
+404 would be ambiguous with a routing failure, so the probe was misleading.
+
+Use the platform's status route instead. It is deliberately gated on
+`CRON_SECRET`, so the expected *success* signal for reachability is `401`, not
+`200` — a `401` proves the application answered:
+
+```bash
+# WITHOUT the bypass: expect 302 to https://vercel.com/sso-api?...
+# WITH the bypass and no Authorization header: expect 401 (app reached, auth enforced)
+curl -s -o /dev/null -w '%{http_code}\n' \
+  -H "x-vercel-protection-bypass: <SECRET>" \
+  "https://<PLATFORM_PREVIEW_ORIGIN>/api/system-status"
+
+# With the bypass and the cron secret: expect 200 (healthy) or 504 (dependency down)
+curl -s -H "x-vercel-protection-bypass: <SECRET>" \
+  -H "Authorization: Bearer <CRON_SECRET>" \
+  "https://<PLATFORM_PREVIEW_ORIGIN>/api/system-status"
+```
+
+The site probe is correct as written: `src/app/api/health/route.js` exists and
+reports `environment: process.env.VERCEL_ENV`.
+
+### 7.2 Correction — B1 is much larger than two tables
+
+§3.5 states that `valu_assessments` is created by no tracked migration. That is
+correct, but it understates the gap. Replaying the tracked sequence on a fresh
+PostgreSQL server (`npm run verify:migration-reproducibility`) shows:
+
+* the chain fails at **migration 2 of 84** (`professional_profiles` absent);
+* **10 tables** are referenced but created by no migration:
+
+  | table | migrations referencing |
+  | --- | --- |
+  | `professional_profiles` | 67 |
+  | `valu_assessments` | 44 |
+  | `taster_sessions` | 28 |
+  | `valoria_journey_events` | 10 |
+  | `professional_standard_event_registrations` | 4 |
+  | `assessment_sessions` | 2 |
+  | `opportunity_invites` | 1 |
+  | `valoria_reentry_links` | 1 |
+  | `rate_limits` | 1 |
+  | `marketplace_profiles` | 1 |
+
+* the `private` schema is created by exactly one migration
+  (`20260827_marketplace_governance_v4.sql`), yet migrations sorting **before**
+  it already reference `private.` — an ordering defect;
+* `public.users` and `cron.job` are assumed to exist.
+
+A clean environment therefore cannot be provisioned from source, and the gap is
+an order of magnitude larger than the two tables previously recorded.
+
+**One real defect was found and fixed** in this phase:
+`20260827_marketplace_governance_v4.sql` declared `language plpgsql` on a
+wrapper whose body is a bare `select ...`, which PostgreSQL rejects with
+`syntax error at or near "select"`. The two sibling wrappers in the same file
+use `language sql`. Fixed, and pinned by a test that fails if it reverts.
+
+### 7.3 B1 — the exact access required (read-only)
+
+To author a baseline from evidence rather than invention, one of the following:
+
+**Option A (preferred) — a read-only role.** Create in the **staging** Supabase
+project, via the SQL editor:
+
+```sql
+create role schema_auditor login password '<OPERATOR_CHOSEN_STRONG_PASSWORD>';
+grant connect on database postgres to schema_auditor;
+grant usage on schema public, private, auth, vault, extensions to schema_auditor;
+grant select on all tables in schema public, private to schema_auditor;
+grant select on all sequences in schema public, private to schema_auditor;
+alter default privileges in schema public, private
+  grant select on tables to schema_auditor;
+-- Catalog reads need no grant. Revoke write explicitly so the role cannot write.
+revoke create on schema public, private from schema_auditor;
+```
+
+Then deliver, out-of-band:
+
+* the connection string, e.g.
+  `postgresql://schema_auditor:<password>@db.<staging-ref>.supabase.co:5432/postgres`
+* the staging DB host, so it can be passed as `--expect-host`.
+
+Run:
+
+```bash
+cd valoria-platform/valoria-final
+STAGING_DATABASE_URL='postgresql://schema_auditor:…@db.<staging-ref>.supabase.co:5432/postgres' \
+  npm run capture:staging-schema -- --expect-host=db.<staging-ref>.supabase.co
+```
+
+The script is read-only, refuses to run without `--expect-host` matching the
+connection host (so production cannot be reached by mistake), and writes only
+`.schema-capture/` (git-ignored). It never prints or stores the password.
+
+**Option B — the operator runs the capture.** The query set is in
+`valoria-platform/valoria-final/docs/engineering/valu-assessments-schema-baseline.md`
+§4. Paste the output back; the developer authors the baseline from it.
+
+**Do not** apply any generated `CREATE TABLE` to staging or production without
+review. The baseline is authored from the capture, then verified offline with
+`npm run verify:migration-reproducibility -- --baseline=<file> --compare=.schema-capture/capture.json`,
+which must take the chain from failing at migration 2 to applying all 84 with no
+column-level differences.
+
+### 7.4 B3 — the exact variable write required
+
+| Project | Scope | Variable | Value |
+| --- | --- | --- | --- |
+| platform (`valoria-final`) | **Preview** | `VALORIA_SITE_URL` | `<STAGING_SITE_ORIGIN>` |
+
+`<STAGING_SITE_ORIGIN>` must be the confirmed staging origin of the site
+project, and the **same** value must be used for the site project's
+`NEXT_PUBLIC_SITE_URL` (§2.1) and the Supabase Auth allowlist (§3.2). It must not
+be set to the production domain.
+
+This is a **build-time** value on the platform: `vite.config.js` inlines the
+origin via `define`, so the variable must be present in the Preview **build**
+scope. Setting it at runtime only will not change the links baked into the
+bundle. After writing it, trigger a redeployment of the preview branch and
+confirm the bundle carries the staging origin.
+
+Do not set this variable to the production domain in any scope to make a test
+pass. That is the exact defect `lib/site-url.js` exists to prevent.
