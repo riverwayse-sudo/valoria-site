@@ -239,6 +239,68 @@ particular:
   existing migration, and it does not touch the pre-existing
   `consume_opportunity_submission_rate_limit` function or its table.
 
+* `20261023130000_unique_full_assessment_per_snapshot.sql` (**platform repo**,
+  `valoria-final/supabase/migrations/`) — required for the retry guarantee.
+
+  `valu_assessments` is created by **no tracked migration in either repository**,
+  so its columns and constraints exist only as hand-applied DDL. Two of the
+  guarantees the platform assumes therefore rest on untracked state:
+
+  1. **No uniqueness on `(taster_id, identity_hash)`.** `submit-assessment.js`
+     guards duplicates with a read-then-write lookup, which cannot be correct
+     under concurrency: two retries that both run the lookup before either
+     insert both insert. The only unique indexes on the table cover
+     `report_token` and `report_idempotency_key`, and submission sets neither.
+     Reproduced against a real engine: the second insert is accepted and the row
+     count becomes 2.
+  2. **No tracked default for `report_token`.** It is `NOT NULL` with a unique
+     index, but nothing tracked generates it. The handler now supplies it
+     (`randomUUID()`), so this dependency is removed in code — no operator action
+     is needed for it, but note that any *other* writer relying on the untracked
+     default would still be exposed.
+
+  **Apply this migration before the branch is deployed**, because the
+  application fix alone does not close the race. It is additive: it creates one
+  index and runs a read-only pre-check.
+
+  **If the target already holds duplicates, the migration will refuse to run.**
+  That is deliberate — it names the offending `(taster_id, identity_hash)` pair
+  and instructs reconciliation rather than deleting anything. Reconcile first:
+  keep the earliest `completed_at` per pair, verify `report_token` and `user_id`
+  ownership, and remove only the redundant rows. Do not delete rows to make a
+  migration apply without confirming which record the participant was given.
+
+  Verify:
+
+  ```bash
+  # In valoria-platform/valoria-final
+  npm run verify:assessment-dedup-migration   # executes the SQL against a real engine
+  ```
+
+  Then confirm in staging, after applying:
+
+  ```sql
+  -- Must return one row, with the partial predicate.
+  select indexdef from pg_indexes
+   where indexname = 'valu_assessments_taster_identity_uidx';
+  ```
+
+  Confirm there is **no** duplicate pair before applying:
+
+  ```sql
+  select taster_id, identity_hash, count(*)
+    from public.valu_assessments
+   where taster_id is not null and identity_hash is not null
+   group by 1,2 having count(*) > 1;
+  ```
+
+* **Journey email navigation.** No migration and no configuration change: the
+  fix is in `api/create-account.js`. But confirm `VALORIA_SITE_URL` is set for
+  the Preview scope (§2.2), because the journey email's "Complete your profile"
+  link now derives from it. Before the fix it was hardcoded to
+  `https://valoriainstitute.com/profile/edit`, which sent a staging participant
+  to the production profile page.
+
 ---
 
 ## 4. Designated staging test account
@@ -274,7 +336,7 @@ action.
 ## 6. Re-verification 2026-10-23 (remediation candidate)
 
 Nothing in §1–§4 has been applied. Re-confirmed against the current heads
-(`valoria-site` `a8f4500`, `valoria-platform` `9e3bcf3`):
+(`valoria-site` `72a646d`, `valoria-platform` `de0fc30`):
 
 * **§1 still blocks.** Both preview origins answer `302` to
   `https://vercel.com/sso-api?url=…`, including the proxied assessment path
@@ -287,5 +349,52 @@ Nothing in §1–§4 has been applied. Re-confirmed against the current heads
   therefore be present in the **Preview build** scope, not only at runtime; a
   runtime-only value will not change the links baked into the bundle. Set it for
   the Preview environment so the staging build inlines the staging origin.
+* **§3.5 gained a second required migration.**
+  `20261023130000_unique_full_assessment_per_snapshot.sql` (platform repo) closes
+  a duplicate-submission race that the application code cannot close alone. It is
+  additive, and it refuses to run over pre-existing duplicates rather than
+  deleting anything.
 * **No production change was made.** Production Deployment Protection is
   untouched, no environment variable was written, and both PRs remain draft.
+
+### 6.1 Defects fixed on this branch (code-level, offline-verified)
+
+Each was reproduced before being fixed, and each fix is guarded by a test that
+fails if the defect returns. None of these has been verified on deployed
+staging; that remains blocked by §1.
+
+| Defect | Where | Reproduced how | Guard |
+| --- | --- | --- | --- |
+| Duplicate assessments possible under retry | platform `api/submit-assessment.js` + DB | second insert accepted, row count 2, on a real engine | `20_assessment_dedup_contract.test.js`, `verify:assessment-dedup-migration` |
+| `report_token` never supplied by the handler | platform `api/submit-assessment.js` | insert without the column raises `23502` | `09_submit_assessment_runtime.test.js`, `20_…contract.test.js` |
+| Journey email CTA hardcoded to production | platform `api/create-account.js` | staging participant sent to production `/profile/edit` | `22_create_account_runtime.test.js` |
+| `check_rate_limit` called but defined by no migration | site (both repos) | absent on a fresh project; two routes `503`, three unmetered | `rate-limit-contract.test.js`, `verify:rate-limit-migration` |
+| First-request race in the limiter | site migration | `select … for update` locks no non-existent row; duplicate-key error | `rate-limit-contract.test.js`, `verify:rate-limit-migration` |
+
+### 6.2 Audit of the remaining critical handlers
+
+The request asked for the other critical handlers to be audited for runtime
+failures, response-after-write bugs, auth gaps and retry hazards. Findings:
+
+* **`scripts/find-block-scope-bugs.mjs` reports 0 findings** across `api`, `src`
+  and `lib`. That is a real pass, not a vacuous one: reintroducing the original
+  `const`-in-`try` shape makes the checker report it. The checker is wired into
+  `npm run test:all`.
+* **`api/claim-taster.js`** (snapshot linking, account-adjacent) is sound on the
+  retry hazard: it links with a compare-and-swap
+  (`user_id=is.null` in the `PATCH` filter) and then re-reads to confirm it won,
+  so a concurrent claim cannot double-link. Ownership and identity are
+  re-validated server-side.
+* **`api/create-account.js`** had the journey-email defect above. Its rate
+  limiting fails closed (a limiter error returns `503`, not an allow), and the
+  recipient address cannot be redirected by a body-supplied address.
+* **`api/submit-assessment.js`** had the two defects above. Its ownership,
+  confirmation, identity-match and handoff-token checks all run server-side and
+  are covered by runtime tests.
+* **Untracked-schema class.** `valu_assessments` is created by no tracked
+  migration in either repository. That is the root cause shared by the
+  `report_token` defect and the missing dedup constraint, and it is the most
+  likely source of further latent defects. Fully resolving it means capturing the
+  live schema as a tracked baseline migration, which requires reading the staging
+  database — blocked by §3.1. Flagged as an open dependency, not closed.
+
