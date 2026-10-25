@@ -1,12 +1,21 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { shouldBypassAuth } from './lib/middleware-routing.js'
+import { blockedWrite } from './lib/environment-guard.js'
 
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 export async function middleware(request) {
   const { pathname } = request.nextUrl
+
+  // A non-production deployment must not write to the production database. This
+  // is checked before every bypass below, including the /api bypass, because the
+  // mutating routes are exactly the /api ones. See lib/environment-guard.js.
+  const refusal = blockedWrite(request)
+  if (refusal) {
+    return NextResponse.json(refusal.body, { status: refusal.status })
+  }
 
   // Bypass rules live in src/lib/middleware-routing.js so the incident that
   // caused the assessment-asset outage is unit-tested directly. See that file
