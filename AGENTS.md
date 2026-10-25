@@ -84,3 +84,32 @@ when the thing they describe changes.
 - Change shared Supabase Auth / Vercel configuration without authorisation;
   document required changes in the integration contract instead.
 - Modify genuine participant records.
+
+## Untracked database objects
+
+A route calling `supabase.rpc('name', ...)` proves nothing about whether `name`
+exists in any deployed database. `check_rate_limit` was called by five routes
+and defined by no migration in either repository — it existed only as DDL
+applied by hand to whichever database those routes were first tested against.
+Every environment therefore depended on untracked schema, and the failure mode
+was silent and non-uniform: the three fail-open routes became unmetered without
+logging anything, while the two fail-closed routes returned 503 on every
+request.
+
+`src/__tests__/rate-limit-contract.test.js` now fails if any `.rpc()` call in
+`src/` is not defined by a tracked migration. The exceptions are listed in that
+file: `admin_set_professional_listing` and `sync_professional_listing_status`
+live in the platform repository's migrations, and the two repositories share a
+database. Add to that list only after confirming the function is defined in the
+sibling repo's migrations.
+
+## Proving SQL
+
+Static assertions over a migration file cannot show that it executes, that its
+privileges are right, or that its locking works. `npm run
+verify:rate-limit-migration` runs the SQL against a real PostgreSQL engine
+(PGlite) and checks behaviour and grants. It provisions PGlite into
+`.pglite-verify/` rather than node_modules: a `--no-save` install into
+node_modules is not resolvable from the process that just ran it, which is the
+case the script exists to handle.
+

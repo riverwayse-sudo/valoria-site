@@ -11,7 +11,8 @@
     "design:check": "node scripts/design-check.js",
     "excellence:check": "node scripts/excellence-check.js",
     "verify:scoring-parity": "node scripts/verify-scoring-parity.mjs",
-    "check:block-scope": "node scripts/find-block-scope-bugs.mjs src"
+    "check:block-scope": "node scripts/find-block-scope-bugs.mjs src",
+    "verify:rate-limit-migration": "node scripts/verify-rate-limit-migration.mjs"
   },
   "dependencies": {
     "@next/third-parties": "15.5.27",

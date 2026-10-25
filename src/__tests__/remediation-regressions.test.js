@@ -80,6 +80,33 @@ describe('auth redirects are environment-specific, never hardcoded production ho
     expect(read('next.config.js')).toContain('process.env.VALU_UPSTREAM_ORIGIN')
   })
 
+  // The earlier version of this test only asserted the env var *appeared* in
+  // both files. That passed even while both concatenated the raw value, so a
+  // configured origin ending in a slash produced `https://host//api/...` and
+  // `https://host//` — a URL the assessment app does not route. Presence of a
+  // variable is not evidence that it is used correctly, so the assertion now
+  // checks the value is normalised before it is concatenated.
+  test('the proxy upstream is normalised before concatenation, not used raw', () => {
+    for (const file of ['src/app/api/trigger-report/route.js', 'next.config.js']) {
+      const source = read(file)
+      expect(source).toContain('normalizeOrigin(process.env.VALU_UPSTREAM_ORIGIN)')
+      // A bare template-literal concatenation of the un-normalised value is the
+      // exact shape of the defect.
+      expect(source).not.toMatch(/\$\{process\.env\.VALU_UPSTREAM_ORIGIN\}/)
+    }
+  })
+
+  test('normalizeOrigin strips a trailing slash and rejects a non-URL', () => {
+    const { normalizeOrigin } = require('@/lib/site-url')
+    expect(normalizeOrigin('https://staging.valoria.example/')).toBe('https://staging.valoria.example')
+    expect(normalizeOrigin('https://staging.valoria.example')).toBe('https://staging.valoria.example')
+    // A path or query on the origin is dropped: an origin is not a base path.
+    expect(normalizeOrigin('https://staging.valoria.example/valu?x=1')).toBe('https://staging.valoria.example')
+    expect(normalizeOrigin('not a url')).toBe(null)
+    expect(normalizeOrigin('')).toBe(null)
+    expect(normalizeOrigin(undefined)).toBe(null)
+  })
+
   test('no participant- or staff-routing link hardcodes the production origin', () => {
     // SEO canonicals, the sitemap and OpenGraph URLs legitimately name the
     // production domain and are excluded by scanning only href/src attributes
@@ -412,5 +439,52 @@ describe('assessment entry points do not pin every environment to production', (
   test('welcome-email and reminder links resolve through the env-aware helper', () => {
     expect(read('src/app/api/cron/valu-reminders/route.js')).toContain("siteUrl('/journey/continue')")
     expect(read('src/app/api/cron/valu-reminders/route.js')).toContain("siteUrl('/profile/setup')")
+  })
+})
+
+// ── 4. Origin concatenation must not bypass the normalising helper ─────────
+// Two server routes built their redirect/journey URLs by concatenating
+// NEXT_PUBLIC_SITE_URL directly. That duplicated the resolution rules in
+// site-url.js and, worse, skipped its URL normalisation: a configured origin
+// with a trailing slash produced `https://host//reset-password`, a URL that is
+// not in the Supabase Auth redirect allowlist, so the invite/re-entry redirect
+// silently fell back to the Supabase Site URL instead of the intended page.
+describe('server routes resolve origins through the shared helper', () => {
+  test('admin invite uses passwordResetUrl(), not raw concatenation', () => {
+    const route = read('src/app/api/admin/create-admin/route.js')
+    expect(route).toContain('passwordResetUrl()')
+    expect(route).not.toMatch(/NEXT_PUBLIC_SITE_URL\s*\|\|\s*'https:\/\/valoriainstitute\.com'/)
+  })
+
+  test('event-registration re-entry links use siteUrl(), not raw concatenation', () => {
+    const route = read('src/app/api/cron/event-registration-sync/route.js')
+    expect(route).toContain("siteUrl(`/journey/continue?token=")
+    expect(route).toContain("siteUrl('/journey')")
+    expect(route).not.toMatch(/NEXT_PUBLIC_SITE_URL\s*\|\|\s*'https:\/\/valoriainstitute\.com'/)
+  })
+
+  test('no server route concatenates NEXT_PUBLIC_SITE_URL with a literal origin fallback', () => {
+    const { execSync } = require('child_process')
+    const hits = execSync(
+      "grep -rn \"NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'\" src/ --include=*.js --include=*.jsx --exclude-dir=__tests__ || true",
+      { cwd: root, encoding: 'utf8' }
+    ).trim()
+    expect(hits).toBe('')
+  })
+
+  test('a trailing slash in the configured origin does not produce a double slash', () => {
+    const previous = process.env.NEXT_PUBLIC_SITE_URL
+    try {
+      process.env.NEXT_PUBLIC_SITE_URL = 'https://staging.valoria.example/'
+      jest.resetModules()
+      const mod = require('../lib/site-url')
+      expect(mod.passwordResetUrl()).toBe('https://staging.valoria.example/reset-password')
+      expect(mod.siteUrl('/journey')).toBe('https://staging.valoria.example/journey')
+      expect(mod.passwordResetUrl()).not.toContain('//reset-password')
+    } finally {
+      if (previous === undefined) delete process.env.NEXT_PUBLIC_SITE_URL
+      else process.env.NEXT_PUBLIC_SITE_URL = previous
+      jest.resetModules()
+    }
   })
 })

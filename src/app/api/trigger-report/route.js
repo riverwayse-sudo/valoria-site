@@ -50,8 +50,13 @@
 
 import { getPrivilegedClient } from '@/lib/supabase-server'
 import { isValidReportToken } from '@/lib/api-guard'
+import { normalizeOrigin } from '@/lib/site-url'
 
-const ASSESSMENT_ORIGIN = process.env.VALU_UPSTREAM_ORIGIN || 'https://assessment.valoriainstitute.com'
+// Normalised, not used raw: a configured origin with a trailing slash produced
+// a double slash in the upstream URL (https://host//api/...), which the
+// assessment app does not route. Same defect class as the site-origin
+// concatenation this branch already fixed.
+const ASSESSMENT_ORIGIN = normalizeOrigin(process.env.VALU_UPSTREAM_ORIGIN) || 'https://assessment.valoriainstitute.com'
 
 // The token format is validated against the same definition the platform's
 // generate-and-send-report enforces, so this relay cannot forward a token the

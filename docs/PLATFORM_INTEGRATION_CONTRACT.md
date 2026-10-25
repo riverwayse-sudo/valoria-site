@@ -122,6 +122,53 @@ participants were charged a completed assessment and shown a save failure.
 the real handler with only `global.fetch` stubbed. Keep runtime coverage for any
 change to this endpoint; do not rely on substring assertions alone.
 
+### Duplicate-submission contract
+
+The handler's own guard is a read-then-write: it looks for an existing
+`valu_assessments` row by `(taster_id, identity_hash)` and only then inserts.
+That cannot be correct alone — two retries that both run the lookup before
+either insert both conclude "no existing row" and both insert.
+
+Nothing prevented that until now. The only unique indexes on
+`valu_assessments` cover `report_token` and `report_idempotency_key`, and the
+submission path sets neither: `report_token` is generated per attempt (so it
+*differs* across duplicates rather than catching them), and
+`report_idempotency_key` belongs to the report state machine. Verified against a
+real PostgreSQL engine: the second insert was accepted and the row count became
+2.
+
+The contract is therefore:
+
+* **Database.** A partial unique index on `(taster_id, identity_hash)`, added by
+  `valoria-platform/valoria-final/supabase/migrations/20261023130000_unique_full_assessment_per_snapshot.sql`.
+  The partial predicate (`where taster_id is not null and identity_hash is not
+  null`) exists so unlinked legacy rows do not collide with each other and block
+  the index.
+* **Application.** The losing writer receives `23505`, which PostgREST reports as
+  HTTP `409`. `api/submit-assessment.js` already handles `409` by resolving to
+  the winner's record and returning `alreadyCompleted: true` with that record's
+  token. The index is only safe *because* that branch exists; removing either
+  half breaks the guarantee.
+* **Migration safety.** The migration runs a read-only pre-check and refuses to
+  run if duplicate `(taster_id, identity_hash)` groups already exist, naming the
+  offending pair and giving a reconciliation instruction. It deletes nothing. If
+  a target database already holds duplicates, they must be reconciled by an
+  operator *before* the migration will apply — see the staging checklist.
+
+### `report_token` provenance
+
+`report_token` is `NOT NULL` with a unique index, but no tracked migration
+defines a default for it, and **no tracked migration creates
+`valu_assessments` at all** in either repository. The handler previously omitted
+the column, so every submission depended on an untracked `DEFAULT` existing in
+the target database; where it is absent the insert fails with `23502` and the
+participant sees "Could not save your result."
+
+`api/submit-assessment.js` now generates the token itself with `randomUUID()`,
+in the opaque UUID shape `api/generate-and-send-report.js` validates. Any future
+change must keep supplying the column explicitly rather than reintroducing a
+dependency on untracked DDL.
+
 ---
 
 ## 3. Email confirmation contract
@@ -172,6 +219,23 @@ it to the platform, which validates it. The callback reads `identity_hash` and
 
 * `src/lib/site-url.js` builds the site's own URLs via `authCallbackUrl()`.
   Resolution order: `NEXT_PUBLIC_SITE_URL` → browser origin → production.
+* The platform resolves the same origin through
+  `valoria-platform/valoria-final/lib/site-url.js` (`resolveSiteUrl()`).
+  Resolution order: `VALORIA_SITE_URL` → `SITE_ORIGIN` →
+  `NEXT_PUBLIC_SITE_URL` → production, with a loud warning when
+  `VERCEL_ENV !== 'production'` and nothing is configured. `VERCEL_URL` is
+  deliberately excluded: the two are separate Vercel projects, so `VERCEL_URL`
+  names the *platform* deployment, not the site, and would build callbacks to a
+  host that has no `/auth/callback` route.
+* **Functional links must use the resolved origin; only branding is canonical.**
+  The journey email's "Complete your profile" call-to-action was hardcoded to
+  `https://valoriainstitute.com/profile/edit`, so a staging participant was sent
+  to the production profile page while their account lives in the staging
+  database. It now uses the resolved origin. The brand footer, the logo, the
+  `mailto:` addresses and the bare-domain reference in the message body stay
+  canonical on purpose — those are identity, not navigation. When reviewing any
+  new email template, classify each URL as one or the other.
+
 * After confirmation the platform/signup flow sends the user to
   `{site-origin}/login?email_confirmed=1`. The login page shows an accessible
   "your email is verified, sign in to continue" notice for that flag.
