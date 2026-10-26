@@ -95,3 +95,21 @@ jobs:
             grep -q "^$KEY=" .env.example || { echo "ERROR: $KEY missing"; exit 1; }
             echo "$KEY found ✓"
           done
+      - name: Every env var read by the app is documented
+        run: |
+          # The hand-written list above drifts: it was missing nine variables the
+          # code actually reads. Derive the list from the source instead, so a
+          # new process.env.X reference fails CI until it is documented.
+          # middleware.js lives under src/, so scan the whole src tree plus the
+          # root config.
+          grep -rhoE 'process\.env\.[A-Z0-9_]+' src next.config.js \
+            | sed 's/process\.env\.//' | sort -u > /tmp/used.txt
+          grep -oE '^[A-Z0-9_]+' .env.example | sort -u > /tmp/documented.txt
+          MISSING=$(comm -23 /tmp/used.txt /tmp/documented.txt)
+          if [ -n "$MISSING" ]; then
+            echo "ERROR: these variables are read by the code but absent from .env.example:"
+            echo "$MISSING"
+            exit 1
+          fi
+          echo "All $(wc -l < /tmp/used.txt) referenced variables are documented ✓"
+          echo "Vercel-provided and test-only variables are expected in the list too."

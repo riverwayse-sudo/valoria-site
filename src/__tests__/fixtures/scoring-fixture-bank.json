@@ -1,0 +1,488 @@
+[
+  {
+    "id": "P1",
+    "cluster": "P",
+    "skill": "Communication",
+    "type": "behavioural",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "P2",
+    "cluster": "P",
+    "skill": "Communication",
+    "type": "situational",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "P3",
+    "cluster": "P",
+    "skill": "Executive Presence",
+    "type": "behavioural",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "P4",
+    "cluster": "P",
+    "skill": "Executive Presence",
+    "type": "situational",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "R1",
+    "cluster": "R",
+    "skill": "Trust-Building",
+    "type": "behavioural",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "R2",
+    "cluster": "R",
+    "skill": "Trust-Building",
+    "type": "situational",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "R3",
+    "cluster": "R",
+    "skill": "Network Quality",
+    "type": "behavioural",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "R4",
+    "cluster": "R",
+    "skill": "Network Quality",
+    "type": "situational",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "I1",
+    "cluster": "I",
+    "skill": "Critical Thinking",
+    "type": "behavioural",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "I2",
+    "cluster": "I",
+    "skill": "Critical Thinking",
+    "type": "situational",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "I3",
+    "cluster": "I",
+    "skill": "Decision-Making",
+    "type": "behavioural",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "I4",
+    "cluster": "I",
+    "skill": "Decision-Making",
+    "type": "situational",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "M1",
+    "cluster": "M",
+    "skill": "Execution Discipline",
+    "type": "behavioural",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "M2",
+    "cluster": "M",
+    "skill": "Execution Discipline",
+    "type": "situational",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "M3",
+    "cluster": "M",
+    "skill": "Resilience",
+    "type": "behavioural",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "M4",
+    "cluster": "M",
+    "skill": "Resilience",
+    "type": "situational",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "E1",
+    "cluster": "E",
+    "skill": "Commercial Thinking",
+    "type": "behavioural",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "E2",
+    "cluster": "E",
+    "skill": "Commercial Thinking",
+    "type": "situational",
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "E3",
+    "cluster": "E",
+    "skill": "Systems Building",
+    "type": "behavioural",
+    "futureReady": true,
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "E4",
+    "cluster": "E",
+    "skill": "Systems Building",
+    "type": "situational",
+    "futureReady": true,
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "VA1",
+    "cluster": "VA",
+    "skill": "Validity",
+    "type": "validity",
+    "validAnchor": true,
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "VA2",
+    "cluster": "VA",
+    "skill": "Validity",
+    "type": "validity",
+    "validAnchor": true,
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "VA3",
+    "cluster": "VA",
+    "skill": "Validity",
+    "type": "validity",
+    "validAnchor": true,
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  },
+  {
+    "id": "VA4",
+    "cluster": "VA",
+    "skill": "Validity",
+    "type": "validity",
+    "validAnchor": true,
+    "options": [
+      {
+        "score": 1
+      },
+      {
+        "score": 2
+      },
+      {
+        "score": 3
+      },
+      {
+        "score": 4
+      }
+    ]
+  }
+]

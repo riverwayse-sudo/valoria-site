@@ -22,13 +22,12 @@
 // — this endpoint's contract (POST with a bearer token, writes
 // cv_summary) is unchanged, only what happens inside it.
 
-import { createClient } from '@supabase/supabase-js'
+import { getPrivilegedClient } from '@/lib/supabase-server'
 
 function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) throw new Error('Supabase server configuration is missing.')
-  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+  // Writes cv_summary on the authenticated user's own profile row; that is a
+  // privileged write and must not silently fall back to the anonymous key.
+  return getPrivilegedClient()
 }
 
 function pickThree(arr) {
