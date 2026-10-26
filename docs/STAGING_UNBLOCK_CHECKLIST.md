@@ -132,6 +132,22 @@ identified. Nothing is allowed by default.
    `ALLOW_LOCAL_PRIVILEGED_WRITES` is exactly `true` *and* the Supabase URL names
    the declared staging project.
 
+Two further properties hold, and both were found by adversarial tests rather than by
+reading the code:
+
+* **A non-production runtime may not target production, however it is labelled.**
+  If `STAGING_SUPABASE_PROJECT_REF` names the production project, a non-production
+  runtime is refused rather than honoured. Without this, a misspelled `VERCEL_ENV`
+  plus a staging declaration that named production would have reached production —
+  the exact "silently target production" failure. The two declarations must name
+  different projects.
+* **A declared ref is normalised; a target never is.** The declaration is trimmed
+  and lowercased, so a copy-paste slip (an uppercased ref, a trailing newline) does
+  not lock a deployment out of its own database. Normalising the declaration cannot
+  widen access: it maps a declaration onto the same project, never onto a different
+  one. The URL side is already lowercased by the URL parser. A declaration that
+  normalises to empty is treated as absent.
+
 An earlier version of this guard allowed any write when `VERCEL_ENV` was unset,
 reasoning that Vercel always sets it on a deployment. That was a hole: a
 deployment whose `VERCEL_ENV` failed to propagate, or any runtime Vercel does not

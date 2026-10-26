@@ -76,6 +76,20 @@ function supabaseProjectRef(url) {
   return match ? match[1] : null
 }
 
+/**
+ * Canonical form of a declared project ref.
+ *
+ * Supabase refs are lowercase and carry no surrounding whitespace, but the value
+ * arrives through an operator-managed environment variable, where a copy-paste
+ * error (an uppercased ref, a trailing newline) is a realistic way to lock a
+ * deployment out of its own database. Normalising the *declaration* cannot widen
+ * access: it only ever maps a declaration onto the same project, never onto a
+ * different one. The URL side is already lowercased by the WHATWG URL parser.
+ */
+function normalizeRef(ref) {
+  return typeof ref === 'string' ? ref.trim().toLowerCase() : ref
+}
+
 /** The environment label used in refusal messages. */
 function environmentLabel(vercelEnv) {
   return vercelEnv ? `VERCEL_ENV=${vercelEnv}` : 'an unidentified runtime (VERCEL_ENV is unset)'
@@ -93,9 +107,11 @@ function decideWriteAllowed({
   allowLocalWrites,
 }) {
   const target = supabaseProjectRef(supabaseUrl)
+  const declaredProduction = normalizeRef(productionProjectRef)
+  const declaredStaging = normalizeRef(stagingProjectRef)
 
   if (vercelEnv === 'production') {
-    if (!productionProjectRef) {
+    if (!declaredProduction) {
       return {
         allowed: false,
         reason:
@@ -109,7 +125,7 @@ function decideWriteAllowed({
           'refusing a privileged write from VERCEL_ENV=production because the Supabase URL does not identify a project',
       }
     }
-    if (target !== productionProjectRef) {
+    if (target !== declaredProduction) {
       return {
         allowed: false,
         reason: `refusing a privileged write from VERCEL_ENV=production: the configured project ${target} is not the declared production project ${productionProjectRef}`,
@@ -126,10 +142,21 @@ function decideWriteAllowed({
     }
   }
 
-  if (!stagingProjectRef) {
+  if (!declaredStaging) {
     return {
       allowed: false,
       reason: `refusing a privileged write from ${environmentLabel(vercelEnv)} because no staging database is declared (set STAGING_SUPABASE_PROJECT_REF)`,
+    }
+  }
+  if (declaredProduction && declaredStaging === declaredProduction) {
+    // A non-production runtime must never target production, however it is
+    // labelled. If the staging declaration names the production project, the
+    // declaration is wrong and the write is refused rather than honoured: this is
+    // the one misconfiguration that would otherwise let a preview (or a runtime
+    // whose VERCEL_ENV is misspelled) reach production.
+    return {
+      allowed: false,
+      reason: `refusing a privileged write from ${environmentLabel(vercelEnv)} because STAGING_SUPABASE_PROJECT_REF names the production project; a non-production runtime must not target production`,
     }
   }
   if (!target) {
@@ -138,10 +165,10 @@ function decideWriteAllowed({
       reason: `refusing a privileged write from ${environmentLabel(vercelEnv)} because the Supabase URL does not identify a project`,
     }
   }
-  if (target !== stagingProjectRef) {
+  if (target !== declaredStaging) {
     return {
       allowed: false,
-      reason: `refusing a privileged write from ${environmentLabel(vercelEnv)}: the configured project ${target} is not the declared staging project ${stagingProjectRef}`,
+      reason: `refusing a privileged write from ${environmentLabel(vercelEnv)}: the configured project ${target} is not the declared staging project ${declaredStaging}`,
     }
   }
   return {
@@ -180,6 +207,7 @@ function blockedWrite(request, env = process.env) {
 
 module.exports = {
   GET_WRITE_PATHS,
+  normalizeRef,
   MUTATING_METHODS,
   blockedWrite,
   decideWriteAllowed,
