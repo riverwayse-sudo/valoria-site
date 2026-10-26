@@ -24,6 +24,26 @@ const path = require('path')
 const siteEngine = require('../scoringEngine')
 const siteContract = require('../valuV4Contract')
 
+// The platform contract is a sibling checkout in the development workspace and a
+// separate repository in CI, where it is absent. When it is present, compare against
+// the real file: a hand-copied literal cannot notice the platform drifting, which is
+// exactly the failure this suite exists to prevent.
+function resolvePlatformContract() {
+  const candidates = [
+    process.env.VALORIA_PLATFORM_DIR,
+    '/workspace/repos/valoria-platform',
+    '/workspace/project/valoria-platform',
+    path.join(__dirname, '..', '..', '..', 'valoria-platform'),
+  ].filter(Boolean)
+  for (const d of candidates) {
+    const file = path.join(d, 'valoria-final', 'src', 'valuV4Contract.js')
+    if (fs.existsSync(file)) return file
+  }
+  return null
+}
+
+const PLATFORM_CONTRACT_FILE = resolvePlatformContract()
+
 // Canonical constants copied from valoria-platform/valoria-final/src/valuV4Contract.js.
 const PLATFORM_CONTRACT = {
   VALU_VERSION: 4,
@@ -104,5 +124,34 @@ describe('site engine reproduces the canonical platform engine exactly', () => {
     // engine would have multiplied this by 0.80.
     expect(actual.valuIndex).toBe(siteEngine.computeWeightedIndex(actual.clusterScores))
     expect(actual.valuIndex).toBe(anchorsLow.expect.valuIndex)
+  })
+})
+
+// Skipped, not passed, when the sibling repository is unavailable - a skipped check is
+// honest; a check that cannot see the other repository and reports success is not.
+const describeLive = PLATFORM_CONTRACT_FILE ? describe : describe.skip
+if (!PLATFORM_CONTRACT_FILE) {
+  console.warn(
+    'live scoring parity SKIPPED: no valoria-platform checkout found.\n' +
+      '  Set VALORIA_PLATFORM_DIR=/path/to/valoria-platform to run it.'
+  )
+}
+
+describeLive('the site contract equals the live platform contract', () => {
+  const live = require(PLATFORM_CONTRACT_FILE)
+  const liveContract = live.default || live
+  const shape = (c) => ({
+    VALU_VERSION: c.VALU_VERSION,
+    MAX_SCORE: c.MAX_SCORE,
+    MARKETPLACE_SCORE_THRESHOLD: c.MARKETPLACE_SCORE_THRESHOLD,
+    CLUSTERS: c.CLUSTERS.map((x) => ({ id: x.id, name: x.name, weight: x.weight, maxRaw: x.maxRaw })),
+    DESIGNATIONS: c.DESIGNATIONS.map((d) => ({ min: d.min, name: d.name })),
+    PATHWAYS: c.PATHWAYS.map((p) => ({ min: p.min, name: p.name })),
+  })
+
+  test('the copied fixture still matches the platform source it was copied from', () => {
+    expect(shape(siteContract)).toEqual(shape(liveContract))
+    // And the live source must still agree with the literal the earlier tests use.
+    expect(shape(liveContract)).toEqual(PLATFORM_CONTRACT)
   })
 })
