@@ -29,15 +29,20 @@ const siteContract = require('../valuV4Contract')
 // the real file: a hand-copied literal cannot notice the platform drifting, which is
 // exactly the failure this suite exists to prevent.
 function resolvePlatformContract() {
-  const candidates = [
-    process.env.VALORIA_PLATFORM_DIR,
+  // VALORIA_PLATFORM_ROOT is the documented test-only variable (see .env.example);
+  // it points at either the repository root or the valoria-final package, so accept
+  // both layouts.
+  const roots = [
+    process.env.VALORIA_PLATFORM_ROOT,
     '/workspace/repos/valoria-platform',
     '/workspace/project/valoria-platform',
     path.join(__dirname, '..', '..', '..', 'valoria-platform'),
   ].filter(Boolean)
-  for (const d of candidates) {
-    const file = path.join(d, 'valoria-final', 'src', 'valuV4Contract.js')
-    if (fs.existsSync(file)) return file
+  for (const root of roots) {
+    for (const rel of ['valoria-final/src/valuV4Contract.js', 'src/valuV4Contract.js']) {
+      const file = path.join(root, rel)
+      if (fs.existsSync(file)) return file
+    }
   }
   return null
 }
@@ -133,13 +138,21 @@ const describeLive = PLATFORM_CONTRACT_FILE ? describe : describe.skip
 if (!PLATFORM_CONTRACT_FILE) {
   console.warn(
     'live scoring parity SKIPPED: no valoria-platform checkout found.\n' +
-      '  Set VALORIA_PLATFORM_DIR=/path/to/valoria-platform to run it.'
+      '  Set VALORIA_PLATFORM_ROOT=/path/to/valoria-platform to run it.'
   )
 }
 
+// describe.skip still executes its callback to collect test names, so the module
+// must be resolved here rather than inside it: require(null) would throw and fail
+// the suite in a checkout where the sibling repository is absent.
+const liveContract = PLATFORM_CONTRACT_FILE
+  ? (() => {
+      const mod = require(PLATFORM_CONTRACT_FILE)
+      return mod.default || mod
+    })()
+  : null
+
 describeLive('the site contract equals the live platform contract', () => {
-  const live = require(PLATFORM_CONTRACT_FILE)
-  const liveContract = live.default || live
   const shape = (c) => ({
     VALU_VERSION: c.VALU_VERSION,
     MAX_SCORE: c.MAX_SCORE,
