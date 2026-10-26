@@ -106,6 +106,44 @@ journey evidence above is from automated tests that exercise the real code paths
 not from a deployed environment. This distinction is the reason the decision is
 "not release-ready" rather than "ready".
 
+### Read-only findings from the owner's connected tools
+
+The owner ran read-only checks directly, which produced four facts that sharpen the
+blocker. Nothing was written, no setting changed, no migration applied.
+
+| Finding | Consequence |
+| --- | --- |
+| The connected Supabase account exposes **one** project, `sbkgpisgkuhbalsxqkdr` (`valoriainstitute.com`), and one branch `main` | This is production. There is no isolated staging target, so the write-acceptance test cannot run safely yet |
+| Migration history: 192 records, latest `20261022105019`; `20261023130000` **not** applied | The duplicate-submission constraint is not yet live on production |
+| `public.valu_assessments` exists, 17 rows, RLS enabled | The table is present and correctly access-controlled |
+| A unique partial index on `taster_id` **exists** and is **untracked** in both repositories | A constraint is live that source cannot reproduce — see below |
+| Vercel: `SUPABASE_SERVICE_ROLE_KEY` is set for **Preview as well as Production**; `STAGING_SUPABASE_PROJECT_REF` and `PRODUCTION_SUPABASE_PROJECT_REF` are **absent** | Preview currently has a service-role key but no target identity. This is the exact combination the guard exists to neutralise, and the guard variables are not configured |
+
+The fourth row is the material one. The repository creates no unique index on
+`valu_assessments.taster_id`, yet production has one. It is part of the untracked
+base table documented in `valoria-platform/docs/engineering/valu-assessments-schema-baseline.md`.
+Two shapes are possible and they differ:
+
+- `unique (taster_id)` alone — **stricter** than the handler, which allows a second
+  identity on one snapshot. If this is the shape, the handler and the constraint
+  disagree, which is a defect.
+- `unique (taster_id, identity_hash)` partial — the constraint `20261023130000`
+  intends, already applied out of band. Then the migration is redundant here but
+  still required for a freshly provisioned environment.
+
+One read-only query settles it — recorded in the schema baseline:
+
+```sql
+select indexname, indexdef
+  from pg_indexes
+ where schemaname = 'public' and tablename = 'valu_assessments';
+```
+
+`20261023130000` is safe under both shapes (it is `if not exists` behind a read-only
+duplicate pre-check), so it does not block release. It does mean the constraint must
+not be assumed absent, and it must not be applied blindly to production — the
+pre-check is there to refuse rather than to guess.
+
 ## Handover — exact owner actions
 
 Each row is one action, one owner. These are the only things standing between the
@@ -115,12 +153,41 @@ current state and release.
 | --- | --- | --- | --- |
 | 1 | Vercel project owner | Generate a Protection Bypass for Automation secret (or set Deployment Protection to "Only Production Deployments"), and give it to the operator — not into GitHub | Live access to previews |
 | 2 | Supabase organization owner | Approve or name an isolated staging project and provide its ref and keys via the Vercel dashboard | Staging database |
-| 3 | Vercel project owner | Set the Preview guard variables from §2, and set `PRODUCTION_SUPABASE_PROJECT_REF` in Production scope (a merge precondition — merging without it refuses production writes) | Guard configuration |
+| 3 | Vercel project owner | Set the Preview guard variables from §2, and set `PRODUCTION_SUPABASE_PROJECT_REF` in Production scope (a merge precondition — merging without it refuses production writes). Confirmed absent today | Guard configuration |
 | 4 | Supabase organization owner | Confirm the production project ref from two sources | Production ref |
-| 5 | Supabase organization owner | Name an operator or a read-only credential for staging schema and migration history | Migration provenance |
+| 5 | Supabase organization owner | Name an operator or a read-only credential for staging schema and migration history, and run the one `pg_indexes` query above | Migration provenance |
 
 `ALLOW_LOCAL_PRIVILEGED_WRITES` must not be set in any Vercel scope. Details and
 evidence-to-close for each row are in `docs/STAGING_AUTHORIZATION_REQUEST.md`.
+
+## Release sequencing (must be followed in this order)
+
+The owner's findings make the order non-optional. Verified against the guard's pure
+decision function with today's real values (`VERCEL_ENV=preview`, production URL,
+`STAGING_SUPABASE_PROJECT_REF` unset): the guard **refuses** the write. That is
+correct, and it has a consequence.
+
+| Step | Action | Why the order matters |
+| --- | --- | --- |
+| 1 | Set `PRODUCTION_SUPABASE_PROJECT_REF` in **Production** scope | The guard refuses production writes when this is absent. Merging the guard before this variable exists would take the live site read-only for participants |
+| 2 | Provision staging; set `STAGING_SUPABASE_PROJECT_REF` and the staging URL/keys in **Preview** scope | Without it, previews refuse every write, so the acceptance suite cannot run |
+| 3 | Merge both PRs | The guard and the Production variable are a matched pair |
+| 4 | Confirm a preview write reaches staging and a preview write aimed at production returns `503` | Result 1's acceptance evidence |
+| 5 | Run the live acceptance suite against the staging preview | Result 2 and Result 3's evidence |
+| 6 | Request release authorization | Result 4 |
+
+Today the risk is live and unprotected only for deployments that predate the guard:
+previews carry `SUPABASE_SERVICE_ROLE_KEY`, and no staging target is declared. A
+preview built from the remediation branch already refuses writes (the guard is in
+that branch), so it is safe but cannot run acceptance until step 2. Previews built
+from `main` have no guard. Nothing here changes that; it is why the merge order above
+matters.
+
+`20261023130000` is **not** part of this sequence. It must not be applied to
+production as a release step: production may already carry an equivalent untracked
+index, and the migration's read-only pre-check exists to refuse rather than guess.
+Its role is to make a *freshly provisioned* environment correct. Decide it after the
+`pg_indexes` query above is answered.
 
 ## What is ready to release
 
