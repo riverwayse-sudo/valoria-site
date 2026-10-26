@@ -8,8 +8,8 @@ Current code state when this was written:
 
 | Repo | Branch | Head | `main` (untouched) |
 | --- | --- | --- | --- |
-| valoria-platform | `remediation/staging-2026-10-23` | `3ad66b2` | `74588311` |
-| valoria-site | `remediation/staging-2026-10-23` | `a314cb6` | `84693eec` |
+| valoria-platform | `remediation/staging-2026-10-23` | `3b95ffd` | `74588311` |
+| valoria-site | `remediation/staging-2026-10-23` | `e87be29` | `84693eec` |
 
 Both PRs are open and in draft: [#62](https://github.com/riverwayse-sudo/valoria-platform/pull/62),
 [#133](https://github.com/riverwayse-sudo/valoria-site/pull/133). Neither will be
@@ -113,7 +113,7 @@ applied migration history, are captured.
   mutations, 0 survivors).
 - The one unguarded service-role writer (`api/_rateLimit.js`) is guarded, and the
   completeness check now scans helpers and RPC calls.
-- Both repositories are green: platform 44 suites / 644 tests, site 21 suites / 456
+- Both repositories are green: platform 44 suites / 644 tests, site 21 suites / 457
   tests, builds and static gates clean.
 
 ## What remains blocked until the above land
