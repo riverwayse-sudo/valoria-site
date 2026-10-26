@@ -183,6 +183,15 @@ Consequences to expect before it is set:
   is a genuine staging environment and the acceptance suite can run against it
   without touching production.
 
+**The shared helper the handler scan missed.** `api/_rateLimit.js` calls the
+`consume_rate_limit` RPC with the service-role key — a write. It was the one
+service-role writer without the guard, because the completeness check enumerated
+handlers and skipped `_`-prefixed helpers, and it did not treat an RPC call as a
+write. It is guarded now, and the completeness check scans every file in `api/`
+including helpers and counts `rpc(` as a write. Every caller enforces a rate limit
+only on a POST, so refusing the rate-limit write cannot break a read or resume
+path; the refusal is thrown, so callers take their existing "unavailable" branch.
+
 **Verification.** With the bypass from §1, a write to a preview must not be
 refused once the ref is set:
 

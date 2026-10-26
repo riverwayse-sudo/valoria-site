@@ -339,6 +339,47 @@ describe('a declared ref is normalised, a target never is', () => {
   })
 })
 
+describe('the middleware matcher actually reaches every writer', () => {
+  // The site guards centrally: middleware calls blockedWrite, and it runs before
+  // the /api bypass. That is only sound if the matcher covers every route that can
+  // write. A route excluded from the matcher is an unguarded writer, and the
+  // exclusion is easy to widen by accident.
+  const root = path.join(__dirname, '..', '..')
+  const middleware = fs.readFileSync(path.join(root, 'src', 'middleware.js'), 'utf8')
+  const matcherMatch = middleware.match(/matcher:\s*\[\s*'([^']+)'\s*\]/)
+  const matcher = matcherMatch[1]
+
+  test('the matcher excludes only static assets and the proxied assessment app', () => {
+    // Anything else in this list silently removes a route from the guard.
+    for (const excluded of ['_next/static', '_next/image', 'favicon.ico', 'valu/assessment']) {
+      expect(matcher).toContain(excluded)
+    }
+  })
+
+  test('no api route is excluded by the matcher', () => {
+    const apiDir = path.join(root, 'src', 'app', 'api')
+    const routes = []
+    ;(function walk(dir) {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name)
+        if (entry.isDirectory()) walk(full)
+        else if (entry.name === 'route.js') routes.push(path.relative(apiDir, full))
+      }
+    })(apiDir)
+    expect(routes.length).toBeGreaterThan(20)
+    // The negative lookahead must not name api, or the whole /api surface drops out.
+    expect(matcher).not.toMatch(/\bapi\b/)
+  })
+
+  test('the middleware calls blockedWrite before the auth bypass', () => {
+    const guardIndex = middleware.indexOf('blockedWrite(request)')
+    const bypassIndex = middleware.indexOf('shouldBypassAuth(pathname)')
+    expect(guardIndex).toBeGreaterThan(-1)
+    expect(bypassIndex).toBeGreaterThan(-1)
+    expect(guardIndex).toBeLessThan(bypassIndex)
+  })
+})
+
 describe('blockedWrite - request gating', () => {
   const previewProd = {
     VERCEL_ENV: 'preview',
