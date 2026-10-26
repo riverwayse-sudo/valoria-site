@@ -444,6 +444,59 @@ failures, response-after-write bugs, auth gaps and retry hazards. Findings:
   live schema as a tracked baseline migration, which requires reading the staging
   database — blocked by §3.1. Flagged as an open dependency, not closed.
 
+### 6.3 The preview-write defect, and why it blocked the acceptance run
+
+The one defect that is both source-fixable and the direct reason live acceptance
+could not be run: **no code in either repository checked which environment it was
+running in before performing a privileged write.**
+
+Vercel's preview environment is configured with the same Supabase URL and
+service-role key as production. Every handler that holds the service-role key
+wrote straight through. A preview built from any branch — including this one —
+could therefore register participants, save assessment progress, submit
+assessments and send mail against the **production** database. Exercising the
+staging acceptance suite against such a deployment would have written real
+participant data, so the suite was not run.
+
+The fix is a fail-closed guard in both repositories (`lib/environment-guard.js`),
+described in §2.3. Production and an unset `VERCEL_ENV` proceed; any other value
+proceeds only when the Supabase project matches `STAGING_SUPABASE_PROJECT_REF`;
+everything else refuses with a `503` naming the reason.
+
+| Aspect | Detail |
+| --- | --- |
+| Platform writers guarded | 20 handlers (not 12 — a single-quoted grep missed double-quoted methods and `/auth/v1/admin` calls) |
+| Site coverage | `middleware.js`, ahead of every bypass, covering all 32 routes that build their own service-role client |
+| Read paths preserved | The resume GET in `assessment-progress.js` and the notifications GET stay readable; the guard sits on the write path |
+| Writing-GET routes | Five `/api` routes plus `/journey/continue` write inside their GET handler and are treated as writes |
+| Tests | Platform 34, site 31, both mutation-verified (removing a call or weakening a deny branch turns each red) |
+
+This is a code-level fix. It is verified offline; its behaviour on deployed
+staging is not yet confirmed, because reaching a preview is still blocked by §1.
+What it changes for the acceptance run: once §1–§3 and
+`STAGING_SUPABASE_PROJECT_REF` are in place, a preview is a genuine staging
+environment and the suite is safe to run against it.
+
+### 6.4 Re-verification 2026-10-24 (post-push)
+
+Re-confirmed after pushing the guard commits:
+
+* **Heads.** `valoria-platform` `1351733`, `valoria-site` `a5e841a`. Both PRs
+  (#62, #133) remain **open and draft**; both `main` branches are unchanged
+  (`7458831`, `84693ee`). Nothing was merged or promoted.
+* **CI.** All checks pass on both heads. The site's `production-smoke` job is
+  `skipped`, which is correct — it must not run against production.
+* **§1 still blocks.** Both preview origins answer `302` to
+  `https://vercel.com/sso-api?url=…`, including `/api/health` and `/`. No
+  `x-vercel-protection-bypass` secret is provisioned here and none was accepted
+  in chat. Automated staging acceptance still cannot start.
+* **Guard is inert on production.** With `VERCEL_ENV=production` the guard
+  allows, and with `VERCEL_ENV` unset (local, CI) it allows; both are covered by
+  tests. The guard cannot refuse a legitimate production write.
+* **Guard is not yet exercisable on staging.** A preview refuses privileged
+  writes with `503` until `STAGING_SUPABASE_PROJECT_REF` is set (§2.3). That is
+  the intended fail-closed behaviour, and the reason the acceptance suite can
+  safely be run once the variable exists.
 
 ---
 
