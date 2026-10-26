@@ -95,6 +95,7 @@ Auth allowlist entry will need updating per deploy.
 | `CRON_SECRET` | Preview | staging-only random value | production value | Guards the cron routes. |
 | `SUPABASE_URL` | Preview | staging project URL | production URL | Fallback read by the reconciliation-health cron. |
 | `STAGING_SUPABASE_PROJECT_REF` | Preview | the staging project ref | unset | Names the one project a preview may write to. See §2.3. |
+| `PRODUCTION_SUPABASE_PROJECT_REF` | Production | the production project ref | the production project ref | Names the one project a production deployment may write to. Required by the guard. See §2.3. |
 
 ### 2.2 Platform project (`valoria-final`)
 
@@ -109,6 +110,7 @@ Auth allowlist entry will need updating per deploy.
 | `RESEND_API_KEY` | Preview | staging/test key | production key | |
 | `CRON_SECRET` | Preview | staging-only random value | production value | Guards `/api/generate-and-send-report` worker path and the sweep routes. |
 | `STAGING_SUPABASE_PROJECT_REF` | Preview | the staging project ref | unset | Names the one project a preview may write to. See §2.3. |
+| `PRODUCTION_SUPABASE_PROJECT_REF` | Production | the production project ref | the production project ref | Names the one project a production deployment may write to. Required by the guard. See §2.3. |
 
 ### 2.3 The write guard (`STAGING_SUPABASE_PROJECT_REF`)
 
@@ -117,27 +119,50 @@ make it. This is the enforcement that was missing: preview deployments were
 configured with production Supabase credentials, so a preview built from any
 branch could write real participant data.
 
-The rule, in `lib/environment-guard.js` in each repository:
+The rule, in `lib/environment-guard.js` in each repository. A privileged write
+requires the runtime identity **and** the target database to be positively
+identified. Nothing is allowed by default.
 
-1. `VERCEL_ENV=production` — allowed.
-2. `VERCEL_ENV` unset — allowed. Vercel always sets it on a deployment, so this
-   is local development or the test runner.
-3. Any other `VERCEL_ENV` (a preview) — allowed **only** when the Supabase URL in
-   use names the project in `STAGING_SUPABASE_PROJECT_REF`.
+1. `VERCEL_ENV=production` — allowed **only** when the Supabase URL in use names
+   the project in `PRODUCTION_SUPABASE_PROJECT_REF`.
+2. `VERCEL_ENV` set to anything else (`preview`, `development`, or a value nobody
+   anticipated) — allowed **only** when the Supabase URL names the project in
+   `STAGING_SUPABASE_PROJECT_REF`.
+3. `VERCEL_ENV` unset or empty — refused. It is allowed only when
+   `ALLOW_LOCAL_PRIVILEGED_WRITES` is exactly `true` *and* the Supabase URL names
+   the declared staging project.
 
-It fails closed: no `STAGING_SUPABASE_PROJECT_REF`, no Supabase URL, or a URL
-whose project ref does not match all refuse the write with a `503` naming the
-reason. A refused write is visible; a silent write to production is not.
+An earlier version of this guard allowed any write when `VERCEL_ENV` was unset,
+reasoning that Vercel always sets it on a deployment. That was a hole: a
+deployment whose `VERCEL_ENV` failed to propagate, or any runtime Vercel does not
+manage, would have been treated as local development and allowed to write with
+production credentials. There is no bare "not on Vercel, so allow" branch now.
+
+It fails closed at every step: a missing declaration, an unreadable Supabase URL,
+or a URL whose project ref does not match all refuse the write with a `503` naming
+the reason. A refused write is visible; a silent write to production is not.
 
 **What the operator must set.** On the **Preview** scope of *both* projects, set
 `STAGING_SUPABASE_PROJECT_REF` to the staging project ref (the `xxxxxxxx` in
-`https://xxxxxxxx.supabase.co`). Leave it unset in the **Production** scope.
+`https://xxxxxxxx.supabase.co`). On the **Production** scope of both projects, set
+`PRODUCTION_SUPABASE_PROJECT_REF` to the production project ref. `ALLOW_LOCAL_`
+`PRIVILEGED_WRITES` is for local development and the test runner only; Vercel
+never sets it, and it must not be set on a deployed environment.
+
+Production scope now needs `PRODUCTION_SUPABASE_PROJECT_REF` before the guard
+will allow a production write. **The guard is not yet merged**, so production is
+unaffected today; this is a merge precondition. It is recorded here because a
+merged guard without that variable would refuse production writes.
 
 Consequences to expect before it is set:
 
 * A preview deployment with `STAGING_SUPABASE_PROJECT_REF` unset refuses every
   privileged write with `503`. This is the intended fail-closed behaviour, not a
   bug. Read-only pages and the assessment resume GET are unaffected.
+* A production deployment with `PRODUCTION_SUPABASE_PROJECT_REF` unset refuses
+  every privileged write with `503`. If the guard is ever deployed to production
+  without that variable, the site becomes read-only for participants. Set it in
+  the same change that merges the guard.
 * Once the staging variables in §2.1/§2.2 and this ref are all in place, a preview
   is a genuine staging environment and the acceptance suite can run against it
   without touching production.

@@ -15,19 +15,24 @@
 // mutating method. A new route is covered the moment it exists.
 //
 // The decision is a pure function so it can be tested exhaustively without a
-// deployment. The rule, in order:
+// deployment. The rule: a privileged write is allowed only when the runtime
+// identity AND the target database are both positively identified. Nothing is
+// allowed by default.
 //
-//   1. VERCEL_ENV=production        -> allow. This is production.
-//   2. VERCEL_ENV unset or empty    -> allow. Not a Vercel-managed deployment, so
-//                                      local development or a test runner. Vercel
-//                                      always sets VERCEL_ENV on deployments, so an
-//                                      unset value cannot be a preview.
-//   3. anything else (preview, ...) -> allow only when the configured Supabase
-//                                      project is the one declared as staging.
+//   1. VERCEL_ENV=production  -> the target must be the declared production
+//                                project (PRODUCTION_SUPABASE_PROJECT_REF).
+//   2. VERCEL_ENV set, other  -> the target must be the declared staging project
+//      (preview, development,   (STAGING_SUPABASE_PROJECT_REF).
+//       or anything unknown)
+//   3. VERCEL_ENV unset/empty -> refused unless local writes are explicitly
+//                                enabled (ALLOW_LOCAL_PRIVILEGED_WRITES=true),
+//                                and then the target must still be the declared
+//                                staging project.
 //
-// Rule 3 fails closed at every step: no declared staging project, no Supabase URL,
-// or a URL whose project ref cannot be read all deny the write. The failure mode is
-// a refused write with a clear message, not a silent write to production.
+// There is deliberately no bare "not on Vercel, so allow" branch. An earlier
+// version had one, and it was a hole: a deployment whose VERCEL_ENV failed to
+// propagate, or any runtime Vercel does not manage, would have been treated as
+// local development and allowed to write with production credentials.
 //
 // CommonJS, matching the other unit-tested lib modules, so the logic can be
 // exercised directly and imported by middleware.js.
@@ -71,37 +76,78 @@ function supabaseProjectRef(url) {
   return match ? match[1] : null
 }
 
+/** The environment label used in refusal messages. */
+function environmentLabel(vercelEnv) {
+  return vercelEnv ? `VERCEL_ENV=${vercelEnv}` : 'an unidentified runtime (VERCEL_ENV is unset)'
+}
+
 /**
  * Decide whether a privileged write may proceed.
  * Pure: takes its inputs as arguments so every combination is reachable in a test.
  */
-function decideWriteAllowed({ vercelEnv, supabaseUrl, stagingProjectRef }) {
+function decideWriteAllowed({
+  vercelEnv,
+  supabaseUrl,
+  productionProjectRef,
+  stagingProjectRef,
+  allowLocalWrites,
+}) {
+  const target = supabaseProjectRef(supabaseUrl)
+
   if (vercelEnv === 'production') {
+    if (!productionProjectRef) {
+      return {
+        allowed: false,
+        reason:
+          'refusing a privileged write from VERCEL_ENV=production because the production database is not declared (set PRODUCTION_SUPABASE_PROJECT_REF to the production project ref)',
+      }
+    }
+    if (!target) {
+      return {
+        allowed: false,
+        reason:
+          'refusing a privileged write from VERCEL_ENV=production because the Supabase URL does not identify a project',
+      }
+    }
+    if (target !== productionProjectRef) {
+      return {
+        allowed: false,
+        reason: `refusing a privileged write from VERCEL_ENV=production: the configured project ${target} is not the declared production project ${productionProjectRef}`,
+      }
+    }
     return { allowed: true, reason: 'production' }
   }
-  if (!vercelEnv) {
-    return { allowed: true, reason: 'non-vercel' }
+
+  if (!vercelEnv && allowLocalWrites !== true) {
+    return {
+      allowed: false,
+      reason:
+        'refusing a privileged write because VERCEL_ENV is unset and local writes are not explicitly enabled (set ALLOW_LOCAL_PRIVILEGED_WRITES=true to permit local development against a declared project)',
+    }
   }
+
   if (!stagingProjectRef) {
     return {
       allowed: false,
-      reason: `refusing a privileged write from VERCEL_ENV=${vercelEnv} because no staging database is declared (set STAGING_SUPABASE_PROJECT_REF)`,
+      reason: `refusing a privileged write from ${environmentLabel(vercelEnv)} because no staging database is declared (set STAGING_SUPABASE_PROJECT_REF)`,
     }
   }
-  const ref = supabaseProjectRef(supabaseUrl)
-  if (!ref) {
+  if (!target) {
     return {
       allowed: false,
-      reason: `refusing a privileged write from VERCEL_ENV=${vercelEnv} because the Supabase URL does not identify a project`,
+      reason: `refusing a privileged write from ${environmentLabel(vercelEnv)} because the Supabase URL does not identify a project`,
     }
   }
-  if (ref !== stagingProjectRef) {
+  if (target !== stagingProjectRef) {
     return {
       allowed: false,
-      reason: `refusing a privileged write from VERCEL_ENV=${vercelEnv}: the configured project ${ref} is not the declared staging project ${stagingProjectRef}`,
+      reason: `refusing a privileged write from ${environmentLabel(vercelEnv)}: the configured project ${target} is not the declared staging project ${stagingProjectRef}`,
     }
   }
-  return { allowed: true, reason: 'declared staging database' }
+  return {
+    allowed: true,
+    reason: vercelEnv ? 'declared staging database' : 'local development against the declared staging database',
+  }
 }
 
 /**
@@ -117,7 +163,9 @@ function blockedWrite(request, env = process.env) {
   const decision = decideWriteAllowed({
     vercelEnv: env.VERCEL_ENV,
     supabaseUrl: env.NEXT_PUBLIC_SUPABASE_URL || env.SUPABASE_URL,
+    productionProjectRef: env.PRODUCTION_SUPABASE_PROJECT_REF,
     stagingProjectRef: env.STAGING_SUPABASE_PROJECT_REF,
+    allowLocalWrites: env.ALLOW_LOCAL_PRIVILEGED_WRITES === 'true',
   })
   if (decision.allowed) return null
 
