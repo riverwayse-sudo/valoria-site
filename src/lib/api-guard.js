@@ -7,6 +7,8 @@
 // covered by runtime tests (jest.config.js maps '@/' and transforms them), so
 // these helpers do not need to carry the whole contract on their own.
 
+'use strict'
+
 // Must match the format the platform's generate-and-send-report validates
 // (valoria-final/api/generate-and-send-report.js:29). A token this guard
 // accepts is one the upstream will accept, so the site cannot forward a
