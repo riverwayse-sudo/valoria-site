@@ -132,11 +132,26 @@ describe('decideWriteAllowed - VERCEL_ENV unset or empty (unidentified runtime)'
     const d = guard.decideWriteAllowed({
       vercelEnv: undefined,
       supabaseUrl: prodUrl,
+      productionProjectRef: PROD_REF,
       stagingProjectRef: STAGE_REF,
       allowLocalWrites: true,
     })
     expect(d.allowed).toBe(false)
     expect(d.reason).toContain(PROD_REF)
+  })
+
+  test('DENIES the local opt-in when production is not declared', () => {
+    // Without the production ref there is no way to show the target is not
+    // production, so the write is refused even against the declared staging
+    // project. Fail closed rather than infer safety.
+    const d = guard.decideWriteAllowed({
+      vercelEnv: undefined,
+      supabaseUrl: stageUrl,
+      stagingProjectRef: STAGE_REF,
+      allowLocalWrites: true,
+    })
+    expect(d.allowed).toBe(false)
+    expect(d.reason).toContain('production database is not declared')
   })
 
   test('DENIES an unset environment with the opt-in but no declared project', () => {
@@ -155,6 +170,7 @@ describe('decideWriteAllowed - VERCEL_ENV unset or empty (unidentified runtime)'
       guard.decideWriteAllowed({
         vercelEnv: undefined,
         supabaseUrl: stageUrl,
+        productionProjectRef: PROD_REF,
         stagingProjectRef: STAGE_REF,
         allowLocalWrites: true,
       })
@@ -178,10 +194,31 @@ describe('decideWriteAllowed - VERCEL_ENV unset or empty (unidentified runtime)'
 describe('decideWriteAllowed - preview and other non-production environments', () => {
   // The exact defect: a preview deployment holding production credentials.
   test('DENIES a preview deployment pointing at production', () => {
-    const d = guard.decideWriteAllowed({ vercelEnv: 'preview', supabaseUrl: prodUrl, stagingProjectRef: STAGE_REF })
+    const d = guard.decideWriteAllowed({
+      vercelEnv: 'preview',
+      supabaseUrl: prodUrl,
+      productionProjectRef: PROD_REF,
+      stagingProjectRef: STAGE_REF,
+    })
     expect(d.allowed).toBe(false)
     expect(d.reason).toContain(PROD_REF)
     expect(d.reason).toContain(STAGE_REF)
+  })
+
+  test('DENIES a preview whose staging ref names production, when production is undeclared', () => {
+    // The defect this closes: the equality check was skipped when the production
+    // ref was absent, so a staging declaration naming the production project was
+    // honoured. A non-production runtime must never target production, however
+    // the declarations are configured, including when they are missing.
+    const d = guard.decideWriteAllowed({ vercelEnv: 'preview', supabaseUrl: prodUrl, stagingProjectRef: PROD_REF })
+    expect(d.allowed).toBe(false)
+    expect(d.reason).toContain('production database is not declared')
+  })
+
+  test('DENIES a preview when production is undeclared, even against a plausible staging target', () => {
+    const d = guard.decideWriteAllowed({ vercelEnv: 'preview', supabaseUrl: stageUrl, stagingProjectRef: STAGE_REF })
+    expect(d.allowed).toBe(false)
+    expect(d.reason).toContain('production database is not declared')
   })
 
   test('denies a preview deployment when no staging database is declared', () => {
@@ -191,20 +228,35 @@ describe('decideWriteAllowed - preview and other non-production environments', (
   })
 
   test('denies when the Supabase URL does not identify a project', () => {
-    const d = guard.decideWriteAllowed({ vercelEnv: 'preview', supabaseUrl: 'https://example.com', stagingProjectRef: STAGE_REF })
+    const d = guard.decideWriteAllowed({
+      vercelEnv: 'preview',
+      supabaseUrl: 'https://example.com',
+      productionProjectRef: PROD_REF,
+      stagingProjectRef: STAGE_REF,
+    })
     expect(d.allowed).toBe(false)
     expect(d.reason).toContain('does not identify')
   })
 
   test('denies when the Supabase URL is missing entirely', () => {
     expect(
-      guard.decideWriteAllowed({ vercelEnv: 'preview', supabaseUrl: undefined, stagingProjectRef: STAGE_REF }).allowed
+      guard.decideWriteAllowed({
+        vercelEnv: 'preview',
+        supabaseUrl: undefined,
+        productionProjectRef: PROD_REF,
+        stagingProjectRef: STAGE_REF,
+      }).allowed
     ).toBe(false)
   })
 
   test('allows a preview deployment only when it points at the declared staging project', () => {
     expect(
-      guard.decideWriteAllowed({ vercelEnv: 'preview', supabaseUrl: stageUrl, stagingProjectRef: STAGE_REF })
+      guard.decideWriteAllowed({
+        vercelEnv: 'preview',
+        supabaseUrl: stageUrl,
+        productionProjectRef: PROD_REF,
+        stagingProjectRef: STAGE_REF,
+      })
     ).toEqual({ allowed: true, reason: 'declared staging database' })
   })
 
@@ -212,10 +264,10 @@ describe('decideWriteAllowed - preview and other non-production environments', (
     // A value nobody anticipated must be treated like preview, not like production.
     for (const vercelEnv of ['development', 'staging', 'test', 'PREVIEW', 'prod', '0']) {
       expect(
-        guard.decideWriteAllowed({ vercelEnv, supabaseUrl: prodUrl, stagingProjectRef: STAGE_REF }).allowed
+        guard.decideWriteAllowed({ vercelEnv, supabaseUrl: prodUrl, productionProjectRef: PROD_REF, stagingProjectRef: STAGE_REF }).allowed
       ).toBe(false)
       expect(
-        guard.decideWriteAllowed({ vercelEnv, supabaseUrl: stageUrl, stagingProjectRef: STAGE_REF }).allowed
+        guard.decideWriteAllowed({ vercelEnv, supabaseUrl: stageUrl, productionProjectRef: PROD_REF, stagingProjectRef: STAGE_REF }).allowed
       ).toBe(true)
     }
   })
@@ -315,7 +367,7 @@ describe('a declared ref is normalised, a target never is', () => {
   test('accepts an uppercased or padded staging declaration', () => {
     for (const declared of [STAGE_REF.toUpperCase(), ` ${STAGE_REF} `]) {
       expect(
-        guard.decideWriteAllowed({ vercelEnv: 'preview', supabaseUrl: stageUrl, stagingProjectRef: declared }).allowed
+        guard.decideWriteAllowed({ vercelEnv: 'preview', supabaseUrl: stageUrl, productionProjectRef: PROD_REF, stagingProjectRef: declared }).allowed
       ).toBe(true)
     }
   })
@@ -389,6 +441,7 @@ describe('blockedWrite - request gating', () => {
   const previewStage = {
     VERCEL_ENV: 'preview',
     NEXT_PUBLIC_SUPABASE_URL: stageUrl,
+    PRODUCTION_SUPABASE_PROJECT_REF: PROD_REF,
     STAGING_SUPABASE_PROJECT_REF: STAGE_REF,
   }
   const production = {
@@ -438,6 +491,7 @@ describe('blockedWrite - request gating', () => {
         { method: 'POST' },
         {
           NEXT_PUBLIC_SUPABASE_URL: stageUrl,
+          PRODUCTION_SUPABASE_PROJECT_REF: PROD_REF,
           STAGING_SUPABASE_PROJECT_REF: STAGE_REF,
           ALLOW_LOCAL_PRIVILEGED_WRITES: 'true',
         }
@@ -467,6 +521,7 @@ describe('blockedWrite - request gating', () => {
       { method: 'POST' },
       {
         NEXT_PUBLIC_SUPABASE_URL: prodUrl,
+        PRODUCTION_SUPABASE_PROJECT_REF: PROD_REF,
         STAGING_SUPABASE_PROJECT_REF: STAGE_REF,
         ALLOW_LOCAL_PRIVILEGED_WRITES: 'true',
       }
