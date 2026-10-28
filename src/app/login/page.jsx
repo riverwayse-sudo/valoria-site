@@ -74,6 +74,14 @@ export default function LoginPage() {
 
   async function launchAssessmentIfRequested(session, pendingTasterId) {
     if (!isAssessmentReturnRequested()) return false
+    let returnTasterId = pendingTasterId || ''
+    let resumeToken = ''
+    try {
+      const params = new URLSearchParams(window.location.search)
+      const target = new URL(params.get('returnTo') || '', window.location.origin)
+      returnTasterId = returnTasterId || target.searchParams.get('taster_id') || ''
+      resumeToken = target.searchParams.get('resume') || ''
+    } catch {}
     if (!session?.access_token) {
       setError('Your session could not be restored. Please sign in to continue your VALU assessment.')
       return true
@@ -83,14 +91,14 @@ export default function LoginPage() {
     setError('')
     try {
       // If signup left a taster claim pending, finish that secure link first.
-      if (pendingTasterId) {
+      if (returnTasterId) {
         const linkRes = await fetch('/api/link-taster', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${session.access_token}`,
           },
-          body: JSON.stringify({ taster_id: pendingTasterId }),
+          body: JSON.stringify({ taster_id: returnTasterId }),
         })
         const linkData = await linkRes.json().catch(() => ({}))
         if (!linkRes.ok) throw new Error(linkData.error || 'Your VALU snapshot could not be linked to this account.')
@@ -101,7 +109,11 @@ export default function LoginPage() {
 
       // Use the existing authenticated handoff endpoint. Do not send the candidate
       // through the SSR continuation route again, which can recreate the login loop.
-      const handoffRes = await fetch('/api/valu-handoff', {
+      const handoffParams = new URLSearchParams()
+      if (returnTasterId) handoffParams.set('taster_id', returnTasterId)
+      if (resumeToken) handoffParams.set('resume', resumeToken)
+      const handoffQuery = handoffParams.toString()
+      const handoffRes = await fetch('/api/valu-handoff' + (handoffQuery ? `?${handoffQuery}` : ''), {
         method: 'GET',
         headers: { Authorization: `Bearer ${session.access_token}` },
         cache: 'no-store',
