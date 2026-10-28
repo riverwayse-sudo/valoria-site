@@ -64,7 +64,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(login).toContain("target.pathname === '/journey/continue'")
     expect(login).toContain("fetch('/api/valu-handoff'")
     expect(login).toContain('Authorization: `Bearer ${session.access_token}`')
-    expect(login).toContain('window.location.replace(handoff.url)')
+    expect(login).toContain('window.location.replace(assessmentDestination.toString())')
     expect(login).toContain('supabase.auth.getSession().then')
   })
 
