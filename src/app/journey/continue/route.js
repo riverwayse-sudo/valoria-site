@@ -70,6 +70,7 @@ export async function GET(request){
     if(requestedTasterId)continuationParams.set('taster_id',requestedTasterId)
     if(resumeToken)continuationParams.set('resume',resumeToken)
     login.searchParams.set('returnTo','/journey/continue?'+continuationParams.toString())
+    if(requestedTasterId) login.searchParams.set('pending_taster_id',requestedTasterId)
     return NextResponse.redirect(login)
    }
    const signup=new URL('/signup',request.url)
