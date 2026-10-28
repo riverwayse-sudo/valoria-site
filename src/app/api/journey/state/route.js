@@ -44,6 +44,14 @@ export async function GET(request) {
     }, { status: 502 })
   }
 
+  // RPC responses can contain the text "null" for an absent assessment ID.
+  // Never send that value to PostgREST as a UUID filter; treat it as no current
+  // assessment and let the historical email lookup below preserve continuity.
+  const currentAssessmentId = typeof journey?.current_assessment_id === 'string' &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(journey.current_assessment_id)
+    ? journey.current_assessment_id
+    : null
+
   const results = await Promise.all([
     admin.from('professional_profiles')
       .select('*')
@@ -53,10 +61,12 @@ export async function GET(request) {
       .select('id,capability,is_active,eligibility_status,eligible_for_listing,listed_at,missing_requirements')
       .eq('professional_id', user.id)
       .eq('is_active', true),
-    admin.from('valu_assessments')
-      .select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,designation,created_at,expires_at,user_id')
-      .eq('id', journey.current_assessment_id)
-      .maybeSingle(),
+    currentAssessmentId
+      ? admin.from('valu_assessments')
+          .select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,designation,created_at,expires_at,user_id')
+          .eq('id', currentAssessmentId)
+          .maybeSingle()
+      : Promise.resolve({ data: null, error: null }),
     admin.from('opportunity_submissions')
       .select('id,opportunity_id,status,created_at')
       .eq('submitter_user_id', user.id)
