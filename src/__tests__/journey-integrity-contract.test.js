@@ -66,6 +66,9 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(login).not.toContain('launchAssessmentIfRequested')
     expect(dashboard).toContain("href:'/journey/continue?stage=assess'")
     expect(dashboard).toContain("? '/journey/continue?stage=assess'")
+    expect(dashboard).toContain('AssessmentStartLink')
+    expect(read('src/components/Nav.jsx')).toContain("fetch('/api/valu-handoff'")
+    expect(read('src/app/valu/start/page.jsx')).toContain('AssessmentStartLink')
   })
 
   test('assessment reminder links require account continuation instead of anonymous assessment submission', () => {
