@@ -53,6 +53,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(handoff).toContain('destination.hash')
     expect(continuation).toContain('createValuHandoffToken(user.id,taster.id)')
     expect(continuation).toContain("login.searchParams.set('returnTo','/journey/continue?'+continuationParams.toString())")
+    expect(continuation).toContain("login.searchParams.set('pending_taster_id',requestedTasterId)")
     expect(continuation).toContain("destinationParams.set('resume',resumeToken)")
     expect(continuation).not.toContain("return NextResponse.redirect(new URL(ASSESSMENT_ORIGIN+'/',request.url))")
   })
