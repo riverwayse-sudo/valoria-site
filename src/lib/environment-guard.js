@@ -41,18 +41,28 @@
 'use strict'
 
 // Methods that can change state. A GET is normally left alone: the guard is about
-// writes. But six route handlers perform writes inside their GET handler (the cron
-// jobs, the assessment handoff, journey value-activation, opportunities/messages
-// and journey/continue), so a method check alone would let those through. Those
-// paths are listed explicitly below.
+// writes. But some route handlers perform writes inside their GET handler (the cron
+// jobs, the assessment handoff, the journey refresh, opportunities/messages and
+// journey/continue), so a method check alone would let those through. Those paths
+// are listed explicitly below.
 const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
 
 // Paths whose GET handler writes. Kept as a literal list so adding a writing GET
 // route requires a deliberate edit here — the same "missed one" failure mode that
 // created this incident.
+//
+// The list is checked against the source tree by
+// src/__tests__/environment-write-guard.test.js, which derives the writing GET
+// handlers from the route files and fails if this list disagrees. It was added
+// after this list was found to be missing /api/journey and /api/journey/state:
+// both call refresh_professional_journey, which INSERTs into professional_journey
+// and valoria_journey_events. A hand-maintained list that nothing verifies is the
+// defect, not just these two entries.
 const GET_WRITE_PATHS = [
   '/api/cron/event-registration-sync',
   '/api/cron/valu-reminders',
+  '/api/journey',
+  '/api/journey/state',
   '/api/journey/value-activation',
   '/api/opportunities/messages',
   '/api/valu-handoff',

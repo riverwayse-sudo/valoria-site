@@ -562,10 +562,48 @@ describe('blockedWrite - GET handlers that write', () => {
     ).toBeNull()
   })
 
+  // These two are the specific regression. Both call refresh_professional_journey
+  // from their GET handler, which writes, and both were absent from the list.
+  test.each(['/api/journey', '/api/journey/state'])(
+    'refuses a writing GET to %s from a preview deployment',
+    route => {
+      const refusal = guard.blockedWrite(req(route), {
+        VERCEL_ENV: 'preview',
+        NEXT_PUBLIC_SUPABASE_URL: prodUrl,
+        PRODUCTION_SUPABASE_PROJECT_REF: PROD_REF,
+        STAGING_SUPABASE_PROJECT_REF: STAGE_REF,
+      })
+      expect(refusal).not.toBeNull()
+      expect(refusal.status).toBe(503)
+    }
+  )
+
+  test.each(['/api/journey', '/api/journey/state'])(
+    'still allows a writing GET to %s on production',
+    route => {
+      expect(
+        guard.blockedWrite(req(route), {
+          VERCEL_ENV: 'production',
+          NEXT_PUBLIC_SUPABASE_URL: prodUrl,
+          PRODUCTION_SUPABASE_PROJECT_REF: PROD_REF,
+        })
+      ).toBeNull()
+    }
+  )
+
   test('the path list matches the routes that actually write in their GET handler', () => {
     // Guards against a new writing GET route being added without listing it.
     // The handler body is brace-matched, so a write in a PATCH handler defined
     // after GET is not mistaken for a GET write.
+    //
+    // A write is not always an insert/update/upsert/delete call in the handler.
+    // A handler can write by calling a Postgres function that writes on its
+    // behalf. /api/journey and /api/journey/state do exactly that: their GET
+    // handler calls refresh_professional_journey, which INSERTs into
+    // professional_journey and valoria_journey_events. An earlier version of this
+    // test only looked for the direct calls, so it passed while both routes were
+    // missing from GET_WRITE_PATHS and their writes were unguarded. The
+    // rpc-writers case below is what that missed.
     const apiDir = path.join(root, 'src/app/api')
     const walk = dir =>
       fs.readdirSync(dir, { withFileTypes: true }).flatMap(e => {
@@ -588,17 +626,41 @@ describe('blockedWrite - GET handlers that write', () => {
       return null
     }
 
+    // Postgres functions that perform writes, established by reading their
+    // definitions in supabase/migrations. Listed explicitly rather than guessed,
+    // because the derivation must not silently treat an unknown function as safe.
+    const WRITING_RPC = new Set([
+      'refresh_professional_journey', // INSERTs into professional_journey and valoria_journey_events
+      'check_rate_limit', // INSERTs/UPDATEs rate_limit_buckets
+      'consume_opportunity_submission_rate_limit', // UPDATEs the submission budget
+    ])
+
+    const writesIn = body => {
+      if (!body) return false
+      if (/\.(insert|update|upsert|delete)\(/.test(body)) return true
+      const calls = [...body.matchAll(/\.rpc\(\s*['"]([a-z_]+)['"]/g)].map(m => m[1])
+      return calls.some(name => WRITING_RPC.has(name))
+    }
+
     const writingGets = walk(apiDir).filter(file => {
       const body = handlerBody(fs.readFileSync(file, 'utf8'), 'GET')
-      return body !== null && /\.(insert|update|upsert|delete)\(/.test(body)
+      return writesIn(body)
     })
 
     const fromFiles = writingGets
       .map(f => '/api/' + path.relative(apiDir, f).replace(/\/route\.js$/, '').split(path.sep).join('/'))
       .sort()
-    // /journey/continue lives outside src/app/api but is covered by the same list.
-    const declared = guard.GET_WRITE_PATHS.filter(p => p.startsWith('/api/')).sort()
-    expect(declared).toEqual(fromFiles)
+
+    // /journey/continue lives outside src/app/api, so it is checked separately
+    // rather than dropped. It calls .update() in its GET handler.
+    const outsideApi = ['/journey/continue']
+    const outsideWriting = outsideApi.filter(route => {
+      const file = path.join(root, 'src/app', route, 'route.js')
+      return fs.existsSync(file) && writesIn(handlerBody(fs.readFileSync(file, 'utf8'), 'GET'))
+    })
+
+    const declared = guard.GET_WRITE_PATHS.slice().sort()
+    expect(declared).toEqual([...fromFiles, ...outsideWriting].sort())
   })
 })
 
