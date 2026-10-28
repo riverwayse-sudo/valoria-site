@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
+import { hasPrivilegedCredentials } from '@/lib/supabase-server'
 
 const TRACK_META = {
   candidate: { label: 'Talent', href: '/marketplace/talent' },
@@ -9,8 +10,12 @@ const TRACK_META = {
 
 async function getHomepageProfiles() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) return { profiles: [], count: null }
+  // The homepage registry reads a public roster RPC. It previously fell back to
+  // the anon key if the service-role key was missing, which quietly changes the
+  // visibility envelope of the RPC per environment. Require the service role so
+  // the homepage reflects exactly one, configured access level everywhere.
+  if (!url || !hasPrivilegedCredentials()) return { profiles: [], count: null }
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
   const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }
   try {
     const [profilesResponse, countResponse] = await Promise.all([

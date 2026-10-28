@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { shouldBypassAuth } from './lib/middleware-routing.js'
+import { blockedWrite } from './lib/environment-guard.js'
 
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -7,23 +9,52 @@ const SB_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 export async function middleware(request) {
   const { pathname } = request.nextUrl
 
-  if (pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname === '/favicon.ico' || pathname.match(/\.(png|jpg|jpeg|svg|ico|webp|woff|woff2|ttf)$/)) return NextResponse.next()
+  // A non-production deployment must not write to the production database. This
+  // is checked before every bypass below, including the /api bypass, because the
+  // mutating routes are exactly the /api ones. See lib/environment-guard.js.
+  const refusal = blockedWrite(request)
+  if (refusal) {
+    return NextResponse.json(refusal.body, { status: refusal.status })
+  }
+
+  // Bypass rules live in src/lib/middleware-routing.js so the incident that
+  // caused the assessment-asset outage is unit-tested directly. See that file
+  // for the full explanation: the proxied VALU assessment app's hashed
+  // /valu/assessment/assets/*.js and *.css requests were reaching the Supabase
+  // auth path and returning 500 whenever auth failed.
+  if (shouldBypassAuth(pathname)) return NextResponse.next()
+
   if (!SB_URL || !SB_ANON_KEY) return NextResponse.next()
 
   let response = NextResponse.next({ request: { headers: request.headers } })
-  const supabase = createServerClient(SB_URL, SB_ANON_KEY, {
-    cookies: {
-      getAll() { return request.cookies.getAll() },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => {
-          request.cookies.set(name, value)
-          response.cookies.set(name, value, options)
-        })
-      },
-    },
-  })
 
-  const { data: { user } } = await supabase.auth.getUser()
+  // A transient Supabase/network failure — or a misconfigured Supabase URL —
+  // must not turn every page on the site into a 500. Client construction and
+  // the identity lookup are both fallible, so both live in the guard: if the
+  // identity cannot be resolved, treat the request as unauthenticated and keep
+  // going. Public pages still render, while the admin guard below still fails
+  // closed by redirecting to login. Previously these calls were unguarded, so
+  // an auth outage produced site-wide 500s.
+  let supabase = null
+  let user = null
+  try {
+    supabase = createServerClient(SB_URL, SB_ANON_KEY, {
+      cookies: {
+        getAll() { return request.cookies.getAll() },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value)
+            response.cookies.set(name, value, options)
+          })
+        },
+      },
+    })
+    const { data } = await supabase.auth.getUser()
+    user = data?.user || null
+  } catch {
+    supabase = null
+    user = null
+  }
 
   if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
     const loginUrl = new URL('/admin/login', request.url)
@@ -75,4 +106,8 @@ export async function middleware(request) {
   return response
 }
 
-export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'] }
+// Belt-and-braces with the in-function bypass: keep the proxied VALU
+// assessment app out of the middleware matcher entirely so its hashed
+// /valu/assessment/assets/*.js and *.css bundle requests never reach the
+// Supabase auth path (which is what turned them into 500s).
+export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico|valu/assessment).*)'] }

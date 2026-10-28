@@ -6,7 +6,11 @@ import { createValuHandoffToken } from '@/lib/valu-handoff-token'
 const SB_URL=process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const SERVICE=process.env.SUPABASE_SERVICE_ROLE_KEY
-const ASSESSMENT_ORIGIN='https://valoriainstitute.com/valu/assessment/'
+// Path of the full VALU assessment SPA. It is rewritten to the platform upstream
+// by next.config.js, so it must be reached through the *current* host rather than
+// a pinned production domain — otherwise a staging or preview deployment hands
+// the user off to production. Callers resolve this against request.url.
+const ASSESSMENT_PATH='/valu/assessment/'
 const norm=value=>String(value||'').trim().toLowerCase().replace(/\s+/g,' ')
 
 async function getUser(request){
@@ -46,7 +50,7 @@ async function stageTarget(request,stage,user){
  if(candidate?.candidate_role&&norm(candidate.candidate_role)!==norm(taster.role))return '/profile/claim-assessment'
  let handoffToken
  try { handoffToken=createValuHandoffToken(user.id,taster.id) } catch { return '/journey' }
- const destination=new URL(ASSESSMENT_ORIGIN)
+  const destination=new URL(ASSESSMENT_PATH,request.url)
  const destinationParams=new URLSearchParams({full:'1',taster_id:taster.id,name:taster.name||'',role:taster.role||'',experience:taster.experience||''})
  const resumeToken=request.nextUrl.searchParams.get('resume')?.trim()
  if(resumeToken)destinationParams.set('resume',resumeToken)

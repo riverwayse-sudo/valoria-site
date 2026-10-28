@@ -76,6 +76,33 @@ function AuthCallbackFlow() {
 
         const { data: buyerProfile } = await supabase.from('profiles').select('id').eq('id', user.id).maybeSingle()
         if (cancelled) return
+
+        // Recover a saved snapshot whose corroborated contact email matches this
+        // newly confirmed account. The snapshot signup creates the account and sends
+        // the confirmation email before the snapshot is submitted, so no taster_id
+        // can travel through the confirmation redirect: the taster row does not
+        // exist yet when the link is generated. Email evidence is the only link on
+        // this path, and /api/claim-taster re-verifies it server-side against the
+        // authenticated, confirmed user. A zero-match result is non-blocking.
+        try {
+          const recoveryRes = await fetch('/api/claim-taster', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+            body: JSON.stringify({}),
+          })
+          const recovery = await recoveryRes.json().catch(() => ({}))
+          if (recoveryRes.ok && recovery.linked > 0) {
+            if (cancelled) return
+            setMessage('Email confirmed. We found and connected your saved VALU snapshot.')
+            await new Promise(resolve => setTimeout(resolve, 900))
+            if (!cancelled) router.replace('/dashboard?welcome=profile')
+            return
+          }
+        } catch (recoveryError) {
+          console.warn('Snapshot recovery was deferred:', recoveryError)
+        }
+        if (cancelled) return
+
         setMessage(buyerProfile ? 'Email confirmed. You’re signed in. Taking you to your dashboard…' : 'Email confirmed. You’re signed in. Taking you to your dashboard…')
         await new Promise(resolve => setTimeout(resolve, 900))
         if (!cancelled) router.replace('/dashboard?welcome=profile')

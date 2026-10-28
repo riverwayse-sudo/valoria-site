@@ -4,6 +4,8 @@ import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { BRAND } from '@/lib/brand'
+import { authCallbackUrl, siteUrl } from '@/lib/site-url'
 import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/password-policy'
 
 const GOLD='#C9A84C', DARK='#0F0F1A', PARCH='#F7F4EE', DIM='rgba(247,244,238,.48)'
@@ -18,7 +20,7 @@ function ProfessionalSignupForm(){
       const { error } = await supabase.auth.resend({
         type:'signup',
         email:form.email.trim().toLowerCase(),
-        options:{emailRedirectTo:`https://valoriainstitute.com/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`}
+        options:{emailRedirectTo:authCallbackUrl({pending_taster_id:tasterId})}
       })
       if(error)throw error
       setResendMessage('A fresh confirmation email has been requested. Check your inbox and spam folder.')
@@ -39,7 +41,7 @@ function ProfessionalSignupForm(){
       const {data,error:signupError}=await supabase.auth.signUp({
         email:form.email.trim().toLowerCase(),
         password:form.password,
-        options:{emailRedirectTo:`https://valoriainstitute.com/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`,data:{display_name:name,full_name:name,user_type:'professional',role,pending_taster_id:tasterId}}
+        options:{emailRedirectTo:authCallbackUrl({pending_taster_id:tasterId}),data:{display_name:name,full_name:name,user_type:'professional',role,pending_taster_id:tasterId}}
       })
       if(signupError)throw signupError
       if(!data?.user?.id)throw new Error('Account could not be created.')
@@ -71,10 +73,10 @@ function ProfessionalSignupForm(){
     }
   }
 
-  if(!tasterId||!name||!role)return <Shell><h1 style={S.title}>Your VALU journey needs a result.</h1><p style={S.sub}>Start with the 15-question VALU Index assessment. Your completed result is the entry point to professional signup.</p><a href="https://valoriainstitute.com/valu/assessment/" style={S.button}>TAKE THE 15-QUESTION VALU INDEX →</a></Shell>
+  if(!tasterId||!name||!role)return <Shell><h1 style={S.title}>Your VALU journey needs a result.</h1><p style={S.sub}>Start with the 15-question VALU Index assessment. Your completed result is the entry point to professional signup.</p><a href={BRAND.assessmentUrl} style={S.button}>TAKE THE 15-QUESTION VALU INDEX →</a></Shell>
   if(confirmationRequired)return <Shell><div style={S.eyebrow}>ONE LAST STEP</div><h1 style={S.title}>Check your inbox. <em>Your journey is waiting.</em></h1><p style={S.sub}>We’ve sent a confirmation link to <strong>{form.email.trim().toLowerCase()}</strong>. Open it to confirm your address and we’ll bring you back to Valoria, sign you in securely, and attach your VALU snapshot to your account. You won’t need to sign in again.</p><button type="button" onClick={resendConfirmation} disabled={resending} style={{...S.button,opacity:resending?0.55:1}}>{resending?'REQUESTING A NEW LINK…':'RESEND CONFIRMATION EMAIL'}</button>{resendMessage&&<p role="status" style={S.note}>{resendMessage}</p>}<p style={S.note}>Can’t find the email? Check your spam or promotions folder. Your VALU result stays private until the full assessment, profile and marketplace eligibility checks are satisfied.</p></Shell>
 
-  if(done){const assessmentUrl=`https://valoriainstitute.com/journey/continue?stage=assess&taster_id=${encodeURIComponent(tasterId)}`;return <Shell><div style={S.eyebrow}>VALORIA PROFESSIONAL ACCOUNT</div><h1 style={S.title}>Your account is ready. <em>Build your professional profile.</em></h1><p style={S.sub}>Your VALU snapshot is linked to your account. Complete the full VALU assessment and your professional profile; once the normal governance checks pass, the relevant capability can be listed in the marketplace.</p>{!linked&&<p style={S.error}>The account was created, but the VALU link still needs to be completed.</p>}<Link href="/profile/setup" style={S.button}>COMPLETE MY PROFESSIONAL PROFILE →</Link><a href={assessmentUrl} style={S.secondary}>COMPLETE THE FULL VALU ASSESSMENT</a><p style={S.note}>The full VALU assessment establishes the authoritative marketplace score. Deeper assessment and development pathways remain available afterwards.</p></Shell>}
+  if(done){const assessmentUrl=`${siteUrl('/journey/continue')}?stage=assess&taster_id=${encodeURIComponent(tasterId)}`;return <Shell><div style={S.eyebrow}>VALORIA PROFESSIONAL ACCOUNT</div><h1 style={S.title}>Your account is ready. <em>Build your professional profile.</em></h1><p style={S.sub}>Your VALU snapshot is linked to your account. Complete the full VALU assessment and your professional profile; once the normal governance checks pass, the relevant capability can be listed in the marketplace.</p>{!linked&&<p style={S.error}>The account was created, but the VALU link still needs to be completed.</p>}<Link href="/profile/setup" style={S.button}>COMPLETE MY PROFESSIONAL PROFILE →</Link><a href={assessmentUrl} style={S.secondary}>COMPLETE THE FULL VALU ASSESSMENT</a><p style={S.note}>The full VALU assessment establishes the authoritative marketplace score. Deeper assessment and development pathways remain available afterwards.</p></Shell>}
   return <Shell><div style={S.eyebrow}>15-QUESTION VALU INDEX COMPLETE</div><h1 style={S.title}>Create your <em>Valoria account.</em></h1><p style={S.sub}>Hi {name.split(/\s+/)[0]}. Your VALU Index result is saved. Create your account and we’ll keep it attached to your professional profile.</p><div style={S.summary}><div><span>NAME</span>{name}</div><div><span>ROLE</span>{role}</div><div><span>ENTRY ASSESSMENT</span>VALU Index · Complete</div></div><form onSubmit={submit} style={S.form}><label>Email<input type="email" required value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="you@example.com" style={S.input}/></label><label>Password<input type="password" required minLength={8} value={form.password} onChange={e=>setForm({...form,password:e.target.value})} placeholder={`Minimum ${PASSWORD_POLICY.minLength} characters`} style={S.input}/></label><p style={S.note}>{passwordPolicyMessage()}</p><label>Confirm password<input type="password" required minLength={8} value={form.confirm} onChange={e=>setForm({...form,confirm:e.target.value})} placeholder="Repeat your password" style={S.input}/></label>{error&&<div style={S.error}>{error}</div>}<button type="submit" disabled={loading||!valid} style={{...S.button,opacity:(loading||!valid)?0.45:1}}>{loading?'CREATING ACCOUNT…':'CREATE ACCOUNT →'}</button></form><p style={S.note}>Your VALU Index begins your professional record. The deeper assessment remains available later when a deeper engagement requires it.</p></Shell>
 }
 function Shell({children}){return <main style={S.page}><div style={S.card}><div style={{marginBottom:24}}><Link href="/" style={{color:GOLD,textDecoration:'none',fontSize:11,letterSpacing:'.12em'}}>VALORIA INSTITUTE</Link></div>{children}</div></main>}

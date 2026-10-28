@@ -1,8 +1,15 @@
 import { createBrowserClient } from '@supabase/ssr'
+import { resolveSupabaseUrl } from '@/lib/supabase-url'
 
 // Use placeholder values at build time — real values come from Vercel env vars at runtime.
 // The client is only used in 'use client' components (browser) where real env vars are injected.
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+//
+// resolveSupabaseUrl validates the value first: createBrowserClient throws
+// synchronously on a malformed URL, and because this module is evaluated at
+// import time that throw surfaced as an unhandled rejection during server
+// rendering of every page that imports it (including /auth/callback). A bad or
+// missing value must degrade to the placeholder, not crash the render.
+const supabaseUrl = resolveSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL)
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key'
 
 // createBrowserClient (rather than plain createClient) writes the session to

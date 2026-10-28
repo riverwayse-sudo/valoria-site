@@ -59,15 +59,21 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
 
   test('assessment reminder links require account continuation instead of anonymous assessment submission', () => {
     const source = read('src/app/api/cron/valu-reminders/route.js')
-    expect(source).toContain('/journey/continue?stage=assess&taster_id=')
+    // Resolved through the env-aware helper so a staging reminder does not send
+    // users to the production journey.
+    expect(source).toContain("siteUrl('/journey/continue')}?stage=assess&taster_id=")
     expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
     expect(source).toContain('email_confirmed_at')
   })
 
   test('professional signup sends the user through authenticated continuation for the full assessment', () => {
     const source = read('src/app/professional-signup/page.jsx')
-    expect(source).toContain('https://valoriainstitute.com/journey/continue?stage=assess&taster_id=')
+    // The continuation link must be environment-specific (siteUrl), not a
+    // hardcoded production host, and must never point back at the anonymous
+    // /valu/assessment/?full=1&taster_id= entry.
+    expect(source).toContain("siteUrl('/journey/continue')")
     expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
+    expect(source).not.toContain("`https://valoriainstitute.com/journey/continue?stage=assess")
   })
 
   test('pending snapshot claim survives a failed link attempt so the user can retry', () => {
@@ -185,10 +191,13 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(source).not.toContain('if (!sessionReady) setNoSession(true)')
   })
 
-  test('login password reset uses the canonical production recovery route', () => {
+  test('login password reset uses the canonical environment-aware recovery route', () => {
     const source = read('src/app/login/page.jsx')
     expect(source).toContain('resetPasswordForEmail')
-    expect(source).toContain('/reset-password')
+    expect(source).toContain('passwordResetUrl()')
+    // Recovery must not be pinned to a hardcoded production host: a staging
+    // account would otherwise be sent a production recovery link.
+    expect(source).not.toContain("'https://valoriainstitute.com/reset-password'")
     expect(source).toContain('setResetSent(true)')
   })
 
