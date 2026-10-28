@@ -79,6 +79,8 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(source).toContain('https://valoriainstitute.com/journey/continue?stage=assess&taster_id=')
     expect(source).toContain('TAKE THE FULL VALU ASSESSMENT')
     expect(source).toContain('Sign in and continue your assessment.')
+    expect(source).toContain('continueSignedInUser')
+    expect(source).toContain("fetch(`/api/valu-handoff?taster_id=")
     expect(source).not.toContain('COMPLETE MY PROFESSIONAL PROFILE')
     expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
   })
