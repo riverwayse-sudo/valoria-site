@@ -58,14 +58,14 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(continuation).not.toContain("return NextResponse.redirect(new URL(ASSESSMENT_ORIGIN+'/',request.url))")
   })
 
-  test('assessment return from login uses the authenticated handoff instead of looping through SSR continuation', () => {
+  test('successful sign-in returns to dashboard and assessment begins only from dashboard CTA', () => {
     const login = read('src/app/login/page.jsx')
-    expect(login).toContain('isAssessmentReturnRequested')
-    expect(login).toContain("target.pathname === '/journey/continue'")
-    expect(login).toContain("fetch('/api/valu-handoff'")
-    expect(login).toContain('Authorization: `Bearer ${session.access_token}`')
-    expect(login).toContain('window.location.replace(assessmentDestination.toString())')
-    expect(login).toContain('supabase.auth.getSession().then')
+    const dashboard = read('src/app/dashboard/page.jsx')
+    expect(login).toContain("target = '/dashboard'")
+    expect(login).toContain("window.location.replace('/dashboard')")
+    expect(login).not.toContain('launchAssessmentIfRequested')
+    expect(dashboard).toContain("href:'/journey/continue?stage=assess'")
+    expect(dashboard).toContain("? '/journey/continue?stage=assess'")
   })
 
   test('assessment reminder links require account continuation instead of anonymous assessment submission', () => {
