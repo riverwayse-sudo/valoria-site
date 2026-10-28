@@ -66,7 +66,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(login).toContain("target.searchParams.get('taster_id')")
     expect(login).toContain("handoffParams.set('resume', resumeToken)")
     expect(login).toContain('Authorization: `Bearer ${session.access_token}`')
-    expect(login).toContain('window.location.replace(handoff.url)')
+    expect(login).toContain('window.location.replace(assessmentDestination.toString())')
     expect(login).toContain('supabase.auth.getSession().then')
   })
 
