@@ -67,7 +67,14 @@ export async function GET(request){
     const continuationParams=new URLSearchParams({stage:'assess'})
     const requestedTasterId=request.nextUrl.searchParams.get('taster_id')?.trim()
     const resumeToken=request.nextUrl.searchParams.get('resume')?.trim()
-    if(requestedTasterId)continuationParams.set('taster_id',requestedTasterId)
+    if(requestedTasterId) {
+     continuationParams.set('taster_id',requestedTasterId)
+     // Preserve the exact completed snapshot across the sign-in boundary. The
+     // login page uses this to securely link the taster before issuing the
+     // full-assessment handoff; otherwise it may fall back to the assessment
+     // homepage and lose the candidate's intended destination.
+     login.searchParams.set('pending_taster_id',requestedTasterId)
+    }
     if(resumeToken)continuationParams.set('resume',resumeToken)
     login.searchParams.set('returnTo','/journey/continue?'+continuationParams.toString())
     return NextResponse.redirect(login)
