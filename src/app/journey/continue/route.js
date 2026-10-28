@@ -6,7 +6,7 @@ import { createValuHandoffToken } from '@/lib/valu-handoff-token'
 const SB_URL=process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const SERVICE=process.env.SUPABASE_SERVICE_ROLE_KEY
-const ASSESSMENT_ORIGIN='https://valoriainstitute.com/valu/assessment/'
+const ASSESSMENT_ORIGIN='https://assessment.valoriainstitute.com/'
 const norm=value=>String(value||'').trim().toLowerCase().replace(/\s+/g,' ')
 
 async function getUser(request){
@@ -67,7 +67,14 @@ export async function GET(request){
     const continuationParams=new URLSearchParams({stage:'assess'})
     const requestedTasterId=request.nextUrl.searchParams.get('taster_id')?.trim()
     const resumeToken=request.nextUrl.searchParams.get('resume')?.trim()
-    if(requestedTasterId)continuationParams.set('taster_id',requestedTasterId)
+    if(requestedTasterId) {
+     continuationParams.set('taster_id',requestedTasterId)
+     // Preserve the exact completed snapshot across the sign-in boundary. The
+     // login page uses this to securely link the taster before issuing the
+     // full-assessment handoff; otherwise it may fall back to the assessment
+     // homepage and lose the candidate's intended destination.
+     login.searchParams.set('pending_taster_id',requestedTasterId)
+    }
     if(resumeToken)continuationParams.set('resume',resumeToken)
     login.searchParams.set('returnTo','/journey/continue?'+continuationParams.toString())
     return NextResponse.redirect(login)

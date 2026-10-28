@@ -81,6 +81,9 @@ export default function ProgressiveOnboardingPage() {
     try {
       const excerpt = reportExcerpt(valu?.ai_report)
       const bio = excerpt || `Professional profile created from the Valoria VALU Index journey. ${form.current_job_title.trim()}.`
+      // Save only the essentials collected on this screen. In particular, do
+      // not write platform-managed visibility or reset existing capability,
+      // evidence, language, and profile fields created by the taster handoff.
       const { error } = await supabase.from('professional_profiles').upsert({
         id: user.id,
         display_name: form.display_name.trim(),
@@ -89,26 +92,14 @@ export default function ProgressiveOnboardingPage() {
         location: form.location.trim() || null,
         industry: form.industry.trim() || null,
         bio,
-        active_tracks: [],
-        languages: [],
-        skills: [],
-        topics: [],
-        facilitation_topics: [],
-        programme_types: [],
-        format_capabilities: [],
-        audience_sizes: [],
-        work_history: [],
-        past_events: [],
-        past_clients: [],
-        youtube_links: [],
-        visibility: 'registered_only',
         updated_at: new Date().toISOString(),
       }, { onConflict:'id' })
       if (error) throw error
       router.replace('/profile/setup')
     } catch (err) {
       console.error('Progressive onboarding save failed:', err)
-      setError('We could not save your starter profile. Please try again.')
+      const detail = typeof err?.message === 'string' ? err.message : ''
+      setError(detail ? `We could not save your starter profile: ${detail}` : 'We could not save your starter profile. Please try again.')
     } finally {
       setSaving(false)
     }
