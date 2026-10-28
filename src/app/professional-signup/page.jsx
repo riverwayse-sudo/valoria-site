@@ -1,5 +1,5 @@
 'use client'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import Link from 'next/link'
@@ -9,8 +9,38 @@ import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/
 const GOLD='#C9A84C', DARK='#0F0F1A', PARCH='#F7F4EE', DIM='rgba(247,244,238,.48)'
 function ProfessionalSignupForm(){
   const params=useSearchParams(); const tasterId=params.get('taster_id')||''; const name=params.get('name')||''; const role=params.get('role')||''; const experience=params.get('experience')||''
-  const [form,setForm]=useState({email:'',password:'',confirm:''}); const [loading,setLoading]=useState(false); const [error,setError]=useState(''); const [done,setDone]=useState(false); const [linked,setLinked]=useState(false); const [confirmationRequired,setConfirmationRequired]=useState(false); const [resending,setResending]=useState(false); const [resendMessage,setResendMessage]=useState('')
+  const [form,setForm]=useState({email:'',password:'',confirm:''}); const [loading,setLoading]=useState(false); const [error,setError]=useState(''); const [done,setDone]=useState(false); const [linked,setLinked]=useState(false); const [confirmationRequired,setConfirmationRequired]=useState(false); const [resending,setResending]=useState(false); const [resendMessage,setResendMessage]=useState(''); const [redirecting,setRedirecting]=useState(false)
   const valid=useMemo(()=>tasterId&&name&&role&&form.email&&form.password.length>=PASSWORD_POLICY.minLength&&form.password===form.confirm,[tasterId,name,role,form])
+  useEffect(()=>{
+    let cancelled=false
+    async function continueSignedInUser(){
+      if(!tasterId||!name||!role)return
+      const {data:{session}}=await supabase.auth.getSession()
+      if(cancelled||!session?.access_token||!session.user?.email_confirmed_at)return
+      setRedirecting(true)
+      try{
+        const linkRes=await fetch('/api/link-taster',{
+          method:'POST',
+          headers:{'Content-Type':'application/json',Authorization:`Bearer ${session.access_token}`},
+          body:JSON.stringify({taster_id:tasterId,name,role})
+        })
+        const linkData=await linkRes.json().catch(()=>({}))
+        if(!linkRes.ok)throw new Error(linkData.error||'Your saved VALU snapshot could not be linked to this account.')
+        const handoffRes=await fetch(`/api/valu-handoff?taster_id=${encodeURIComponent(tasterId)}`,{
+          method:'GET',headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'
+        })
+        const handoff=await handoffRes.json().catch(()=>({}))
+        if(!handoffRes.ok||!handoff.url)throw new Error(handoff.error||'Your full VALU assessment could not be opened.')
+        const destination=new URL(handoff.url,window.location.origin)
+        if(destination.searchParams.get('full')!=='1'||destination.searchParams.get('taster_id')!==tasterId)throw new Error('We could not verify the saved snapshot for this assessment.')
+        if(!cancelled)window.location.replace(destination.toString())
+      }catch(err){
+        if(!cancelled){setError(err?.message||'We could not open your full VALU assessment. Please try again.');setRedirecting(false)}
+      }
+    }
+    continueSignedInUser().catch(err=>{if(!cancelled)setError(err?.message||'We could not verify your Valoria session.')})
+    return ()=>{cancelled=true}
+  },[tasterId,name,role])
   async function resendConfirmation(){
     setResending(true)
     setResendMessage('')
@@ -71,6 +101,7 @@ function ProfessionalSignupForm(){
     }
   }
 
+  if(redirecting)return <Shell><div style={S.eyebrow}>VALU ASSESSMENT</div><h1 style={S.title}>Opening your <em>full assessment.</em></h1><p style={S.sub}>Your saved snapshot is being verified. Taking you directly to the remaining questions…</p></Shell>
   if(!tasterId||!name||!role)return <Shell><h1 style={S.title}>Your VALU journey needs a result.</h1><p style={S.sub}>Start with the 15-question VALU Index assessment. Your completed result is the entry point to professional signup.</p><a href="https://valoriainstitute.com/valu/assessment/" style={S.button}>TAKE THE 15-QUESTION VALU INDEX →</a></Shell>
   if(confirmationRequired)return <Shell><div style={S.eyebrow}>ONE LAST STEP</div><h1 style={S.title}>Check your inbox. <em>Your journey is waiting.</em></h1><p style={S.sub}>We’ve sent a confirmation link to <strong>{form.email.trim().toLowerCase()}</strong>. Open it to confirm your address and we’ll bring you back to Valoria, sign you in securely, and attach your VALU snapshot to your account. You won’t need to sign in again.</p><button type="button" onClick={resendConfirmation} disabled={resending} style={{...S.button,opacity:resending?0.55:1}}>{resending?'REQUESTING A NEW LINK…':'RESEND CONFIRMATION EMAIL'}</button>{resendMessage&&<p role="status" style={S.note}>{resendMessage}</p>}<p style={S.note}>Can’t find the email? Check your spam or promotions folder. Your VALU result stays private until the full assessment, profile and marketplace eligibility checks are satisfied.</p></Shell>
 
