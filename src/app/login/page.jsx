@@ -28,19 +28,24 @@ export default function LoginPage() {
     if (pendingTasterId) localStorage.setItem('pending_taster_id', pendingTasterId)
 
     if (identityHash) {
-      // Store identity_hash in sessionStorage to use after login
+      // Preserve the assessment identity until the authenticated candidate
+      // completes the secure account-linking step after sign-in.
       sessionStorage.setItem('pending_identity_hash', identityHash)
 
-      // Confirmation links used to land back on the assessment app, whose
-      // own client code fired report generation immediately on arrival.
-      // They now land here instead, so this same-origin proxy restores
-      // that instant trigger (see /api/trigger-report). Fire-and-forget —
-      // the 15-min sweep-unsent-reports cron is the safety net if this
-      // fails or the user never gets this far.
+      // Restore report generation previously triggered by the assessment app.
       fetch('/api/trigger-report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identity_hash: identityHash }),
+      }).catch(() => {})
+    }
+
+    // If a valid session already exists, the login screen is not the right
+    // destination. Email-confirmation identity handoffs are handled after the
+    // candidate explicitly signs in so we do not lose their pending identity.
+    if (!identityHash) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.access_token) window.location.replace('/dashboard')
       }).catch(() => {})
     }
 
@@ -182,7 +187,8 @@ export default function LoginPage() {
             return
           }
         } catch (_) {}
-        redirectAfterLogin('/profile/onboarding')
+        // The candidate is signed in and their taster is linked; continue from the dashboard.
+        redirectAfterLogin('/dashboard')
         return
       }
 
