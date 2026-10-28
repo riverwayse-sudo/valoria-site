@@ -44,22 +44,8 @@ export default function LoginPage() {
       }).catch(() => {})
     }
 
-    // A valid browser session can exist even when a server-rendered continuation
-    // could not read its cookie. Resume the authenticated assessment handoff here
-    // instead of asking the candidate to sign in repeatedly.
-    const isAssessmentReturn = (() => {
-      try {
-        const target = new URL(requestedReturnTo, window.location.origin)
-        return target.origin === window.location.origin
-          && target.pathname === '/journey/continue'
-          && target.searchParams.get('stage') === 'assess'
-      } catch { return false }
-    })()
-    if (isAssessmentReturn) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.access_token) launchAssessmentIfRequested(session, pendingTasterId)
-      }).catch(() => {})
-    }
+    // Signing in always lands the candidate on the dashboard. Assessment
+    // handoff starts only after they choose the assessment CTA there.
   }, [])
 
   function isAssessmentReturnRequested() {
@@ -124,7 +110,16 @@ export default function LoginPage() {
   }
 
   function redirectAfterLogin(defaultPath) {
-    const target = returnTo && returnTo.startsWith('/') ? returnTo : defaultPath
+    const requested = returnTo && returnTo.startsWith('/') ? returnTo : defaultPath
+    let target = requested
+    try {
+      const parsed = new URL(requested, window.location.origin)
+      // An assessment CTA that required sign-in must return to the dashboard;
+      // the candidate explicitly starts the 58-question assessment from there.
+      if (parsed.pathname === '/journey/continue' && parsed.searchParams.get('stage') === 'assess') {
+        target = '/dashboard'
+      }
+    } catch {}
     window.location.href = target
   }
 
@@ -142,11 +137,6 @@ export default function LoginPage() {
       document.cookie = `vi_waitlist_v2=submitted; path=/; max-age=31536000`
       const { data: { user } } = await supabase.auth.getUser()
       const { data: { session } } = await supabase.auth.getSession()
-
-      // For an assessment return, issue the signed handoff with the authenticated
-      // bearer token immediately. This prevents a second trip through /login when
-      // the server continuation cannot see the browser session cookie.
-      if (await launchAssessmentIfRequested(session, localStorage.getItem('pending_taster_id'))) return
 
       // Complete a professional VALU snapshot handoff that was paused for email confirmation.
       const pendingTasterId = localStorage.getItem('pending_taster_id')
@@ -215,7 +205,7 @@ export default function LoginPage() {
             setLoading(false)
             return
           }
-          window.location.href = `/profile/${user.id}?fresh=true`
+          window.location.href = '/dashboard?welcome=profile'
           return
         } catch (linkErr) {
           console.error('Failed to link assessment to user:', linkErr)
@@ -273,7 +263,7 @@ export default function LoginPage() {
 
       if (!profile || !profile.display_name) {
         // First time — go to setup wizard
-        redirectAfterLogin('/profile/onboarding')
+        redirectAfterLogin('/dashboard')
       } else {
         // Returning user — go to dashboard
         window.location.href = '/dashboard'
