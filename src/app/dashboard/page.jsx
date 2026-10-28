@@ -757,7 +757,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
 
   const next = steps.find(step => !step.done)
   const nextHref = !assessmentDone
-    ? '/valu/start'
+    ? '/journey/continue?stage=assess'
     : !profileComplete
       ? '/profile/setup'
       : !capabilityReady
@@ -1044,7 +1044,7 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
   const isListed = listedCapabilities.length > 0
 
   const current = !hasAssessment
-    ? { label:'See your signal', text:'Start VALU and understand where you stand.', href:'https://valoriainstitute.com/valu/assessment/' }
+    ? { label:'See your signal', text:'Start VALU and understand where you stand.', href:'/journey/continue?stage=assess' }
     : !hasProfile
       ? { label:'Build your profile', text:'Tell us about your work so people can understand you.', href:'/profile/onboarding' }
       : !hasCapability
