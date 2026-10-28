@@ -75,6 +75,9 @@ export default function Nav() {
 
   const renderItem = (item, className = 'nav-dropdown-link') => {
     const active = isPathActive(pathname, item.href)
+    if (item.external && item.href === NAVIGATION.assessmentUrl) {
+      return <AssessmentStartLink href={item.href} className={`${className}${active ? ' active' : ''}`} onClick={close}>{item.label}</AssessmentStartLink>
+    }
     if (item.external) {
       return <a href={item.href} className={`${className}${active ? ' active' : ''}`} onClick={close}>{item.label}</a>
     }
@@ -129,5 +132,55 @@ export default function Nav() {
       </> : <div>{renderItem({ label: 'Sign In', href: '/login' }, 'nav-mobile-link')}</div>}
       <a href={cta.href} className="m-cta" onClick={close}>{cta.label}</a>
     </nav>
+  </>
+}
+
+// Session-aware entry for every VALU CTA. Anonymous visitors begin the public
+// 15-question snapshot; authenticated candidates with a completed snapshot get
+// a signed handoff directly into the full 58-question assessment.
+export function AssessmentStartLink({ href = '/valu/assessment/', className, style, children, onClick, ...props }) {
+  const [opening, setOpening] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleClick(event) {
+    if (onClick) onClick(event)
+    if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
+    event.preventDefault()
+    if (opening) return
+    setOpening(true)
+    setError('')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        window.location.assign(href)
+        return
+      }
+
+      const response = await fetch('/api/valu-handoff', {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        cache: 'no-store',
+      })
+      const handoff = await response.json().catch(() => ({}))
+      if (!response.ok || !handoff.url) {
+        throw new Error(handoff.error || 'We could not open your VALU assessment. Please return to your dashboard and try again.')
+      }
+
+      const destination = new URL(handoff.url, window.location.origin)
+      if (destination.searchParams.get('full') === '1' && !destination.searchParams.get('taster_id')) {
+        throw new Error('Your completed snapshot could not be matched to this account. Please return to your dashboard for assistance.')
+      }
+      window.location.assign(destination.toString())
+    } catch (err) {
+      setError(err?.message || 'We could not open your VALU assessment. Please try again.')
+      setOpening(false)
+    }
+  }
+
+  return <>
+    <a href={href} className={className} style={style} onClick={handleClick} aria-busy={opening} {...props}>
+      {opening ? 'Opening VALU…' : children}
+    </a>
+    {error && <span role="alert" style={{ display: 'block', color: '#F09595', fontSize: '12px', marginTop: '6px' }}>{error}</span>}
   </>
 }
