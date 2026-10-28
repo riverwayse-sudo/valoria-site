@@ -156,21 +156,10 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
         return
       }
 
-      const response = await fetch('/api/valu-handoff', {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${session.access_token}` },
-        cache: 'no-store',
-      })
-      const handoff = await response.json().catch(() => ({}))
-      if (!response.ok || !handoff.url) {
-        throw new Error(handoff.error || 'We could not open your VALU assessment. Please return to your dashboard and try again.')
-      }
-
-      const destination = new URL(handoff.url, window.location.origin)
-      if (destination.searchParams.get('full') === '1' && !destination.searchParams.get('taster_id')) {
-        throw new Error('Your completed snapshot could not be matched to this account. Please return to your dashboard for assistance.')
-      }
-      window.location.assign(destination.toString())
+      // Signed-in candidates must pass through the same-site continuation callback.
+      // It verifies the cookie session, snapshot ownership, and issues the signed
+      // cross-app handoff before redirecting to the full assessment.
+      window.location.assign('/journey/continue?stage=assess')
     } catch (err) {
       setError(err?.message || 'We could not open your VALU assessment. Please try again.')
       setOpening(false)
