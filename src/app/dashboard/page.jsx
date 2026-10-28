@@ -517,10 +517,9 @@ export default function DashboardPage() {
                     <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
                       You haven't completed your VALU Index assessment yet.
                     </p>
-                    <a href="https://valoriainstitute.com/valu/assessment/" target="_blank" rel="noopener noreferrer"
-                      style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
+                    <AssessmentStartLink href="/journey/continue?stage=assess" className="dashboard-valu-cta" style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
                       TAKE THE ASSESSMENT
-                    </a>
+                    </AssessmentStartLink>
                   </>
                 )}
               </div>
