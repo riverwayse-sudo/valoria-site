@@ -53,67 +53,6 @@ export default function LoginPage() {
     // handoff starts only after they choose the assessment CTA there.
   }, [])
 
-  function isAssessmentReturnRequested() {
-    try {
-      const params = new URLSearchParams(window.location.search)
-      const target = new URL(params.get('returnTo') || '', window.location.origin)
-      return target.origin === window.location.origin
-        && target.pathname === '/journey/continue'
-        && target.searchParams.get('stage') === 'assess'
-    } catch { return false }
-  }
-
-  async function launchAssessmentIfRequested(session, pendingTasterId) {
-    if (!isAssessmentReturnRequested()) return false
-    if (!session?.access_token) {
-      setError('Your session could not be restored. Please sign in to continue your VALU assessment.')
-      return true
-    }
-
-    setRedirecting(true)
-    setError('')
-    try {
-      // If signup left a taster claim pending, finish that secure link first.
-      if (pendingTasterId) {
-        const linkRes = await fetch('/api/link-taster', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify({ taster_id: pendingTasterId }),
-        })
-        const linkData = await linkRes.json().catch(() => ({}))
-        if (!linkRes.ok) throw new Error(linkData.error || 'Your VALU snapshot could not be linked to this account.')
-        localStorage.removeItem('pending_taster_id')
-        localStorage.removeItem('pending_taster_name')
-        localStorage.removeItem('pending_taster_role')
-      }
-
-      // Use the existing authenticated handoff endpoint. Do not send the candidate
-      // through the SSR continuation route again, which can recreate the login loop.
-      const handoffRes = await fetch('/api/valu-handoff', {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${session.access_token}` },
-        cache: 'no-store',
-      })
-      const handoff = await handoffRes.json().catch(() => ({}))
-      if (!handoffRes.ok || !handoff.url) {
-        throw new Error(handoff.error || 'We could not securely open your full VALU assessment. Please try again.')
-      }
-      const assessmentDestination = new URL(handoff.url, window.location.origin)
-      if (assessmentDestination.searchParams.get('full') !== '1' || !assessmentDestination.searchParams.get('taster_id')) {
-        throw new Error('Your completed 15-question snapshot is not yet linked to this account. Please return to your Valoria dashboard or contact support.')
-      }
-      window.location.replace(assessmentDestination.toString())
-      return true
-    } catch (err) {
-      setError(err?.message || 'We could not open your VALU assessment. Please try again.')
-      setRedirecting(false)
-      return true
-    }
-  }
-
   function redirectAfterLogin(defaultPath) {
     const requested = returnTo && returnTo.startsWith('/') ? returnTo : defaultPath
     let target = requested
