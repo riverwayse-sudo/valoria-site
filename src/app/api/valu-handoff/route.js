@@ -21,7 +21,11 @@ export async function GET(request) {
   if (userError || !userData?.user) return NextResponse.json({ error:'Unauthorized' }, { status:401 })
   const user = userData.user
   if (!user.email_confirmed_at) return NextResponse.json({ error:'Confirm your email before opening the full VALU assessment.' }, { status:403 })
-  const { data:taster, error:tasterError } = await admin.from('taster_sessions').select('id,name,role,experience,completed_at').eq('user_id', user.id).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle()
+  const requestedTasterId = new URL(request.url).searchParams.get('taster_id')?.trim()
+  let tasterQuery = admin.from('taster_sessions').select('id,name,role,experience,completed_at').eq('user_id', user.id).not('completed_at','is',null)
+  if (requestedTasterId) tasterQuery = tasterQuery.eq('id', requestedTasterId)
+  else tasterQuery = tasterQuery.order('completed_at',{ascending:false}).limit(1)
+  const { data:taster, error:tasterError } = await tasterQuery.maybeSingle()
   if (tasterError) return NextResponse.json({ error:'Could not verify your completed VALU snapshot.' }, { status:502 })
   if (!taster) return NextResponse.json({ url:'https://valoriainstitute.com/valu/assessment/' })
   const { data:candidate, error:candidateError } = await admin.from('taster_identity_candidates')

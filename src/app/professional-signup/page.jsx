@@ -1,5 +1,5 @@
 'use client'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import Link from 'next/link'
@@ -9,8 +9,38 @@ import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/
 const GOLD='#C9A84C', DARK='#0F0F1A', PARCH='#F7F4EE', DIM='rgba(247,244,238,.48)'
 function ProfessionalSignupForm(){
   const params=useSearchParams(); const tasterId=params.get('taster_id')||''; const name=params.get('name')||''; const role=params.get('role')||''; const experience=params.get('experience')||''
-  const [form,setForm]=useState({email:'',password:'',confirm:''}); const [loading,setLoading]=useState(false); const [error,setError]=useState(''); const [done,setDone]=useState(false); const [linked,setLinked]=useState(false); const [confirmationRequired,setConfirmationRequired]=useState(false); const [resending,setResending]=useState(false); const [resendMessage,setResendMessage]=useState('')
+  const [form,setForm]=useState({email:'',password:'',confirm:''}); const [loading,setLoading]=useState(false); const [error,setError]=useState(''); const [done,setDone]=useState(false); const [linked,setLinked]=useState(false); const [confirmationRequired,setConfirmationRequired]=useState(false); const [resending,setResending]=useState(false); const [resendMessage,setResendMessage]=useState(''); const [redirecting,setRedirecting]=useState(false)
   const valid=useMemo(()=>tasterId&&name&&role&&form.email&&form.password.length>=PASSWORD_POLICY.minLength&&form.password===form.confirm,[tasterId,name,role,form])
+  useEffect(()=>{
+    let cancelled=false
+    async function continueSignedInUser(){
+      if(!tasterId||!name||!role)return
+      const {data:{session}}=await supabase.auth.getSession()
+      if(cancelled||!session?.access_token||!session.user?.email_confirmed_at)return
+      setRedirecting(true)
+      try{
+        const linkRes=await fetch('/api/link-taster',{
+          method:'POST',
+          headers:{'Content-Type':'application/json',Authorization:`Bearer ${session.access_token}`},
+          body:JSON.stringify({taster_id:tasterId,name,role})
+        })
+        const linkData=await linkRes.json().catch(()=>({}))
+        if(!linkRes.ok)throw new Error(linkData.error||'Your saved VALU snapshot could not be linked to this account.')
+        const handoffRes=await fetch(`/api/valu-handoff?taster_id=${encodeURIComponent(tasterId)}`,{
+          method:'GET',headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'
+        })
+        const handoff=await handoffRes.json().catch(()=>({}))
+        if(!handoffRes.ok||!handoff.url)throw new Error(handoff.error||'Your full VALU assessment could not be opened.')
+        const destination=new URL(handoff.url,window.location.origin)
+        if(destination.searchParams.get('full')!=='1'||destination.searchParams.get('taster_id')!==tasterId)throw new Error('We could not verify the saved snapshot for this assessment.')
+        if(!cancelled)window.location.replace(destination.toString())
+      }catch(err){
+        if(!cancelled){setError(err?.message||'We could not open your full VALU assessment. Please try again.');setRedirecting(false)}
+      }
+    }
+    continueSignedInUser().catch(err=>{if(!cancelled)setError(err?.message||'We could not verify your Valoria session.')})
+    return ()=>{cancelled=true}
+  },[tasterId,name,role])
   async function resendConfirmation(){
     setResending(true)
     setResendMessage('')
@@ -71,11 +101,12 @@ function ProfessionalSignupForm(){
     }
   }
 
+  if(redirecting)return <Shell><div style={S.eyebrow}>VALU ASSESSMENT</div><h1 style={S.title}>Opening your <em>full assessment.</em></h1><p style={S.sub}>Your saved snapshot is being verified. Taking you directly to the remaining questions…</p></Shell>
   if(!tasterId||!name||!role)return <Shell><h1 style={S.title}>Your VALU journey needs a result.</h1><p style={S.sub}>Start with the 15-question VALU Index assessment. Your completed result is the entry point to professional signup.</p><a href="https://valoriainstitute.com/valu/assessment/" style={S.button}>TAKE THE 15-QUESTION VALU INDEX →</a></Shell>
   if(confirmationRequired)return <Shell><div style={S.eyebrow}>ONE LAST STEP</div><h1 style={S.title}>Check your inbox. <em>Your journey is waiting.</em></h1><p style={S.sub}>We’ve sent a confirmation link to <strong>{form.email.trim().toLowerCase()}</strong>. Open it to confirm your address and we’ll bring you back to Valoria, sign you in securely, and attach your VALU snapshot to your account. You won’t need to sign in again.</p><button type="button" onClick={resendConfirmation} disabled={resending} style={{...S.button,opacity:resending?0.55:1}}>{resending?'REQUESTING A NEW LINK…':'RESEND CONFIRMATION EMAIL'}</button>{resendMessage&&<p role="status" style={S.note}>{resendMessage}</p>}<p style={S.note}>Can’t find the email? Check your spam or promotions folder. Your VALU result stays private until the full assessment, profile and marketplace eligibility checks are satisfied.</p></Shell>
 
-  if(done){const assessmentUrl=`https://valoriainstitute.com/journey/continue?stage=assess&taster_id=${encodeURIComponent(tasterId)}`;return <Shell><div style={S.eyebrow}>VALORIA PROFESSIONAL ACCOUNT</div><h1 style={S.title}>Your account is ready. <em>Build your professional profile.</em></h1><p style={S.sub}>Your VALU snapshot is linked to your account. Complete the full VALU assessment and your professional profile; once the normal governance checks pass, the relevant capability can be listed in the marketplace.</p>{!linked&&<p style={S.error}>The account was created, but the VALU link still needs to be completed.</p>}<Link href="/profile/setup" style={S.button}>COMPLETE MY PROFESSIONAL PROFILE →</Link><a href={assessmentUrl} style={S.secondary}>COMPLETE THE FULL VALU ASSESSMENT</a><p style={S.note}>The full VALU assessment establishes the authoritative marketplace score. Deeper assessment and development pathways remain available afterwards.</p></Shell>}
-  return <Shell><div style={S.eyebrow}>15-QUESTION VALU INDEX COMPLETE</div><h1 style={S.title}>Create your <em>Valoria account.</em></h1><p style={S.sub}>Hi {name.split(/\s+/)[0]}. Your VALU Index result is saved. Create your account and we’ll keep it attached to your professional profile.</p><div style={S.summary}><div><span>NAME</span>{name}</div><div><span>ROLE</span>{role}</div><div><span>ENTRY ASSESSMENT</span>VALU Index · Complete</div></div><form onSubmit={submit} style={S.form}><label>Email<input type="email" required value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="you@example.com" style={S.input}/></label><label>Password<input type="password" required minLength={8} value={form.password} onChange={e=>setForm({...form,password:e.target.value})} placeholder={`Minimum ${PASSWORD_POLICY.minLength} characters`} style={S.input}/></label><p style={S.note}>{passwordPolicyMessage()}</p><label>Confirm password<input type="password" required minLength={8} value={form.confirm} onChange={e=>setForm({...form,confirm:e.target.value})} placeholder="Repeat your password" style={S.input}/></label>{error&&<div style={S.error}>{error}</div>}<button type="submit" disabled={loading||!valid} style={{...S.button,opacity:(loading||!valid)?0.45:1}}>{loading?'CREATING ACCOUNT…':'CREATE ACCOUNT →'}</button></form><p style={S.note}>Your VALU Index begins your professional record. The deeper assessment remains available later when a deeper engagement requires it.</p></Shell>
+  if(done){const assessmentUrl=`https://valoriainstitute.com/journey/continue?stage=assess&taster_id=${encodeURIComponent(tasterId)}`;return <Shell><div style={S.eyebrow}>VALU SNAPSHOT SAVED</div><h1 style={S.title}>Continue to your <em>full assessment.</em></h1><p style={S.sub}>Your 15-question snapshot is linked to your account. Continue the remaining questions to complete your official VALU Index. You can complete your professional profile after the assessment.</p>{!linked&&<p style={S.error}>Your account was created, but the snapshot link still needs to be completed before continuing.</p>}<a href={assessmentUrl} style={S.button}>TAKE THE FULL VALU ASSESSMENT →</a><p style={S.note}>Your saved snapshot and progress are preserved.</p></Shell>}
+  return <Shell><div style={S.eyebrow}>15-QUESTION VALU INDEX COMPLETE</div><h1 style={S.title}>Create your <em>Valoria account.</em></h1><p style={S.sub}>Hi {name.split(/\s+/)[0]}. Your VALU Index result is saved. Create your account and we’ll keep it attached to your professional profile.</p><div style={S.summary}><div><span>NAME</span>{name}</div><div><span>ROLE</span>{role}</div><div><span>ENTRY ASSESSMENT</span>VALU Index · Complete</div></div><form onSubmit={submit} style={S.form}><label>Email<input type="email" required value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="you@example.com" style={S.input}/></label><label>Password<input type="password" required minLength={8} value={form.password} onChange={e=>setForm({...form,password:e.target.value})} placeholder={`Minimum ${PASSWORD_POLICY.minLength} characters`} style={S.input}/></label><p style={S.note}>{passwordPolicyMessage()}</p><label>Confirm password<input type="password" required minLength={8} value={form.confirm} onChange={e=>setForm({...form,confirm:e.target.value})} placeholder="Repeat your password" style={S.input}/></label>{error&&<div style={S.error}>{error}</div>}<button type="submit" disabled={loading||!valid} style={{...S.button,opacity:(loading||!valid)?0.45:1}}>{loading?'CREATING ACCOUNT…':'CREATE ACCOUNT →'}</button></form><p style={S.note}>Already have a Valoria account? <Link href={`/login?pending_taster_id=${encodeURIComponent(tasterId)}&returnTo=${encodeURIComponent(`/journey/continue?stage=assess&taster_id=${tasterId}`)}`} style={{color:GOLD,textDecoration:'underline'}}>Sign in and continue your assessment.</Link></p></Shell>
 }
 function Shell({children}){return <main style={S.page}><div style={S.card}><div style={{marginBottom:24}}><Link href="/" style={{color:GOLD,textDecoration:'none',fontSize:11,letterSpacing:'.12em'}}>VALORIA INSTITUTE</Link></div>{children}</div></main>}
 export default function ProfessionalSignupPage(){return <Suspense fallback={null}><ProfessionalSignupForm/></Suspense>}

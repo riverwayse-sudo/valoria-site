@@ -68,9 +68,19 @@ function AuthCallbackFlow() {
           localStorage.removeItem('pending_taster_id')
           localStorage.removeItem('pending_taster_name')
           localStorage.removeItem('pending_taster_role')
-          setMessage('Email confirmed. You’re signed in and your VALU snapshot is connected.')
-          await new Promise(resolve => setTimeout(resolve, 900))
-          if (!cancelled) router.replace('/dashboard?welcome=profile')
+          setMessage('Email confirmed. Opening your full VALU assessment…')
+          const handoffRes = await fetch(`/api/valu-handoff?taster_id=${encodeURIComponent(pendingTasterId)}`, {
+            method: 'GET',
+            headers: { Authorization: `Bearer ${session.access_token}` },
+            cache: 'no-store',
+          })
+          const handoff = await handoffRes.json().catch(() => ({}))
+          if (!handoffRes.ok || !handoff.url) throw new Error(handoff.error || 'Your full VALU assessment could not be opened.')
+          const destination = new URL(handoff.url, window.location.origin)
+          if (destination.searchParams.get('full') !== '1' || destination.searchParams.get('taster_id') !== pendingTasterId) {
+            throw new Error('We could not verify the saved snapshot for this assessment.')
+          }
+          if (!cancelled) window.location.replace(destination.toString())
           return
         }
 
