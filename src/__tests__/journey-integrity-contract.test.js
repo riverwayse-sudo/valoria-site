@@ -57,6 +57,16 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(continuation).not.toContain("return NextResponse.redirect(new URL(ASSESSMENT_ORIGIN+'/',request.url))")
   })
 
+  test('assessment return from login uses the authenticated handoff instead of looping through SSR continuation', () => {
+    const login = read('src/app/login/page.jsx')
+    expect(login).toContain('isAssessmentReturnRequested')
+    expect(login).toContain("target.pathname === '/journey/continue'")
+    expect(login).toContain("fetch('/api/valu-handoff'")
+    expect(login).toContain('Authorization: `Bearer ${session.access_token}`')
+    expect(login).toContain('window.location.replace(handoff.url)')
+    expect(login).toContain('supabase.auth.getSession().then')
+  })
+
   test('assessment reminder links require account continuation instead of anonymous assessment submission', () => {
     const source = read('src/app/api/cron/valu-reminders/route.js')
     expect(source).toContain('/journey/continue?stage=assess&taster_id=')

@@ -43,7 +43,85 @@ export default function LoginPage() {
         body: JSON.stringify({ identity_hash: identityHash }),
       }).catch(() => {})
     }
+
+    // A valid browser session can exist even when a server-rendered continuation
+    // could not read its cookie. Resume the authenticated assessment handoff here
+    // instead of asking the candidate to sign in repeatedly.
+    const isAssessmentReturn = (() => {
+      try {
+        const target = new URL(requestedReturnTo, window.location.origin)
+        return target.origin === window.location.origin
+          && target.pathname === '/journey/continue'
+          && target.searchParams.get('stage') === 'assess'
+      } catch { return false }
+    })()
+    if (isAssessmentReturn) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.access_token) launchAssessmentIfRequested(session, pendingTasterId)
+      }).catch(() => {})
+    }
   }, [])
+
+  function isAssessmentReturnRequested() {
+    try {
+      const params = new URLSearchParams(window.location.search)
+      const target = new URL(params.get('returnTo') || '', window.location.origin)
+      return target.origin === window.location.origin
+        && target.pathname === '/journey/continue'
+        && target.searchParams.get('stage') === 'assess'
+    } catch { return false }
+  }
+
+  async function launchAssessmentIfRequested(session, pendingTasterId) {
+    if (!isAssessmentReturnRequested()) return false
+    if (!session?.access_token) {
+      setError('Your session could not be restored. Please sign in to continue your VALU assessment.')
+      return true
+    }
+
+    setRedirecting(true)
+    setError('')
+    try {
+      // If signup left a taster claim pending, finish that secure link first.
+      if (pendingTasterId) {
+        const linkRes = await fetch('/api/link-taster', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ taster_id: pendingTasterId }),
+        })
+        const linkData = await linkRes.json().catch(() => ({}))
+        if (!linkRes.ok) throw new Error(linkData.error || 'Your VALU snapshot could not be linked to this account.')
+        localStorage.removeItem('pending_taster_id')
+        localStorage.removeItem('pending_taster_name')
+        localStorage.removeItem('pending_taster_role')
+      }
+
+      // Use the existing authenticated handoff endpoint. Do not send the candidate
+      // through the SSR continuation route again, which can recreate the login loop.
+      const handoffRes = await fetch('/api/valu-handoff', {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        cache: 'no-store',
+      })
+      const handoff = await handoffRes.json().catch(() => ({}))
+      if (!handoffRes.ok || !handoff.url) {
+        throw new Error(handoff.error || 'We could not securely open your full VALU assessment. Please try again.')
+      }
+      const assessmentDestination = new URL(handoff.url, window.location.origin)
+      if (assessmentDestination.searchParams.get('full') !== '1' || !assessmentDestination.searchParams.get('taster_id')) {
+        throw new Error('Your completed 15-question snapshot is not yet linked to this account. Please return to your Valoria dashboard or contact support.')
+      }
+      window.location.replace(assessmentDestination.toString())
+      return true
+    } catch (err) {
+      setError(err?.message || 'We could not open your VALU assessment. Please try again.')
+      setRedirecting(false)
+      return true
+    }
+  }
 
   function redirectAfterLogin(defaultPath) {
     const target = returnTo && returnTo.startsWith('/') ? returnTo : defaultPath
@@ -64,6 +142,11 @@ export default function LoginPage() {
       document.cookie = `vi_waitlist_v2=submitted; path=/; max-age=31536000`
       const { data: { user } } = await supabase.auth.getUser()
       const { data: { session } } = await supabase.auth.getSession()
+
+      // For an assessment return, issue the signed handoff with the authenticated
+      // bearer token immediately. This prevents a second trip through /login when
+      // the server continuation cannot see the browser session cookie.
+      if (await launchAssessmentIfRequested(session, localStorage.getItem('pending_taster_id'))) return
 
       // Complete a professional VALU snapshot handoff that was paused for email confirmation.
       const pendingTasterId = localStorage.getItem('pending_taster_id')
