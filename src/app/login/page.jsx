@@ -110,7 +110,11 @@ export default function LoginPage() {
       if (!handoffRes.ok || !handoff.url) {
         throw new Error(handoff.error || 'We could not securely open your full VALU assessment. Please try again.')
       }
-      window.location.replace(handoff.url)
+      const assessmentDestination = new URL(handoff.url, window.location.origin)
+      if (assessmentDestination.searchParams.get('full') !== '1' || !assessmentDestination.searchParams.get('taster_id')) {
+        throw new Error('Your completed 15-question snapshot is not yet linked to this account. Please return to your Valoria dashboard or contact support.')
+      }
+      window.location.replace(assessmentDestination.toString())
       return true
     } catch (err) {
       setError(err?.message || 'We could not open your VALU assessment. Please try again.')
