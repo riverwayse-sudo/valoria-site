@@ -68,7 +68,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(dashboard).toContain("? '/journey/continue?stage=assess'")
     expect(dashboard).toContain('AssessmentStartLink')
     expect(read('src/components/Nav.jsx')).toContain('<a href={href}')
-    expect(read('src/components/Nav.jsx')).toContain("<a href=\"/journey/continue?stage=assess\"")
+    expect(read('src/components/Nav.jsx')).toContain("window.location.assign('/journey/continue?stage=assess')")
     expect(dashboard.match(/<AssessmentStartLink href=\"\/journey\/continue\?stage=assess\"/g)?.length).toBe(2)
     expect(read('src/app/valu/start/page.jsx')).toContain('AssessmentStartLink')
   })
