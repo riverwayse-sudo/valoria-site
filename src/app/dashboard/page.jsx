@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { AssessmentStartLink } from '@/components/Nav'
 import { supabase } from '@/lib/supabase'
 import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
@@ -801,9 +802,11 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
             <div style={{ fontSize:'21px', fontWeight:500, color:PARCH, marginTop:7, lineHeight:1.25 }}>{heading}</div>
             <div style={{ fontSize:'13px', color:DIM, marginTop:7, lineHeight:1.6, maxWidth:'680px' }}>{explanation}</div>
           </div>
-          <Link href={nextHref} style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>
-            {next ? (next.key === 'valu' ? 'START VALU' : `CONTINUE ${next.plain.toUpperCase()}`) : 'VIEW OPPORTUNITIES'} →
-          </Link>
+          {!assessmentDone
+            ? <AssessmentStartLink href="/valu/assessment/" className="dashboard-valu-cta" style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>START VALU →</AssessmentStartLink>
+            : <Link href={nextHref} style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>
+                {next ? `CONTINUE ${next.plain.toUpperCase()}` : 'VIEW OPPORTUNITIES'} →
+              </Link>}
         </div>
 
         <div style={{ display:'grid', gridTemplateColumns:'repeat(5,minmax(0,1fr))', gap:'8px', marginTop:22 }} aria-label="Journey progress">
@@ -1061,7 +1064,9 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
           <div style={{ fontSize:'20px', fontWeight:400, color:PARCH, marginTop:7 }}>{current.label}</div>
           <div style={{ fontSize:'12px', color:DIM, marginTop:5, lineHeight:1.5 }}>{current.text}</div>
         </div>
-        <Link href={current.href} style={{ flexShrink:0, padding:'12px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'9px', fontWeight:800, letterSpacing:'.12em' }}>CONTINUE →</Link>
+        {current.href === '/journey/continue?stage=assess'
+          ? <AssessmentStartLink href="/valu/assessment/" className="dashboard-valu-cta" style={{ flexShrink:0, padding:'12px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'9px', fontWeight:800, letterSpacing:'.12em' }}>CONTINUE →</AssessmentStartLink>
+          : <Link href={current.href} style={{ flexShrink:0, padding:'12px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'9px', fontWeight:800, letterSpacing:'.12em' }}>CONTINUE →</Link>}
       </div>
     </section>
   )
