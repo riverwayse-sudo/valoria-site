@@ -74,10 +74,23 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(source).toContain('email_confirmed_at')
   })
 
-  test('professional signup sends the user through authenticated continuation for the full assessment', () => {
+  test('professional signup makes the full assessment the next step and preserves sign-in for existing accounts', () => {
     const source = read('src/app/professional-signup/page.jsx')
     expect(source).toContain('https://valoriainstitute.com/journey/continue?stage=assess&taster_id=')
+    expect(source).toContain('TAKE THE FULL VALU ASSESSMENT')
+    expect(source).toContain('Sign in and continue your assessment.')
+    expect(source).not.toContain('COMPLETE MY PROFESSIONAL PROFILE')
     expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
+  })
+
+  test('email confirmation links the exact snapshot and opens the full assessment directly', () => {
+    const callback = read('src/app/auth/callback/page.jsx')
+    const handoff = read('src/app/api/valu-handoff/route.js')
+    expect(callback).toContain('/api/valu-handoff?taster_id=')
+    expect(callback).toContain('window.location.replace(destination.toString())')
+    expect(callback).toContain("destination.searchParams.get('taster_id') !== pendingTasterId")
+    expect(handoff).toContain("tasterQuery.eq('id', requestedTasterId)")
+    expect(handoff).toContain(".eq('user_id', user.id)")
   })
 
   test('pending snapshot claim survives a failed link attempt so the user can retry', () => {
