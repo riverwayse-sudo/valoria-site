@@ -111,6 +111,15 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(handoff).toContain(".eq('user_id', user.id)")
   })
 
+  test('both handoff issuers carry a resume reference so saved full-assessment progress survives sign-in', () => {
+    const handoff = read('src/app/api/valu-handoff/route.js')
+    const continuation = read('src/app/journey/continue/route.js')
+    for (const source of [handoff, continuation]) {
+      expect(source).toContain("get('resume')")
+      expect(source).toMatch(/destinationParams\.set\('resume',\s?resumeToken\)/)
+    }
+  })
+
   test('pending snapshot identity is retained until the dashboard CTA passes it to continuation', () => {
     const source = read('src/app/login/page.jsx')
     expect(source).toContain('Keep pending_taster_id until the dashboard CTA carries this snapshot into continuation.')
