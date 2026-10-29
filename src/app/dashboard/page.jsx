@@ -6,6 +6,7 @@ import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { getValuTier } from '@/lib/brand'
+import { FULL_VALU_ASSESSMENT_CONTINUATION } from '@/lib/valu-assessment-navigation'
 
 // ─── brand tokens — same system as the public profile page ─────────────────
 const GOLD    = '#C9A84C'
@@ -531,7 +532,7 @@ export default function DashboardPage() {
                     <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
                       You haven't completed your VALU Index assessment yet.
                     </p>
-                    <Link href="/journey/continue?stage=assess"
+                    <Link href={FULL_VALU_ASSESSMENT_CONTINUATION}
                       style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
                       TAKE THE ASSESSMENT
                     </Link>
@@ -1059,7 +1060,7 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
   const isListed = listedCapabilities.length > 0
 
   const current = !hasAssessment
-    ? { label:'See your signal', text:'Start VALU and understand where you stand.', href:'/journey/continue?stage=assess' }
+    ? { label:'See your signal', text:'Start VALU and understand where you stand.', href:FULL_VALU_ASSESSMENT_CONTINUATION }
     : !hasProfile
       ? { label:'Build your profile', text:'Tell us about your work so people can understand you.', href:'/profile/onboarding' }
       : !hasCapability
