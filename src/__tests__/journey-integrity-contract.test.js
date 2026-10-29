@@ -57,16 +57,13 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(continuation).not.toContain("return NextResponse.redirect(new URL(ASSESSMENT_ORIGIN+'/',request.url))")
   })
 
-  test('assessment return from login uses the authenticated handoff instead of looping through SSR continuation', () => {
+  test('assessment return from login always lands on dashboard before the user chooses to continue', () => {
     const login = read('src/app/login/page.jsx')
-    expect(login).toContain('isAssessmentReturnRequested')
     expect(login).toContain("target.pathname === '/journey/continue'")
-    expect(login).toContain("fetch('/api/valu-handoff'")
-    expect(login).toContain('Authorization: `Bearer ${session.access_token}`')
-    expect(login).toContain('window.location.replace(assessmentDestination.toString())')
-    expect(login).toContain("assessmentDestination.searchParams.get('full') !== '1'")
-    expect(login).toContain("!assessmentDestination.searchParams.get('taster_id')")
-    expect(login).toContain('supabase.auth.getSession().then')
+    expect(login).toContain("window.location.replace('/dashboard')")
+    expect(login).toContain("pending_taster_id")
+    expect(login).not.toContain('launchAssessmentIfRequested')
+    expect(login).not.toContain("fetch('/api/valu-handoff'")
   })
 
   test('assessment reminder links require account continuation instead of anonymous assessment submission', () => {
@@ -103,13 +100,11 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(handoff).toContain(".eq('user_id', user.id)")
   })
 
-  test('pending snapshot claim survives a failed link attempt so the user can retry', () => {
+  test('pending snapshot identity is retained until the dashboard CTA passes it to continuation', () => {
     const source = read('src/app/login/page.jsx')
-    const failedLink = source.indexOf('if (!linkRes.ok)')
-    const clearPending = source.indexOf("localStorage.removeItem('pending_taster_id')")
-    expect(failedLink).toBeGreaterThan(-1)
-    expect(clearPending).toBeGreaterThan(failedLink)
-    expect(source).toContain('Keep the pending ID so the user can retry')
+    expect(source).toContain('Keep pending_taster_id until the dashboard CTA carries this snapshot into continuation.')
+    expect(source).not.toContain("localStorage.removeItem('pending_taster_id')")
+    expect(read('src/components/Nav.jsx')).toContain("continuation.searchParams.set('taster_id', pendingTasterId)")
   })
 
   test('unowned snapshots require exact email evidence and legacy assessments are never auto-linked by name/role', () => {
@@ -279,4 +274,19 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(monitor).not.toContain("from('valu_assessments').update")
     expect(config).toContain('/api/cron/reconciliation-health')
   })
+  
+  test('dashboard and all primary VALU entry points use authenticated continuation', () => {
+    const dashboard = read('src/app/dashboard/page.jsx')
+    const nav = read('src/components/Nav.jsx')
+    const start = read('src/app/valu/start/page.jsx')
+    const continuation = read('src/app/journey/continue/route.js')
+    expect(dashboard).toContain('AssessmentStartLink')
+    expect(nav).toContain('export function AssessmentStartLink')
+    expect(nav).toContain("continuation.searchParams.set('stage', 'assess')")
+    expect(nav).toContain("continuation.searchParams.set('taster_id', pendingTasterId)")
+    expect(start).toContain('AssessmentStartLink')
+    expect(continuation).toContain("login.searchParams.set('pending_taster_id',requestedTasterId)")
+    expect(continuation).toContain("https://assessment.valoriainstitute.com/")
+  })
+
 })

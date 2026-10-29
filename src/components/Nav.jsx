@@ -76,6 +76,9 @@ export default function Nav() {
   const renderItem = (item, className = 'nav-dropdown-link') => {
     const active = isPathActive(pathname, item.href)
     if (item.external) {
+      if (item.href === NAVIGATION.assessmentUrl) {
+        return <AssessmentStartLink href={item.href} className={`${className}${active ? ' active' : ''}`} onClick={close}>{item.label}</AssessmentStartLink>
+      }
       return <a href={item.href} className={`${className}${active ? ' active' : ''}`} onClick={close}>{item.label}</a>
     }
     return <Link href={item.href} className={`${className}${active ? ' active' : ''}`} onClick={close}>{item.label}</Link>
@@ -108,7 +111,7 @@ export default function Nav() {
 
         {authChecked && user && <li className="nav-account"><Link href="/dashboard" className={`nav-link${isPathActive(pathname, '/dashboard') ? ' active' : ''}`}>Dashboard</Link><NotificationBell userId={user.id} /><button onClick={signOut} className="nav-link nav-signout">Sign Out</button></li>}
         {authChecked && !user && <li><Link href="/login" className={`nav-link${isPathActive(pathname, '/login') ? ' active' : ''}`}>Sign In</Link></li>}
-        <li><a href={cta.href} className="nav-cta">{cta.label}</a></li>
+        <li><AssessmentStartLink href={cta.href} className="nav-cta">{cta.label}</AssessmentStartLink></li>
       </ul>
 
       <button className={`nav-burger${menuOpen ? ' open' : ''}`} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span/><span/><span/></button>
@@ -127,7 +130,48 @@ export default function Nav() {
         <div>{renderItem({ label: 'My Profile', href: `/profile/${user.id}` }, 'nav-mobile-link')}</div>
         <button className="nav-signout" onClick={() => { close(); signOut() }}>Sign Out</button>
       </> : <div>{renderItem({ label: 'Sign In', href: '/login' }, 'nav-mobile-link')}</div>}
-      <a href={cta.href} className="m-cta" onClick={close}>{cta.label}</a>
+      <AssessmentStartLink href={cta.href} className="m-cta" onClick={close}>{cta.label}</AssessmentStartLink>
     </nav>
+  </>
+}
+ 
+// Route every signed-in VALU start through the authenticated continuation endpoint.
+// Anonymous visitors still begin at the configured public taster URL.
+export function AssessmentStartLink({ href = '/valu/assessment/', className, style, children, onClick, ...props }) {
+  const [opening, setOpening] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleClick(event) {
+    if (onClick) onClick(event)
+    if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
+    event.preventDefault()
+    if (opening) return
+    setOpening(true)
+    setError('')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        window.location.assign(href)
+        return
+      }
+      const pendingTasterId = localStorage.getItem('pending_taster_id')
+      const continuation = new URL('/journey/continue', window.location.origin)
+      continuation.searchParams.set('stage', 'assess')
+      if (pendingTasterId) {
+        continuation.searchParams.set('taster_id', pendingTasterId)
+        localStorage.removeItem('pending_taster_id')
+      }
+      window.location.assign(continuation.pathname + continuation.search)
+    } catch (err) {
+      setError(err?.message || 'We could not open your VALU assessment. Please try again.')
+      setOpening(false)
+    }
+  }
+
+  return <>
+    <a href={href} className={className} style={style} onClick={handleClick} aria-busy={opening} {...props}>
+      {opening ? 'Opening VALU…' : children}
+    </a>
+    {error && <span role="alert" style={{ display: 'block', color: '#F09595', fontSize: '12px', marginTop: '6px' }}>{error}</span>}
   </>
 }

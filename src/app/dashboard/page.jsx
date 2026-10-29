@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { AssessmentStartLink } from '@/components/Nav'
 import { supabase } from '@/lib/supabase'
 import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
@@ -531,10 +532,10 @@ export default function DashboardPage() {
                     <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
                       You haven't completed your VALU Index assessment yet.
                     </p>
-                    <a href="https://valoriainstitute.com/valu/assessment/" target="_blank" rel="noopener noreferrer"
+                    <AssessmentStartLink href="/journey/continue?stage=assess"
                       style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
                       TAKE THE ASSESSMENT
-                    </a>
+                    </AssessmentStartLink>
                   </>
                 )}
               </div>
@@ -1059,7 +1060,7 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
   const isListed = listedCapabilities.length > 0
 
   const current = !hasAssessment
-    ? { label:'See your signal', text:'Start VALU and understand where you stand.', href:'https://valoriainstitute.com/valu/assessment/' }
+    ? { label:'See your signal', text:'Start VALU and understand where you stand.', href:'/journey/continue?stage=assess' }
     : !hasProfile
       ? { label:'Build your profile', text:'Tell us about your work so people can understand you.', href:'/profile/onboarding' }
       : !hasCapability
@@ -1076,7 +1077,9 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
           <div style={{ fontSize:'20px', fontWeight:400, color:PARCH, marginTop:7 }}>{current.label}</div>
           <div style={{ fontSize:'12px', color:DIM, marginTop:5, lineHeight:1.5 }}>{current.text}</div>
         </div>
-        <Link href={current.href} style={{ flexShrink:0, padding:'12px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'9px', fontWeight:800, letterSpacing:'.12em' }}>CONTINUE →</Link>
+        {current.href === '/journey/continue?stage=assess'
+          ? <AssessmentStartLink href={current.href} style={{ flexShrink:0, padding:'12px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'9px', fontWeight:800, letterSpacing:'.12em' }}>CONTINUE →</AssessmentStartLink>
+          : <Link href={current.href} style={{ flexShrink:0, padding:'12px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'9px', fontWeight:800, letterSpacing:'.12em' }}>CONTINUE →</Link>}
       </div>
     </section>
   )
