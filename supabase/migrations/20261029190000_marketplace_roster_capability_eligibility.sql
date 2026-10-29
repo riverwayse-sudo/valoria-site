@@ -201,15 +201,20 @@ end;
 $function$;
 
 
--- Rebuild the existing public roster so every current card receives the report-derived field.
+-- Snapshot IDs before refreshing: each refresh deletes and reinserts its roster row.
+-- A stable ID list makes the backfill independent of changes to the scanned relation.
 do $backfill$
 declare
-  roster_row record;
+  professional_ids uuid[];
+  professional_id uuid;
 begin
-  for roster_row in
-    select professional_id from public.marketplace_public_roster
+  select coalesce(array_agg(distinct professional_id order by professional_id), '{}'::uuid[])
+    into professional_ids
+    from public.marketplace_public_roster;
+
+  foreach professional_id in array professional_ids
   loop
-    perform public.refresh_marketplace_public_roster(roster_row.professional_id);
+    perform public.refresh_marketplace_public_roster(professional_id);
   end loop;
 
   -- Include the preserved account even when the prior roster excluded it.
