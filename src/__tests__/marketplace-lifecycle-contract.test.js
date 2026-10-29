@@ -77,8 +77,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(migration).toContain("'A well-balanced capability profile across the five PRIME dimensions.'")
     expect(migration).not.toContain('report_text')
     expect(migration).not.toContain("caps := array['talent']::text[]")
-    expect(migration).toContain('array_agg(distinct professional_id order by professional_id)')
-    expect(migration).toContain('foreach professional_id in array professional_ids')
+    expect(migration).toContain('array_agg(distinct mpr.professional_id order by mpr.professional_id)')
+    expect(migration).toContain('foreach roster_professional_id in array professional_ids')
   })
 
   test('profile onboarding does not submit platform-owned governance fields', () => {
