@@ -73,13 +73,15 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(source).toContain('email_confirmed_at')
   })
 
-  test('professional signup makes the full assessment the next step and preserves sign-in for existing accounts', () => {
+  test('professional signup preserves the snapshot but sends authenticated users to the dashboard before full assessment', () => {
     const source = read('src/app/professional-signup/page.jsx')
     expect(source).toContain('https://valoriainstitute.com/journey/continue?stage=assess&taster_id=')
     expect(source).toContain('TAKE THE FULL VALU ASSESSMENT')
     expect(source).toContain('Sign in and continue your assessment.')
     expect(source).toContain('continueSignedInUser')
-    expect(source).toContain("fetch(`/api/valu-handoff?taster_id=")
+    expect(source).toContain('/dashboard?welcome=profile&pending_taster_id=')
+    expect(source).toContain("localStorage.setItem('pending_taster_id',tasterId)")
+    expect(source).not.toContain("fetch(`/api/valu-handoff?taster_id=")
     expect(source).not.toContain('COMPLETE MY PROFESSIONAL PROFILE')
     expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
   })
