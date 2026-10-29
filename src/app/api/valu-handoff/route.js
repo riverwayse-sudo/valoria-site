@@ -22,12 +22,14 @@ export async function GET(request) {
   const user = userData.user
   if (!user.email_confirmed_at) return NextResponse.json({ error:'Confirm your email before opening the full VALU assessment.' }, { status:403 })
   const requestedTasterId = new URL(request.url).searchParams.get('taster_id')?.trim()
-  let tasterQuery = admin.from('taster_sessions').select('id,name,role,experience,completed_at').eq('user_id', user.id).not('completed_at','is',null)
-  if (requestedTasterId) tasterQuery = tasterQuery.eq('id', requestedTasterId)
-  else tasterQuery = tasterQuery.order('completed_at',{ascending:false}).limit(1)
-  const { data:taster, error:tasterError } = await tasterQuery.maybeSingle()
+  // The authenticated handoff must name the exact saved snapshot. Never silently
+  // substitute the latest taster or send a signed-in user to the assessment homepage.
+  if (!requestedTasterId) return NextResponse.json({ error:'Your saved assessment reference is missing. Return to your dashboard and continue from your saved snapshot.' }, { status:400 })
+  const { data:taster, error:tasterError } = await admin.from('taster_sessions')
+    .select('id,name,role,experience,completed_at')
+    .eq('user_id', user.id).eq('id', requestedTasterId).not('completed_at','is',null).maybeSingle()
   if (tasterError) return NextResponse.json({ error:'Could not verify your completed VALU snapshot.' }, { status:502 })
-  if (!taster) return NextResponse.json({ url:'https://assessment.valoriainstitute.com/' })
+  if (!taster) return NextResponse.json({ error:'The requested saved snapshot could not be verified for this account. Return to your dashboard or contact Valoria support.' }, { status:404 })
   const { data:candidate, error:candidateError } = await admin.from('taster_identity_candidates')
     .select('candidate_email,candidate_role,linked_user_id').eq('taster_id', taster.id).maybeSingle()
   if (candidateError) return NextResponse.json({ error:'Could not verify snapshot identity evidence.' }, { status:502 })
