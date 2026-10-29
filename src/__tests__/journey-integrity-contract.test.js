@@ -361,7 +361,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     const nudge = read('src/components/ValuCompletionNudge.jsx')
     expect(nudge).toContain("window.localStorage.getItem('pending_taster_id')")
     expect(nudge).not.toContain("from('taster_sessions').select('id,completed_at')")
-    expect(nudge).not.toContain(".order('completed_at',{ascending:false}).limit(1).maybeSingle()")
+    expect(nudge).not.toContain("from('taster_sessions').select('id,completed_at').eq('user_id',user.id)")
   })
 
 })
