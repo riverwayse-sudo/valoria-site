@@ -106,7 +106,11 @@ export default function Nav() {
             </div>
           </li>
         ) : (
-          <li key={item.label}>{item.href.startsWith('http') ? <a href={item.href} className={`nav-link${isPathActive(pathname, item.href) ? ' active' : ''}`}>{item.label}</a> : <Link href={item.href} className={`nav-link${isPathActive(pathname, item.href) ? ' active' : ''}`}>{item.label}</Link>}</li>
+          <li key={item.label}>{item.href === NAVIGATION.assessmentUrl
+          ? <AssessmentStartLink href={item.href} className={`nav-link${isPathActive(pathname, item.href) ? ' active' : ''}`}>{item.label}</AssessmentStartLink>
+          : item.href.startsWith('http')
+            ? <a href={item.href} className={`nav-link${isPathActive(pathname, item.href) ? ' active' : ''}`}>{item.label}</a>
+            : <Link href={item.href} className={`nav-link${isPathActive(pathname, item.href) ? ' active' : ''}`}>{item.label}</Link>}</li>
         ))}
 
         {authChecked && user && <li className="nav-account"><Link href="/dashboard" className={`nav-link${isPathActive(pathname, '/dashboard') ? ' active' : ''}`}>Dashboard</Link><NotificationBell userId={user.id} /><button onClick={signOut} className="nav-link nav-signout">Sign Out</button></li>}
