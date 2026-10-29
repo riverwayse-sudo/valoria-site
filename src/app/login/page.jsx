@@ -25,6 +25,11 @@ export default function LoginPage() {
     const requestedReturnTo = params.get('returnTo') || ''
     if (requestedReturnTo.startsWith('/')) setReturnTo(requestedReturnTo)
     const pendingTasterId = params.get('pending_taster_id')
+      || localStorage.getItem('pending_taster_id')
+      || (() => {
+        try { return new URL(requestedReturnTo, window.location.origin).searchParams.get('taster_id') }
+        catch { return null }
+      })()
     if (pendingTasterId) localStorage.setItem('pending_taster_id', pendingTasterId)
 
     if (identityHash) {
@@ -101,7 +106,10 @@ export default function LoginPage() {
 
       // Use the existing authenticated handoff endpoint. Do not send the candidate
       // through the SSR continuation route again, which can recreate the login loop.
-      const handoffRes = await fetch('/api/valu-handoff', {
+      const handoffPath = pendingTasterId
+        ? `/api/valu-handoff?taster_id=${encodeURIComponent(pendingTasterId)}`
+        : '/api/valu-handoff'
+      const handoffRes = await fetch(handoffPath, {
         method: 'GET',
         headers: { Authorization: `Bearer ${session.access_token}` },
         cache: 'no-store',
@@ -113,6 +121,9 @@ export default function LoginPage() {
       const assessmentDestination = new URL(handoff.url, window.location.origin)
       if (assessmentDestination.searchParams.get('full') !== '1' || !assessmentDestination.searchParams.get('taster_id')) {
         throw new Error('Your completed 9-question snapshot is not yet linked to this account. Please return to your Valoria dashboard or contact support.')
+      }
+      if (pendingTasterId && assessmentDestination.searchParams.get('taster_id') !== pendingTasterId) {
+        throw new Error('We could not verify the exact VALU snapshot you started with. Please return to your dashboard and try again.')
       }
       window.location.replace(assessmentDestination.toString())
       return true
