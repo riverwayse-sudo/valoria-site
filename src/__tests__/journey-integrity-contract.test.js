@@ -133,6 +133,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
   test('email confirmation links the exact snapshot and returns the user to the dashboard before assessment', () => {
     const callback = read('src/app/auth/callback/page.jsx')
     const dashboard = read('src/app/dashboard/page.jsx')
+    const profileSetup = read('src/app/profile/setup/page.jsx')
     const continuation = read('src/app/journey/continue/route.js')
     const handoff = read('src/app/api/valu-handoff/route.js')
     expect(callback).toContain("localStorage.setItem('pending_taster_id', pendingTasterId)")
@@ -144,6 +145,8 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(dashboard).toContain("new URLSearchParams(window.location.search).get('pending_taster_id')")
     expect(dashboard).toContain("window.localStorage.getItem('pending_taster_id')")
     expect(dashboard).toContain('`${FULL_VALU_ASSESSMENT_CONTINUATION}&taster_id=${encodeURIComponent(pendingTasterId)}`')
+    expect(profileSetup).toContain("window.localStorage.getItem('pending_taster_id')")
+    expect(profileSetup).toContain('`${FULL_VALU_ASSESSMENT_CONTINUATION}&taster_id=${encodeURIComponent(pendingTasterId)}`')
     expect(continuation).toContain('requestedTasterId')
     expect(handoff).toContain(".eq('user_id', user.id).eq('id', requestedTasterId).not('completed_at','is',null).maybeSingle()")
     expect(handoff).toContain(".eq('user_id', user.id)")
