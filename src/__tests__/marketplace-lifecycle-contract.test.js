@@ -37,6 +37,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('facilitator: byTrack.facilitator.size')
   })
 
+  test('open marketplace directories refresh server-rendered counts automatically', () => {
+    const source = read('src/components/MarketplaceDirectory.jsx')
+    expect(source).toContain('useRouter')
+    expect(source).toContain('router.refresh()')
+    expect(source).toContain('window.setInterval(refreshWhenVisible, 30_000)')
+    expect(source).toContain("document.addEventListener('visibilitychange', refreshWhenVisible)")
+    expect(source).toContain('window.clearInterval(interval)')
+  })
+
   test('profile onboarding does not submit platform-owned governance fields', () => {
     const source = read('src/app/profile/setup/page.jsx')
     const start = source.indexOf('async function saveProgress')
