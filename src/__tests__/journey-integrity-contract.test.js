@@ -345,4 +345,23 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(continuation).not.toContain("query=query.order('completed_at',{ascending:false}).limit(1)")
   })
 
+  test('assessment retry keeps the exact snapshot reference until handoff validation succeeds', () => {
+    const login = read('src/app/login/page.jsx')
+    const linkSuccess = login.indexOf("if (!linkRes.ok) throw new Error(linkData.error || 'Your VALU snapshot could not be linked to this account.')")
+    const clearPendingId = login.indexOf("localStorage.removeItem('pending_taster_id')", linkSuccess)
+    const validateDestination = login.indexOf("assessmentDestination.searchParams.get('taster_id') !== pendingTasterId", linkSuccess)
+    const redirect = login.indexOf('window.location.replace(assessmentDestination.toString())', linkSuccess)
+    expect(linkSuccess).toBeGreaterThan(-1)
+    expect(validateDestination).toBeGreaterThan(linkSuccess)
+    expect(clearPendingId).toBeGreaterThan(validateDestination)
+    expect(redirect).toBeGreaterThan(clearPendingId)
+  })
+
+  test('completion nudge never infers a snapshot by selecting the newest taster', () => {
+    const nudge = read('src/components/ValuCompletionNudge.jsx')
+    expect(nudge).toContain("window.localStorage.getItem('pending_taster_id')")
+    expect(nudge).not.toContain("from('taster_sessions').select('id,completed_at')")
+    expect(nudge).not.toContain(".order('completed_at',{ascending:false}).limit(1).maybeSingle()")
+  })
+
 })
