@@ -96,7 +96,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(callback).not.toContain('window.location.replace(destination.toString())')
     expect(dashboard).toContain('START FULL VALU ASSESSMENT')
     expect(dashboard).toContain('/journey/continue?stage=assess&taster_id=')
-    expect(continuation).toContain('tasterQuery')
+    expect(continuation).toContain('requestedTasterId')
     expect(handoff).toContain("tasterQuery.eq('id', requestedTasterId)")
     expect(handoff).toContain(".eq('user_id', user.id)")
   })
