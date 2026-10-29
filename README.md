@@ -33,7 +33,7 @@ The site uses the approved institutional palette and Raleway typography. Merit t
 
 ## VALU funnel
 
-The public entry point is the **15-question directional VALU snapshot**. It is a teaser/acquisition experience and does **not** establish the official VALU Index; marketplace eligibility requires the current authoritative assessment.
+The public entry point is the **9-question directional VALU snapshot**. It is a teaser/acquisition experience and does **not** establish the official VALU Index; marketplace eligibility requires the current authoritative assessment.
 
 After signup, a professional completes the authoritative full assessment and profile. The official VALU Index and marketplace eligibility are established only by the authoritative assessment lifecycle in the platform application.
 
