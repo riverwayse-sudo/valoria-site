@@ -7,6 +7,7 @@ export default function ValuCompletionNudge(){
   const [show,setShow]=useState(false)
   const [assessed,setAssessed]=useState(false)
   const [assessmentStarted,setAssessmentStarted]=useState(false)
+  const [pendingTasterId,setPendingTasterId]=useState(null)
   const closeButtonRef=useRef(null)
 
   useEffect(()=>{
@@ -19,10 +20,11 @@ export default function ValuCompletionNudge(){
       const {data:{user}}=await supabase.auth.getUser()
       if(!user||!active)return
 
-      const [{data:profile},{data:assessment},{data:latestSession}]=await Promise.all([
+      const [{data:profile},{data:assessment},{data:latestSession},{data:completedTaster}]=await Promise.all([
         supabase.from('professional_profiles').select('profile_complete').eq('id',user.id).maybeSingle(),
         supabase.from('valu_assessments').select('id,total_score,completed_at').eq('user_id',user.id).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle(),
-        supabase.from('assessment_sessions').select('id,completed_at,updated_at').eq('user_id',user.id).order('updated_at',{ascending:false}).limit(1).maybeSingle()
+        supabase.from('assessment_sessions').select('id,completed_at,updated_at').eq('user_id',user.id).order('updated_at',{ascending:false}).limit(1).maybeSingle(),
+        supabase.from('taster_sessions').select('id,completed_at').eq('user_id',user.id).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle()
       ])
 
       if(!profile||profile.profile_complete)return
@@ -31,6 +33,7 @@ export default function ValuCompletionNudge(){
         const started = !!latestSession?.id && !latestSession?.completed_at
         setAssessmentStarted(started)
         setAssessed(fullAssessmentComplete)
+        setPendingTasterId(completedTaster?.id || null)
         setShow(true)
       }
     }
@@ -63,11 +66,11 @@ export default function ValuCompletionNudge(){
       <p style={S.copy}>
         {assessed
           ? 'Your professional profile is ready to complete. Finish your details to establish your marketplace presence. Eligibility and public listing are determined separately by Valoria’s requirements.'
-          : assessmentStarted
-            ? 'You have already started the VALU Index assessment. Continue where you left off; your progress is saved.'
-            : 'Start the VALU Index assessment to understand your professional capability and take the next step with Valoria.'}
+          : (assessmentStarted || pendingTasterId)
+            ? 'Your saved 9-question snapshot is ready. Continue to the full VALU assessment without repeating the questions.'
+            : 'Start the 9-question VALU snapshot to understand your professional capability and take the next step with Valoria.'}
       </p>
-      <a href={assessed?"/profile/setup":"/valu/start"} style={S.button}>{assessed?"COMPLETE MY PROFILE":assessmentStarted?"CONTINUE THE VALU INDEX":"START THE VALU INDEX"} →</a>
+      <a href={assessed?"/profile/setup":(assessmentStarted || pendingTasterId)?`/journey/continue?stage=assess${pendingTasterId?`&taster_id=${encodeURIComponent(pendingTasterId)}`:''}`:"/valu/start"} style={S.button}>{assessed?"COMPLETE MY PROFILE":(assessmentStarted || pendingTasterId)?"CONTINUE FULL VALU ASSESSMENT":"START THE 9-QUESTION SNAPSHOT"} →</a>
       <button onClick={dismiss} style={S.later}>Remind me later</button>
     </div>
   </div>
