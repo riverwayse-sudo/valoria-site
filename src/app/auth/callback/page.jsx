@@ -65,12 +65,15 @@ function AuthCallbackFlow() {
           })
           const data = await linkRes.json().catch(() => ({}))
           if (!linkRes.ok) throw new Error(data.error || 'Your VALU result could not be linked yet.')
-          localStorage.removeItem('pending_taster_id')
+          // Keep the exact linked taster available for the dashboard's
+          // assessment CTA. Confirmation grants dashboard access; it does not
+          // force the user into the full assessment.
+          localStorage.setItem('pending_taster_id', pendingTasterId)
           localStorage.removeItem('pending_taster_name')
           localStorage.removeItem('pending_taster_role')
-          setMessage('Email confirmed. You’re signed in and your VALU snapshot is connected.')
-          await new Promise(resolve => setTimeout(resolve, 900))
-          if (!cancelled) router.replace('/dashboard?welcome=profile')
+          setMessage('Email confirmed. You’re signed in. Taking you to your dashboard…')
+          await new Promise(resolve => setTimeout(resolve, 500))
+          if (!cancelled) router.replace(`/dashboard?welcome=profile&pending_taster_id=${encodeURIComponent(pendingTasterId)}`)
           return
         }
 
