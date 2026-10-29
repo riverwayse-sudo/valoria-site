@@ -30,20 +30,23 @@ export default function ValuCompletionNudge(){
       const {data:{user}}=await supabase.auth.getUser()
       if(!user||!active)return
 
-      const [{data:profile},{data:assessment},{data:latestSession},{data:completedTaster}]=await Promise.all([
+      const [{data:profile},{data:assessment},{data:latestSession}]=await Promise.all([
         supabase.from('professional_profiles').select('profile_complete').eq('id',user.id).maybeSingle(),
         supabase.from('valu_assessments').select('id,total_score,completed_at').eq('user_id',user.id).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle(),
-        supabase.from('assessment_sessions').select('id,completed_at,updated_at').eq('user_id',user.id).order('updated_at',{ascending:false}).limit(1).maybeSingle(),
-        supabase.from('taster_sessions').select('id,completed_at').eq('user_id',user.id).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle()
+        supabase.from('assessment_sessions').select('id,completed_at,updated_at').eq('user_id',user.id).order('updated_at',{ascending:false}).limit(1).maybeSingle()
       ])
 
       if(!profile||profile.profile_complete)return
       const fullAssessmentComplete=!!assessment?.completed_at
+      // Use only the snapshot the user explicitly carried through confirmation.
+      // Never infer a handoff target by selecting the newest taster in the account.
+      let exactPendingTasterId=null
+      try { exactPendingTasterId=window.localStorage.getItem('pending_taster_id')||null } catch {}
       if(active){
         const started=!!latestSession?.id&&!latestSession?.completed_at
         setAssessmentStarted(started)
         setAssessed(fullAssessmentComplete)
-        setPendingTasterId(completedTaster?.id||null)
+        setPendingTasterId(exactPendingTasterId)
         setShow(true)
       }
     }
