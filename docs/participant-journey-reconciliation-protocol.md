@@ -4,7 +4,7 @@
 
 - One authenticated account maps to one `professional_profiles` row.
 - A professional may have multiple `professional_capabilities`; capabilities are not duplicate people.
-- `taster_sessions` are historical 15-question snapshots. They grant **Basic** access only when existing listing rules allow it.
+- `taster_sessions` are historical 9-question snapshots. They grant **Basic** access only when existing listing rules allow it.
 - `valu_assessments` are authoritative full VALU Index assessments. Preserve stored scores, answers, assessment/scoring/rubric versions, completion times and reports.
 - `professional_journey` is derived state, not an identity source. Refresh it only after ownership is verified.
 - `marketplace_public_roster` is a projection/cache, not the canonical source of identity.
