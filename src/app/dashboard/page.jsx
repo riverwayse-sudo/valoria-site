@@ -228,6 +228,21 @@ export default function DashboardPage() {
     </div>
   )
 
+  const pendingTasterId = typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search).get('pending_taster_id')
+    : null
+
+  if (!profile && pendingTasterId) return (
+    <div style={{ minHeight:'100vh', background:DARK, color:PARCH, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'18px', padding:'24px', fontFamily:'var(--font,Raleway,sans-serif)' }}>
+      <div style={{ color:GOLD, fontSize:'11px', fontWeight:700, letterSpacing:'.18em' }}>VALORIA INSTITUTE</div>
+      <h1 style={{ maxWidth:'620px', textAlign:'center', fontSize:'clamp(28px,4vw,42px)', lineHeight:1.15, margin:0 }}>Your professional journey starts here.</h1>
+      <p style={{ maxWidth:'560px', textAlign:'center', color:DIM, fontSize:'15px', lineHeight:1.8, margin:0 }}>Your email is confirmed and your initial VALU snapshot is connected. Continue to the full assessment when you’re ready. Your saved snapshot will be preserved.</p>
+      <Link href={`/journey/continue?stage=assess&taster_id=${encodeURIComponent(pendingTasterId)}`} style={{ padding:'14px 24px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:800, letterSpacing:'.08em', textDecoration:'none', borderRadius:'999px' }}>START FULL VALU ASSESSMENT →</Link>
+      <Link href="/marketplace" style={{ color:PARCH, fontSize:'13px', textDecoration:'underline', textUnderlineOffset:'4px' }}>Explore Valoria first</Link>
+      <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')} style={{ marginTop:'10px', background:'transparent', border:'1px solid rgba(201,168,76,.28)', color:DIM, borderRadius:'999px', padding:'9px 18px', cursor:'pointer', fontFamily:'inherit' }}>Sign Out</button>
+    </div>
+  )
+
   if (!profile) return (
     <div style={{ minHeight:'100vh', background: DARK, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'16px', fontFamily:'var(--font,Raleway,sans-serif)', color: PARCH }}>
       <p style={{ fontSize:'14px', fontWeight:300, color: DIM }}>No profile found yet.</p>
