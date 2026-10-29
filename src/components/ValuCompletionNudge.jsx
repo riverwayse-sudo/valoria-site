@@ -59,9 +59,9 @@ export default function ValuCompletionNudge(){
   return <div style={S.overlay} role="dialog" aria-modal="true" aria-labelledby="valu-nudge-title">
     <div style={S.card}>
       <button ref={closeButtonRef} onClick={dismiss} aria-label="Close" style={S.close}>×</button>
-      <div style={S.eyebrow}>{assessed?'VALU INDEX ASSESSMENT COMPLETE':assessmentStarted?'ASSESSMENT IN PROGRESS':'YOUR NEXT STEP'}</div>
+      <div style={S.eyebrow}>{assessed?'VALU INDEX ASSESSMENT COMPLETE':(assessmentStarted||pendingTasterId)?'ASSESSMENT IN PROGRESS':'YOUR NEXT STEP'}</div>
       <h2 id="valu-nudge-title" style={S.title}>
-        {assessed?'Your VALU Index assessment is complete.':assessmentStarted?'Continue your VALU Index assessment.':'Start your VALU Index assessment.'}
+        {assessed?'Your VALU Index assessment is complete.':(assessmentStarted||pendingTasterId)?'Continue your full VALU Index assessment.':'Start your 9-question VALU snapshot.'}
       </h2>
       <p style={S.copy}>
         {assessed
