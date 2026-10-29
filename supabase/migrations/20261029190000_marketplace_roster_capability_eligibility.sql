@@ -2,7 +2,7 @@
 -- Full-assessment professionals remain in All professionals when no selected capability is eligible.
 -- Category pages include only selected, active, eligible capabilities; Basic/taster rules stay separate.
 
--- Marketplace cards must use a genuine VALU Index report insight, never participant-written bio/headline.
+-- Marketplace card descriptors must come from canonical structured VALU Index PRIME scores, never participant-written copy.
 alter table public.marketplace_public_roster
   add column if not exists assessment_summary text;
 
