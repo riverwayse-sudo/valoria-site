@@ -62,7 +62,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(login).toContain('isAssessmentReturnRequested')
     expect(login).toContain("target.pathname === '/journey/continue'")
     expect(login).toContain('fetch(handoffPath')
-    expect(login).toContain("'/api/valu-handoff'")
+    expect(login).toContain('const handoffPath = `/api/valu-handoff?taster_id=${encodeURIComponent(pendingTasterId)}`')
     expect(login).toContain('Authorization: `Bearer ${session.access_token}`')
     expect(login).toContain('window.location.replace(assessmentDestination.toString())')
     expect(login).toContain('if (!pendingTasterId)')
@@ -145,7 +145,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(dashboard).toContain("window.localStorage.getItem('pending_taster_id')")
     expect(dashboard).toContain('`${FULL_VALU_ASSESSMENT_CONTINUATION}&taster_id=${encodeURIComponent(pendingTasterId)}`')
     expect(continuation).toContain('requestedTasterId')
-    expect(handoff).toContain("tasterQuery.eq('id', requestedTasterId)")
+    expect(handoff).toContain(".eq('user_id', user.id).eq('id', requestedTasterId).not('completed_at','is',null).maybeSingle()")
     expect(handoff).toContain(".eq('user_id', user.id)")
   })
 
