@@ -84,6 +84,20 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(handoff).not.toContain("new URL('https://valoriainstitute.com/valu/assessment/')")
   })
 
+  test('public VALU entry points use the canonical assessment host', () => {
+    const pages = [
+      read('src/app/waitlist/page.jsx'),
+      read('src/app/prime/page.jsx'),
+      read('src/app/signup/page.jsx'),
+      read('src/app/dashboard/page.jsx'),
+      read('src/app/professional-signup/page.jsx'),
+      read('src/app/profile/setup/page.jsx'),
+      read('src/app/profile/[id]/ProfileClient.jsx'),
+    ].join('\\n')
+    expect(pages).not.toContain('https://valoriainstitute.com/valu/assessment/')
+    expect(pages).toContain('https://assessment.valoriainstitute.com/')
+  })
+
   test('assessment reminder links require account continuation instead of anonymous assessment submission', () => {
     const source = read('src/app/api/cron/valu-reminders/route.js')
     expect(source).toContain('/journey/continue?stage=assess&taster_id=')
