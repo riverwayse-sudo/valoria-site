@@ -206,15 +206,15 @@ $function$;
 do $backfill$
 declare
   professional_ids uuid[];
-  professional_id uuid;
+  roster_professional_id uuid;
 begin
-  select coalesce(array_agg(distinct professional_id order by professional_id), '{}'::uuid[])
+  select coalesce(array_agg(distinct mpr.professional_id order by mpr.professional_id), '{}'::uuid[])
     into professional_ids
-    from public.marketplace_public_roster;
+    from public.marketplace_public_roster mpr;
 
-  foreach professional_id in array professional_ids
+  foreach roster_professional_id in array professional_ids
   loop
-    perform public.refresh_marketplace_public_roster(professional_id);
+    perform public.refresh_marketplace_public_roster(roster_professional_id);
   end loop;
 
   -- Include the preserved account even when the prior roster excluded it.
