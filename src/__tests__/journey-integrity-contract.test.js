@@ -67,6 +67,8 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(login).toContain('window.location.replace(assessmentDestination.toString())')
     expect(login).toContain('assessmentDestination.searchParams.get(\'taster_id\') !== pendingTasterId')
     expect(login).toContain('supabase.auth.getSession().then')
+    expect(login).not.toContain('href="https://valoriainstitute.com/valu/assessment/"')
+    expect(login).toContain('href="https://assessment.valoriainstitute.com/"')
   })
 
   test('full assessment handoffs use the canonical assessment host and preserve the exact taster ID', () => {
