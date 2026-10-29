@@ -61,10 +61,25 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     const login = read('src/app/login/page.jsx')
     expect(login).toContain('isAssessmentReturnRequested')
     expect(login).toContain("target.pathname === '/journey/continue'")
-    expect(login).toContain("fetch('/api/valu-handoff'")
+    expect(login).toContain('fetch(handoffPath')
+    expect(login).toContain("'/api/valu-handoff'")
     expect(login).toContain('Authorization: `Bearer ${session.access_token}`')
-    expect(login).toContain('window.location.replace(handoff.url)')
+    expect(login).toContain('window.location.replace(assessmentDestination.toString())')
+    expect(login).toContain('assessmentDestination.searchParams.get(\'taster_id\') !== pendingTasterId')
     expect(login).toContain('supabase.auth.getSession().then')
+  })
+
+  test('full assessment handoffs use the canonical assessment host and preserve the exact taster ID', () => {
+    const continuation = read('src/app/journey/continue/route.js')
+    const handoff = read('src/app/api/valu-handoff/route.js')
+    const login = read('src/app/login/page.jsx')
+    expect(continuation).toContain("const ASSESSMENT_ORIGIN='https://assessment.valoriainstitute.com/'")
+    expect(handoff).toContain("new URL('https://assessment.valoriainstitute.com/')")
+    expect(handoff).toContain("tasterQuery.eq('id', requestedTasterId)")
+    expect(login).toContain('/api/valu-handoff?taster_id=')
+    expect(login).toContain('new URL(requestedReturnTo, window.location.origin).searchParams.get(\'taster_id\')')
+    expect(continuation).not.toContain("const ASSESSMENT_ORIGIN='https://valoriainstitute.com/valu/assessment/'")
+    expect(handoff).not.toContain("new URL('https://valoriainstitute.com/valu/assessment/')")
   })
 
   test('assessment reminder links require account continuation instead of anonymous assessment submission', () => {
