@@ -84,13 +84,14 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(handoff).not.toContain("new URL('https://valoriainstitute.com/valu/assessment/')")
   })
 
-  test('completion nudge sends saved tasters to the full assessment, not the public start page', () => {
+  test('completion nudge is contextual to the dashboard and never interrupts another active route', () => {
     const nudge = read('src/components/ValuCompletionNudge.jsx')
-    expect(nudge).toContain("supabase.from('taster_sessions').select('id,completed_at')")
-    expect(nudge).toContain('/journey/continue?stage=assess')
-    expect(nudge).toContain('taster_id=\u0024{encodeURIComponent(pendingTasterId)}')
-    expect(nudge).toContain('START THE 9-QUESTION SNAPSHOT')
-    expect(nudge).toContain('CONTINUE FULL VALU ASSESSMENT')
+    expect(nudge).toContain("import { usePathname } from 'next/navigation'")
+    expect(nudge).toContain("if(pathname!=='/dashboard')")
+    expect(nudge).toContain("if(!show||pathname!=='/dashboard')return null")
+    expect(nudge).toContain('Your saved progress is preserved.')
+    expect(nudge).toContain('CONTINUE SAVED ASSESSMENT')
+    expect(nudge).not.toContain('Start your VALU Index assessment.')
   })
 
   test('public VALU entry points use the canonical assessment host', () => {
