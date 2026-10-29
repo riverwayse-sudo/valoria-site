@@ -1,9 +1,11 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 const GOLD='#C9A84C', DARK='#0F0F1A', PARCH='#F7F4EE'
 export default function ValuCompletionNudge(){
+  const pathname=usePathname()
   const [show,setShow]=useState(false)
   const [assessed,setAssessed]=useState(false)
   const [assessmentStarted,setAssessmentStarted]=useState(false)
@@ -12,6 +14,14 @@ export default function ValuCompletionNudge(){
 
   useEffect(()=>{
     let active=true
+
+    // This is a dashboard coachmark, not a site-wide redirect modal.
+    // Never interrupt assessment, report, profile setup, or another active route.
+    if(pathname!=='/dashboard'){
+      setShow(false)
+      return ()=>{active=false}
+    }
+
     async function load(){
       try{
         if(sessionStorage.getItem('valu_nudge_dismissed_today')===new Date().toISOString().slice(0,10))return
@@ -30,16 +40,16 @@ export default function ValuCompletionNudge(){
       if(!profile||profile.profile_complete)return
       const fullAssessmentComplete=!!assessment?.completed_at
       if(active){
-        const started = !!latestSession?.id && !latestSession?.completed_at
+        const started=!!latestSession?.id&&!latestSession?.completed_at
         setAssessmentStarted(started)
         setAssessed(fullAssessmentComplete)
-        setPendingTasterId(completedTaster?.id || null)
+        setPendingTasterId(completedTaster?.id||null)
         setShow(true)
       }
     }
     load()
     return()=>{active=false}
-  },[])
+  },[pathname])
 
   useEffect(()=>{
     if(!show)return undefined
@@ -49,7 +59,7 @@ export default function ValuCompletionNudge(){
     return()=>window.removeEventListener('keydown',onKeyDown)
   },[show])
 
-  if(!show)return null
+  if(!show||pathname!=='/dashboard')return null
 
   function dismiss(){
     try{sessionStorage.setItem('valu_nudge_dismissed_today',new Date().toISOString().slice(0,10))}catch{}
@@ -59,18 +69,18 @@ export default function ValuCompletionNudge(){
   return <div style={S.overlay} role="dialog" aria-modal="true" aria-labelledby="valu-nudge-title">
     <div style={S.card}>
       <button ref={closeButtonRef} onClick={dismiss} aria-label="Close" style={S.close}>×</button>
-      <div style={S.eyebrow}>{assessed?'VALU INDEX ASSESSMENT COMPLETE':(assessmentStarted||pendingTasterId)?'ASSESSMENT IN PROGRESS':'YOUR NEXT STEP'}</div>
+      <div style={S.eyebrow}>{assessed?'VALU INDEX ASSESSMENT COMPLETE':(assessmentStarted||pendingTasterId)?'YOUR NEXT STEP':'DASHBOARD GUIDANCE'}</div>
       <h2 id="valu-nudge-title" style={S.title}>
-        {assessed?'Your VALU Index assessment is complete.':(assessmentStarted||pendingTasterId)?'Continue your full VALU Index assessment.':'Start your 9-question VALU snapshot.'}
+        {assessed?'Your VALU Index assessment is complete.':(assessmentStarted||pendingTasterId)?'Your saved assessment is ready to continue.':'Your next step is the 9-question VALU snapshot.'}
       </h2>
       <p style={S.copy}>
         {assessed
-          ? 'Your professional profile is ready to complete. Finish your details to establish your marketplace presence. Eligibility and public listing are determined separately by Valoria’s requirements.'
-          : (assessmentStarted || pendingTasterId)
-            ? 'Your saved 9-question snapshot is ready. Continue to the full VALU assessment without repeating the questions.'
-            : 'Start the 9-question VALU snapshot to understand your professional capability and take the next step with Valoria.'}
+          ? 'Your assessment is complete. Finish your professional profile to continue your Valoria journey.'
+          : (assessmentStarted||pendingTasterId)
+            ? 'Your saved progress is preserved. Continue from your existing snapshot; you do not need to repeat completed questions.'
+            : 'Begin with the 9-question snapshot. Your result will guide the next step in your Valoria journey.'}
       </p>
-      <a href={assessed?"/profile/setup":(assessmentStarted || pendingTasterId)?`/journey/continue?stage=assess${pendingTasterId?`&taster_id=${encodeURIComponent(pendingTasterId)}`:''}`:"/valu/start"} style={S.button}>{assessed?"COMPLETE MY PROFILE":(assessmentStarted || pendingTasterId)?"CONTINUE FULL VALU ASSESSMENT":"START THE 9-QUESTION SNAPSHOT"} →</a>
+      <a href={assessed?"/profile/setup":(assessmentStarted||pendingTasterId)?`/journey/continue?stage=assess${pendingTasterId?`&taster_id=${encodeURIComponent(pendingTasterId)}`:''}`:"/valu/start"} style={S.button}>{assessed?"COMPLETE MY PROFILE":(assessmentStarted||pendingTasterId)?"CONTINUE SAVED ASSESSMENT":"START THE 9-QUESTION SNAPSHOT"} →</a>
       <button onClick={dismiss} style={S.later}>Remind me later</button>
     </div>
   </div>
