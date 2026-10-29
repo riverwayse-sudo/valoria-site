@@ -102,9 +102,8 @@ export default function LoginPage() {
         })
         const linkData = await linkRes.json().catch(() => ({}))
         if (!linkRes.ok) throw new Error(linkData.error || 'Your VALU snapshot could not be linked to this account.')
-        localStorage.removeItem('pending_taster_id')
-        localStorage.removeItem('pending_taster_name')
-        localStorage.removeItem('pending_taster_role')
+        // Keep the exact snapshot ID until the signed handoff has been verified.
+        // If handoff fails transiently, the user can retry without losing their place.
       }
 
       // Use the existing authenticated handoff endpoint. Do not send the candidate
@@ -126,6 +125,9 @@ export default function LoginPage() {
       if (pendingTasterId && assessmentDestination.searchParams.get('taster_id') !== pendingTasterId) {
         throw new Error('We could not verify the exact VALU snapshot you started with. Please return to your dashboard and try again.')
       }
+      localStorage.removeItem('pending_taster_id')
+      localStorage.removeItem('pending_taster_name')
+      localStorage.removeItem('pending_taster_role')
       window.location.replace(assessmentDestination.toString())
       return true
     } catch (err) {
