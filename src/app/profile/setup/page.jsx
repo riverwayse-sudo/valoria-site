@@ -138,6 +138,7 @@ function ProfileSetupForm() {
     return raw ? raw.split(',').filter(Boolean) : []
   }, [searchParams])
   const [user, setUser] = useState(null)
+  const [pendingTasterId, setPendingTasterId] = useState('')
   const [ready, setReady] = useState(false)
   const [screenIndex, setScreenIndex] = useState(0)
   const [saving, setSaving] = useState(false)
@@ -177,6 +178,17 @@ function ProfileSetupForm() {
   const sectionNames = [...new Set(screens.map(s => s.section).filter(Boolean))].filter(s => s !== 'Review')
   const sectionStarts = sectionNames.map(name => screens.findIndex(s => s.section === name))
   const currentSection = screen?.section || 'Review'
+
+  useEffect(() => {
+    const fromUrl = searchParams.get('pending_taster_id') || searchParams.get('taster_id') || ''
+    let fromStorage = ''
+    try { fromStorage = window.localStorage.getItem('pending_taster_id') || '' } catch {}
+    const exactTasterId = fromUrl || fromStorage
+    if (exactTasterId) {
+      setPendingTasterId(exactTasterId)
+      try { window.localStorage.setItem('pending_taster_id', exactTasterId) } catch {}
+    }
+  }, [searchParams])
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -1091,7 +1103,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
             Your profile is not yet listed because the full VALU assessment is not complete. Complete VALU and you will be listed first; completing your professional profile then unlocks additional visibility and opportunities.
           </p>
-          <a href={FULL_VALU_ASSESSMENT_CONTINUATION} style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
+          <a href={pendingTasterId ? `${FULL_VALU_ASSESSMENT_CONTINUATION}&taster_id=${encodeURIComponent(pendingTasterId)}` : FULL_VALU_ASSESSMENT_CONTINUATION} style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
             COMPLETE THE FULL VALU ASSESSMENT →
           </a>
         </div>
