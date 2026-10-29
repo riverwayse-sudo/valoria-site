@@ -67,6 +67,18 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(tasterBranch).toContain("'basic'")
   })
 
+  test('capability projection preserves canonical VALU Index fields and PRIME descriptor', () => {
+    const migration = read('supabase/migrations/20261029190000_marketplace_roster_capability_eligibility.sql')
+    expect(migration).toContain('select v.total_score, v.cluster_scores, v.designation')
+    expect(migration).toContain('canonical_valu_index := coalesce(canonical_valu_index, p.valu_index)')
+    expect(migration).toContain('canonical_cluster_scores := coalesce(canonical_cluster_scores, p.cluster_scores)')
+    expect(migration).toContain('canonical_designation := coalesce(canonical_designation, p.designation)')
+    expect(migration).toContain('Derive public summary only from structured PRIME scores')
+    expect(migration).toContain("'A well-balanced capability profile across the five PRIME dimensions.'")
+    expect(migration).not.toContain('report_text')
+    expect(migration).not.toContain("caps := array['talent']::text[]")
+  })
+
   test('profile onboarding does not submit platform-owned governance fields', () => {
     const source = read('src/app/profile/setup/page.jsx')
     const start = source.indexOf('async function saveProgress')
