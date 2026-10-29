@@ -113,8 +113,18 @@ export default function DashboardPage() {
   const [profileViewCount, setProfileViewCount] = useState(null)
   const [capabilities, setCapabilities] = useState([])
   const [assessment, setAssessment] = useState(null)
+  const [pendingTasterId, setPendingTasterId] = useState(null)
 
   useEffect(() => {
+    // Keep the exact snapshot from email confirmation across dashboard navigation.
+    // The query string is the first source; localStorage supports later dashboard visits.
+    const queryTasterId = new URLSearchParams(window.location.search).get('pending_taster_id')
+    const savedTasterId = queryTasterId || window.localStorage.getItem('pending_taster_id')
+    if (savedTasterId) {
+      setPendingTasterId(savedTasterId)
+      window.localStorage.setItem('pending_taster_id', savedTasterId)
+    }
+
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/login'; return }
@@ -229,9 +239,9 @@ export default function DashboardPage() {
     </div>
   )
 
-  const pendingTasterId = typeof window !== 'undefined'
-    ? new URLSearchParams(window.location.search).get('pending_taster_id')
-    : null
+  const fullAssessmentContinuation = pendingTasterId
+    ? `${FULL_VALU_ASSESSMENT_CONTINUATION}&taster_id=${encodeURIComponent(pendingTasterId)}`
+    : FULL_VALU_ASSESSMENT_CONTINUATION
 
   if (!profile && pendingTasterId) return (
     <div style={{ minHeight:'100vh', background:DARK, color:PARCH, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'18px', padding:'24px', fontFamily:'var(--font,Raleway,sans-serif)' }}>
@@ -532,7 +542,7 @@ export default function DashboardPage() {
                     <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
                       You haven't completed your VALU Index assessment yet.
                     </p>
-                    <Link href={FULL_VALU_ASSESSMENT_CONTINUATION}
+                    <Link href={fullAssessmentContinuation}
                       style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
                       TAKE THE ASSESSMENT
                     </Link>
