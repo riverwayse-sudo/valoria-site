@@ -32,10 +32,12 @@ async function stageTarget(request,stage,user){
  if(!user.email_confirmed_at)return '/login'
  const admin=createClient(SB_URL,SERVICE,{auth:{persistSession:false,autoRefreshToken:false}})
  const requestedTasterId=request.nextUrl.searchParams.get('taster_id')?.trim()
- let query=admin.from('taster_sessions').select('id,name,role,experience,completed_at').eq('user_id',user.id).not('completed_at','is',null)
- if(requestedTasterId) query=query.eq('id',requestedTasterId)
- else query=query.order('completed_at',{ascending:false}).limit(1)
- const {data:taster,error}=await query.maybeSingle()
+ // Never guess which saved snapshot to resume. The account-confirmation journey must
+ // carry the exact 9-question snapshot ID through the dashboard and login return.
+ if(!requestedTasterId)return '/profile/claim-assessment'
+ const {data:taster,error}=await admin.from('taster_sessions')
+  .select('id,name,role,experience,completed_at')
+  .eq('user_id',user.id).eq('id',requestedTasterId).not('completed_at','is',null).maybeSingle()
  if(error)return '/journey'
  if(!taster)return '/profile/claim-assessment'
  const {data:candidate,error:candidateError}=await admin.from('taster_identity_candidates')
