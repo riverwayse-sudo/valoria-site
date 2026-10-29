@@ -84,6 +84,15 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(handoff).not.toContain("new URL('https://valoriainstitute.com/valu/assessment/')")
   })
 
+  test('completion nudge sends saved tasters to the full assessment, not the public start page', () => {
+    const nudge = read('src/components/ValuCompletionNudge.jsx')
+    expect(nudge).toContain("supabase.from('taster_sessions').select('id,completed_at')")
+    expect(nudge).toContain('/journey/continue?stage=assess')
+    expect(nudge).toContain('taster_id=\u0024{encodeURIComponent(pendingTasterId)}')
+    expect(nudge).toContain('START THE 9-QUESTION SNAPSHOT')
+    expect(nudge).toContain('CONTINUE FULL VALU ASSESSMENT')
+  })
+
   test('public VALU entry points use the canonical assessment host', () => {
     const pages = [
       read('src/app/waitlist/page.jsx'),
