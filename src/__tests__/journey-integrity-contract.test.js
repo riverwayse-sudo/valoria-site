@@ -65,6 +65,8 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(login).toContain("'/api/valu-handoff'")
     expect(login).toContain('Authorization: `Bearer ${session.access_token}`')
     expect(login).toContain('window.location.replace(assessmentDestination.toString())')
+    expect(login).toContain('if (!pendingTasterId)')
+    expect(login).not.toContain(": '/api/valu-handoff'")
     expect(login).toContain('assessmentDestination.searchParams.get(\'taster_id\') !== pendingTasterId')
     expect(login).toContain('supabase.auth.getSession().then')
     expect(login).not.toContain('href="https://valoriainstitute.com/valu/assessment/"')
