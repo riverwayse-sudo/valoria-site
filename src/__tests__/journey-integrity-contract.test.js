@@ -318,4 +318,17 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(monitor).not.toContain("from('valu_assessments').update")
     expect(config).toContain('/api/cron/reconciliation-health')
   })
+  test('confirmed users continue through the secure full-assessment handoff instead of the assessment homepage', () => {
+    const dashboard = read('src/app/dashboard/page.jsx')
+    const setup = read('src/app/profile/setup/page.jsx')
+    const continuation = read('src/app/journey/continue/route.js')
+    expect(dashboard).toContain('href="/journey/continue?stage=assess"')
+    expect(setup).toContain('href="/journey/continue?stage=assess"')
+    expect(dashboard).not.toContain('href="https://assessment.valoriainstitute.com/"')
+    expect(setup).not.toContain('href="https://assessment.valoriainstitute.com/"')
+    expect(continuation).toContain("new URL(ASSESSMENT_ORIGIN)")
+    expect(continuation).toContain("full:'1'")
+    expect(continuation).toContain("taster_id:taster.id")
+  })
+
 })
