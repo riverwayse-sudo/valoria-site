@@ -86,6 +86,13 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
   })
 
+  test('signup and resend confirmation use the current site origin so staging links do not jump to production', () => {
+    const source = read('src/app/professional-signup/page.jsx')
+    expect(source).toContain(`emailRedirectTo:`${window.location.origin}/auth/callback?pending_taster_id=`)
+    expect(source).not.toContain(`emailRedirectTo:`https://valoriainstitute.com/auth/callback?pending_taster_id=`)
+    expect(source).toContain("localStorage.setItem('pending_taster_id',tasterId)")
+  })
+
   test('email confirmation links the exact snapshot and returns the user to the dashboard before assessment', () => {
     const callback = read('src/app/auth/callback/page.jsx')
     const dashboard = read('src/app/dashboard/page.jsx')

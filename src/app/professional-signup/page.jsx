@@ -45,7 +45,7 @@ function ProfessionalSignupForm(){
       const { error } = await supabase.auth.resend({
         type:'signup',
         email:form.email.trim().toLowerCase(),
-        options:{emailRedirectTo:`https://valoriainstitute.com/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`}
+        options:{emailRedirectTo:`${window.location.origin}/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`}
       })
       if(error)throw error
       setResendMessage('A fresh confirmation email has been requested. Check your inbox and spam folder.')
@@ -66,7 +66,7 @@ function ProfessionalSignupForm(){
       const {data,error:signupError}=await supabase.auth.signUp({
         email:form.email.trim().toLowerCase(),
         password:form.password,
-        options:{emailRedirectTo:`https://valoriainstitute.com/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`,data:{display_name:name,full_name:name,user_type:'professional',role,pending_taster_id:tasterId}}
+        options:{emailRedirectTo:`${window.location.origin}/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`,data:{display_name:name,full_name:name,user_type:'professional',role,pending_taster_id:tasterId}}
       })
       if(signupError)throw signupError
       if(!data?.user?.id)throw new Error('Account could not be created.')
