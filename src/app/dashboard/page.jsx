@@ -325,6 +325,17 @@ export default function DashboardPage() {
           </nav>
         </header>
 
+        {pendingTasterId && !assessment && (
+          <section aria-label="Continue your VALU journey" style={{ margin:'22px clamp(20px,4vw,40px) 0', padding:'22px clamp(20px,3vw,32px)', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'20px', flexWrap:'wrap', border:'1px solid rgba(201,168,76,.32)', borderRadius:'10px', background:'rgba(201,168,76,.06)' }}>
+            <div style={{ flex:'1 1 280px' }}>
+              <div style={{ color:GOLD, fontSize:'10px', fontWeight:800, letterSpacing:'.16em', marginBottom:'8px' }}>YOUR VALU JOURNEY</div>
+              <h2 style={{ color:PARCH, fontSize:'clamp(18px,2.5vw,24px)', fontWeight:500, margin:'0 0 8px' }}>Your snapshot is saved.</h2>
+              <p style={{ color:DIM, fontSize:'13px', lineHeight:1.7, margin:0 }}>Continue to the full assessment when you’re ready. You can also explore Valoria first; your snapshot remains connected to your account.</p>
+            </div>
+            <Link href={`/journey/continue?stage=assess&taster_id=${encodeURIComponent(pendingTasterId)}`} style={{ display:'inline-block', padding:'13px 20px', background:GOLD, color:DARK, fontSize:'11px', fontWeight:800, letterSpacing:'.07em', textDecoration:'none', borderRadius:'999px', whiteSpace:'nowrap' }}>START FULL VALU ASSESSMENT →</Link>
+          </section>
+        )}
+
         {/* COVER BANNER */}
         <div style={{ position:'relative', height:'176px', overflow:'hidden', background:`radial-gradient(ellipse 800px 400px at 10% 30%, rgba(201,168,76,.22), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 70%, rgba(201,168,76,.1), transparent 55%), linear-gradient(155deg, ${MID} 0%, ${DARK} 70%)` }}>
           <svg viewBox="0 0 1200 280" preserveAspectRatio="none" style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:.45 }}>
