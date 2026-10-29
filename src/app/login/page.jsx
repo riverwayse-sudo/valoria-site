@@ -87,6 +87,9 @@ export default function LoginPage() {
     setRedirecting(true)
     setError('')
     try {
+      if (!pendingTasterId) {
+        throw new Error('Your saved 9-question snapshot reference is missing. Return to your Valoria dashboard and continue from the saved assessment there.')
+      }
       // If signup left a taster claim pending, finish that secure link first.
       if (pendingTasterId) {
         const linkRes = await fetch('/api/link-taster', {
@@ -106,9 +109,7 @@ export default function LoginPage() {
 
       // Use the existing authenticated handoff endpoint. Do not send the candidate
       // through the SSR continuation route again, which can recreate the login loop.
-      const handoffPath = pendingTasterId
-        ? `/api/valu-handoff?taster_id=${encodeURIComponent(pendingTasterId)}`
-        : '/api/valu-handoff'
+      const handoffPath = `/api/valu-handoff?taster_id=${encodeURIComponent(pendingTasterId)}`
       const handoffRes = await fetch(handoffPath, {
         method: 'GET',
         headers: { Authorization: `Bearer ${session.access_token}` },
