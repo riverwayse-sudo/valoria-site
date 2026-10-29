@@ -68,9 +68,18 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(dashboard).toContain("? '/journey/continue?stage=assess'")
     expect(dashboard).toContain('AssessmentStartLink')
     expect(read('src/components/Nav.jsx')).toContain('<a href={href}')
-    expect(read('src/components/Nav.jsx')).toContain("window.location.assign('/journey/continue?stage=assess')")
+    expect(read('src/components/Nav.jsx')).toContain("continuation.searchParams.set('stage', 'assess')")
+    expect(read('src/components/Nav.jsx')).toContain("continuation.searchParams.set('taster_id', pendingTasterId)")
     expect(dashboard.match(/<AssessmentStartLink href=\"\/journey\/continue\?stage=assess\"/g)?.length).toBe(2)
     expect(read('src/app/valu/start/page.jsx')).toContain('AssessmentStartLink')
+  })
+
+  test('email confirmation links the exact taster then lands on dashboard without forcing assessment', () => {
+    const callback = read('src/app/auth/callback/page.jsx')
+    expect(callback).toContain("localStorage.setItem('pending_taster_id', pendingTasterId)")
+    expect(callback).toContain('/dashboard?welcome=profile&pending_taster_id=')
+    expect(callback).not.toContain('Opening your full VALU assessment')
+    expect(callback).not.toContain('/api/valu-handoff?taster_id=')
   })
 
   test('assessment reminder links require account continuation instead of anonymous assessment submission', () => {
