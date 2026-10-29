@@ -1,6 +1,6 @@
--- Marketplace roster projection must respect capability-specific eligibility.
--- Full-assessment listings include only selected, active, eligible capabilities.
--- Basic/taster listing rules remain separate and unchanged.
+-- Marketplace roster projection separates general discoverability from capability eligibility.
+-- Full-assessment professionals remain in All professionals when no selected capability is eligible.
+-- Category pages include only selected, active, eligible capabilities; Basic/taster rules stay separate.
 
 -- Marketplace cards must use a genuine VALU Index report insight, never participant-written bio/headline.
 alter table public.marketplace_public_roster
@@ -73,14 +73,18 @@ begin
          and pc.eligible_for_listing = true
          and pc.eligibility_status = 'listed'
     );
-    -- Do not silently grant a Talent listing when no selected capability is eligible.
-    -- Returning here also prevents a full-assessment account from falling through
-    -- to the separate Basic/taster listing branch.
-    if cardinality(caps) = 0 then return; end if;
-    caps := array(
-      select x from unnest(caps) x
-       order by case x when 'talent' then 1 when 'speaker' then 2 when 'facilitator' then 3 else 9 end
-    );
+    -- General marketplace presence is independent of capability readiness.
+    -- Keep a qualifying full-assessment professional discoverable in All professionals
+    -- even when no selected capability is currently eligible. Empty caps intentionally
+    -- produce NULL capability/track values and do not grant a Talent category listing.
+    if coalesce(cardinality(caps), 0) > 0 then
+      caps := array(
+        select x from unnest(caps) x
+         order by case x when 'talent' then 1 when 'speaker' then 2 when 'facilitator' then 3 else 9 end
+      );
+    else
+      caps := '{}'::text[];
+    end if;
 
     -- Use the same person's latest current, completed VALU report.
     select v.ai_report into report_text
