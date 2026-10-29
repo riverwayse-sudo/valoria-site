@@ -46,6 +46,25 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('window.clearInterval(interval)')
   })
 
+
+  test('full-assessment roster projects only selected, active, eligible capabilities while preserving Basic taster listings', () => {
+    const migration = read('supabase/migrations/20261029190000_marketplace_roster_capability_eligibility.sql')
+    const fullBranch = migration.slice(
+      migration.indexOf("if assessment_ok and p.visibility = 'public'"),
+      migration.indexOf("select * into t", migration.indexOf("if assessment_ok and p.visibility = 'public'"))
+    )
+    const tasterBranch = migration.slice(migration.indexOf("select * into t"))
+
+    expect(fullBranch).toContain('public.professional_capabilities')
+    expect(fullBranch).toContain('pc.is_active = true')
+    expect(fullBranch).toContain('pc.eligible_for_listing = true')
+    expect(fullBranch).toContain("pc.eligibility_status = 'listed'")
+    expect(fullBranch).toContain('if cardinality(caps) = 0 then return; end if;')
+    expect(fullBranch).not.toContain("if cardinality(caps) = 0 then caps := array['talent']")
+    expect(tasterBranch).toContain("array['talent']::text[]")
+    expect(tasterBranch).toContain("'basic'")
+  })
+
   test('profile onboarding does not submit platform-owned governance fields', () => {
     const source = read('src/app/profile/setup/page.jsx')
     const start = source.indexOf('async function saveProgress')
