@@ -364,4 +364,17 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(nudge).not.toContain("from('taster_sessions').select('id,completed_at').eq('user_id',user.id)")
   })
 
+
+  test('public journey copy consistently identifies the taster as nine questions', () => {
+    const prime = read('src/app/prime/page.jsx')
+    const reminders = read('src/app/api/cron/valu-reminders/route.js')
+    const login = read('src/app/login/page.jsx')
+    expect(prime).toContain('9-question directional snapshot')
+    expect(prime).not.toContain('15-question')
+    expect(reminders).toContain('9-question snapshot')
+    expect(reminders).not.toContain('15-question')
+    expect(login).toContain('saved 9-question snapshot')
+    expect(login).not.toContain('15-question')
+  })
+
 })
