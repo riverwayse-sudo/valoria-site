@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { FULL_VALU_ASSESSMENT_CONTINUATION } from '@/lib/valu-assessment-navigation'
 
 import {
   GOLD, DARK, MID, PARCH, DIM, GLINE,
@@ -1090,7 +1091,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
             Your profile is not yet listed because the full VALU assessment is not complete. Complete VALU and you will be listed first; completing your professional profile then unlocks additional visibility and opportunities.
           </p>
-          <a href="/journey/continue?stage=assess" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
+          <a href={FULL_VALU_ASSESSMENT_CONTINUATION} style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
             COMPLETE THE FULL VALU ASSESSMENT →
           </a>
         </div>
