@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { getValuTier } from '@/lib/brand'
@@ -19,7 +20,20 @@ const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' 
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
 
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
+  const router = useRouter()
   const [query,setQuery] = useState('')
+  // Keep an open directory in sync with the database-backed roster without requiring a manual refresh.
+  useEffect(() => {
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === 'visible') router.refresh()
+    }
+    const interval = window.setInterval(refreshWhenVisible, 30_000)
+    document.addEventListener('visibilitychange', refreshWhenVisible)
+    return () => {
+      window.clearInterval(interval)
+      document.removeEventListener('visibilitychange', refreshWhenVisible)
+    }
+  }, [router])
   const [industry,setIndustry] = useState('')
   const industries = useMemo(() => [...new Set(rows.map(r=>displayText(r.industry)).filter(Boolean))].sort(), [rows])
 
