@@ -157,9 +157,13 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
       }
 
       // Signed-in candidates must pass through the same-site continuation callback.
-      // It verifies the cookie session, snapshot ownership, and issues the signed
-      // cross-app handoff before redirecting to the full assessment.
-      window.location.assign('/journey/continue?stage=assess')
+      // Preserve the exact snapshot chosen at confirmation/signup; the server
+      // verifies ownership and issues the signed cross-app handoff.
+      const pendingTasterId = localStorage.getItem('pending_taster_id')
+      const continuation = new URL('/journey/continue', window.location.origin)
+      continuation.searchParams.set('stage', 'assess')
+      if (pendingTasterId) continuation.searchParams.set('taster_id', pendingTasterId)
+      window.location.assign(continuation.pathname + continuation.search)
     } catch (err) {
       setError(err?.message || 'We could not open your VALU assessment. Please try again.')
       setOpening(false)
