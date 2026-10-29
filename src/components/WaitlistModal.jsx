@@ -99,7 +99,7 @@ export default function WaitlistModal({ open, onClose, source = 'site_gate', aut
                 </div>
                 <a className="vi-assessment-btn" href="/valu">TAKE THE 9-QUESTION ASSESSMENT <span aria-hidden="true">→</span></a>
               </div>
-              <div className="vi-assessment-side" aria-hidden="true"><span className="vi-assessment-number">15</span><span className="vi-assessment-small">questions</span></div>
+              <div className="vi-assessment-side" aria-hidden="true"><span className="vi-assessment-number">9</span><span className="vi-assessment-small">questions</span></div>
             </div>
             <div className="vi-done-footer">
               <p className="vi-gate-done-note">Confirmation closes automatically in <strong>1 minute</strong>.</p>
