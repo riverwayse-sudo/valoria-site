@@ -147,4 +147,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(start).not.toContain("'Professionalism'")
     expect(start).not.toContain("'Motivation & Stamina'")
   })
+
+  test('public taster copy describes the canonical nine-question taster, not the retired fifteen-question snapshot', () => {
+    const prime = read('src/app/prime/page.jsx')
+    const reminders = read('src/app/api/cron/valu-reminders/route.js')
+    for (const source of [prime, reminders]) {
+      expect(source).not.toContain('15-question')
+      expect(source).not.toContain('15 question')
+    }
+    expect(prime).toContain('9-question directional taster')
+    expect(reminders).toContain('your 9-question snapshot')
+  })
 })

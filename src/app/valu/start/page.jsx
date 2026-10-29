@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Nav from '@/components/Nav'
+import Nav, { AssessmentStartLink } from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { BRAND } from '@/lib/brand'
 
@@ -40,7 +40,7 @@ export default function ValuStartPage() {
               <h1 style={{ maxWidth: "12.5ch", fontSize: "clamp(1.85rem, 3.1vw, 3.1rem)", lineHeight: 1.12, letterSpacing: "-0.045em", marginBlock: "0 1.1rem" }}>Your CV tells people what you’ve done.<br /><em>VALU shows what you can become.</em></h1>
               <p className="vs-lede">A professional diagnostic built around PRIME to give you a clearer starting point for understanding your capability, direction and professional presence.</p>
               <div className="vs-actions">
-                <a href={assessmentUrl} className="vs-btn vs-primary">START YOUR VALU INDEX <b>→</b></a>
+                <AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">START YOUR VALU INDEX <b>→</b></AssessmentStartLink>
                 <a href="#how" className="vs-btn vs-secondary">SEE HOW IT WORKS <b>↓</b></a>
               </div>
               <div className="vs-proof"><span>9 QUESTIONS</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
@@ -116,7 +116,7 @@ export default function ValuStartPage() {
       </section>
 
       <section className="vs-final">
-        <div className="vs-shell"><div className="vs-kicker"><span /> WORTH. BUILT.</div><h2>Your capability deserves<br /><em>more than a CV.</em></h2><p>Start with a clearer understanding of where you stand.</p><a href={assessmentUrl} className="vs-btn vs-primary">START YOUR VALU INDEX <b>→</b></a><Link href="/valu" className="vs-back">Learn more about VALU →</Link></div>
+        <div className="vs-shell"><div className="vs-kicker"><span /> WORTH. BUILT.</div><h2>Your capability deserves<br /><em>more than a CV.</em></h2><p>Start with a clearer understanding of where you stand.</p><AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">START YOUR VALU INDEX <b>→</b></AssessmentStartLink><Link href="/valu" className="vs-back">Learn more about VALU →</Link></div>
       </section>
     </main>
     <Footer />

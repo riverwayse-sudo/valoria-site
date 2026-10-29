@@ -21,7 +21,9 @@ export async function GET(request) {
   if (userError || !userData?.user) return NextResponse.json({ error:'Unauthorized' }, { status:401 })
   const user = userData.user
   if (!user.email_confirmed_at) return NextResponse.json({ error:'Confirm your email before opening the full VALU assessment.' }, { status:403 })
-  const requestedTasterId = new URL(request.url).searchParams.get('taster_id')?.trim()
+  const handoffParams = new URL(request.url).searchParams
+  const requestedTasterId = handoffParams.get('taster_id')?.trim()
+  const resumeToken = handoffParams.get('resume')?.trim()
   let tasterQuery = admin.from('taster_sessions').select('id,name,role,experience,completed_at').eq('user_id', user.id).not('completed_at','is',null)
   if (requestedTasterId) tasterQuery = tasterQuery.eq('id', requestedTasterId)
   else tasterQuery = tasterQuery.order('completed_at',{ascending:false}).limit(1)
@@ -38,7 +40,9 @@ export async function GET(request) {
   try { handoffToken = createValuHandoffToken(user.id, taster.id) } catch { return NextResponse.json({ error:'Secure VALU handoff is unavailable.' }, { status:503 }) }
   await admin.from('valoria_journey_events').insert({ user_id:user.id, event_key:'assessment_handoff', source:'taster_session', source_id:taster.id, metadata:{ destination:'valoriainstitute.com/valu/assessment', mode:'full', token_ttl_seconds:14400 } })
   const destination = new URL('https://valoriainstitute.com/valu/assessment/')
-  destination.search = new URLSearchParams({ full:'1', taster_id:taster.id, name:taster.name||'', role:taster.role||'', experience:taster.experience||'' }).toString()
+  const destinationParams = new URLSearchParams({ full:'1', taster_id:taster.id, name:taster.name||'', role:taster.role||'', experience:taster.experience||'' })
+  if (resumeToken) destinationParams.set('resume', resumeToken)
+  destination.search = destinationParams.toString()
   destination.hash = new URLSearchParams({ handoff_token:handoffToken }).toString()
   return NextResponse.json({ url:destination.toString() }, { headers:{'Cache-Control':'no-store','Referrer-Policy':'no-referrer'} })
 }

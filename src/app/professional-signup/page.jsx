@@ -26,14 +26,11 @@ function ProfessionalSignupForm(){
         })
         const linkData=await linkRes.json().catch(()=>({}))
         if(!linkRes.ok)throw new Error(linkData.error||'Your saved VALU snapshot could not be linked to this account.')
-        const handoffRes=await fetch(`/api/valu-handoff?taster_id=${encodeURIComponent(tasterId)}`,{
-          method:'GET',headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'
-        })
-        const handoff=await handoffRes.json().catch(()=>({}))
-        if(!handoffRes.ok||!handoff.url)throw new Error(handoff.error||'Your full VALU assessment could not be opened.')
-        const destination=new URL(handoff.url,window.location.origin)
-        if(destination.searchParams.get('full')!=='1'||destination.searchParams.get('taster_id')!==tasterId)throw new Error('We could not verify the saved snapshot for this assessment.')
-        if(!cancelled)window.location.replace(destination.toString())
+        // A signed-in user may arrive here from the taster, but must still
+        // choose to continue from the dashboard. Do not launch the full assessment
+        // automatically from this route.
+        localStorage.setItem('pending_taster_id',tasterId)
+        if(!cancelled)window.location.replace(`/dashboard?welcome=profile&pending_taster_id=${encodeURIComponent(tasterId)}`)
       }catch(err){
         if(!cancelled){setError(err?.message||'We could not open your full VALU assessment. Please try again.');setRedirecting(false)}
       }
@@ -48,7 +45,7 @@ function ProfessionalSignupForm(){
       const { error } = await supabase.auth.resend({
         type:'signup',
         email:form.email.trim().toLowerCase(),
-        options:{emailRedirectTo:`https://valoriainstitute.com/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`}
+        options:{emailRedirectTo:`${window.location.origin}/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`}
       })
       if(error)throw error
       setResendMessage('A fresh confirmation email has been requested. Check your inbox and spam folder.')
@@ -69,7 +66,7 @@ function ProfessionalSignupForm(){
       const {data,error:signupError}=await supabase.auth.signUp({
         email:form.email.trim().toLowerCase(),
         password:form.password,
-        options:{emailRedirectTo:`https://valoriainstitute.com/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`,data:{display_name:name,full_name:name,user_type:'professional',role,pending_taster_id:tasterId}}
+        options:{emailRedirectTo:`${window.location.origin}/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`,data:{display_name:name,full_name:name,user_type:'professional',role,pending_taster_id:tasterId}}
       })
       if(signupError)throw signupError
       if(!data?.user?.id)throw new Error('Account could not be created.')
