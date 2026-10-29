@@ -366,9 +366,12 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
 
 
   test('public journey copy consistently identifies the taster as nine questions', () => {
+    const homepage = read('src/app/page.jsx')
     const prime = read('src/app/prime/page.jsx')
     const reminders = read('src/app/api/cron/valu-reminders/route.js')
     const login = read('src/app/login/page.jsx')
+    expect(homepage).toContain('<b>9</b> QUESTIONS')
+    expect(homepage).not.toContain('<b>15</b> QUESTIONS')
     expect(prime).toContain('9-question directional snapshot')
     expect(prime).not.toContain('15-question')
     expect(reminders).toContain('9-question snapshot')
