@@ -55,6 +55,29 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('window.clearInterval(interval)')
   })
 
+  test('CV uploads create private evidence records from both onboarding and profile edit', () => {
+    const helper = read('src/lib/upload-professional-cv.js')
+    const setup = read('src/app/profile/setup/page.jsx')
+    const edit = read('src/app/profile/edit/page.jsx')
+    expect(helper).toContain("from('cvs')")
+    expect(helper).toContain("from('professional_documents')")
+    expect(helper).toContain("document_type: 'cv'")
+    expect(helper).toContain("visibility: 'private'")
+    expect(helper).toContain('size_bytes: file.size')
+    expect(helper).toContain('10 * 1024 * 1024')
+    expect(helper).toContain('remove([storagePath])')
+    expect(setup).toContain('uploadProfessionalCv(supabase, user.id, file)')
+    expect(edit).toContain('uploadProfessionalCv(supabase, user.id, file)')
+  })
+
+  test('existing CV evidence backfill uses exact profile-to-storage object matches', () => {
+    const migration = read('supabase/migrations/20261030140000_backfill_existing_cv_document_records.sql')
+    expect(migration).toContain('join storage.objects o')
+    expect(migration).toContain('and o.name = p.cv_url')
+    expect(migration).toContain("o.bucket_id = 'cvs'")
+    expect(migration).toContain('on conflict (storage_bucket, storage_path) do nothing')
+  })
+
   test('profile onboarding serializes saves, syncs capabilities, and reads database-derived completion', () => {
     const source = read('src/app/profile/setup/page.jsx')
     expect(source).toContain('saveQueueRef.current.catch(() => {}).then(write)')
