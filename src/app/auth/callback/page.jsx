@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
 import VALUJourneyProgress from '@/components/VALUJourneyProgress'
+import ValoriaHandoverCards from '@/components/ValoriaHandoverCards'
 
 const GOLD = '#C9A84C'
 const PARCHMENT = '#F7F4EE'
@@ -53,7 +54,7 @@ function AuthCallbackFlow() {
           if (!linkRes.ok) throw new Error(data.error || 'Your assessment could not be linked yet.')
           sessionStorage.removeItem('pending_identity_hash')
           setMessage('Email confirmed. You’re signed in and your VALU assessment is connected.')
-          await new Promise(resolve => setTimeout(resolve, 900))
+          await new Promise(resolve => setTimeout(resolve, 1900))
           if (!cancelled) router.replace('/dashboard?welcome=profile')
           return
         }
@@ -75,7 +76,7 @@ function AuthCallbackFlow() {
           localStorage.removeItem('pending_taster_name')
           localStorage.removeItem('pending_taster_role')
           setMessage('Email confirmed. You’re signed in and your opening nine are connected. Your dashboard is ready; continue at Question 10.')
-          await new Promise(resolve => setTimeout(resolve, 1400))
+          await new Promise(resolve => setTimeout(resolve, 2200))
           if (!cancelled) router.replace('/dashboard?welcome=profile')
           return
         }
@@ -83,7 +84,7 @@ function AuthCallbackFlow() {
         const { data: buyerProfile } = await supabase.from('profiles').select('id').eq('id', user.id).maybeSingle()
         if (cancelled) return
         setMessage(buyerProfile ? 'Email confirmed. You’re signed in. Taking you to your dashboard…' : 'Email confirmed. You’re signed in. Taking you to your dashboard…')
-        await new Promise(resolve => setTimeout(resolve, 900))
+        await new Promise(resolve => setTimeout(resolve, 1900))
         if (!cancelled) router.replace('/dashboard?welcome=profile')
       } catch (error) {
         if (cancelled) return
@@ -97,7 +98,7 @@ function AuthCallbackFlow() {
 
   return (
     <main style={{ minHeight: '100vh', background: DARK, color: PARCHMENT, display: 'grid', placeItems: 'center', padding: 24, fontFamily: "'Raleway', Arial, sans-serif" }}>
-      <section style={{ width: '100%', maxWidth: 520, padding: 'clamp(28px, 5vw, 52px)', border: '1px solid rgba(201,168,76,.25)', borderRadius: 16, background: '#1A1A2E', textAlign: 'center' }}>
+      <section style={{ width: '100%', maxWidth: 1100, padding: 'clamp(22px, 3vw, 36px)', border: '1px solid rgba(201,168,76,.25)', borderRadius: 16, background: '#1A1A2E', textAlign: 'center' }}>
         <div style={{ margin: '0 auto 30px', textAlign: 'center' }} aria-label="Valoria Institute">
           <div style={{ color: GOLD, fontSize: 12, letterSpacing: '.24em', fontWeight: 800 }}>VALORIA INSTITUTE</div>
           <div style={{ color: PARCHMENT, fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 15, marginTop: 7 }}>Worth. Built.</div>
@@ -108,6 +109,7 @@ function AuthCallbackFlow() {
           <h1 style={{ fontSize: 30, lineHeight: 1.2, fontWeight: 500, margin: '0 0 14px' }}>{failed ? 'We could not finish the handoff.' : 'You’re almost there.'}</h1>
           <p style={{ fontSize: 15, lineHeight: 1.8, color: '#EDE8DC', margin: '0 0 26px' }}>{message}</p>
         </div>
+        {!failed && <ValoriaHandoverCards />}
         {assessmentBridge && !failed && <div aria-label="Your next steps" style={{display:'grid',gridTemplateColumns:'1fr',gap:9,textAlign:'left',marginTop:8}}>
           <div style={{display:'flex',gap:12,alignItems:'flex-start',padding:'12px 14px',border:'1px solid rgba(201,168,76,.22)',borderRadius:8}}>
             <span style={{color:GOLD,fontWeight:800,fontSize:11}}>✓</span><span><strong style={{display:'block',fontSize:12,color:PARCHMENT}}>Email confirmed and account connected</strong><small style={{display:'block',fontSize:11,color:'rgba(247,244,238,.55)',lineHeight:1.6,marginTop:3}}>Your saved opening nine are attached to your Valoria account.</small></span>
