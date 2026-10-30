@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
-import VALUJourneyProgress from '@/components/VALUJourneyProgress'
 
 const GOLD = '#C9A84C'
 const PARCHMENT = '#F7F4EE'
@@ -15,7 +14,6 @@ function AuthCallbackFlow() {
   const params = useSearchParams()
   const [message, setMessage] = useState('Confirming your email and securely opening your Valoria account…')
   const [failed, setFailed] = useState(false)
-  const [assessmentBridge, setAssessmentBridge] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -53,13 +51,12 @@ function AuthCallbackFlow() {
           if (!linkRes.ok) throw new Error(data.error || 'Your assessment could not be linked yet.')
           sessionStorage.removeItem('pending_identity_hash')
           setMessage('Email confirmed. You’re signed in and your VALU assessment is connected.')
-          await new Promise(resolve => setTimeout(resolve, 1900))
+          await new Promise(resolve => setTimeout(resolve, 900))
           if (!cancelled) router.replace('/dashboard?welcome=profile')
           return
         }
 
         if (pendingTasterId) {
-          setAssessmentBridge(true)
           setMessage('Email confirmed. Connecting your saved opening nine…')
           const linkRes = await fetch('/api/link-taster', {
             method: 'POST',
@@ -74,8 +71,8 @@ function AuthCallbackFlow() {
           localStorage.removeItem('pending_taster_id')
           localStorage.removeItem('pending_taster_name')
           localStorage.removeItem('pending_taster_role')
-          setMessage('Email confirmed. You’re signed in and your opening nine are connected. Your dashboard is ready; continue at Question 10.')
-          await new Promise(resolve => setTimeout(resolve, 2200))
+          setMessage('Email confirmed. You’re signed in and your opening nine are connected. Taking you to your dashboard…')
+          await new Promise(resolve => setTimeout(resolve, 1400))
           if (!cancelled) router.replace('/dashboard?welcome=profile')
           return
         }
@@ -83,7 +80,7 @@ function AuthCallbackFlow() {
         const { data: buyerProfile } = await supabase.from('profiles').select('id').eq('id', user.id).maybeSingle()
         if (cancelled) return
         setMessage(buyerProfile ? 'Email confirmed. You’re signed in. Taking you to your dashboard…' : 'Email confirmed. You’re signed in. Taking you to your dashboard…')
-        await new Promise(resolve => setTimeout(resolve, 1900))
+        await new Promise(resolve => setTimeout(resolve, 900))
         if (!cancelled) router.replace('/dashboard?welcome=profile')
       } catch (error) {
         if (cancelled) return
@@ -97,28 +94,16 @@ function AuthCallbackFlow() {
 
   return (
     <main style={{ minHeight: '100vh', background: DARK, color: PARCHMENT, display: 'grid', placeItems: 'center', padding: 24, fontFamily: "'Raleway', Arial, sans-serif" }}>
-      <section style={{ width: '100%', maxWidth: 1100, padding: 'clamp(22px, 3vw, 36px)', border: '1px solid rgba(201,168,76,.25)', borderRadius: 16, background: '#1A1A2E', textAlign: 'center' }}>
+      <section style={{ width: '100%', maxWidth: 520, padding: 'clamp(28px, 5vw, 52px)', border: '1px solid rgba(201,168,76,.25)', borderRadius: 16, background: '#1A1A2E', textAlign: 'center' }}>
         <div style={{ margin: '0 auto 30px', textAlign: 'center' }} aria-label="Valoria Institute">
           <div style={{ color: GOLD, fontSize: 12, letterSpacing: '.24em', fontWeight: 800 }}>VALORIA INSTITUTE</div>
           <div style={{ color: PARCHMENT, fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 15, marginTop: 7 }}>Worth. Built.</div>
         </div>
-        <VALUJourneyProgress stage="bridge" />
         <div aria-live="polite" role={failed ? 'alert' : 'status'}>
           <div style={{ color: GOLD, fontSize: 11, letterSpacing: '.18em', fontWeight: 700, marginBottom: 14 }}>{failed ? 'CONFIRMATION NEEDS ATTENTION' : 'VALORIA ACCOUNT'}</div>
           <h1 style={{ fontSize: 30, lineHeight: 1.2, fontWeight: 500, margin: '0 0 14px' }}>{failed ? 'We could not finish the handoff.' : 'You’re almost there.'}</h1>
           <p style={{ fontSize: 15, lineHeight: 1.8, color: '#EDE8DC', margin: '0 0 26px' }}>{message}</p>
         </div>
-        {assessmentBridge && !failed && <div aria-label="Your next steps" style={{display:'grid',gridTemplateColumns:'1fr',gap:9,textAlign:'left',marginTop:8}}>
-          <div style={{display:'flex',gap:12,alignItems:'flex-start',padding:'12px 14px',border:'1px solid rgba(201,168,76,.22)',borderRadius:8}}>
-            <span style={{color:GOLD,fontWeight:800,fontSize:11}}>✓</span><span><strong style={{display:'block',fontSize:12,color:PARCHMENT}}>Email confirmed and account connected</strong><small style={{display:'block',fontSize:11,color:'rgba(247,244,238,.55)',lineHeight:1.6,marginTop:3}}>Your saved opening nine are attached to your Valoria account.</small></span>
-          </div>
-          <div style={{display:'flex',gap:12,alignItems:'flex-start',padding:'12px 14px',border:'1px solid rgba(201,168,76,.22)',borderRadius:8}}>
-            <span style={{color:GOLD,fontWeight:800,fontSize:11}}>02</span><span><strong style={{display:'block',fontSize:12,color:PARCHMENT}}>Return to your dashboard</strong><small style={{display:'block',fontSize:11,color:'rgba(247,244,238,.55)',lineHeight:1.6,marginTop:3}}>You’ll already be signed in. No separate login is needed.</small></span>
-          </div>
-          <div style={{display:'flex',gap:12,alignItems:'flex-start',padding:'12px 14px',border:'1px solid rgba(201,168,76,.22)',borderRadius:8}}>
-            <span style={{color:GOLD,fontWeight:800,fontSize:11}}>03</span><span><strong style={{display:'block',fontSize:12,color:PARCHMENT}}>Continue at Question 10</strong><small style={{display:'block',fontSize:11,color:'rgba(247,244,238,.55)',lineHeight:1.6,marginTop:3}}>Complete the remaining 49 questions to receive your official VALU Index.</small></span>
-          </div>
-        </div>}
         {failed && <a href="/login" style={{ display: 'inline-block', padding: '14px 24px', background: GOLD, color: '#1A1A2E', borderRadius: 999, fontWeight: 700, textDecoration: 'none', fontSize: 12, letterSpacing: '.08em' }}>CONTINUE TO ACCOUNT SUPPORT →</a>}
       </section>
     </main>
