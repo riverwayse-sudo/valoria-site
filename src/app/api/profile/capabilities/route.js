@@ -55,6 +55,15 @@ export async function POST(request) {
     return NextResponse.json({ error: 'One or more selected capabilities are not supported.' }, { status: 400 })
   }
   const selected = [...new Set(normalizedTracks.map(track => TRACK_TO_CAPABILITY[track]))]
+
+  const { error: profileTrackError } = await admin
+    .from('professional_profiles')
+    .update({ active_tracks: normalizedTracks, updated_at: new Date().toISOString() })
+    .eq('id', user.id)
+  if (profileTrackError) {
+    console.error('Professional profile capability selection update failed:', profileTrackError)
+    return NextResponse.json({ error: 'Your capability selection could not be saved to your profile. Please try again.' }, { status: 502 })
+  }
   if (!selected.length || selected.length > 3) {
     return NextResponse.json({ error: 'Choose between one and three distinct capabilities.' }, { status: 400 })
   }
