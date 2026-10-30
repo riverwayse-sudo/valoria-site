@@ -11,7 +11,8 @@ insert into public.professional_documents (
   original_filename,
   mime_type,
   size_bytes,
-  visibility
+  visibility,
+  verification_status
 )
 select
   p.id,
@@ -20,7 +21,8 @@ select
   o.name,
   regexp_replace(o.name, '^.*/', ''),
   o.metadata->>'mimetype',
-  case when nullif(o.metadata->>'size', '') ~ '^[0-9]+  'private'
+  case when nullif(o.metadata->>'size', '') ~ '^[0-9]+  'private',
+  'pending'
 from public.professional_profiles p
 join storage.objects o
   on o.bucket_id = 'cvs'
