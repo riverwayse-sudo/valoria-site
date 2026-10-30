@@ -269,7 +269,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(migration).toContain('revoke all on public.professional_document_reviews from anon, authenticated')
     expect(upload).toContain("auth.getUser(token)")
     expect(upload).toContain(".eq('professional_id',user.id)")
-    expect(upload).toContain(".eq('is_active',true)")
+    expect(upload).toContain('!capability.is_active')
     expect(upload).toContain("verification_status:'pending'")
     expect(upload).toContain("from('professional_documents')")
     expect(upload).not.toContain("upsert:true")
