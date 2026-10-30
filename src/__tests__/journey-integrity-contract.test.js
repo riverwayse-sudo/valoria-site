@@ -329,4 +329,15 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(dashboard).toContain('CONTINUE TO QUESTION 10')
   })
 
+
+  test('dashboard makes the next milestone visible and previews what follows without inventing saved progress', () => {
+    const dashboard = read('src/app/dashboard/page.jsx')
+    expect(dashboard).toContain('COMING UP AFTER THIS')
+    expect(dashboard).toContain('You’ll unlock:')
+    expect(dashboard).toContain('hasSavedOpening={!!pendingTasterId}')
+    expect(dashboard).toContain('Your first answers are saved. Ready for the next 49?')
+    expect(dashboard).toContain('Start or continue your 58-question VALU assessment.')
+    expect(dashboard).not.toContain('Your opening nine answers are saved. Your account is confirmed.')
+  })
+
 })
