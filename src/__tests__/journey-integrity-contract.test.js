@@ -360,4 +360,20 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(start).toContain('Your official result in points')
   })
 
+
+  test('the account bridge explains email confirmation, signed-in return and Question 10 as the next action', () => {
+    const signup = read('src/app/professional-signup/page.jsx')
+    const callback = read('src/app/auth/callback/page.jsx')
+    expect(signup).toContain('ACCOUNT BRIDGE · STEP 2 OF 3')
+    expect(signup).toContain('ACCOUNT BRIDGE · EMAIL CONFIRMATION')
+    expect(signup).toContain('One quick confirmation.')
+    expect(signup).toContain('Then Question 10.')
+    expect(signup).toContain('Continue at Question 10')
+    expect(signup).toContain('Opening nine saved')
+    expect(callback).toContain('Your dashboard is ready; continue at Question 10.')
+    expect(callback).toContain('Return to your dashboard')
+    expect(callback).toContain('No separate login is needed.')
+    expect(callback).toContain('Continue at Question 10')
+  })
+
 })
