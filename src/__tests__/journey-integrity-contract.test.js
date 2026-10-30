@@ -471,6 +471,26 @@ describe('journey integrity contract', () => {
     expect(callback).toContain('Continue at Question 10')
   })
 
+  test('email confirmation handover introduces Valoria through animated destination cards', () => {
+    const callback = read('src/app/auth/callback/page.jsx')
+    const cards = read('src/components/ValoriaHandoverCards.jsx')
+    const styles = read('src/components/ValoriaHandoverCards.module.css')
+    const events = read('src/lib/professionalStandardSeries.js')
+    expect(callback).toContain("import ValoriaHandoverCards from '@/components/ValoriaHandoverCards'")
+    expect(callback).toContain('<ValoriaHandoverCards />')
+    expect(cards).toContain('THE INSTITUTE')
+    expect(cards).toContain('VALU INDEX')
+    expect(cards).toContain('PRIME FRAMEWORK')
+    expect(cards).toContain('PROFESSIONAL REGISTRY')
+    expect(cards).toContain('EVENTS & CONVERSATIONS')
+    expect(cards).toContain('session.dateApproved')
+    expect(cards).toContain("href: '/events'")
+    expect(cards).toContain("href: '/marketplace'")
+    expect(styles).toContain('@keyframes cardIn')
+    expect(styles).toContain('prefers-reduced-motion:reduce')
+    expect(events).toContain('dateApproved: false')
+  })
+
   test('dashboard presents one primary assessment action and keeps the VALU Index card informational', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
     const sidebar = dashboard.split('{/* VALU Index */}')[1].split('{/* Profile completeness */}')[0]
