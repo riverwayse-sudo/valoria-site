@@ -10,8 +10,10 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
 
   const profileMissing = []
   if (!profile?.display_name?.trim()) profileMissing.push('Your name')
-  if (!profile?.current_job_title?.trim() && !profile?.headline?.trim()) profileMissing.push('Your professional title')
+  if (!profile?.current_job_title?.trim()) profileMissing.push('Your current job title')
+  if (!profile?.headline?.trim()) profileMissing.push('Your professional headline')
   if (!profile?.bio?.trim()) profileMissing.push('Your professional bio')
+  if (!Array.isArray(profile?.active_tracks) || profile.active_tracks.length === 0) profileMissing.push('At least one professional capability')
   if (!profile?.industry?.trim()) profileMissing.push('Your industry')
   if (!profile?.username?.trim()) profileMissing.push('Your username')
   if (!profile?.phone?.trim()) profileMissing.push('Your phone number')
@@ -33,6 +35,7 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
   ))]
   const capabilitySelected = activeCapabilities.length > 0
   const eligibilityMissing = [...new Set([...profileMissing, ...capabilityMissing])]
+  if (!capabilitySelected) eligibilityMissing.push('At least one professional capability')
   if (!profile?.cv_url?.trim()) eligibilityMissing.push('Your CV')
   if (!assessmentCurrent) eligibilityMissing.push('A current full VALU Index assessment of at least 35 points')
   const eligibilityComplete = profileReady && assessmentCurrent && capabilitySelected && eligibleCapabilities.length > 0
