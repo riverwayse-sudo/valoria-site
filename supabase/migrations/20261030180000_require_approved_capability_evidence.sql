@@ -77,6 +77,9 @@ begin
         from public.professional_documents d
         where d.professional_id=p_professional_id
           and d.document_type='cv'
+          and d.storage_bucket='cvs'
+          and d.visibility='private'
+          and d.capability_id is null
           and d.storage_path=p.cv_url
           and d.verification_status='verified'
       ) into approved_evidence;
@@ -102,6 +105,8 @@ begin
         from public.professional_documents d
         where d.professional_id=p_professional_id
           and d.capability_id=capability_row_id
+          and d.storage_bucket='cvs'
+          and d.visibility='private'
           and d.document_type in ('speaking_sample','portfolio','certification')
           and d.verification_status='verified'
       ) into approved_evidence;
@@ -125,6 +130,8 @@ begin
         from public.professional_documents d
         where d.professional_id=p_professional_id
           and d.capability_id=capability_row_id
+          and d.storage_bucket='cvs'
+          and d.visibility='private'
           and d.document_type in ('facilitation_record','portfolio','certification')
           and d.verification_status='verified'
       ) into approved_evidence;
