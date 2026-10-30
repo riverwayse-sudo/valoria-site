@@ -232,4 +232,21 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(prime).toContain('completed in two sessions')
     expect(reminders).toContain('CONTINUE TO QUESTION 10')
   })
+
+  test('profile capability selection is reconciled through an authenticated server endpoint', () => {
+    const setup = read('src/app/profile/setup/page.jsx')
+    const route = read('src/app/api/profile/capabilities/route.js')
+    expect(setup).toContain("fetch('/api/profile/capabilities'")
+    expect(setup).toContain('Authorization: `Bearer ${session.access_token}`')
+    expect(setup).not.toContain(".from('professional_capabilities')")
+    expect(route).toContain("auth.getUser(token)")
+    expect(route).toContain("from('professional_capabilities')")
+    expect(route).toContain("is_active: true")
+    expect(route).toContain("is_active: false")
+    expect(route).toContain("'candidate': 'talent'")
+    expect(route).toContain("'speaker'")
+    expect(route).toContain("'facilitator'")
+    expect(route).not.toContain('.delete(')
+  })
+
 })
