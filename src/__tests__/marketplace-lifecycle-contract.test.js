@@ -55,21 +55,23 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('window.clearInterval(interval)')
   })
 
-  test('profile onboarding serializes saves and confirms capabilities before profile completion', () => {
+  test('profile onboarding serializes saves, syncs capabilities, and reads database-derived completion', () => {
     const source = read('src/app/profile/setup/page.jsx')
     expect(source).toContain('saveQueueRef.current.catch(() => {}).then(write)')
     expect(source).toContain('const saved = await saveProgress()')
     expect(source).toContain('if (saved) router.push(\'/dashboard\')')
     const capabilitySync = source.indexOf("from('professional_capabilities')")
-    const completion = source.indexOf("update({ profile_complete: true")
+    const completionRead = source.indexOf(".select('atb_id, listing_status, profile_complete')")
     expect(capabilitySync).toBeGreaterThan(-1)
-    expect(completion).toBeGreaterThan(capabilitySync)
+    expect(completionRead).toBeGreaterThan(capabilitySync)
+    expect(source).not.toContain("update({ profile_complete: true")
   })
 
   test('profile setup matches database readiness requirements and verifies completion read-back', () => {
     const source = read('src/app/profile/setup/page.jsx')
     expect(source).toContain("key:'photo_url', kind:'photo'")
-    expect(source).toContain('required:true })')
+    expect(source).toContain('sub:\'Optional. Valoria uses a professional default avatar')
+    expect(source).toContain('required:false })')
     expect(source).toContain(".select('atb_id, listing_status, profile_complete')")
     expect(source).toContain('if (!row?.profile_complete)')
   })
