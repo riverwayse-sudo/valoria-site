@@ -156,3 +156,17 @@ test('capability requirements must be resolved before full marketplace eligibili
   expect(state.marketplace.capabilities).toEqual([])
   expect(state.next).toBe('eligibility')
 })
+
+
+test('stale enhanced journey labels cannot bypass a missing CV requirement', () => {
+  const state = deriveJourneyState({
+    journey: { journey_stage: 'marketplace_enhanced', marketplace_ready: true },
+    assessment: completedAssessment,
+    activation: { status: 'activated' },
+    profile: { ...completeProfile, cv_url: '' },
+    capabilities: [{ id: 'c1', capability: 'talent', is_active: true, eligibility_status: 'listed', eligible_for_listing: true }],
+  })
+  expect(state.next).toBe('eligibility')
+  expect(state.eligibility.complete).toBe(false)
+  expect(state.marketplace.capabilities).toEqual([])
+})
