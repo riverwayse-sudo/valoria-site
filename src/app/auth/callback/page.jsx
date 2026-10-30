@@ -15,6 +15,7 @@ function AuthCallbackFlow() {
   const params = useSearchParams()
   const [message, setMessage] = useState('Confirming your email and securely opening your Valoria account…')
   const [failed, setFailed] = useState(false)
+  const [assessmentBridge, setAssessmentBridge] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -58,7 +59,8 @@ function AuthCallbackFlow() {
         }
 
         if (pendingTasterId) {
-          setMessage('Email confirmed. Connecting your VALU result…')
+          setAssessmentBridge(true)
+          setMessage('Email confirmed. Connecting your saved opening nine…')
           const linkRes = await fetch('/api/link-taster', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
@@ -72,7 +74,7 @@ function AuthCallbackFlow() {
           localStorage.setItem('pending_taster_id', pendingTasterId)
           localStorage.removeItem('pending_taster_name')
           localStorage.removeItem('pending_taster_role')
-          setMessage('Email confirmed. You’re signed in. Taking you to your dashboard…')
+          setMessage('Email confirmed. You’re signed in and your opening nine are connected. Your dashboard is ready; continue at Question 10.')
           await new Promise(resolve => setTimeout(resolve, 700))
           if (!cancelled) router.replace(`/dashboard?welcome=profile&pending_taster_id=${encodeURIComponent(pendingTasterId)}`)
           return
@@ -106,6 +108,17 @@ function AuthCallbackFlow() {
           <h1 style={{ fontSize: 30, lineHeight: 1.2, fontWeight: 500, margin: '0 0 14px' }}>{failed ? 'We could not finish the handoff.' : 'You’re almost there.'}</h1>
           <p style={{ fontSize: 15, lineHeight: 1.8, color: '#EDE8DC', margin: '0 0 26px' }}>{message}</p>
         </div>
+        {assessmentBridge && !failed && <div aria-label="Your next steps" style={{display:'grid',gridTemplateColumns:'1fr',gap:9,textAlign:'left',marginTop:8}}>
+          <div style={{display:'flex',gap:12,alignItems:'flex-start',padding:'12px 14px',border:'1px solid rgba(201,168,76,.22)',borderRadius:8}}>
+            <span style={{color:GOLD,fontWeight:800,fontSize:11}}>✓</span><span><strong style={{display:'block',fontSize:12,color:PARCHMENT}}>Email confirmed and account connected</strong><small style={{display:'block',fontSize:11,color:'rgba(247,244,238,.55)',lineHeight:1.6,marginTop:3}}>Your saved opening nine are attached to your Valoria account.</small></span>
+          </div>
+          <div style={{display:'flex',gap:12,alignItems:'flex-start',padding:'12px 14px',border:'1px solid rgba(201,168,76,.22)',borderRadius:8}}>
+            <span style={{color:GOLD,fontWeight:800,fontSize:11}}>02</span><span><strong style={{display:'block',fontSize:12,color:PARCHMENT}}>Return to your dashboard</strong><small style={{display:'block',fontSize:11,color:'rgba(247,244,238,.55)',lineHeight:1.6,marginTop:3}}>You’ll already be signed in. No separate login is needed.</small></span>
+          </div>
+          <div style={{display:'flex',gap:12,alignItems:'flex-start',padding:'12px 14px',border:'1px solid rgba(201,168,76,.22)',borderRadius:8}}>
+            <span style={{color:GOLD,fontWeight:800,fontSize:11}}>03</span><span><strong style={{display:'block',fontSize:12,color:PARCHMENT}}>Continue at Question 10</strong><small style={{display:'block',fontSize:11,color:'rgba(247,244,238,.55)',lineHeight:1.6,marginTop:3}}>Complete the remaining 49 questions to receive your official VALU Index.</small></span>
+          </div>
+        </div>}
         {failed && <a href="/login" style={{ display: 'inline-block', padding: '14px 24px', background: GOLD, color: '#1A1A2E', borderRadius: 999, fontWeight: 700, textDecoration: 'none', fontSize: 12, letterSpacing: '.08em' }}>CONTINUE TO ACCOUNT SUPPORT →</a>}
       </section>
     </main>
