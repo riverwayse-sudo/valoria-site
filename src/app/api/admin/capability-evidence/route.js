@@ -55,19 +55,16 @@ export async function POST(request){
   const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
   if(!uuid.test(documentId)||!['approved','changes_requested','rejected'].includes(decision)||!notes||notes.length>3000)
     return NextResponse.json({error:'A valid document, decision and review note (max 3,000 characters) are required.'},{status:400})
-  const {data:document,error:documentError}=await db.from('professional_documents')
-    .select('id,professional_id,capability_id,verification_status').eq('id',documentId).maybeSingle()
-  if(documentError) return NextResponse.json({error:'Could not verify the evidence record.'},{status:500})
-  if(!document) return NextResponse.json({error:'Evidence record not found.'},{status:404})
-  const status=decision==='approved'?'verified':decision==='rejected'?'rejected':'pending'
-  const reviewedAt=new Date().toISOString()
-  const {data:review,error:reviewError}=await db.from('professional_document_reviews').insert({
-    document_id:document.id,capability_id:document.capability_id,decision,notes,reviewed_by:user.id,reviewed_at:reviewedAt
-  }).select('id,document_id,capability_id,decision,notes,reviewed_by,reviewed_at').single()
-  if(reviewError) return NextResponse.json({error:'Could not append the review decision.'},{status:500})
-  const {error:updateError}=await db.from('professional_documents').update({
-    verification_status:status,verified_by:decision==='approved'?user.id:null,verified_at:decision==='approved'?reviewedAt:null,updated_at:reviewedAt
-  }).eq('id',document.id)
-  if(updateError) return NextResponse.json({error:'The review was recorded, but document status could not be synchronized. Reconcile this record before reviewing it again.'},{status:502})
-  return NextResponse.json({ok:true,review,verification_status:status},{status:201})
+  const {data:result,error:reviewError}=await db.rpc('record_professional_document_review',{
+    p_document_id:documentId,
+    p_decision:decision,
+    p_notes:notes,
+    p_reviewed_by:user.id
+  })
+  if(reviewError) {
+    const message=reviewError.message||''
+    const status=message.includes('not found')?404:message.includes('authorised')?403:400
+    return NextResponse.json({error:status===404?'Evidence record not found.':status===403?'Admin access required.':'The review could not be recorded. Please verify the decision and notes.'},{status})
+  }
+  return NextResponse.json({ok:true,...result},{status:201})
 }
