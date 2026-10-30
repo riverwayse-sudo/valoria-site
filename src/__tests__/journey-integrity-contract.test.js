@@ -121,6 +121,7 @@ describe('journey integrity contract', () => {
     expect(handoff).toContain('destination.hash')
     expect(continuation).toContain('createValuHandoffToken(user.id,taster.id)')
     expect(continuation).toContain("login.searchParams.set('returnTo','/journey/continue?'+continuationParams.toString())")
+    expect(continuation).toContain("stageTarget(request,link.target_stage,user,link.target_stage==='assess'?link.source_id:null)")
     expect(continuation).toContain("fragmentParams.set('resume_token',resumeToken)")
     expect(handoff).toContain("new URLSearchParams({ full:'1' })")
     expect(continuation).toContain("new URLSearchParams({full:'1'})")
@@ -142,9 +143,16 @@ describe('journey integrity contract', () => {
     expect(login).not.toContain("fetch('/api/valu-handoff'")
   })
 
-  test('assessment reminder links require account continuation instead of anonymous assessment submission', () => {
+  test('assessment reminder emails use opaque single-use account-bound re-entry links', () => {
     const source = read('src/app/api/cron/valu-reminders/route.js')
-    expect(source).toContain('/journey/continue?stage=assess&taster_id=')
+    expect(source).toContain("from('valoria_reentry_links').insert({")
+    expect(source).toContain("entry_point: 'valu_reminder'")
+    expect(source).toContain("target_stage: 'assess'")
+    expect(source).toContain('source_id: row.id')
+    expect(source).toContain("randomBytes(32).toString('hex')")
+    expect(source).toContain("assessmentUrl.searchParams.set('token', reentry.token)")
+    expect(source).not.toContain('/journey/continue?stage=assess&taster_id=')
+    expect(source).not.toContain('pending_taster_id')
     expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
     expect(source).toContain('email_confirmed_at')
   })
