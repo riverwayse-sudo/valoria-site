@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
 import {
   GOLD, DARK, MID, PARCH, DIM, GLINE,
   INDUSTRIES, SKILLS_POOL, TOPICS_POOL, PROGRAMME_TYPES, LANGUAGES,
@@ -218,11 +219,8 @@ function EditPageInner() {
     if (!file || !user) return
     setCvUploading(true)
     try {
-      const ext = file.name.split('.').pop()
-      const path = `profiles/${user.id}/cv.${ext}`
-      const { error } = await supabase.storage.from('cvs').upload(path, file, { upsert: true })
-      if (error) throw error
-      setField('media', 'cv_url', path)
+      const { storagePath } = await uploadProfessionalCv(supabase, user.id, file)
+      setField('media', 'cv_url', storagePath)
       // Fire-and-forget, same as onboarding — see api/cv-summary/route.js.
       supabase.auth.getSession().then(({ data }) => {
         if (!data.session) return
