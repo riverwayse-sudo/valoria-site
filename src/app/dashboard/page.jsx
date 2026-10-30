@@ -412,7 +412,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* VALORIA PROGRESSION / UNLOCK SYSTEM — follows identity, never overlaps it */}
+        {/* MARKETPLACE JOURNEY — five eligibility milestones; not a profile or VALU percentage */}
         {isSupply && (
           <div style={{ maxWidth:'1100px', margin:'24px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
             <AccessProgressCard
@@ -544,7 +544,7 @@ export default function DashboardPage() {
               {/* Profile completeness */}
               <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px' }}>
-                  <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)' }}>Profile Completeness</div>
+                  <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)' }}>Required Profile Details</div>
                   <span style={{ fontSize:'16px', fontWeight:700, color: completenessPct === 100 ? '#1D9E75' : GOLD }}>{completenessPct}%</span>
                 </div>
                 <div style={{ height:'4px', background: FAINT, borderRadius:'2px' }}>
@@ -830,7 +830,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
         </div>
 
         {!assessmentDone && <div style={{ marginTop:22, paddingTop:18, borderTop:`1px solid ${GLINE}` }}><VALUJourneyProgress stage="continuation" /></div>}
-        {assessmentDone && <div style={{ display:'grid', gridTemplateColumns:'repeat(5,minmax(0,1fr))', gap:'8px', marginTop:22 }} aria-label="Marketplace readiness progress">
+        {assessmentDone && <div style={{ display:'grid', gridTemplateColumns:'repeat(5,minmax(0,1fr))', gap:'8px', marginTop:22 }} aria-label="Marketplace journey: five milestones">
           {steps.map((step, index) => (
             <div key={step.key} style={{ minWidth:0 }}>
               <div style={{ height:'4px', borderRadius:'99px', background:step.done ? GOLD : 'rgba(247,244,238,.12)' }} />
@@ -857,7 +857,7 @@ function WelcomeModal({ firstName, isSupply, isOrganiser, pct, onClose }) {
   const timerRef = useRef(null)
 
   const beats = isSupply ? [
-    { eyebrow:'PROFILE LIVE', title:`You did it, ${firstName}.`, body:`${pct}% complete — your profile is officially part of the Valoria marketplace.`, icon:'✓' },
+    { eyebrow:'PROFILE DETAILS', title:`Your profile is taking shape, ${firstName}.`, body:`${pct}% of your required profile details are complete. This is separate from your VALU assessment and marketplace eligibility.`, icon:'✓' },
     { eyebrow:"YOU'RE IN GOOD COMPANY", title:'Welcome to Valoria.', body:"Every professional here is independently assessed. You're not just listed — you're verified.", icon:'◈' },
     { eyebrow:'WHAT HAPPENS NEXT', title:'Your next opportunity could start today.', body:'Stay visible to the right people. We’ll let you know when someone expresses interest in connecting with you.', icon:'→' },
   ] : [
