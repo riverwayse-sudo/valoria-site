@@ -47,11 +47,12 @@ async function stageTarget(request,stage,user){
  let handoffToken
  try { handoffToken=createValuHandoffToken(user.id,taster.id) } catch { return '/journey' }
  const destination=new URL(ASSESSMENT_ORIGIN)
- const destinationParams=new URLSearchParams({full:'1',taster_id:taster.id,name:taster.name||'',role:taster.role||'',experience:taster.experience||''})
- const resumeToken=request.nextUrl.searchParams.get('resume')?.trim()
- if(resumeToken)destinationParams.set('resume',resumeToken)
- destination.search=destinationParams.toString()
- destination.hash=new URLSearchParams({handoff_token:handoffToken}).toString()
+ const destinationParams=new URLSearchParams({full:'1'})
+  destination.search=destinationParams.toString()
+  const fragmentParams=new URLSearchParams({handoff_token:handoffToken})
+  const resumeToken=request.nextUrl.searchParams.get('resume')?.trim()
+  if(resumeToken)fragmentParams.set('resume_token',resumeToken)
+  destination.hash=fragmentParams.toString()
  return destination.toString()
 }
 
