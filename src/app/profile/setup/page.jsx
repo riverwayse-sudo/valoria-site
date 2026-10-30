@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
 
 import {
   GOLD, DARK, MID, PARCH, DIM, GLINE,
@@ -326,16 +327,10 @@ function ProfileSetupForm() {
     setCvUploading(true)
     setCvError('')
     try {
-      const ext  = file.name.split('.').pop()
-      const path = `profiles/${user.id}/cv.${ext}`
-      // 'cvs' is a private bucket (unlike 'avatars') — CVs contain personal
-      // data that shouldn't be publicly fetchable by URL. We store the
-      // storage path here, not a public URL, and resolve a short-lived
-      // signed URL only when something needs to actually read the file
-      // (download, or a future summarisation job).
-      const { error } = await supabase.storage.from('cvs').upload(path, file, { upsert: true })
-      if (error) throw error
-      setForm(f => ({ ...f, cv_url: path, cv_filename: file.name }))
+      // Upload to the private bucket and register the evidence record before
+      // making the new path the profile's active CV.
+      const { storagePath } = await uploadProfessionalCv(supabase, user.id, file)
+      setForm(f => ({ ...f, cv_url: storagePath, cv_filename: file.name }))
       // Fire-and-forget — generates the About-section summary from the
       // person's already-collected profile fields (see cv-summary/route.js
       // — no AI call, no CV text parsing, just template composition, so
