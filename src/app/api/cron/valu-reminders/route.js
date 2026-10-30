@@ -76,7 +76,7 @@ export async function GET(request) {
     const { data: userData } = await admin.auth.admin.getUserById(row.user_id)
     const email = userData?.user?.email
     if (!email || !userData?.user?.email_confirmed_at) continue
-    const firstName = String(row.name || 'there').trim().split(/\\s+/)[0] || 'there'
+    const firstName = String(row.name || 'there').trim().split(/\s+/)[0] || 'there'
     const dashboardUrl = 'https://valoriainstitute.com/login?returnTo=%2Fdashboard'
     const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#1A1A2E;line-height:1.65"><p style="font-size:11px;font-weight:700;letter-spacing:.14em;color:#C9A84C">VALORIA INSTITUTE</p><h2 style="font-weight:400">Your VALU journey is waiting.</h2><p>Hi ${escapeHtml(firstName)}, your opening nine answers are saved to your Valoria account.</p><p>Sign in to your account to see your progress and continue your assessment from your dashboard.</p><a href="${dashboardUrl}" style="display:inline-block;padding:13px 22px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-weight:700;font-size:12px;letter-spacing:.08em">RETURN TO YOUR DASHBOARD →</a><p style="font-size:11px;color:#8A8578;margin-top:26px">Your saved responses remain part of your Valoria journey.</p></div>`
     try {
