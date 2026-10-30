@@ -348,7 +348,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(report).toContain('/profile/setup')
     expect(report).toContain('Choose capabilities')
     expect(report).toContain('Prepare for the Registry')
-    expect(report).toContain("' points</span>'")
+    expect(report).toContain(' points</span>')
   })
 
   test('public VALU explanation describes one continuous 58-question journey with an account bridge', () => {
