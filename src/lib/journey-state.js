@@ -1,7 +1,9 @@
 function deriveJourneyState({ journey = null, assessment, profile, capabilities = [], activation, documents = [], opportunity }) {
   const assessmentScore = assessment?.total_score ?? profile?.valu_index ?? null
   const hasAssessment = !!(assessment?.completed_at || profile?.assessment_completed_at || profile?.valu_index != null)
-  const assessmentCurrent = hasAssessment && (!assessment?.expires_at || new Date(assessment.expires_at).getTime() > Date.now())
+  const assessmentExpiresAt = assessment?.expires_at || profile?.assessment_expires_at || null
+  const assessmentCurrent = hasAssessment && (!assessmentExpiresAt || new Date(assessmentExpiresAt).getTime() > Date.now())
+  const assessmentEligible = assessmentCurrent && assessmentScore != null && Number(assessmentScore) >= 35
 
   const reportStatus = assessment?.report_status ||
     (assessment?.ai_report ? 'READY' : hasAssessment ? 'PENDING' : 'NOT_STARTED')
@@ -37,8 +39,10 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
   const eligibilityMissing = [...new Set([...profileMissing, ...capabilityMissing])]
   if (!capabilitySelected) eligibilityMissing.push('At least one professional capability')
   if (!profile?.cv_url?.trim()) eligibilityMissing.push('Your CV')
-  if (!assessmentCurrent) eligibilityMissing.push('A current full VALU Index assessment of at least 35 points')
-  const eligibilityComplete = profileReady && assessmentCurrent && capabilitySelected && eligibleCapabilities.length > 0
+  if (!hasAssessment) eligibilityMissing.push('A completed full VALU Index assessment')
+  else if (!assessmentCurrent) eligibilityMissing.push('A current full VALU Index assessment')
+  else if (!assessmentEligible) eligibilityMissing.push('At least 35 VALU Index points')
+  const eligibilityComplete = profileReady && assessmentEligible && capabilitySelected && eligibleCapabilities.length > 0
   const listed = listedCapabilities.length > 0 && eligibilityComplete
   const opportunityAccess = !!journey?.marketplace_ready || listed
   const opportunityEngaged = !!opportunity
@@ -68,7 +72,7 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
   // Report generation/activation is a hard gate before profile progression.
   if (hasAssessment && !reportReady) next = 'report'
   else if (hasAssessment && reportReady && activation?.status !== 'activated') next = 'report'
-  else if (profileReady && assessmentCurrent && eligibleCapabilities.length > 0 && !listed) next = 'listed'
+  else if (profileReady && assessmentEligible && eligibleCapabilities.length > 0 && !listed) next = 'listed'
   else if (listed) next = 'opportunity'
 
   const recoveryReason = journey?.next_action ||
