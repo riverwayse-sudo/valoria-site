@@ -22,6 +22,11 @@ create policy professional_documents_owner_insert
     and verification_status in ('unverified','pending')
     and verified_by is null
     and verified_at is null
+    and visibility = 'private'
+    and storage_bucket = 'cvs'
+    and split_part(storage_path, '/', 1) = 'profiles'
+    and split_part(storage_path, '/', 2) = (select auth.uid())::text
+    and ((document_type = 'cv' and capability_id is null) or (document_type <> 'cv' and capability_id is not null))
     and (
       capability_id is null
       or exists (
