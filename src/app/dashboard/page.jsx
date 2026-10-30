@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import VALUJourneyProgress from '@/components/VALUJourneyProgress'
 import Link from 'next/link'
 import { AssessmentStartLink } from '@/components/Nav'
 import { supabase } from '@/lib/supabase'
@@ -797,7 +798,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
             : 'You are ready for opportunities.'
 
   const explanation = !assessmentDone
-    ? 'Your first nine responses are saved. Continue the remaining 49 questions to complete your official VALU Index.'
+    ? 'Your opening nine answers are saved. Your account is confirmed. Continue at Question 10 to complete the remaining 49 and receive your official VALU Index.'
     : !profileComplete
       ? 'You are already discoverable. Complete your profile to add more context and unlock enhanced marketplace access.'
       : !capabilityReady
@@ -819,7 +820,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
           </div>
           {next?.key === 'valu' ? (
             <AssessmentStartLink href={nextHref} style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>
-              CONTINUE ASSESSMENT →
+              CONTINUE AT QUESTION 10 →
             </AssessmentStartLink>
           ) : (
             <Link href={nextHref} style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>
@@ -828,6 +829,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
           )}
         </div>
 
+        {!assessmentDone && <div style={{ marginTop:22, paddingTop:18, borderTop:`1px solid ${GLINE}` }}><VALUJourneyProgress stage="continuation" /></div>}
         <div style={{ display:'grid', gridTemplateColumns:'repeat(5,minmax(0,1fr))', gap:'8px', marginTop:22 }} aria-label="Journey progress">
           {steps.map((step, index) => (
             <div key={step.key} style={{ minWidth:0 }}>
