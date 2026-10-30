@@ -22,11 +22,11 @@ create table if not exists public.professional_document_reviews (
 );
 
 create index if not exists professional_document_reviews_document_idx
-  on public.professional_document_reviews (document_id, reviewed_at desc);
+  on public.professional_document_reviews (document_id, reviewed_at desc, id desc);
 
 alter table public.professional_document_reviews enable row level security;
-revoke all on public.professional_document_reviews from anon, authenticated;
-grant all on public.professional_document_reviews to service_role;
+revoke all on public.professional_document_reviews from public, anon, authenticated, service_role;
+grant select on public.professional_document_reviews to service_role;
 
 comment on column public.professional_documents.capability_id is
   'Null for profile-wide evidence such as CV; populated for evidence submitted against one professional capability.';
