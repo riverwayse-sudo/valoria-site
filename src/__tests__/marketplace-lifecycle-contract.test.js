@@ -27,6 +27,14 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(facilitators).toContain("getMarketplaceRows('facilitator')")
   })
 
+  test('marketplace roster projection refreshes when profile, capability, or listing governance changes', () => {
+    const migration = read('supabase/migrations/20261030120000_restore_marketplace_projection_refresh_triggers.sql')
+    expect(migration).toContain('after insert or update or delete on public.professional_profiles')
+    expect(migration).toContain('after insert or update or delete on public.professional_capabilities')
+    expect(migration).toContain('after insert or update or delete on public.professional_listing_events')
+    expect(migration.match(/execute function public\.refresh_marketplace_public_roster_trigger\(\)/g)).toHaveLength(3)
+  })
+
   test('marketplace distinguishes Basic snapshot access from Full VALU assessment', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
     const data = read('src/lib/marketplace-data.js')
