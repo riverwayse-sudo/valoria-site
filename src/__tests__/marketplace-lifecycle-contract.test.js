@@ -46,6 +46,17 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('window.clearInterval(interval)')
   })
 
+  test('profile onboarding serializes saves and confirms capabilities before profile completion', () => {
+    const source = read('src/app/profile/setup/page.jsx')
+    expect(source).toContain('saveQueueRef.current.catch(() => {}).then(write)')
+    expect(source).toContain('const saved = await saveProgress()')
+    expect(source).toContain('if (saved) router.push(\'/dashboard\')')
+    const capabilitySync = source.indexOf("from('professional_capabilities')")
+    const completion = source.indexOf("update({ profile_complete: true")
+    expect(capabilitySync).toBeGreaterThan(-1)
+    expect(completion).toBeGreaterThan(capabilitySync)
+  })
+
   test('profile onboarding does not submit platform-owned governance fields', () => {
     const source = read('src/app/profile/setup/page.jsx')
     const start = source.indexOf('async function saveProgress')
