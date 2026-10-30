@@ -471,4 +471,15 @@ describe('journey integrity contract', () => {
     expect(callback).toContain('Continue at Question 10')
   })
 
+  test('dashboard presents one primary assessment action and keeps the VALU Index card informational', () => {
+    const dashboard = read('src/app/dashboard/page.jsx')
+    const sidebar = dashboard.split('{/* VALU Index */}')[1].split('{/* Profile completeness */}')[0]
+    expect(dashboard).toContain('<AccessProgressCard')
+    expect(sidebar).toContain('ASSESSMENT IN PROGRESS')
+    expect(sidebar).not.toContain('AssessmentStartLink')
+    expect(sidebar).not.toContain('CONTINUE YOUR VALU ASSESSMENT')
+    expect(sidebar).toContain('Your official VALU Index and PRIME insights will appear here')
+  })
+
+
 })
