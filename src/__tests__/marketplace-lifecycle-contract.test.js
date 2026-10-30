@@ -310,4 +310,35 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(trigger).not.toContain('set is_active=true')
   })
 
+  test('CV evidence backfill is valid, exact-match, bounded and idempotent', () => {
+    const backfill = read('supabase/migrations/20261030140000_backfill_existing_cv_document_records.sql')
+    expect(backfill).toContain("o.name = p.cv_url")
+    expect(backfill).toContain("o.bucket_id = 'cvs'")
+    expect(backfill).toContain("between 1 and 10485760")
+    expect(backfill).toContain("on conflict (storage_bucket, storage_path) do nothing")
+    expect(backfill).not.toContain("^[0-9]+  'private'")
+    expect(backfill.match(/\\bcommit;/gi)).toHaveLength(1)
+  })
+
+  test('evidence and capability governance migrations match installed policy names', () => {
+    const governance = read('supabase/migrations/20261030170000_lock_professional_document_review_governance.sql')
+    expect(governance).toContain('drop policy if exists "professionals can insert own capabilities"')
+    expect(governance).toContain('drop policy if exists "professionals can update own capabilities"')
+    expect(governance).toContain('drop policy if exists "professionals can delete own capabilities"')
+    expect(governance).toContain('drop policy if exists professional_documents_owner_delete')
+    expect(governance).toContain('drop policy if exists "CV owner can update own objects"')
+  })
+
+  test('administrator review history and document status update atomically', () => {
+    const migration = read('supabase/migrations/20261030200000_atomic_professional_document_review.sql')
+    const api = read('src/app/api/admin/capability-evidence/route.js')
+    expect(migration).toContain('for update')
+    expect(migration).toContain('insert into public.professional_document_reviews')
+    expect(migration).toContain('update public.professional_documents')
+    expect(migration).toContain('public.admin_users')
+    expect(migration).toContain('grant execute on function public.record_professional_document_review')
+    expect(api).toContain("db.rpc('record_professional_document_review'")
+    expect(api).not.toContain("from('professional_document_reviews').insert")
+  })
+
 })
