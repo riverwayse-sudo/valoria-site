@@ -836,33 +836,19 @@ function AccessProgressCard({ profile, assessment, capabilities, hasSavedOpening
                 <div style={{ marginTop:15, padding:'13px 15px', border:'1px solid rgba(201,168,76,.18)', borderRadius:8, background:'rgba(15,15,26,.28)' }}>
                   <div style={{ fontSize:'9px', fontWeight:800, letterSpacing:'.14em', color:'rgba(201,168,76,.72)', marginBottom:9 }}>CAPABILITY REQUIREMENTS</div>
                   {activeCapabilities.map(capability => {
-                    const missing = Array.isArray(capability.missing_requirements) ? capability.missing_requirements : []
-                    const ready = isCapabilityEligible(capability) && missing.length === 0
-                    return (
-                      <div key={capability.id} style={{ padding:'8px 0', borderTop:'1px solid rgba(247,244,238,.07)' }}>
-                        <div style={{ color:PARCH, fontSize:'11px', fontWeight:700, textTransform:'capitalize' }}>{capability.capability}</div>
-                        <div style={{ color:ready ? '#8FC8A8' : DIM, fontSize:'10px', lineHeight:1.6, marginTop:3 }}>
-                          {ready ? 'Requirements met' : missing.length ? missing.map(item => String(item).replace(/_/g,' ')).join(' · ') : 'Awaiting Valoria eligibility review'}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-              {next?.key === 'eligibility' && activeCapabilities.length > 0 && (
-                <div style={{ marginTop:15, padding:'13px 15px', border:'1px solid rgba(201,168,76,.18)', borderRadius:8, background:'rgba(15,15,26,.28)' }}>
-                  <div style={{ fontSize:'9px', fontWeight:800, letterSpacing:'.14em', color:'rgba(201,168,76,.72)', marginBottom:9 }}>CAPABILITY REQUIREMENTS</div>
-                  {activeCapabilities.map(capability => {
                     const labels = {
                       capability: 'Confirm this capability',
                       profile: 'Complete your professional profile',
                       valu_assessment_score_35_current: 'Complete a current VALU Index assessment with at least 35 points',
                       talent_cv: 'Submit your CV',
+                      talent_cv_approval: 'Your current CV must be approved by Valoria',
                       speaker_topics: 'Add your speaking topics',
                       speaker_formats: 'Select your speaking formats',
                       speaker_audience_size: 'Add your audience experience',
+                      speaker_evidence_approval: 'Submit a speaking sample, portfolio or certification and await approval',
                       facilitator_topics: 'Add your facilitation topics',
                       facilitator_programme_types: 'Select your programme types',
+                      facilitator_evidence_approval: 'Submit a facilitation record, portfolio or certification and await approval',
                     }
                     const missing = Array.isArray(capability.missing_requirements) ? capability.missing_requirements : []
                     const ready = isCapabilityEligible(capability) && missing.length === 0
