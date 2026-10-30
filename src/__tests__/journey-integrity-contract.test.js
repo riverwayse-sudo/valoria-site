@@ -124,7 +124,10 @@ describe('journey integrity contract', () => {
     expect(continuation).toContain("entry_point:'legacy_valu_link'")
     expect(continuation).toContain("source:'legacy_assessment_url'")
     expect(continuation).not.toContain("login.searchParams.set('pending_taster_id',requestedTasterId)")
-    expect(continuation).toContain("stageTarget(request,link.target_stage,user,link.target_stage==='assess'?link.source_id:null)")
+    expect(continuation).toContain(".select('id,user_id,entry_point,target_stage,source_id,expires_at,used_at')")
+    expect(continuation).toContain("['valu_reminder','legacy_valu_link'].includes(link.entry_point)?link.source_id:null")
+    expect(continuation).toContain(".select('id').maybeSingle()")
+
     expect(continuation).toContain("fragmentParams.set('resume_token',resumeToken)")
     expect(handoff).toContain("new URLSearchParams({ full:'1' })")
     expect(continuation).toContain("new URLSearchParams({full:'1'})")
