@@ -73,7 +73,7 @@ export async function POST(request) {
 export async function GET(request) {
   const db=adminClient()
   if(!db) return NextResponse.json({error:'Evidence service is temporarily unavailable.'},{status:503})
-  const token=request.headers.get('authorization')?.match(/^Bearer\\s+(.+)$/i)?.[1]
+  const token=request.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1]
   if(!token) return NextResponse.json({error:'Not authenticated.'},{status:401})
   const {data:{user},error:authError}=await db.auth.getUser(token)
   if(authError||!user) return NextResponse.json({error:'Not authenticated.'},{status:401})
