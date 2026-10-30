@@ -411,13 +411,11 @@ describe('journey integrity contract', () => {
   test('the VALU opening, confirmation bridge, and Question 10 continuation read as one journey', () => {
     const progress = read('src/components/VALUJourneyProgress.jsx')
     const signup = read('src/app/professional-signup/page.jsx')
-    const callback = read('src/app/auth/callback/page.jsx')
     const dashboard = read('src/app/dashboard/page.jsx')
     expect(progress).toContain('Questions 1–9')
     expect(progress).toContain('Save & confirm')
     expect(progress).toContain('Questions 10–58')
     expect(signup).toContain('VALUJourneyProgress stage="bridge"')
-    expect(callback).toContain('VALUJourneyProgress stage="bridge"')
     expect(dashboard).toContain('VALUJourneyProgress stage="continuation"')
     expect(signup).not.toContain('9-QUESTION VALU INDEX COMPLETE')
     expect(signup).toContain('Opening 9 of 58 · Saved')
@@ -465,10 +463,10 @@ describe('journey integrity contract', () => {
     expect(signup).toContain('Then Question 10.')
     expect(signup).toContain('Continue at Question 10')
     expect(signup).toContain('Opening nine saved')
-    expect(callback).toContain('Your dashboard is ready; continue at Question 10.')
-    expect(callback).toContain('Return to your dashboard')
-    expect(callback).toContain('No separate login is needed.')
-    expect(callback).toContain('Continue at Question 10')
+    expect(callback).toContain("router.replace('/dashboard?welcome=profile')")
+    expect(callback).not.toContain('VALUJourneyProgress')
+    expect(callback).not.toContain('Your next steps')
+    expect(callback).not.toContain('Continue at Question 10')
   })
 
   test('dashboard-to-assessment bridge introduces Valoria while the secure handoff opens', () => {
