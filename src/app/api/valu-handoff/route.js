@@ -45,9 +45,10 @@ export async function GET(request) {
   try { handoffToken = createValuHandoffToken(user.id, taster.id) } catch { return NextResponse.json({ error:'Secure VALU handoff is unavailable.' }, { status:503 }) }
   await admin.from('valoria_journey_events').insert({ user_id:user.id, event_key:'assessment_handoff', source:'taster_session', source_id:taster.id, metadata:{ destination:'assessment.valoriainstitute.com', mode:'full', token_ttl_seconds:14400 } })
   const destination = new URL(ASSESSMENT_ORIGIN)
-  const destinationParams = new URLSearchParams({ full:'1', taster_id:taster.id, name:taster.name||'', role:taster.role||'', experience:taster.experience||'' })
-  if (resumeToken) destinationParams.set('resume', resumeToken)
+  const destinationParams = new URLSearchParams({ full:'1' })
   destination.search = destinationParams.toString()
-  destination.hash = new URLSearchParams({ handoff_token:handoffToken }).toString()
+  const fragmentParams = new URLSearchParams({ handoff_token:handoffToken })
+  if (resumeToken) fragmentParams.set('resume_token', resumeToken)
+  destination.hash = fragmentParams.toString()
   return NextResponse.json({ url:destination.toString() }, { headers:{'Cache-Control':'no-store','Referrer-Policy':'no-referrer'} })
 }
