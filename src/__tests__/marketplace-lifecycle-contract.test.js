@@ -293,4 +293,18 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(governance).toContain('drop policy if exists "CV owner can update own objects"')
   })
 
+  test('only approved evidence unlocks the matching capability and every evidence decision recalculates eligibility', () => {
+    const evaluator = read('supabase/migrations/20261030180000_require_approved_capability_evidence.sql')
+    const trigger = read('supabase/migrations/20261030190000_recalculate_capability_eligibility_on_evidence_review.sql')
+    expect(evaluator).toContain("d.verification_status='verified'")
+    expect(evaluator).toContain("d.storage_path=p.cv_url")
+    expect(evaluator).toContain("d.capability_id=capability_row_id")
+    expect(evaluator).toContain("'speaker_evidence_approval'")
+    expect(evaluator).toContain("'facilitator_evidence_approval'")
+    expect(trigger).toContain('after insert or update or delete on public.professional_documents')
+    expect(trigger).toContain('private.evaluate_professional_capability')
+    expect(trigger).toContain('where id=capability_row.id')
+    expect(trigger).not.toContain('set is_active=true')
+  })
+
 })
