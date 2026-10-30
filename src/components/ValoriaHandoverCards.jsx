@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
 import styles from './ValoriaHandoverCards.module.css'
 
@@ -18,8 +17,6 @@ export default function ValoriaHandoverCards() {
       label: 'THE INSTITUTE',
       title: 'Worth. Built.',
       copy: 'A professional institute building the standards, insight and infrastructure that help capability become recognised value.',
-      href: '/about-us',
-      action: 'Discover Valoria',
       tone: 'institute',
     },
     {
@@ -27,8 +24,6 @@ export default function ValoriaHandoverCards() {
       label: 'VALU INDEX',
       title: 'Understand your professional value.',
       copy: 'A structured assessment that turns your responses into insight across five dimensions of professional capability.',
-      href: '/valu',
-      action: 'Explore VALU',
       tone: 'valu',
     },
     {
@@ -36,8 +31,6 @@ export default function ValoriaHandoverCards() {
       label: 'PRIME FRAMEWORK',
       title: 'Five dimensions. One fuller picture.',
       copy: 'Presence, Relationships, Intelligence, Mastery and Enterprise — the dimensions that shape how professional value is built.',
-      href: '/prime',
-      action: 'Explore PRIME',
       tone: 'prime',
     },
     {
@@ -45,8 +38,6 @@ export default function ValoriaHandoverCards() {
       label: 'PROFESSIONAL REGISTRY',
       title: 'Make your capability discoverable.',
       copy: 'Build a professional profile, define your capabilities and work towards visibility in the Valoria marketplace.',
-      href: '/marketplace',
-      action: 'Visit marketplace',
       tone: 'registry',
     },
     {
@@ -56,8 +47,6 @@ export default function ValoriaHandoverCards() {
       copy: nextEvent
         ? `${formatSessionDate(nextEvent)} · ${nextEvent.speaker || 'Valoria Institute'} · ${eventState === 'live' ? 'Live now' : 'Registration details on the events page'}`
         : 'Valoria conversations bring professionals together around the ideas, standards and capabilities shaping the future of work. The next confirmed date will appear here.',
-      href: '/events',
-      action: nextEvent ? 'View event details' : 'Explore events',
       tone: 'events',
     },
   ]
@@ -66,10 +55,10 @@ export default function ValoriaHandoverCards() {
     <section className={styles.section} aria-label="Discover Valoria Institute">
       <div className={styles.heading}>
         <div>
-          <span className={styles.eyebrow}>WHILE YOUR ACCOUNT OPENS</span>
+          <span className={styles.eyebrow}>YOUR NEXT VALORIA EXPERIENCE</span>
           <h2>There is more to <em>Valoria.</em></h2>
         </div>
-        <p>Explore the institute, the VALU framework, professional opportunities and conversations ahead.</p>
+        <p>A quick introduction to the institute, your professional framework, the marketplace and upcoming conversations.</p>
       </div>
       <div className={styles.grid}>
         {cards.map((card, index) => (
@@ -82,7 +71,7 @@ export default function ValoriaHandoverCards() {
               <h3>{card.title}</h3>
               <p>{card.copy}</p>
             </div>
-            <Link href={card.href} className={styles.link}>{card.action}<span aria-hidden="true"> ↗</span></Link>
+            <span className={styles.link}>VALORIA INSTITUTE</span>
           </article>
         ))}
       </div>
