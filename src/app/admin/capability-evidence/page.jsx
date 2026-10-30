@@ -5,14 +5,14 @@ import {supabase} from '@/lib/supabase'
 
 const BG='#0F0F1A',P='#F7F4EE',M='#1A1A2E',G='#C9A84C',DIM='rgba(247,244,238,.62)'
 export default function CapabilityEvidenceAdmin(){
- const [items,setItems]=useState([]),[latest,setLatest]=useState({}),[loading,setLoading]=useState(true),[error,setError]=useState(''),[busy,setBusy]=useState(''),[notes,setNotes]=useState({})
+ const [items,setItems]=useState([]),[latest,setLatest]=useState({}),[history,setHistory]=useState({}),[loading,setLoading]=useState(true),[error,setError]=useState(''),[busy,setBusy]=useState(''),[notes,setNotes]=useState({})
  const load=useCallback(async()=>{
   const {data:{session}}=await supabase.auth.getSession()
   if(!session){location.href='/admin/login';return}
   const r=await fetch('/api/admin/capability-evidence',{headers:{Authorization:'Bearer '+session.access_token}})
   const j=await r.json()
   if(!r.ok)setError(j.error||'Could not load evidence queue.')
-  else{setItems(j.documents||[]);setLatest(j.latestByDocument||{})}
+  else{setItems(j.documents||[]);setLatest(j.latestByDocument||{});setHistory((j.reviews||[]).reduce((acc,review)=>{(acc[review.document_id] ||= []).push(review);return acc},{}))}
   setLoading(false)
  },[])
  useEffect(()=>{load()},[load])
@@ -34,7 +34,7 @@ export default function CapabilityEvidenceAdmin(){
  <div style={styles.cards}><div><small>Evidence records</small><strong>{items.length}</strong></div><div><small>Awaiting review</small><strong>{items.filter(x=>x.verification_status==='pending'||x.verification_status==='unverified').length}</strong></div><div><small>Approved</small><strong>{items.filter(x=>x.verification_status==='verified').length}</strong></div><div><small>Changes / rejected</small><strong>{items.filter(x=>x.verification_status==='rejected').length}</strong></div></div>
  <div style={styles.list}>{items.map(d=>{const review=latest[d.id];const cap=d.professional_capabilities?.capability||'Profile-wide';const profile=d.professional_profiles||{};return <article key={d.id} style={styles.item}>
   <div style={styles.top}><div><b>{d.original_filename}</b><div style={styles.muted}>{profile.display_name||'Professional'} · {profile.atb_id||d.professional_id}</div><div style={styles.tags}><span>{cap}</span><span>{d.document_type.replaceAll('_',' ')}</span><span>{d.verification_status}</span></div></div>{d.preview_url?<a href={d.preview_url} target="_blank" rel="noreferrer" style={styles.link}>Open private file ↗</a>:<span style={styles.muted}>Preview unavailable</span>}</div>
-  {review&&<div style={styles.history}><b>Latest: {review.decision.replaceAll('_',' ')}</b><p>{review.notes}</p><small>{new Date(review.reviewed_at).toLocaleString()}</small></div>}
+  {(history[d.id]||[]).length>0&&<div style={styles.history}><b>Review history</b>{(history[d.id]||[]).map(entry=><div key={entry.id} style={{borderTop:'1px solid rgba(247,244,238,.12)',paddingTop:8,marginTop:8}}><b>{entry.decision.replaceAll('_',' ')}</b><p>{entry.notes}</p><small>{new Date(entry.reviewed_at).toLocaleString()} · {entry.reviewed_by}</small></div>)}</div>}
   <label style={styles.label}>Reviewer notes (required)</label><textarea value={notes[d.id]||''} onChange={e=>setNotes(v=>({...v,[d.id]:e.target.value}))} placeholder="State what was checked and what the participant must do next." style={styles.textarea}/>
   <div style={styles.actions}><button disabled={busy===d.id} onClick={()=>decide(d.id,'approved')} style={styles.approve}>{busy===d.id?'Saving…':'Approve evidence'}</button><button disabled={busy===d.id} onClick={()=>decide(d.id,'changes_requested')} style={styles.secondary}>Request changes</button><button disabled={busy===d.id} onClick={()=>decide(d.id,'rejected')} style={styles.secondary}>Reject</button></div>
  </article>})}{!items.length&&<p style={styles.empty}>No evidence has been submitted yet.</p>}</div>
