@@ -90,7 +90,7 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Up to 3 roles. Helps people understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organisation' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:true })
   if (isCandidate) s.push({ key:'certifications', kind:'text', section:'Expertise', title:'Any certifications or credentials?', sub:'Comma separated.', placeholder:'PMP, Google Analytics, HubSpot Marketing', required:true })
 
-  s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'A profile photo is required by the current profile-readiness rules. Use a clear, professional image so your identity can be reviewed and represented accurately.', required:true })
+  s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'Optional. Valoria uses a professional default avatar until you choose to upload a photo.', required:false })
   s.push({ key:'cv_url', kind:'cv', section:'Media', title:'Upload your CV.', sub:'PDF or Word. We use this to auto-summarise your background on your profile.', required:true })
   // Candidates don't get asked for this — video links are a Speaker/
   // Facilitator thing (per the owner's 31 Jul note: "candidates don't get
@@ -466,17 +466,8 @@ function ProfileSetupForm() {
         return
       }
     }
-    // Mark complete only after both the profile draft and capability records are confirmed.
-    const { error: completionError } = await supabase
-      .from('professional_profiles')
-      .update({ profile_complete: true, updated_at: new Date().toISOString() })
-      .eq('id', user.id)
-    if (completionError) {
-      console.error('Profile completion update failed:', completionError)
-      setSaving(false)
-      setSaveError('Your profile was saved, but completion could not be confirmed. Please try again.')
-      return
-    }
+    // profile_complete is calculated by the database from required profile fields.
+    // Do not write this derived governance field from the client.
     // Fetch back what the database actually assigned (atb_id is set by a
     // trigger, not by this app) so we can show it — previously this just
     // redirected silently with no confirmation of any kind.
