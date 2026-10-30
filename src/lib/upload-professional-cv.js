@@ -41,6 +41,7 @@ export async function uploadProfessionalCv(supabase, professionalId, file) {
       mime_type: mimeType,
       size_bytes: file.size,
       visibility: 'private',
+      verification_status: 'pending',
     })
     .select('id, verification_status, created_at')
     .single()
