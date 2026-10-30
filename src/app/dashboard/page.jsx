@@ -773,7 +773,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
 
   const next = steps.find(step => !step.done)
   const nextHref = !assessmentDone
-    ? '/valu/start'
+    ? '/journey/continue?stage=assess'
     : !profileComplete
       ? '/profile/setup'
       : !capabilityReady
