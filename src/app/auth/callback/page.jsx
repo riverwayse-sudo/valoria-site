@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
 import VALUJourneyProgress from '@/components/VALUJourneyProgress'
-import ValoriaHandoverCards from '@/components/ValoriaHandoverCards'
 
 const GOLD = '#C9A84C'
 const PARCHMENT = '#F7F4EE'
@@ -109,7 +108,6 @@ function AuthCallbackFlow() {
           <h1 style={{ fontSize: 30, lineHeight: 1.2, fontWeight: 500, margin: '0 0 14px' }}>{failed ? 'We could not finish the handoff.' : 'You’re almost there.'}</h1>
           <p style={{ fontSize: 15, lineHeight: 1.8, color: '#EDE8DC', margin: '0 0 26px' }}>{message}</p>
         </div>
-        {!failed && <ValoriaHandoverCards />}
         {assessmentBridge && !failed && <div aria-label="Your next steps" style={{display:'grid',gridTemplateColumns:'1fr',gap:9,textAlign:'left',marginTop:8}}>
           <div style={{display:'flex',gap:12,alignItems:'flex-start',padding:'12px 14px',border:'1px solid rgba(201,168,76,.22)',borderRadius:8}}>
             <span style={{color:GOLD,fontWeight:800,fontSize:11}}>✓</span><span><strong style={{display:'block',fontSize:12,color:PARCHMENT}}>Email confirmed and account connected</strong><small style={{display:'block',fontSize:11,color:'rgba(247,244,238,.55)',lineHeight:1.6,marginTop:3}}>Your saved opening nine are attached to your Valoria account.</small></span>
