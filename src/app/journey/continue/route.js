@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { randomBytes } from 'node:crypto'
 import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
 import { createValuHandoffToken } from '@/lib/valu-handoff-token'
@@ -14,6 +15,15 @@ async function getUser(request){
  const supabase=createServerClient(SB_URL,SB_ANON,{cookies:{getAll:()=>request.cookies.getAll(),setAll:()=>{}}})
  const {data:{user}}=await supabase.auth.getUser()
  return user||null
+}
+
+async function adminLookupTaster(tasterId){
+ const url=process.env.NEXT_PUBLIC_SUPABASE_URL
+ const key=process.env.SUPABASE_SERVICE_ROLE_KEY
+ if(!url||!key)return {data:null}
+ const admin=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}})
+ const {data,error}=await admin.from('taster_sessions').select('id,user_id,completed_at').eq('id',tasterId).not('completed_at','is',null).maybeSingle()
+ return {data:error?null:data}
 }
 
 async function stageTarget(request,stage,user,linkedTasterId=null){
@@ -65,12 +75,32 @@ export async function GET(request){
   if(!user){
    if(stage==='assess'){
     const login=new URL('/login',request.url)
-    const continuationParams=new URLSearchParams({stage:'assess'})
     const requestedTasterId=request.nextUrl.searchParams.get('taster_id')?.trim()
     const resumeToken=request.nextUrl.searchParams.get('resume')?.trim()
-    if(requestedTasterId)continuationParams.set('taster_id',requestedTasterId)
+    if(requestedTasterId){
+     // Backwards-compatible path for old emails/bookmarks: exchange the
+     // exposed snapshot ID for a short-lived opaque token before login.
+     const {data:taster}=await adminLookupTaster(requestedTasterId)
+     if(taster?.user_id){
+      const reentryToken=randomBytes(32).toString('hex')
+      const expiresAt=new Date(Date.now()+24*60*60*1000).toISOString()
+      const {data:reentry,error:reentryError}=await createClient(SB_URL,SERVICE,{auth:{persistSession:false,autoRefreshToken:false}})
+       .from('valoria_reentry_links').insert({
+        user_id:taster.user_id,token:reentryToken,entry_point:'legacy_valu_link',
+        target_stage:'assess',source:'legacy_assessment_url',source_id:taster.id,expires_at:expiresAt
+       }).select('token').single()
+      if(!reentryError&&reentry?.token){
+       const continuationParams=new URLSearchParams({token:reentry.token})
+       if(resumeToken)continuationParams.set('resume',resumeToken)
+       login.searchParams.set('returnTo','/journey/continue?'+continuationParams.toString())
+       return NextResponse.redirect(login)
+      }
+     }
+     login.searchParams.set('returnTo','/dashboard')
+     return NextResponse.redirect(login)
+    }
+    const continuationParams=new URLSearchParams({stage:'assess'})
     if(resumeToken)continuationParams.set('resume',resumeToken)
-    if(requestedTasterId)login.searchParams.set('pending_taster_id',requestedTasterId)
     login.searchParams.set('returnTo','/journey/continue?'+continuationParams.toString())
     return NextResponse.redirect(login)
    }
