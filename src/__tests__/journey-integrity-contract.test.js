@@ -76,7 +76,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
   test('professional signup preserves the snapshot but sends authenticated users to the dashboard before full assessment', () => {
     const source = read('src/app/professional-signup/page.jsx')
     expect(source).toContain('https://valoriainstitute.com/journey/continue?stage=assess&taster_id=')
-    expect(source).toContain('TAKE THE FULL VALU ASSESSMENT')
+    expect(source).toContain('CONTINUE TO QUESTION 10')
     expect(source).toContain('Sign in and continue your assessment.')
     expect(source).toContain('continueSignedInUser')
     expect(source).toContain('/dashboard?welcome=profile&pending_taster_id=')
@@ -104,7 +104,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(callback).toContain('/dashboard?welcome=profile&pending_taster_id=')
     expect(callback).not.toContain('/api/valu-handoff?taster_id=')
     expect(callback).not.toContain('window.location.replace(destination.toString())')
-    expect(dashboard).toContain('START FULL VALU ASSESSMENT')
+    expect(dashboard).toContain('CONTINUE TO QUESTION 10')
     expect(dashboard).toContain('/journey/continue?stage=assess&taster_id=')
     expect(continuation).toContain('requestedTasterId')
     expect(handoff).toContain("tasterQuery.eq('id', requestedTasterId)")

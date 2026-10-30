@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createValuHandoffToken } from '@/lib/valu-handoff-token'
 
+// The full assessment is served from its own origin, not a /valu/assessment/
+// path on the marketing site. Launch there so the signed handoff reaches the
+// deployment's root-level API routes.
+const ASSESSMENT_ORIGIN = 'https://assessment.valoriainstitute.com/'
+
 function norm(value) { return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ') }
 
 function getAdmin() {
@@ -29,7 +34,7 @@ export async function GET(request) {
   else tasterQuery = tasterQuery.order('completed_at',{ascending:false}).limit(1)
   const { data:taster, error:tasterError } = await tasterQuery.maybeSingle()
   if (tasterError) return NextResponse.json({ error:'Could not verify your completed VALU snapshot.' }, { status:502 })
-  if (!taster) return NextResponse.json({ url:'https://valoriainstitute.com/valu/assessment/' })
+  if (!taster) return NextResponse.json({ url:ASSESSMENT_ORIGIN })
   const { data:candidate, error:candidateError } = await admin.from('taster_identity_candidates')
     .select('candidate_email,candidate_role,linked_user_id').eq('taster_id', taster.id).maybeSingle()
   if (candidateError) return NextResponse.json({ error:'Could not verify snapshot identity evidence.' }, { status:502 })
@@ -38,8 +43,8 @@ export async function GET(request) {
   if (candidate?.candidate_role && norm(candidate.candidate_role) !== norm(taster.role)) return NextResponse.json({ error:'The saved snapshot role conflicts with contact evidence. Valoria support must review it.' }, { status:403 })
   let handoffToken
   try { handoffToken = createValuHandoffToken(user.id, taster.id) } catch { return NextResponse.json({ error:'Secure VALU handoff is unavailable.' }, { status:503 }) }
-  await admin.from('valoria_journey_events').insert({ user_id:user.id, event_key:'assessment_handoff', source:'taster_session', source_id:taster.id, metadata:{ destination:'valoriainstitute.com/valu/assessment', mode:'full', token_ttl_seconds:14400 } })
-  const destination = new URL('https://valoriainstitute.com/valu/assessment/')
+  await admin.from('valoria_journey_events').insert({ user_id:user.id, event_key:'assessment_handoff', source:'taster_session', source_id:taster.id, metadata:{ destination:'assessment.valoriainstitute.com', mode:'full', token_ttl_seconds:14400 } })
+  const destination = new URL(ASSESSMENT_ORIGIN)
   const destinationParams = new URLSearchParams({ full:'1', taster_id:taster.id, name:taster.name||'', role:taster.role||'', experience:taster.experience||'' })
   if (resumeToken) destinationParams.set('resume', resumeToken)
   destination.search = destinationParams.toString()
