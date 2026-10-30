@@ -1,11 +1,79 @@
 const fs = require('fs')
 const path = require('path')
+const { deriveJourneyState } = require('../lib/journey-state')
 
 function read(relative) {
   return fs.readFileSync(path.join(process.cwd(), relative), 'utf8')
 }
 
-describe('journey integrity contract', () => { // UX simplification coverage + dashboard web
+describe('journey integrity contract', () => {
+  test('profile completeness remains true when the full VALU assessment is expired', () => {
+    const state = deriveJourneyState({
+      journey: { journey_stage: 'profile_complete', progress_percent: 78 },
+      assessment: {
+        completed_at: '2026-01-01T00:00:00.000Z',
+        expires_at: '2026-02-01T00:00:00.000Z',
+        total_score: 62,
+        report_status: 'READY',
+        ai_report: { summary: 'Assessment summary' },
+      },
+      activation: { status: 'activated' },
+      profile: {
+        profile_complete: true,
+        display_name: 'Test Professional',
+        current_job_title: 'Consultant',
+        headline: 'Consultant',
+        bio: 'Professional profile summary',
+        industry: 'Consulting',
+        username: 'test-professional',
+        phone: '+2348000000000',
+        location: 'Lagos',
+        languages: ['English'],
+        active_tracks: ['candidate'],
+        cv_url: null,
+      },
+      capabilities: [{
+        is_active: true,
+        eligible_for_listing: true,
+        eligibility_status: 'listed',
+        missing_requirements: [],
+      }],
+    })
+
+    expect(state.profile.complete).toBe(true)
+    expect(state.assessment.current).toBe(false)
+    expect(state.eligibility.complete).toBe(false)
+    expect(state.eligibility.missing).toContain('Your CV')
+    expect(state.eligibility.missing).toContain('A current full VALU Index assessment of at least 35 points')
+    expect(state.marketplace.capabilities).toEqual([])
+  })
+
+  test('profile completeness does not require an uploaded photo or CV', () => {
+    const state = deriveJourneyState({
+      assessment: { completed_at: new Date().toISOString(), expires_at: null, report_status: 'READY' },
+      activation: { status: 'activated' },
+      profile: {
+        profile_complete: true,
+        display_name: 'Test Professional',
+        current_job_title: 'Consultant',
+        headline: 'Consultant',
+        bio: 'Professional profile summary',
+        industry: 'Consulting',
+        username: 'test-professional',
+        phone: '+2348000000000',
+        location: 'Lagos',
+        languages: ['English'],
+        active_tracks: ['candidate'],
+        photo_url: null,
+        cv_url: null,
+      },
+    })
+
+    expect(state.profile.complete).toBe(true)
+    expect(state.profile.missing).toEqual([])
+    expect(state.eligibility.missing).toContain('Your CV')
+  })
+ // UX simplification coverage + dashboard web
   test('journey state fails loudly when required database reads fail', () => {
     const source = read('src/app/api/journey/state/route.js')
     expect(source).toContain('query_errors')
