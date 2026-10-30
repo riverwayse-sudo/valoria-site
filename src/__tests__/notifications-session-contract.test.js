@@ -22,20 +22,22 @@ describe('notifications session authentication', () => {
 })
 
 describe('authenticated VALU continuation entry points', () => {
-  test('dashboard continue action resumes through the signed-in journey handoff', () => {
+  test('dashboard continue action issues a dashboard-only one-time handoff', () => {
     const dashboard = fs.readFileSync(
       path.join(process.cwd(), 'src/app/dashboard/page.jsx'),
       'utf8'
     )
-    expect(dashboard).toContain("? '/journey/continue?stage=assess'")
+    expect(dashboard).toContain("? '/dashboard/continue-assessment'")
+    expect(dashboard).toContain('dashboardOnly')
     expect(dashboard).not.toContain("? '/valu/start'")
   })
 
-  test('in-progress assessment nudge uses the authenticated continuation route', () => {
+  test('sitewide assessment nudge returns participants to the dashboard', () => {
     const nudge = fs.readFileSync(
       path.join(process.cwd(), 'src/components/ValuCompletionNudge.jsx'),
       'utf8'
     )
-    expect(nudge).toContain('assessmentStarted?"/journey/continue?stage=assess":"/valu/start"')
+    expect(nudge).toContain('assessmentStarted?"/dashboard":"/valu/start"')
+    expect(nudge).toContain('OPEN MY DASHBOARD')
   })
 })
