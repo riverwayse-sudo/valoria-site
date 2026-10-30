@@ -425,6 +425,7 @@ export default function DashboardPage() {
             <AccessProgressCard
               profile={p}
               assessment={assessment}
+              assessmentAccess={assessmentAccess}
               capabilities={capabilities}
               hasSavedOpening={!!assessmentAccess?.can_continue}
             />
@@ -765,8 +766,8 @@ export default function DashboardPage() {
 }
 
 // ── Welcome modal ────────────────────────────────────────────────────────────
-function AccessProgressCard({ profile, assessment, capabilities, hasSavedOpening }) {
-  const assessmentDone = !!assessment?.completed_at
+function AccessProgressCard({ profile, assessment, assessmentAccess, capabilities, hasSavedOpening }) {
+  const assessmentDone = !!assessment?.completed_at || !!assessmentAccess?.assessment_completed
   const profileComplete = !!profile?.profile_complete
   const capabilityReady = capabilities.some(c => c.is_active)
   const activeCapabilities = capabilities.filter(c => c.is_active)
