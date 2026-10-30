@@ -255,6 +255,9 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(dashboard).toContain('missing_requirements')
     expect(dashboard).toContain('CAPABILITY REQUIREMENTS')
     expect(dashboard).toContain('activeCapabilities.every(isCapabilityEligible)')
+    expect(dashboard).toContain('talent_cv_approval')
+    expect(dashboard).toContain('speaker_evidence_approval')
+    expect(dashboard).toContain('facilitator_evidence_approval')
   })
 
   test('capability evidence is linked to one active owned capability and has an append-only review history', () => {
