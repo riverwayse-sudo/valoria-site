@@ -190,6 +190,7 @@ describe('journey integrity contract', () => {
   test('assessment origin is environment-specific and preview never silently falls back to production', () => {
     const handoff = read('src/app/api/valu-handoff/route.js')
     const config = read('next.config.js')
+    const reportTrigger = read('src/app/api/trigger-report/route.js')
     const signup = read('src/app/professional-signup/page.jsx')
     expect(handoff).toContain('VALU_UPSTREAM_ORIGIN')
     expect(handoff).toContain("process.env.VERCEL_ENV === 'production'")
@@ -197,6 +198,9 @@ describe('journey integrity contract', () => {
     expect(handoff).toContain('if (!assessmentOrigin)')
     expect(config).toContain("process.env.VERCEL_ENV === 'preview'")
     expect(config).toContain('if (!valuOrigin) return []')
+    expect(reportTrigger).toContain('VALU_UPSTREAM_ORIGIN')
+    expect(reportTrigger).toContain("process.env.VERCEL_ENV === 'production'")
+    expect(reportTrigger).toContain('if (!assessmentOrigin)')
     expect(signup).toContain('href="/valu/assessment/"')
     expect(signup).not.toContain('href="https://assessment.valoriainstitute.com/"')
   })
