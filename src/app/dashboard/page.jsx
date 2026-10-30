@@ -830,7 +830,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
         </div>
 
         {!assessmentDone && <div style={{ marginTop:22, paddingTop:18, borderTop:`1px solid ${GLINE}` }}><VALUJourneyProgress stage="continuation" /></div>}
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(5,minmax(0,1fr))', gap:'8px', marginTop:22 }} aria-label="Journey progress">
+        {assessmentDone && <div style={{ display:'grid', gridTemplateColumns:'repeat(5,minmax(0,1fr))', gap:'8px', marginTop:22 }} aria-label="Marketplace readiness progress">
           {steps.map((step, index) => (
             <div key={step.key} style={{ minWidth:0 }}>
               <div style={{ height:'4px', borderRadius:'99px', background:step.done ? GOLD : 'rgba(247,244,238,.12)' }} />
@@ -839,7 +839,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
               </div>
             </div>
           ))}
-        </div>
+        </div>}
 
         {assessmentDone && !profileComplete && (
           <div style={{ marginTop:16, padding:'12px 14px', background:'rgba(201,168,76,.06)', border:'1px solid rgba(201,168,76,.16)', borderRadius:'8px', fontSize:'12px', color:DIM, lineHeight:1.55 }}>
