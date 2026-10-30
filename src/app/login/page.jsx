@@ -57,9 +57,7 @@ export default function LoginPage() {
     if (isAssessmentReturn) {
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (!session?.access_token) return
-        const tasterId = pendingTasterId || localStorage.getItem('pending_taster_id')
-        if (tasterId) window.location.replace('/dashboard?pending_taster_id=' + encodeURIComponent(tasterId))
-        else window.location.replace('/dashboard')
+        window.location.replace('/dashboard')
       }).catch(() => {})
     }
   }, [])
@@ -69,18 +67,10 @@ export default function LoginPage() {
     try {
       const parsed = new URL(target, window.location.origin)
       if (parsed.pathname === '/journey/continue' && parsed.searchParams.get('stage') === 'assess') {
-        const pending = parsed.searchParams.get('taster_id') || localStorage.getItem('pending_taster_id')
-        window.location.replace(pending ? '/dashboard?pending_taster_id=' + encodeURIComponent(pending) : '/dashboard')
+        window.location.replace('/dashboard')
         return
       }
     } catch {}
-    if (target === '/dashboard') {
-      const pending = localStorage.getItem('pending_taster_id')
-      if (pending) {
-        window.location.replace('/dashboard?pending_taster_id=' + encodeURIComponent(pending))
-        return
-      }
-    }
     window.location.href = target
   }
 
@@ -117,7 +107,10 @@ export default function LoginPage() {
           setLoading(false)
           return
         }
-        // Keep pending_taster_id until the dashboard CTA carries this snapshot into continuation.
+        // The dashboard derives the linked snapshot from the authenticated account.
+        localStorage.removeItem('pending_taster_id')
+        localStorage.removeItem('pending_taster_name')
+        localStorage.removeItem('pending_taster_role')
         // Restore any completed full VALU assessment attached to the same taster.
         // A taster-only record is still valid; in that case the claim endpoint
         // simply reports that no completed assessment exists and onboarding continues.
