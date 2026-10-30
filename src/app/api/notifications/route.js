@@ -10,13 +10,9 @@
 // call has been failing with a column-not-found error since this route was
 // introduced, meaning the notification bell has never actually worked.
 //
-// Originally written against @supabase/ssr's createServerClient, which
-// isn't a dependency of this project (only @supabase/supabase-js is) — that
-// caused every build since this file was introduced to fail with
-// "Module not found: Can't resolve '@supabase/ssr'". Rewritten to read the
-// session cookie directly, the same way middleware.js already does, and
-// pass the user's access token through to supabase-js so RLS is enforced
-// as that user rather than via the service-role key.
+// Authenticate with the same Supabase SSR cookie adapter used by
+// middleware. The adapter handles base64-prefixed and chunked session
+// cookies; Auth validates the session before any user-scoped query runs.
 
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
