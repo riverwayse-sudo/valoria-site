@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
+import VALUJourneyProgress from '@/components/VALUJourneyProgress'
 
 const GOLD = '#C9A84C'
 const PARCHMENT = '#F7F4EE'
@@ -99,6 +100,7 @@ function AuthCallbackFlow() {
           <div style={{ color: GOLD, fontSize: 12, letterSpacing: '.24em', fontWeight: 800 }}>VALORIA INSTITUTE</div>
           <div style={{ color: PARCHMENT, fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 15, marginTop: 7 }}>Worth. Built.</div>
         </div>
+        <VALUJourneyProgress stage="bridge" />
         <div aria-live="polite" role={failed ? 'alert' : 'status'}>
           <div style={{ color: GOLD, fontSize: 11, letterSpacing: '.18em', fontWeight: 700, marginBottom: 14 }}>{failed ? 'CONFIRMATION NEEDS ATTENTION' : 'VALORIA ACCOUNT'}</div>
           <h1 style={{ fontSize: 30, lineHeight: 1.2, fontWeight: 500, margin: '0 0 14px' }}>{failed ? 'We could not finish the handoff.' : 'You’re almost there.'}</h1>
