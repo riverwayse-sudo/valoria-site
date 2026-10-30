@@ -471,24 +471,27 @@ describe('journey integrity contract', () => {
     expect(callback).toContain('Continue at Question 10')
   })
 
-  test('email confirmation handover introduces Valoria through animated destination cards', () => {
-    const callback = read('src/app/auth/callback/page.jsx')
+  test('dashboard-to-assessment bridge introduces Valoria while the secure handoff opens', () => {
+    const nav = read('src/components/Nav.jsx')
+    const bridge = read('src/components/ValoriaAssessmentBridge.jsx')
     const cards = read('src/components/ValoriaHandoverCards.jsx')
+    const page = read('src/app/assessment/bridge/page.jsx')
     const styles = read('src/components/ValoriaHandoverCards.module.css')
     const events = read('src/lib/professionalStandardSeries.js')
-    expect(callback).toContain("import ValoriaHandoverCards from '@/components/ValoriaHandoverCards'")
-    expect(callback).toContain('<ValoriaHandoverCards />')
+    expect(nav).toContain("window.location.assign('/assessment/bridge')")
+    expect(bridge).toContain("fetch('/api/valu-handoff'")
+    expect(bridge).toContain('window.location.assign(data.url)')
+    expect(page).toContain('ValoriaAssessmentBridge')
     expect(cards).toContain('THE INSTITUTE')
     expect(cards).toContain('VALU INDEX')
     expect(cards).toContain('PRIME FRAMEWORK')
     expect(cards).toContain('PROFESSIONAL REGISTRY')
     expect(cards).toContain('EVENTS & CONVERSATIONS')
     expect(cards).toContain('session.dateApproved')
-    expect(cards).toContain("href: '/events'")
-    expect(cards).toContain("href: '/marketplace'")
     expect(styles).toContain('@keyframes cardIn')
     expect(styles).toContain('prefers-reduced-motion:reduce')
     expect(events).toContain('dateApproved: false')
+    expect(read('src/app/auth/callback/page.jsx')).not.toContain('ValoriaHandoverCards')
   })
 
   test('dashboard presents one primary assessment action and keeps the VALU Index card informational', () => {
