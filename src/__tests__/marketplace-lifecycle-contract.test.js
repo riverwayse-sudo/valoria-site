@@ -63,6 +63,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(helper).toContain("from('professional_documents')")
     expect(helper).toContain("document_type: 'cv'")
     expect(helper).toContain("visibility: 'private'")
+    expect(helper).toContain("verification_status: 'pending'")
     expect(helper).toContain('size_bytes: file.size')
     expect(helper).toContain('10 * 1024 * 1024')
     expect(helper).toContain('remove([storagePath])')
@@ -75,6 +76,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(migration).toContain('join storage.objects o')
     expect(migration).toContain('and o.name = p.cv_url')
     expect(migration).toContain("o.bucket_id = 'cvs'")
+    expect(migration).toContain("'pending'")
     expect(migration).toContain('on conflict (storage_bucket, storage_path) do nothing')
   })
 
