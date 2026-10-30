@@ -18,34 +18,26 @@
 // pass the user's access token through to supabase-js so RLS is enforced
 // as that user rather than via the service-role key.
 
-import { createClient } from '@supabase/supabase-js'
+import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-function getAccessToken(request) {
-  const cookie = request.cookies.getAll().find(c => /^sb-.*-auth-token/.test(c.name))
-  if (!cookie) return null
-  try {
-    // Supabase's browser client stores the session as a JSON blob (or an
-    // array of chunked JSON strings for large sessions) in this cookie.
-    const raw = decodeURIComponent(cookie.value)
-    const parsed = JSON.parse(raw)
-    return parsed?.access_token || parsed?.[0]?.access_token || null
-  } catch {
-    return null
-  }
-}
-
 async function getAuthedClient(request) {
-  const token = getAccessToken(request)
-  if (!token) return { supabase: null, user: null }
+  if (!SB_URL || !SB_ANON_KEY) return { supabase: null, user: null }
 
-  const supabase = createClient(SB_URL, SB_ANON_KEY, {
-    global: { headers: { Authorization: `Bearer ${token}` } },
+  // Let Supabase SSR decode its own base64-prefixed and chunked auth cookies.
+  // This avoids hand-parsing a browser storage format and keeps user identity
+  // verified by Auth rather than trusting decoded cookie contents.
+  const supabase = createServerClient(SB_URL, SB_ANON_KEY, {
+    cookies: {
+      getAll() { return request.cookies.getAll() },
+      setAll() {},
+    },
   })
-  const { data: { user } } = await supabase.auth.getUser(token)
+  const { data: { user }, error } = await supabase.auth.getUser()
+  if (error || !user) return { supabase: null, user: null }
   return { supabase, user }
 }
 
