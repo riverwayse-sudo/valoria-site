@@ -43,7 +43,7 @@ export default async function ReportPage(){
       <a href="/profile/setup" style={{display:'inline-flex',alignItems:'center',gap:12,padding:'14px 22px',background:'#C9A84C',color:'#1A1A2E',textDecoration:'none',fontWeight:800,fontSize:10,letterSpacing:'.12em',borderRadius:999}}>BUILD MY PROFESSIONAL PROFILE <span aria-hidden="true">→</span></a>
       <span style={{fontSize:11,color:'rgba(247,244,238,.45)'}}>Next: capability selection and marketplace readiness.</span>
     </div>
-    <div style={{display:'grid',gridTemplateColumns:'repeat(3,minmax(0,1fr))',gap:10,marginTop:26}}>
+    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:10,marginTop:26}}>
       {[
         ['01','Build your profile','Present your experience and professional story.'],
         ['02','Choose capabilities','Show whether you are here as Talent, Speaker or Facilitator.'],
