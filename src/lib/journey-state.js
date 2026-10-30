@@ -42,7 +42,11 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
   if (!hasAssessment) eligibilityMissing.push('A completed full VALU Index assessment')
   else if (!assessmentCurrent) eligibilityMissing.push('A current full VALU Index assessment')
   else if (!assessmentEligible) eligibilityMissing.push('At least 35 VALU Index points')
-  const eligibilityComplete = profileReady && assessmentEligible && capabilitySelected && eligibleCapabilities.length > 0
+  // Full marketplace eligibility must satisfy the same evidence and capability requirements
+  // exposed to the participant below. Do not let stale eligible flags bypass either gate.
+  const cvSubmitted = !!profile?.cv_url?.trim()
+  const capabilityRequirementsComplete = capabilityMissing.length === 0
+  const eligibilityComplete = profileReady && cvSubmitted && assessmentEligible && capabilitySelected && capabilityRequirementsComplete && eligibleCapabilities.length > 0
   const listed = listedCapabilities.length > 0 && eligibilityComplete
   const opportunityAccess = !!journey?.marketplace_ready || listed
   const opportunityEngaged = !!opportunity
@@ -72,7 +76,7 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
   // Report generation/activation is a hard gate before profile progression.
   if (hasAssessment && !reportReady) next = 'report'
   else if (hasAssessment && reportReady && activation?.status !== 'activated') next = 'report'
-  else if (profileReady && assessmentEligible && eligibleCapabilities.length > 0 && !listed) next = 'listed'
+  else if (eligibilityComplete && !listed) next = 'listed'
   else if (listed) next = 'opportunity'
 
   const recoveryReason = journey?.next_action ||
