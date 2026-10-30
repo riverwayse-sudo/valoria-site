@@ -5,14 +5,14 @@ import {supabase} from '@/lib/supabase'
 
 const BG='#0F0F1A',P='#F7F4EE',M='#1A1A2E',G='#C9A84C',DIM='rgba(247,244,238,.62)'
 export default function CapabilityEvidenceAdmin(){
- const [items,setItems]=useState([]),[latest,setLatest]=useState({}),[history,setHistory]=useState({}),[loading,setLoading]=useState(true),[error,setError]=useState(''),[busy,setBusy]=useState(''),[notes,setNotes]=useState({})
+ const [items,setItems]=useState([]),[history,setHistory]=useState({}),[loading,setLoading]=useState(true),[error,setError]=useState(''),[busy,setBusy]=useState(''),[notes,setNotes]=useState({})
  const load=useCallback(async()=>{
   const {data:{session}}=await supabase.auth.getSession()
   if(!session){location.href='/admin/login';return}
   const r=await fetch('/api/admin/capability-evidence',{headers:{Authorization:'Bearer '+session.access_token}})
   const j=await r.json()
   if(!r.ok)setError(j.error||'Could not load evidence queue.')
-  else{setItems(j.documents||[]);setLatest(j.latestByDocument||{});setHistory((j.reviews||[]).reduce((acc,review)=>{(acc[review.document_id] ||= []).push(review);return acc},{}))}
+  else{setItems(j.documents||[]);setHistory((j.reviews||[]).reduce((acc,review)=>{(acc[review.document_id] ||= []).push(review);return acc},{}))}
   setLoading(false)
  },[])
  useEffect(()=>{load()},[load])
