@@ -426,7 +426,7 @@ export default function DashboardPage() {
               profile={p}
               assessment={assessment}
               capabilities={capabilities}
-              hasSavedOpening={!!pendingTasterId}
+              hasSavedOpening={!!assessmentAccess?.can_continue}
             />
           </div>
         )}
