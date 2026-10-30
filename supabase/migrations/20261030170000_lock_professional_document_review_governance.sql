@@ -2,6 +2,12 @@
 -- platform-owned. Prevent deletion or replacement of submitted evidence.
 begin;
 
+-- Capability rows contain platform-owned eligibility fields. Participants
+-- must change selected paths through the authenticated server endpoint only.
+drop policy if exists "professionals can insert own capabilities" on public.professional_capabilities;
+drop policy if exists "professionals can update own capabilities" on public.professional_capabilities;
+drop policy if exists "professionals can delete own capabilities" on public.professional_capabilities;
+
 drop policy if exists professional_documents_admin_update on public.professional_documents;
 create policy professional_documents_admin_update
   on public.professional_documents
