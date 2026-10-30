@@ -187,7 +187,7 @@ describe('journey integrity contract', () => {
     const continuation = read('src/app/journey/continue/route.js')
     for (const source of [handoff, continuation]) {
       expect(source).toContain("get('resume')")
-      expect(source).toMatch(/destinationParams\.set\('resume',\s?resumeToken\)/)
+      expect(source).toMatch(/fragmentParams\.set\('resume_token',\s?resumeToken\)/)
     }
   })
 
