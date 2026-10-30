@@ -545,13 +545,16 @@ export default function DashboardPage() {
                   </>
                 ) : (
                   <>
-                    <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
-                      You haven&apos;t completed your VALU Index assessment yet.
-                    </p>
-                    <AssessmentStartLink href="/dashboard" dashboardOnly
-                      style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
-                      CONTINUE YOUR VALU ASSESSMENT
-                    </AssessmentStartLink>
+                    <div role="status" style={{ padding:'12px 13px', background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, borderRadius:6 }}>
+                      <div style={{ fontSize:'9px', fontWeight:800, letterSpacing:'.12em', color:GOLD, marginBottom:6 }}>
+                        {assessmentAccess?.can_continue ? 'ASSESSMENT IN PROGRESS' : 'ASSESSMENT NOT COMPLETE'}
+                      </div>
+                      <p style={{ fontSize:'11px', fontWeight:300, color:DIM, lineHeight:1.65, margin:0 }}>
+                        {assessmentAccess?.can_continue
+                          ? 'Your opening nine responses are saved.'
+                          : 'Your official VALU Index and PRIME insights will appear here when your assessment is complete.'}
+                      </p>
+                    </div>
                   </>
                 )}
               </div>
