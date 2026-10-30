@@ -105,6 +105,11 @@ export async function POST(request) {
   if (snapshot.error) return NextResponse.json({ error: snapshot.error }, { status: snapshot.status })
   if (snapshot.completed) return NextResponse.json({ error: 'Your full VALU assessment is already complete.', already_completed: true }, { status: 409 })
 
+  const assessmentOrigin = getAssessmentOrigin()
+  if (!assessmentOrigin) {
+    return NextResponse.json({ error: 'The assessment preview origin is not configured for this environment.' }, { status: 503 })
+  }
+
   const handoffCode = randomBytes(32).toString('base64url')
   const tokenHash = createHash('sha256').update(handoffCode).digest('hex')
   const expiresAt = new Date(Date.now() + HANDOFF_TTL_SECONDS * 1000).toISOString()
@@ -122,10 +127,6 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Secure assessment access is temporarily unavailable. Please try again.' }, { status: 503 })
   }
 
-  const assessmentOrigin = getAssessmentOrigin()
-  if (!assessmentOrigin) {
-    return NextResponse.json({ error: 'The assessment preview origin is not configured for this environment.' }, { status: 503 })
-  }
   const destination = new URL('/', assessmentOrigin)
   destination.search = new URLSearchParams({ full: '1' }).toString()
   destination.hash = new URLSearchParams({ handoff_code: handoffCode }).toString()
