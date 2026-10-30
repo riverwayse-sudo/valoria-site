@@ -114,12 +114,21 @@ export default function DashboardPage() {
   const [profileViewCount, setProfileViewCount] = useState(null)
   const [capabilities, setCapabilities] = useState([])
   const [assessment, setAssessment] = useState(null)
+  const [assessmentAccess, setAssessmentAccess] = useState(null)
 
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/login'; return }
       setUser(user)
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.access_token) {
+        const accessResponse = await fetch('/api/valu-handoff', {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+          cache: 'no-store',
+        })
+        if (accessResponse.ok) setAssessmentAccess(await accessResponse.json())
+      }
 
       const { data: proProfile } = await supabase
         .from('professional_profiles')
@@ -230,18 +239,14 @@ export default function DashboardPage() {
     </div>
   )
 
-  const pendingTasterId = typeof window !== 'undefined'
-    ? new URLSearchParams(window.location.search).get('pending_taster_id')
-    : null
-
-  if (!profile && pendingTasterId) return (
+  if (!profile && assessmentAccess?.can_continue) return (
     <div style={{ minHeight:'100vh', background:DARK, color:PARCH, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'18px', padding:'24px', fontFamily:'var(--font,Raleway,sans-serif)' }}>
       <div style={{width:'100%',maxWidth:560}}><VALUJourneyProgress stage="continuation" currentQuestion={10} /></div>
       <div style={{ color:GOLD, fontSize:'11px', fontWeight:700, letterSpacing:'.18em' }}>VALORIA INSTITUTE</div>
       <h1 style={{ maxWidth:'620px', textAlign:'center', fontSize:'clamp(28px,4vw,42px)', lineHeight:1.15, margin:0 }}>Your first session is saved.</h1>
-      <p style={{ maxWidth:'560px', textAlign:'center', color:DIM, fontSize:'15px', lineHeight:1.8, margin:0 }}>Your email is confirmed and your opening nine responses are connected to your account. You are now at the continuation stage. Complete Questions 10–58 to receive your official VALU Index; your saved answers will carry forward.</p>
-      <div style={{width:'100%',maxWidth:560,padding:'18px',border:'1px solid rgba(201,168,76,.2)',borderRadius:10,background:'rgba(201,168,76,.05)'}}><div style={{fontSize:9,fontWeight:800,letterSpacing:'.15em',color:GOLD,marginBottom:7}}>YOUR NEXT STEP</div><div style={{fontSize:16,color:PARCH,fontWeight:600}}>Continue at Question 10</div><div style={{fontSize:12,color:DIM,lineHeight:1.65,marginTop:5}}>You have 49 questions left. Once you complete them, your official VALU Index and PRIME insights will be ready.</div></div>
-      <Link href={`/journey/continue?stage=assess&taster_id=${encodeURIComponent(pendingTasterId)}`} style={{ padding:'14px 24px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:800, letterSpacing:'.08em', textDecoration:'none', borderRadius:'999px' }}>CONTINUE TO QUESTION 10 →</Link>
+      <p style={{ maxWidth:'560px', textAlign:'center', color:DIM, fontSize:'15px', lineHeight:1.8, margin:0 }}>Your opening nine responses are connected to your account. Continue your assessment securely from here; your saved answers will carry forward.</p>
+      <div style={{width:'100%',maxWidth:560,padding:'18px',border:'1px solid rgba(201,168,76,.2)',borderRadius:10,background:'rgba(201,168,76,.05)'}}><div style={{fontSize:9,fontWeight:800,letterSpacing:'.15em',color:GOLD,marginBottom:7}}>YOUR NEXT STEP</div><div style={{fontSize:16,color:PARCH,fontWeight:600}}>Continue at Question 10</div><div style={{fontSize:12,color:DIM,lineHeight:1.65,marginTop:5}}>Complete the remaining questions to receive your official VALU Index and PRIME insights.</div></div>
+      <AssessmentStartLink href="/dashboard" dashboardOnly style={{ padding:'14px 24px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:800, letterSpacing:'.08em', textDecoration:'none', borderRadius:'999px' }}>CONTINUE TO QUESTION 10 →</AssessmentStartLink>
       <Link href="/marketplace" style={{ color:PARCH, fontSize:'13px', textDecoration:'underline', textUnderlineOffset:'4px' }}>Explore Valoria first</Link>
       <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')} style={{ marginTop:'10px', background:'transparent', border:'1px solid rgba(201,168,76,.28)', color:DIM, borderRadius:'999px', padding:'9px 18px', cursor:'pointer', fontFamily:'inherit' }}>Sign Out</button>
     </div>
@@ -1129,7 +1134,7 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
   const isListed = listedCapabilities.length > 0
 
   const current = !hasAssessment
-    ? { label:'See your signal', text:'Start VALU and understand where you stand.', href:'/journey/continue?stage=assess' }
+    ? { label:'Continue your VALU assessment', text:'Your opening responses are saved. Continue securely from your dashboard.', href:'/dashboard/continue-assessment' }
     : !hasProfile
       ? { label:'Build your profile', text:'Tell us about your work so people can understand you.', href:'/profile/onboarding' }
       : !hasCapability
@@ -1146,8 +1151,8 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
           <div style={{ fontSize:'20px', fontWeight:400, color:PARCH, marginTop:7 }}>{current.label}</div>
           <div style={{ fontSize:'12px', color:DIM, marginTop:5, lineHeight:1.5 }}>{current.text}</div>
         </div>
-        {current.href === '/journey/continue?stage=assess'
-          ? <AssessmentStartLink href={current.href} style={{ flexShrink:0, padding:'12px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'9px', fontWeight:800, letterSpacing:'.12em' }}>CONTINUE →</AssessmentStartLink>
+        {current.href === '/dashboard/continue-assessment'
+          ? <AssessmentStartLink href="/dashboard" dashboardOnly style={{ flexShrink:0, padding:'12px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'9px', fontWeight:800, letterSpacing:'.12em' }}>CONTINUE →</AssessmentStartLink>
           : <Link href={current.href} style={{ flexShrink:0, padding:'12px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'9px', fontWeight:800, letterSpacing:'.12em' }}>CONTINUE →</Link>}
       </div>
     </section>
