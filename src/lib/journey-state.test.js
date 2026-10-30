@@ -121,3 +121,38 @@ test('expired assessment preserves profile completeness but blocks current marke
   expect(state.eligibility.missing).toContain('A current full VALU Index assessment')
   expect(state.next).toBe('eligibility')
 })
+
+
+test('a full VALU score and eligible capability do not bypass the required CV evidence', () => {
+  const state = deriveJourneyState({
+    assessment: completedAssessment,
+    activation: { status: 'activated' },
+    profile: { ...completeProfile, cv_url: '' },
+    capabilities: [{ id: 'c1', capability: 'talent', is_active: true, eligibility_status: 'eligible', eligible_for_listing: true }],
+  })
+  expect(state.profile.complete).toBe(true)
+  expect(state.eligibility.complete).toBe(false)
+  expect(state.eligibility.missing).toContain('Your CV')
+  expect(state.marketplace.capabilities).toEqual([])
+  expect(state.next).toBe('eligibility')
+})
+
+test('capability requirements must be resolved before full marketplace eligibility', () => {
+  const state = deriveJourneyState({
+    assessment: completedAssessment,
+    activation: { status: 'activated' },
+    profile: completeProfile,
+    capabilities: [{
+      id: 'c1',
+      capability: 'speaker',
+      is_active: true,
+      eligibility_status: 'eligible',
+      eligible_for_listing: true,
+      missing_requirements: ['Speaking portfolio evidence'],
+    }],
+  })
+  expect(state.eligibility.complete).toBe(false)
+  expect(state.eligibility.missing).toContain('Speaking portfolio evidence')
+  expect(state.marketplace.capabilities).toEqual([])
+  expect(state.next).toBe('eligibility')
+})
