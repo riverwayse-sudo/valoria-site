@@ -765,7 +765,7 @@ function AccessProgressCard({ profile, assessment, capabilities, hasSavedOpening
   const profileComplete = !!profile?.profile_complete
   const capabilityReady = capabilities.some(c => c.is_active)
   const activeCapabilities = capabilities.filter(c => c.is_active)
-  const isCapabilityEligible = c => c.eligible_for_listing === true || c.eligibility_status === 'eligible' || c.eligibility_status === 'listed'
+  const isCapabilityEligible = c => (c.eligible_for_listing === true || c.eligibility_status === 'eligible' || c.eligibility_status === 'listed') && (!Array.isArray(c.missing_requirements) || c.missing_requirements.length === 0)
   const eligibilityReady = activeCapabilities.length > 0 && activeCapabilities.every(isCapabilityEligible)
   const listedReady = eligibilityReady && activeCapabilities.every(c => c.eligibility_status === 'listed')
 
