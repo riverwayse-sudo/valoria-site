@@ -72,7 +72,7 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
   test('existing CV evidence backfill uses exact profile-to-storage object matches', () => {
-    const migration = read('supabase/migrations/20261030140000_backfill_existing_cv_document_records.sql')
+    const migration = read('supabase/migrations/20261030122022_backfill_existing_cv_document_records_20261030140000.sql')
     expect(migration).toContain('join storage.objects o')
     expect(migration).toContain('and o.name = p.cv_url')
     expect(migration).toContain("o.bucket_id = 'cvs'")
@@ -261,7 +261,7 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
   test('capability evidence is linked to one active owned capability and has an append-only review history', () => {
-    const migration = read('supabase/migrations/20261030160000_capability_evidence_review_ledger.sql')
+    const migration = read('supabase/migrations/20261030122024_capability_evidence_review_ledger_20261030160000.sql')
     const upload = read('src/app/api/profile/evidence/route.js')
     const admin = read('src/app/api/admin/capability-evidence/route.js')
     const participantPage = read('src/app/profile/evidence/page.jsx')
@@ -287,7 +287,7 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
   test('participants cannot alter evidence review status, delete submitted records, or overwrite stored evidence', () => {
-    const governance = read('supabase/migrations/20261030170000_lock_professional_document_review_governance.sql')
+    const governance = read('supabase/migrations/20261030122026_lock_professional_document_review_governance_20261030170000.sql')
     expect(governance).toContain('using (is_valoria_admin())')
     expect(governance).toContain('with check (is_valoria_admin())')
     expect(governance).toContain('drop policy if exists professional_documents_owner_delete')
@@ -297,8 +297,8 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
   test('only approved evidence unlocks the matching capability and every evidence decision recalculates eligibility', () => {
-    const evaluator = read('supabase/migrations/20261030180000_require_approved_capability_evidence.sql')
-    const trigger = read('supabase/migrations/20261030190000_recalculate_capability_eligibility_on_evidence_review.sql')
+    const evaluator = read('supabase/migrations/20261030122028_require_approved_capability_evidence_20261030180000.sql')
+    const trigger = read('supabase/migrations/20261030122031_recalculate_capability_eligibility_on_evidence_review_20261030190000.sql')
     expect(evaluator).toContain("d.verification_status='verified'")
     expect(evaluator).toContain("d.storage_path=p.cv_url")
     expect(evaluator).toContain("d.capability_id=capability_row_id")
@@ -311,7 +311,7 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
   test('CV evidence backfill is valid, exact-match, bounded and idempotent', () => {
-    const backfill = read('supabase/migrations/20261030140000_backfill_existing_cv_document_records.sql')
+    const backfill = read('supabase/migrations/20261030122022_backfill_existing_cv_document_records_20261030140000.sql')
     expect(backfill).toContain("o.name = p.cv_url")
     expect(backfill).toContain("o.bucket_id = 'cvs'")
     expect(backfill).toContain("between 1 and 10485760")
@@ -321,7 +321,7 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
   test('evidence and capability governance migrations match installed policy names', () => {
-    const governance = read('supabase/migrations/20261030170000_lock_professional_document_review_governance.sql')
+    const governance = read('supabase/migrations/20261030122026_lock_professional_document_review_governance_20261030170000.sql')
     expect(governance).toContain('drop policy if exists "professionals can insert own capabilities"')
     expect(governance).toContain('drop policy if exists "professionals can update own capabilities"')
     expect(governance).toContain('drop policy if exists "professionals can delete own capabilities"')
@@ -330,7 +330,7 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
   test('administrator review history and document status update atomically', () => {
-    const migration = read('supabase/migrations/20261030200000_atomic_professional_document_review.sql')
+    const migration = read('supabase/migrations/20261030122033_atomic_professional_document_review_20261030200000.sql')
     const api = read('src/app/api/admin/capability-evidence/route.js')
     expect(migration).toContain('for update')
     expect(migration).toContain('insert into public.professional_document_reviews')
@@ -343,7 +343,7 @@ describe('VALUI marketplace lifecycle contract', () => {
 
 
   test('full-assessment roster projects only selected, active, eligible capabilities while preserving Basic taster listings', () => {
-    const migration = read('supabase/migrations/20261030100000_marketplace_roster_capability_eligibility.sql')
+    const migration = read('supabase/migrations/20261030122017_marketplace_roster_capability_eligibility_20261030100000.sql')
     const fullBranch = migration.slice(
       migration.indexOf("if assessment_ok and p.visibility = 'public'"),
       migration.indexOf("select * into t", migration.indexOf("if assessment_ok and p.visibility = 'public'"))
@@ -361,8 +361,16 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(tasterBranch).toContain("'basic'")
   })
 
+  test('existing capability eligibility is reconciled after historical evidence is marked pending', () => {
+    const migration = read('supabase/migrations/20261030122057_reconcile_existing_capability_evidence_eligibility_20261030210000.sql')
+    expect(migration).toContain('private.refresh_existing_professional_capability')
+    expect(migration).toContain('where pc.is_active = true')
+    expect(migration).toContain('public.refresh_marketplace_public_roster')
+    expect(migration).toContain('including basic/taster listings')
+  })
+
   test('capability projection preserves canonical VALU Index fields and derives descriptors from PRIME scores', () => {
-    const migration = read('supabase/migrations/20261030100000_marketplace_roster_capability_eligibility.sql')
+    const migration = read('supabase/migrations/20261030122017_marketplace_roster_capability_eligibility_20261030100000.sql')
     expect(migration).toContain('select v.total_score, v.cluster_scores, v.designation')
     expect(migration).toContain('canonical_valu_index := coalesce(canonical_valu_index, p.valu_index)')
     expect(migration).toContain('canonical_cluster_scores := coalesce(canonical_cluster_scores, p.cluster_scores)')
