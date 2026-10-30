@@ -196,6 +196,7 @@ describe('journey integrity contract', () => {
     expect(handoff).toContain("process.env.VERCEL_ENV === 'production'")
     expect(handoff).toContain("url.hostname === 'assessment.valoriainstitute.com'")
     expect(handoff).toContain('if (!assessmentOrigin)')
+    expect(handoff.indexOf('if (!assessmentOrigin)')).toBeLessThan(handoff.indexOf("admin.from('valoria_reentry_links').insert"));
     expect(config).toContain("process.env.VERCEL_ENV === 'preview'")
     expect(config).toContain('if (!valuOrigin) return []')
     expect(reportTrigger).toContain('VALU_UPSTREAM_ORIGIN')
