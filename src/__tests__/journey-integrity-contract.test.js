@@ -309,4 +309,21 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(continuation).toContain("https://assessment.valoriainstitute.com/")
   })
 
+
+  test('the VALU opening, confirmation bridge, and Question 10 continuation read as one journey', () => {
+    const progress = read('src/components/VALUJourneyProgress.jsx')
+    const signup = read('src/app/professional-signup/page.jsx')
+    const callback = read('src/app/auth/callback/page.jsx')
+    const dashboard = read('src/app/dashboard/page.jsx')
+    expect(progress).toContain('Questions 1–9')
+    expect(progress).toContain('Save & confirm')
+    expect(progress).toContain('Questions 10–58')
+    expect(signup).toContain('VALUJourneyProgress stage="bridge"')
+    expect(callback).toContain('VALUJourneyProgress stage="bridge"')
+    expect(dashboard).toContain('VALUJourneyProgress stage="continuation"')
+    expect(signup).not.toContain('9-QUESTION VALU INDEX COMPLETE')
+    expect(signup).toContain('Opening 9 of 58 · Saved')
+    expect(dashboard).toContain('CONTINUE TO QUESTION 10')
+  })
+
 })
