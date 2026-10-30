@@ -21,11 +21,17 @@ export async function GET(request){
   const {db,response}=await requireAdmin(request)
   if(response) return response
   const url=new URL(request.url)
-  let query=db.from('professional_documents').select('id,professional_id,capability_id,document_type,storage_bucket,storage_path,original_filename,mime_type,size_bytes,verification_status,created_at,professional_capabilities(capability),professional_profiles(display_name,atb_id)').order('created_at',{ascending:false}).limit(300)
+  let query=db.from('professional_documents').select('id,professional_id,capability_id,document_type,storage_bucket,storage_path,original_filename,mime_type,size_bytes,verification_status,created_at,professional_capabilities(capability)').order('created_at',{ascending:false}).limit(300)
   const status=url.searchParams.get('status')
   if(['pending','verified','rejected','unverified'].includes(status)) query=query.eq('verification_status',status)
   const {data:documents,error}=await query
   if(error) return NextResponse.json({error:'Could not load capability evidence.'},{status:500})
+  const profileIds=[...new Set((documents||[]).map(d=>d.professional_id))]
+  const {data:profiles,error:profileError}=profileIds.length
+    ? await db.from('professional_profiles').select('id,display_name,atb_id').in('id',profileIds)
+    : {data:[],error:null}
+  if(profileError) return NextResponse.json({error:'Could not load professional evidence owners.'},{status:500})
+  const profileById=Object.fromEntries((profiles||[]).map(profile=>[profile.id,profile]))
   const ids=(documents||[]).map(d=>d.id)
   const {data:reviews,error:reviewError}=ids.length?await db.from('professional_document_reviews').select('id,document_id,capability_id,decision,notes,reviewed_by,reviewed_at').in('document_id',ids).order('reviewed_at',{ascending:false}):{data:[],error:null}
   if(reviewError) return NextResponse.json({error:'Could not load evidence review history.'},{status:500})
@@ -33,7 +39,7 @@ export async function GET(request){
   for(const review of reviews||[]) if(!latest[review.document_id]) latest[review.document_id]=review
   const signedDocuments=await Promise.all((documents||[]).map(async document=>{
     const {data,error}=await db.storage.from(document.storage_bucket).createSignedUrl(document.storage_path,300)
-    return {...document,preview_url:error?null:data?.signedUrl||null}
+    return {...document,professional_profiles:profileById[document.professional_id]||null,preview_url:error?null:data?.signedUrl||null}
   }))
   return NextResponse.json({documents:signedDocuments,reviews:reviews||[],latestByDocument:latest})
 }
