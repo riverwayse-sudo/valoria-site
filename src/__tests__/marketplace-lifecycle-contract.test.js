@@ -255,10 +255,6 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(dashboard).toContain('missing_requirements')
     expect(dashboard).toContain('CAPABILITY REQUIREMENTS')
     expect(dashboard).toContain('activeCapabilities.every(isCapabilityEligible)')
-    const dashboard = read('src/app/dashboard/page.jsx')
-    expect(dashboard).toContain('missing_requirements')
-    expect(dashboard).toContain('CAPABILITY REQUIREMENTS')
-    expect(dashboard).toContain('activeCapabilities.every(isCapabilityEligible)')
   })
 
 })
