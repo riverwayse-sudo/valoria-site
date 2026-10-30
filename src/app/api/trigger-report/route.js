@@ -16,7 +16,18 @@
 // the 15-min sweep picks it up instead, so we don't want the login flow to
 // hang or fail waiting on this.
 
-const ASSESSMENT_ORIGIN = 'https://assessment.valoriainstitute.com'
+function getAssessmentOrigin() {
+  const configured = process.env.VALU_UPSTREAM_ORIGIN?.trim()
+  if (process.env.VERCEL_ENV === 'production') return configured || 'https://assessment.valoriainstitute.com'
+  if (!configured) return null
+  try {
+    const url = new URL(configured)
+    if (!['http:', 'https:'].includes(url.protocol) || url.hostname === 'assessment.valoriainstitute.com') return null
+    return url.origin
+  } catch {
+    return null
+  }
+}
 
 export async function POST(request) {
   let identity_hash
@@ -31,8 +42,13 @@ export async function POST(request) {
     return Response.json({ ok: false, error: 'identity_hash is required' }, { status: 400 })
   }
 
+  const assessmentOrigin = getAssessmentOrigin()
+  if (!assessmentOrigin) {
+    return Response.json({ ok: false, error: 'The assessment preview origin is not configured for this environment.' }, { status: 503 })
+  }
+
   try {
-    const res = await fetch(`${ASSESSMENT_ORIGIN}/api/generate-and-send-report`, {
+    const res = await fetch(`${assessmentOrigin}/api/generate-and-send-report`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ identity_hash }),
