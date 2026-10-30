@@ -309,6 +309,7 @@ function EditPageInner() {
             </button>
             <input ref={cvFileRef} type="file" accept="application/pdf,.doc,.docx" style={{ display:'none' }} onChange={e => e.target.files[0] && uploadCV(e.target.files[0])} />
           </div>
+          <p style={{ fontSize:'11px', color:DIM, lineHeight:1.6, margin:'0 0 14px' }}>PDF or Word, up to 10MB. Stored privately and added to your Valoria evidence record for review; never shown publicly.</p>
           <Field label="LinkedIn" error={form.linkedin_url && !VALIDATORS.linkedin(form.linkedin_url) ? validatorError('linkedin') : null}>
             <TextInput value={form.linkedin_url} onChange={v => setField('media','linkedin_url',v)} placeholder="https://linkedin.com/in/yourname" />
           </Field>
