@@ -69,3 +69,24 @@ export async function POST(request) {
   }
   return NextResponse.json({ok:true,document}, {status:201})
 }
+
+export async function GET(request) {
+  const db=adminClient()
+  if(!db) return NextResponse.json({error:'Evidence service is temporarily unavailable.'},{status:503})
+  const token=request.headers.get('authorization')?.match(/^Bearer\\s+(.+)$/i)?.[1]
+  if(!token) return NextResponse.json({error:'Not authenticated.'},{status:401})
+  const {data:{user},error:authError}=await db.auth.getUser(token)
+  if(authError||!user) return NextResponse.json({error:'Not authenticated.'},{status:401})
+  const {data:documents,error}=await db.from('professional_documents')
+    .select('id,capability_id,document_type,original_filename,verification_status,created_at,professional_capabilities(capability)')
+    .eq('professional_id',user.id).order('created_at',{ascending:false}).limit(100)
+  if(error) return NextResponse.json({error:'Could not load your submitted evidence.'},{status:500})
+  const ids=(documents||[]).map(d=>d.id)
+  const {data:reviews,error:reviewError}=ids.length
+    ? await db.from('professional_document_reviews').select('id,document_id,decision,notes,reviewed_at').in('document_id',ids).order('reviewed_at',{ascending:false})
+    : {data:[],error:null}
+  if(reviewError) return NextResponse.json({error:'Could not load evidence review updates.'},{status:500})
+  const latest={}
+  for(const review of reviews||[]) if(!latest[review.document_id]) latest[review.document_id]=review
+  return NextResponse.json({documents:documents||[],latestByDocument:latest})
+}
