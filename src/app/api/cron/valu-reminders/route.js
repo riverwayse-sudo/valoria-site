@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { randomBytes } from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
 
 function getAdminClient() {
@@ -78,27 +77,8 @@ export async function GET(request) {
     const email = userData?.user?.email
     if (!email || !userData?.user?.email_confirmed_at) continue
     const firstName = String(row.name || 'there').trim().split(/\\s+/)[0] || 'there'
-    // Email links use an opaque, account-bound, single-use re-entry token.
-    // Never expose taster IDs or participant identity in email URLs/query strings.
-    const reentryToken = randomBytes(32).toString('hex')
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-    const { data: reentry, error: reentryError } = await admin.from('valoria_reentry_links').insert({
-      user_id: row.user_id,
-      token: reentryToken,
-      entry_point: 'valu_reminder',
-      target_stage: 'assess',
-      source: 'valu_assessment_reminder',
-      source_id: row.id,
-      expires_at: expiresAt,
-    }).select('token').single()
-    if (reentryError || !reentry?.token) {
-      failed += 1
-      failures.push({ type: 'assessment_reminder_link', id: row.id, error: reentryError?.message || 'reentry_link_not_created' })
-      continue
-    }
-    const assessmentUrl = new URL('/journey/continue', 'https://valoriainstitute.com')
-    assessmentUrl.searchParams.set('token', reentry.token)
-    const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#1A1A2E;line-height:1.65"><p style="font-size:11px;font-weight:700;letter-spacing:.14em;color:#C9A84C">VALORIA INSTITUTE</p><h2 style="font-weight:400">Your VALU journey is not finished.</h2><p>Hi ${escapeHtml(firstName)}, you saved your first nine answers. Your Valoria profile is currently <strong>Basic · Incomplete</strong>.</p><p>Complete the full VALU assessment to establish your official score and unlock the completed professional profile.</p><a href="${assessmentUrl.toString()}" style="display:inline-block;padding:13px 22px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-weight:700;font-size:12px;letter-spacing:.08em">CONTINUE TO QUESTION 10 →</a><p style="font-size:11px;color:#8A8578;margin-top:26px">You can complete your professional profile after the assessment. This secure continuation link expires in seven days.</p></div>`
+    const dashboardUrl = 'https://valoriainstitute.com/login?returnTo=%2Fdashboard'
+    const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#1A1A2E;line-height:1.65"><p style="font-size:11px;font-weight:700;letter-spacing:.14em;color:#C9A84C">VALORIA INSTITUTE</p><h2 style="font-weight:400">Your VALU journey is waiting.</h2><p>Hi ${escapeHtml(firstName)}, your opening nine answers are saved to your Valoria account.</p><p>Sign in to your account to see your progress and continue your assessment from your dashboard.</p><a href="${dashboardUrl}" style="display:inline-block;padding:13px 22px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-weight:700;font-size:12px;letter-spacing:.08em">RETURN TO YOUR DASHBOARD →</a><p style="font-size:11px;color:#8A8578;margin-top:26px">Your saved responses remain part of your Valoria journey.</p></div>`
     try {
       const send = await fetch('https://api.brevo.com/v3/smtp/email', { method:'POST', headers:{'api-key':BREVO_KEY,'Content-Type':'application/json'}, body:JSON.stringify({sender:{name:FROM_NAME,email:FROM_EMAIL},to:[{email,name:row.name}],subject:'Complete your VALU Index',htmlContent:html,tags:['valu-reminder','assessment-completion']}) })
       if (!send.ok) {
