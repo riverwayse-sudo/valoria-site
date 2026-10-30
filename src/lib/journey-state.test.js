@@ -93,7 +93,7 @@ test('listed capability unlocks opportunity access', () => {
   expect(state.next).toBe('opportunity')
 })
 
-test('expired assessment cannot silently unlock current profile eligibility', () => {
+test('expired assessment preserves profile completeness but blocks current marketplace eligibility', () => {
   const state = deriveJourneyState({
     assessment: { ...completedAssessment, expires_at: '2020-01-01T00:00:00.000Z' },
     activation: { status: 'activated' },
@@ -101,6 +101,8 @@ test('expired assessment cannot silently unlock current profile eligibility', ()
     capabilities: [{ id: 'c1', capability: 'talent', is_active: true, eligibility_status: 'eligible', eligible_for_listing: true }],
   })
   expect(state.assessment.current).toBe(false)
-  expect(state.profile.complete).toBe(false)
-  expect(state.next).toBe('profile')
+  expect(state.profile.complete).toBe(true)
+  expect(state.eligibility.complete).toBe(false)
+  expect(state.eligibility.missing).toContain('A current full VALU Index assessment of at least 35 points')
+  expect(state.next).toBe('eligibility')
 })
