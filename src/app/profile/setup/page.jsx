@@ -489,7 +489,7 @@ function ProfileSetupForm() {
       .maybeSingle()
     if (!row?.profile_complete) {
       setSaving(false)
-      setSaveError('Your details and capabilities were saved, but Valoria has not confirmed profile completion. Check that your full VALU assessment is current and that all required profile details are present.')
+      setSaveError('Your details and capabilities were saved, but Valoria has not confirmed profile completion. Review the required profile details and try again.')
       return
     }
     setSaving(false)
