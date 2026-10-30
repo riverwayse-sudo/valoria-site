@@ -541,7 +541,7 @@ export default function DashboardPage() {
                     <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
                       You haven&apos;t completed your VALU Index assessment yet.
                     </p>
-                    <AssessmentStartLink href="/journey/continue?stage=assess"
+                    <AssessmentStartLink href="/dashboard" dashboardOnly
                       style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
                       CONTINUE YOUR VALU ASSESSMENT
                     </AssessmentStartLink>
@@ -786,7 +786,7 @@ function AccessProgressCard({ profile, assessment, capabilities, hasSavedOpening
   const next = nextIndex >= 0 ? steps[nextIndex] : null
   const comingAfter = nextIndex >= 0 ? steps[nextIndex + 1] : null
   const nextHref = !assessmentDone
-    ? '/journey/continue?stage=assess'
+    ? '/dashboard/continue-assessment'
     : !profileComplete
       ? '/profile/setup'
       : !capabilityReady
@@ -873,7 +873,7 @@ function AccessProgressCard({ profile, assessment, capabilities, hasSavedOpening
               )}
               <div style={{ display:'flex', alignItems:'center', gap:12, flexWrap:'wrap', marginTop:20 }}>
                 {next?.key === 'valu' ? (
-                  <AssessmentStartLink href={nextHref} style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'13px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:999, transition:'transform .2s ease, box-shadow .2s ease' }}>
+                  <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'13px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:999, transition:'transform .2s ease, box-shadow .2s ease' }}>
                     {hasSavedOpening ? 'CONTINUE TO QUESTION 10' : 'START YOUR VALU ASSESSMENT'} <span aria-hidden="true">→</span>
                   </AssessmentStartLink>
                 ) : (
