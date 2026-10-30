@@ -17,12 +17,13 @@ const dimensions = [
 ]
 
 const faqs = [
-  ['How long does it take?', 'The initial VALU snapshot is a focused 9-question directional experience. It does not establish the authoritative marketplace score.'],
+  ['How does it work?', 'The VALU assessment has 58 questions and is completed in two sessions. You answer the first nine questions straight away, then create your account to continue with the remaining 49 from your dashboard.'],
+  ['Do I need an account first?', 'No. You start the assessment immediately. You only create your account after the first nine questions, at a natural break.'],
   ['Who is it for?', 'It is designed for African professionals who want a clearer view of their current professional capability and a stronger foundation for development, visibility and opportunity.'],
-  ['Is it free?', 'Yes. The initial VALU Index is free to take. It is the entry point into the wider Valoria professional ecosystem.'],
-  ['Does the result define me?', 'No. Your initial result is directional, not a permanent label. It gives you a starting point for understanding where you are and deciding what to build next.'],
-  ['What happens after I finish?', 'You can create your professional account, complete your profile and, subject to Valoria’s normal governance checks, become discoverable through the professional marketplace.'],
-  ['Is there a deeper assessment?', 'Yes. The initial assessment is the acquisition and orientation layer. A deeper VALU assessment is available for more advanced professional intelligence and opportunity pathways.'],
+  ['Is it free?', 'Yes. The VALU Index is free to take. It is the entry point into the wider Valoria professional ecosystem.'],
+  ['Does the result define me?', 'No. Your VALU Index is directional, not a permanent label. It gives you a starting point for understanding where you are and deciding what to build next.'],
+  ['What happens after I finish?', 'You create your professional account, complete your profile and, subject to Valoria’s normal governance checks, become discoverable through the professional marketplace.'],
+  ['Can I pause part-way through?', 'Yes. Your progress is saved automatically, so you can return and continue from where you stopped without losing your answers.'],
 ]
 
 export default function ValuStartPage() {
@@ -80,11 +81,11 @@ export default function ValuStartPage() {
       <section className="vs-light vs-journey">
         <div className="vs-shell">
           <div className="vs-kicker dark"><span /> HOW IT WORKS</div>
-          <h2>Assess. Understand. Build.<br /><em>Then become discoverable.</em></h2>
+          <h2>Start. Continue. Understand.<br /><em>Then become discoverable.</em></h2>
           <div className="vs-journey-grid">
-            <article><span>01</span><h3>Assess</h3><p>Complete the initial 9-question VALU Index assessment.</p></article>
-            <article><span>02</span><h3>Understand</h3><p>Receive directional insight through the PRIME framework.</p></article>
-            <article><span>03</span><h3>Build</h3><p>Create your professional profile and define what you bring.</p></article>
+            <article><span>01</span><h3>Start</h3><p>Answer the first nine questions of the 58-question VALU assessment. No account needed.</p></article>
+            <article><span>02</span><h3>Continue</h3><p>Create your account to unlock the remaining 49 questions and keep your answers.</p></article>
+            <article><span>03</span><h3>Understand</h3><p>Receive your official VALU Index and a view across the five PRIME dimensions.</p></article>
             <article><span>04</span><h3>Discover</h3><p>Subject to governance checks, become discoverable through the marketplace.</p></article>
           </div>
         </div>
@@ -93,8 +94,8 @@ export default function ValuStartPage() {
       <section className="vs-result">
         <div className="vs-shell">
           <div className="vs-result-grid">
-            <div><div className="vs-kicker"><span /> YOUR RESULT</div><h2>Your result is a starting point,<br /><em>not a label.</em></h2></div>
-            <div className="vs-result-copy"><p>The initial VALU Index gives you a directional view of your professional profile. It is designed to create clarity and momentum — not to reduce your potential to one number.</p><ul><li><b>VALU Index</b><span>A concise directional signal</span></li><li><b>PRIME profile</b><span>A view across five capability dimensions</span></li><li><b>Next pathway</b><span>A clearer basis for what to build next</span></li></ul></div>
+            <div><div className="vs-kicker"><span /> YOUR RESULT</div><h2>One assessment.<br /><em>Two sessions. One result.</em></h2></div>
+            <div className="vs-result-copy"><p>Answer the opening nine questions, then complete the remaining 49 from your dashboard. Your saved answers carry across, and the result is issued once — as your official VALU Index.</p><ul><li><b>VALU Index</b><span>Your official score</span></li><li><b>PRIME profile</b><span>A view across five capability dimensions</span></li><li><b>Next pathway</b><span>A clearer basis for what to build next</span></li></ul></div>
           </div>
         </div>
       </section>
@@ -102,8 +103,8 @@ export default function ValuStartPage() {
       <section className="vs-light vs-next">
         <div className="vs-shell">
           <div className="vs-next-grid">
-            <div><div className="vs-kicker dark"><span /> AFTER VALU</div><h2>One assessment can open a much bigger professional journey.</h2></div>
-            <div className="vs-copy"><p>Once you complete the initial VALU Index, you can create your professional account and complete your profile. From there, Valoria connects capability with professional visibility and opportunity.</p><div className="vs-next-list"><div><b>01</b><span>Complete your professional profile</span></div><div><b>02</b><span>Make your capabilities discoverable</span></div><div><b>03</b><span>Explore deeper assessment and development pathways</span></div></div></div>
+            <div><div className="vs-kicker dark"><span /> AFTER VALU</div><h2>One assessment opens a much bigger professional journey.</h2></div>
+            <div className="vs-copy"><p>Once you complete the full VALU assessment, you create your professional profile. From there, Valoria connects capability with professional visibility and opportunity.</p><div className="vs-next-list"><div><b>01</b><span>Complete your professional profile</span></div><div><b>02</b><span>Make your capabilities discoverable</span></div><div><b>03</b><span>Explore deeper assessment and development pathways</span></div></div></div>
           </div>
         </div>
       </section>

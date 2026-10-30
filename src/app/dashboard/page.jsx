@@ -236,9 +236,9 @@ export default function DashboardPage() {
   if (!profile && pendingTasterId) return (
     <div style={{ minHeight:'100vh', background:DARK, color:PARCH, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'18px', padding:'24px', fontFamily:'var(--font,Raleway,sans-serif)' }}>
       <div style={{ color:GOLD, fontSize:'11px', fontWeight:700, letterSpacing:'.18em' }}>VALORIA INSTITUTE</div>
-      <h1 style={{ maxWidth:'620px', textAlign:'center', fontSize:'clamp(28px,4vw,42px)', lineHeight:1.15, margin:0 }}>Your professional journey starts here.</h1>
-      <p style={{ maxWidth:'560px', textAlign:'center', color:DIM, fontSize:'15px', lineHeight:1.8, margin:0 }}>Your email is confirmed and your initial VALU snapshot is connected. Continue to the full assessment when you’re ready. Your saved snapshot will be preserved.</p>
-      <Link href={`/journey/continue?stage=assess&taster_id=${encodeURIComponent(pendingTasterId)}`} style={{ padding:'14px 24px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:800, letterSpacing:'.08em', textDecoration:'none', borderRadius:'999px' }}>START FULL VALU ASSESSMENT →</Link>
+      <h1 style={{ maxWidth:'620px', textAlign:'center', fontSize:'clamp(28px,4vw,42px)', lineHeight:1.15, margin:0 }}>Your first session is saved.</h1>
+      <p style={{ maxWidth:'560px', textAlign:'center', color:DIM, fontSize:'15px', lineHeight:1.8, margin:0 }}>Your email is confirmed and your first nine responses are connected to your account. Continue the remaining 49 questions to complete your official VALU Index. Your saved progress will be preserved.</p>
+      <Link href={`/journey/continue?stage=assess&taster_id=${encodeURIComponent(pendingTasterId)}`} style={{ padding:'14px 24px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:800, letterSpacing:'.08em', textDecoration:'none', borderRadius:'999px' }}>CONTINUE TO QUESTION 10 →</Link>
       <Link href="/marketplace" style={{ color:PARCH, fontSize:'13px', textDecoration:'underline', textUnderlineOffset:'4px' }}>Explore Valoria first</Link>
       <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')} style={{ marginTop:'10px', background:'transparent', border:'1px solid rgba(201,168,76,.28)', color:DIM, borderRadius:'999px', padding:'9px 18px', cursor:'pointer', fontFamily:'inherit' }}>Sign Out</button>
     </div>
@@ -530,11 +530,11 @@ export default function DashboardPage() {
                 ) : (
                   <>
                     <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
-                      You haven't completed your VALU Index assessment yet.
+                      You haven&apos;t completed your VALU Index assessment yet.
                     </p>
                     <AssessmentStartLink href="/journey/continue?stage=assess"
                       style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
-                      TAKE THE ASSESSMENT
+                      CONTINUE YOUR VALU ASSESSMENT
                     </AssessmentStartLink>
                   </>
                 )}
@@ -785,7 +785,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
             : '/opportunities'
 
   const heading = !assessmentDone
-    ? 'Start with VALU.'
+    ? 'Continue your VALU assessment.'
     : !profileComplete
       ? 'Your profile is the next step.'
       : !capabilityReady
@@ -797,7 +797,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
             : 'You are ready for opportunities.'
 
   const explanation = !assessmentDone
-    ? 'Complete your VALU assessment to establish your professional signal.'
+    ? 'Your first nine responses are saved. Continue the remaining 49 questions to complete your official VALU Index.'
     : !profileComplete
       ? 'You are already discoverable. Complete your profile to add more context and unlock enhanced marketplace access.'
       : !capabilityReady
@@ -818,7 +818,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
             <div style={{ fontSize:'13px', color:DIM, marginTop:7, lineHeight:1.6, maxWidth:'680px' }}>{explanation}</div>
           </div>
           <Link href={nextHref} style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>
-            {next ? (next.key === 'valu' ? 'START VALU' : `CONTINUE ${next.plain.toUpperCase()}`) : 'VIEW OPPORTUNITIES'} →
+            {next ? (next.key === 'valu' ? 'CONTINUE ASSESSMENT' : `CONTINUE ${next.plain.toUpperCase()}`) : 'VIEW OPPORTUNITIES'} →
           </Link>
         </div>
 

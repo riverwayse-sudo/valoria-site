@@ -45,7 +45,7 @@ export default function ValuPage() {
           <div className="valu-kicker"><span /> THE JOURNEY</div>
           <h2>Four steps from<br /><em>assessment to opportunity.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Take the assessment</h3><p>Answer the initial 9-question VALU Index assessment.</p></article>
+            <article><b>01</b><h3>Start the assessment</h3><p>Answer the first nine of 58 questions. No account needed to begin.</p></article>
             <article><b>02</b><h3>Understand your profile</h3><p>See your directional result through the PRIME framework.</p></article>
             <article><b>03</b><h3>Create your record</h3><p>Create your professional account and complete the authoritative VALU assessment.</p></article>
             <article><b>04</b><h3>Become discoverable</h3><p>Complete your professional profile, clear the governance gates and enter the relevant marketplace.</p></article>
@@ -63,7 +63,7 @@ export default function ValuPage() {
       <section className="valu-outcome">
         <div className="valu-wrap valu-outcome-grid">
           <div><div className="valu-kicker valu-dark"><span /> WHAT YOU DO NEXT</div><h2>Your result is a starting point, not a label.</h2></div>
-          <div><p>The initial 9-question VALU snapshot gives you directional insight. To establish the authoritative marketplace record, create your professional account, complete the full VALU assessment and finish your professional profile. Subject to the normal governance checks, your eligible capability can then enter the marketplace.</p><p>The full VALU assessment establishes the authoritative marketplace score. Deeper assessment, development and opportunity pathways remain available afterwards.</p><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-inline">START THE VALU INDEX →</a></div>
+          <div><p>The VALU assessment has 58 questions and is completed in two sessions. You answer the opening nine straight away, then create your professional account to continue with the remaining 49 from your dashboard.</p><p>The full assessment establishes your official VALU Index, the authoritative marketplace record. Subject to the normal governance checks, your eligible capability can then enter the marketplace.</p><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-inline">START THE VALU INDEX →</a></div>
         </div>
       </section>
 
