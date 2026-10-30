@@ -341,4 +341,38 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(api).not.toContain("from('professional_document_reviews').insert")
   })
 
+
+  test('full-assessment roster projects only selected, active, eligible capabilities while preserving Basic taster listings', () => {
+    const migration = read('supabase/migrations/20261029190000_marketplace_roster_capability_eligibility.sql')
+    const fullBranch = migration.slice(
+      migration.indexOf("if assessment_ok and p.visibility = 'public'"),
+      migration.indexOf("select * into t", migration.indexOf("if assessment_ok and p.visibility = 'public'"))
+    )
+    const tasterBranch = migration.slice(migration.indexOf("select * into t"))
+
+    expect(fullBranch).toContain('public.professional_capabilities')
+    expect(fullBranch).toContain('pc.is_active = true')
+    expect(fullBranch).toContain('pc.eligible_for_listing = true')
+    expect(fullBranch).toContain("pc.eligibility_status = 'listed'")
+    expect(fullBranch).toContain("caps := '{}'::text[]")
+    expect(fullBranch).toContain('General marketplace presence is independent of capability readiness')
+    expect(fullBranch).not.toContain("if cardinality(caps) = 0 then caps := array['talent']")
+    expect(tasterBranch).toContain("array['talent']::text[]")
+    expect(tasterBranch).toContain("'basic'")
+  })
+
+  test('capability projection preserves canonical VALU Index fields and derives descriptors from PRIME scores', () => {
+    const migration = read('supabase/migrations/20261029190000_marketplace_roster_capability_eligibility.sql')
+    expect(migration).toContain('select v.total_score, v.cluster_scores, v.designation')
+    expect(migration).toContain('canonical_valu_index := coalesce(canonical_valu_index, p.valu_index)')
+    expect(migration).toContain('canonical_cluster_scores := coalesce(canonical_cluster_scores, p.cluster_scores)')
+    expect(migration).toContain('canonical_designation := coalesce(canonical_designation, p.designation)')
+    expect(migration).toContain('Derive public summary only from structured PRIME scores')
+    expect(migration).toContain("'A well-balanced capability profile across the five PRIME dimensions.'")
+    expect(migration).not.toContain('report_text')
+    expect(migration).not.toContain("caps := array['talent']::text[]")
+    expect(migration).toContain('array_agg(distinct mpr.professional_id order by mpr.professional_id)')
+    expect(migration).toContain('foreach roster_professional_id in array professional_ids')
+  })
+
 })
