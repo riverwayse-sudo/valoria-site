@@ -48,35 +48,46 @@ as $function$
 declare
   new_capability text;
   old_capability text;
-  target_professional_id uuid;
 begin
-  if tg_op <> 'DELETE' then
-    target_professional_id:=new.professional_id;
-
-    if new.document_type='cv' then
-      perform private.refresh_existing_professional_capability(new.professional_id,'talent');
+  if tg_op='DELETE' then
+    if old.document_type='cv' then
+      perform private.refresh_existing_professional_capability(old.professional_id,'talent');
     end if;
-
-    if new.capability_id is not null then
-      select capability into new_capability
+    if old.capability_id is not null then
+      select capability into old_capability
       from public.professional_capabilities
-      where id=new.capability_id;
-      if new_capability is not null then
-        perform private.refresh_existing_professional_capability(new.professional_id,new_capability);
+      where id=old.capability_id;
+      if old_capability is not null then
+        perform private.refresh_existing_professional_capability(old.professional_id,old_capability);
       end if;
+    end if;
+    return old;
+  end if;
+
+  if new.document_type='cv' then
+    perform private.refresh_existing_professional_capability(new.professional_id,'talent');
+  end if;
+
+  if new.capability_id is not null then
+    select capability into new_capability
+    from public.professional_capabilities
+    where id=new.capability_id;
+    if new_capability is not null then
+      perform private.refresh_existing_professional_capability(new.professional_id,new_capability);
     end if;
   end if;
 
-  if tg_op <> 'INSERT' then
-    target_professional_id:=old.professional_id;
-
-    if old.document_type='cv' and (tg_op='DELETE' or new.document_type is distinct from old.document_type or new.storage_path is distinct from old.storage_path or new.verification_status is distinct from old.verification_status) then
+  if tg_op='UPDATE' then
+    if old.document_type='cv' and (
+      new.document_type is distinct from old.document_type
+      or new.storage_path is distinct from old.storage_path
+      or new.verification_status is distinct from old.verification_status
+    ) then
       perform private.refresh_existing_professional_capability(old.professional_id,'talent');
     end if;
 
     if old.capability_id is not null and (
-      tg_op='DELETE'
-      or new.capability_id is distinct from old.capability_id
+      new.capability_id is distinct from old.capability_id
       or new.verification_status is distinct from old.verification_status
       or new.document_type is distinct from old.document_type
     ) then
@@ -89,7 +100,6 @@ begin
     end if;
   end if;
 
-  if tg_op='DELETE' then return old; end if;
   return new;
 end;
 $function$;
