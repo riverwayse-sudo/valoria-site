@@ -72,6 +72,19 @@ test('eligible capability is not enough until profile is complete', () => {
   expect(state.next).toBe('listed')
 })
 
+test('a current full assessment below 35 points does not unlock marketplace eligibility', () => {
+  const state = deriveJourneyState({
+    assessment: { ...completedAssessment, total_score: 34, expires_at: null },
+    activation: { status: 'activated' },
+    profile: completeProfile,
+    capabilities: [{ id: 'c1', capability: 'talent', is_active: true, eligibility_status: 'eligible', eligible_for_listing: true }],
+  })
+  expect(state.assessment.current).toBe(true)
+  expect(state.profile.complete).toBe(true)
+  expect(state.eligibility.complete).toBe(false)
+  expect(state.eligibility.missing).toContain('At least 35 VALU Index points')
+  expect(state.marketplace.capabilities).toEqual([])
+})
 test('eligible or timestamped capability is not listed until authoritative listed status is set', () => {
   const state = deriveJourneyState({
     assessment: completedAssessment,
@@ -105,6 +118,6 @@ test('expired assessment preserves profile completeness but blocks current marke
   expect(state.assessment.current).toBe(false)
   expect(state.profile.complete).toBe(true)
   expect(state.eligibility.complete).toBe(false)
-  expect(state.eligibility.missing).toContain('A current full VALU Index assessment of at least 35 points')
+  expect(state.eligibility.missing).toContain('A current full VALU Index assessment')
   expect(state.next).toBe('eligibility')
 })
