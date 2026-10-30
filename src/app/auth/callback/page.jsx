@@ -71,12 +71,12 @@ function AuthCallbackFlow() {
           // Preserve the exact linked taster until the user chooses to continue
           // from the dashboard. The dashboard is the stable, authenticated landing
           // page; assessment handoff happens only after an explicit user action.
-          localStorage.setItem('pending_taster_id', pendingTasterId)
+          localStorage.removeItem('pending_taster_id')
           localStorage.removeItem('pending_taster_name')
           localStorage.removeItem('pending_taster_role')
           setMessage('Email confirmed. You’re signed in and your opening nine are connected. Your dashboard is ready; continue at Question 10.')
           await new Promise(resolve => setTimeout(resolve, 1400))
-          if (!cancelled) router.replace(`/dashboard?welcome=profile&pending_taster_id=${encodeURIComponent(pendingTasterId)}`)
+          if (!cancelled) router.replace('/dashboard?welcome=profile')
           return
         }
 
