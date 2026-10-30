@@ -181,7 +181,33 @@ function EditPageInner() {
       }
       payload[k] = databaseValue(k)
     })
-    const { error } = await supabase.from('professional_profiles').update(payload).eq('id', user.id)
+    let error = null
+    if (section === 'tracks') {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        error = { message: 'Your session expired. Sign in again to update your capabilities.' }
+      } else {
+        try {
+          const response = await fetch('/api/profile/capabilities', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({ active_tracks: form.active_tracks || [] }),
+          })
+          if (!response.ok) {
+            const result = await response.json().catch(() => ({}))
+            error = { message: result.error || 'Your capability selection could not be saved.' }
+          }
+        } catch {
+          error = { message: 'Capability service could not be reached. Please try again.' }
+        }
+      }
+    } else {
+      const result = await supabase.from('professional_profiles').update(payload).eq('id', user.id)
+      error = result.error
+    }
     setSaving(s => ({ ...s, [section]: false }))
     if (error) {
       console.error(`Save failed for ${section}:`, error)
