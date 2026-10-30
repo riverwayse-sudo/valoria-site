@@ -118,7 +118,7 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
     marketplace: {
       complete: opportunityAccess,
       profileCreated: !!profile && hasAssessment,
-      capabilities: listedCapabilities,
+      capabilities: listed ? listedCapabilities : [],
       enhanced: journeyStage === 'marketplace_enhanced',
     },
     opportunity: { complete: opportunityAccess, access: opportunityAccess, engaged: opportunityEngaged, latest: opportunity || null },
