@@ -48,14 +48,21 @@ async function getOwnedSnapshot(admin, user) {
     return { error: 'The saved snapshot role conflicts with account evidence. Valoria support must review it.', status: 403 }
   }
 
-  const { data: completed, error: assessmentError } = await admin.from('valu_assessments')
+  const { data: completedByAccount, error: accountAssessmentError } = await admin.from('valu_assessments')
     .select('id')
     .eq('user_id', user.id)
     .not('completed_at', 'is', null)
     .limit(1)
     .maybeSingle()
-  if (assessmentError) return { error: 'Could not verify your VALU assessment status.', status: 502 }
-  return { taster, completed: Boolean(completed) }
+  if (accountAssessmentError) return { error: 'Could not verify your VALU assessment status.', status: 502 }
+  const { data: completedBySnapshot, error: snapshotAssessmentError } = await admin.from('valu_assessments')
+    .select('id')
+    .eq('taster_id', taster.id)
+    .not('completed_at', 'is', null)
+    .limit(1)
+    .maybeSingle()
+  if (snapshotAssessmentError) return { error: 'Could not verify your VALU assessment status.', status: 502 }
+  return { taster, completed: Boolean(completedByAccount || completedBySnapshot) }
 }
 
 export async function GET(request) {
