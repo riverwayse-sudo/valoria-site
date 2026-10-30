@@ -109,35 +109,21 @@ describe('journey integrity contract', () => {
     expect(source).toContain('sync_professional_listing_status')
   })
 
-  test('full VALU launch links are signed, time-limited, and bound to the authenticated snapshot owner', () => {
-    const signer = read('src/lib/valu-handoff-token.js')
+  test('full VALU launch is a one-time dashboard-only handoff', () => {
     const handoff = read('src/app/api/valu-handoff/route.js')
     const continuation = read('src/app/journey/continue/route.js')
-    expect(signer).toContain('createHmac')
-    expect(signer).toContain('valu-full-assessment')
-    expect(signer).toContain('TOKEN_TTL_SECONDS')
-    expect(handoff).toContain('user.email_confirmed_at')
-    expect(handoff).toContain('createValuHandoffToken(user.id, taster.id)')
+    expect(handoff).toContain('HANDOFF_TTL_SECONDS = 60')
+    expect(handoff).toContain("createHash('sha256')")
+    expect(handoff).toContain("entry_point: 'dashboard_assessment'")
+    expect(handoff).toContain("source: 'authenticated_dashboard'")
     expect(handoff).toContain('destination.hash')
-    expect(continuation).toContain('createValuHandoffToken(user.id,taster.id)')
-    expect(continuation).toContain("login.searchParams.set('returnTo','/journey/continue?'+continuationParams.toString())")
-    expect(continuation).toContain("entry_point:'legacy_valu_link'")
-    expect(continuation).toContain("source:'legacy_assessment_url'")
-    expect(continuation).not.toContain("login.searchParams.set('pending_taster_id',requestedTasterId)")
-    expect(continuation).toContain(".select('id,user_id,entry_point,target_stage,source_id,expires_at,used_at')")
-    expect(continuation).toContain("['valu_reminder','legacy_valu_link'].includes(link.entry_point)?link.source_id:null")
-    expect(continuation).toContain(".select('id').maybeSingle()")
-
-    expect(continuation).toContain("fragmentParams.set('resume_token',resumeToken)")
-    expect(handoff).toContain("new URLSearchParams({ full:'1' })")
-    expect(continuation).toContain("new URLSearchParams({full:'1'})")
-    for (const source of [handoff, continuation]) {
-      expect(source).not.toContain('taster_id:taster.id')
-      expect(source).not.toContain('name:taster.name')
-      expect(source).not.toContain('role:taster.role')
-      expect(source).not.toContain('experience:taster.experience')
-    }
-    expect(continuation).not.toContain("return NextResponse.redirect(new URL(ASSESSMENT_ORIGIN+'/',request.url))")
+    expect(handoff).toContain("method: 'POST'")
+    expect(handoff).toContain(".eq('user_id', user.id)")
+    expect(continuation).toContain("stage === 'assess'")
+    expect(continuation).toContain("return NextResponse.redirect(new URL('/dashboard', request.url))")
+    expect(continuation).not.toContain('createValuHandoffToken')
+    expect(continuation).not.toContain('pending_taster_id')
+    expect(continuation).not.toContain('taster_id')
   })
 
   test('assessment return from login always lands on dashboard before the user chooses to continue', () => {
@@ -149,17 +135,15 @@ describe('journey integrity contract', () => {
     expect(login).not.toContain("fetch('/api/valu-handoff'")
   })
 
-  test('assessment reminder emails use opaque single-use account-bound re-entry links', () => {
+  test('assessment reminder emails return participants to login and dashboard only', () => {
     const source = read('src/app/api/cron/valu-reminders/route.js')
-    expect(source).toContain("from('valoria_reentry_links').insert({")
-    expect(source).toContain("entry_point: 'valu_reminder'")
-    expect(source).toContain("target_stage: 'assess'")
-    expect(source).toContain('source_id: row.id')
-    expect(source).toContain("randomBytes(32).toString('hex')")
-    expect(source).toContain("assessmentUrl.searchParams.set('token', reentry.token)")
-    expect(source).not.toContain('/journey/continue?stage=assess&taster_id=')
+    expect(source).toContain("https://valoriainstitute.com/login?returnTo=%2Fdashboard")
+    expect(source).toContain('RETURN TO YOUR DASHBOARD')
+    expect(source).toContain('Sign in to your account')
+    expect(source).not.toContain("from('valoria_reentry_links').insert")
+    expect(source).not.toContain('CONTINUE TO QUESTION 10')
     expect(source).not.toContain('pending_taster_id')
-    expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
+    expect(source).not.toContain('taster_id=')
     expect(source).toContain('email_confirmed_at')
   })
 
@@ -185,39 +169,32 @@ describe('journey integrity contract', () => {
     expect(source).toContain("localStorage.setItem('pending_taster_id',tasterId)")
   })
 
-  test('email confirmation links the exact snapshot and returns the user to the dashboard before assessment', () => {
+  test('email confirmation returns participants to dashboard before assessment continuation', () => {
     const callback = read('src/app/auth/callback/page.jsx')
     const dashboard = read('src/app/dashboard/page.jsx')
     const continuation = read('src/app/journey/continue/route.js')
     const handoff = read('src/app/api/valu-handoff/route.js')
-    expect(callback).toContain("localStorage.setItem('pending_taster_id', pendingTasterId)")
-    expect(callback).toContain('/dashboard?welcome=profile&pending_taster_id=')
-    expect(callback).not.toContain('/api/valu-handoff?taster_id=')
-    expect(callback).not.toContain('window.location.replace(destination.toString())')
+    expect(callback).toContain('/dashboard')
     expect(dashboard).toContain('CONTINUE TO QUESTION 10')
     expect(dashboard).toContain('Required Profile Details')
     expect(dashboard).toContain('This is separate from your VALU assessment and marketplace eligibility.')
     expect(dashboard).toContain('five milestones; not a profile or VALU percentage')
-    expect(dashboard).toContain('/journey/continue?stage=assess&taster_id=')
-    expect(continuation).toContain('requestedTasterId')
-    expect(handoff).toContain("tasterQuery.eq('id', requestedTasterId)")
+    expect(dashboard).toContain('dashboardOnly')
+    expect(dashboard).not.toContain('pending_taster_id')
+    expect(dashboard).not.toContain('/journey/continue?stage=assess')
+    expect(continuation).toContain("stage === 'assess'")
+    expect(handoff).toContain("entry_point: 'dashboard_assessment'")
     expect(handoff).toContain(".eq('user_id', user.id)")
   })
 
-  test('both handoff issuers carry a resume reference so saved full-assessment progress survives sign-in', () => {
-    const handoff = read('src/app/api/valu-handoff/route.js')
+  test('assessment continuation never accepts email resume tokens or public identity query parameters', () => {
     const continuation = read('src/app/journey/continue/route.js')
-    for (const source of [handoff, continuation]) {
-      expect(source).toContain("get('resume')")
-      expect(source).toMatch(/fragmentParams\.set\('resume_token',\s?resumeToken\)/)
-    }
-  })
-
-  test('pending snapshot identity is retained until the dashboard CTA passes it to continuation', () => {
-    const source = read('src/app/login/page.jsx')
-    expect(source).toContain('Keep pending_taster_id until the dashboard CTA carries this snapshot into continuation.')
-    expect(source).not.toContain("localStorage.removeItem('pending_taster_id')")
-    expect(read('src/components/Nav.jsx')).toContain("continuation.searchParams.set('taster_id', pendingTasterId)")
+    const handoff = read('src/app/api/valu-handoff/route.js')
+    expect(continuation).not.toContain("searchParams.get('token')")
+    expect(continuation).not.toContain("searchParams.get('taster_id')")
+    expect(handoff).not.toContain("searchParams.get('taster_id')")
+    expect(handoff).not.toContain("searchParams.get('resume')")
+    expect(handoff).toContain("expires_at: expiresAt")
   })
 
   test('unowned snapshots require exact email evidence and legacy assessments are never auto-linked by name/role', () => {
@@ -388,20 +365,22 @@ describe('journey integrity contract', () => {
     expect(config).toContain('/api/cron/reconciliation-health')
   })
   
-  test('dashboard and all primary VALU entry points use authenticated continuation', () => {
+  test('dashboard is the only authenticated continuation entry point', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
     const nav = read('src/components/Nav.jsx')
     const start = read('src/app/valu/start/page.jsx')
     const continuation = read('src/app/journey/continue/route.js')
     expect(dashboard).toContain('AssessmentStartLink')
+    expect(dashboard).toContain('dashboardOnly')
     expect(nav).toContain('export function AssessmentStartLink')
-    expect(nav).toContain("continuation.searchParams.set('stage', 'assess')")
-    expect(nav).toContain("continuation.searchParams.set('taster_id', pendingTasterId)")
+    expect(nav).toContain("fetch('/api/valu-handoff'")
+    expect(nav).toContain("window.location.assign('/dashboard')")
+    expect(nav).not.toContain('pending_taster_id')
+    expect(nav).not.toContain("continuation.searchParams.set('stage', 'assess')")
     expect(start).toContain('AssessmentStartLink')
-    expect(continuation).not.toContain("login.searchParams.set('pending_taster_id',requestedTasterId)")
-    expect(continuation).toContain("entry_point:'legacy_valu_link'")
-    expect(continuation).toContain("source:'legacy_assessment_url'")
-    expect(continuation).toContain("https://assessment.valoriainstitute.com/")
+    expect(continuation).toContain("stage === 'assess'")
+    expect(continuation).toContain("return NextResponse.redirect(new URL('/dashboard', request.url))")
+    expect(continuation).not.toContain('assessment.valoriainstitute.com')
   })
 
 
@@ -426,7 +405,7 @@ describe('journey integrity contract', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
     expect(dashboard).toContain('COMING UP AFTER THIS')
     expect(dashboard).toContain('You’ll unlock:')
-    expect(dashboard).toContain('hasSavedOpening={!!pendingTasterId}')
+    expect(dashboard).toContain('hasSavedOpening={!!assessmentAccess?.can_continue}')
     expect(dashboard).toContain('Your first answers are saved. Ready for the next 49?')
     expect(dashboard).toContain('Start or continue your 58-question VALU assessment.')
     expect(dashboard).not.toContain('Your opening nine answers are saved. Your account is confirmed.')
