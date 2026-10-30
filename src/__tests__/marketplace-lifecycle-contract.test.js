@@ -269,7 +269,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(migration).toContain('add column if not exists capability_id')
     expect(migration).toContain('professional_document_reviews')
     expect(migration).toContain('on delete restrict')
-    expect(migration).toContain('revoke all on public.professional_document_reviews from anon, authenticated')
+    expect(migration).toContain('revoke all on public.professional_document_reviews from public, anon, authenticated, service_role')
     expect(upload).toContain("auth.getUser(token)")
     expect(upload).toContain(".eq('professional_id',user.id)")
     expect(upload).toContain('!capability.is_active')
