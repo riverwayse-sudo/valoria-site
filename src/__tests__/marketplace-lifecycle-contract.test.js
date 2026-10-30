@@ -283,4 +283,14 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(adminPage).toContain('Request changes')
   })
 
+  test('participants cannot alter evidence review status, delete submitted records, or overwrite stored evidence', () => {
+    const governance = read('supabase/migrations/20261030170000_lock_professional_document_review_governance.sql')
+    expect(governance).toContain('using (is_valoria_admin())')
+    expect(governance).toContain('with check (is_valoria_admin())')
+    expect(governance).toContain('drop policy if exists professional_documents_owner_delete')
+    expect(governance).toContain('pc.professional_id = professional_documents.professional_id')
+    expect(governance).toContain('pc.is_active = true')
+    expect(governance).toContain('drop policy if exists "CV owner can update own objects"')
+  })
+
 })
