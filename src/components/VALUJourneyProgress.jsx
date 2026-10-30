@@ -2,7 +2,7 @@ export default function VALUJourneyProgress({ stage = 'bridge', currentQuestion 
   const steps = [
     { key: 'opening', title: 'Opening', detail: 'Questions 1–9' },
     { key: 'bridge', title: 'Account', detail: 'Save & confirm' },
-    { key: 'continuation', title: 'Complete', detail: 'Questions 10–58' },
+    { key: 'continuation', title: 'Continue', detail: 'Questions 10–58' },
   ]
   const active = Math.max(0, steps.findIndex(step => step.key === stage))
   return (
