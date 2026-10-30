@@ -141,7 +141,7 @@ export default function Nav() {
  
 // Route every signed-in VALU start through the authenticated continuation endpoint.
 // Anonymous visitors still begin at the configured public taster URL.
-export function AssessmentStartLink({ href = '/valu/assessment/', className, style, children, onClick, ...props }) {
+export function AssessmentStartLink({ href = '/valu/assessment/', className, style, children, onClick, dashboardOnly = false, ...props }) {
   const [opening, setOpening] = useState(false)
   const [error, setError] = useState('')
 
@@ -154,18 +154,28 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
     setError('')
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.access_token) {
-        window.location.assign(href)
+      if (dashboardOnly) {
+        if (!session?.access_token) {
+          window.location.assign('/login?returnTo=%2Fdashboard')
+          return
+        }
+        const response = await fetch('/api/valu-handoff', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${session.access_token}` },
+          cache: 'no-store',
+        })
+        const data = await response.json().catch(() => ({}))
+        if (!response.ok || !data.url) throw new Error(data.error || 'We could not securely open your saved assessment.')
+        window.location.assign(data.url)
         return
       }
-      const pendingTasterId = localStorage.getItem('pending_taster_id')
-      const continuation = new URL('/journey/continue', window.location.origin)
-      continuation.searchParams.set('stage', 'assess')
-      if (pendingTasterId) {
-        continuation.searchParams.set('taster_id', pendingTasterId)
-        localStorage.removeItem('pending_taster_id')
+      // Public navigation is for starting the opening snapshot only. An
+      // authenticated participant must return to the dashboard to resume.
+      if (session?.access_token) {
+        window.location.assign('/dashboard')
+        return
       }
-      window.location.assign(continuation.pathname + continuation.search)
+      window.location.assign(href)
     } catch (err) {
       setError(err?.message || 'We could not open your VALU assessment. Please try again.')
       setOpening(false)

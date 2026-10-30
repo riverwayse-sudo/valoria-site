@@ -231,7 +231,8 @@ describe('VALUI marketplace lifecycle contract', () => {
       expect(source).not.toContain('15 question')
     }
     expect(prime).toContain('completed in two sessions')
-    expect(reminders).toContain('CONTINUE TO QUESTION 10')
+    expect(reminders).toContain('RETURN TO YOUR DASHBOARD')
+    expect(reminders).not.toContain('CONTINUE TO QUESTION 10')
   })
 
   test('profile capability selection is reconciled through an authenticated server endpoint', () => {

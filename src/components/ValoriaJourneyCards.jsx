@@ -5,7 +5,7 @@ import styles from './ValoriaJourneyCards.module.css'
 
 const MILESTONES = [
   { key:'connect', title:'Join Valoria', short:'START', description:'Your Valoria account is ready.', href:'/profile/onboarding', icon:'01' },
-  { key:'assess', title:'Complete VALU', short:'VALU', description:'See your professional signal.', href:'/journey/continue?stage=assess', icon:'02' },
+  { key:'assess', title:'Complete VALU', short:'VALU', description:'See your professional signal.', href:'/dashboard', icon:'02' },
   { key:'report', title:'Understand your result', short:'RESULT', description:'Read what your VALU result means.', href:'/report', icon:'03' },
   { key:'profile', title:'Complete your profile', short:'PROFILE', description:'Add your professional details and unlock enhanced marketplace access.', href:'/profile/setup', icon:'04' },
   { key:'capability', title:'Choose your capability', short:'CAPABILITY', description:'Tell Valoria what you want to be discovered for.', href:'/profile/setup', icon:'05' },
