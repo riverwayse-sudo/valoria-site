@@ -20,3 +20,22 @@ describe('notifications session authentication', () => {
     expect(source).toContain("from('platform_notifications')")
   })
 })
+
+describe('authenticated VALU continuation entry points', () => {
+  test('dashboard continue action resumes through the signed-in journey handoff', () => {
+    const dashboard = fs.readFileSync(
+      path.join(process.cwd(), 'src/app/dashboard/page.jsx'),
+      'utf8'
+    )
+    expect(dashboard).toContain("? '/journey/continue?stage=assess'")
+    expect(dashboard).not.toContain("? '/valu/start'")
+  })
+
+  test('in-progress assessment nudge uses the authenticated continuation route', () => {
+    const nudge = fs.readFileSync(
+      path.join(process.cwd(), 'src/components/ValuCompletionNudge.jsx'),
+      'utf8'
+    )
+    expect(nudge).toContain('assessmentStarted?"/journey/continue?stage=assess":"/valu/start"')
+  })
+})
