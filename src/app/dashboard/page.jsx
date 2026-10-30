@@ -236,9 +236,11 @@ export default function DashboardPage() {
 
   if (!profile && pendingTasterId) return (
     <div style={{ minHeight:'100vh', background:DARK, color:PARCH, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'18px', padding:'24px', fontFamily:'var(--font,Raleway,sans-serif)' }}>
+      <div style={{width:'100%',maxWidth:560}}><VALUJourneyProgress stage="continuation" currentQuestion={10} /></div>
       <div style={{ color:GOLD, fontSize:'11px', fontWeight:700, letterSpacing:'.18em' }}>VALORIA INSTITUTE</div>
       <h1 style={{ maxWidth:'620px', textAlign:'center', fontSize:'clamp(28px,4vw,42px)', lineHeight:1.15, margin:0 }}>Your first session is saved.</h1>
-      <p style={{ maxWidth:'560px', textAlign:'center', color:DIM, fontSize:'15px', lineHeight:1.8, margin:0 }}>Your email is confirmed and your first nine responses are connected to your account. Continue the remaining 49 questions to complete your official VALU Index. Your saved progress will be preserved.</p>
+      <p style={{ maxWidth:'560px', textAlign:'center', color:DIM, fontSize:'15px', lineHeight:1.8, margin:0 }}>Your email is confirmed and your opening nine responses are connected to your account. You are now at the continuation stage. Complete Questions 10–58 to receive your official VALU Index; your saved answers will carry forward.</p>
+      <div style={{width:'100%',maxWidth:560,padding:'18px',border:'1px solid rgba(201,168,76,.2)',borderRadius:10,background:'rgba(201,168,76,.05)'}}><div style={{fontSize:9,fontWeight:800,letterSpacing:'.15em',color:GOLD,marginBottom:7}}>YOUR NEXT STEP</div><div style={{fontSize:16,color:PARCH,fontWeight:600}}>Continue at Question 10</div><div style={{fontSize:12,color:DIM,lineHeight:1.65,marginTop:5}}>You have 49 questions left. Once you complete them, your official VALU Index and PRIME insights will be ready.</div></div>
       <Link href={`/journey/continue?stage=assess&taster_id=${encodeURIComponent(pendingTasterId)}`} style={{ padding:'14px 24px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:800, letterSpacing:'.08em', textDecoration:'none', borderRadius:'999px' }}>CONTINUE TO QUESTION 10 →</Link>
       <Link href="/marketplace" style={{ color:PARCH, fontSize:'13px', textDecoration:'underline', textUnderlineOffset:'4px' }}>Explore Valoria first</Link>
       <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')} style={{ marginTop:'10px', background:'transparent', border:'1px solid rgba(201,168,76,.28)', color:DIM, borderRadius:'999px', padding:'9px 18px', cursor:'pointer', fontFamily:'inherit' }}>Sign Out</button>
@@ -412,7 +414,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* MARKETPLACE JOURNEY — five eligibility milestones; not a profile or VALU percentage */}
+        {/* MARKETPLACE JOURNEY — five milestones; not a profile or VALU percentage */}
         {isSupply && (
           <div style={{ maxWidth:'1100px', margin:'24px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
             <AccessProgressCard
@@ -816,6 +818,7 @@ function AccessProgressCard({ profile, assessment, capabilities, hasSavedOpening
 
   return (
     <section aria-label="Your Valoria journey and next step" style={{ maxWidth:'1100px', margin:'26px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+      {hasSavedOpening && !assessmentDone && <div style={{maxWidth:650,marginBottom:18}}><VALUJourneyProgress stage="continuation" currentQuestion={10} /></div>}
       <div className="dv-next-journey" style={{ position:'relative', overflow:'hidden', background:'linear-gradient(120deg, rgba(26,26,46,.98), rgba(26,26,46,.78))', border:`1px solid ${GLINE2}`, padding:'clamp(22px,3vw,30px)', borderRadius:'12px' }}>
         <div aria-hidden="true" style={{ position:'absolute', width:260, height:260, borderRadius:'50%', right:-110, top:-150, border:'1px solid rgba(201,168,76,.12)', boxShadow:'0 0 0 28px rgba(201,168,76,.025), 0 0 0 56px rgba(201,168,76,.02)' }} />
         <div style={{ position:'relative', zIndex:1 }}>
