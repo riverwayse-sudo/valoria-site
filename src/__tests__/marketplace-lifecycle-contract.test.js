@@ -158,6 +158,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('no_stable_taster_match')
     expect(source).toContain('taster_version_source')
     expect(source).toContain('taster_version')
+    expect(source).toContain("select('professional_id,verification_status,document_type,storage_path,original_filename,created_at')")
+    expect(source).not.toContain("select('professional_id,status,document_type,created_at')")
   })
 
   test('assessment session schema and reconciliation protocol are governed explicitly', () => {
