@@ -343,7 +343,7 @@ describe('VALUI marketplace lifecycle contract', () => {
 
 
   test('full-assessment roster projects only selected, active, eligible capabilities while preserving Basic taster listings', () => {
-    const migration = read('supabase/migrations/20261029190000_marketplace_roster_capability_eligibility.sql')
+    const migration = read('supabase/migrations/20261030100000_marketplace_roster_capability_eligibility.sql')
     const fullBranch = migration.slice(
       migration.indexOf("if assessment_ok and p.visibility = 'public'"),
       migration.indexOf("select * into t", migration.indexOf("if assessment_ok and p.visibility = 'public'"))
@@ -362,7 +362,7 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
   test('capability projection preserves canonical VALU Index fields and derives descriptors from PRIME scores', () => {
-    const migration = read('supabase/migrations/20261029190000_marketplace_roster_capability_eligibility.sql')
+    const migration = read('supabase/migrations/20261030100000_marketplace_roster_capability_eligibility.sql')
     expect(migration).toContain('select v.total_score, v.cluster_scores, v.designation')
     expect(migration).toContain('canonical_valu_index := coalesce(canonical_valu_index, p.valu_index)')
     expect(migration).toContain('canonical_cluster_scores := coalesce(canonical_cluster_scores, p.cluster_scores)')
