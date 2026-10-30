@@ -317,7 +317,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(backfill).toContain("between 1 and 10485760")
     expect(backfill).toContain("on conflict (storage_bucket, storage_path) do nothing")
     expect(backfill).not.toContain("^[0-9]+  'private'")
-    expect(backfill.split('commit;')).toHaveLength(2)
+    expect(backfill.match(/^commit;$/gim)).toHaveLength(1)
   })
 
   test('evidence and capability governance migrations match installed policy names', () => {
