@@ -151,6 +151,8 @@ function ProfileSetupForm() {
   const [autoSaveStatus, setAutoSaveStatus] = useState('saved')
   const hydratedRef = useRef(false)
   const autoSaveTimerRef = useRef(null)
+  // Serialize draft writes so a slower autosave cannot overwrite a newer explicit save.
+  const saveQueueRef = useRef(Promise.resolve())
   const fileRef = useRef(null)
   const cvFileRef = useRef(null)
   // Captured once on load — whether this person already had tracks set
@@ -176,6 +178,16 @@ function ProfileSetupForm() {
   const sectionNames = [...new Set(screens.map(s => s.section).filter(Boolean))].filter(s => s !== 'Review')
   const sectionStarts = sectionNames.map(name => screens.findIndex(s => s.section === name))
   const currentSection = screen?.section || 'Review'
+  const sectionGuidance = {
+    Track: 'Choose the professional pathways that describe how you want to participate. This selection shapes the capability sections and the directories your profile may qualify for.',
+    Profile: 'Establish your professional identity. These details help people recognise your experience and understand the context behind your VALU Index.',
+    Expertise: 'Describe the work you do in each selected pathway. This information helps Valoria organise your capability profile and assess relevant evidence.',
+    Media: 'Add supporting material that helps reviewers and prospective partners understand your professional background. Your CV remains private unless a permitted workflow uses it.',
+    Terms: 'Set practical preferences for matching and introductions. These preferences do not change your VALU points or determine eligibility by themselves.',
+    Review: 'Review your details and confirm that the information is accurate before submitting your profile.'
+  }
+  const currentSectionIndex = sectionNames.indexOf(currentSection)
+  const nextSection = currentSection === 'Review' ? null : (sectionNames[currentSectionIndex + 1] || 'Review')
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -355,7 +367,7 @@ function ProfileSetupForm() {
     const f = overrides || form
     const silent = options.silent === true
     if (!silent) setSaving(true)
-    const { error } = await supabase.from('professional_profiles').upsert({
+    const write = () => supabase.from('professional_profiles').upsert({
       id: user.id,
       display_name: f.display_name || null, headline: f.headline || null,
       location: f.location || null, industry: f.industry || null,
@@ -389,6 +401,9 @@ function ProfileSetupForm() {
       // They are written by the assessment/governance pipeline, never by profile-owner upserts.
       updated_at: new Date().toISOString(),
     }, { onConflict: 'id' })
+    const queuedWrite = saveQueueRef.current.catch(() => {}).then(write)
+    saveQueueRef.current = queuedWrite
+    const { error } = await queuedWrite
     if (!silent) setSaving(false)
     if (error) {
       console.error('Profile save failed:', error)
@@ -406,22 +421,25 @@ function ProfileSetupForm() {
   // Mirrors the assessment's pattern: click an answer, brief highlight,
   // then auto-advance — no separate "Continue" click needed for
   // single-choice questions.
-  function selectAndAdvance(key, val) {
+  async function selectAndAdvance(key, val) {
     if (transitioning) return
     const nextForm = { ...form, [key]: val }
     setForm(nextForm)
     setTransitioning(true)
-    saveProgress(nextForm)
+    const saved = await saveProgress(nextForm)
+    if (!saved) { setTransitioning(false); return }
     setTimeout(() => {
       setScreenIndex(i => Math.min(i + 1, screens.length - 1))
       setTransitioning(false)
     }, 320)
   }
 
-  function goNext() {
+  async function goNext() {
     if (transitioning) return
-    saveProgress()
-    setScreenIndex(i => Math.min(i + 1, screens.length - 1))
+    setTransitioning(true)
+    const saved = await saveProgress()
+    if (saved) setScreenIndex(i => Math.min(i + 1, screens.length - 1))
+    setTransitioning(false)
   }
 
   function goBack() {
@@ -433,19 +451,6 @@ function ProfileSetupForm() {
     setSaving(true)
     const ok = await saveProgress()
     if (!ok) { setSaving(false); return }
-
-    // Completion is an explicit governance state, not a side-effect of autosave.
-    // Keep assessment/eligibility/listing platform-managed.
-    const { error: completionError } = await supabase
-      .from('professional_profiles')
-      .update({ profile_complete: true, updated_at: new Date().toISOString() })
-      .eq('id', user.id)
-    if (completionError) {
-      console.error('Profile completion update failed:', completionError)
-      setSaving(false)
-      setSaveError('Your profile was saved, but completion could not be confirmed. Please try again.')
-      return
-    }
 
     // Maintain the canonical 1 Profile → 1–3+ Capabilities model.
     const capabilityMap = { candidate: 'talent', talent: 'talent', speaker: 'speaker', facilitator: 'facilitator' }
@@ -461,6 +466,17 @@ function ProfileSetupForm() {
         return
       }
     }
+    // Mark complete only after both the profile draft and capability records are confirmed.
+    const { error: completionError } = await supabase
+      .from('professional_profiles')
+      .update({ profile_complete: true, updated_at: new Date().toISOString() })
+      .eq('id', user.id)
+    if (completionError) {
+      console.error('Profile completion update failed:', completionError)
+      setSaving(false)
+      setSaveError('Your profile was saved, but completion could not be confirmed. Please try again.')
+      return
+    }
     // Fetch back what the database actually assigned (atb_id is set by a
     // trigger, not by this app) so we can show it — previously this just
     // redirected silently with no confirmation of any kind.
@@ -474,8 +490,8 @@ function ProfileSetupForm() {
   }
 
   async function handleSaveExit() {
-    await saveProgress()
-    router.push('/dashboard')
+    const saved = await saveProgress()
+    if (saved) router.push('/dashboard')
   }
 
   if (!ready) return <div style={{ minHeight:'100vh', background:DARK, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font,Raleway,sans-serif)', color:DIM, fontSize:'13px' }}>Loading…</div>
@@ -556,7 +572,13 @@ function ProfileSetupForm() {
           </div>
         </div>
 
-        <div style={{ display:'grid', gridTemplateColumns:'minmax(0,1fr)', gap:'28px', alignItems:'start' }}>
+        <div style={{ background:'rgba(201,168,76,.045)', border:`1px solid ${GLINE}`, padding:'16px 18px', marginBottom:'22px', borderRadius:'6px' }}>
+        <div style={{ color:GOLD, fontSize:'9px', fontWeight:800, letterSpacing:'.16em', marginBottom:'7px' }}>WHY THIS SECTION MATTERS</div>
+        <p style={{ color:DIM, fontSize:'12px', lineHeight:1.75, margin:0 }}>{sectionGuidance[currentSection]}</p>
+        {nextSection && <p style={{ color:'rgba(247,244,238,.42)', fontSize:'10px', lineHeight:1.6, margin:'8px 0 0' }}>UP NEXT · {nextSection}</p>}
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'minmax(0,1fr)', gap:'28px', alignItems:'start' }}>
           <aside style={{ display:'flex', flexWrap:'wrap', gap:'6px', alignItems:'stretch', marginBottom:'6px' }}>
             <div style={{ width:'100%', fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'2px' }}>PROFILE BUILD</div>
             {sectionNames.map((name, idx) => {
