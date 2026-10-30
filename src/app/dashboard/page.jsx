@@ -133,7 +133,7 @@ export default function DashboardPage() {
       if (prof) {
         const { data: capabilityRows, error: capabilityError } = await supabase
           .from('professional_capabilities')
-          .select('id,capability,is_active,eligibility_status,eligible_for_listing')
+          .select('id,capability,is_active,eligibility_status,eligible_for_listing,missing_requirements')
           .eq('professional_id', user.id)
         if (capabilityError) console.error('Dashboard capability status load failed:', capabilityError)
         setCapabilities(capabilityRows || [])
@@ -764,8 +764,10 @@ function AccessProgressCard({ profile, assessment, capabilities, hasSavedOpening
   const assessmentDone = !!assessment?.completed_at
   const profileComplete = !!profile?.profile_complete
   const capabilityReady = capabilities.some(c => c.is_active)
-  const eligibilityReady = capabilities.some(c => c.is_active && (c.eligible_for_listing || c.eligibility_status === 'eligible' || c.eligibility_status === 'listed'))
-  const listedReady = capabilities.some(c => c.is_active && c.eligible_for_listing === true && c.eligibility_status === 'listed')
+  const activeCapabilities = capabilities.filter(c => c.is_active)
+  const isCapabilityEligible = c => c.eligible_for_listing === true || c.eligibility_status === 'eligible' || c.eligibility_status === 'listed'
+  const eligibilityReady = activeCapabilities.length > 0 && activeCapabilities.every(isCapabilityEligible)
+  const listedReady = eligibilityReady && activeCapabilities.every(c => c.eligibility_status === 'listed')
 
   const steps = [
     { key:'valu', label:'VALU', plain:'Assessment', done:assessmentDone, detail:'Understand your professional signal', unlock:'Your official VALU Index and PRIME dimension insights' },
@@ -830,6 +832,37 @@ function AccessProgressCard({ profile, assessment, capabilities, hasSavedOpening
             <div style={{ minWidth:0 }}>
               <h2 style={{ fontSize:'clamp(21px,3vw,29px)', fontWeight:500, color:PARCH, lineHeight:1.2, margin:'0 0 9px' }}>{heading}</h2>
               <p style={{ fontSize:'13px', color:DIM, margin:0, lineHeight:1.75, maxWidth:650 }}>{explanation}</p>
+              {next?.key === 'eligibility' && activeCapabilities.length > 0 && (
+                <div style={{ marginTop:15, padding:'13px 15px', border:'1px solid rgba(201,168,76,.18)', borderRadius:8, background:'rgba(15,15,26,.28)' }}>
+                  <div style={{ fontSize:'9px', fontWeight:800, letterSpacing:'.14em', color:'rgba(201,168,76,.72)', marginBottom:9 }}>CAPABILITY REQUIREMENTS</div>
+                  {activeCapabilities.map(capability => {
+                    const labels = {
+                      capability: 'Confirm this capability',
+                      profile: 'Complete your professional profile',
+                      valu_assessment_score_35_current: 'Complete a current VALU Index assessment with at least 35 points',
+                      talent_cv: 'Submit your CV',
+                      speaker_topics: 'Add your speaking topics',
+                      speaker_formats: 'Select your speaking formats',
+                      speaker_audience_size: 'Add your audience experience',
+                      facilitator_topics: 'Add your facilitation topics',
+                      facilitator_programme_types: 'Select your programme types',
+                    }
+                    const missing = Array.isArray(capability.missing_requirements) ? capability.missing_requirements : []
+                    const ready = isCapabilityEligible(capability) && missing.length === 0
+                    return (
+                      <div key={capability.id} style={{ display:'flex', justifyContent:'space-between', gap:12, alignItems:'flex-start', padding:'8px 0', borderTop:'1px solid rgba(247,244,238,.07)' }}>
+                        <div style={{ minWidth:0 }}>
+                          <div style={{ color:PARCH, fontSize:'11px', fontWeight:700, textTransform:'capitalize' }}>{capability.capability}</div>
+                          {ready
+                            ? <div style={{ color:'#8FC8A8', fontSize:'10px', marginTop:3 }}>Requirements met</div>
+                            : <div style={{ color:DIM, fontSize:'10px', lineHeight:1.6, marginTop:3 }}>{missing.length ? missing.map(item => labels[item] || String(item).replace(/_/g,' ')).join(' · ') : 'Awaiting Valoria eligibility review'}</div>}
+                        </div>
+                        <span style={{ color:ready ? '#8FC8A8' : GOLD, fontSize:'9px', fontWeight:800, whiteSpace:'nowrap' }}>{ready ? 'READY' : 'ACTION NEEDED'}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
               <div style={{ display:'flex', alignItems:'center', gap:12, flexWrap:'wrap', marginTop:20 }}>
                 {next?.key === 'valu' ? (
                   <AssessmentStartLink href={nextHref} style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'13px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:999, transition:'transform .2s ease, box-shadow .2s ease' }}>
