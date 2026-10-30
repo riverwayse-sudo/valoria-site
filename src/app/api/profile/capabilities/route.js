@@ -25,7 +25,7 @@ export async function POST(request) {
   }
 
   const authorization = request.headers.get('authorization') || ''
-  const token = authorization.match(/^Bearer\\s+(.+)$/i)?.[1]
+  const token = authorization.match(/^Bearer\s+(.+)$/i)?.[1]
   if (!token) {
     return NextResponse.json({ error: 'Sign in before saving your capabilities.' }, { status: 401 })
   }
