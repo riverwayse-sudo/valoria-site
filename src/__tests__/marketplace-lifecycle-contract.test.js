@@ -57,6 +57,14 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(completion).toBeGreaterThan(capabilitySync)
   })
 
+  test('profile setup matches database readiness requirements and verifies completion read-back', () => {
+    const source = read('src/app/profile/setup/page.jsx')
+    expect(source).toContain("key:'photo_url', kind:'photo'")
+    expect(source).toContain('required:true })')
+    expect(source).toContain(".select('atb_id, listing_status, profile_complete')")
+    expect(source).toContain('if (!row?.profile_complete)')
+  })
+
   test('profile onboarding does not submit platform-owned governance fields', () => {
     const source = read('src/app/profile/setup/page.jsx')
     const start = source.indexOf('async function saveProgress')
