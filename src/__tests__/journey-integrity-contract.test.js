@@ -252,7 +252,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(journey).toContain('YOUR NEXT STEP')
     expect(report).toContain('Your five PRIME dimension results')
     expect(report).toContain('radarShape')
-    expect(report).toContain('SEE MY NEXT STEP')
+    expect(report).toContain('BUILD MY PROFESSIONAL PROFILE')
     expect(dashboard).toContain('YOUR NEXT STEP')
     expect(dashboard).not.toContain('OBJECTIVES CLEARED')
   })
@@ -338,6 +338,26 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(dashboard).toContain('Your first answers are saved. Ready for the next 49?')
     expect(dashboard).toContain('Start or continue your 58-question VALU assessment.')
     expect(dashboard).not.toContain('Your opening nine answers are saved. Your account is confirmed.')
+  })
+
+
+  test('the completed VALU report creates anticipation for profile building and the next marketplace stages', () => {
+    const report = read('src/app/report/page.jsx')
+    expect(report).toContain('VALU COMPLETE · YOUR NEXT CHAPTER')
+    expect(report).toContain('Turn your insight into a professional presence.')
+    expect(report).toContain('/profile/setup')
+    expect(report).toContain('Choose capabilities')
+    expect(report).toContain('Prepare for the Registry')
+    expect(report).toContain('Your VALU Index points')
+  })
+
+  test('public VALU explanation describes one continuous 58-question journey with an account bridge', () => {
+    const start = read('src/app/valu/start/page.jsx')
+    expect(start).toContain('one continuous journey of 58 questions')
+    expect(start).toContain('Questions 10–58')
+    expect(start).toContain('One continuous journey.')
+    expect(start).not.toContain('Two sessions. One result.')
+    expect(start).toContain('Your official result in points')
   })
 
 })
