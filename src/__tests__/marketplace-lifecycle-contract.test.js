@@ -76,6 +76,23 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('if (!row?.profile_complete)')
   })
 
+  test('database keeps profile completeness separate from full-assessment and listing eligibility', () => {
+    const migration = read('supabase/migrations/20261008140000_default_avatar_photo_optional.sql')
+    const profileTriggerStart = migration.indexOf('create or replace function public.enforce_valu_profile_lifecycle()')
+    const capabilityGateStart = migration.indexOf('create or replace function private.evaluate_professional_capability')
+    const readinessGateStart = migration.indexOf('create or replace function private.evaluate_professional_readiness')
+    const profileTrigger = migration.slice(profileTriggerStart, capabilityGateStart)
+    const capabilityGate = migration.slice(capabilityGateStart, readinessGateStart)
+    const readinessGate = migration.slice(readinessGateStart)
+    expect(profileTrigger).toContain('new.profile_complete :=')
+    expect(profileTrigger).not.toContain('valu_assessment_is_current')
+    expect(profileTrigger).not.toContain('new.photo_url')
+    expect(profileTrigger).not.toContain('new.cv_url')
+    expect(capabilityGate).toContain('valu_assessment_is_current')
+    expect(readinessGate).toContain('valu_assessment_is_current')
+    expect(readinessGate).toContain('p.cv_url')
+  })
+
   test('profile onboarding does not submit platform-owned governance fields', () => {
     const source = read('src/app/profile/setup/page.jsx')
     const start = source.indexOf('async function saveProgress')
