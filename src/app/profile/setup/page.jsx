@@ -447,19 +447,35 @@ function ProfileSetupForm() {
     const ok = await saveProgress()
     if (!ok) { setSaving(false); return }
 
-    // Maintain the canonical 1 Profile → 1–3+ Capabilities model.
-    const capabilityMap = { candidate: 'talent', talent: 'talent', speaker: 'speaker', facilitator: 'facilitator' }
-    const capabilities = [...new Set((form.active_tracks || []).map(t => capabilityMap[String(t).toLowerCase()]).filter(Boolean))]
-    if (capabilities.length) {
-      const { error: capabilityError } = await supabase
-        .from('professional_capabilities')
-        .upsert(capabilities.map(capability => ({ professional_id: user.id, capability, is_active: true, updated_at: new Date().toISOString() })), { onConflict: 'professional_id,capability' })
-      if (capabilityError) {
-        console.error('Capability sync failed:', capabilityError)
-        setSaving(false)
-        setSaveError('Your profile was saved, but your capability selection could not be synchronized. Please try again.')
-        return
-      }
+    // Capability governance is server-owned. The authenticated API verifies
+    // this session and reconciles selected tracks without deleting history.
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.access_token) {
+      setSaving(false)
+      setSaveError('Your session expired. Sign in again to finish saving your capabilities.')
+      return
+    }
+    let capabilityResponse
+    try {
+      capabilityResponse = await fetch('/api/profile/capabilities', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ active_tracks: form.active_tracks || [] }),
+      })
+    } catch (error) {
+      console.error('Capability sync request failed:', error)
+      setSaving(false)
+      setSaveError('Your profile was saved, but capability synchronisation could not be reached. Please try again.')
+      return
+    }
+    if (!capabilityResponse.ok) {
+      const result = await capabilityResponse.json().catch(() => ({}))
+      setSaving(false)
+      setSaveError(result.error || 'Your profile was saved, but your capability selection could not be synchronized. Please try again.')
+      return
     }
     // profile_complete is calculated by the database from required profile fields.
     // Do not write this derived governance field from the client.
