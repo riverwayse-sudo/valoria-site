@@ -395,7 +395,9 @@ describe('journey integrity contract', () => {
     expect(nav).toContain("continuation.searchParams.set('stage', 'assess')")
     expect(nav).toContain("continuation.searchParams.set('taster_id', pendingTasterId)")
     expect(start).toContain('AssessmentStartLink')
-    expect(continuation).toContain("login.searchParams.set('pending_taster_id',requestedTasterId)")
+    expect(continuation).not.toContain("login.searchParams.set('pending_taster_id',requestedTasterId)")
+    expect(continuation).toContain("entry_point:'legacy_valu_link'")
+    expect(continuation).toContain("source:'legacy_assessment_url'")
     expect(continuation).toContain("https://assessment.valoriainstitute.com/")
   })
 
