@@ -773,7 +773,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
 
   const next = steps.find(step => !step.done)
   const nextHref = !assessmentDone
-    ? '/valu/start'
+    ? '/journey/continue?stage=assess'
     : !profileComplete
       ? '/profile/setup'
       : !capabilityReady
@@ -817,9 +817,15 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
             <div style={{ fontSize:'21px', fontWeight:500, color:PARCH, marginTop:7, lineHeight:1.25 }}>{heading}</div>
             <div style={{ fontSize:'13px', color:DIM, marginTop:7, lineHeight:1.6, maxWidth:'680px' }}>{explanation}</div>
           </div>
-          <Link href={nextHref} style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>
-            {next ? (next.key === 'valu' ? 'CONTINUE ASSESSMENT' : `CONTINUE ${next.plain.toUpperCase()}`) : 'VIEW OPPORTUNITIES'} →
-          </Link>
+          {next?.key === 'valu' ? (
+            <AssessmentStartLink href={nextHref} style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>
+              CONTINUE ASSESSMENT →
+            </AssessmentStartLink>
+          ) : (
+            <Link href={nextHref} style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>
+              {next ? `CONTINUE ${next.plain.toUpperCase()}` : 'VIEW OPPORTUNITIES'} →
+            </Link>
+          )}
         </div>
 
         <div style={{ display:'grid', gridTemplateColumns:'repeat(5,minmax(0,1fr))', gap:'8px', marginTop:22 }} aria-label="Journey progress">

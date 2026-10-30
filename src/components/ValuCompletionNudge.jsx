@@ -67,7 +67,7 @@ export default function ValuCompletionNudge(){
             ? 'You have already started the VALU Index assessment. Continue where you left off; your progress is saved.'
             : 'Start the VALU Index assessment to understand your professional capability and take the next step with Valoria.'}
       </p>
-      <a href={assessed?"/profile/setup":"/valu/start"} style={S.button}>{assessed?"COMPLETE MY PROFILE":assessmentStarted?"CONTINUE THE VALU INDEX":"START THE VALU INDEX"} →</a>
+      <a href={assessed?"/profile/setup":assessmentStarted?"/journey/continue?stage=assess":"/valu/start"} style={S.button}>{assessed?"COMPLETE MY PROFILE":assessmentStarted?"CONTINUE THE VALU INDEX":"START THE VALU INDEX"} →</a>
       <button onClick={dismiss} style={S.later}>Remind me later</button>
     </div>
   </div>
