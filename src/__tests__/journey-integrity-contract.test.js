@@ -122,7 +122,7 @@ describe('journey integrity contract', () => {
     expect(continuation).toContain("stage === 'assess'")
     expect(continuation).toContain("return NextResponse.redirect(new URL('/dashboard', request.url))")
     expect(continuation).not.toContain('createValuHandoffToken')
-    expect(continuation).toContain("searchParams.has('pending_taster_id')")
+    expect(continuation).toContain('hasLegacyAssessmentParams')
   })
 
   test('assessment return from login always lands on dashboard before the user chooses to continue', () => {
