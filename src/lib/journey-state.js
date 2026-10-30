@@ -72,12 +72,15 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
   }
   let next = stageNext[journeyStage] || 'assess'
 
-  // The derived state must reflect authoritative data, not stale journey labels.
-  // Report generation/activation is a hard gate before profile progression.
-  if (hasAssessment && !reportReady) next = 'report'
-  else if (hasAssessment && reportReady && activation?.status !== 'activated') next = 'report'
-  else if (eligibilityComplete && !listed) next = 'listed'
+  // The derived state must reflect authoritative records, not stale journey labels.
+  // Report activation precedes profile progression; profile and eligibility gates
+  // then take priority over any previously persisted marketplace stage.
+  if (hasAssessment && (!reportReady || activation?.status !== 'activated')) next = 'report'
+  else if (hasAssessment && !profileReady) next = 'profile'
+  else if (hasAssessment && !capabilitySelected) next = 'capability'
+  else if (hasAssessment && !eligibilityComplete) next = 'eligibility'
   else if (listed) next = 'opportunity'
+  else if (eligibilityComplete) next = 'listed'
 
   const recoveryReason = journey?.next_action ||
     ({
