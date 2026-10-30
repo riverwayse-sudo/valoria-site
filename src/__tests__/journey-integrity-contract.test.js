@@ -122,7 +122,7 @@ describe('journey integrity contract', () => {
     expect(continuation).toContain("stage === 'assess'")
     expect(continuation).toContain("return NextResponse.redirect(new URL('/dashboard', request.url))")
     expect(continuation).not.toContain('createValuHandoffToken')
-    expect(continuation).not.toContain('pending_taster_id')
+    expect(continuation).toContain("searchParams.has('pending_taster_id')")
   })
 
   test('assessment return from login always lands on dashboard before the user chooses to continue', () => {
@@ -212,9 +212,8 @@ describe('journey integrity contract', () => {
     expect(handoff).toContain('candidate?.linked_user_id && candidate.linked_user_id !== user.id')
     expect(handoff).toContain('candidate?.candidate_email')
     expect(handoff).toContain('candidate?.candidate_role')
-    expect(continuation).toContain('candidate?.linked_user_id&&candidate.linked_user_id!==user.id')
-    expect(continuation).toContain('candidate?.candidate_email')
-    expect(continuation).toContain('candidate?.candidate_role')
+    expect(continuation).not.toContain('candidate?.linked_user_id')
+    expect(continuation).not.toContain('createValuHandoffToken')
   })
 
   test('value activation is idempotent and does not silently lose its audit event', () => {
