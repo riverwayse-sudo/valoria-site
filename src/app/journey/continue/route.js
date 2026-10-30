@@ -114,7 +114,7 @@ export async function GET(request){
  if(!token||!SERVICE||!SB_URL||!SB_ANON)return NextResponse.redirect(new URL('/journey',request.url))
 
  const admin=createClient(SB_URL,SERVICE,{auth:{persistSession:false,autoRefreshToken:false}})
- const {data:link,error}=await admin.from('valoria_reentry_links').select('id,user_id,target_stage,expires_at,used_at').eq('token',token).maybeSingle()
+ const {data:link,error}=await admin.from('valoria_reentry_links').select('id,user_id,entry_point,target_stage,source_id,expires_at,used_at').eq('token',token).maybeSingle()
  if(error||!link||link.used_at||(link.expires_at&&new Date(link.expires_at)<=new Date()))return NextResponse.redirect(new URL('/journey',request.url))
 
  const user=await getUser(request)
@@ -125,7 +125,10 @@ export async function GET(request){
  }
  if(link.user_id&&link.user_id!==user.id)return NextResponse.redirect(new URL('/journey',request.url))
 
- await admin.from('valoria_reentry_links').update({user_id:user.id,used_at:new Date().toISOString()}).eq('id',link.id).is('used_at',null)
+ const {data:consumed,error:consumeError}=await admin.from('valoria_reentry_links').update({user_id:user.id,used_at:new Date().toISOString()})
+  .eq('id',link.id).is('used_at',null).select('id').maybeSingle()
+ if(consumeError||!consumed)return NextResponse.redirect(new URL('/journey',request.url))
  await admin.from('valoria_journey_events').insert({user_id:user.id,event_key:'journey_reentered',source:'reentry_link',source_id:link.id,metadata:{target_stage:link.target_stage}})
- return NextResponse.redirect(new URL(await stageTarget(request,link.target_stage,user,link.target_stage==='assess'?link.source_id:null),request.url))
+ const linkedTasterId=['valu_reminder','legacy_valu_link'].includes(link.entry_point)?link.source_id:null
+ return NextResponse.redirect(new URL(await stageTarget(request,link.target_stage,user,linkedTasterId),request.url))
 }
