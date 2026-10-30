@@ -24,7 +24,7 @@ export async function GET(request){
     supabase.from('valu_assessments').select('id,user_id,taster_id,email,name,role,total_score,completed_at,assessment_version,scoring_version').not('completed_at','is',null).order('completed_at',{ascending:false}),
     supabase.from('professional_profiles').select('id,display_name,headline,profile_complete,active_tracks,photo_url,current_job_title,updated_at'),
     supabase.from('professional_capabilities').select('professional_id,capability,is_active,eligibility_status,eligible_for_listing,missing_requirements'),
-    supabase.from('professional_documents').select('professional_id,status,document_type,created_at'),
+    supabase.from('professional_documents').select('professional_id,verification_status,document_type,storage_path,original_filename,created_at'),
     supabase.from('marketplace_public_roster').select('professional_id,capabilities,track'),
     supabase.from('taster_sessions').select('id,user_id,name,role,experience,taster_version,taster_version_source,completed_at,created_at,linked_at').not('completed_at','is',null).order('completed_at',{ascending:false}),
     supabase.from('assessment_identity_links').select('assessment_id,user_id,link_method'),
