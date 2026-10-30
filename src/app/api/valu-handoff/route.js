@@ -2,8 +2,23 @@ import { NextResponse } from 'next/server'
 import { createHash, randomBytes } from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
 
-const ASSESSMENT_ORIGIN = 'https://assessment.valoriainstitute.com/'
 const HANDOFF_TTL_SECONDS = 60
+
+function getAssessmentOrigin() {
+  const configured = process.env.VALU_UPSTREAM_ORIGIN?.trim()
+  const productionOrigin = 'https://assessment.valoriainstitute.com'
+  if (process.env.VERCEL_ENV === 'production') return configured || productionOrigin
+  if (!configured) return null
+  try {
+    const url = new URL(configured)
+    if (!['http:', 'https:'].includes(url.protocol)) return null
+    // Preview deployments must never silently send participants to production.
+    if (url.hostname === 'assessment.valoriainstitute.com') return null
+    return url.origin
+  } catch {
+    return null
+  }
+}
 
 function getAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -107,7 +122,11 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Secure assessment access is temporarily unavailable. Please try again.' }, { status: 503 })
   }
 
-  const destination = new URL(ASSESSMENT_ORIGIN)
+  const assessmentOrigin = getAssessmentOrigin()
+  if (!assessmentOrigin) {
+    return NextResponse.json({ error: 'The assessment preview origin is not configured for this environment.' }, { status: 503 })
+  }
+  const destination = new URL('/', assessmentOrigin)
   destination.search = new URLSearchParams({ full: '1' }).toString()
   destination.hash = new URLSearchParams({ handoff_code: handoffCode }).toString()
   return NextResponse.json({ url: destination.toString(), expires_in: HANDOFF_TTL_SECONDS }, {
