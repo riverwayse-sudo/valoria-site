@@ -27,6 +27,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(facilitators).toContain("getMarketplaceRows('facilitator')")
   })
 
+  test('marketplace distinguishes Basic snapshot access from Full VALU assessment', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    const data = read('src/lib/marketplace-data.js')
+    expect(data).toContain('assessment_access')
+    expect(directory).toContain("p.assessment_access === 'full'")
+    expect(directory).toContain('BASIC · SNAPSHOT')
+    expect(directory).toContain('official points, merit tier and assessment insight')
+  })
+
   test('marketplace data is professional-first and deduplicates capabilities', () => {
     const source = read('src/lib/marketplace-data.js')
     expect(source).toContain('professional_id')
