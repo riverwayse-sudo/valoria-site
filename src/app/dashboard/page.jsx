@@ -123,11 +123,17 @@ export default function DashboardPage() {
       setUser(user)
       const { data: { session } } = await supabase.auth.getSession()
       if (session?.access_token) {
-        const accessResponse = await fetch('/api/valu-handoff', {
-          headers: { Authorization: `Bearer ${session.access_token}` },
-          cache: 'no-store',
-        })
-        if (accessResponse.ok) setAssessmentAccess(await accessResponse.json())
+        try {
+          const accessResponse = await fetch('/api/valu-handoff', {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+            cache: 'no-store',
+          })
+          if (accessResponse.ok) setAssessmentAccess(await accessResponse.json())
+        } catch (error) {
+          // A continuation-status outage must never prevent dashboard access.
+          console.warn('Dashboard assessment access check unavailable:', error)
+          setAssessmentAccess(null)
+        }
       }
 
       const { data: proProfile } = await supabase
