@@ -247,6 +247,10 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(route).toContain("'speaker'")
     expect(route).toContain("'facilitator'")
     expect(route).not.toContain('.delete(')
+    const dashboard = read('src/app/dashboard/page.jsx')
+    expect(dashboard).toContain('missing_requirements')
+    expect(dashboard).toContain('CAPABILITY REQUIREMENTS')
+    expect(dashboard).toContain('activeCapabilities.every(isCapabilityEligible)')
   })
 
 })
