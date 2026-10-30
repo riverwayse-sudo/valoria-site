@@ -1013,7 +1013,7 @@ function ScreenBody(props) {
             )}
             <input ref={cvFileRef} type="file" accept="application/pdf,.doc,.docx" style={{ display:'none' }} onChange={e => e.target.files[0] && uploadCV(e.target.files[0])} />
           </div>
-          <p style={{ fontSize:'11px', color:DIM, margin:0, lineHeight:1.6 }}>PDF or Word, up to 10MB. Kept private — never shown to anyone directly.</p>
+          <p style={{ fontSize:'11px', color:DIM, margin:0, lineHeight:1.6 }}>PDF or Word, up to 10MB. Stored privately and added to your Valoria evidence record for review; never shown publicly.</p>
           {cvError && <p style={{ fontSize:'11px', color:'#F09595', margin:'6px 0 0', lineHeight:1.5 }}>{cvError}</p>}
           <ContinueBar onNext={goNext} nextDisabled={cvUploading || (screen.required && !form.cv_url)} saving={saving} />
         </div>
