@@ -820,7 +820,7 @@ function AccessProgressCard({ profile, assessment, capabilities }) {
           </div>
           {next?.key === 'valu' ? (
             <AssessmentStartLink href={nextHref} style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>
-              CONTINUE AT QUESTION 10 →
+              CONTINUE TO QUESTION 10 →
             </AssessmentStartLink>
           ) : (
             <Link href={nextHref} style={{ padding:'11px 18px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:'999px', whiteSpace:'nowrap' }}>
