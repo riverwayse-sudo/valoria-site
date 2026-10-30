@@ -80,10 +80,12 @@ export default function SignupPage() {
         })
       }
       // Fire-and-forget — shouldn't block the success screen from showing.
+      // user_id lets the route confirm the address belongs to an account that
+      // was just created, rather than mailing any address it is handed.
       fetch('/api/welcome-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: form.email, name: form.name }),
+        body: JSON.stringify({ email: form.email, name: form.name, user_id: data.user?.id }),
       }).catch(err => console.error('Welcome email request failed:', err))
       setSuccess(true)
     } catch (err) {

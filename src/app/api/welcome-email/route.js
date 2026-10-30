@@ -9,34 +9,97 @@
 // {name}." branded email (with their score and a Complete Your Profile
 // CTA) as part of report delivery in the assessment app's send-email.js.
 // A second one would just be redundant.
+//
+// This route is public: the caller has just created an account and has no
+// session yet. It is therefore gated on evidence that the account was just
+// created and that the recipient is that account's own address, rather than
+// on a session. Before this it mailed any syntactically valid address.
+
+import { createClient } from '@supabase/supabase-js'
+import { signupEmailEligible } from '@/lib/api-guard'
 
 const BREVO_KEY = process.env.BREVO_API_KEY
 const FROM_EMAIL = 'info@valoriainstitute.com'
 const FROM_NAME  = 'Valoria Institute'
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+function getSupabase() {
+  if (!SUPABASE_URL || !SERVICE_ROLE_KEY) throw new Error('Supabase server configuration is missing.')
+  return createClient(SUPABASE_URL, SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } })
+}
+
+function clientIp(request) {
+  return request.headers.get('x-forwarded-for')?.split(',')[0].trim()
+    || request.headers.get('x-real-ip')
+    || 'unknown'
+}
+
+async function withinLimit(key, maxCount, windowSeconds) {
+  try {
+    const supabase = getSupabase()
+    const { data: allowed, error } = await supabase.rpc('check_rate_limit', {
+      p_key: key, p_max_count: maxCount, p_window_seconds: windowSeconds,
+    })
+    // Fail open, matching the other public forms in this repo: a broken limiter
+    // must not silently drop a real signup's welcome email.
+    if (error) { console.error('welcome-email rate limit check failed'); return true }
+    return allowed !== false
+  } catch {
+    return true
+  }
+}
+
+async function lookupUser(userId) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
+      headers: { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` },
+      cache: 'no-store',
+    })
+    if (!res.ok) return null
+    return await res.json()
+  } catch {
+    return null
+  }
+}
 
 export async function POST(request) {
   if (!BREVO_KEY) {
     console.error('Welcome email skipped: BREVO_API_KEY not configured.')
-    return new Response(JSON.stringify({ ok: false, error: 'Email not configured.' }), {
-      status: 501, headers: { 'Content-Type': 'application/json' },
-    })
+    return Response.json({ ok: false, error: 'Email not configured.' }, { status: 501 })
+  }
+  if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
+    console.error('Welcome email skipped: Supabase server configuration is missing.')
+    return Response.json({ ok: false, error: 'Email not configured.' }, { status: 501 })
   }
 
   let body
   try {
     body = await request.json()
   } catch {
-    return new Response(JSON.stringify({ ok: false, error: 'Invalid request body.' }), {
-      status: 400, headers: { 'Content-Type': 'application/json' },
-    })
+    return Response.json({ ok: false, error: 'Invalid request body.' }, { status: 400 })
   }
 
-  const { email, name } = body || {}
+  const { email, name, user_id: userId } = body || {}
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!email || !emailRe.test(email)) {
-    return new Response(JSON.stringify({ ok: false, error: 'A valid email is required.' }), {
-      status: 400, headers: { 'Content-Type': 'application/json' },
-    })
+    return Response.json({ ok: false, error: 'A valid email is required.' }, { status: 400 })
+  }
+
+  // Abuse controls. IP limits bulk sending; the per-recipient key makes a
+  // duplicate welcome for the same address a no-op rather than a repeat email.
+  if (!await withinLimit(`welcome-email-ip:${clientIp(request)}`, 5, 3600)) {
+    return Response.json({ ok: false, error: 'Too many requests from this connection — please try again later.' }, { status: 429 })
+  }
+  if (!await withinLimit(`welcome-email-to:${email.trim().toLowerCase()}`, 1, 86400)) {
+    return Response.json({ ok: true, skipped: 'already_sent' })
+  }
+
+  // Eligibility: the address must belong to an account that was just created.
+  // Without this the route is an open relay for arbitrary recipients.
+  const user = userId ? await lookupUser(userId) : null
+  if (!signupEmailEligible(user, email)) {
+    return Response.json({ ok: false, error: 'No new account matches this address.' }, { status: 403 })
   }
 
   const firstName = (name || '').trim().split(/\s+/)[0] || 'there'
@@ -69,19 +132,14 @@ export async function POST(request) {
       }),
     })
     if (!res.ok) {
-      const errText = await res.text().catch(() => '')
-      console.error('Welcome email failed:', res.status, errText)
-      return new Response(JSON.stringify({ ok: false, error: 'Send failed.' }), {
-        status: 502, headers: { 'Content-Type': 'application/json' },
-      })
+      // Provider status only — never echo the response body, which can contain
+      // the recipient address or account details.
+      console.error('Welcome email failed with status', res.status)
+      return Response.json({ ok: false, error: 'Send failed.' }, { status: 502 })
     }
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200, headers: { 'Content-Type': 'application/json' },
-    })
+    return Response.json({ ok: true }, { status: 200 })
   } catch (err) {
-    console.error('Welcome email error:', err)
-    return new Response(JSON.stringify({ ok: false, error: 'Send failed.' }), {
-      status: 500, headers: { 'Content-Type': 'application/json' },
-    })
+    console.error('Welcome email error:', err?.message || 'unknown')
+    return Response.json({ ok: false, error: 'Send failed.' }, { status: 500 })
   }
 }
