@@ -122,6 +122,14 @@ describe('journey integrity contract', () => {
     expect(continuation).toContain('createValuHandoffToken(user.id,taster.id)')
     expect(continuation).toContain("login.searchParams.set('returnTo','/journey/continue?'+continuationParams.toString())")
     expect(continuation).toContain("fragmentParams.set('resume_token',resumeToken)")
+    expect(handoff).toContain("new URLSearchParams({ full:'1' })")
+    expect(continuation).toContain("new URLSearchParams({full:'1'})")
+    for (const source of [handoff, continuation]) {
+      expect(source).not.toContain('taster_id:taster.id')
+      expect(source).not.toContain('name:taster.name')
+      expect(source).not.toContain('role:taster.role')
+      expect(source).not.toContain('experience:taster.experience')
+    }
     expect(continuation).not.toContain("return NextResponse.redirect(new URL(ASSESSMENT_ORIGIN+'/',request.url))")
   })
 
