@@ -17,13 +17,13 @@ const dimensions = [
 ]
 
 const faqs = [
-  ['How does it work?', 'The VALU assessment has 58 questions and is completed in two sessions. You answer the first nine questions straight away, then create your account to continue with the remaining 49 from your dashboard.'],
+  ['How does it work?', 'The VALU assessment is one continuous journey of 58 questions. Answer the opening nine, create your account at the natural break, then continue with Questions 10–58 from your dashboard. Your answers stay connected.'],
   ['Do I need an account first?', 'No. You start the assessment immediately. You only create your account after the first nine questions, at a natural break.'],
   ['Who is it for?', 'It is designed for African professionals who want a clearer view of their current professional capability and a stronger foundation for development, visibility and opportunity.'],
   ['Is it free?', 'Yes. The VALU Index is free to take. It is the entry point into the wider Valoria professional ecosystem.'],
   ['Does the result define me?', 'No. Your VALU Index is directional, not a permanent label. It gives you a starting point for understanding where you are and deciding what to build next.'],
   ['What happens after I finish?', 'You create your professional account, complete your profile and, subject to Valoria’s normal governance checks, become discoverable through the professional marketplace.'],
-  ['Can I pause part-way through?', 'Yes. Your progress is saved automatically, so you can return and continue from where you stopped without losing your answers.'],
+  ['Can I pause part-way through?', 'Yes. Your answers are saved as you go. After the opening nine, your account becomes the secure bridge into Questions 10–58; you can return to your dashboard and continue without starting again.'],
 ]
 
 export default function ValuStartPage() {
@@ -94,8 +94,8 @@ export default function ValuStartPage() {
       <section className="vs-result">
         <div className="vs-shell">
           <div className="vs-result-grid">
-            <div><div className="vs-kicker"><span /> YOUR RESULT</div><h2>One assessment.<br /><em>Two sessions. One result.</em></h2></div>
-            <div className="vs-result-copy"><p>Answer the opening nine questions, then complete the remaining 49 from your dashboard. Your saved answers carry across, and the result is issued once — as your official VALU Index.</p><ul><li><b>VALU Index</b><span>Your official score</span></li><li><b>PRIME profile</b><span>A view across five capability dimensions</span></li><li><b>Next pathway</b><span>A clearer basis for what to build next</span></li></ul></div>
+            <div><div className="vs-kicker"><span /> YOUR RESULT</div><h2>One assessment.<br /><em>One continuous journey.</em></h2></div>
+            <div className="vs-result-copy"><p>Answer Questions 1–9, create your account at the natural break, then continue with Questions 10–58. Your saved answers carry across. One completed assessment produces one official VALU Index.</p><ul><li><b>VALU Index</b><span>Your official result in points</span></li><li><b>PRIME profile</b><span>A view across five capability dimensions</span></li><li><b>Next pathway</b><span>A clearer basis for what to build next</span></li></ul></div>
           </div>
         </div>
       </section>

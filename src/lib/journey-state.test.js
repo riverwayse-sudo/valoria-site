@@ -4,7 +4,9 @@ const completeProfile = {
   profile_complete: true,
   display_name: 'Test Professional',
   current_job_title: 'Director',
+  headline: 'Technology leader and strategist',
   bio: 'A professional bio.',
+  active_tracks: ['candidate'],
   industry: 'Technology',
   username: 'test-professional',
   phone: '+234000000000',
@@ -70,6 +72,19 @@ test('eligible capability is not enough until profile is complete', () => {
   expect(state.next).toBe('listed')
 })
 
+test('a current full assessment below 35 points does not unlock marketplace eligibility', () => {
+  const state = deriveJourneyState({
+    assessment: { ...completedAssessment, total_score: 34, expires_at: null },
+    activation: { status: 'activated' },
+    profile: completeProfile,
+    capabilities: [{ id: 'c1', capability: 'talent', is_active: true, eligibility_status: 'eligible', eligible_for_listing: true }],
+  })
+  expect(state.assessment.current).toBe(true)
+  expect(state.profile.complete).toBe(true)
+  expect(state.eligibility.complete).toBe(false)
+  expect(state.eligibility.missing).toContain('At least 35 VALU Index points')
+  expect(state.marketplace.capabilities).toEqual([])
+})
 test('eligible or timestamped capability is not listed until authoritative listed status is set', () => {
   const state = deriveJourneyState({
     assessment: completedAssessment,
@@ -93,7 +108,7 @@ test('listed capability unlocks opportunity access', () => {
   expect(state.next).toBe('opportunity')
 })
 
-test('expired assessment cannot silently unlock current profile eligibility', () => {
+test('expired assessment preserves profile completeness but blocks current marketplace eligibility', () => {
   const state = deriveJourneyState({
     assessment: { ...completedAssessment, expires_at: '2020-01-01T00:00:00.000Z' },
     activation: { status: 'activated' },
@@ -101,6 +116,57 @@ test('expired assessment cannot silently unlock current profile eligibility', ()
     capabilities: [{ id: 'c1', capability: 'talent', is_active: true, eligibility_status: 'eligible', eligible_for_listing: true }],
   })
   expect(state.assessment.current).toBe(false)
-  expect(state.profile.complete).toBe(false)
-  expect(state.next).toBe('profile')
+  expect(state.profile.complete).toBe(true)
+  expect(state.eligibility.complete).toBe(false)
+  expect(state.eligibility.missing).toContain('A current full VALU Index assessment')
+  expect(state.next).toBe('eligibility')
+})
+
+
+test('a full VALU score and eligible capability do not bypass the required CV evidence', () => {
+  const state = deriveJourneyState({
+    assessment: completedAssessment,
+    activation: { status: 'activated' },
+    profile: { ...completeProfile, cv_url: '' },
+    capabilities: [{ id: 'c1', capability: 'talent', is_active: true, eligibility_status: 'eligible', eligible_for_listing: true }],
+  })
+  expect(state.profile.complete).toBe(true)
+  expect(state.eligibility.complete).toBe(false)
+  expect(state.eligibility.missing).toContain('Your CV')
+  expect(state.marketplace.capabilities).toEqual([])
+  expect(state.next).toBe('eligibility')
+})
+
+test('capability requirements must be resolved before full marketplace eligibility', () => {
+  const state = deriveJourneyState({
+    assessment: completedAssessment,
+    activation: { status: 'activated' },
+    profile: completeProfile,
+    capabilities: [{
+      id: 'c1',
+      capability: 'speaker',
+      is_active: true,
+      eligibility_status: 'eligible',
+      eligible_for_listing: true,
+      missing_requirements: ['Speaking portfolio evidence'],
+    }],
+  })
+  expect(state.eligibility.complete).toBe(false)
+  expect(state.eligibility.missing).toContain('Speaking portfolio evidence')
+  expect(state.marketplace.capabilities).toEqual([])
+  expect(state.next).toBe('eligibility')
+})
+
+
+test('stale enhanced journey labels cannot bypass a missing CV requirement', () => {
+  const state = deriveJourneyState({
+    journey: { journey_stage: 'marketplace_enhanced', marketplace_ready: true },
+    assessment: completedAssessment,
+    activation: { status: 'activated' },
+    profile: { ...completeProfile, cv_url: '' },
+    capabilities: [{ id: 'c1', capability: 'talent', is_active: true, eligibility_status: 'listed', eligible_for_listing: true }],
+  })
+  expect(state.next).toBe('eligibility')
+  expect(state.eligibility.complete).toBe(false)
+  expect(state.marketplace.capabilities).toEqual([])
 })

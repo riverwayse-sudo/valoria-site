@@ -1,7 +1,9 @@
 function deriveJourneyState({ journey = null, assessment, profile, capabilities = [], activation, documents = [], opportunity }) {
   const assessmentScore = assessment?.total_score ?? profile?.valu_index ?? null
   const hasAssessment = !!(assessment?.completed_at || profile?.assessment_completed_at || profile?.valu_index != null)
-  const assessmentCurrent = hasAssessment && (!assessment?.expires_at || new Date(assessment.expires_at).getTime() > Date.now())
+  const assessmentExpiresAt = assessment?.expires_at || profile?.assessment_expires_at || null
+  const assessmentCurrent = hasAssessment && (!assessmentExpiresAt || new Date(assessmentExpiresAt).getTime() > Date.now())
+  const assessmentEligible = assessmentCurrent && assessmentScore != null && Number(assessmentScore) >= 35
 
   const reportStatus = assessment?.report_status ||
     (assessment?.ai_report ? 'READY' : hasAssessment ? 'PENDING' : 'NOT_STARTED')
@@ -10,16 +12,19 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
 
   const profileMissing = []
   if (!profile?.display_name?.trim()) profileMissing.push('Your name')
-  if (!profile?.current_job_title?.trim() && !profile?.headline?.trim()) profileMissing.push('Your professional title')
+  if (!profile?.current_job_title?.trim()) profileMissing.push('Your current job title')
+  if (!profile?.headline?.trim()) profileMissing.push('Your professional headline')
   if (!profile?.bio?.trim()) profileMissing.push('Your professional bio')
+  if (!Array.isArray(profile?.active_tracks) || profile.active_tracks.length === 0) profileMissing.push('At least one professional capability')
   if (!profile?.industry?.trim()) profileMissing.push('Your industry')
   if (!profile?.username?.trim()) profileMissing.push('Your username')
   if (!profile?.phone?.trim()) profileMissing.push('Your phone number')
   if (!profile?.location?.trim()) profileMissing.push('Your location')
   if (!Array.isArray(profile?.languages) || profile.languages.length === 0) profileMissing.push('At least one language')
-  if (!profile?.cv_url?.trim()) profileMissing.push('Your CV')
 
-  const profileReady = profile?.profile_complete === true && profileMissing.length === 0 && assessmentCurrent
+  // Profile completeness is a profile-data state. It must not be coupled to
+  // assessment freshness, VALU points, or marketplace eligibility.
+  const profileReady = profile?.profile_complete === true && profileMissing.length === 0
   const activeCapabilities = capabilities.filter(c => c.is_active)
   const eligibleCapabilities = activeCapabilities.filter(c =>
     c.eligible_for_listing || c.eligibility_status === 'eligible' || c.eligibility_status === 'listed'
@@ -31,7 +36,17 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
     Array.isArray(c.missing_requirements) ? c.missing_requirements : []
   ))]
   const capabilitySelected = activeCapabilities.length > 0
-  const eligibilityComplete = profileReady && capabilitySelected && eligibleCapabilities.length > 0
+  const eligibilityMissing = [...new Set([...profileMissing, ...capabilityMissing])]
+  if (!capabilitySelected) eligibilityMissing.push('At least one professional capability')
+  if (!profile?.cv_url?.trim()) eligibilityMissing.push('Your CV')
+  if (!hasAssessment) eligibilityMissing.push('A completed full VALU Index assessment')
+  else if (!assessmentCurrent) eligibilityMissing.push('A current full VALU Index assessment')
+  else if (!assessmentEligible) eligibilityMissing.push('At least 35 VALU Index points')
+  // Full marketplace eligibility must satisfy the same evidence and capability requirements
+  // exposed to the participant below. Do not let stale eligible flags bypass either gate.
+  const cvSubmitted = !!profile?.cv_url?.trim()
+  const capabilityRequirementsComplete = capabilityMissing.length === 0
+  const eligibilityComplete = profileReady && cvSubmitted && assessmentEligible && capabilitySelected && capabilityRequirementsComplete && eligibleCapabilities.length > 0
   const listed = listedCapabilities.length > 0 && eligibilityComplete
   const opportunityAccess = !!journey?.marketplace_ready || listed
   const opportunityEngaged = !!opportunity
@@ -57,12 +72,15 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
   }
   let next = stageNext[journeyStage] || 'assess'
 
-  // The derived state must reflect authoritative data, not stale journey labels.
-  // Report generation/activation is a hard gate before profile progression.
-  if (hasAssessment && !reportReady) next = 'report'
-  else if (hasAssessment && reportReady && activation?.status !== 'activated') next = 'report'
-  else if (profileReady && eligibleCapabilities.length > 0 && !listed) next = 'listed'
+  // The derived state must reflect authoritative records, not stale journey labels.
+  // Report activation precedes profile progression; profile and eligibility gates
+  // then take priority over any previously persisted marketplace stage.
+  if (hasAssessment && (!reportReady || activation?.status !== 'activated')) next = 'report'
+  else if (hasAssessment && !profileReady) next = 'profile'
+  else if (hasAssessment && !capabilitySelected) next = 'capability'
+  else if (hasAssessment && !eligibilityComplete) next = 'eligibility'
   else if (listed) next = 'opportunity'
+  else if (eligibilityComplete) next = 'listed'
 
   const recoveryReason = journey?.next_action ||
     ({
@@ -103,11 +121,11 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
     },
     profile: { complete: profileReady, missing: profileMissing },
     capability: { complete: capabilitySelected, capabilities: activeCapabilities, eligible: eligibleCapabilities, missing: capabilityMissing },
-    eligibility: { complete: eligibilityComplete, missing: [...new Set([...profileMissing, ...capabilityMissing])], capabilities: eligibleCapabilities },
+    eligibility: { complete: eligibilityComplete, missing: [...new Set(eligibilityMissing)], capabilities: eligibleCapabilities },
     marketplace: {
       complete: opportunityAccess,
       profileCreated: !!profile && hasAssessment,
-      capabilities: listedCapabilities,
+      capabilities: listed ? listedCapabilities : [],
       enhanced: journeyStage === 'marketplace_enhanced',
     },
     opportunity: { complete: opportunityAccess, access: opportunityAccess, engaged: opportunityEngaged, latest: opportunity || null },

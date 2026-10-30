@@ -1,11 +1,79 @@
 const fs = require('fs')
 const path = require('path')
+const { deriveJourneyState } = require('../lib/journey-state')
 
 function read(relative) {
   return fs.readFileSync(path.join(process.cwd(), relative), 'utf8')
 }
 
-describe('journey integrity contract', () => { // UX simplification coverage + dashboard web
+describe('journey integrity contract', () => {
+  test('profile completeness remains true when the full VALU assessment is expired', () => {
+    const state = deriveJourneyState({
+      journey: { journey_stage: 'profile_complete', progress_percent: 78 },
+      assessment: {
+        completed_at: '2026-01-01T00:00:00.000Z',
+        expires_at: '2026-02-01T00:00:00.000Z',
+        total_score: 62,
+        report_status: 'READY',
+        ai_report: { summary: 'Assessment summary' },
+      },
+      activation: { status: 'activated' },
+      profile: {
+        profile_complete: true,
+        display_name: 'Test Professional',
+        current_job_title: 'Consultant',
+        headline: 'Consultant',
+        bio: 'Professional profile summary',
+        industry: 'Consulting',
+        username: 'test-professional',
+        phone: '+2348000000000',
+        location: 'Lagos',
+        languages: ['English'],
+        active_tracks: ['candidate'],
+        cv_url: null,
+      },
+      capabilities: [{
+        is_active: true,
+        eligible_for_listing: true,
+        eligibility_status: 'listed',
+        missing_requirements: [],
+      }],
+    })
+
+    expect(state.profile.complete).toBe(true)
+    expect(state.assessment.current).toBe(false)
+    expect(state.eligibility.complete).toBe(false)
+    expect(state.eligibility.missing).toContain('Your CV')
+    expect(state.eligibility.missing).toContain('A current full VALU Index assessment')
+    expect(state.marketplace.capabilities).toEqual([])
+  })
+
+  test('profile completeness does not require an uploaded photo or CV', () => {
+    const state = deriveJourneyState({
+      assessment: { completed_at: new Date().toISOString(), expires_at: null, report_status: 'READY' },
+      activation: { status: 'activated' },
+      profile: {
+        profile_complete: true,
+        display_name: 'Test Professional',
+        current_job_title: 'Consultant',
+        headline: 'Consultant',
+        bio: 'Professional profile summary',
+        industry: 'Consulting',
+        username: 'test-professional',
+        phone: '+2348000000000',
+        location: 'Lagos',
+        languages: ['English'],
+        active_tracks: ['candidate'],
+        photo_url: null,
+        cv_url: null,
+      },
+    })
+
+    expect(state.profile.complete).toBe(true)
+    expect(state.profile.missing).toEqual([])
+    expect(state.eligibility.missing).toContain('Your CV')
+  })
+ // UX simplification coverage + dashboard web
   test('journey state fails loudly when required database reads fail', () => {
     const source = read('src/app/api/journey/state/route.js')
     expect(source).toContain('query_errors')
@@ -105,6 +173,9 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(callback).not.toContain('/api/valu-handoff?taster_id=')
     expect(callback).not.toContain('window.location.replace(destination.toString())')
     expect(dashboard).toContain('CONTINUE TO QUESTION 10')
+    expect(dashboard).toContain('Required Profile Details')
+    expect(dashboard).toContain('This is separate from your VALU assessment and marketplace eligibility.')
+    expect(dashboard).toContain('five milestones; not a profile or VALU percentage')
     expect(dashboard).toContain('/journey/continue?stage=assess&taster_id=')
     expect(continuation).toContain('requestedTasterId')
     expect(handoff).toContain("tasterQuery.eq('id', requestedTasterId)")
@@ -249,7 +320,7 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(journey).toContain('YOUR NEXT STEP')
     expect(report).toContain('Your five PRIME dimension results')
     expect(report).toContain('radarShape')
-    expect(report).toContain('SEE MY NEXT STEP')
+    expect(report).toContain('BUILD MY PROFESSIONAL PROFILE')
     expect(dashboard).toContain('YOUR NEXT STEP')
     expect(dashboard).not.toContain('OBJECTIVES CLEARED')
   })
@@ -307,6 +378,70 @@ describe('journey integrity contract', () => { // UX simplification coverage + d
     expect(start).toContain('AssessmentStartLink')
     expect(continuation).toContain("login.searchParams.set('pending_taster_id',requestedTasterId)")
     expect(continuation).toContain("https://assessment.valoriainstitute.com/")
+  })
+
+
+  test('the VALU opening, confirmation bridge, and Question 10 continuation read as one journey', () => {
+    const progress = read('src/components/VALUJourneyProgress.jsx')
+    const signup = read('src/app/professional-signup/page.jsx')
+    const callback = read('src/app/auth/callback/page.jsx')
+    const dashboard = read('src/app/dashboard/page.jsx')
+    expect(progress).toContain('Questions 1–9')
+    expect(progress).toContain('Save & confirm')
+    expect(progress).toContain('Questions 10–58')
+    expect(signup).toContain('VALUJourneyProgress stage="bridge"')
+    expect(callback).toContain('VALUJourneyProgress stage="bridge"')
+    expect(dashboard).toContain('VALUJourneyProgress stage="continuation"')
+    expect(signup).not.toContain('9-QUESTION VALU INDEX COMPLETE')
+    expect(signup).toContain('Opening 9 of 58 · Saved')
+    expect(dashboard).toContain('CONTINUE TO QUESTION 10')
+  })
+
+
+  test('dashboard makes the next milestone visible and previews what follows without inventing saved progress', () => {
+    const dashboard = read('src/app/dashboard/page.jsx')
+    expect(dashboard).toContain('COMING UP AFTER THIS')
+    expect(dashboard).toContain('You’ll unlock:')
+    expect(dashboard).toContain('hasSavedOpening={!!pendingTasterId}')
+    expect(dashboard).toContain('Your first answers are saved. Ready for the next 49?')
+    expect(dashboard).toContain('Start or continue your 58-question VALU assessment.')
+    expect(dashboard).not.toContain('Your opening nine answers are saved. Your account is confirmed.')
+  })
+
+
+  test('the completed VALU report creates anticipation for profile building and the next marketplace stages', () => {
+    const report = read('src/app/report/page.jsx')
+    expect(report).toContain('VALU COMPLETE · YOUR NEXT CHAPTER')
+    expect(report).toContain('Turn your insight into a professional presence.')
+    expect(report).toContain('/profile/setup')
+    expect(report).toContain('Choose capabilities')
+    expect(report).toContain('Prepare for the Registry')
+    expect(report).toContain(' points</span>')
+  })
+
+  test('public VALU explanation describes one continuous 58-question journey with an account bridge', () => {
+    const start = read('src/app/valu/start/page.jsx')
+    expect(start).toContain('one continuous journey of 58 questions')
+    expect(start).toContain('Questions 10–58')
+    expect(start).toContain('One continuous journey.')
+    expect(start).not.toContain('Two sessions. One result.')
+    expect(start).toContain('Your official result in points')
+  })
+
+
+  test('the account bridge explains email confirmation, signed-in return and Question 10 as the next action', () => {
+    const signup = read('src/app/professional-signup/page.jsx')
+    const callback = read('src/app/auth/callback/page.jsx')
+    expect(signup).toContain('ACCOUNT BRIDGE · STEP 2 OF 3')
+    expect(signup).toContain('ACCOUNT BRIDGE · EMAIL CONFIRMATION')
+    expect(signup).toContain('One quick confirmation.')
+    expect(signup).toContain('Then Question 10.')
+    expect(signup).toContain('Continue at Question 10')
+    expect(signup).toContain('Opening nine saved')
+    expect(callback).toContain('Your dashboard is ready; continue at Question 10.')
+    expect(callback).toContain('Return to your dashboard')
+    expect(callback).toContain('No separate login is needed.')
+    expect(callback).toContain('Continue at Question 10')
   })
 
 })

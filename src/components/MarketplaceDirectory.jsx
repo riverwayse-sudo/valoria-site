@@ -55,7 +55,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       <div className={styles.container}>
         <p className={styles.eyebrow}>THE AFRICAN TALENT BUREAU</p>
         <h1>{activeTrack === 'all' ? <>Find capability.<br/><i>Engage confidently.</i></> : <>{TRACKS.find(t=>t[0]===activeTrack)?.[1]}<br/><i>on Valoria.</i></>}</h1>
-        <p className={styles.lede}>A curated directory of professionals who have completed the Valoria assessment and meet the Institute's marketplace requirements.</p>
+        <p className={styles.lede}>Discover professionals at different stages of the Valoria journey. Basic snapshot listings introduce emerging profiles; a completed VALU Index unlocks official points, merit tier and assessment insight.</p>
         <nav className={styles.tabs}>{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
       </div>
     </section>

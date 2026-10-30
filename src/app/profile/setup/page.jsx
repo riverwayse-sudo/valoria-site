@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
 
 import {
   GOLD, DARK, MID, PARCH, DIM, GLINE,
@@ -90,7 +91,7 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Up to 3 roles. Helps people understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organisation' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:true })
   if (isCandidate) s.push({ key:'certifications', kind:'text', section:'Expertise', title:'Any certifications or credentials?', sub:'Comma separated.', placeholder:'PMP, Google Analytics, HubSpot Marketing', required:true })
 
-  s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'Optional. Valoria will show a default professional avatar until you add your own photo.', required:false })
+  s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'Optional. Valoria uses a professional default avatar until you choose to upload a photo.', required:false })
   s.push({ key:'cv_url', kind:'cv', section:'Media', title:'Upload your CV.', sub:'PDF or Word. We use this to auto-summarise your background on your profile.', required:true })
   // Candidates don't get asked for this — video links are a Speaker/
   // Facilitator thing (per the owner's 31 Jul note: "candidates don't get
@@ -151,6 +152,8 @@ function ProfileSetupForm() {
   const [autoSaveStatus, setAutoSaveStatus] = useState('saved')
   const hydratedRef = useRef(false)
   const autoSaveTimerRef = useRef(null)
+  // Serialize draft writes so a slower autosave cannot overwrite a newer explicit save.
+  const saveQueueRef = useRef(Promise.resolve())
   const fileRef = useRef(null)
   const cvFileRef = useRef(null)
   // Captured once on load — whether this person already had tracks set
@@ -176,6 +179,16 @@ function ProfileSetupForm() {
   const sectionNames = [...new Set(screens.map(s => s.section).filter(Boolean))].filter(s => s !== 'Review')
   const sectionStarts = sectionNames.map(name => screens.findIndex(s => s.section === name))
   const currentSection = screen?.section || 'Review'
+  const sectionGuidance = {
+    Track: 'Choose the professional pathways that describe how you want to participate. This selection shapes the capability sections and the directories your profile may qualify for.',
+    Profile: 'Establish your professional identity. These details help people recognise your experience and understand the context behind your VALU Index.',
+    Expertise: 'Describe the work you do in each selected pathway. This information helps Valoria organise your capability profile and assess relevant evidence.',
+    Media: 'Add supporting material that helps reviewers and prospective partners understand your professional background. Your CV remains private unless a permitted workflow uses it.',
+    Terms: 'Set practical preferences for matching and introductions. These preferences do not change your VALU points or determine eligibility by themselves.',
+    Review: 'Review your details and confirm that the information is accurate before submitting your profile.'
+  }
+  const currentSectionIndex = sectionNames.indexOf(currentSection)
+  const nextSection = currentSection === 'Review' ? null : (sectionNames[currentSectionIndex + 1] || 'Review')
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -314,16 +327,10 @@ function ProfileSetupForm() {
     setCvUploading(true)
     setCvError('')
     try {
-      const ext  = file.name.split('.').pop()
-      const path = `profiles/${user.id}/cv.${ext}`
-      // 'cvs' is a private bucket (unlike 'avatars') — CVs contain personal
-      // data that shouldn't be publicly fetchable by URL. We store the
-      // storage path here, not a public URL, and resolve a short-lived
-      // signed URL only when something needs to actually read the file
-      // (download, or a future summarisation job).
-      const { error } = await supabase.storage.from('cvs').upload(path, file, { upsert: true })
-      if (error) throw error
-      setForm(f => ({ ...f, cv_url: path, cv_filename: file.name }))
+      // Upload to the private bucket and register the evidence record before
+      // making the new path the profile's active CV.
+      const { storagePath } = await uploadProfessionalCv(supabase, user.id, file)
+      setForm(f => ({ ...f, cv_url: storagePath, cv_filename: file.name }))
       // Fire-and-forget — generates the About-section summary from the
       // person's already-collected profile fields (see cv-summary/route.js
       // — no AI call, no CV text parsing, just template composition, so
@@ -355,7 +362,7 @@ function ProfileSetupForm() {
     const f = overrides || form
     const silent = options.silent === true
     if (!silent) setSaving(true)
-    const { error } = await supabase.from('professional_profiles').upsert({
+    const write = () => supabase.from('professional_profiles').upsert({
       id: user.id,
       display_name: f.display_name || null, headline: f.headline || null,
       location: f.location || null, industry: f.industry || null,
@@ -389,6 +396,9 @@ function ProfileSetupForm() {
       // They are written by the assessment/governance pipeline, never by profile-owner upserts.
       updated_at: new Date().toISOString(),
     }, { onConflict: 'id' })
+    const queuedWrite = saveQueueRef.current.catch(() => {}).then(write)
+    saveQueueRef.current = queuedWrite
+    const { error } = await queuedWrite
     if (!silent) setSaving(false)
     if (error) {
       console.error('Profile save failed:', error)
@@ -406,22 +416,25 @@ function ProfileSetupForm() {
   // Mirrors the assessment's pattern: click an answer, brief highlight,
   // then auto-advance — no separate "Continue" click needed for
   // single-choice questions.
-  function selectAndAdvance(key, val) {
+  async function selectAndAdvance(key, val) {
     if (transitioning) return
     const nextForm = { ...form, [key]: val }
     setForm(nextForm)
     setTransitioning(true)
-    saveProgress(nextForm)
+    const saved = await saveProgress(nextForm)
+    if (!saved) { setTransitioning(false); return }
     setTimeout(() => {
       setScreenIndex(i => Math.min(i + 1, screens.length - 1))
       setTransitioning(false)
     }, 320)
   }
 
-  function goNext() {
+  async function goNext() {
     if (transitioning) return
-    saveProgress()
-    setScreenIndex(i => Math.min(i + 1, screens.length - 1))
+    setTransitioning(true)
+    const saved = await saveProgress()
+    if (saved) setScreenIndex(i => Math.min(i + 1, screens.length - 1))
+    setTransitioning(false)
   }
 
   function goBack() {
@@ -434,48 +447,58 @@ function ProfileSetupForm() {
     const ok = await saveProgress()
     if (!ok) { setSaving(false); return }
 
-    // Completion is an explicit governance state, not a side-effect of autosave.
-    // Keep assessment/eligibility/listing platform-managed.
-    const { error: completionError } = await supabase
-      .from('professional_profiles')
-      .update({ profile_complete: true, updated_at: new Date().toISOString() })
-      .eq('id', user.id)
-    if (completionError) {
-      console.error('Profile completion update failed:', completionError)
+    // Capability governance is server-owned. The authenticated API verifies
+    // this session and reconciles selected tracks without deleting history.
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.access_token) {
       setSaving(false)
-      setSaveError('Your profile was saved, but completion could not be confirmed. Please try again.')
+      setSaveError('Your session expired. Sign in again to finish saving your capabilities.')
       return
     }
-
-    // Maintain the canonical 1 Profile → 1–3+ Capabilities model.
-    const capabilityMap = { candidate: 'talent', talent: 'talent', speaker: 'speaker', facilitator: 'facilitator' }
-    const capabilities = [...new Set((form.active_tracks || []).map(t => capabilityMap[String(t).toLowerCase()]).filter(Boolean))]
-    if (capabilities.length) {
-      const { error: capabilityError } = await supabase
-        .from('professional_capabilities')
-        .upsert(capabilities.map(capability => ({ professional_id: user.id, capability, is_active: true, updated_at: new Date().toISOString() })), { onConflict: 'professional_id,capability' })
-      if (capabilityError) {
-        console.error('Capability sync failed:', capabilityError)
-        setSaving(false)
-        setSaveError('Your profile was saved, but your capability selection could not be synchronized. Please try again.')
-        return
-      }
+    let capabilityResponse
+    try {
+      capabilityResponse = await fetch('/api/profile/capabilities', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ active_tracks: form.active_tracks || [] }),
+      })
+    } catch (error) {
+      console.error('Capability sync request failed:', error)
+      setSaving(false)
+      setSaveError('Your profile was saved, but capability synchronisation could not be reached. Please try again.')
+      return
     }
+    if (!capabilityResponse.ok) {
+      const result = await capabilityResponse.json().catch(() => ({}))
+      setSaving(false)
+      setSaveError(result.error || 'Your profile was saved, but your capability selection could not be synchronized. Please try again.')
+      return
+    }
+    // profile_complete is calculated by the database from required profile fields.
+    // Do not write this derived governance field from the client.
     // Fetch back what the database actually assigned (atb_id is set by a
     // trigger, not by this app) so we can show it — previously this just
     // redirected silently with no confirmation of any kind.
     const { data: row } = await supabase
       .from('professional_profiles')
-      .select('atb_id, listing_status')
+      .select('atb_id, listing_status, profile_complete')
       .eq('id', user.id)
       .maybeSingle()
+    if (!row?.profile_complete) {
+      setSaving(false)
+      setSaveError('Your details and capabilities were saved, but Valoria has not confirmed profile completion. Review the required profile details and try again.')
+      return
+    }
     setSaving(false)
     setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: row?.listing_status || 'pending' })
   }
 
   async function handleSaveExit() {
-    await saveProgress()
-    router.push('/dashboard')
+    const saved = await saveProgress()
+    if (saved) router.push('/dashboard')
   }
 
   if (!ready) return <div style={{ minHeight:'100vh', background:DARK, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font,Raleway,sans-serif)', color:DIM, fontSize:'13px' }}>Loading…</div>
@@ -556,7 +579,13 @@ function ProfileSetupForm() {
           </div>
         </div>
 
-        <div style={{ display:'grid', gridTemplateColumns:'minmax(0,1fr)', gap:'28px', alignItems:'start' }}>
+        <div style={{ background:'rgba(201,168,76,.045)', border:`1px solid ${GLINE}`, padding:'16px 18px', marginBottom:'22px', borderRadius:'6px' }}>
+        <div style={{ color:GOLD, fontSize:'9px', fontWeight:800, letterSpacing:'.16em', marginBottom:'7px' }}>WHY THIS SECTION MATTERS</div>
+        <p style={{ color:DIM, fontSize:'12px', lineHeight:1.75, margin:0 }}>{sectionGuidance[currentSection]}</p>
+        {nextSection && <p style={{ color:'rgba(247,244,238,.42)', fontSize:'10px', lineHeight:1.6, margin:'8px 0 0' }}>UP NEXT · {nextSection}</p>}
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'minmax(0,1fr)', gap:'28px', alignItems:'start' }}>
           <aside style={{ display:'flex', flexWrap:'wrap', gap:'6px', alignItems:'stretch', marginBottom:'6px' }}>
             <div style={{ width:'100%', fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'2px' }}>PROFILE BUILD</div>
             {sectionNames.map((name, idx) => {
@@ -1000,7 +1029,7 @@ function ScreenBody(props) {
             )}
             <input ref={cvFileRef} type="file" accept="application/pdf,.doc,.docx" style={{ display:'none' }} onChange={e => e.target.files[0] && uploadCV(e.target.files[0])} />
           </div>
-          <p style={{ fontSize:'11px', color:DIM, margin:0, lineHeight:1.6 }}>PDF or Word, up to 10MB. Kept private — never shown to anyone directly.</p>
+          <p style={{ fontSize:'11px', color:DIM, margin:0, lineHeight:1.6 }}>PDF or Word, up to 10MB. Stored privately and added to your Valoria evidence record for review; never shown publicly.</p>
           {cvError && <p style={{ fontSize:'11px', color:'#F09595', margin:'6px 0 0', lineHeight:1.5 }}>{cvError}</p>}
           <ContinueBar onNext={goNext} nextDisabled={cvUploading || (screen.required && !form.cv_url)} saving={saving} />
         </div>

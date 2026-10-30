@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
 import {
   GOLD, DARK, MID, PARCH, DIM, GLINE,
   INDUSTRIES, SKILLS_POOL, TOPICS_POOL, PROGRAMME_TYPES, LANGUAGES,
@@ -180,7 +181,33 @@ function EditPageInner() {
       }
       payload[k] = databaseValue(k)
     })
-    const { error } = await supabase.from('professional_profiles').update(payload).eq('id', user.id)
+    let error = null
+    if (section === 'tracks') {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        error = { message: 'Your session expired. Sign in again to update your capabilities.' }
+      } else {
+        try {
+          const response = await fetch('/api/profile/capabilities', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({ active_tracks: form.active_tracks || [] }),
+          })
+          if (!response.ok) {
+            const result = await response.json().catch(() => ({}))
+            error = { message: result.error || 'Your capability selection could not be saved.' }
+          }
+        } catch {
+          error = { message: 'Capability service could not be reached. Please try again.' }
+        }
+      }
+    } else {
+      const result = await supabase.from('professional_profiles').update(payload).eq('id', user.id)
+      error = result.error
+    }
     setSaving(s => ({ ...s, [section]: false }))
     if (error) {
       console.error(`Save failed for ${section}:`, error)
@@ -218,11 +245,8 @@ function EditPageInner() {
     if (!file || !user) return
     setCvUploading(true)
     try {
-      const ext = file.name.split('.').pop()
-      const path = `profiles/${user.id}/cv.${ext}`
-      const { error } = await supabase.storage.from('cvs').upload(path, file, { upsert: true })
-      if (error) throw error
-      setField('media', 'cv_url', path)
+      const { storagePath } = await uploadProfessionalCv(supabase, user.id, file)
+      setField('media', 'cv_url', storagePath)
       // Fire-and-forget, same as onboarding — see api/cv-summary/route.js.
       supabase.auth.getSession().then(({ data }) => {
         if (!data.session) return
@@ -311,6 +335,8 @@ function EditPageInner() {
             </button>
             <input ref={cvFileRef} type="file" accept="application/pdf,.doc,.docx" style={{ display:'none' }} onChange={e => e.target.files[0] && uploadCV(e.target.files[0])} />
           </div>
+          <p style={{ fontSize:'11px', color:DIM, lineHeight:1.6, margin:'0 0 14px' }}>PDF or Word, up to 10MB. Stored privately and added to your Valoria evidence record for review; never shown publicly.</p>
+          <Link href="/profile/evidence" style={{ ...S.ghostBtn, display:'inline-block', textDecoration:'none', marginBottom:14 }}>Manage capability evidence →</Link>
           <Field label="LinkedIn" error={form.linkedin_url && !VALIDATORS.linkedin(form.linkedin_url) ? validatorError('linkedin') : null}>
             <TextInput value={form.linkedin_url} onChange={v => setField('media','linkedin_url',v)} placeholder="https://linkedin.com/in/yourname" />
           </Field>
