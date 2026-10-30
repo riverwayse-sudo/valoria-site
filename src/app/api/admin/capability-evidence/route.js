@@ -31,7 +31,11 @@ export async function GET(request){
   if(reviewError) return NextResponse.json({error:'Could not load evidence review history.'},{status:500})
   const latest={}
   for(const review of reviews||[]) if(!latest[review.document_id]) latest[review.document_id]=review
-  return NextResponse.json({documents:documents||[],reviews:reviews||[],latestByDocument:latest})
+  const signedDocuments=await Promise.all((documents||[]).map(async document=>{
+    const {data,error}=await db.storage.from(document.storage_bucket).createSignedUrl(document.storage_path,300)
+    return {...document,preview_url:error?null:data?.signedUrl||null}
+  }))
+  return NextResponse.json({documents:signedDocuments,reviews:reviews||[],latestByDocument:latest})
 }
 
 export async function POST(request){
