@@ -8,7 +8,7 @@ function adminClient(){
 async function requireAdmin(request){
   const db=adminClient()
   if(!db) return {response:NextResponse.json({error:'Review service is unavailable.'},{status:503})}
-  const token=request.headers.get('authorization')?.match(/^Bearer\\s+(.+)$/i)?.[1]
+  const token=request.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1]
   if(!token) return {response:NextResponse.json({error:'Not authenticated.'},{status:401})}
   const {data:{user},error}=await db.auth.getUser(token)
   if(error||!user) return {response:NextResponse.json({error:'Not authenticated.'},{status:401})}
