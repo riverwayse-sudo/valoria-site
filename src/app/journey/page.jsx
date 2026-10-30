@@ -8,7 +8,7 @@ export const metadata = {
 
 const STAGE_ROUTES = {
   connect: '/signup',
-  assess: '/journey/continue?stage=assess',
+  assess: '/dashboard',
   report: '/report',
   profile: '/profile/setup',
   capability: '/profile/setup',
