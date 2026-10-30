@@ -16,7 +16,7 @@ async function getUser(request){
  return user||null
 }
 
-async function stageTarget(request,stage,user){
+async function stageTarget(request,stage,user,linkedTasterId=null){
  const routes={
   connect:'/dashboard',
   report:'/report',
@@ -31,7 +31,7 @@ async function stageTarget(request,stage,user){
  if(!user||!SERVICE||!SB_URL)return '/login'
  if(!user.email_confirmed_at)return '/login'
  const admin=createClient(SB_URL,SERVICE,{auth:{persistSession:false,autoRefreshToken:false}})
- const requestedTasterId=request.nextUrl.searchParams.get('taster_id')?.trim()
+ const requestedTasterId=linkedTasterId||request.nextUrl.searchParams.get('taster_id')?.trim()
  let query=admin.from('taster_sessions').select('id,name,role,experience,completed_at').eq('user_id',user.id).not('completed_at','is',null)
  if(requestedTasterId) query=query.eq('id',requestedTasterId)
  else query=query.order('completed_at',{ascending:false}).limit(1)
@@ -97,5 +97,5 @@ export async function GET(request){
 
  await admin.from('valoria_reentry_links').update({user_id:user.id,used_at:new Date().toISOString()}).eq('id',link.id).is('used_at',null)
  await admin.from('valoria_journey_events').insert({user_id:user.id,event_key:'journey_reentered',source:'reentry_link',source_id:link.id,metadata:{target_stage:link.target_stage}})
- return NextResponse.redirect(new URL(await stageTarget(request,link.target_stage,user),request.url))
+ return NextResponse.redirect(new URL(await stageTarget(request,link.target_stage,user,link.target_stage==='assess'?link.source_id:null),request.url))
 }
