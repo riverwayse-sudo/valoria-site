@@ -187,6 +187,20 @@ describe('journey integrity contract', () => {
     expect(handoff).toContain(".eq('user_id', user.id)")
   })
 
+  test('assessment origin is environment-specific and preview never silently falls back to production', () => {
+    const handoff = read('src/app/api/valu-handoff/route.js')
+    const config = read('next.config.js')
+    const signup = read('src/app/professional-signup/page.jsx')
+    expect(handoff).toContain('VALU_UPSTREAM_ORIGIN')
+    expect(handoff).toContain("process.env.VERCEL_ENV === 'production'")
+    expect(handoff).toContain("url.hostname === 'assessment.valoriainstitute.com'")
+    expect(handoff).toContain('if (!assessmentOrigin)')
+    expect(config).toContain("process.env.VERCEL_ENV === 'preview'")
+    expect(config).toContain('if (!valuOrigin) return []')
+    expect(signup).toContain('href="/valu/assessment/"')
+    expect(signup).not.toContain('href="https://assessment.valoriainstitute.com/"')
+  })
+
   test('assessment continuation never accepts email resume tokens or public identity query parameters', () => {
     const continuation = read('src/app/journey/continue/route.js')
     const handoff = read('src/app/api/valu-handoff/route.js')
