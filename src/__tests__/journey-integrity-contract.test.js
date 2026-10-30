@@ -44,7 +44,7 @@ describe('journey integrity contract', () => {
     expect(state.assessment.current).toBe(false)
     expect(state.eligibility.complete).toBe(false)
     expect(state.eligibility.missing).toContain('Your CV')
-    expect(state.eligibility.missing).toContain('A current full VALU Index assessment of at least 35 points')
+    expect(state.eligibility.missing).toContain('A current full VALU Index assessment')
     expect(state.marketplace.capabilities).toEqual([])
   })
 
