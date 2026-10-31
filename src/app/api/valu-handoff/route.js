@@ -30,7 +30,7 @@ function getAssessmentOrigin() {
 }
 
 function getAdmin() {
-  const isProduction = process.env.VERCEL_ENV === 'production'
+  const isProduction = isProductionRuntime()
   const url = isProduction ? process.env.NEXT_PUBLIC_SUPABASE_URL : process.env.VALU_PREVIEW_SUPABASE_URL
   const key = isProduction ? process.env.SUPABASE_SERVICE_ROLE_KEY : process.env.VALU_PREVIEW_SUPABASE_SERVICE_ROLE_KEY
   if (!isProduction) {
