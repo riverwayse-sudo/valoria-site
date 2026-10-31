@@ -488,6 +488,12 @@ describe('journey integrity contract', () => {
     expect(api).toContain("target_stage: 'assess'")
     expect(api).toContain('HANDOFF_TTL_SECONDS = 60')
     expect(api).toContain('Referrer-Policy')
+    expect(api).toContain('VALU_PREVIEW_ASSESSMENT_ORIGIN')
+    expect(api).toContain('VALU_PREVIEW_SUPABASE_URL')
+    expect(api).toContain('VALU_PREVIEW_SUPABASE_SERVICE_ROLE_KEY')
+    expect(api).toContain('VALU_PREVIEW_SUPABASE_ANON_KEY')
+    expect(api).toContain('valoria-platform.riverwayse.workers.dev')
+    expect(api).toContain('isolated preview Supabase project')
     expect(read('src/app/auth/callback/page.jsx')).not.toContain('ValoriaHandoverCards')
   })
 
