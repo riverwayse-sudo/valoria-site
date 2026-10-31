@@ -65,7 +65,8 @@ export default function ValoriaAssessmentBridge() {
           } catch {
             throw new Error('The assessment service returned an invalid destination. Please return to your dashboard.')
           }
-          if (!['https:', 'http:'].includes(destination.protocol)) {
+          const isLocalDevelopment = destination.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(destination.hostname)
+          if (destination.protocol !== 'https:' && !isLocalDevelopment) {
             throw new Error('The assessment destination is not secure. Please return to your dashboard.')
           }
           return { url: destination.toString() }
