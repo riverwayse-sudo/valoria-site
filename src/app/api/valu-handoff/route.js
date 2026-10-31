@@ -5,15 +5,19 @@ import { createClient } from '@supabase/supabase-js'
 const HANDOFF_TTL_SECONDS = 60
 
 function getAssessmentOrigin() {
-  const configured = process.env.VALU_UPSTREAM_ORIGIN?.trim()
+  const isProduction = process.env.VERCEL_ENV === 'production'
+  const configured = (isProduction
+    ? process.env.VALU_UPSTREAM_ORIGIN
+    : process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN)?.trim()
   const productionOrigin = 'https://assessment.valoriainstitute.com'
-  if (process.env.VERCEL_ENV === 'production') return configured || productionOrigin
+  if (isProduction) return configured || productionOrigin
   if (!configured) return null
   try {
     const url = new URL(configured)
     if (!['http:', 'https:'].includes(url.protocol)) return null
-    // Preview deployments must never silently send participants to production.
+    // Preview must use an explicitly configured non-production platform origin.
     if (url.hostname === 'assessment.valoriainstitute.com') return null
+    if (url.hostname === 'valoria-platform.riverwayse.workers.dev') return null
     return url.origin
   } catch {
     return null
@@ -21,8 +25,17 @@ function getAssessmentOrigin() {
 }
 
 function getAdmin() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const isProduction = process.env.VERCEL_ENV === 'production'
+  const url = isProduction ? process.env.NEXT_PUBLIC_SUPABASE_URL : process.env.VALU_PREVIEW_SUPABASE_URL
+  const key = isProduction ? process.env.SUPABASE_SERVICE_ROLE_KEY : process.env.VALU_PREVIEW_SUPABASE_SERVICE_ROLE_KEY
+  if (!isProduction) {
+    const publicUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const publicAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    const previewAnonKey = process.env.VALU_PREVIEW_SUPABASE_ANON_KEY
+    if (!url || !key || !previewAnonKey || url.replace(/\\/$/, '') !== publicUrl?.replace(/\\/$/, '') || previewAnonKey !== publicAnonKey) {
+      throw new Error('An isolated preview Supabase project must be configured before assessment handoff is enabled.')
+    }
+  }
   if (!url || !key) throw new Error('Supabase server configuration is missing.')
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
 }
