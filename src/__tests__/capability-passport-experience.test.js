@@ -42,4 +42,12 @@ describe('Capability Passport experience', () => {
     expect(dashboard).toContain('/evidence|approval/i')
   })
 
+  test('profile completion confirmation points to the passport without implying listing approval', () => {
+    const setup = fs.readFileSync(path.join(process.cwd(), 'src/app/profile/setup/page.jsx'), 'utf8')
+    expect(setup).toContain('Your professional profile is complete and saved.')
+    expect(setup).toContain("router.push('/profile/passport')")
+    expect(setup).toContain('Profile completion does not automatically create a marketplace listing.')
+    expect(setup).not.toContain('submitted to the founding cohort')
+  })
+
 })
