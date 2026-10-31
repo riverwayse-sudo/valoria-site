@@ -61,6 +61,11 @@ jobs:
         run: npm test -- --runInBand
         env:
           CI: true
+      - name: Build with patched dependencies
+        run: npm run build
+        env:
+          CI: true
+          NEXT_TELEMETRY_DISABLED: 1
       - name: Commit patched dependency manifests to this PR branch
         if: github.event_name == 'pull_request' && github.head_ref == 'fix/valu-bridge-continuity-screen'
         env:
