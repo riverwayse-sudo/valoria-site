@@ -50,4 +50,10 @@ describe('Capability Passport experience', () => {
     expect(setup).not.toContain('submitted to the founding cohort')
   })
 
+  test('evidence guidance is evaluated per capability rather than across the whole profile', () => {
+    expect(passport).toContain('const capabilityEvidenceGaps = capabilities.some(capability')
+    expect(passport).toContain('documents.some(document => document.capability_id === capability.id)')
+    expect(passport).toContain('requiresCapabilityEvidence && !hasEvidenceForCapability')
+  })
+
 })
