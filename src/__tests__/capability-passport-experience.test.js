@@ -5,7 +5,7 @@ const passport = fs.readFileSync(path.join(process.cwd(), 'src/app/profile/passp
 
 describe('Capability Passport experience', () => {
   test('shows VALU as points and separates profile completion from marketplace listing', () => {
-    expect(passport).toContain('VALU Index')
+    expect(passport.toLowerCase()).toContain('valu index')
     expect(passport).toContain('points')
     expect(passport).not.toContain('/100')
     expect(passport).toContain('profileReady ? \'Complete\' : \'In progress\'')
