@@ -1,12 +1,26 @@
 /** @type {import('next').NextConfig} */
-const configuredVALUOrigin = process.env.VALU_UPSTREAM_ORIGIN
 const productionVALUOrigin = 'https://assessment.valoriainstitute.com'
-let valuOrigin = process.env.VERCEL_ENV === 'production'
+const isCloudflareProduction = process.env.CF_PAGES === '1' && process.env.CF_PAGES_BRANCH === 'main'
+const isProduction = process.env.VERCEL_ENV === 'production' || isCloudflareProduction
+const isPreview = process.env.VERCEL_ENV === 'preview' || (process.env.CF_PAGES === '1' && !isCloudflareProduction)
+const configuredVALUOrigin = isProduction
+  ? process.env.VALU_UPSTREAM_ORIGIN
+  : process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN
+let valuOrigin = isProduction
   ? (configuredVALUOrigin || productionVALUOrigin)
   : (configuredVALUOrigin || null)
-if (process.env.VERCEL_ENV === 'preview' && valuOrigin) {
+
+if (isPreview && valuOrigin) {
   try {
-    if (new URL(valuOrigin).hostname === 'assessment.valoriainstitute.com') valuOrigin = null
+    const preview = new URL(valuOrigin)
+    const isLocalDevelopment = preview.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(preview.hostname)
+    if ((preview.protocol !== 'https:' && !isLocalDevelopment) ||
+        preview.hostname === 'assessment.valoriainstitute.com' ||
+        preview.hostname === 'valoria-platform.riverwayse.workers.dev') {
+      valuOrigin = null
+    } else {
+      valuOrigin = preview.origin
+    }
   } catch {
     valuOrigin = null
   }
@@ -33,22 +47,10 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'cdn.prod.website-files.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'valoriainstitute.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.supabase.co',
-      },
-      {
-        protocol: 'https',
-        hostname: 'i.pravatar.cc',
-      },
+      { protocol: 'https', hostname: 'cdn.prod.website-files.com' },
+      { protocol: 'https', hostname: 'valoriainstitute.com' },
+      { protocol: 'https', hostname: '*.supabase.co' },
+      { protocol: 'https', hostname: 'i.pravatar.cc' },
     ],
   },
 }
