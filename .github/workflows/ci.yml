@@ -74,7 +74,7 @@ jobs:
           cp package.json /tmp/valoria-site-package.json
           cp package-lock.json /tmp/valoria-site-package-lock.json
           git fetch origin "+refs/heads/${BRANCH}:refs/remotes/origin/${BRANCH}"
-          git checkout -B "${BRANCH}" "refs/remotes/origin/${BRANCH}"
+          git checkout -f -B "${BRANCH}" "refs/remotes/origin/${BRANCH}"
           cp /tmp/valoria-site-package.json package.json
           cp /tmp/valoria-site-package-lock.json package-lock.json
           git config user.name "github-actions[bot]"
