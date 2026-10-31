@@ -45,7 +45,7 @@ function getAdmin() {
     const productionUrl = process.env.VALU_PRODUCTION_SUPABASE_URL
     const previewOrigin = url ? new URL(url).origin : null
     const productionOrigin = productionUrl ? new URL(productionUrl).origin : null
-    if (!url || !key || !previewAnonKey || !publicUrl || previewOrigin !== new URL(publicUrl).origin || (productionOrigin && previewOrigin === productionOrigin) || previewAnonKey !== publicAnonKey) {
+    if (!url || !key || !previewAnonKey || !publicUrl || !productionOrigin || previewOrigin !== new URL(publicUrl).origin || previewOrigin === productionOrigin || previewAnonKey !== publicAnonKey) {
       throw new Error('An isolated preview Supabase project must be configured before assessment handoff is enabled.')
     }
   }
