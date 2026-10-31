@@ -64,10 +64,13 @@ function nextSteps({ profile, capabilities, documents, activation }) {
   if (profile?.profile_complete && capabilities.length && !profile?.cv_url) {
     steps.push({ title: 'Add your CV', detail: 'Your CV is a required profile-wide evidence item.', href: '/profile/setup', action: 'ADD CV' })
   }
-  const hasCapabilityEvidence = documents.some(document => document.capability_id)
-  const hasMissingRequirements = capabilities.some(capability => Array.isArray(capability.missing_requirements) && capability.missing_requirements.length)
-  const needsCapabilityEvidence = capabilities.some(capability => !['talent', 'candidate'].includes(capability.capability))
-  if (capabilities.length && (hasMissingRequirements || (needsCapabilityEvidence && !hasCapabilityEvidence))) {
+  const capabilityEvidenceGaps = capabilities.some(capability => {
+    const hasEvidenceForCapability = documents.some(document => document.capability_id === capability.id)
+    const hasOutstandingRequirements = Array.isArray(capability.missing_requirements) && capability.missing_requirements.length > 0
+    const requiresCapabilityEvidence = !['talent', 'candidate'].includes(capability.capability)
+    return hasOutstandingRequirements || (requiresCapabilityEvidence && !hasEvidenceForCapability)
+  })
+  if (capabilities.length && capabilityEvidenceGaps) {
     steps.push({ title: 'Submit capability evidence', detail: 'Attach relevant work samples, certifications or engagement records to each capability that requires them.', href: '/profile/evidence', action: 'ADD EVIDENCE' })
   }
   if (activation?.status !== 'activated') {
