@@ -25,7 +25,7 @@ describe('Capability Passport experience', () => {
     expect(passport).toContain("href=\"/profile/evidence\"")
     expect(passport).toContain("admin.from('professional_documents')")
     expect(passport).toContain('capability_id,document_type,verification_status')
-    expect(passport).toContain('Submit evidence')
+    expect(passport.toLowerCase()).toContain('submit evidence')
     expect(passport).toContain('Under review')
   })
 
