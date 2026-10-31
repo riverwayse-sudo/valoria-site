@@ -35,4 +35,11 @@ describe('Capability Passport experience', () => {
     expect(passport).not.toContain('eligible_for_listing:')
     expect(passport).not.toContain('listing_status:')
   })
+  test('dashboard exposes evidence submission when a capability is waiting on evidence review', () => {
+    const dashboard = fs.readFileSync(path.join(process.cwd(), 'src/app/dashboard/page.jsx'), 'utf8')
+    expect(dashboard).toContain("href=\"/profile/evidence\"")
+    expect(dashboard).toContain('SUBMIT EVIDENCE')
+    expect(dashboard).toContain('/evidence|approval/i')
+  })
+
 })
