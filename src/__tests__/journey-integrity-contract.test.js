@@ -196,8 +196,13 @@ describe('journey integrity contract', () => {
     expect(handoff).toContain("process.env.VERCEL_ENV === 'production'")
     expect(handoff).toContain("url.hostname === 'assessment.valoriainstitute.com'")
     expect(handoff).toContain('if (!assessmentOrigin)')
+    expect(handoff).toContain('!productionOrigin')
+    expect(handoff).toContain('previewOrigin === productionOrigin')
     expect(handoff.indexOf('if (!assessmentOrigin)')).toBeLessThan(handoff.indexOf("admin.from('valoria_reentry_links').insert"));
     expect(config).toContain("process.env.VERCEL_ENV === 'preview'")
+    expect(config).toContain('VALU_PREVIEW_ASSESSMENT_ORIGIN')
+    expect(config).toContain("process.env.CF_PAGES_BRANCH === 'main'")
+    expect(read('.env.example')).toContain('VALU_PREVIEW_ASSESSMENT_ORIGIN=')
     expect(config).toContain('if (!valuOrigin) return []')
     expect(reportTrigger).toContain('VALU_UPSTREAM_ORIGIN')
     expect(reportTrigger).toContain("process.env.VERCEL_ENV === 'production'")
@@ -469,26 +474,32 @@ describe('journey integrity contract', () => {
     expect(callback).not.toContain('Continue at Question 10')
   })
 
-  test('dashboard-to-assessment bridge introduces Valoria while the secure handoff opens', () => {
+  test('dashboard-to-assessment bridge verifies continuity and immediately opens the secure handoff', () => {
     const nav = read('src/components/Nav.jsx')
     const bridge = read('src/components/ValoriaAssessmentBridge.jsx')
-    const cards = read('src/components/ValoriaHandoverCards.jsx')
     const page = read('src/app/assessment/bridge/page.jsx')
-    const styles = read('src/components/ValoriaHandoverCards.module.css')
-    const events = read('src/lib/professionalStandardSeries.js')
+    const api = read('src/app/api/valu-handoff/route.js')
     expect(nav).toContain("window.location.assign('/assessment/bridge')")
     expect(bridge).toContain("fetch('/api/valu-handoff'")
-    expect(bridge).toContain('window.location.assign(data.url)')
+    expect(bridge).toContain('window.location.replace(result.url)')
+    expect(bridge).toContain('handoffPromiseRef.current')
+    expect(bridge).toContain('Do not add an artificial delay')
+    expect(bridge).toContain("status === 'error'")
+    expect(bridge).toContain('RETURN TO DASHBOARD')
+    expect(bridge).not.toContain('ValoriaHandoverCards')
+    expect(bridge).not.toContain('setTimeout')
     expect(page).toContain('ValoriaAssessmentBridge')
-    expect(cards).toContain('THE INSTITUTE')
-    expect(cards).toContain('VALU INDEX')
-    expect(cards).toContain('PRIME FRAMEWORK')
-    expect(cards).toContain('PROFESSIONAL REGISTRY')
-    expect(cards).toContain('EVENTS & CONVERSATIONS')
-    expect(cards).toContain('session.dateApproved')
-    expect(styles).toContain('@keyframes cardIn')
-    expect(styles).toContain('prefers-reduced-motion:reduce')
-    expect(events).toContain('dateApproved: false')
+    expect(api).toContain("entry_point: 'dashboard_assessment'")
+    expect(api).toContain("target_stage: 'assess'")
+    expect(api).toContain('HANDOFF_TTL_SECONDS = 60')
+    expect(api).toContain('Referrer-Policy')
+    expect(api).toContain('VALU_PREVIEW_ASSESSMENT_ORIGIN')
+    expect(api).toContain('VALU_PREVIEW_SUPABASE_URL')
+    expect(api).toContain('VALU_PREVIEW_SUPABASE_SERVICE_ROLE_KEY')
+    expect(api).toContain('VALU_PREVIEW_SUPABASE_ANON_KEY')
+    expect(api).toContain('CF_PAGES_BRANCH')
+    expect(api).toContain('valoria-platform.riverwayse.workers.dev')
+    expect(api).toContain('isolated preview Supabase project')
     expect(read('src/app/auth/callback/page.jsx')).not.toContain('ValoriaHandoverCards')
   })
 
@@ -500,6 +511,30 @@ describe('journey integrity contract', () => {
     expect(sidebar).not.toContain('AssessmentStartLink')
     expect(sidebar).not.toContain('CONTINUE YOUR VALU ASSESSMENT')
     expect(sidebar).toContain('Your official VALU Index and PRIME insights will appear here')
+  })
+
+  test('assessment handoff uses HTTPS outside local development', () => {
+    const api = read('src/app/api/valu-handoff/route.js')
+    const bridge = read('src/components/ValoriaAssessmentBridge.jsx')
+    expect(api).toContain("url.protocol !== 'https:'")
+    expect(api).toContain("['localhost', '127.0.0.1'].includes(url.hostname)")
+    expect(bridge).toContain("destination.protocol !== 'https:'")
+    expect(bridge).toContain("['localhost', '127.0.0.1'].includes(destination.hostname)")
+  })
+
+  test('assessment proxy preserves the Vite base path and forwards platform APIs', () => {
+    const config = read('next.config.js')
+    expect(config).toContain("destination: `${origin}/valu/assessment/:path*`")
+    for (const route of [
+      '/api/taster-progress',
+      '/api/submit-taster',
+      '/api/assessment-progress',
+      '/api/submit-assessment',
+      '/api/link-assessment-to-taster',
+      '/api/generate-and-send-report',
+    ]) {
+      expect(config).toContain(`source: '${route}'`)
+    }
   })
 
 

@@ -892,6 +892,13 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
                   </Link>
                 )}
                 <span style={{ fontSize:'11px', color:'rgba(247,244,238,.42)' }}>{next ? `Next: ${next.unlock}` : 'Your profile remains yours to develop.'}</span>
+                {next?.key === 'eligibility' && activeCapabilities.some(capability =>
+                  (capability.missing_requirements || []).some(item => /evidence|approval/i.test(String(item)))
+                ) && (
+                  <Link href="/profile/evidence" style={{ color:GOLD, fontSize:'10px', fontWeight:800, letterSpacing:'.1em', textDecoration:'none' }}>
+                    SUBMIT EVIDENCE →
+                  </Link>
+                )}
               </div>
             </div>
             <div style={{ padding:'17px 18px', borderRadius:9, background:'rgba(15,15,26,.42)', border:'1px solid rgba(201,168,76,.14)' }}>
