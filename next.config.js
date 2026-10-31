@@ -18,7 +18,17 @@ const nextConfig = {
     const origin = valuOrigin
     return [
       { source: '/valu/assessment', destination: `${origin}/` },
-      { source: '/valu/assessment/:path*', destination: `${origin}/:path*` },
+      // Preserve the platform's Vite base path so its JS/CSS assets resolve.
+      { source: '/valu/assessment/:path*', destination: `${origin}/valu/assessment/:path*` },
+
+      // The assessment bundle calls root-level platform APIs. Keep these
+      // explicit so the site's own unrelated /api routes remain local.
+      { source: '/api/taster-progress', destination: `${origin}/api/taster-progress` },
+      { source: '/api/submit-taster', destination: `${origin}/api/submit-taster` },
+      { source: '/api/assessment-progress', destination: `${origin}/api/assessment-progress` },
+      { source: '/api/submit-assessment', destination: `${origin}/api/submit-assessment` },
+      { source: '/api/link-assessment-to-taster', destination: `${origin}/api/link-assessment-to-taster` },
+      { source: '/api/generate-and-send-report', destination: `${origin}/api/generate-and-send-report` },
     ]
   },
   images: {
