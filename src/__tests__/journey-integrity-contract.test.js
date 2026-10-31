@@ -492,6 +492,7 @@ describe('journey integrity contract', () => {
     expect(api).toContain('VALU_PREVIEW_SUPABASE_URL')
     expect(api).toContain('VALU_PREVIEW_SUPABASE_SERVICE_ROLE_KEY')
     expect(api).toContain('VALU_PREVIEW_SUPABASE_ANON_KEY')
+    expect(api).toContain('CF_PAGES_BRANCH')
     expect(api).toContain('valoria-platform.riverwayse.workers.dev')
     expect(api).toContain('isolated preview Supabase project')
     expect(read('src/app/auth/callback/page.jsx')).not.toContain('ValoriaHandoverCards')
