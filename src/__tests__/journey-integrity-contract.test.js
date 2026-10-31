@@ -508,5 +508,14 @@ describe('journey integrity contract', () => {
     expect(sidebar).toContain('Your official VALU Index and PRIME insights will appear here')
   })
 
+  test('assessment handoff uses HTTPS outside local development', () => {
+    const api = read('src/app/api/valu-handoff/route.js')
+    const bridge = read('src/components/ValoriaAssessmentBridge.jsx')
+    expect(api).toContain("url.protocol !== 'https:'")
+    expect(api).toContain("['localhost', '127.0.0.1'].includes(url.hostname)")
+    expect(bridge).toContain("destination.protocol !== 'https:'")
+    expect(bridge).toContain("['localhost', '127.0.0.1'].includes(destination.hostname)")
+  })
+
 
 })
