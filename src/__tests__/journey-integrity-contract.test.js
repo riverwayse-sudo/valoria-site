@@ -517,5 +517,20 @@ describe('journey integrity contract', () => {
     expect(bridge).toContain("['localhost', '127.0.0.1'].includes(destination.hostname)")
   })
 
+  test('assessment proxy preserves the Vite base path and forwards platform APIs', () => {
+    const config = read('next.config.js')
+    expect(config).toContain("destination: `${origin}/valu/assessment/:path*`")
+    for (const route of [
+      '/api/taster-progress',
+      '/api/submit-taster',
+      '/api/assessment-progress',
+      '/api/submit-assessment',
+      '/api/link-assessment-to-taster',
+      '/api/generate-and-send-report',
+    ]) {
+      expect(config).toContain(`source: '${route}'`)
+    }
+  })
+
 
 })
