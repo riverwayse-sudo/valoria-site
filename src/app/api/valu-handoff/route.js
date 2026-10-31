@@ -4,8 +4,13 @@ import { createClient } from '@supabase/supabase-js'
 
 const HANDOFF_TTL_SECONDS = 60
 
+function isProductionRuntime() {
+  if (process.env.VERCEL_ENV) return process.env.VERCEL_ENV === 'production'
+  return process.env.CF_PAGES === '1' && process.env.CF_PAGES_BRANCH === 'main'
+}
+
 function getAssessmentOrigin() {
-  const isProduction = process.env.VERCEL_ENV === 'production'
+  const isProduction = isProductionRuntime()
   const configured = (isProduction
     ? process.env.VALU_UPSTREAM_ORIGIN
     : process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN)?.trim()
