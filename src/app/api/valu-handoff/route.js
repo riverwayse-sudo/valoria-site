@@ -42,7 +42,10 @@ function getAdmin() {
     const publicUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const publicAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     const previewAnonKey = process.env.VALU_PREVIEW_SUPABASE_ANON_KEY
-    if (!url || !key || !previewAnonKey || !publicUrl || new URL(url).origin !== new URL(publicUrl).origin || previewAnonKey !== publicAnonKey) {
+    const productionUrl = process.env.VALU_PRODUCTION_SUPABASE_URL
+    const previewOrigin = url ? new URL(url).origin : null
+    const productionOrigin = productionUrl ? new URL(productionUrl).origin : null
+    if (!url || !key || !previewAnonKey || !publicUrl || previewOrigin !== new URL(publicUrl).origin || (productionOrigin && previewOrigin === productionOrigin) || previewAnonKey !== publicAnonKey) {
       throw new Error('An isolated preview Supabase project must be configured before assessment handoff is enabled.')
     }
   }
