@@ -14,15 +14,20 @@ function getAssessmentOrigin() {
   const configured = (isProduction
     ? process.env.VALU_UPSTREAM_ORIGIN
     : process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN)?.trim()
-  const productionOrigin = 'https://assessment.valoriainstitute.com'
-  if (isProduction) return configured || productionOrigin
-  if (!configured) return null
+  const candidate = isProduction
+    ? (configured || 'https://assessment.valoriainstitute.com')
+    : configured
+  if (!candidate) return null
+
   try {
-    const url = new URL(configured)
-    if (!['http:', 'https:'].includes(url.protocol)) return null
-    // Preview must use an explicitly configured non-production platform origin.
-    if (url.hostname === 'assessment.valoriainstitute.com') return null
-    if (url.hostname === 'valoria-platform.riverwayse.workers.dev') return null
+    const url = new URL(candidate)
+    const isLocalDevelopment = url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname)
+    if (url.protocol !== 'https:' && !isLocalDevelopment) return null
+    if (!isProduction) {
+      // Preview must use an explicitly configured non-production platform origin.
+      if (url.hostname === 'assessment.valoriainstitute.com') return null
+      if (url.hostname === 'valoria-platform.riverwayse.workers.dev') return null
+    }
     return url.origin
   } catch {
     return null
