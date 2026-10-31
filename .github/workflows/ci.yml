@@ -24,7 +24,7 @@ jobs:
         run: npm ci
       - name: Generate patched Next.js lock candidate
         run: |
-          node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('package.json','utf8')); p.dependencies.next='15.5.28'; fs.writeFileSync('package.json', JSON.stringify(p,null,2));"
+          node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('package.json','utf8')); p.dependencies.next='15.5.28'; p.overrides={...(p.overrides||{}),postcss:'8.5.23'}; fs.writeFileSync('package.json', JSON.stringify(p,null,2));"
           npm install --package-lock-only --ignore-scripts
           npm update --package-lock-only --ignore-scripts baseline-browser-mapping brace-expansion browserslist js-yaml nanoid source-map-js postcss
       - name: Upload patched Next.js candidate
