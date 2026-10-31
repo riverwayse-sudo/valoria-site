@@ -513,7 +513,7 @@ function ProfileSetupForm() {
           </div>
           <Title>You&apos;re in,<br/><Em>{form.display_name?.split(' ')[0] || 'welcome'}.</Em></Title>
           <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.75, marginBottom:'28px' }}>
-            Your profile has been submitted to the founding cohort.
+            Your professional profile is complete and saved. Your capability and marketplace decisions are tracked separately in your Capability Passport.
           </p>
 
           <div style={{ background:MID, border:`1px solid ${GLINE}`, padding:'24px', marginBottom:'24px' }}>
@@ -528,12 +528,15 @@ function ProfileSetupForm() {
           <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'28px', textAlign:'left' }}>
             <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>WHAT HAPPENS NEXT</div>
             <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.8, margin:0 }}>
-              Status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? 'Listed' : 'Not yet listed'}</strong>. Complete the full VALU assessment, keep your professional profile complete and meet the relevant capability gates. A current score of 35 or above is required for marketplace eligibility.
+              Marketplace status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? 'Listed' : 'Not yet listed'}</strong>. Profile completion does not automatically create a marketplace listing. Each capability must meet its own evidence, assessment and Valoria review requirements. Full marketplace eligibility requires a current full VALU assessment with at least 35 points.
             </p>
           </div>
 
-          <button onClick={() => router.push('/dashboard')} style={{ display:'block', width:'100%', padding:'16px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor:'pointer', fontFamily:'inherit' }}>
-            GO TO DASHBOARD →
+          <button onClick={() => router.push('/profile/passport')} style={{ display:'block', width:'100%', padding:'16px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor:'pointer', fontFamily:'inherit' }}>
+            OPEN MY CAPABILITY PASSPORT →
+          </button>
+          <button onClick={() => router.push('/dashboard')} style={{ display:'block', width:'100%', marginTop:'10px', padding:'13px', background:'transparent', color:PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', border:`1px solid ${GLINE}`, cursor:'pointer', fontFamily:'inherit' }}>
+            RETURN TO DASHBOARD
           </button>
         </div>
       </div>
