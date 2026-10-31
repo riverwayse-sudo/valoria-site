@@ -59,6 +59,8 @@ jobs:
           'src/app/profile/[id]/page.jsx' 'src/app/profile/[id]/ProfileClient.jsx'
       - name: Run unit tests
         run: npm test -- --runInBand
+        env:
+          CI: true
       - name: Commit patched dependency manifests to this PR branch
         if: github.event_name == 'pull_request' && github.head_ref == 'fix/valu-bridge-continuity-screen'
         env:
@@ -71,8 +73,6 @@ jobs:
             git commit -m "fix: patch vulnerable site dependencies"
             git push origin "HEAD:${BRANCH}"
           fi
-        env:
-          CI: true
 
   build-check:
     name: Production Build Check
