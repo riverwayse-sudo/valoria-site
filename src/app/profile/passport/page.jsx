@@ -66,7 +66,8 @@ function nextSteps({ profile, capabilities, documents, activation }) {
   }
   const hasCapabilityEvidence = documents.some(document => document.capability_id)
   const hasMissingRequirements = capabilities.some(capability => Array.isArray(capability.missing_requirements) && capability.missing_requirements.length)
-  if (capabilities.length && (hasMissingRequirements || !hasCapabilityEvidence)) {
+  const needsCapabilityEvidence = capabilities.some(capability => !['talent', 'candidate'].includes(capability.capability))
+  if (capabilities.length && (hasMissingRequirements || (needsCapabilityEvidence && !hasCapabilityEvidence))) {
     steps.push({ title: 'Submit capability evidence', detail: 'Attach relevant work samples, certifications or engagement records to each capability that requires them.', href: '/profile/evidence', action: 'ADD EVIDENCE' })
   }
   if (activation?.status !== 'activated') {
