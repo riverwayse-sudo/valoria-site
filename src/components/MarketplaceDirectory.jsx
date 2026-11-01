@@ -44,7 +44,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
       if(industry && displayText(p.industry) !== industry) return false
       if(!q) return true
-      return [p.atb_id,p.headline,p.current_job_title,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
+      return [p.full_name,p.atb_id,p.headline,p.current_job_title,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
     })
   },[rows,activeTrack,query,industry])
 
@@ -76,7 +76,12 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
           <span>VALU INDEX × PRIME</span>
         </div>
         {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p}/>)}</div> :
-          <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
+          <div className={styles.empty}>
+            <strong>{query.trim() || industry ? 'No professionals match your search.' : activeTrack === 'all' ? 'The directory is being refreshed.' : `No approved ${TRACKS.find(t=>t[0]===activeTrack)?.[1]?.toLowerCase() || 'professional'} listings yet.`}</strong>
+            <p>{query.trim() || industry ? 'Clear your search or adjust the filters to see more profiles.' : activeTrack === 'all' ? 'Please check back shortly.' : 'Profiles appear here after the relevant capability evidence and listing requirements have been approved. You can still explore the general directory.'}</p>
+            {activeTrack !== 'all' && !query.trim() && !industry && <Link href="/marketplace" className={styles.view}>EXPLORE GENERAL DIRECTORY</Link>}
+            {(query.trim() || industry) && <button onClick={()=>{setQuery('');setIndustry('')}}>CLEAR SEARCH</button>}
+          </div>}
       </div>
     </section>
     </main>
