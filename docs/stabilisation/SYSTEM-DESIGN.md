@@ -114,16 +114,16 @@ No consumer may independently recalculate an authoritative domain decision.
 
 ## 5. Canonical user journey
 
-1. Visitor opens the institutional site and chooses the VALU entry point.
-2. Visitor completes the **9-question directional taster**. Its result is introductory only; it is not the official VALU Index.
-3. User creates an account and confirms their email.
-4. Confirmation returns the user to the dashboard with a valid authenticated session; no second sign-in should be required.
-5. Dashboard reads canonical journey state and clearly presents the next action.
-6. User may complete or update the professional profile, but profile completion must not erase or block assessment progress.
-7. User continues the remaining/full assessment flow. The product invariant is a **58-question full assessment**; whether the 9-question taster is represented as a subset of that total must follow the canonical assessment version and must not be guessed by the UI.
-8. Answers persist incrementally; resume returns the next unanswered question without losing saved answers.
-9. Submission is idempotent and produces one authoritative assessment result.
-10. Scoring creates the official VALU Index and PRIME point results; reports and merit/certification decisions use that result.
+1. Visitor opens the institutional site and chooses **Create account** or **Sign in**. Signup/sign-in is a concise modal or entry surface, not a complicated pre-assessment funnel.
+2. New users create an account, confirm their email and arrive at the dashboard with a valid authenticated session; no second sign-in should be required. Existing users sign in and resume their persisted journey.
+3. Dashboard reads canonical journey state and clearly presents the next action. The full VALU journey is the priority; the interface must not create competing assessment prompts.
+4. The authenticated user starts or resumes the **9-question directional taster**. Its result is introductory only and is not the official VALU Index.
+5. Taster answers and identity linkage persist. The user can leave, return and resume without losing answers.
+6. The user proceeds to the **58-question full assessment** according to the canonical assessment version and transition rules. The UI must not guess whether the taster is counted inside the 58; that relationship must be explicit in the versioned assessment contract.
+7. Answers persist incrementally; resume returns the next unanswered question without losing saved answers.
+8. Submission is idempotent and produces one authoritative assessment result.
+9. Scoring creates the official VALU Index and PRIME point results; reports and merit/certification decisions use that result.
+10. Profile setup is a distinct workflow. It must not erase, reset or block assessment progress; dashboard prioritises assessment continuation until completion.
 11. Profile capability summaries are derived from authoritative assessment/report data, not a free-text bio.
 12. Marketplace eligibility and public listing are separate decisions. Completing an assessment must not be conflated with meeting a listing threshold. A score threshold such as 35 points must not block assessment completion.
 13. Marketplace exposes one professional identity with one or more capabilities (Talent, Speaker, Facilitator), subject to the canonical eligibility/listing rules.
