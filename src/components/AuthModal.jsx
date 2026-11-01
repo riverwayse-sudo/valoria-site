@@ -66,11 +66,56 @@ export default function AuthModal({ open, onClose, initialMode = 'signin' }) {
           window.location.assign('/dashboard')
           return
         }
+        fetch('/api/welcome-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: form.email.trim(), name: form.name.trim() }),
+        }).catch(() => {})
         setNotice('Your account has been created. Check your email and confirm your address to open your Valoria dashboard.')
       } else {
         const { error: authError } = await supabase.auth.signInWithPassword({ email: form.email.trim(), password: form.password })
         if (authError) throw authError
         document.cookie = 'vi_waitlist_v2=submitted; path=/; max-age=31536000; samesite=lax'
+        const { data: { session } } = await supabase.auth.getSession()
+        const { data: { user } } = await supabase.auth.getUser()
+
+        const pendingTasterId = localStorage.getItem('pending_taster_id')
+        if (pendingTasterId && session?.access_token) {
+          const linkRes = await fetch('/api/link-taster', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+            body: JSON.stringify({
+              taster_id: pendingTasterId,
+              name: localStorage.getItem('pending_taster_name') || undefined,
+              role: localStorage.getItem('pending_taster_role') || undefined,
+            }),
+          })
+          const linkData = await linkRes.json().catch(() => ({}))
+          if (!linkRes.ok) throw new Error(linkData.error || 'Your saved VALU opening could not be linked. Please try again.')
+          localStorage.removeItem('pending_taster_id')
+          localStorage.removeItem('pending_taster_name')
+          localStorage.removeItem('pending_taster_role')
+        }
+
+        const pendingIdentityHash = sessionStorage.getItem('pending_identity_hash')
+        if (pendingIdentityHash && session?.access_token) {
+          const linkRes = await fetch('/api/link-assessment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+            body: JSON.stringify({ identity_hash: pendingIdentityHash }),
+          })
+          const linkData = await linkRes.json().catch(() => ({}))
+          if (!linkRes.ok) throw new Error(linkData.error || 'Your VALU assessment could not be linked. Please try again.')
+          sessionStorage.removeItem('pending_identity_hash')
+        }
+
+        if (session?.access_token) {
+          fetch('/api/claim-taster', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+            body: JSON.stringify({}),
+          }).catch(() => {})
+        }
         window.location.assign('/dashboard')
       }
     } catch (err) {
