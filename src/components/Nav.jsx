@@ -135,9 +135,10 @@ export default function Nav() {
         <div>{renderItem({ label: 'Dashboard', href: '/dashboard' }, 'nav-mobile-link')}</div>
         <div>{renderItem({ label: 'My Profile', href: `/profile/${user.id}` }, 'nav-mobile-link')}</div>
         <button className="nav-signout" onClick={() => { close(); signOut() }}>Sign Out</button>
-      </> : <div>{renderItem({ label: 'Sign In', href: '/login' }, 'nav-mobile-link')}</div>}
+      </> : <><button className="nav-mobile-link" onClick={() => { close(); setAuthModal('signin') }}>Sign In</button><button className="nav-mobile-link" onClick={() => { close(); setAuthModal('signup') }}>Create Account</button></>}
       <AssessmentStartLink href={cta.href} className="m-cta" onClick={close}>{cta.label}</AssessmentStartLink>
     </nav>
+    <AuthModal open={Boolean(authModal)} initialMode={authModal || 'signin'} onClose={() => setAuthModal(null)} />
   </>
 }
  
@@ -170,7 +171,8 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
         window.location.assign('/dashboard')
         return
       }
-      // Account creation now precedes pathway selection and the professional taster.\n      window.location.assign('/signup')
+      // Account creation now precedes pathway selection and the professional taster.
+      window.location.assign('/signup')
     } catch (err) {
       setError(err?.message || 'We could not open your VALU assessment. Please try again.')
       setOpening(false)
