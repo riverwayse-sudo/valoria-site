@@ -143,7 +143,7 @@ export default function Nav() {
 }
  
 // Route every signed-in VALU start through the authenticated continuation endpoint.
-// Anonymous visitors still begin at the configured public taster URL.
+// Anonymous visitors create an account before choosing a Valoria pathway.
 export function AssessmentStartLink({ href = '/valu/assessment/', className, style, children, onClick, dashboardOnly = false, ...props }) {
   const [opening, setOpening] = useState(false)
   const [error, setError] = useState('')
