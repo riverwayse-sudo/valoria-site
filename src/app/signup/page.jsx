@@ -147,7 +147,7 @@ export default function SignupPage() {
                 <li>Work towards discovery and opportunities in the marketplace</li>
               </ul>
               <a
-                href="https://assessment.valoriainstitute.com/valu/assessment/"
+                href="/valu/assessment/"
                 style={S.featureButton}
               >
                 START YOUR FREE VALU INDEX <span aria-hidden="true">→</span>
