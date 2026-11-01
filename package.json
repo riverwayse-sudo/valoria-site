@@ -9,7 +9,11 @@
     "start": "next start",
     "test": "jest",
     "design:check": "node scripts/design-check.js",
-    "excellence:check": "node scripts/excellence-check.js"
+    "excellence:check": "node scripts/excellence-check.js",
+    "preview:cloudflare": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy:cloudflare": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload:cloudflare": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@next/third-parties": "15.5.27",
@@ -20,7 +24,9 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "jest": "^30.4.2"
+    "jest": "^30.4.2",
+    "@opennextjs/cloudflare": "1.20.15",
+    "wrangler": "4.68.0"
   },
   "engines": {
     "node": "24.x"
