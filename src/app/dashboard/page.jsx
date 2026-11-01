@@ -115,6 +115,8 @@ export default function DashboardPage() {
   const [capabilities, setCapabilities] = useState([])
   const [assessment, setAssessment] = useState(null)
   const [assessmentAccess, setAssessmentAccess] = useState(null)
+  const [pathwaySaving, setPathwaySaving] = useState(false)
+  const [pathwayError, setPathwayError] = useState('')
 
   useEffect(() => {
     async function load() {
@@ -223,6 +225,40 @@ export default function DashboardPage() {
     load()
   }, [])
 
+  async function choosePathway(pathway) {
+    if (!user || pathwaySaving) return
+    setPathwaySaving(true)
+    setPathwayError('')
+    try {
+      const { error: metadataError } = await supabase.auth.updateUser({
+        data: { ...user.user_metadata, display_name: user.user_metadata?.display_name || user.user_metadata?.full_name || user.email?.split('@')[0], user_type: pathway },
+      })
+      if (metadataError) throw metadataError
+
+      if (pathway === 'professional') {
+        window.location.assign('/valu/assessment/')
+        return
+      }
+
+      const { data: organisationProfile, error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          display_name: user.user_metadata?.display_name || user.user_metadata?.full_name || user.email?.split('@')[0],
+          user_type: pathway,
+        }, { onConflict: 'id' })
+        .select('*')
+        .single()
+      if (profileError) throw profileError
+      setProfile(organisationProfile)
+      setIsSupply(false)
+    } catch (error) {
+      setPathwayError(error?.message || 'We could not save your pathway. Please try again.')
+    } finally {
+      setPathwaySaving(false)
+    }
+  }
+
   function dismissWelcome() {
     setShowWelcome(false)
     if (typeof window !== 'undefined' && user) {
@@ -259,10 +295,36 @@ export default function DashboardPage() {
   )
 
   if (!profile) return (
-    <div style={{ minHeight:'100vh', background: DARK, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'16px', fontFamily:'var(--font,Raleway,sans-serif)', color: PARCH }}>
-      <p style={{ fontSize:'14px', fontWeight:300, color: DIM }}>No profile found yet.</p>
-      <Link href="/profile/setup" style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>COMPLETE YOUR PROFILE</Link>
-    </div>
+    <main style={{ minHeight:'100vh', background:DARK, color:PARCH, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'32px 20px', fontFamily:'var(--font,Raleway,sans-serif)' }}>
+      <section style={{ width:'100%', maxWidth:760 }}>
+        <div style={{ color:GOLD, fontSize:10, fontWeight:800, letterSpacing:'.2em', marginBottom:18 }}>VALORIA INSTITUTE</div>
+        <h1 style={{ fontSize:'clamp(30px,5vw,46px)', lineHeight:1.12, margin:'0 0 14px' }}>Welcome to Valoria.</h1>
+        <p style={{ color:DIM, fontSize:15, lineHeight:1.8, maxWidth:580, margin:'0 0 30px' }}>Your account is ready. Choose how you want to use Valoria. You can build your professional standing or connect with assessed talent and expertise.</p>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(210px,1fr))', gap:14 }}>
+          <button disabled={pathwaySaving} onClick={() => choosePathway('professional')} style={{ textAlign:'left', padding:24, background:'rgba(201,168,76,.09)', border:'1px solid rgba(201,168,76,.38)', borderRadius:12, color:PARCH, cursor:'pointer' }}>
+            <span style={{ display:'block', color:GOLD, fontSize:10, fontWeight:800, letterSpacing:'.14em', marginBottom:12 }}>PROFESSIONAL PATHWAY</span>
+            <strong style={{ display:'block', fontSize:20, marginBottom:8 }}>I’m a professional</strong>
+            <span style={{ display:'block', color:DIM, fontSize:13, lineHeight:1.7 }}>Start the VALU Index, build your professional profile and work towards marketplace opportunities.</span>
+            <span style={{ display:'block', color:GOLD, fontSize:11, fontWeight:800, marginTop:20 }}>CONTINUE →</span>
+          </button>
+          <button disabled={pathwaySaving} onClick={() => choosePathway('employer')} style={{ textAlign:'left', padding:24, background:'rgba(255,255,255,.025)', border:'1px solid rgba(247,244,238,.14)', borderRadius:12, color:PARCH, cursor:'pointer' }}>
+            <span style={{ display:'block', color:GOLD, fontSize:10, fontWeight:800, letterSpacing:'.14em', marginBottom:12 }}>ATB CONNECT</span>
+            <strong style={{ display:'block', fontSize:20, marginBottom:8 }}>I’m an employer</strong>
+            <span style={{ display:'block', color:DIM, fontSize:13, lineHeight:1.7 }}>Discover assessed professionals and connect with the talent your organisation needs.</span>
+            <span style={{ display:'block', color:GOLD, fontSize:11, fontWeight:800, marginTop:20 }}>CONTINUE →</span>
+          </button>
+          <button disabled={pathwaySaving} onClick={() => choosePathway('organiser')} style={{ textAlign:'left', padding:24, background:'rgba(255,255,255,.025)', border:'1px solid rgba(247,244,238,.14)', borderRadius:12, color:PARCH, cursor:'pointer' }}>
+            <span style={{ display:'block', color:GOLD, fontSize:10, fontWeight:800, letterSpacing:'.14em', marginBottom:12 }}>ATB SPOTLIGHT</span>
+            <strong style={{ display:'block', fontSize:20, marginBottom:8 }}>I organise events</strong>
+            <span style={{ display:'block', color:DIM, fontSize:13, lineHeight:1.7 }}>Find speakers and facilitators and submit briefs for your events.</span>
+            <span style={{ display:'block', color:GOLD, fontSize:11, fontWeight:800, marginTop:20 }}>CONTINUE →</span>
+          </button>
+        </div>
+        {pathwayError && <p role="alert" style={{ color:'#F09595', fontSize:13, marginTop:18 }}>{pathwayError}</p>}
+        {pathwaySaving && <p role="status" style={{ color:DIM, fontSize:12, marginTop:18 }}>Saving your pathway…</p>}
+        <button onClick={() => supabase.auth.signOut().then(() => window.location.assign('/'))} style={{ marginTop:26, background:'transparent', border:'1px solid rgba(201,168,76,.25)', color:DIM, borderRadius:999, padding:'10px 18px', cursor:'pointer' }}>Sign out</button>
+      </section>
+    </main>
   )
 
   const p           = profile
