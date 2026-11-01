@@ -1,0 +1,32 @@
+name: Valoria scheduled jobs
+
+on:
+  schedule:
+    - cron: "0 7 * * *"
+    - cron: "0 8 * * *"
+    - cron: "0 9 * * *"
+
+jobs:
+  scheduled-jobs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run daily Valoria jobs
+        env:
+          SITE_WORKER_URL: ${{ secrets.SITE_WORKER_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          set -euo pipefail
+          test -n "$SITE_WORKER_URL"
+          test -n "$CRON_SECRET"
+          case "$SCHEDULE" in
+            "0 7 * * *") path="/api/cron/reconciliation-health" ;;
+            "0 8 * * *") path="/api/cron/valu-reminders" ;;
+            "0 9 * * *") path="/api/cron/event-registration-sync" ;;
+            *) echo "Unknown schedule"; exit 1 ;;
+          esac
+          status=$(curl --silent --show-error --output response.json --write-out "%{http_code}" \\
+            --request GET "$SITE_WORKER_URL$path" \\
+            --header "Authorization: Bearer $CRON_SECRET")
+          cat response.json
+          test "$status" -ge 200 && test "$status" -lt 300
