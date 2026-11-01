@@ -170,7 +170,7 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
         window.location.assign('/dashboard')
         return
       }
-      window.location.assign(href)
+      // Account creation now precedes pathway selection and the professional taster.\n      window.location.assign('/signup')
     } catch (err) {
       setError(err?.message || 'We could not open your VALU assessment. Please try again.')
       setOpening(false)
