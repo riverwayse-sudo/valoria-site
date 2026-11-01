@@ -109,6 +109,18 @@ describe('journey integrity contract', () => {
     expect(source).toContain('sync_professional_listing_status')
   })
 
+  test('Cloudflare Workers use production identity configuration and receive runtime secrets', () => {
+    const handoff = read('src/app/api/valu-handoff/route.js')
+    const wrangler = read('wrangler.jsonc')
+    const workflow = read('.github/workflows/cloudflare-opennext.yml')
+    expect(handoff).toContain("process.env.CF_WORKERS === '1'")
+    expect(wrangler).toContain('nodejs_compat_populate_process_env')
+    expect(wrangler).toContain('"CF_WORKERS": "1"')
+    expect(workflow).toContain('Configure Cloudflare Worker runtime secrets')
+    expect(workflow).toContain('secret put "$key" --name valoria-institute-site')
+    expect(workflow).toContain('SUPABASE_SERVICE_ROLE_KEY')
+  })
+
   test('full VALU launch is a one-time dashboard-only handoff', () => {
     const handoff = read('src/app/api/valu-handoff/route.js')
     const continuation = read('src/app/journey/continue/route.js')
