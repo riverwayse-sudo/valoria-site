@@ -236,7 +236,7 @@ export default function DashboardPage() {
       if (metadataError) throw metadataError
 
       if (pathway === 'professional') {
-        window.location.assign('/valu/assessment/')
+        window.location.assign('/assessment/start')
         return
       }
 
