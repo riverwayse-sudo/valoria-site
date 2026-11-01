@@ -113,7 +113,8 @@ function Profile({p}) {
       <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
       <div className={styles.identityCopy}>
         <small>ATB PROFILE ID</small>
-        <strong>{profileId}</strong>
+        <strong className={styles.profileName}>{displayText(p.full_name) || 'Valoria Professional'}</strong>
+        <span className={styles.profileId}>{profileId}</span>
         <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : '✓ VALORIA ASSESSED'}</span>
       </div>
     </div>
@@ -138,7 +139,11 @@ function Profile({p}) {
           </span>
         : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>FULL ASSESSMENT<br/>PENDING</span>}
     </div>
-    {capabilityBadges.length > 0 && <div className={styles.capabilities}>{capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)}</div>}
+    <div className={styles.capabilities}>
+      {capabilityBadges.length > 0
+        ? capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)
+        : <span className={styles.capabilityBadge}><strong>GENERAL DIRECTORY</strong><small>Capability approval pending</small></span>}
+    </div>
     <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE</Link>
   </article>
 }
