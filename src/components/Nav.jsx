@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import NotificationBell from './NotificationBell'
+import AuthModal from './AuthModal'
 import { NAVIGATION, isPathActive } from '@/config/navigation'
 
 export default function Nav() {
@@ -15,6 +16,7 @@ export default function Nav() {
   const [user, setUser] = useState(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [accountType, setAccountType] = useState(null)
+  const [authModal, setAuthModal] = useState(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -114,7 +116,7 @@ export default function Nav() {
         ))}
 
         {authChecked && user && <li className="nav-account"><Link href="/dashboard" className={`nav-link${isPathActive(pathname, '/dashboard') ? ' active' : ''}`}>Dashboard</Link><NotificationBell userId={user.id} /><button onClick={signOut} className="nav-link nav-signout">Sign Out</button></li>}
-        {authChecked && !user && <li><Link href="/login" className={`nav-link${isPathActive(pathname, '/login') ? ' active' : ''}`}>Sign In</Link></li>}
+        {authChecked && !user && <li className="nav-account-actions"><button type="button" className="nav-link" onClick={() => setAuthModal('signin')}>Sign In</button><button type="button" className="nav-cta" onClick={() => setAuthModal('signup')}>Create Account</button></li>}
         <li><AssessmentStartLink href={cta.href} className="nav-cta">{cta.label}</AssessmentStartLink></li>
       </ul>
 
