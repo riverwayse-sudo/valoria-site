@@ -1,0 +1,40 @@
+name: Deploy Valoria Website to Cloudflare Workers
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [migration/cloudflare-opennext]
+    paths:
+      - "app/**"
+      - "src/**"
+      - "public/**"
+      - "next.config.js"
+      - "package.json"
+      - "package-lock.json"
+      - "open-next.config.ts"
+      - "wrangler.jsonc"
+      - ".github/workflows/cloudflare-opennext.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Install dependencies and synchronize lockfile
+        run: npm install
+      - name: Build and deploy with OpenNext
+        run: npm run deploy:cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          VALU_UPSTREAM_ORIGIN: ${{ secrets.VALU_UPSTREAM_ORIGIN }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
