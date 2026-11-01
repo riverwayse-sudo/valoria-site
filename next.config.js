@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const productionVALUOrigin = 'https://assessment.valoriainstitute.com'
-const isCloudflareProduction = process.env.CF_PAGES === '1' && process.env.CF_PAGES_BRANCH === 'main'
+const isCloudflareProduction = (process.env.CF_PAGES === '1' && process.env.CF_PAGES_BRANCH === 'main') || process.env.CF_WORKERS === '1'
 const isProduction = process.env.VERCEL_ENV === 'production' || isCloudflareProduction
-const isPreview = process.env.VERCEL_ENV === 'preview' || (process.env.CF_PAGES === '1' && !isCloudflareProduction)
+const isPreview = process.env.VERCEL_ENV === 'preview' || (process.env.CF_PAGES === '1' && !isCloudflareProduction) || (process.env.CF_WORKERS === '1' && !isCloudflareProduction)
 const configuredVALUOrigin = isProduction
   ? process.env.VALU_UPSTREAM_ORIGIN
   : process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN
