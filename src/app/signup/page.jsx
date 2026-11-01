@@ -128,47 +128,57 @@ export default function SignupPage() {
         {/* STEP 1 — account type */}
         {step === 1 && (
           <>
-            <h1 style={S.title}>
-              Who are<br /><em style={{ color: GOLD, fontStyle: 'italic' }}>you here for?</em>
+            <h1 style={{ ...S.title, fontSize: 'clamp(32px,5vw,48px)' }}>
+              Your next opportunity<br /><em style={{ color: GOLD, fontStyle: 'italic' }}>starts with being seen.</em>
             </h1>
+            <p style={{ ...S.sub, marginBottom: '26px', maxWidth: '440px' }}>
+              Valoria connects proven capability with meaningful opportunity. Build a trusted professional profile, discover exceptional talent, or bring the right voices into your next event.
+            </p>
 
-            {/* Talent/speaker redirect notice */}
-            <div style={S.noticeBox}>
-              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: GOLD, marginBottom: '8px' }}>
-                TALENT & SPEAKERS
-              </div>
-              <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.6, margin: '0 0 12px' }}>
-                If you're a professional or speaker, your account is created through the VALU Index — the assessment is the entry point, not a separate signup.
+            <section style={S.professionalBox} aria-labelledby="professional-heading">
+              <div style={S.featureTag}>FOR PROFESSIONALS, TALENT & SPEAKERS</div>
+              <h2 id="professional-heading" style={S.featureTitle}>Make your value visible.</h2>
+              <p style={S.featureCopy}>
+                Take the free VALU Index to understand and evidence your strengths across Presence, Relationships, Intelligence, Mastery and Enterprise.
               </p>
+              <ul style={S.benefitList}>
+                <li>Receive a structured view of your professional capabilities</li>
+                <li>Build your Valoria profile as you progress</li>
+                <li>Work towards discovery and opportunities in the marketplace</li>
+              </ul>
               <a
-                href="https://valoriainstitute.com/valu/assessment/"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ display: 'inline-block', padding: '10px 20px', background: GOLD, color: MIDNIGHT, fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', borderRadius: '999px', textDecoration: 'none' }}
+                href="https://assessment.valoriainstitute.com/valu/assessment/"
+                style={S.featureButton}
               >
-                TAKE THE VALU INDEX — FREE →
+                START YOUR FREE VALU INDEX <span aria-hidden="true">→</span>
               </a>
+              <p style={S.microcopy}>No separate professional signup is needed. Your account is created as part of the journey, after the opening questions.</p>
+            </section>
+
+            <div style={S.audienceDivider}>
+              <span>OR JOIN AS AN ORGANISATION</span>
             </div>
-
-            <div style={{ height: '1px', background: 'rgba(201,168,76,.12)', margin: '28px 0' }} />
-
-            <p style={{ ...S.sub, marginBottom: '20px' }}>Employers and event organisers create accounts directly here.</p>
+            <p style={{ ...S.sub, marginBottom: '16px' }}>
+              Create an account to connect with assessed professionals or source speakers and facilitators for your events.
+            </p>
 
             <div style={S.typeGrid}>
               {BUYER_TYPES.map(t => (
                 <button
                   key={t.id}
                   onClick={() => setUserType(t.id)}
+                  aria-pressed={userType === t.id}
                   style={{
                     ...S.typeCard,
-                    borderColor: userType === t.id ? GOLD : 'rgba(201,168,76,.15)',
-                    background: userType === t.id ? 'rgba(201,168,76,.06)' : 'rgba(255,255,255,.02)',
+                    borderColor: userType === t.id ? GOLD : 'rgba(201,168,76,.2)',
+                    background: userType === t.id ? 'rgba(201,168,76,.09)' : 'rgba(255,255,255,.025)',
                   }}
                 >
                   <span style={S.typeIcon}>{t.icon}</span>
                   <div style={S.typeLabel}>{t.label}</div>
                   <div style={S.typeSub}>{t.sub}</div>
                   <div style={S.typeDesc}>{t.desc}</div>
+                  <span style={S.cardAction}>{userType === t.id ? 'SELECTED ✓' : 'CHOOSE THIS PATH →'}</span>
                 </button>
               ))}
             </div>
@@ -176,10 +186,11 @@ export default function SignupPage() {
             <button
               onClick={() => setStep(2)}
               disabled={!userType}
-              style={{ ...S.btnGold, opacity: userType ? 1 : 0.4, cursor: userType ? 'pointer' : 'not-allowed', border: 'none' }}
+              style={{ ...S.btnGold, opacity: userType ? 1 : 0.42, cursor: userType ? 'pointer' : 'not-allowed', border: 'none' }}
             >
-              CONTINUE →
+              CREATE MY ORGANISATION ACCOUNT →
             </button>
+            <p style={S.microcopy}>Already part of Valoria? <Link href="/login" style={{ color: GOLD }}>Sign in to continue.</Link></p>
           </>
         )}
 
@@ -259,7 +270,15 @@ const S = {
   eyebrowText: { fontSize: '10px', fontWeight: 700, letterSpacing: '.16em', color: GOLD },
   title: { fontSize: 'clamp(28px,4vw,42px)', fontWeight: 200, color: PARCHMENT, lineHeight: 1.1, marginBottom: '16px', letterSpacing: '-.02em' },
   sub: { fontSize: '14px', fontWeight: 300, color: DIM, lineHeight: 1.6 },
-  noticeBox: { background: 'rgba(201,168,76,.05)', border: '1px solid rgba(201,168,76,.15)', borderRadius: '10px', padding: '20px' },
+  professionalBox: { background: 'linear-gradient(145deg, rgba(201,168,76,.12), rgba(26,26,46,.82) 58%)', border: '1px solid rgba(201,168,76,.38)', borderRadius: '12px', padding: 'clamp(22px,4vw,30px)', marginBottom: '28px', boxShadow: '0 18px 48px rgba(0,0,0,.18)' },
+  featureTag: { fontSize: '10px', fontWeight: 800, letterSpacing: '.14em', color: GOLD, marginBottom: '12px' },
+  featureTitle: { color: PARCHMENT, fontSize: 'clamp(22px,3vw,30px)', fontWeight: 600, margin: '0 0 10px', letterSpacing: '-.02em' },
+  featureCopy: { fontSize: '14px', color: 'rgba(247,244,238,.78)', lineHeight: 1.7, margin: '0 0 14px' },
+  benefitList: { color: 'rgba(247,244,238,.72)', fontSize: '12px', lineHeight: 1.8, paddingLeft: '18px', margin: '0 0 20px' },
+  featureButton: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '14px 22px', background: GOLD, color: MIDNIGHT, fontSize: '11px', fontWeight: 800, letterSpacing: '.09em', borderRadius: '999px', textDecoration: 'none', maxWidth: '100%' },
+  microcopy: { color: 'rgba(247,244,238,.42)', fontSize: '11px', lineHeight: 1.6, margin: '12px 0 0' },
+  audienceDivider: { display: 'flex', alignItems: 'center', gap: '12px', color: 'rgba(247,244,238,.42)', fontSize: '9px', fontWeight: 800, letterSpacing: '.15em', margin: '26px 0 14px' },
+  cardAction: { display: 'block', marginTop: '14px', color: GOLD, fontSize: '9px', fontWeight: 800, letterSpacing: '.1em' },
   typeGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' },
   typeCard: { padding: '20px', borderRadius: '8px', border: '1px solid', textAlign: 'left', cursor: 'pointer', transition: 'all .2s', fontFamily: 'Raleway' },
   typeIcon: { fontSize: '20px', color: GOLD, display: 'block', marginBottom: '8px' },
