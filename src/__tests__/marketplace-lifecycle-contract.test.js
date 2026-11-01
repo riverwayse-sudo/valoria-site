@@ -384,4 +384,17 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(migration).toContain('foreach roster_professional_id in array professional_ids')
   })
 
+
+  test('marketplace cards render the member name and a secondary ATB identifier', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    const styles = read('src/components/MarketplaceDirectory.module.css')
+    expect(directory).toContain('displayText(p.full_name)')
+    expect(directory).toContain('className={styles.profileName}')
+    expect(directory).toContain('className={styles.profileId}')
+    expect(directory).toContain('GENERAL DIRECTORY')
+    expect(directory).toContain('Capability approval pending')
+    expect(styles).toContain('.profileName')
+    expect(styles).toContain('.profileId')
+  })
+
 })
