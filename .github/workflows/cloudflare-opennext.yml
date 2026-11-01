@@ -15,6 +15,9 @@ on:
       - "wrangler.jsonc"
       - ".github/workflows/cloudflare-opennext.yml"
 
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -26,6 +29,15 @@ jobs:
           cache: npm
       - name: Install dependencies and synchronize lockfile
         run: npm install
+      - name: Commit synchronized dependency lockfile
+        run: |
+          if ! git diff --quiet -- package-lock.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add package-lock.json
+            git commit -m "Sync package lockfile for Cloudflare adapter"
+            git push
+          fi
       - name: Build and deploy with OpenNext
         run: npm run deploy:cloudflare
         env:
