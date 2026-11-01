@@ -40,7 +40,15 @@ describe('account-first authentication journey', () => {
     expect(dashboard).toContain("choosePathway('organiser')")
     expect(dashboard).toContain("supabase.auth.updateUser")
     expect(dashboard).toContain(".from('profiles')")
-    expect(dashboard).toContain("window.location.assign('/valu/assessment/')")
+    expect(dashboard).toContain("window.location.assign('/assessment/start')")
+  })
+
+  test('professional assessment entry passes the active session through tab-scoped storage, never a URL', () => {
+    const start = read('src/app/assessment/start/page.jsx')
+    expect(start).toContain('supabase.auth.getSession()')
+    expect(start).toContain("sessionStorage.setItem('valoria-assessment-auth'")
+    expect(start).toContain("window.location.replace('/valu/assessment/')")
+    expect(start).not.toContain('access_token=')
   })
 
   test('email confirmation keeps the account signed in and returns to dashboard', () => {
