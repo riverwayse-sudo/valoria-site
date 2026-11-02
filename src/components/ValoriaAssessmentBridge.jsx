@@ -21,7 +21,7 @@ export default function ValoriaAssessmentBridge() {
       try {
         const { data: { session } } = await supabase.auth.getSession()
         if (!session?.access_token) {
-          router.replace('/login?returnTo=%2Fdashboard')
+          router.replace('/login?returnTo=%2Fassessment%2Fbridge')
           return
         }
 
@@ -41,11 +41,11 @@ export default function ValoriaAssessmentBridge() {
 
         if (cancelled) return
         setMessage('Your saved responses are ready. Taking you to your next question…')
-        // Keep the short introduction visible long enough to read, while the
+        // Keep the introduction visible long enough to read, while the
         // one-time handoff token remains comfortably inside its 60-second TTL.
         redirectTimer = window.setTimeout(() => {
           if (!cancelled) window.location.assign(data.url)
-        }, 3200)
+        }, 5800)
       } catch (cause) {
         if (!cancelled) setError(cause?.message || 'Your assessment could not be opened. Please try again.')
       }
