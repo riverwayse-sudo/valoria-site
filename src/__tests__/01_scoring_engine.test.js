@@ -76,14 +76,21 @@ describe("computeWeightedIndex", () => {
 });
 
 describe("getDesignation", () => {
-  const cases = [[100,"Elite"],[90,"Elite"],[89,"Distinguished"],[75,"Distinguished"],[74,"Proficient"],[55,"Proficient"],[54,"Standard"],[35,"Standard"]];
-  test.each(cases)("score %i → %s", (score, expectedName) => expect(getDesignation(score).name).toBe(expectedName));
-  test("official merit band boundaries are applied", () => {
-    expect(getDesignation(90).name).toBe("Elite"); expect(getDesignation(89).name).toBe("Distinguished");
-    expect(getDesignation(75).name).toBe("Distinguished"); expect(getDesignation(74).name).toBe("Proficient");
-    expect(getDesignation(55).name).toBe("Proficient"); expect(getDesignation(54).name).toBe("Standard");
+  const cases = [[100,"Force to Align With"],[90,"Force to Align With"],[89,"Force to Align With"],[80,"Force to Align With"],[79,"Emerging Force"],[65,"Emerging Force"],[64,"Developing Professional"],[50,"Developing Professional"],[49,"Building Foundations"],[35,"Building Foundations"]];
+  test.each(cases)("score %i points → %s", (score, expected) => expect(getDesignation(score).name).toBe(expected));
+  test("scores below 35 points have no merit designation", () => {
+    expect(getDesignation(34)).toBeNull();
+    expect(getDesignation(0)).toBeNull();
   });
-  test("returns object with min property", () => expect(getDesignation(72)).toEqual(expect.objectContaining({ min: expect.any(Number), name: expect.any(String) })));
+  test("official merit band boundaries are applied", () => {
+    expect(getDesignation(80).name).toBe("Force to Align With");
+    expect(getDesignation(79).name).toBe("Emerging Force");
+    expect(getDesignation(65).name).toBe("Emerging Force");
+    expect(getDesignation(64).name).toBe("Developing Professional");
+    expect(getDesignation(50).name).toBe("Developing Professional");
+    expect(getDesignation(49).name).toBe("Building Foundations");
+    expect(getDesignation(35).name).toBe("Building Foundations");
+  });
 });
 
 describe("getPathway", () => {
