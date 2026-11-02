@@ -159,3 +159,18 @@
 .capabilities .capabilityBadge{
   max-width:100%;
 }
+
+
+/* Keep the official VALU Index beside the avatar and ATB identity. */
+.identity{grid-template-columns:58px minmax(0,1fr) auto;padding-right:0;align-items:center}
+.identityScore{min-width:58px;padding-left:10px;border-left:1px solid #D4C9A8;text-align:right;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:5px}
+.identityScore small{font-family:var(--font);font-size:7px;letter-spacing:.12em;font-weight:800;color:#6F6A60;white-space:nowrap}
+.identityScore strong{font-family:var(--font);font-size:22px;line-height:1;font-weight:900;color:#1A1A2E;white-space:nowrap}
+.identityScore strong span{font-size:7px;letter-spacing:.08em}
+.signalRow{justify-content:flex-start}
+@media(max-width:520px){
+  .identity{grid-template-columns:52px minmax(0,1fr) auto;gap:9px;height:auto;min-height:66px;max-height:none;overflow:visible}
+  .identityScore{min-width:46px;padding-left:7px}
+  .identityScore strong{font-size:17px}
+  .identityScore strong span{font-size:6px}
+}
