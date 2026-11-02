@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,fee_range,salary_expectation,availability_status,assessment_access'
+const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,fee_range,salary_expectation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
 
 function normalizeTrack(value) {
@@ -18,6 +18,7 @@ function dedupeProfessionals(rows) {
         id: row.professional_id,
         capabilities: [],
         tracks: [],
+        selectedCapabilities: [],
       })
     }
     const target = map.get(row.professional_id)
@@ -26,8 +27,11 @@ function dedupeProfessionals(rows) {
       row.capability,
       row.track,
     ].map(normalizeTrack).filter(Boolean)
+    const selectedValues = (Array.isArray(row.selected_capabilities) ? row.selected_capabilities : [])
+      .map(normalizeTrack).filter(Boolean)
     target.capabilities = [...new Set([...target.capabilities, ...values])]
     target.tracks = target.capabilities
+    target.selectedCapabilities = [...new Set([...target.selectedCapabilities, ...selectedValues])]
   }
   return [...map.values()]
 }
