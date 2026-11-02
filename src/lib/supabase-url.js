@@ -16,8 +16,8 @@ export function normalizeSupabaseProjectUrl(value) {
   }
 
   parsed.pathname = parsed.pathname
-    .replace(/\\/rest\\/v1\\/?$/i, '')
-    .replace(/\\/+$/, '')
+    .replace(/\/rest\/v1\/?$/i, '')
+    .replace(/\/+$/, '')
 
-  return parsed.toString().replace(/\\/$/, '')
+  return parsed.toString().replace(/\/$/, '')
 }
