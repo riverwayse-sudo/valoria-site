@@ -1,4 +1,26 @@
 /** @type {import('next').NextConfig} */
+function normalizeSupabaseBuildUrl(value) {
+  if (!value) return undefined
+  const url = new URL(value)
+  const isLocalDevelopment = url.protocol === 'http:' &&
+    ['localhost', '127.0.0.1'].includes(url.hostname)
+  if (url.protocol !== 'https:' && !isLocalDevelopment) {
+    throw new Error('Supabase project URL must use HTTPS outside local development.')
+  }
+  if (url.username || url.password || url.search || url.hash) {
+    throw new Error('Supabase project URL must not include credentials, query parameters, or a fragment.')
+  }
+  url.pathname = url.pathname.replace(/\/rest\/v1\/?$/i, '').replace(/\/+$/, '')
+  return url.toString().replace(/\/$/, '')
+}
+
+const publicSupabaseUrl = normalizeSupabaseBuildUrl(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
+)
+const serverSupabaseUrl = normalizeSupabaseBuildUrl(
+  process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
+)
+
 const productionVALUOrigin = 'https://assessment.valoriainstitute.com'
 const isCloudflarePreview = process.env.CF_WORKERS_PREVIEW === '1'
 const isCloudflareProduction = process.env.CF_WORKERS === '1' && !isCloudflarePreview
@@ -31,6 +53,13 @@ if (isPreview && valuOrigin) {
 }
 
 const nextConfig = {
+  // Next.js inlines these values into server and browser bundles. Normalize
+  // both here so every Supabase client receives the project root, even if a
+  // Cloudflare build variable accidentally contains the PostgREST /rest/v1 path.
+  env: {
+    ...(publicSupabaseUrl ? { NEXT_PUBLIC_SUPABASE_URL: publicSupabaseUrl } : {}),
+    ...(serverSupabaseUrl ? { SUPABASE_URL: serverSupabaseUrl } : {}),
+  },
   async rewrites() {
     if (!valuOrigin) return []
     const origin = valuOrigin
