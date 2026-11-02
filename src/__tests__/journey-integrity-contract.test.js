@@ -416,7 +416,6 @@ describe('journey integrity contract', () => {
     expect(nav).toContain("fetch('/api/valu-handoff'")
     expect(nav).toContain('window.location.assign(data.url)')
     expect(nav).not.toContain("window.location.assign('/assessment/bridge')")
-    expect(nav).not.toContain("fetch('/api/valu-handoff'")
     expect(nav).not.toContain('pending_taster_id')
     expect(nav).not.toContain("continuation.searchParams.set('stage', 'assess')")
     expect(start).toContain('AssessmentStartLink')
