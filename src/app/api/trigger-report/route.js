@@ -15,19 +15,7 @@
 // Fire-and-forget by design from the caller's side — errors here just mean
 // the 15-min sweep picks it up instead, so we don't want the login flow to
 // hang or fail waiting on this.
-
-function getAssessmentOrigin() {
-  const configured = process.env.VALU_UPSTREAM_ORIGIN?.trim()
-  if (process.env.VERCEL_ENV === 'production') return configured || 'https://assessment.valoriainstitute.com'
-  if (!configured) return null
-  try {
-    const url = new URL(configured)
-    if (!['http:', 'https:'].includes(url.protocol) || url.hostname === 'assessment.valoriainstitute.com') return null
-    return url.origin
-  } catch {
-    return null
-  }
-}
+import { getValuAssessmentOrigin } from '@/lib/valu-origin'
 
 export async function POST(request) {
   let identity_hash
@@ -42,7 +30,7 @@ export async function POST(request) {
     return Response.json({ ok: false, error: 'identity_hash is required' }, { status: 400 })
   }
 
-  const assessmentOrigin = getAssessmentOrigin()
+  const assessmentOrigin = getValuAssessmentOrigin(process.env)
   if (!assessmentOrigin) {
     return Response.json({ ok: false, error: 'The assessment preview origin is not configured for this environment.' }, { status: 503 })
   }
