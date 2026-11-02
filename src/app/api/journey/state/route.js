@@ -16,7 +16,7 @@ export async function GET(request) {
   // requests. Cloudflare/OpenNext cookie adapters can differ from the browser
   // storage adapter; relying on cookies alone caused valid sessions to appear
   // anonymous during journey-state reads.
-  const bearer = (request.headers.get('authorization') || '').match(/^Bearer\\s+(.+)$/i)?.[1]?.trim()
+  const bearer = (request.headers.get('authorization') || '').match(/^Bearer\s+(.+)$/i)?.[1]?.trim()
   let user = null
 
   if (bearer) {
