@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js'
 const HANDOFF_TTL_SECONDS = 60
 
 function isProductionRuntime() {
+  if (process.env.VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1') return false
   if (process.env.VERCEL_ENV) return process.env.VERCEL_ENV === 'production'
   // OpenNext runs as a Cloudflare Worker, not a Cloudflare Pages function.
   // CF_WORKERS is an explicit non-secret Wrangler var on the production Worker.
