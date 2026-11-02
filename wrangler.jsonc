@@ -14,5 +14,9 @@
   "observability": {
     "enabled": true
   },
-  "previews": {}
+  "previews": {
+    "vars": {
+      "VALU_UPSTREAM_ORIGIN": "https://assessment.valoriainstitute.com"
+    }
+  }
 }
