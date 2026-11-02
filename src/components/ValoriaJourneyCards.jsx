@@ -54,6 +54,8 @@ function buildCards(state) {
     let action = complete ? 'VIEW' : current ? 'CONTINUE' : 'LOCKED'
 
     if (m.key === 'assess' && complete) href='/dashboard'
+    // An incomplete VALU milestone must always enter the secure assessment
+    // handoff. Never send a participant back to the dashboard as the action.
     if (m.key === 'report' && complete) href='/report'
     if (m.key === 'profile' && complete) href='/profile/edit'
     if (m.key === 'capability' && complete) href='/profile/passport'
