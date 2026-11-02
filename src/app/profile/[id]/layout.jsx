@@ -13,14 +13,20 @@ function getInitials(name) {
 }
 
 export async function generateMetadata({ params }) {
-  const { id } = params
+  const { id } = await params
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)
+  const isAtbId = /^ATB-[A-Z0-9-]{4,40}$/i.test(id)
 
-  // Public professional profiles use the authoritative professional profile source.
-  const { data: profile } = await supabase
-    .from('professional_profiles')
-    .select('display_name, headline, bio, photo_url, active_tracks')
-    .eq('id', id)
-    .maybeSingle()
+  // Match the public profile page: cards publish ATB IDs, while legacy links
+  // may still contain the underlying UUID. Never compare an ATB ID to a UUID
+  // column; that produces PostgREST 400s and breaks metadata resolution.
+  const { data: profile } = (isUuid || isAtbId)
+    ? await supabase
+        .from('professional_profiles')
+        .select('display_name, headline, bio, photo_url, active_tracks')
+        .eq(isUuid ? 'id' : 'atb_id', id)
+        .maybeSingle()
+    : { data: null }
 
   if (profile) {
     const name = getInitials(profile.display_name)
