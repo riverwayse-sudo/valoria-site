@@ -4,18 +4,19 @@ Status labels: **Pending**, **In progress**, **Blocked**, **Verified**. Do not m
 
 ## Phase 0 — Approval and source validation
 
-- [ ] **Blocked:** Obtain owner approval of the 14 November event record.
-- [ ] Confirm exact title, description, speaker/facilitator, portrait role, date, start/end time, format, duration, registration terms and any capacity/fee.
-- [ ] Reconcile the approved flyer against `professionalStandardSeries.js`.
-- [ ] Keep Session 04 unavailable for promotion while `dateApproved` is false.
+- [x] Retrieve the 28–29 October owner-approved event details: Professional Standard Series · Enterprise; “Influence Without Authority: The Real Currency of Organisational Power”; 14 November 2026; 10:00 AM WAT; guest speaker Yinlayefa Thompson, SPHRi; host Temitayo Adetokunbo.
+- [x] Update Session 04 in `professionalStandardSeries.js` to those confirmed details and set `dateApproved: true`.
+- [x] Remove the unconfirmed 90-minute/end-time and virtual-format claims from the poster, registration modal and confirmation email.
+- [ ] Store the supplied Temitayo host portrait in the repository's public asset directory and wire it only to the host presentation.
+- [ ] Do not add a description, agenda, venue/platform, duration or event end time unless the owner supplies it.
 - [ ] Approve registration privacy/consent wording and marketing consent wording separately.
 - [ ] Approve campaign copy, sender identity, audience and schedule.
 
 ## Phase 1 — Existing implementation audit
 
 - [x] Inspect `POST /api/session-registration` route and its persistence target. It upserts `professional_standard_event_registrations` on `session_id,email` using the Supabase service role.
-- [ ] Inspect `src/lib/eventRegistrationBrevo.js` and determine exactly when/how Brevo is called.
-- [ ] Inspect database schema, constraints, triggers and policies used by registration.
+- [x] Inspect `src/lib/eventRegistrationBrevo.js`: it upserts the contact to the configured event/master list and sends the registration confirmation through Brevo SMTP. The helper now uses the confirmed event date/time and guest/host names, with no unsupported virtual/duration claim.
+- [x] Inspect live registration schema and lead-capture trigger. Registration records are persisted in `professional_standard_event_registrations`; lead capture is mirrored to `lead_captures` by trigger.
 - [x] Confirm duplicate-registration/idempotency behaviour. Database upsert uses the `session_id,email` conflict key; verify the matching unique constraint in the deployed database.
 - [x] Confirm server-side consent enforcement. A single Boolean is required; consent currently combines essential event information and relevant Valoria communications, so separate marketing permission remains a required policy/design decision.
 - [x] Confirm rate limiting and safe error responses. Found a fail-open RPC error path; patched it to fail closed with HTTP 503 and prefer Cloudflare's `CF-Connecting-IP`. End-to-end verification remains pending.
@@ -24,8 +25,8 @@ Status labels: **Pending**, **In progress**, **Blocked**, **Verified**. Do not m
 
 ## Phase 2 — Registration implementation
 
-- [ ] Update only the canonical event record with owner-approved facts.
-- [ ] Ensure approval state gates event visibility and registration.
+- [x] Update only the canonical event record with owner-approved facts.
+- [x] Ensure approval state gates event visibility and registration.
 - [ ] Preserve the existing Events page and registration modal.
 - [ ] Validate all submitted fields on the server.
 - [ ] Enforce required consent and persist its purpose/version/timestamp.
