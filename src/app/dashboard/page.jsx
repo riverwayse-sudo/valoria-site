@@ -7,7 +7,6 @@ import { supabase } from '@/lib/supabase'
 import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import ValoriaHandoverCards from '@/components/ValoriaHandoverCards'
 import { getValuTier } from '@/lib/brand'
 
 // ─── brand tokens — same system as the public profile page ─────────────────
@@ -801,7 +800,6 @@ function DashboardAssessmentHandover({ standalone = false }) {
           <VALUJourneyProgress stage="continuation" currentQuestion={10} />
         </div>
       </div>
-      <ValoriaHandoverCards />
       <div style={{ display:'flex', justifyContent:'center', marginTop:22 }}>
         <AssessmentStartLink href="/assessment/bridge" dashboardOnly style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:10, padding:'14px 26px', background:'#C9A84C', color:'#1A1A2E', borderRadius:999, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.12em' }}>
           CONTINUE YOUR ASSESSMENT <span aria-hidden="true">→</span>
