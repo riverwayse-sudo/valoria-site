@@ -11,71 +11,82 @@ function getNextEvent() {
 export default function ValoriaHandoverCards() {
   const nextEvent = getNextEvent()
   const eventState = nextEvent ? getSessionState(nextEvent) : null
-  const cards = [
+  const chapters = [
     {
       number: '01',
       label: 'THE INSTITUTE',
       title: 'Worth. Built.',
-      copy: 'A professional institute building the standards, insight and infrastructure that help capability become recognised value.',
-      tone: 'institute',
+      copy: 'An institute advancing professional standards, insight and the infrastructure that turns capability into recognised value.',
     },
     {
       number: '02',
       label: 'VALU INDEX',
-      title: 'Understand your professional value.',
-      copy: 'A structured assessment that turns your responses into insight across five dimensions of professional capability.',
-      tone: 'valu',
+      title: 'See your professional value with greater clarity.',
+      copy: 'A structured assessment that brings together evidence across five dimensions of professional capability.',
     },
     {
       number: '03',
-      label: 'PRIME FRAMEWORK',
-      title: 'Five dimensions. One fuller picture.',
-      copy: 'Presence, Relationships, Intelligence, Mastery and Enterprise — the dimensions that shape how professional value is built.',
-      tone: 'prime',
+      label: 'THE PRIME FRAMEWORK',
+      title: 'A fuller picture of professional capability.',
+      copy: 'Presence, Relationships, Intelligence, Mastery and Enterprise — five dimensions, considered together.',
     },
     {
       number: '04',
-      label: 'PROFESSIONAL REGISTRY',
-      title: 'Make your capability discoverable.',
-      copy: 'Build a professional profile, define your capabilities and work towards visibility in the Valoria marketplace.',
-      tone: 'registry',
+      label: 'THE PROFESSIONAL REGISTRY',
+      title: 'Let the right people discover what you do.',
+      copy: 'Build a considered professional profile, define your capabilities and progress towards marketplace visibility.',
     },
     {
       number: '05',
       label: 'EVENTS & CONVERSATIONS',
-      title: nextEvent ? nextEvent.title : 'The next conversation is coming.',
+      title: nextEvent ? nextEvent.title : 'Ideas worth bringing people together for.',
       copy: nextEvent
-        ? `${formatSessionDate(nextEvent)} · ${nextEvent.speaker || 'Valoria Institute'} · ${eventState === 'live' ? 'Live now' : 'Registration details on the events page'}`
-        : 'Valoria conversations bring professionals together around the ideas, standards and capabilities shaping the future of work. The next confirmed date will appear here.',
-      tone: 'events',
+        ? `${formatSessionDate(nextEvent)} · ${nextEvent.speaker || 'Valoria Institute'} · ${eventState === 'live' ? 'Live now' : 'Explore the event'}`
+        : 'Valoria conversations bring professionals together around the ideas, standards and capabilities shaping the future of work.',
     },
   ]
 
   return (
-    <section className={styles.section} aria-label="Discover Valoria Institute">
-      <div className={styles.heading}>
-        <div>
-          <span className={styles.eyebrow}>YOUR NEXT VALORIA EXPERIENCE</span>
-          <h2>There is more to <em>Valoria.</em></h2>
+    <section className={styles.experience} aria-label="An introduction to Valoria Institute">
+      <div className={styles.intro}>
+        <div className={styles.seal} aria-hidden="true">
+          <span className={styles.sealOuter} />
+          <span className={styles.sealInner} />
+          <span className={styles.sealLetter}>V</span>
+          <span className={styles.sealCaption}>INSTITUTE</span>
         </div>
-        <p>A quick introduction to the institute, your professional framework, the marketplace and upcoming conversations.</p>
+        <div className={styles.introCopy}>
+          <span className={styles.eyebrow}>A CLOSER LOOK AT VALORIA</span>
+          <h2>A place where professional <em>worth</em> is built.</h2>
+          <p>Beyond the assessment is an institute, a framework and a professional community designed to make capability more visible and meaningful.</p>
+          <div className={styles.signature}><span /> WORTH. BUILT.</div>
+        </div>
       </div>
-      <div className={styles.grid}>
-        {cards.map((card, index) => (
-          <article key={card.number} className={`${styles.card} ${styles[card.tone]}`} style={{ '--card-index': index }}>
-            <div className={styles.cardTop}>
-              <span className={styles.number}>{card.number}</span>
-              <span className={styles.label}>{card.label}</span>
-            </div>
-            <div className={styles.cardBody}>
-              <h3>{card.title}</h3>
-              <p>{card.copy}</p>
-            </div>
-            <span className={styles.link}>VALORIA INSTITUTE</span>
-          </article>
-        ))}
+
+      <div className={styles.chapters} aria-label="Explore the Valoria experience">
+        <div className={styles.chapterHeading}>
+          <span>THE INSTITUTE, IN FIVE PARTS</span>
+          <span>01 — 05</span>
+        </div>
+        <ol className={styles.timeline}>
+          {chapters.map((chapter, index) => (
+            <li key={chapter.number} className={styles.chapter} style={{ '--chapter-index': index }}>
+              <span className={styles.chapterNumber}>{chapter.number}</span>
+              <span className={styles.chapterRule} aria-hidden="true" />
+              <div className={styles.chapterCopy}>
+                <span className={styles.chapterLabel}>{chapter.label}</span>
+                <h3>{chapter.title}</h3>
+                <p>{chapter.copy}</p>
+              </div>
+              <span className={styles.chapterMark} aria-hidden="true">↗</span>
+            </li>
+          ))}
+        </ol>
       </div>
-      <div className={styles.footer}>YOUR ACCOUNT · YOUR INSIGHT · YOUR NEXT CHAPTER</div>
+
+      <div className={styles.footer}>
+        <span>YOUR ACCOUNT</span><i /><span>YOUR INSIGHT</span><i /><span>YOUR NEXT CHAPTER</span>
+      </div>
     </section>
   )
 }
