@@ -857,6 +857,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
   ]
   const nextIndex = steps.findIndex(step => !step.done)
   const next = nextIndex >= 0 ? steps[nextIndex] : null
+  const comingAfter = nextIndex >= 0 ? steps[nextIndex + 1] : null
   const nextHref = !assessmentDone ? '/dashboard/continue-assessment'
     : !profileComplete || !capabilityReady ? '/profile/setup'
       : !eligibilityReady ? '/profile/passport'
@@ -900,10 +901,10 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
     speaker_topics: ['/profile/edit', 'Add speaking topics'],
     speaker_formats: ['/profile/edit', 'Select speaking formats'],
     speaker_audience_size: ['/profile/edit', 'Add audience experience'],
-    speaker_evidence_approval: ['/profile/evidence', 'Submit evidence'],
+    speaker_evidence_approval: ['/profile/evidence', 'Submit speaker evidence'],
     facilitator_topics: ['/profile/edit', 'Add facilitation topics'],
     facilitator_programme_types: ['/profile/edit', 'Select programme types'],
-    facilitator_evidence_approval: ['/profile/evidence', 'Submit evidence'],
+    facilitator_evidence_approval: ['/profile/evidence', 'Submit facilitator evidence'],
   }
 
   return (
@@ -924,7 +925,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
         <div style={{ display:'flex', alignItems:'center', gap:14, flexWrap:'wrap', marginTop:18 }}>
           {next?.key === 'valu' ? (
             <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
-              {hasSavedOpening ? 'CONTINUE ASSESSMENT' : 'START ASSESSMENT'} <span aria-hidden="true">→</span>
+              {hasSavedOpening ? 'CONTINUE TO QUESTION 10' : 'START YOUR VALU ASSESSMENT'} <span aria-hidden="true">→</span>
             </AssessmentStartLink>
           ) : (
             <Link href={nextHref} style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
@@ -936,7 +937,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
 
         {next?.key === 'eligibility' && activeCapabilities.length > 0 && (
           <details style={{ marginTop:18, borderTop:`1px solid ${GLINE}`, paddingTop:12 }}>
-            <summary style={{ cursor:'pointer', color:GOLD, fontSize:11, fontWeight:700 }}>View capability requirements</summary>
+            <summary style={{ cursor:'pointer', color:GOLD, fontSize:11, fontWeight:700 }}>CAPABILITY REQUIREMENTS · View details</summary>
             <div style={{ display:'grid', gap:12, marginTop:12 }}>
               {activeCapabilities.map(capability => {
                 const missing = Array.isArray(capability.missing_requirements) ? capability.missing_requirements : []
@@ -962,6 +963,12 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
           </details>
         )}
 
+        {comingAfter && (
+          <details style={{ marginTop:12, borderTop:`1px solid ${GLINE}`, paddingTop:12 }}>
+            <summary style={{ cursor:'pointer', color:'rgba(247,244,238,.56)', fontSize:11, fontWeight:600 }}>COMING UP AFTER THIS</summary>
+            <p style={{ margin:'10px 0 0', color:DIM, fontSize:11 }}>{comingAfter.label}</p>
+          </details>
+        )}
         <details style={{ marginTop:18, borderTop:`1px solid ${GLINE}`, paddingTop:12 }}>
           <summary style={{ cursor:'pointer', color:'rgba(247,244,238,.66)', fontSize:11, fontWeight:600 }}>View journey progress</summary>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(125px,1fr))', gap:10, marginTop:14 }}>
