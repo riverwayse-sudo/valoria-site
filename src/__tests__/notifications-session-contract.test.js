@@ -37,7 +37,8 @@ describe('authenticated VALU continuation entry points', () => {
       path.join(process.cwd(), 'src/components/ValuCompletionNudge.jsx'),
       'utf8'
     )
-    expect(nudge).toContain('assessmentStarted?"/dashboard":"/valu/start"')
+    expect(nudge).toContain('AssessmentStartLink href="/dashboard" dashboardOnly')
+    expect(nudge).toContain('href={assessed?"/profile/setup":"/valu/start"}')
     expect(nudge).toContain('CONTINUE MY ASSESSMENT')
   })
 })
