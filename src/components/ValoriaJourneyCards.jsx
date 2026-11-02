@@ -89,8 +89,11 @@ export default function ValoriaJourneyCards({ compact=false }) {
           setState(data.state)
         }
         setLoading(false)
-      })
-      .catch(() => alive && setLoading(false))
+      } catch {
+        if (alive) setLoading(false)
+      }
+    }
+    loadJourney()
     return () => { alive=false }
   }, [])
 
