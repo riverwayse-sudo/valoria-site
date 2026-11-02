@@ -8,6 +8,5 @@
   "vars": { "CF_WORKERS": "1" },
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   "observability": { "enabled": true },
-  // Preview deployments intentionally receive no production secrets or bindings.
   "previews": {}
 }
