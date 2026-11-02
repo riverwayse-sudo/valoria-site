@@ -22,10 +22,11 @@ export const PROFESSIONAL_STANDARD_SERIES = [
     speaker: 'Temi Adetokunbo', flyerPosition: 'right', youtubeVideoId: 'm2ElTyJy6dg',
   },
   {
-    id: '04', cluster: 'RELATIONSHIPS',
-    title: 'Emotional Intelligence Is Not About Being Nice',
-    description: 'Treat emotional intelligence as a precision instrument for perception, regulation and strategic application.',
-    start: '2026-11-14T10:00:00+01:00', end: '2026-11-14T11:30:00+01:00', dateApproved: false,
+    id: '04', cluster: 'ENTERPRISE',
+    title: 'Influence Without Authority: The Real Currency of Organisational Power',
+    description: '',
+    start: '2026-11-14T10:00:00+01:00', end: '2026-11-14T11:30:00+01:00', dateApproved: true,
+    speaker: 'Yinlayefa Thompson, SPHRi', host: 'Temitayo Adetokunbo',
   },
   {
     id: '05', cluster: 'ENTERPRISE',
