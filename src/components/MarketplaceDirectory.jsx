@@ -44,7 +44,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
       if(industry && displayText(p.industry) !== industry) return false
       if(!q) return true
-      return [p.atb_id,p.headline,p.current_job_title,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
+      return [p.full_name,p.atb_id,p.headline,p.current_job_title,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
     })
   },[rows,activeTrack,query,industry])
 
@@ -76,7 +76,12 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
           <span>VALU INDEX × PRIME</span>
         </div>
         {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p}/>)}</div> :
-          <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
+          <div className={styles.empty}>
+            <strong>{query.trim() || industry ? 'No professionals match your search.' : activeTrack === 'all' ? 'The directory is being refreshed.' : `No approved ${TRACKS.find(t=>t[0]===activeTrack)?.[1]?.toLowerCase() || 'professional'} listings yet.`}</strong>
+            <p>{query.trim() || industry ? 'Clear your search or adjust the filters to see more profiles.' : activeTrack === 'all' ? 'Please check back shortly.' : 'Profiles appear here after the relevant capability evidence and listing requirements have been approved. You can still explore the general directory.'}</p>
+            {activeTrack !== 'all' && !query.trim() && !industry && <Link href="/marketplace" className={styles.view}>EXPLORE GENERAL DIRECTORY</Link>}
+            {(query.trim() || industry) && <button onClick={()=>{setQuery('');setIndustry('')}}>CLEAR SEARCH</button>}
+          </div>}
       </div>
     </section>
     </main>
@@ -113,8 +118,13 @@ function Profile({p}) {
       <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
       <div className={styles.identityCopy}>
         <small>ATB PROFILE ID</small>
-        <strong>{profileId}</strong>
+        <strong className={styles.profileName}>{displayText(p.full_name) || 'Valoria Professional'}</strong>
+        <span className={styles.profileId}>{profileId}</span>
         <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : '✓ VALORIA ASSESSED'}</span>
+      </div>
+      <div className={styles.identityScore}>
+        <small>VALU INDEX</small>
+        <strong>{isFullAssessment ? <>{p.valu_index}<span> POINTS</span></> : <span className={styles.snapshotScore}>SNAPSHOT</span>}</strong>
       </div>
     </div>
     <p className={styles.specialisation} title={specialisation}>{specialisation || 'Professional capability'}</p>
@@ -127,10 +137,6 @@ function Profile({p}) {
         : <p className={styles.assessmentPending}>Complete the full VALU Index assessment to unlock this insight.</p>}
     </div>
     <div className={styles.signalRow}>
-      <div className={styles.scoreBlock}>
-        <small>VALU INDEX</small>
-        <strong>{isFullAssessment ? <>{p.valu_index}<span> POINTS</span></> : <span className={styles.snapshotScore}>SNAPSHOT</span>}</strong>
-      </div>
       {isFullAssessment && tier
         ? <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>
             {tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}
@@ -138,7 +144,11 @@ function Profile({p}) {
           </span>
         : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>FULL ASSESSMENT<br/>PENDING</span>}
     </div>
-    {capabilityBadges.length > 0 && <div className={styles.capabilities}>{capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)}</div>}
+    <div className={styles.capabilities}>
+      {capabilityBadges.length > 0
+        ? capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)
+        : <span className={styles.capabilityBadge}><strong>GENERAL DIRECTORY</strong><small>Capability approval pending</small></span>}
+    </div>
     <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE</Link>
   </article>
 }
