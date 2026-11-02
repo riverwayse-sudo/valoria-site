@@ -524,7 +524,7 @@ export default function DashboardPage() {
                 {p.valu_index != null ? (
                   <>
                     <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_index}<span style={{ fontSize:'18px', color: DIM, fontWeight:400 }}> points</span></div>{getValuTier(p.valu_index,'full') && <div style={{fontSize:'11px',fontWeight:800,color:GOLD,letterSpacing:'.1em',marginBottom:'14px'}}>{getValuTier(p.valu_index,'full').name.toUpperCase()} · {getValuTier(p.valu_index,'full').stars}</div>}
-                    {p.designation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{p.designation.replace(/_/g,' ')}</div>}
+
                     {p.cluster_scores && (
                       <div>
                         {PRIME.map(({ letter, color }) => {
