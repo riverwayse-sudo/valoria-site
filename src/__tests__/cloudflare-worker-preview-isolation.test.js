@@ -10,7 +10,9 @@ describe('Cloudflare Worker Preview isolation contract', () => {
   test('Worker Preview is distinguished from production before choosing the assessment origin', () => {
     expect(nextConfig).toContain("process.env.CF_WORKERS_PREVIEW === '1'")
     expect(nextConfig).toContain("process.env.CF_WORKERS === '1' && !isCloudflarePreview")
-    expect(nextConfig).toContain('isCloudflarePreview ? process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN')
+    expect(nextConfig).toContain("process.env.CF_PAGES_BRANCH === 'main'")
+    expect(nextConfig).toContain('const configuredVALUOrigin = isPreview')
+    expect(nextConfig).toContain('process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN')
     expect(nextConfig).toContain("preview.hostname === 'assessment.valoriainstitute.com'")
   })
 
