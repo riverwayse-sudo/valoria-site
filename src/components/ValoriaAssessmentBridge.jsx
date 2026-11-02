@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
 
@@ -29,6 +29,7 @@ function getNextConversation() {
 }
 
 export default function ValoriaAssessmentBridge() {
+  const handoffInFlightRef = useRef(false)
   const [status, setStatus] = useState('intro')
   const [error, setError] = useState('')
   const nextConversation = getNextConversation()
@@ -38,7 +39,8 @@ export default function ValoriaAssessmentBridge() {
     : 'DATE TO BE ANNOUNCED'
 
   const beginHandoff = useCallback(async () => {
-    if (status === 'connecting' || status === 'redirecting') return
+    if (handoffInFlightRef.current) return
+    handoffInFlightRef.current = true
     setStatus('connecting')
     setError('')
 
@@ -83,13 +85,14 @@ export default function ValoriaAssessmentBridge() {
       setStatus('redirecting')
       window.location.replace(destination.toString())
     } catch (cause) {
+      handoffInFlightRef.current = false
       setStatus('error')
       setError(cause?.message || 'We could not open your saved assessment. Please try again.')
       if (cause?.status === 401) {
         window.location.replace('/login?returnTo=%2Fdashboard')
       }
     }
-  }, [status])
+  }, [])
 
   return (
     <main className="valu-bridge" style={{ minHeight:'100vh', background:DARK, color:PARCHMENT, display:'grid', placeItems:'center', padding:'clamp(18px,4vw,40px)', fontFamily:"'Raleway',Arial,sans-serif" }}>
@@ -128,7 +131,7 @@ export default function ValoriaAssessmentBridge() {
           </article>
 
           <article className="bridge-card" style={{ border:'1px solid rgba(201,168,76,.2)', background:'rgba(15,15,26,.28)', borderRadius:12, padding:'21px 20px', minHeight:190 }}>
-            <div style={{ color:GOLD, fontSize:9, fontWeight:800, letterSpacing:'.18em', marginBottom:15 }}>{conversationState === 'registration-open' ? '03 · NEXT CONVERSATION' : '03 · COMING SOON'}</div>
+            <div style={{ color:GOLD, fontSize:9, fontWeight:800, letterSpacing:'.18em', marginBottom:15 }}>{conversationState === 'live' ? '03 · LIVE NOW' : conversationState === 'registration-open' ? '03 · NEXT CONVERSATION' : '03 · COMING SOON'}</div>
             <div style={{ color:PARCHMENT, fontSize:16, lineHeight:1.35, fontWeight:700, marginBottom:9 }}>{nextConversation?.title || 'Conversations that shape professional standard.'}</div>
             <p style={{ color:MUTED, fontSize:10, lineHeight:1.6, margin:'0 0 13px' }}>{conversationDate} · Professional Standard Series</p>
             <a href="/events" style={{ color:GOLD, fontSize:9, fontWeight:800, letterSpacing:'.12em', textDecoration:'none' }}>EXPLORE VALORIA EVENTS →</a>
