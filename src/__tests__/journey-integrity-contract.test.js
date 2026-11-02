@@ -125,9 +125,9 @@ describe('journey integrity contract', () => {
     expect(continuation).toContain('hasLegacyAssessmentParams')
   })
 
-  test('assessment return from login always lands on dashboard before the user chooses to continue', () => {
+  test('assessment bridge return from login resumes the transition after authentication', () => {
     const login = read('src/app/login/page.jsx')
-    expect(login).toContain("target.pathname === '/journey/continue'")
+    expect(login).toContain("target.pathname === '/assessment/bridge'")
     expect(login).toContain("window.location.replace('/assessment/bridge')")
     expect(login).toContain("pending_taster_id")
     expect(login).not.toContain('launchAssessmentIfRequested')
@@ -513,6 +513,7 @@ describe('journey integrity contract', () => {
 
   test('saved VALU handover is visible for dashboard accounts with or without a professional profile', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
+    const bridge = read('src/components/ValoriaAssessmentBridge.jsx')
     expect(dashboard).toContain('if (!profile && assessmentAccess?.can_continue) return <DashboardAssessmentHandover standalone />')
     expect(dashboard).toContain('{assessmentAccess?.can_continue && (')
     expect(dashboard).toContain('Your first answers are saved. Ready for the next 49?')
