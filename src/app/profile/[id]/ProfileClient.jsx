@@ -572,7 +572,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                       </div>
                       <div>
                         <div style={{ fontSize:'13px', fontWeight:600, color: DARK, marginBottom:'4px' }}>
-                          {name} <span style={{ color:'rgba(15,15,26,.6)', fontWeight:400 }}>· {score}/100</span>
+                          {name} <span style={{ color:'rgba(15,15,26,.6)', fontWeight:400 }}>· {score} points</span>
                         </div>
                         <p style={{ fontSize:'13px', fontWeight:400, color:'rgba(15,15,26,.75)', lineHeight:1.7, margin:0 }}>{blurb}</p>
                       </div>
