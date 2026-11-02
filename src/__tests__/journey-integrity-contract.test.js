@@ -422,6 +422,8 @@ describe('journey integrity contract', () => {
     expect(nav).toContain('export function AssessmentStartLink')
     expect(nav).toContain("fetch('/api/valu-handoff'")
     expect(nav).toContain('window.location.assign(data.url)')
+    expect(nav).toContain("const linkHref = dashboardOnly ? 'https://assessment.valoriainstitute.com/remaining' : href")
+    expect(nav).toContain('<a href={linkHref}')
     expect(nav).not.toContain("window.location.assign('/assessment/bridge')")
     expect(nav).not.toContain('pending_taster_id')
     expect(nav).not.toContain("continuation.searchParams.set('stage', 'assess')")
