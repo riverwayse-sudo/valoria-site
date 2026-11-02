@@ -11,8 +11,22 @@ const login = fs.readFileSync(
   path.join(__dirname, "../app/login/page.jsx"),
   "utf8"
 );
+const supabaseClient = fs.readFileSync(
+  path.join(__dirname, "../lib/supabase.js"),
+  "utf8"
+);
+const supabaseUrl = fs.readFileSync(
+  path.join(__dirname, "../lib/supabase-url.js"),
+  "utf8"
+);
 
 describe("professional signup identity recovery", () => {
+  test("Supabase client normalizes a REST API URL back to the project root for Auth", () => {
+    expect(supabaseClient).toContain("normalizeSupabaseProjectUrl(configuredSupabaseUrl)");
+    expect(supabaseUrl).toContain("/rest/");
+    expect(supabaseUrl).toContain("return parsed.toString()");
+  });
+
   test("existing Supabase identities are routed to sign-in instead of a false confirmation state", () => {
     expect(signup).toContain("Array.isArray(data.user.identities) && data.user.identities.length === 0");
     expect(signup).toContain("localStorage.setItem('pending_taster_id',tasterId)");
