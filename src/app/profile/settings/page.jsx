@@ -143,7 +143,7 @@ export default function ProfileSettingsPage() {
           <div style={S.identityBar}>
             <div><span>PROFILE ID</span><strong>{profile?.atb_id || 'Not assigned'}</strong></div>
             <div><span>ACTIVE PATHS</span><strong>{activeCount}</strong></div>
-            {profile?.valu_index != null && <div><span>VALU</span><strong>{profile.valu_index}/100</strong></div>}
+            {profile?.valu_index != null && <div><span>VALU</span><strong>{profile.valu_index} points</strong></div>}
           </div>
         </section>
 

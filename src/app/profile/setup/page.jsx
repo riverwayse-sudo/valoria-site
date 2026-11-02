@@ -528,7 +528,7 @@ function ProfileSetupForm() {
           <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'28px', textAlign:'left' }}>
             <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>WHAT HAPPENS NEXT</div>
             <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.8, margin:0 }}>
-              Status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? 'Listed' : 'Not yet listed'}</strong>. Complete the full VALU assessment, keep your professional profile complete and meet the relevant capability gates. A current score of 35 or above is required for marketplace eligibility.
+              Status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? 'Listed' : 'Not yet listed'}</strong>. Complete the full VALU assessment, keep your professional profile complete and meet the relevant capability gates. A current VALU Index score of 35 points or above is required for marketplace eligibility.
             </p>
           </div>
 

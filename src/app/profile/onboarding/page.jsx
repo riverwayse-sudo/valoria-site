@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import { getValuTier } from '@/lib/brand'
 
 const GOLD = '#C9A84C'
 const DARK = '#0F0F1A'
@@ -128,8 +129,8 @@ export default function ProgressiveOnboardingPage() {
 
         {valu?.total_score != null && (
           <div style={styles.valuCard}>
-            <div><div style={styles.label}>OFFICIAL VALU INDEX</div><div style={styles.score}>{valu.total_score}<span>/100</span></div></div>
-            <div style={styles.designation}>{valu.designation || 'ASSESSED PROFESSIONAL'}</div>
+            <div><div style={styles.label}>OFFICIAL VALU INDEX</div><div style={styles.score}>{valu.total_score}<span> points</span></div></div>
+            <div style={styles.designation}>{getValuTier(valu.total_score, 'full')?.name || (valu.total_score != null ? 'VALU INDEX RECORDED' : 'ASSESSED PROFESSIONAL')}</div>
           </div>
         )}
 
