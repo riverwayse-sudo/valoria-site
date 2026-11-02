@@ -364,6 +364,18 @@ export default function DashboardPage() {
     <>
       <div style={{ minHeight:'100vh', background: DARK, color: PARCH, fontFamily:'var(--font,Raleway,sans-serif)' }}>
 
+        {!isOnline && (
+          <div role="status" aria-live="polite" style={{ padding:'10px clamp(20px,4vw,40px)', background:'rgba(201,168,76,.12)', borderBottom:`1px solid ${GLINE2}`, color:PARCH, fontSize:12, textAlign:'center' }}>
+            You’re offline. Information already on this page remains visible; reconnect before submitting changes.
+          </div>
+        )}
+        {loadError && profile && (
+          <div role="alert" style={{ padding:'12px clamp(20px,4vw,40px)', background:'rgba(201,168,76,.08)', borderBottom:`1px solid ${GLINE}`, color:PARCH, fontSize:12, display:'flex', alignItems:'center', justifyContent:'center', gap:12, flexWrap:'wrap' }}>
+            <span>{loadError}</span>
+            <button type="button" onClick={() => { setLoading(true); setRetryKey(value => value + 1) }} disabled={!isOnline} style={{ border:`1px solid ${GLINE2}`, borderRadius:999, padding:'7px 13px', background:'transparent', color:GOLD, fontSize:10, fontWeight:800, cursor:isOnline?'pointer':'not-allowed' }}>RETRY</button>
+          </div>
+        )}
+
         {showWelcome && (
           <WelcomeModal
             firstName={firstName}
