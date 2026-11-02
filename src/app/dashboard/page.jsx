@@ -288,7 +288,7 @@ export default function DashboardPage() {
       <h1 style={{ maxWidth:'620px', textAlign:'center', fontSize:'clamp(28px,4vw,42px)', lineHeight:1.15, margin:0 }}>Your first session is saved.</h1>
       <p style={{ maxWidth:'560px', textAlign:'center', color:DIM, fontSize:'15px', lineHeight:1.8, margin:0 }}>Your opening nine responses are connected to your account. Continue your assessment securely from here; your saved answers will carry forward.</p>
       <div style={{width:'100%',maxWidth:560,padding:'18px',border:'1px solid rgba(201,168,76,.2)',borderRadius:10,background:'rgba(201,168,76,.05)'}}><div style={{fontSize:9,fontWeight:800,letterSpacing:'.15em',color:GOLD,marginBottom:7}}>YOUR NEXT STEP</div><div style={{fontSize:16,color:PARCH,fontWeight:600}}>Continue at Question 10</div><div style={{fontSize:12,color:DIM,lineHeight:1.65,marginTop:5}}>Complete the remaining questions to receive your official VALU Index and PRIME insights.</div></div>
-      <AssessmentStartLink href="/dashboard" dashboardOnly style={{ padding:'14px 24px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:800, letterSpacing:'.08em', textDecoration:'none', borderRadius:'999px' }}>CONTINUE TO QUESTION 10 →</AssessmentStartLink>
+      <AssessmentStartLink href="/dashboard" dashboardOnly hasSavedOpening={true} style={{ padding:'14px 24px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:800, letterSpacing:'.08em', textDecoration:'none', borderRadius:'999px' }}>CONTINUE TO QUESTION 10 →</AssessmentStartLink>
       <Link href="/marketplace" style={{ color:PARCH, fontSize:'13px', textDecoration:'underline', textUnderlineOffset:'4px' }}>Explore Valoria first</Link>
       <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')} style={{ marginTop:'10px', background:'transparent', border:'1px solid rgba(201,168,76,.28)', color:DIM, borderRadius:'999px', padding:'9px 18px', cursor:'pointer', fontFamily:'inherit' }}>Sign Out</button>
     </div>
@@ -945,7 +945,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
               )}
               <div style={{ display:'flex', alignItems:'center', gap:12, flexWrap:'wrap', marginTop:20 }}>
                 {next?.key === 'valu' ? (
-                  <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'13px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:999, transition:'transform .2s ease, box-shadow .2s ease' }}>
+                  <AssessmentStartLink href="/dashboard" dashboardOnly hasSavedOpening={hasSavedOpening} style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'13px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:999, transition:'transform .2s ease, box-shadow .2s ease' }}>
                     {hasSavedOpening ? 'CONTINUE TO QUESTION 10' : 'START YOUR VALU ASSESSMENT'} <span aria-hidden="true">→</span>
                   </AssessmentStartLink>
                 ) : (
