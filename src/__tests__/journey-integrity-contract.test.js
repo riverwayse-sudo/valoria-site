@@ -125,10 +125,10 @@ describe('journey integrity contract', () => {
     expect(continuation).toContain('hasLegacyAssessmentParams')
   })
 
-  test('assessment bridge return from login resumes the transition after authentication', () => {
+  test('login returns authenticated participants to the dashboard without a bridge interstitial', () => {
     const login = read('src/app/login/page.jsx')
-    expect(login).toContain("target.pathname === '/dashboard'")
-    expect(login).toContain("window.location.replace('/dashboard')")
+    expect(login).toContain('window.location.href = target')
+    expect(login).not.toContain('/assessment/bridge')
     expect(login).toContain("pending_taster_id")
     expect(login).not.toContain('launchAssessmentIfRequested')
     expect(login).not.toContain("fetch('/api/valu-handoff'")
