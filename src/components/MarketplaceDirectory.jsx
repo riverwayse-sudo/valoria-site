@@ -122,6 +122,10 @@ function Profile({p}) {
         <span className={styles.profileId}>{profileId}</span>
         <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : '✓ VALORIA ASSESSED'}</span>
       </div>
+      <div className={styles.identityScore}>
+        <small>VALU INDEX</small>
+        <strong>{isFullAssessment ? <>{p.valu_index}<span> POINTS</span></> : <span className={styles.snapshotScore}>SNAPSHOT</span>}</strong>
+      </div>
     </div>
     <p className={styles.specialisation} title={specialisation}>{specialisation || 'Professional capability'}</p>
     <div className={styles.assessmentInsight}>
@@ -133,10 +137,6 @@ function Profile({p}) {
         : <p className={styles.assessmentPending}>Complete the full VALU Index assessment to unlock this insight.</p>}
     </div>
     <div className={styles.signalRow}>
-      <div className={styles.scoreBlock}>
-        <small>VALU INDEX</small>
-        <strong>{isFullAssessment ? <>{p.valu_index}<span> POINTS</span></> : <span className={styles.snapshotScore}>SNAPSHOT</span>}</strong>
-      </div>
       {isFullAssessment && tier
         ? <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>
             {tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}
