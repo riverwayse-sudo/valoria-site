@@ -54,6 +54,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain('target.selectedCapabilities')
     expect(directory).toContain('p.selectedCapabilities || p.selected_capabilities')
     expect(directory).toContain('Selected capabilities are shown separately from directory listing eligibility')
+    expect(directory).toContain('SELECTED CAPABILITIES')
     const categoryFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
     expect(categoryFilter).toContain('p.capabilities || p.tracks || [p.track]')
     expect(categoryFilter).not.toContain('selectedCapabilities')
