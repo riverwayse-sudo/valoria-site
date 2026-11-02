@@ -511,6 +511,16 @@ describe('journey integrity contract', () => {
     expect(read('src/app/auth/callback/page.jsx')).not.toContain('ValoriaHandoverCards')
   })
 
+  test('saved VALU handover is visible for dashboard accounts with or without a professional profile', () => {
+    const dashboard = read('src/app/dashboard/page.jsx')
+    expect(dashboard).toContain('if (!profile && assessmentAccess?.can_continue) return <DashboardAssessmentHandover standalone />')
+    expect(dashboard).toContain('{assessmentAccess?.can_continue && (')
+    expect(dashboard).toContain('Your first answers are saved. Ready for the next 49?')
+    expect(dashboard).toContain('<ValoriaHandoverCards />')
+    expect(dashboard).toContain('AssessmentStartLink href="/assessment/bridge" dashboardOnly')
+    expect(dashboard).toContain('isSupply && !assessmentAccess?.can_continue')
+  })
+
   test('dashboard presents one primary assessment action and keeps the VALU Index card informational', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
     const sidebar = dashboard.split('{/* VALU Index */}')[1].split('{/* Profile completeness */}')[0]
