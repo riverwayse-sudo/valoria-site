@@ -18,7 +18,7 @@ const teaser = [
   ['Intelligence','How do you usually make an important decision?',['Gather the relevant facts','Compare possible consequences','Combine evidence with experience','Test the decision against the bigger picture']],
   ['Mastery','What keeps you improving when nobody is watching?',['Personal standards','Curiosity','Pride in the work','The desire to become more capable']],
   ['Enterprise','Which opportunity would most excite you?',['Building something useful','Solving a difficult commercial problem','Creating a new professional pathway','Turning an idea into a sustainable system']],
-]
+].slice(0, 9)
 
 const full = [
   ['Presence','How clearly can you explain what you do and the value you create?',['Very clearly','Clearly in most situations','It depends on the audience','I am still finding the right language']],
