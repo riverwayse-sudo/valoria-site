@@ -61,9 +61,9 @@ Form design:
 
 ## 6. Portrait asset governance
 
-The supplied Temitayo portrait is an event/brand asset candidate. Before publication:
-- confirm the intended role in this event;
-- confirm permission and approved use;
+The supplied Temitayo portrait is the host portrait for the 14 November event. Before publication:
+- retain the confirmed host label (Temitayo Adetokunbo); do not present this image as the guest speaker;
+- preserve the supplied image and use it only for the approved host presentation;
 - save an optimised web asset under a stable descriptive filename in the public asset directory;
 - preserve an original source copy where repository policy allows;
 - use meaningful alt text only when the portrait conveys information; otherwise use empty alt text when decorative;
