@@ -156,7 +156,7 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
       const { data: { session } } = await supabase.auth.getSession()
       if (dashboardOnly) {
         if (!session?.access_token) {
-          window.location.assign('/login?returnTo=%2Fdashboard')
+          window.location.assign('/login?returnTo=%2Fassessment%2Fbridge')
           return
         }
         window.location.assign('/assessment/bridge')
