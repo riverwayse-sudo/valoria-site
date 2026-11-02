@@ -92,7 +92,7 @@ Marketing permission must be distinct from operational event communication. A re
 - Apply rate limiting and anti-abuse controls.
 - Enforce idempotency for retries and double-clicks.
 - Persist registration before reporting success.
-- Make email delivery retryable without duplicating registration records.
+- Make email delivery retryable without duplicating registration records. The event retry endpoint currently has a Vercel-only schedule declaration; Cloudflare production scheduling is not yet established.
 - Record provider message IDs and delivery failures where available.
 - Keep secrets in server-side environment/secret management.
 - Never log full personal form payloads or credentials.
