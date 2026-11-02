@@ -191,19 +191,44 @@ describe('journey integrity contract', () => {
     const handoff = read('src/app/api/valu-handoff/route.js')
     const config = read('next.config.js')
     const reportTrigger = read('src/app/api/trigger-report/route.js')
+    const origin = read('src/lib/valu-origin.js')
     const signup = read('src/app/professional-signup/page.jsx')
-    expect(handoff).toContain('VALU_UPSTREAM_ORIGIN')
-    expect(handoff).toContain("process.env.VERCEL_ENV === 'production'")
-    expect(handoff).toContain("url.hostname === 'assessment.valoriainstitute.com'")
+    expect(handoff).toContain("from '@/lib/valu-origin'")
+    expect(handoff).toContain('getValuAssessmentOrigin(process.env)')
     expect(handoff).toContain('if (!assessmentOrigin)')
     expect(handoff.indexOf('if (!assessmentOrigin)')).toBeLessThan(handoff.indexOf("admin.from('valoria_reentry_links').insert"));
     expect(config).toContain("process.env.VERCEL_ENV === 'preview'")
     expect(config).toContain('if (!valuOrigin) return []')
-    expect(reportTrigger).toContain('VALU_UPSTREAM_ORIGIN')
-    expect(reportTrigger).toContain("process.env.VERCEL_ENV === 'production'")
-    expect(reportTrigger).toContain('if (!assessmentOrigin)')
+    expect(reportTrigger).toContain("from '@/lib/valu-origin'")
+    expect(reportTrigger).toContain('getValuAssessmentOrigin(process.env)')
+    expect(origin).toContain("env.CF_WORKERS === '1'")
+    expect(origin).toContain("env.CF_WORKERS_PREVIEW === '1'")
+    expect(origin).toContain('VALU_PREVIEW_ASSESSMENT_ORIGIN')
+    expect(origin).toContain("url.hostname === 'assessment.valoriainstitute.com'")
     expect(signup).toContain('href="/valu/assessment/"')
     expect(signup).not.toContain('href="https://assessment.valoriainstitute.com/"')
+  })
+
+
+  test('Cloudflare production resolves the assessment Worker while previews stay isolated', () => {
+    const { getValuAssessmentOrigin } = require('../lib/valu-origin')
+    expect(getValuAssessmentOrigin({
+      CF_WORKERS: '1',
+      VALU_UPSTREAM_ORIGIN: 'https://assessment.valoriainstitute.com',
+    })).toBe('https://assessment.valoriainstitute.com')
+    expect(getValuAssessmentOrigin({
+      CF_WORKERS_PREVIEW: '1',
+      VALU_PREVIEW_ASSESSMENT_ORIGIN: 'https://assessment-preview.invalid',
+      VALU_UPSTREAM_ORIGIN: 'https://preview-assessment.invalid',
+    })).toBe('https://assessment-preview.invalid')
+    expect(getValuAssessmentOrigin({
+      CF_WORKERS_PREVIEW: '1',
+      VALU_PREVIEW_ASSESSMENT_ORIGIN: 'https://assessment.valoriainstitute.com',
+    })).toBeNull()
+    expect(getValuAssessmentOrigin({
+      VERCEL_ENV: 'production',
+      VALU_UPSTREAM_ORIGIN: 'https://assessment.valoriainstitute.com',
+    })).toBe('https://assessment.valoriainstitute.com')
   })
 
   test('assessment continuation never accepts email resume tokens or public identity query parameters', () => {
