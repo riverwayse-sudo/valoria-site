@@ -107,6 +107,7 @@ export default function DashboardPage() {
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(null)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const [retryKey, setRetryKey] = useState(0)
   const [isOnline, setIsOnline] = useState(true)
   const [showWelcome, setShowWelcome] = useState(false)
@@ -122,6 +123,7 @@ export default function DashboardPage() {
   useEffect(() => {
     async function load() {
       setLoadError(null)
+      setIsRefreshing(!!profile)
       try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/login'; return }
@@ -228,6 +230,7 @@ export default function DashboardPage() {
         setLoadError('We could not load all your dashboard information. Your saved assessment and profile data have not been changed.')
       } finally {
         setLoading(false)
+        setIsRefreshing(false)
       }
     }
     load()
@@ -366,6 +369,11 @@ export default function DashboardPage() {
     <>
       <div style={{ minHeight:'100vh', background: DARK, color: PARCH, fontFamily:'var(--font,Raleway,sans-serif)' }}>
 
+        {isRefreshing && isOnline && (
+          <div role="status" aria-live="polite" style={{ padding:'8px clamp(20px,4vw,40px)', color:DIM, fontSize:11, textAlign:'center', borderBottom:`1px solid ${GLINE}` }}>
+            Refreshing your dashboard. Your current information remains available.
+          </div>
+        )}
         {!isOnline && (
           <div role="status" aria-live="polite" style={{ padding:'10px clamp(20px,4vw,40px)', background:'rgba(201,168,76,.12)', borderBottom:`1px solid ${GLINE2}`, color:PARCH, fontSize:12, textAlign:'center' }}>
             You’re offline. Information already on this page remains visible; reconnect before submitting changes.
@@ -374,7 +382,7 @@ export default function DashboardPage() {
         {loadError && profile && (
           <div role="alert" style={{ padding:'12px clamp(20px,4vw,40px)', background:'rgba(201,168,76,.08)', borderBottom:`1px solid ${GLINE}`, color:PARCH, fontSize:12, display:'flex', alignItems:'center', justifyContent:'center', gap:12, flexWrap:'wrap' }}>
             <span>{loadError}</span>
-            <button type="button" onClick={() => { setLoading(true); setRetryKey(value => value + 1) }} disabled={!isOnline} style={{ border:`1px solid ${GLINE2}`, borderRadius:999, padding:'7px 13px', background:'transparent', color:GOLD, fontSize:10, fontWeight:800, cursor:isOnline?'pointer':'not-allowed' }}>RETRY</button>
+            <button type="button" onClick={() => { setRetryKey(value => value + 1) }} disabled={!isOnline} style={{ border:`1px solid ${GLINE2}`, borderRadius:999, padding:'7px 13px', background:'transparent', color:GOLD, fontSize:10, fontWeight:800, cursor:isOnline?'pointer':'not-allowed' }}>RETRY</button>
           </div>
         )}
 
