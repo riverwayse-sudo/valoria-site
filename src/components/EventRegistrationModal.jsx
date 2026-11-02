@@ -40,6 +40,7 @@ export default function EventRegistrationModal({ session, onClose }) {
   const [status, setStatus] = useState('idle')
   const [error, setError] = useState('')
   const [journeyUrl, setJourneyUrl] = useState('')
+  const [confirmationSent, setConfirmationSent] = useState(false)
   const [form, setForm] = useState({ full_name: '', email: '', role: '', organisation: '', whatsapp: '', consent: false })
   const modalRef = useRef(null)
   const firstInputRef = useRef(null)
@@ -97,6 +98,7 @@ export default function EventRegistrationModal({ session, onClose }) {
       const data = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(data.error || 'Registration could not be completed.')
       setJourneyUrl(data.journey_url || '/journey')
+      setConfirmationSent(data.confirmation_email_sent === true)
       setStatus('success')
     } catch (err) {
       setStatus('error')
@@ -107,7 +109,7 @@ export default function EventRegistrationModal({ session, onClose }) {
   const state = getSessionState(session)
   const isLive = state === 'live'
   const isEnded = state === 'ended'
-  const target = isLive ? new Date(session.end).getTime() : new Date(session.start).getTime()
+  const target = isLive ? (session.end ? new Date(session.end).getTime() : null) : new Date(session.start).getTime()
 
   return (
     <>
@@ -182,15 +184,16 @@ export default function EventRegistrationModal({ session, onClose }) {
               <p id="event-modal-description" className="event-modal-description">{session.description}</p>
               <div className="event-modal-event-meta">
                 <div className="event-modal-event-meta-row"><span>WHEN</span><div><strong>{sessionDate}</strong><br/>{sessionTime} WAT</div></div>
-                <div className="event-modal-event-meta-row"><span>FORMAT</span><div><strong>Virtual conversation</strong><br/>90 minutes</div></div>
+                {session.speaker && <div className="event-modal-event-meta-row"><span>GUEST</span><div><strong>{session.speaker}</strong></div></div>}
+                {session.host && <div className="event-modal-event-meta-row"><span>HOST</span><div><strong>{session.host}</strong></div></div>}
               </div>
-              {session.speaker && <div className="event-modal-speaker">Featuring<strong>{session.speaker}</strong></div>}
+
             </div>
-            {!isEnded && <Countdown target={target} label={isLive ? 'CONVERSATION ENDS IN' : 'CONVERSATION STARTS IN'} live={isLive} />}
+            {!isEnded && (!isLive || target) && <Countdown target={target} label={isLive ? 'CONVERSATION ENDS IN' : 'CONVERSATION STARTS IN'} live={isLive} />}
           </section>
 
           <section className="event-modal-form-panel">
-            {status === 'success' ? <div className="event-success"><div className="event-success-mark">✓</div><h3>You are registered.</h3><p>Your place for <strong>{session.title}</strong> has been recorded. A confirmation will be sent to your email with the event details.</p><button type="button" className="event-submit" onClick={onClose}>DONE</button></div> : (
+            {status === 'success' ? <div className="event-success"><div className="event-success-mark">✓</div><h3>You are registered.</h3><p>Your place for <strong>{session.title}</strong> has been recorded. {confirmationSent ? 'A confirmation email has been sent to your inbox.' : 'The confirmation email has not yet been delivered. Your registration is recorded; please contact info@valoriainstitute.com if you need assistance.'}</p><button type="button" className="event-submit" onClick={onClose}>DONE</button></div> : (
               <>
                 <div className="event-modal-form-kicker">Reserve your place</div>
                 <h3 className="event-modal-form-title">Be in the room.</h3>
@@ -224,9 +227,9 @@ export function SessionTimer({ session }) {
   useEffect(() => { setNow(Date.now()); const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer) }, [])
   if (now === null) return <div className="session-timer session-timer-open"><Countdown target={null} label="COUNTDOWN" /></div>
   const state = getSessionState(session, now), index = PROFESSIONAL_STANDARD_SERIES.findIndex(item => item.id === session.id), previous = index > 0 ? PROFESSIONAL_STANDARD_SERIES[index - 1] : null
-  const target = state === 'locked' && previous ? new Date(previous.end).getTime() : state === 'registration-open' ? new Date(session.start).getTime() : state === 'live' ? new Date(session.end).getTime() : null
+  const target = state === 'locked' && previous?.end ? new Date(previous.end).getTime() : state === 'registration-open' ? new Date(session.start).getTime() : state === 'live' && session.end ? new Date(session.end).getTime() : null
   if (state === 'coming-soon') return <div className="session-timer session-timer-open"><span>COMING SOON · DATE TO BE CONFIRMED</span></div>
   if (state === 'ended') return <div className="session-timer session-timer-ended">CONVERSATION ENDED</div>
-  if (state === 'live') return <div className="session-timer session-timer-live">● LIVE NOW <Countdown target={target} label="ENDS IN" live /></div>
+  if (state === 'live') return <div className="session-timer session-timer-live">● LIVE NOW {target && <Countdown target={target} label="ENDS IN" live />}</div>
   return <div className={`session-timer ${state === 'locked' ? 'session-timer-locked' : 'session-timer-open'}`}><Countdown target={target} label={state === 'locked' ? 'REGISTRATION OPENS IN' : 'CONVERSATION STARTS IN'} /></div>
 }

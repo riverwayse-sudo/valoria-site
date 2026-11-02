@@ -24,7 +24,7 @@ function SessionCard({ session, state }) {
       <div className="event-editorial-footer">
         <div className="event-editorial-copy">
           <span>{isEnded ? 'COMPLETED' : isComingSoon ? 'COMING SOON' : state === 'live' ? 'LIVE NOW' : 'REGISTRATION OPEN'}</span>
-          <p>{session.description}</p>
+          {session.description && <p>{session.description}</p>}
         </div>
         {!isEnded && !isComingSoon && <div className="event-editorial-actions"><EventRegistrationTrigger session={session} />{session.id === '03' && <a className="btn-gold" href="#webinar">WATCH ON VALORIA →</a>}</div>}
       </div>
