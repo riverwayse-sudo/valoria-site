@@ -71,10 +71,9 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   ], required:true })
   s.push({ key:'bio', kind:'textarea', section:'Profile', title:'Write a short bio.', sub:'First person, 3–4 sentences. What you do, who you serve, what makes you distinct.', placeholder:'I\u2019m a fintech growth strategist with 12 years of experience...', maxLength:600, required:true })
   s.push({ key:'languages', kind:'multi-chip', section:'Profile', title:'Which languages do you speak?', sub:'Select all that apply.', options:LANGUAGES, required:true })
-  // Visibility choice removed (1 Aug 2026) — every profile must be
-  // available in the marketplace, so this is no longer a decision the
-  // person makes; visibility is hardcoded to 'registered_only' in
-  // saveProgress below instead.
+  // New profiles begin as registered_only. Existing visibility is preserved
+  // when the record is loaded; owner saves never write visibility or listing
+  // status, which remain controlled by the platform assessment/governance flow.
 
   // The self-report "What are your core skills?" question was removed here —
   // replaced by the current/preferred industry pair at the top of this
@@ -443,6 +442,10 @@ function ProfileSetupForm() {
   }
 
   async function handleFinish() {
+    if (!form.consent) {
+      setSaveError('Confirm the profile submission acknowledgement before continuing.')
+      return
+    }
     setSaving(true)
     const ok = await saveProgress()
     if (!ok) { setSaving(false); return }
@@ -492,6 +495,22 @@ function ProfileSetupForm() {
       setSaveError('Your details and capabilities were saved, but Valoria has not confirmed profile completion. Review the required profile details and try again.')
       return
     }
+
+    const acknowledgementResponse = await fetch('/api/profile/acknowledgement', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ acknowledged: true }),
+    })
+    const acknowledgementResult = await acknowledgementResponse.json().catch(() => ({}))
+    if (!acknowledgementResponse.ok) {
+      setSaving(false)
+      setSaveError(acknowledgementResult.error || 'Your profile was saved, but the submission acknowledgement could not be recorded. Please retry.')
+      return
+    }
+
     setSaving(false)
     setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: row?.listing_status || 'pending' })
   }
@@ -1122,7 +1141,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
             Your profile is not yet listed because the full VALU assessment is not complete. Complete VALU and you will be listed first; completing your professional profile then unlocks additional visibility and opportunities.
           </p>
-          <a href="https://valoriainstitute.com/valu/assessment/" target="_blank" rel="noopener noreferrer" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
+          <a href="https://assessment.valoriainstitute.com/valu/assessment/" target="_blank" rel="noopener noreferrer" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
             COMPLETE THE FULL VALU ASSESSMENT →
           </a>
         </div>
