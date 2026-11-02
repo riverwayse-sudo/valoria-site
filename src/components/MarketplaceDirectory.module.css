@@ -131,3 +131,105 @@
   .avatar{width:52px;height:52px}
   .assessmentInsight{flex-basis:112px;height:112px;min-height:112px;max-height:112px}
 }
+
+
+/* Consistent two-line professional identity: role from canonical job title, industry separately. */
+.roleIndustry{box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:3px;height:40px;min-height:40px;max-height:40px;margin-top:8px;overflow:hidden}
+.roleTitle,.industryLine{font-family:var(--font);display:block;max-width:100%;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.roleTitle{font-size:11px;line-height:1.35;font-weight:800;color:#1A1A2E}
+.industryLine{font-size:8px;line-height:1.3;font-weight:700;letter-spacing:.04em;color:#6F6A60}
+.specialisation{display:none}
+.assessmentInsight{margin-top:8px;flex-basis:108px;height:108px;min-height:108px;max-height:108px}
+.signalRow{margin-top:8px}
+.capabilities{margin-top:8px}
+@media(max-width:520px){.roleIndustry{height:40px;min-height:40px;max-height:40px}.assessmentInsight{flex-basis:108px;height:108px;min-height:108px;max-height:108px}}
+
+
+/* Value-led card redesign: make the assessed PRIME profile the primary proof point. */
+.primePanel{box-sizing:border-box;flex:0 0 132px;height:132px;min-height:132px;max-height:132px;min-width:0;overflow:hidden;margin:8px 0 0;padding:9px 10px;background:#FAFAF7;border:1px solid #D4C9A8;border-radius:6px}
+.primePanelHead{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0}
+.primePanelHead small{font-family:var(--font);font-size:7px;line-height:1.2;font-weight:900;letter-spacing:.11em;color:#6F5A26;white-space:nowrap}
+.primePanelHead span{font-family:var(--font);font-size:6px;line-height:1.2;font-weight:900;letter-spacing:.07em;color:#6F6A60;white-space:nowrap}
+.leadingSignal{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:5px}
+.leadingSignal strong{font-family:var(--font);font-size:12px;line-height:1.2;font-weight:900;color:#1A1A2E}
+.leadingSignal>b{font-family:var(--font);font-size:13px;line-height:1;font-weight:900;color:#1A1A2E}
+.leadingSignal>b small{font-size:7px;color:#6F6A60}
+.leadingMeaning{font-family:var(--font);font-size:7px;line-height:1.2;color:#6F6A60;margin:2px 0 5px}
+.primeBars{display:grid;gap:3px}
+.primeBarRow{display:grid;grid-template-columns:10px minmax(0,1fr) 18px;align-items:center;gap:5px;height:7px;min-width:0}
+.primeBarRow>span{font-family:var(--font);font-size:6px;line-height:1;font-weight:900;color:#6F6A60}
+.primeBarRow>b{font-family:var(--font);font-size:6px;line-height:1;text-align:right;font-weight:800;color:#2E2E4A}
+.primeBarTrack{height:4px;min-width:0;background:#EDE8DC;border-radius:999px;overflow:hidden}
+.primeBarTrack i{display:block;height:100%;border-radius:999px;background:#C9A84C}
+.primePanel .assessmentPending{font-size:9px;line-height:1.45;margin-top:12px}
+.roleIndustry{height:36px;min-height:36px;max-height:36px;margin-top:6px}
+.signalRow{flex-basis:58px;height:58px;min-height:58px;max-height:58px;margin-top:7px;padding:7px 0}
+.capabilities{flex-basis:36px;height:36px;min-height:36px;max-height:36px;margin-top:7px;gap:4px}
+.capabilities .capabilityBadge{padding:5px 7px}
+.view{flex-basis:30px;height:30px;min-height:30px;max-height:30px;padding-top:8px}
+.assessmentInsight{display:none}
+@media(max-width:520px){.primePanel{flex-basis:132px;height:132px;min-height:132px;max-height:132px}.roleIndustry{height:36px;min-height:36px;max-height:36px}}
+
+
+/* Refinement pass: stronger hierarchy, darker contrast, cleaner alignment. */
+.identity{grid-template-columns:58px minmax(0,1fr);gap:12px;align-items:center}
+.identityCopy{min-width:0;gap:5px}
+.identityCopy>small{font-size:8px;line-height:1.1;font-weight:900;letter-spacing:.13em;color:#6F5A26}
+.identityCopy>strong{font-size:12px;line-height:1.25;font-weight:900;letter-spacing:.025em;color:#1A1A2E}
+.assessedStatus,.snapshotStatus{width:max-content;max-width:100%;padding:4px 7px;border-radius:3px;font-size:7px;line-height:1.1;font-weight:900;letter-spacing:.08em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.assessedStatus{background:#1A1A2E;color:#FAFAF7}
+.snapshotStatus{background:#EDE8DC;color:#5D4A1E}
+.roleIndustry{gap:4px;border-left:3px solid #C9A84C;padding-left:9px}
+.roleTitle{font-size:13px;line-height:1.2;font-weight:900;letter-spacing:-.015em;color:#1A1A2E}
+.industryLine{font-size:9px;line-height:1.2;font-weight:800;letter-spacing:.065em;text-transform:uppercase;color:#5D5A52}
+.primePanel{padding:10px 12px;background:#F7F4EE;border:1px solid #D4C9A8;border-top:3px solid #C9A84C;border-radius:5px}
+.primePanelHead small{font-size:8px;font-weight:900;letter-spacing:.1em;color:#5D4A1E}
+.primePanelHead span{font-size:7px;font-weight:900;letter-spacing:.06em;color:#5D5A52}
+.leadingSignal{margin-top:6px}
+.leadingSignal strong{font-size:14px;font-weight:900;letter-spacing:-.01em}
+.leadingSignal>b{font-size:15px;font-weight:900}
+.leadingSignal>b small{font-size:8px;font-weight:800}
+.leadingMeaning{font-size:8px;line-height:1.3;font-weight:700;color:#5D5A52;margin:3px 0 6px}
+.primeBars{gap:4px}
+.primeBarRow{grid-template-columns:12px minmax(0,1fr) 22px;gap:6px;height:8px}
+.primeBarRow>span{font-size:7px;font-weight:900;color:#4B4A46}
+.primeBarRow>b{font-size:7px;font-weight:900;color:#1A1A2E}
+.primeBarTrack{height:5px;background:#E3DDCF}
+.primeBarTrack i{background:#B58D2E}
+.signalRow{align-items:center;border-top:1px solid #E3DDCF;border-bottom:1px solid #E3DDCF}
+.scoreBlock>small{font-size:8px;line-height:1.2;font-weight:900;letter-spacing:.12em;color:#6F5A26}
+.scoreBlock>strong{font-size:23px;line-height:1;font-weight:900;letter-spacing:-.035em;color:#1A1A2E}
+.scoreBlock>strong span{font-size:8px;font-weight:900;letter-spacing:.08em}
+.tierBadge{font-size:10px;line-height:1.2;font-weight:900;letter-spacing:.01em}
+.tierStars{font-size:12px;letter-spacing:.06em}
+.capabilities{display:flex;align-items:flex-start;gap:5px;flex-wrap:wrap}
+.capabilities .capabilityBadge{border:1px solid #D4C9A8;background:#F7F4EE;border-radius:4px;padding:5px 7px}
+.capabilityBadge strong{font-size:8px;line-height:1.15;font-weight:900;letter-spacing:.06em;color:#1A1A2E}
+.capabilityBadge small{font-size:6px;line-height:1.2;font-weight:800;letter-spacing:.045em;color:#5D5A52}
+.view{display:flex;align-items:center;justify-content:space-between;padding:0 12px!important;background:#1A1A2E;color:#FAFAF7;border-radius:4px;font-size:9px;line-height:1;font-weight:900;letter-spacing:.12em;text-decoration:none}
+.view:hover{background:#2E2E4A;color:#FAFAF7;transform:none}
+@media(max-width:520px){
+  .identity{grid-template-columns:52px minmax(0,1fr);gap:10px}
+  .roleTitle{font-size:12px}
+  .primePanel{padding:9px 10px}
+  .scoreBlock>strong{font-size:21px}
+}
+
+
+/* Evidence-based descriptor: one concise sentence, consistent across every card. */
+.assessmentDescriptor{
+  margin:10px 0 0;
+  color:#29283B;
+  font-size:12px;
+  line-height:1.55;
+  font-weight:700;
+  letter-spacing:-.01em;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
+  overflow:hidden;
+  min-height:56px;
+}
+@media(max-width:640px){
+  .assessmentDescriptor{font-size:11px;line-height:1.5;min-height:50px}
+}
