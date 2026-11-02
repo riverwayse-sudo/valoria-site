@@ -46,6 +46,20 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('facilitator: byTrack.facilitator.size')
   })
 
+  test('marketplace cards display selected capabilities without changing category eligibility filters', () => {
+    const data = read('src/lib/marketplace-data.js')
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    expect(data).toContain('selected_capabilities')
+    expect(data).toContain('selectedCapabilities: []')
+    expect(data).toContain('target.selectedCapabilities')
+    expect(directory).toContain('p.selectedCapabilities || p.selected_capabilities')
+    expect(directory).toContain('Selected capabilities are shown separately from directory listing eligibility')
+    expect(directory).toContain('SELECTED CAPABILITIES')
+    const categoryFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
+    expect(categoryFilter).toContain('p.capabilities || p.tracks || [p.track]')
+    expect(categoryFilter).not.toContain('selectedCapabilities')
+  })
+
   test('open marketplace directories refresh server-rendered counts automatically', () => {
     const source = read('src/components/MarketplaceDirectory.jsx')
     expect(source).toContain('useRouter')

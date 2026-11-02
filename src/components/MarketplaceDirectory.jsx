@@ -94,7 +94,10 @@ function labelValues(value) {
 }
 
 function Profile({p}) {
-  const caps=[...(p.capabilities||p.tracks||[p.track])].map(normalize).filter(Boolean)
+  // Show the professional's selected capabilities, not only capabilities
+  // that have passed the separate listing-eligibility gate. Category pages
+  // continue to filter against the eligible `capabilities` field above.
+  const caps=[...(p.selectedCapabilities || p.selected_capabilities || p.capabilities || p.tracks || [p.track])].map(normalize).filter(Boolean)
   const capabilityBadges = [...new Set(caps)].map(c => ({
     key:c,
     title:c === 'candidate' ? 'PROFESSIONAL' : c === 'speaker' ? 'SPEAKER' : c === 'facilitator' ? 'FACILITATOR' : c.toUpperCase(),
@@ -138,7 +141,7 @@ function Profile({p}) {
           </span>
         : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>FULL ASSESSMENT<br/>PENDING</span>}
     </div>
-    {capabilityBadges.length > 0 && <div className={styles.capabilities}>{capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)}</div>}
+    {capabilityBadges.length > 0 && <div className={styles.capabilities} aria-label="Selected professional capabilities" title="Selected capabilities are shown separately from directory listing eligibility"><small className={styles.capabilityLabel}>SELECTED CAPABILITIES</small>{capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)}</div>}
     <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE</Link>
   </article>
 }

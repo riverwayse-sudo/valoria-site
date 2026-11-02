@@ -131,3 +131,5 @@
   .avatar{width:52px;height:52px}
   .assessmentInsight{flex-basis:112px;height:112px;min-height:112px;max-height:112px}
 }
+
+.capabilityLabel{display:block;flex:0 0 100%;font-family:var(--font);font-size:6px;line-height:1;font-weight:800;letter-spacing:.12em;color:#6F6A60;margin:0 0 3px}
