@@ -132,7 +132,14 @@ export async function POST(request) {
   }
 
   const destination = new URL('/', assessmentOrigin)
-  destination.search = new URLSearchParams({ full: '1' }).toString()
+  // Preserve the exact production host that issued the handoff. Supabase
+  // browser cookies are host-scoped, so switching between apex and www
+  // can make a valid dashboard session appear to be signed out.
+  const requestOrigin = new URL(request.url).origin
+  const siteOrigin = ['https://valoriainstitute.com', 'https://www.valoriainstitute.com'].includes(requestOrigin)
+    ? requestOrigin
+    : 'https://valoriainstitute.com'
+  destination.search = new URLSearchParams({ full: '1', site_origin: siteOrigin }).toString()
   destination.hash = new URLSearchParams({ handoff_code: handoffCode }).toString()
   return NextResponse.json({ url: destination.toString(), expires_in: HANDOFF_TTL_SECONDS }, {
     headers: { 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' },
