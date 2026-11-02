@@ -873,7 +873,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
   const explanation = !next ? 'Explore opportunities and keep your professional presence current.'
     : next.key === 'valu' ? (hasSavedOpening
       ? 'Your first nine answers are saved. Continue from Question 10 to complete the assessment and receive your official VALU Index.'
-      : 'Your assessment establishes your professional signal and unlocks your official VALU Index.')
+      : 'Start or continue your 58-question VALU assessment. Your answers establish your professional signal and unlock your official VALU Index.')
       : next.key === 'profile' ? 'Add the details that help organisations understand your experience and strengths.'
         : next.key === 'capability' ? 'Select the professional capabilities you want Valoria to represent.'
           : next.key === 'eligibility' ? 'Review the remaining requirements for each capability.'
