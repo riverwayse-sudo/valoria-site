@@ -8,5 +8,13 @@
   "vars": { "CF_WORKERS": "1" },
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   "observability": { "enabled": true },
-  "previews": {}
+  "previews": {
+    "vars": {
+      "VALU_PREVIEW": "1",
+      "CF_WORKERS_PREVIEW": "1",
+      "VALU_UPSTREAM_ORIGIN": "https://preview-assessment.invalid",
+      "NEXT_PUBLIC_SUPABASE_URL": "https://preview-disabled.invalid",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY": "preview-disabled"
+    }
+  }
 }
