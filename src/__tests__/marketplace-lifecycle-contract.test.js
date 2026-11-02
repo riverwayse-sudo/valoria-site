@@ -394,4 +394,13 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(dashboard).toContain('href ? <Link href={href}')
   })
 
+  test('evidence submission only offers evidence types that can satisfy the selected capability', () => {
+    const page = read('src/app/profile/evidence/page.jsx')
+    expect(page).toContain("['portfolio','certification','speaking_sample']")
+    expect(page).toContain("['portfolio','certification','facilitation_record']")
+    expect(page).toContain('allowedTypes.some(([value])=>value===type)')
+    expect(page).toContain('Talent capability is verified through your profile-wide CV')
+    expect(page).toContain('Upload or update your CV in profile settings')
+  })
+
 })
