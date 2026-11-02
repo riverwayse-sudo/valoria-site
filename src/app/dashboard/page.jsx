@@ -279,6 +279,8 @@ export default function DashboardPage() {
     </main>
   )
 
+  if (!profile && assessmentAccess?.can_continue) return <DashboardAssessmentHandover standalone />
+
   if (loadError && !profile) return (
     <main role="alert" aria-live="assertive" style={{ minHeight:'100vh', background:DARK, color:PARCH, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:14, padding:24, textAlign:'center', fontFamily:'var(--font,Raleway,sans-serif)' }}>
       <div style={{ color:GOLD, fontSize:10, fontWeight:800, letterSpacing:'.16em' }}>DASHBOARD TEMPORARILY UNAVAILABLE</div>
