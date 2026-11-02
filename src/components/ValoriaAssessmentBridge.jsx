@@ -21,7 +21,7 @@ export default function ValoriaAssessmentBridge() {
       try {
         const { data: { session } } = await supabase.auth.getSession()
         if (!session?.access_token) {
-          router.replace('/login?returnTo=%2Fdashboard')
+          router.replace('/login?returnTo=%2Fassessment%2Fbridge')
           return
         }
 
