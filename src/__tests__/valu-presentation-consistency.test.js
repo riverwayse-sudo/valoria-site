@@ -29,6 +29,14 @@ describe('VALU presentation consistency', () => {
     expect(read('src/components/ValueActivationCard.jsx')).toContain('points')
   })
 
+  test('legacy stored designation strings cannot override the canonical points-based merit bands', () => {
+    expect(read('src/app/dashboard/page.jsx')).not.toContain('p.designation.replace')
+    expect(read('src/app/report/page.jsx')).not.toContain('assessment.designation ||')
+    expect(read('src/app/profile/[id]/ProfileClient.jsx')).not.toContain('p.designation.replace')
+    expect(read('src/app/profile/onboarding/page.jsx')).not.toContain('valu.designation ||')
+    expect(read('src/app/profile/passport/page.jsx')).not.toContain('profile?.designation||')
+  })
+
   test('the shared score display contract declares points, not a percentage suffix', () => {
     const brand = read('src/lib/brand.js')
     expect(brand).toContain("unit: 'points'")
