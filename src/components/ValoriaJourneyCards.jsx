@@ -75,9 +75,14 @@ export default function ValoriaJourneyCards({ compact=false }) {
 
   useEffect(() => {
     let alive = true
-    fetch('/api/journey/state', { cache:'no-store' })
-      .then(r => r.ok ? r.json() : null)
-      .then(data => {
+    async function loadJourney() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        const response = await fetch('/api/journey/state', {
+          cache: 'no-store',
+          headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
+        })
+        const data = response.ok ? await response.json() : null
         if (!alive) return
         if (data?.authenticated) {
           setUser({ authenticated:true })
