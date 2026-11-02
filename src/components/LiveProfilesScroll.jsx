@@ -103,7 +103,7 @@ export default async function LiveProfilesScroll() {
                     <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'}`}>
                       <span className="vi-scroll-score-label">VALU INDEX</span>
                       <strong>{profile.valu_index ?? '—'}</strong>
-                      <span className="vi-scroll-score-max">/100</span>
+                      <span className="vi-scroll-score-max">points</span>
                     </div>
                     <span className="vi-scroll-card-arrow" aria-hidden="true">↗</span>
                   </Link>
