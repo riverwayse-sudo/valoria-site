@@ -27,10 +27,14 @@ function getAdmin() {
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
 }
 
-async function getAccount(request, admin) {
+async function getAccount(request) {
   const token = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '').trim()
   if (!token) return { error: NextResponse.json({ error: 'Authentication required.' }, { status: 401 }) }
-  const { data, error } = await admin.auth.getUser(token)
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !anonKey) return { error: NextResponse.json({ error: 'Authentication service is not configured.' }, { status: 503 }) }
+  const verifier = createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false } })
+  const { data, error } = await verifier.auth.getUser(token)
   if (error || !data?.user) return { error: NextResponse.json({ error: 'Your session is invalid. Sign in again.' }, { status: 401 }) }
   if (!data.user.email_confirmed_at) return { error: NextResponse.json({ error: 'Confirm your email before continuing.' }, { status: 403 }) }
   return { user: data.user }
@@ -83,7 +87,7 @@ async function getOwnedSnapshot(admin, user) {
 export async function GET(request) {
   let admin
   try { admin = getAdmin() } catch { return NextResponse.json({ error: 'Server misconfigured.' }, { status: 503 }) }
-  const auth = await getAccount(request, admin)
+  const auth = await getAccount(request)
   if (auth.error) return auth.error
   const snapshot = await getOwnedSnapshot(admin, auth.user)
   if (snapshot.error) {
@@ -99,7 +103,7 @@ export async function GET(request) {
 export async function POST(request) {
   let admin
   try { admin = getAdmin() } catch { return NextResponse.json({ error: 'Server misconfigured.' }, { status: 503 }) }
-  const auth = await getAccount(request, admin)
+  const auth = await getAccount(request)
   if (auth.error) return auth.error
   const snapshot = await getOwnedSnapshot(admin, auth.user)
   if (snapshot.error) return NextResponse.json({ error: snapshot.error }, { status: snapshot.status })
