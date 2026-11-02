@@ -106,6 +106,9 @@ export default function DashboardPage() {
   const [enquiries, setEnquiries] = useState([])
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(null)
+  const [retryKey, setRetryKey] = useState(0)
+  const [isOnline, setIsOnline] = useState(true)
   const [showWelcome, setShowWelcome] = useState(false)
   const [avatarError, setAvatarError] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -118,6 +121,8 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function load() {
+      setLoadError(null)
+      try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/login'; return }
       setUser(user)
@@ -218,9 +223,25 @@ export default function DashboardPage() {
           .order('created_at', { ascending: false })
         setRequests((msgs || []).map(m => ({ ...m, recipient_profile_id: m.professional_profile_id })))
       }
-      setLoading(false)
+      } catch (error) {
+        console.error('Dashboard data load failed:', error)
+        setLoadError('We could not load all your dashboard information. Your saved assessment and profile data have not been changed.')
+      } finally {
+        setLoading(false)
+      }
     }
     load()
+  }, [retryKey])
+
+  useEffect(() => {
+    const updateOnlineStatus = () => setIsOnline(navigator.onLine)
+    updateOnlineStatus()
+    window.addEventListener('online', updateOnlineStatus)
+    window.addEventListener('offline', updateOnlineStatus)
+    return () => {
+      window.removeEventListener('online', updateOnlineStatus)
+      window.removeEventListener('offline', updateOnlineStatus)
+    }
   }, [])
 
   function dismissWelcome() {
@@ -240,9 +261,34 @@ export default function DashboardPage() {
   }
 
   if (loading) return (
-    <div style={{ minHeight:'100vh', background: DARK, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font,Raleway,sans-serif)', color: DIM, fontSize:'13px', letterSpacing:'.08em' }}>
-      Loading your dashboard…
-    </div>
+    <main aria-busy="true" aria-live="polite" style={{ minHeight:'100vh', background:DARK, color:PARCH, padding:'clamp(24px,5vw,56px)', fontFamily:'var(--font,Raleway,sans-serif)' }}>
+      <div style={{ maxWidth:1100, margin:'0 auto' }}>
+        <div style={{ width:150, height:9, borderRadius:8, background:'rgba(247,244,238,.10)', marginBottom:18 }} />
+        <div style={{ width:'min(420px,75%)', height:30, borderRadius:8, background:'rgba(247,244,238,.10)', marginBottom:34 }} />
+        <div style={{ border:`1px solid ${GLINE}`, borderRadius:12, padding:24, background:'rgba(26,26,46,.55)', marginBottom:16 }}>
+          <div style={{ width:110, height:8, borderRadius:8, background:'rgba(247,244,238,.10)', marginBottom:18 }} />
+          <div style={{ width:'min(380px,80%)', height:22, borderRadius:8, background:'rgba(247,244,238,.10)', marginBottom:12 }} />
+          <div style={{ width:'min(560px,95%)', height:10, borderRadius:8, background:'rgba(247,244,238,.07)', marginBottom:24 }} />
+          <div style={{ width:170, height:38, borderRadius:999, background:'rgba(201,168,76,.18)' }} />
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))', gap:14 }}>
+          {[0,1,2].map(item => <div key={item} style={{ height:112, border:`1px solid ${GLINE}`, borderRadius:10, background:'rgba(26,26,46,.35)' }} />)}
+        </div>
+        <p style={{ color:DIM, fontSize:11, marginTop:22 }}>Loading your dashboard…</p>
+      </div>
+    </main>
+  )
+
+  if (loadError && !profile) return (
+    <main role="alert" aria-live="assertive" style={{ minHeight:'100vh', background:DARK, color:PARCH, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:14, padding:24, textAlign:'center', fontFamily:'var(--font,Raleway,sans-serif)' }}>
+      <div style={{ color:GOLD, fontSize:10, fontWeight:800, letterSpacing:'.16em' }}>DASHBOARD TEMPORARILY UNAVAILABLE</div>
+      <h1 style={{ margin:0, fontSize:'clamp(23px,4vw,32px)' }}>We couldn’t load your dashboard.</h1>
+      <p style={{ maxWidth:520, color:DIM, fontSize:13, lineHeight:1.7 }}>{loadError}</p>
+      <button type="button" onClick={() => { setLoading(true); setRetryKey(value => value + 1) }} disabled={!isOnline} style={{ border:0, borderRadius:999, padding:'12px 22px', background:GOLD, color:DARK, fontSize:11, fontWeight:800, cursor:isOnline?'pointer':'not-allowed', opacity:isOnline?1:.55 }}>
+        {isOnline ? 'RETRY DASHBOARD' : 'WAITING FOR CONNECTION'}
+      </button>
+      {!isOnline && <p style={{ color:DIM, fontSize:11, margin:0 }}>Reconnect to the internet to retry. Your saved work remains on your account.</p>}
+    </main>
   )
 
   if (!profile && assessmentAccess?.can_continue) return <DashboardAssessmentHandover standalone />
