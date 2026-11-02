@@ -35,8 +35,9 @@ export default function EventPoster({ session }) {
           {outcomes.map((item, index) => <div key={item}><b>0{index + 1}</b>{item}</div>)}
         </div>
         <div className="poster-details">
-          <div><b>{date.replace(', 2026', '')}</b><span>{time} WAT · VIRTUAL</span></div>
-          <div><b>{session.speaker || 'VALORIA INSTITUTE'}</b><span>90 MINUTES</span></div>
+          <div><b>{date.replace(', 2026', '')}</b><span>{time} WAT</span></div>
+          {session.speaker && <div><b>{session.speaker}</b><span>GUEST SPEAKER</span></div>}
+          {session.host && <div><b>{session.host}</b><span>HOST</span></div>}
         </div>
       </div>
     </div>
