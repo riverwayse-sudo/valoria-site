@@ -97,12 +97,20 @@ function Profile({p}) {
   // Show the professional's selected capabilities, not only capabilities
   // that have passed the separate listing-eligibility gate. Category pages
   // continue to filter against the eligible `capabilities` field above.
-  const caps=[...(p.selectedCapabilities || p.selected_capabilities || p.capabilities || p.tracks || [p.track])].map(normalize).filter(Boolean)
-  const capabilityBadges = [...new Set(caps)].map(c => ({
-    key:c,
-    title:c === 'candidate' ? 'PROFESSIONAL' : c === 'speaker' ? 'SPEAKER' : c === 'facilitator' ? 'FACILITATOR' : c.toUpperCase(),
-    detail:c === 'candidate' ? 'CAREER · TALENT' : c === 'speaker' ? 'KNOWLEDGE · COMMUNICATION' : c === 'facilitator' ? 'PEOPLE · PROGRESS' : '',
-  }))
+  const selectedCaps = new Set([
+    ...(Array.isArray(p.selectedCapabilities) ? p.selectedCapabilities : []),
+    ...(Array.isArray(p.selected_capabilities) ? p.selected_capabilities : []),
+    ...(Array.isArray(p.capabilities) ? p.capabilities : []),
+    ...(Array.isArray(p.tracks) ? p.tracks : []),
+    p.track,
+  ].map(normalize).filter(Boolean))
+  // Keep all three capability lanes visible on every card. Selection is a
+  // profile preference; category listing eligibility remains a separate gate.
+  const capabilityBadges = [
+    { key:'candidate', title:'TALENT', selected:selectedCaps.has('candidate') },
+    { key:'speaker', title:'SPEAKER', selected:selectedCaps.has('speaker') },
+    { key:'facilitator', title:'FACILITATOR', selected:selectedCaps.has('facilitator') },
+  ]
   const specialisation=displayText(p.industry || '')
   // Fail closed: only an explicitly full assessment can expose an official score/designation.
   const isFullAssessment = p.assessment_access === 'full' && p.valu_index != null
@@ -141,7 +149,7 @@ function Profile({p}) {
           </span>
         : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>FULL ASSESSMENT<br/>PENDING</span>}
     </div>
-    {capabilityBadges.length > 0 && <div className={styles.capabilities} aria-label="Selected professional capabilities" title="Selected capabilities are shown separately from directory listing eligibility"><small className={styles.capabilityLabel}>SELECTED CAPABILITIES</small>{capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)}</div>}
+    <div className={styles.capabilities} aria-label={`Capability selection: ${capabilityBadges.filter(b=>b.selected).map(b=>b.title).join(', ') || 'none selected'}`} title="Selection status only; category listing eligibility is assessed separately"><small className={styles.capabilityLabel}>CAPABILITY SELECTION</small>{capabilityBadges.map(badge=><span className={`${styles.capabilityBadge} ${badge.selected ? styles.capabilitySelected : styles.capabilityUnselected}`} key={badge.key}><strong>{badge.title}</strong><small>{badge.selected ? 'SELECTED' : 'NOT SELECTED'}</small></span>)}</div>
     <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE</Link>
   </article>
 }

@@ -1,24 +1,9 @@
 import { NextResponse } from 'next/server'
 import { createHash, randomBytes } from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
+import { getValuAssessmentOrigin } from '@/lib/valu-origin'
 
 const HANDOFF_TTL_SECONDS = 60
-
-function getAssessmentOrigin() {
-  const configured = process.env.VALU_UPSTREAM_ORIGIN?.trim()
-  const productionOrigin = 'https://assessment.valoriainstitute.com'
-  if (process.env.VERCEL_ENV === 'production') return configured || productionOrigin
-  if (!configured) return null
-  try {
-    const url = new URL(configured)
-    if (!['http:', 'https:'].includes(url.protocol)) return null
-    // Preview deployments must never silently send participants to production.
-    if (url.hostname === 'assessment.valoriainstitute.com') return null
-    return url.origin
-  } catch {
-    return null
-  }
-}
 
 function getAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -109,7 +94,7 @@ export async function POST(request) {
   if (snapshot.error) return NextResponse.json({ error: snapshot.error }, { status: snapshot.status })
   if (snapshot.completed) return NextResponse.json({ error: 'Your full VALU assessment is already complete.', already_completed: true }, { status: 409 })
 
-  const assessmentOrigin = getAssessmentOrigin()
+  const assessmentOrigin = getValuAssessmentOrigin(process.env)
   if (!assessmentOrigin) {
     return NextResponse.json({ error: 'The assessment preview origin is not configured for this environment.' }, { status: 503 })
   }

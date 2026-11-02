@@ -133,3 +133,14 @@
 }
 
 .capabilityLabel{display:block;flex:0 0 100%;font-family:var(--font);font-size:6px;line-height:1;font-weight:800;letter-spacing:.12em;color:#6F6A60;margin:0 0 3px}
+
+.capabilities{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;align-content:start}
+.capabilities .capabilityBadge{box-sizing:border-box;min-width:0;width:100%;padding:5px 5px;gap:3px}
+.capabilityBadge strong{font-size:6px;letter-spacing:.035em;white-space:nowrap}
+.capabilityBadge small{font-size:5.5px;letter-spacing:.025em;white-space:nowrap}
+.capabilitySelected{background:#EDE8DC!important;border-color:#C9A84C!important;color:#1A1A2E!important}
+.capabilitySelected small{color:#6F5A26!important}
+.capabilityUnselected{background:#FAFAF7!important;border-color:#D4C9A8!important;color:#8A8578!important;opacity:.82}
+.capabilityUnselected small{color:#8A8578!important}
+
+.capabilities .capabilityLabel{grid-column:1/-1}
