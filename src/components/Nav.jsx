@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import NotificationBell from './NotificationBell'
+import AuthModal from './AuthModal'
 import { NAVIGATION, isPathActive } from '@/config/navigation'
 
 export default function Nav() {
@@ -15,6 +16,7 @@ export default function Nav() {
   const [user, setUser] = useState(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [accountType, setAccountType] = useState(null)
+  const [authModal, setAuthModal] = useState(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -114,7 +116,7 @@ export default function Nav() {
         ))}
 
         {authChecked && user && <li className="nav-account"><Link href="/dashboard" className={`nav-link${isPathActive(pathname, '/dashboard') ? ' active' : ''}`}>Dashboard</Link><NotificationBell userId={user.id} /><button onClick={signOut} className="nav-link nav-signout">Sign Out</button></li>}
-        {authChecked && !user && <li><Link href="/login" className={`nav-link${isPathActive(pathname, '/login') ? ' active' : ''}`}>Sign In</Link></li>}
+        {authChecked && !user && <li className="nav-account-actions"><button type="button" className="nav-link" onClick={() => setAuthModal('signin')}>Sign In</button><button type="button" className="nav-cta" onClick={() => setAuthModal('signup')}>Create Account</button></li>}
         <li><AssessmentStartLink href={cta.href} className="nav-cta">{cta.label}</AssessmentStartLink></li>
       </ul>
 
@@ -133,14 +135,15 @@ export default function Nav() {
         <div>{renderItem({ label: 'Dashboard', href: '/dashboard' }, 'nav-mobile-link')}</div>
         <div>{renderItem({ label: 'My Profile', href: `/profile/${user.id}` }, 'nav-mobile-link')}</div>
         <button className="nav-signout" onClick={() => { close(); signOut() }}>Sign Out</button>
-      </> : <div>{renderItem({ label: 'Sign In', href: '/login' }, 'nav-mobile-link')}</div>}
+      </> : <><button className="nav-mobile-link" onClick={() => { close(); setAuthModal('signin') }}>Sign In</button><button className="nav-mobile-link" onClick={() => { close(); setAuthModal('signup') }}>Create Account</button></>}
       <AssessmentStartLink href={cta.href} className="m-cta" onClick={close}>{cta.label}</AssessmentStartLink>
     </nav>
+    <AuthModal open={Boolean(authModal)} initialMode={authModal || 'signin'} onClose={() => setAuthModal(null)} />
   </>
 }
  
 // Route every signed-in VALU start through the authenticated continuation endpoint.
-// Anonymous visitors still begin at the configured public taster URL.
+// Anonymous visitors create an account before choosing a Valoria pathway.
 export function AssessmentStartLink({ href = '/valu/assessment/', className, style, children, onClick, dashboardOnly = false, ...props }) {
   const [opening, setOpening] = useState(false)
   const [error, setError] = useState('')
@@ -168,7 +171,8 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
         window.location.assign('/dashboard')
         return
       }
-      window.location.assign(href)
+      // Account creation now precedes pathway selection and the professional taster.
+      window.location.assign('/signup')
     } catch (err) {
       setError(err?.message || 'We could not open your VALU assessment. Please try again.')
       setOpening(false)
