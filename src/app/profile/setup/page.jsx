@@ -402,10 +402,11 @@ function ProfileSetupForm() {
     if (!silent) setSaving(false)
     if (error) {
       console.error('Profile save failed:', error)
+      const safeMessage = String(error.message || '').replace(/[\\r\\n]+/g, ' ').slice(0, 180)
       setSaveError(
         error.code === '23505' && /username/i.test(error.message || '')
           ? 'That username is already taken — please choose another.'
-          : 'Your last change didn\u2019t save — check your connection and try again.'
+          : `Your last change didn’t save (${error.code || 'unknown'}): ${safeMessage || 'Please check your connection and try again.'}`
       )
       return false
     }
@@ -431,6 +432,23 @@ function ProfileSetupForm() {
 
   async function goNext() {
     if (transitioning) return
+
+    // Work history is required for the Talent/Candidate pathway. Do not let
+    // the default empty row pass merely because the array contains one item.
+    if (screen?.key === 'work_history') {
+      const rows = (form.work_history || []).filter(row =>
+        row.title?.trim() || row.org?.trim() || row.duration?.trim()
+      )
+      const complete = rows.filter(row =>
+        row.title?.trim() && row.org?.trim() && row.duration?.trim()
+      )
+      if (complete.length === 0 || rows.length !== complete.length) {
+        setSaveError('Add at least one complete role: job title, organisation and duration. Finish or remove any partially completed row.')
+        return
+      }
+    }
+
+    setSaveError('')
     setTransitioning(true)
     const saved = await saveProgress()
     if (saved) setScreenIndex(i => Math.min(i + 1, screens.length - 1))
@@ -938,8 +956,8 @@ function ScreenBody(props) {
                   f.type === 'select' ? (
                     <select key={f.key} style={selectStyle} value={row[f.key] || ''}
                       onChange={e => updateListItem(screen.key, i, f.key, e.target.value)}>
-                      <option value="" disabled>{f.placeholder}</option>
-                      {f.options.map(o => <option key={o} value={o}>{o}</option>)}
+                      <option value="" disabled style={{ background:'#1A1A2E', color:'#F7F4EE' }}>{f.placeholder}</option>
+                      {f.options.map(o => <option key={o} value={o} style={{ background:'#1A1A2E', color:'#F7F4EE' }}>{o}</option>)}
                     </select>
                   ) : (
                     <input key={f.key} style={inputStyle} placeholder={f.placeholder} value={row[f.key] || ''}
