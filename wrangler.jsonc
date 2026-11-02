@@ -8,5 +8,5 @@
   "vars": { "CF_WORKERS": "1" },
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   "observability": { "enabled": true },
-  "previews": {}
+  "previews": { "vars": { "CF_WORKERS_PREVIEW": "1" } }
 }
