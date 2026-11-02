@@ -60,7 +60,7 @@ export default function HomePage() {
             <h2 id="home-valu-title" className="valu-title">Before you build your next move, <em>know where you stand.</em></h2>
             <p className="valu-desc">The VALU Index gives you a directional picture of your professional capability across Presence, Relationships, Intelligence, Mastery and Enterprise — so you can see what to strengthen, what to surface and what to build next.</p>
             <div className="valu-conversion-proof" aria-label="Assessment details">
-              <span><b>15</b> QUESTIONS</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
+              <span><b>9</b> QUESTIONS</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
             </div>
             <div className="home-dual-actions">
               <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START MY VALU INDEX SNAPSHOT <span aria-hidden="true">→</span></a>
