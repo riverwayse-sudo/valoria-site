@@ -1,11 +1,14 @@
 /** @type {import('next').NextConfig} */
 const productionVALUOrigin = 'https://assessment.valoriainstitute.com'
+const isCloudflarePages = process.env.CF_PAGES === '1'
+const isCloudflarePagesProduction = isCloudflarePages && process.env.CF_PAGES_BRANCH === 'main'
+const isCloudflarePagesPreview = isCloudflarePages && !isCloudflarePagesProduction
+const isCloudflareWorker = process.env.CF_WORKERS === '1'
 const isCloudflarePreview = process.env.CF_WORKERS_PREVIEW === '1'
-const isCloudflareProduction = process.env.CF_WORKERS === '1' && !isCloudflarePreview
-const isProduction = process.env.VERCEL_ENV === 'production' || isCloudflareProduction
-const isPreview = process.env.VERCEL_ENV === 'preview' || isCloudflarePreview
-
-const configuredVALUOrigin = isCloudflarePreview
+const isCloudflareWorkerProduction = isCloudflareWorker && !isCloudflarePreview
+const isProduction = process.env.VERCEL_ENV === 'production' || isCloudflarePagesProduction || isCloudflareWorkerProduction
+const isPreview = process.env.VERCEL_ENV === 'preview' || isCloudflarePagesPreview || isCloudflarePreview
+const configuredVALUOrigin = isPreview
   ? process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN
   : process.env.VALU_UPSTREAM_ORIGIN
 
