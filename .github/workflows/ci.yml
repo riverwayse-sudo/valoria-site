@@ -5,7 +5,7 @@ on:
   push:
     branches: [main, migration/cloudflare-opennext]
   pull_request:
-    branches: [main]
+    branches: [main, migration/cloudflare-opennext]
 
 jobs:
   unit-tests:
