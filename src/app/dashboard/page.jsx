@@ -347,7 +347,7 @@ export default function DashboardPage() {
         </header>
 
         {/* COVER BANNER */}
-        <div style={{ position:'relative', height:'176px', overflow:'hidden', background:`radial-gradient(ellipse 800px 400px at 10% 30%, rgba(201,168,76,.22), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 70%, rgba(201,168,76,.1), transparent 55%), linear-gradient(155deg, ${MID} 0%, ${DARK} 70%)` }}>
+        <div style={{ position:'relative', height:'112px', overflow:'hidden', background:`radial-gradient(ellipse 800px 400px at 10% 30%, rgba(201,168,76,.22), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 70%, rgba(201,168,76,.1), transparent 55%), linear-gradient(155deg, ${MID} 0%, ${DARK} 70%)` }}>
           <svg viewBox="0 0 1200 280" preserveAspectRatio="none" style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:.45 }}>
             <g stroke="#C9A84C" strokeOpacity=".18" strokeWidth="1" fill="none">
               <path d="M0,240 C300,160 500,280 800,180 S1100,240 1200,160"/>
@@ -373,10 +373,10 @@ export default function DashboardPage() {
 
             {/* Avatar — individual professionals only; employer/organiser accounts are businesses, not people */}
             {isSupply && (
-              <div style={{ width:'112px', height:'112px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
+              <div style={{ width:'88px', height:'88px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
                 <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
                   <div style={{ width:'100%', height:'100%', borderRadius:'50%', overflow:'hidden' }}>
-                    <ValoriaAvatar src={p.photo_url} seed={p.id || user?.id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={112} />
+                    <ValoriaAvatar src={p.photo_url} seed={p.id || user?.id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={88} />
                   </div>          </div>
               </div>
             )}
@@ -417,16 +417,13 @@ export default function DashboardPage() {
                 </svg>
                 MESSAGES
               </button>
-              {isSupply && (
-                <button onClick={copyPublicLink}
-                  style={{ padding:'12px 18px', background:'transparent', border:`1px solid ${GLINE}`, color: DIM, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', cursor:'pointer', fontFamily:'inherit' }}>
-                  {copied ? 'LINK COPIED' : 'COPY PUBLIC LINK'}
-                </button>
+
+              {!assessmentAccess?.can_continue && (
+                <Link href={isSupply ? '/profile/edit' : '/marketplace'}
+                  style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
+                  {isSupply ? 'EDIT PROFILE' : 'BROWSE MARKETPLACE'}
+                </Link>
               )}
-              <Link href={isSupply ? '/profile/edit' : '/marketplace'}
-                style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
-                {isSupply ? 'EDIT PROFILE' : 'BROWSE MARKETPLACE'}
-              </Link>
             </div>
           </div>
         </div>
@@ -458,7 +455,7 @@ export default function DashboardPage() {
             every isSpeaker/isFacilitator check to the candidate branch —
             so a not-yet-configured account looked identical to a real
             candidate instead of prompting the person to finish setup. */}
-        {isSupply && !hasTrack && (
+        {isSupply && !hasTrack && !assessmentAccess?.can_continue && (
           <div style={{ maxWidth:'1100px', margin:'20px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
             <div style={{ display:'flex', alignItems:'center', gap:'14px', background:'rgba(201,168,76,.08)', border:`1px solid ${GLINE2}`, borderRadius:'6px', padding:'14px 18px', flexWrap:'wrap' }}>
               <span style={{ fontSize:'18px', color: GOLD }}>◈</span>
@@ -471,6 +468,10 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {stats.length > 0 && (
+        <details className="dv-detail dv-overview">
+          <summary>Account overview <span>View details</span></summary>
+          <div className="dv-detail-content">
         {/* STAT STRIP — professionals only */}
         {stats.length > 0 && (
         <div style={{ maxWidth:'1100px', margin:'32px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
@@ -496,31 +497,8 @@ export default function DashboardPage() {
         </div>
         )}
 
-        {/* VIDEO HIGHLIGHTS ROW */}
-        {isSupply && videos.length > 0 && (
-          <div style={{ maxWidth:'1100px', margin:'32px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
-            <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.45)', marginBottom:'14px' }}>Highlights</div>
-            <div style={{ display:'flex', gap:'16px', overflowX:'auto', paddingBottom:'6px' }}>
-              {videos.map((url, i) => {
-                const ytId = getYouTubeId(url)
-                const labels = ['Intro reel','Case study','Keynote clip','Panel talk']
-                const isActive = activeVideo === i
-                return (
-                  <div key={i} onClick={() => setActiveVideo(isActive ? null : i)}
-                    style={{ flexShrink:0, width:'84px', textAlign:'center', cursor:'pointer' }}>
-                    <div style={{ width:'72px', height:'72px', borderRadius:'50%', margin:'0 auto 8px', padding:'2.5px', background: isActive ? `conic-gradient(${GOLD}, rgba(201,168,76,.2) 40%, rgba(201,168,76,.05) 41%)` : 'rgba(201,168,76,.15)', border: isActive ? `none` : `1px solid ${GLINE}` }}>
-                      <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: MID, display:'flex', alignItems:'center', justifyContent:'center', color: GOLD, fontSize:'18px', border:`2px solid ${DARK}`, overflow:'hidden' }}>
-                        {ytId
-                          ? <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
-                          : '▶'}
-                      </div>
-                    </div>
-                    <div style={{ fontSize:'10px', color: DIM, letterSpacing:'.04em' }}>{labels[i] || `Video ${i+1}`}</div>
-                  </div>
-                )
-              })}
-            </div>
           </div>
+        </details>
         )}
 
         {/* MAIN */}
@@ -572,6 +550,8 @@ export default function DashboardPage() {
               </div>
 
               {/* Profile completeness */}
+              <details className="dv-detail">
+                <summary>Profile completion <span>{completenessPct}%</span></summary>
               <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px' }}>
                   <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)' }}>Required Profile Details</div>
@@ -590,8 +570,12 @@ export default function DashboardPage() {
                     </Link>
                   </>
                 )}
-              </div>
+                </div>
+              </details>
 
+              <details className="dv-detail">
+                <summary>More profile tools <span>Optional</span></summary>
+                <div className="dv-detail-content">
               {/* CV nudge — CV upload is optional so it isn't part of the
                   required-completeness score above, but it powers the
                   About-section summary on the public profile, so it's
@@ -627,6 +611,8 @@ export default function DashboardPage() {
                 )}
                 <Link href="/profile/edit" style={{ fontSize:'11px', color: GOLD, marginTop:'6px', display:'block' }}>Edit links →</Link>
               </div>
+                </div>
+              </details>
             </div>
 
             {/* MAIN CONTENT */}
@@ -650,6 +636,9 @@ export default function DashboardPage() {
                 ) : null
               })()}
 
+              <details className="dv-detail">
+                <summary>Professional profile details <span>Bio, expertise and media</span></summary>
+                <div className="dv-detail-content">
               <Section label="About">
                 {p.bio
                   ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
@@ -702,6 +691,9 @@ export default function DashboardPage() {
                   </div>
                 </Section>
               )}
+
+                </div>
+              </details>
 
               <div style={{ marginBottom:'16px', display:'flex', alignItems:'center', gap:'10px' }}>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.45)' }}>Enquiries Received</div>
@@ -766,6 +758,34 @@ export default function DashboardPage() {
       )}
 
       <style>{`
+        .dv-detail {
+          border:1px solid rgba(201,168,76,.16);
+          background:rgba(26,26,46,.48);
+          margin:0 0 12px;
+        }
+        .dv-detail > summary {
+          display:flex; align-items:center; justify-content:space-between; gap:16px;
+          cursor:pointer; list-style:none; padding:15px 17px;
+          color:#F7F4EE; font-size:12px; font-weight:700; letter-spacing:.035em;
+        }
+        .dv-detail > summary::-webkit-details-marker { display:none; }
+        .dv-detail > summary::after { content:'+'; color:#C9A84C; font-size:18px; font-weight:400; }
+        .dv-detail[open] > summary::after { content:'−'; }
+        .dv-detail > summary span { margin-left:auto; color:rgba(247,244,238,.48); font-size:10px; font-weight:500; }
+        .dv-detail-content { padding:0 17px 16px; }
+        .dv-detail-content > div { margin-bottom:0 !important; }
+        .dv-overview { max-width:1100px; margin:18px auto 0; }
+        .dv-grid { grid-template-columns:260px minmax(0,1fr) !important; gap:28px !important; margin-top:24px !important; }
+        .dv-grid section { margin-bottom:20px !important; }
+        .dv-header-block { gap:18px !important; }
+        @media (max-width:860px) {
+          .dv-grid { grid-template-columns:minmax(0,1fr) !important; gap:18px !important; }
+          .dv-overview { margin-left:20px; margin-right:20px; }
+        }
+        @media (max-width:640px) {
+          .dv-detail > summary { padding:14px; }
+          .dv-detail-content { padding:0 14px 14px; }
+        }
         @keyframes dv-pulse {
           0%{box-shadow:0 0 0 0 rgba(29,158,117,.55);}
           70%{box-shadow:0 0 0 6px rgba(29,158,117,0);}
