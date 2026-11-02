@@ -15,7 +15,7 @@
 - Existing lead pipeline documentation: `docs/LEAD_PIPELINE.md`.
 - Existing lead pipeline: Meta Lead Ads / website captures → Supabase `lead_captures` → sync worker → Brevo. The documented pipeline uses idempotent source/external identifiers and retry metadata.
 
-The event page derives event states from the canonical event catalogue. The catalogue currently marks Session 04 as not date-approved. The UI must respect that approval flag.
+The event page derives event states from the canonical event catalogue. Session 04 is now marked approved on the working branch using the confirmed 14 November event details. It has no configured end time because none is confirmed; it remains live after its start until manually marked ended.
 
 ## 2. Logical flow
 
