@@ -55,14 +55,13 @@ export default function LoginPage() {
       try {
         const target = new URL(requestedReturnTo, window.location.origin)
         return target.origin === window.location.origin
-          && target.pathname === '/journey/continue'
-          && target.searchParams.get('stage') === 'assess'
+          && target.pathname === '/assessment/bridge'
       } catch { return false }
     })()
     if (isAssessmentReturn) {
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (!session?.access_token) return
-        window.location.replace('/dashboard')
+        window.location.replace('/assessment/bridge')
       }).catch(() => {})
     }
   }, [])
@@ -75,9 +74,8 @@ export default function LoginPage() {
         target = `${parsed.pathname}${parsed.search}${parsed.hash}`
       }
       if (parsed.origin === window.location.origin
-        && parsed.pathname === '/journey/continue'
-        && parsed.searchParams.get('stage') === 'assess') {
-        window.location.replace('/dashboard')
+        && parsed.pathname === '/assessment/bridge') {
+        window.location.replace('/assessment/bridge')
         return
       }
     } catch { /* Fall back to the known internal destination. */ }
