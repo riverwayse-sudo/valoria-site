@@ -64,7 +64,7 @@ Form design:
 The supplied Temitayo portrait is the host portrait for the 14 November event. Before publication:
 - retain the confirmed host label (Temitayo Adetokunbo); do not present this image as the guest speaker;
 - preserve the supplied image and use it only for the approved host presentation;
-- save an optimised web asset under a stable descriptive filename in the public asset directory;
+- optimised asset path: `public/images/temitayo-adetokunbo-host.webp` (360 × 499 WebP);
 - preserve an original source copy where repository policy allows;
 - use meaningful alt text only when the portrait conveys information; otherwise use empty alt text when decorative;
 - do not crop away identifying/contextual details without design approval;
