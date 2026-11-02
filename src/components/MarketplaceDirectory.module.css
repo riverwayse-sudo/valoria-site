@@ -142,3 +142,5 @@
 .capabilitySelected small{color:#6F5A26!important}
 .capabilityUnselected{background:#FAFAF7!important;border-color:#D4C9A8!important;color:#8A8578!important;opacity:.82}
 .capabilityUnselected small{color:#8A8578!important}
+
+.capabilities .capabilityLabel{grid-column:1/-1}
