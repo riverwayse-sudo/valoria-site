@@ -73,6 +73,17 @@ function ProfessionalSignupForm(){
       if(signupError)throw signupError
       if(!data?.user?.id)throw new Error('Account could not be created.')
 
+      // Supabase intentionally returns an empty identities array when this
+      // email already belongs to an account. Do not show a false confirmation
+      // message; preserve the taster and route the participant to sign-in.
+      if(Array.isArray(data.user.identities) && data.user.identities.length === 0){
+        localStorage.setItem('pending_taster_id',tasterId)
+        localStorage.setItem('pending_taster_name',name)
+        localStorage.setItem('pending_taster_role',role)
+        window.location.replace(`/login?pending_taster_id=${encodeURIComponent(tasterId)}&returnTo=%2Fdashboard`)
+        return
+      }
+
       const { data: sessionData } = await supabase.auth.getSession()
       if(sessionData?.session?.access_token){
         const linkRes=await fetch('/api/link-taster',{
