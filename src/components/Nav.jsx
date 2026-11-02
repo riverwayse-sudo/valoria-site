@@ -156,10 +156,23 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
       const { data: { session } } = await supabase.auth.getSession()
       if (dashboardOnly) {
         if (!session?.access_token) {
-          window.location.assign('/login?returnTo=%2Fassessment%2Fbridge')
+          window.location.assign('/login?returnTo=%2Fdashboard')
           return
         }
-        window.location.assign('/assessment/bridge')
+        const response = await fetch('/api/valu-handoff', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${session.access_token}` },
+          cache: 'no-store',
+        })
+        const data = await response.json().catch(() => ({}))
+        if (!response.ok || !data.url) {
+          if (data.already_completed) {
+            window.location.assign('/dashboard')
+            return
+          }
+          throw new Error(data.error || 'We could not securely open your saved assessment.')
+        }
+        window.location.assign(data.url)
         return
       }
       // Public navigation is for starting the opening snapshot only. An

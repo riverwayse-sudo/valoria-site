@@ -254,13 +254,13 @@ export default function DashboardPage() {
           <VALUJourneyProgress stage="continuation" currentQuestion={10} />
           <h1 style={{fontSize:'clamp(26px,4vw,38px)',textAlign:'center',margin:0}}>Your assessment is ready to continue.</h1>
           <p style={{maxWidth:560,textAlign:'center',color:DIM,lineHeight:1.7}}>Your saved opening answers are connected to this account. Continue from Question 10 without restarting.</p>
-          <AssessmentStartLink href="/assessment/bridge" dashboardOnly style={{padding:'14px 24px',background:GOLD,color:DARK,fontSize:12,fontWeight:800,textDecoration:'none',borderRadius:999}}>CONTINUE YOUR ASSESSMENT →</AssessmentStartLink>
+          <AssessmentStartLink href="/dashboard" dashboardOnly style={{padding:'14px 24px',background:GOLD,color:DARK,fontSize:12,fontWeight:800,textDecoration:'none',borderRadius:999}}>CONTINUE YOUR ASSESSMENT →</AssessmentStartLink>
         </>
       ) : assessmentAccess === null ? (
         <>
           <h1 style={{fontSize:'clamp(26px,4vw,38px)',textAlign:'center',margin:0}}>Continue your VALU assessment.</h1>
           <p style={{maxWidth:560,textAlign:'center',color:DIM,lineHeight:1.7}}>We could not confirm your assessment status yet. You can retry the secure continuation; your saved responses will not be discarded.</p>
-          <AssessmentStartLink href="/assessment/bridge" dashboardOnly style={{padding:'14px 24px',background:GOLD,color:DARK,fontSize:12,fontWeight:800,textDecoration:'none',borderRadius:999}}>CONTINUE YOUR ASSESSMENT →</AssessmentStartLink>
+          <AssessmentStartLink href="/dashboard" dashboardOnly style={{padding:'14px 24px',background:GOLD,color:DARK,fontSize:12,fontWeight:800,textDecoration:'none',borderRadius:999}}>CONTINUE YOUR ASSESSMENT →</AssessmentStartLink>
         </>
       ) : (
         <>
@@ -821,7 +821,7 @@ function DashboardAssessmentHandover({ standalone = false }) {
         </div>
       </div>
       <div style={{ display:'flex', justifyContent:'center', marginTop:22 }}>
-        <AssessmentStartLink href="/assessment/bridge" dashboardOnly style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:10, padding:'14px 26px', background:'#C9A84C', color:'#1A1A2E', borderRadius:999, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.12em' }}>
+        <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:10, padding:'14px 26px', background:'#C9A84C', color:'#1A1A2E', borderRadius:999, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.12em' }}>
           CONTINUE YOUR ASSESSMENT <span aria-hidden="true">→</span>
         </AssessmentStartLink>
       </div>
@@ -941,7 +941,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
                               const actions = {
                                 profile: ['/profile/edit', 'Complete profile'],
                                 capability: ['/profile/edit', 'Review capabilities'],
-                                valu_assessment_score_35_current: ['/assessment/bridge', 'Complete VALU assessment'],
+                                valu_assessment_score_35_current: ['/dashboard', 'Complete VALU assessment'],
                                 talent_cv: ['/profile/edit', 'Upload CV'],
                                 talent_cv_approval: [null, 'Await Valoria CV approval'],
                                 speaker_topics: ['/profile/edit', 'Add speaking topics'],
@@ -967,7 +967,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
               )}
               <div style={{ display:'flex', alignItems:'center', gap:12, flexWrap:'wrap', marginTop:20 }}>
                 {next?.key === 'valu' ? (
-                  <AssessmentStartLink href="/assessment/bridge" dashboardOnly style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'13px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:999, transition:'transform .2s ease, box-shadow .2s ease' }}>
+                  <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'13px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:999, transition:'transform .2s ease, box-shadow .2s ease' }}>
                     {hasSavedOpening ? 'CONTINUE TO QUESTION 10' : 'START YOUR VALU ASSESSMENT'} <span aria-hidden="true">→</span>
                   </AssessmentStartLink>
                 ) : (

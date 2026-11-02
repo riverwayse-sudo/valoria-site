@@ -3,10 +3,11 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import styles from './ValoriaJourneyCards.module.css'
 import { supabase } from '@/lib/supabase'
+import { AssessmentStartLink } from '@/components/Nav'
 
 const MILESTONES = [
   { key:'connect', title:'Join Valoria', short:'START', description:'Your Valoria account is ready.', href:'/profile/onboarding', icon:'01' },
-  { key:'assess', title:'Complete VALU', short:'VALU', description:'Continue your saved assessment and see your professional signal.', href:'/assessment/bridge', icon:'02' },
+  { key:'assess', title:'Complete VALU', short:'VALU', description:'Continue your saved assessment and see your professional signal.', href:'/dashboard', icon:'02' },
   { key:'report', title:'Understand your result', short:'RESULT', description:'Read what your VALU result means.', href:'/report', icon:'03' },
   { key:'profile', title:'Complete your profile', short:'PROFILE', description:'Add your professional details and unlock enhanced marketplace access.', href:'/profile/setup', icon:'04' },
   { key:'capability', title:'Choose your capability', short:'CAPABILITY', description:'Tell Valoria what you want to be discovered for.', href:'/profile/setup', icon:'05' },
@@ -122,14 +123,20 @@ export default function ValoriaJourneyCards({ compact=false }) {
         {cards.map((card, index) => (
           <div key={card.key} className={styles.webNodeWrap} role="listitem">
             {index > 0 && <span className={styles.webLine} aria-hidden="true" />}
-            <Link
-              href={card.locked ? '/journey' : card.href}
-              className={[styles.webNode, card.complete ? styles.webComplete : '', card.current ? styles.webCurrent : '', card.locked ? styles.webLocked : ''].join(' ')}
-              aria-current={card.current ? 'step' : undefined}
-              aria-label={`${card.title}: ${card.complete ? 'done' : card.current ? 'your next step' : 'not ready yet'}`}
-            >
-              <span>{card.complete ? '✓' : card.icon}</span>
-            </Link>
+            {card.key === 'assess' && card.current ? (
+              <AssessmentStartLink href="/dashboard" dashboardOnly className={[styles.webNode, styles.webCurrent].join(' ')} aria-current="step" aria-label="Continue your saved VALU assessment">
+                <span>{card.icon}</span>
+              </AssessmentStartLink>
+            ) : (
+              <Link
+                href={card.locked ? '/journey' : card.href}
+                className={[styles.webNode, card.complete ? styles.webComplete : '', card.current ? styles.webCurrent : '', card.locked ? styles.webLocked : ''].join(' ')}
+                aria-current={card.current ? 'step' : undefined}
+                aria-label={`${card.title}: ${card.complete ? 'done' : card.current ? 'your next step' : 'not ready yet'}`}
+              >
+                <span>{card.complete ? '✓' : card.icon}</span>
+              </Link>
+            )}
             <div className={[styles.webLabel, card.current ? styles.webLabelCurrent : ''].join(' ')}>
               {card.current ? 'YOU ARE HERE' : card.complete ? 'DONE' : card.short}
             </div>
@@ -139,7 +146,9 @@ export default function ValoriaJourneyCards({ compact=false }) {
 
       <div className={styles.next}>
         <span><b>NEXT</b> {state?.journey?.nextAction || current?.title}</span>
-        {current && !current.locked && <Link href={current.href} className={styles.primaryAction}>CONTINUE →</Link>}
+        {current && !current.locked && (current.key === 'assess'
+          ? <AssessmentStartLink href="/dashboard" dashboardOnly className={styles.primaryAction}>CONTINUE →</AssessmentStartLink>
+          : <Link href={current.href} className={styles.primaryAction}>CONTINUE →</Link>)}
       </div>
     </section>
   )

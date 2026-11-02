@@ -49,21 +49,7 @@ export default function LoginPage() {
       }).catch(() => {})
     }
 
-    // A valid browser session must return to the dashboard first. The user
-    // chooses when to continue; the dashboard CTA then issues the signed handoff.
-    const isAssessmentReturn = (() => {
-      try {
-        const target = new URL(requestedReturnTo, window.location.origin)
-        return target.origin === window.location.origin
-          && target.pathname === '/assessment/bridge'
-      } catch { return false }
-    })()
-    if (isAssessmentReturn) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (!session?.access_token) return
-        window.location.replace('/assessment/bridge')
-      }).catch(() => {})
-    }
+
   }, [])
 
   function redirectAfterLogin(defaultPath) {
@@ -72,11 +58,6 @@ export default function LoginPage() {
       const parsed = new URL(returnTo || defaultPath, window.location.origin)
       if (parsed.origin === window.location.origin) {
         target = `${parsed.pathname}${parsed.search}${parsed.hash}`
-      }
-      if (parsed.origin === window.location.origin
-        && parsed.pathname === '/assessment/bridge') {
-        window.location.replace('/assessment/bridge')
-        return
       }
     } catch { /* Fall back to the known internal destination. */ }
     window.location.href = target
