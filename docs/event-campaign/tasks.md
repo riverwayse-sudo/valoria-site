@@ -13,13 +13,13 @@ Status labels: **Pending**, **In progress**, **Blocked**, **Verified**. Do not m
 
 ## Phase 1 — Existing implementation audit
 
-- [ ] Inspect `POST /api/session-registration` route and its persistence target.
+- [x] Inspect `POST /api/session-registration` route and its persistence target. It upserts `professional_standard_event_registrations` on `session_id,email` using the Supabase service role.
 - [ ] Inspect `src/lib/eventRegistrationBrevo.js` and determine exactly when/how Brevo is called.
 - [ ] Inspect database schema, constraints, triggers and policies used by registration.
-- [ ] Confirm duplicate-registration/idempotency behaviour.
-- [ ] Confirm server-side consent enforcement.
-- [ ] Confirm rate limiting, abuse protection and safe error responses.
-- [ ] Confirm confirmation email behaviour and delivery observability.
+- [x] Confirm duplicate-registration/idempotency behaviour. Database upsert uses the `session_id,email` conflict key; verify the matching unique constraint in the deployed database.
+- [x] Confirm server-side consent enforcement. A single Boolean is required; consent currently combines essential event information and relevant Valoria communications, so separate marketing permission remains a required policy/design decision.
+- [x] Confirm rate limiting and safe error responses. Found a fail-open RPC error path; patched it to fail closed with HTTP 503 and prefer Cloudflare's `CF-Connecting-IP`. End-to-end verification remains pending.
+- [x] Confirm confirmation email behaviour and delivery observability. A protected cron route retries rows with unsent Brevo sync/confirmation; verify the actual scheduler and deployed secret configuration.
 - [ ] Record actual findings here before changing architecture.
 
 ## Phase 2 — Registration implementation
