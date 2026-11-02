@@ -418,10 +418,12 @@ export default function DashboardPage() {
                 MESSAGES
               </button>
 
-              <Link href={isSupply ? '/profile/edit' : '/marketplace'}
-                style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
-                {isSupply ? 'EDIT PROFILE' : 'BROWSE MARKETPLACE'}
-              </Link>
+              {!assessmentAccess?.can_continue && (
+                <Link href={isSupply ? '/profile/edit' : '/marketplace'}
+                  style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
+                  {isSupply ? 'EDIT PROFILE' : 'BROWSE MARKETPLACE'}
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -453,7 +455,7 @@ export default function DashboardPage() {
             every isSpeaker/isFacilitator check to the candidate branch —
             so a not-yet-configured account looked identical to a real
             candidate instead of prompting the person to finish setup. */}
-        {isSupply && !hasTrack && (
+        {isSupply && !hasTrack && !assessmentAccess?.can_continue && (
           <div style={{ maxWidth:'1100px', margin:'20px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
             <div style={{ display:'flex', alignItems:'center', gap:'14px', background:'rgba(201,168,76,.08)', border:`1px solid ${GLINE2}`, borderRadius:'6px', padding:'14px 18px', flexWrap:'wrap' }}>
               <span style={{ fontSize:'18px', color: GOLD }}>◈</span>
