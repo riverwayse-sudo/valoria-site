@@ -28,6 +28,7 @@ describe('Next.js Supabase build URL normalization', () => {
 
     expect(config.env.NEXT_PUBLIC_SUPABASE_URL).toBe('https://example.supabase.co')
     expect(config.env.SUPABASE_URL).toBe('https://example.supabase.co')
+    expect(config.env).not.toHaveProperty('SUPABASE_SERVICE_ROLE_KEY')
   })
 
   test('uses the available project URL for both public and server clients', () => {
