@@ -25,6 +25,9 @@ describe("professional signup identity recovery", () => {
     expect(login).toContain("localStorage.setItem('pending_taster_id', pendingTasterId)");
     expect(login).toContain("fetch('/api/link-taster'");
     expect(login).toContain("redirectAfterLogin('/dashboard')");
+    expect(login).toContain("requestedTarget.origin === window.location.origin");
+    expect(login).toContain("parsed.origin === window.location.origin");
+    expect(login).not.toContain("returnTo && returnTo.startsWith('/')");
   });
 
   test("new-account signup still requires password confirmation", () => {
