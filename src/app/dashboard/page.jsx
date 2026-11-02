@@ -952,7 +952,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
                       <ul style={{ margin:'9px 0 0', paddingLeft:18, color:DIM, fontSize:11, lineHeight:1.8 }}>
                         {missing.map(item => {
                           const [href, label] = requirementActions[item] || [null, requirementLabels[item] || String(item).replace(/_/g,' ')]
-                          return <li key={item}>{href ? <><span>{requirementLabels[item] || String(item).replace(/_/g,' ')}</span> — <Link href={href} style={{ color:GOLD }}>{label}</Link></> : (requirementLabels[item] || String(item).replace(/_/g,' '))}</li>
+                          return <li key={item}>{href ? <Link href={href} style={{ color:GOLD }}>{requirementLabels[item] || String(item).replace(/_/g,' ')} — {label}</Link> : (requirementLabels[item] || String(item).replace(/_/g,' '))}</li>
                         })}
                       </ul>
                     ) : <p style={{ margin:'8px 0 0', color:DIM, fontSize:11 }}>Awaiting Valoria eligibility review.</p>}
@@ -966,7 +966,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
         {comingAfter && (
           <details style={{ marginTop:12, borderTop:`1px solid ${GLINE}`, paddingTop:12 }}>
             <summary style={{ cursor:'pointer', color:'rgba(247,244,238,.56)', fontSize:11, fontWeight:600 }}>COMING UP AFTER THIS</summary>
-            <p style={{ margin:'10px 0 0', color:DIM, fontSize:11 }}>{comingAfter.label}</p>
+            <p style={{ margin:'10px 0 0', color:DIM, fontSize:11 }}>You’ll unlock: {comingAfter.label}</p>
           </details>
         )}
         <details style={{ marginTop:18, borderTop:`1px solid ${GLINE}`, paddingTop:12 }}>
