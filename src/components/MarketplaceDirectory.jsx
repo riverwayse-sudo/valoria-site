@@ -141,7 +141,7 @@ function Profile({p}) {
           </span>
         : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>FULL ASSESSMENT<br/>PENDING</span>}
     </div>
-    {capabilityBadges.length > 0 && <div className={styles.capabilities} aria-label="Selected professional capabilities" title="Selected capabilities are shown separately from directory listing eligibility">{capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)}</div>}
+    {capabilityBadges.length > 0 && <div className={styles.capabilities} aria-label="Selected professional capabilities" title="Selected capabilities are shown separately from directory listing eligibility"><small className={styles.capabilityLabel}>SELECTED CAPABILITIES</small>{capabilityBadges.map(badge=><span className={styles.capabilityBadge} key={badge.key}><strong>{badge.title}</strong><small>{badge.detail}</small></span>)}</div>}
     <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE</Link>
   </article>
 }
