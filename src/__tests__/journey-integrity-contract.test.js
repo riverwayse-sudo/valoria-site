@@ -387,7 +387,7 @@ describe('journey integrity contract', () => {
     expect(config).toContain('/api/cron/reconciliation-health')
   })
   
-  test('every incomplete VALU dashboard milestone opens the secure assessment bridge', () => {
+  test('every incomplete VALU dashboard milestone opens the secure direct assessment handoff', () => {
     const cards = read('src/components/ValoriaJourneyCards.jsx')
     const dashboard = read('src/app/dashboard/page.jsx')
     const nudge = read('src/components/ValuCompletionNudge.jsx')
@@ -396,7 +396,7 @@ describe('journey integrity contract', () => {
     expect(dashboard).toContain('CONTINUE YOUR ASSESSMENT')
     expect(dashboard).toContain('href="/dashboard" dashboardOnly')
     expect(nudge).toContain('CONTINUE MY ASSESSMENT')
-    expect(nudge).toContain('assessmentStarted?"/dashboard"')
+    expect(nudge).toContain('AssessmentStartLink href="/dashboard" dashboardOnly')
   })
 
   test('journey-state API accepts a verified bearer session as well as the SSR cookie session', () => {
@@ -426,14 +426,15 @@ describe('journey integrity contract', () => {
     expect(journey).toContain("assess: '/dashboard'")
     expect(journeyCards).toContain("href:'/dashboard'")
     expect(journeyCards).toContain('AssessmentStartLink')
-    expect(nudge).toContain('assessmentStarted?"/dashboard":"/valu/start"')
+    expect(nudge).toContain('AssessmentStartLink href="/dashboard" dashboardOnly')
+    expect(nudge).toContain('href={assessed?"/profile/setup":"/valu/start"}')
     expect(continuation).toContain("stage === 'assess'")
     expect(continuation).toContain("return NextResponse.redirect(new URL('/dashboard', request.url))")
     expect(continuation).not.toContain('assessment.valoriainstitute.com')
   })
 
 
-  test('the VALU opening, confirmation bridge, and Question 10 continuation read as one journey', () => {
+  test('the VALU opening and Question 10 continuation read as one journey', () => {
     const progress = read('src/components/VALUJourneyProgress.jsx')
     const signup = read('src/app/professional-signup/page.jsx')
     const dashboard = read('src/app/dashboard/page.jsx')
