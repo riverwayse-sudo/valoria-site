@@ -1,11 +1,17 @@
 /** @type {import('next').NextConfig} */
 const productionVALUOrigin = 'https://assessment.valoriainstitute.com'
-const isCloudflareProduction = (process.env.CF_PAGES === '1' && process.env.CF_PAGES_BRANCH === 'main') || process.env.CF_WORKERS === '1'
-const isProduction = process.env.VERCEL_ENV === 'production' || isCloudflareProduction
-const isPreview = process.env.VERCEL_ENV === 'preview' || (process.env.CF_PAGES === '1' && !isCloudflareProduction) || (process.env.CF_WORKERS === '1' && !isCloudflareProduction)
-const configuredVALUOrigin = isProduction
-  ? process.env.VALU_UPSTREAM_ORIGIN
-  : process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN
+const isCloudflarePages = process.env.CF_PAGES === '1'
+const isCloudflarePagesProduction = isCloudflarePages && process.env.CF_PAGES_BRANCH === 'main'
+const isCloudflarePagesPreview = isCloudflarePages && !isCloudflarePagesProduction
+const isCloudflareWorker = process.env.CF_WORKERS === '1'
+const isCloudflarePreview = process.env.CF_WORKERS_PREVIEW === '1'
+const isCloudflareWorkerProduction = isCloudflareWorker && !isCloudflarePreview
+const isProduction = process.env.VERCEL_ENV === 'production' || isCloudflarePagesProduction || isCloudflareWorkerProduction
+const isPreview = process.env.VERCEL_ENV === 'preview' || isCloudflarePagesPreview || isCloudflarePreview
+const configuredVALUOrigin = isPreview
+  ? process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN
+  : process.env.VALU_UPSTREAM_ORIGIN
+
 let valuOrigin = isProduction
   ? (configuredVALUOrigin || productionVALUOrigin)
   : (configuredVALUOrigin || null)
@@ -13,7 +19,8 @@ let valuOrigin = isProduction
 if (isPreview && valuOrigin) {
   try {
     const preview = new URL(valuOrigin)
-    const isLocalDevelopment = preview.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(preview.hostname)
+    const isLocalDevelopment = preview.protocol === 'http:' &&
+      ['localhost', '127.0.0.1'].includes(preview.hostname)
     if ((preview.protocol !== 'https:' && !isLocalDevelopment) ||
         preview.hostname === 'assessment.valoriainstitute.com' ||
         preview.hostname === 'valoria-platform.riverwayse.workers.dev') {
