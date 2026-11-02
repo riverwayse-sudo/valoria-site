@@ -23,7 +23,12 @@ export default function LoginPage() {
     const params = new URLSearchParams(window.location.search)
     const identityHash = params.get('identity_hash')
     const requestedReturnTo = params.get('returnTo') || ''
-    if (requestedReturnTo.startsWith('/')) setReturnTo(requestedReturnTo)
+    try {
+      const requestedTarget = new URL(requestedReturnTo, window.location.origin)
+      if (requestedTarget.origin === window.location.origin) {
+        setReturnTo(`${requestedTarget.pathname}${requestedTarget.search}${requestedTarget.hash}`)
+      }
+    } catch { /* Ignore malformed or external return destinations. */ }
     const pendingTasterId = params.get('pending_taster_id')
     if (pendingTasterId) localStorage.setItem('pending_taster_id', pendingTasterId)
 
@@ -63,14 +68,19 @@ export default function LoginPage() {
   }, [])
 
   function redirectAfterLogin(defaultPath) {
-    const target = returnTo && returnTo.startsWith('/') ? returnTo : defaultPath
+    let target = defaultPath
     try {
-      const parsed = new URL(target, window.location.origin)
-      if (parsed.pathname === '/journey/continue' && parsed.searchParams.get('stage') === 'assess') {
+      const parsed = new URL(returnTo || defaultPath, window.location.origin)
+      if (parsed.origin === window.location.origin) {
+        target = `${parsed.pathname}${parsed.search}${parsed.hash}`
+      }
+      if (parsed.origin === window.location.origin
+        && parsed.pathname === '/journey/continue'
+        && parsed.searchParams.get('stage') === 'assess') {
         window.location.replace('/dashboard')
         return
       }
-    } catch {}
+    } catch { /* Fall back to the known internal destination. */ }
     window.location.href = target
   }
 
