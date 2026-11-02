@@ -4,8 +4,7 @@
 .seal{position:relative;display:grid;place-items:center;width:clamp(132px,17vw,190px);aspect-ratio:1;margin:auto;border:1px solid rgba(201,168,76,.48);border-radius:50%;animation:sealReveal .9s cubic-bezier(.2,.7,.2,1) both}
 .sealOuter,.sealInner{position:absolute;border:1px solid rgba(201,168,76,.24);border-radius:50%;inset:9px}
 .sealInner{inset:20px;border-style:dashed;animation:sealRotate 36s linear infinite}
-.sealLetter{font-family:Georgia,'Times New Roman',serif;font-size:clamp(64px,8vw,92px);font-weight:400;line-height:1;color:#C9A84C;transform:translateY(-5px)}
-.sealCaption{position:absolute;bottom:24px;color:rgba(247,244,238,.55);font-size:7px;font-weight:800;letter-spacing:.28em}
+.sealLogo{display:block;width:76%;max-width:148px;max-height:76px;height:auto;object-fit:contain;filter:drop-shadow(0 2px 12px rgba(0,0,0,.18))}
 .introCopy{max-width:650px;animation:copyReveal .75s .12s both}
 .eyebrow,.chapterHeading{color:#C9A84C;font-size:9px;font-weight:800;letter-spacing:.2em}
 .introCopy h2{max-width:620px;margin:12px 0 10px;color:#FAFAF7;font-size:clamp(25px,3.4vw,42px);font-weight:400;line-height:1.12;letter-spacing:-.025em}
@@ -35,5 +34,5 @@
 @keyframes lineReveal{to{transform:scaleX(1)}}
 @keyframes chapterReveal{to{opacity:1;transform:translateY(0)}}
 @media(max-width:900px){.timeline{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:24px}.timeline:before{display:none}.chapter{display:grid;grid-template-columns:36px 1fr;column-gap:12px;padding-right:12px}.chapterNumber{grid-row:1 / span 2}.chapterCopy{padding-top:1px}.chapterMark{grid-column:2;margin-top:8px}}
-@media(max-width:620px){.experience{padding:22px 18px}.intro{grid-template-columns:1fr;gap:20px;padding-bottom:24px}.seal{width:118px}.sealLetter{font-size:60px}.sealCaption{bottom:18px}.introCopy{text-align:center}.introCopy p{margin-inline:auto}.signature{justify-content:center}.timeline{grid-template-columns:1fr;gap:18px}.chapter{grid-template-columns:38px 1fr;column-gap:12px;padding:0}.chapterCopy{padding-top:1px}.chapter h3{font-size:14px}.chapter p{font-size:11px}.chapterMark{display:none}.footer{gap:7px;font-size:6px;letter-spacing:.11em}}
+@media(max-width:620px){.experience{padding:22px 18px}.intro{grid-template-columns:1fr;gap:20px;padding-bottom:24px}.seal{width:118px}.introCopy{text-align:center}.introCopy p{margin-inline:auto}.signature{justify-content:center}.timeline{grid-template-columns:1fr;gap:18px}.chapter{grid-template-columns:38px 1fr;column-gap:12px;padding:0}.chapterCopy{padding-top:1px}.chapter h3{font-size:14px}.chapter p{font-size:11px}.chapterMark{display:none}.footer{gap:7px;font-size:6px;letter-spacing:.11em}}
 @media(prefers-reduced-motion:reduce){.seal,.sealInner,.introCopy,.timeline:before,.chapter{animation:none!important;opacity:1;transform:none}.chapterMark{transition:none}}

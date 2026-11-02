@@ -52,8 +52,7 @@ export default function ValoriaHandoverCards() {
         <div className={styles.seal} aria-hidden="true">
           <span className={styles.sealOuter} />
           <span className={styles.sealInner} />
-          <span className={styles.sealLetter}>V</span>
-          <span className={styles.sealCaption}>INSTITUTE</span>
+          <img src="/logo.png" alt="Valoria Institute" className={styles.sealLogo} />
         </div>
         <div className={styles.introCopy}>
           <span className={styles.eyebrow}>A CLOSER LOOK AT VALORIA</span>
