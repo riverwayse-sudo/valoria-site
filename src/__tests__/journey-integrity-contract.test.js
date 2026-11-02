@@ -128,7 +128,7 @@ describe('journey integrity contract', () => {
   test('assessment return from login always lands on dashboard before the user chooses to continue', () => {
     const login = read('src/app/login/page.jsx')
     expect(login).toContain("target.pathname === '/journey/continue'")
-    expect(login).toContain("window.location.replace('/dashboard')")
+    expect(login).toContain("window.location.replace('/assessment/bridge')")
     expect(login).toContain("pending_taster_id")
     expect(login).not.toContain('launchAssessmentIfRequested')
     expect(login).not.toContain("fetch('/api/valu-handoff'")
@@ -516,7 +516,8 @@ describe('journey integrity contract', () => {
     expect(dashboard).toContain('if (!profile && assessmentAccess?.can_continue) return <DashboardAssessmentHandover standalone />')
     expect(dashboard).toContain('{assessmentAccess?.can_continue && (')
     expect(dashboard).toContain('Your first answers are saved. Ready for the next 49?')
-    expect(dashboard).toContain('<ValoriaHandoverCards />')
+    expect(dashboard).not.toContain('<ValoriaHandoverCards />')
+    expect(bridge).toContain('<ValoriaHandoverCards />')
     expect(dashboard).toContain('AssessmentStartLink href="/assessment/bridge" dashboardOnly')
     expect(dashboard).toContain('isSupply && !assessmentAccess?.can_continue')
   })
