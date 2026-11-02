@@ -130,7 +130,7 @@ export default function ProgressiveOnboardingPage() {
         {valu?.total_score != null && (
           <div style={styles.valuCard}>
             <div><div style={styles.label}>OFFICIAL VALU INDEX</div><div style={styles.score}>{valu.total_score}<span> points</span></div></div>
-            <div style={styles.designation}>{getValuTier(valu.total_score, 'full')?.name || valu.designation || 'ASSESSED PROFESSIONAL'}</div>
+            <div style={styles.designation}>{getValuTier(valu.total_score, 'full')?.name || (valu.total_score != null ? 'VALU INDEX RECORDED' : 'ASSESSED PROFESSIONAL')}</div>
           </div>
         )}
 
