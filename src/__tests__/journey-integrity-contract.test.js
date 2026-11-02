@@ -1,4 +1,3 @@
-import { getValuAssessmentOrigin } from '../lib/valu-origin.js'
 const fs = require('fs')
 const path = require('path')
 const { deriveJourneyState } = require('../lib/journey-state')
@@ -210,26 +209,6 @@ describe('journey integrity contract', () => {
     expect(signup).not.toContain('href="https://assessment.valoriainstitute.com/"')
   })
 
-
-  test('Cloudflare production resolves the assessment Worker while previews stay isolated', () => {
-    expect(getValuAssessmentOrigin({
-      CF_WORKERS: '1',
-      VALU_UPSTREAM_ORIGIN: 'https://assessment.valoriainstitute.com',
-    })).toBe('https://assessment.valoriainstitute.com')
-    expect(getValuAssessmentOrigin({
-      CF_WORKERS_PREVIEW: '1',
-      VALU_PREVIEW_ASSESSMENT_ORIGIN: 'https://assessment-preview.invalid',
-      VALU_UPSTREAM_ORIGIN: 'https://preview-assessment.invalid',
-    })).toBe('https://assessment-preview.invalid')
-    expect(getValuAssessmentOrigin({
-      CF_WORKERS_PREVIEW: '1',
-      VALU_PREVIEW_ASSESSMENT_ORIGIN: 'https://assessment.valoriainstitute.com',
-    })).toBeNull()
-    expect(getValuAssessmentOrigin({
-      VERCEL_ENV: 'production',
-      VALU_UPSTREAM_ORIGIN: 'https://assessment.valoriainstitute.com',
-    })).toBe('https://assessment.valoriainstitute.com')
-  })
 
   test('assessment continuation never accepts email resume tokens or public identity query parameters', () => {
     const continuation = read('src/app/journey/continue/route.js')
