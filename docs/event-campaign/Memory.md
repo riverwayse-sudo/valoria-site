@@ -43,7 +43,17 @@
 - `docs/LEAD_PIPELINE.md` documents Supabase `lead_captures` and a Brevo synchronisation worker. It also records a historical Brevo HTTP 401 egress/IP-authorisation issue. Recheck current provider status; do not assume it is still failing or resolved.
 - Exact registration persistence schema and transactional delivery behaviour must be confirmed by inspecting the route and database before implementation claims are made.
 
-## 5. Non-negotiable project constraints
+## 5. Registration audit findings (2 November 2026)
+
+- `POST /api/session-registration` uses Supabase service-role access and upserts `professional_standard_event_registrations` on `session_id,email`.
+- Registration API requires a true consent Boolean. The UI wording currently combines essential event information and “relevant Valoria communications”; this is not a clean separation of transactional and optional promotional consent. Resolve the approved consent wording and data model before marketing sends.
+- The rate-limit RPC previously failed open. A code change on the event-campaign documentation branch now returns HTTP 503 if the RPC errors and prefers Cloudflare's `CF-Connecting-IP` header. This patch is not yet merged, deployed or runtime-tested.
+- A protected `GET /api/cron/event-registration-sync` route exists and retries registrations where Brevo sync or confirmation is incomplete, with a maximum attempt count of 10. The actual scheduler invoking this route and its production secret configuration still require verification.
+- The registration flow adds the contact to a Brevo list and sends a confirmation email through the same helper. Verify list purpose and suppression/consent semantics before campaign use.
+- The registration API creates a Valoria re-entry link and attempts to resolve an existing account; the account lookup result is currently unused.
+- The event-registration sync cron currently selects future sessions from `EVENT_SESSIONS`; verify approval gating and do not treat this as permission to market a provisional session.
+
+## 6. Non-negotiable project constraints
 
 - Do not invent event title, speaker, role, credentials, date, time, duration, venue, price, agenda, capacity or outcomes.
 - Approved flyer and explicit owner confirmation control event copy.
@@ -57,7 +67,7 @@
 - The project owner has directed the team to use Cloudflare for current deployments; do not revert to Vercel deployment paths without explicit direction.
 - Do not claim a deployment, test, send or fix is complete without evidence.
 
-## 6. Update protocol
+## 7. Update protocol
 
 After each implementation milestone, update:
 1. current verified behaviour;
