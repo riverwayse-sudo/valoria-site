@@ -25,7 +25,7 @@ export const PROFESSIONAL_STANDARD_SERIES = [
     id: '04', cluster: 'ENTERPRISE',
     title: 'Influence Without Authority: The Real Currency of Organisational Power',
     description: '',
-    start: '2026-11-14T10:00:00+01:00', end: '2026-11-14T11:30:00+01:00', dateApproved: true,
+    start: '2026-11-14T10:00:00+01:00', dateApproved: true,
     speaker: 'Yinlayefa Thompson, SPHRi', host: 'Temitayo Adetokunbo',
   },
   {
@@ -39,13 +39,18 @@ export const PROFESSIONAL_STANDARD_SERIES = [
 export function getSessionState(session, now = Date.now()) {
   if (!session.dateApproved) return 'coming-soon'
   const start = new Date(session.start).getTime()
-  const end = new Date(session.end).getTime()
   const index = PROFESSIONAL_STANDARD_SERIES.findIndex((item) => item.id === session.id)
   const previous = index > 0 ? PROFESSIONAL_STANDARD_SERIES[index - 1] : null
-  const previousEnd = previous ? new Date(previous.end).getTime() : 0
+
+  // If a previous approved session has no confirmed end time, keep the next
+  // session locked until the previous one is explicitly marked ended.
+  if (previous && !previous.end && !previous.manuallyEnded) return 'locked'
+  const previousEnd = previous?.end ? new Date(previous.end).getTime() : 0
   if (now < previousEnd) return 'locked'
   if (now < start) return 'registration-open'
-  if (now < end) return 'live'
+  if (session.manuallyEnded) return 'ended'
+  if (!session.end) return 'live'
+  if (now < new Date(session.end).getTime()) return 'live'
   return 'ended'
 }
 
@@ -58,7 +63,7 @@ export function getCountdownTarget(session, now = Date.now()) {
     return new Date(previous.end).getTime()
   }
   if (state === 'registration-open') return new Date(session.start).getTime()
-  if (state === 'live') return new Date(session.end).getTime()
+  if (state === 'live') return session.end ? new Date(session.end).getTime() : null
   return null
 }
 
