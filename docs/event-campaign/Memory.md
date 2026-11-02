@@ -24,7 +24,7 @@ Confirmed in the user's 28–29 October 2026 event discussion:
 - Host: Temitayo Adetokunbo.
 - Two planned creatives, in order: speaker profile poster, then main event announcement poster.
 - Existing creative direction: Valoria navy, gold and light blue; user asked to keep the work simple and not add unnecessary elements.
-- User supplied a Temitayo portrait and explicitly asked that it be stored in the codebase. It is the host portrait; do not label it as the guest speaker.
+- User supplied a Temitayo portrait and explicitly asked that it be stored in the codebase. It is the host portrait; do not label it as the guest speaker. An optimised copy is committed at `public/images/temitayo-adetokunbo-host.webp`.
 - No approved event duration/end time, venue/platform, agenda, or further description is evidenced. Do not invent or display these fields.
 
 Session 04 in the codebase has been updated on the working branch to match the confirmed title, Enterprise cluster, date/time, guest speaker and host. The previously coded 90-minute end time was removed because it was not confirmed. The event remains active after its start until an operator explicitly marks it ended; this avoids inventing an end time.
