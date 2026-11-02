@@ -154,11 +154,11 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
     setError('')
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      if (dashboardOnly) {
-        if (!session?.access_token) {
-          window.location.assign('/login?returnTo=%2Fdashboard')
-          return
-        }
+      // Every signed-in assessment CTA must issue the secure continuation
+      // handoff and navigate directly to the dedicated /remaining route.
+      // Returning to /dashboard here caused the public header CTA to loop
+      // participants back to the page they were already on.
+      if (session?.access_token) {
         const response = await fetch('/api/valu-handoff', {
           method: 'POST',
           headers: { Authorization: `Bearer ${session.access_token}` },
@@ -175,12 +175,11 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
         window.location.assign(data.url)
         return
       }
-      // Public navigation is for starting the opening snapshot only. An
-      // authenticated participant must return to the dashboard to resume.
-      if (session?.access_token) {
-        window.location.assign('/dashboard')
+      if (dashboardOnly) {
+        window.location.assign('/login?returnTo=%2Fdashboard')
         return
       }
+      // Anonymous visitors start the public nine-question taster.
       window.location.assign(href)
     } catch (err) {
       setError(err?.message || 'We could not open your VALU assessment. Please try again.')
