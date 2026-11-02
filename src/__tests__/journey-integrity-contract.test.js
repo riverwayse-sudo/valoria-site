@@ -491,7 +491,7 @@ describe('journey integrity contract', () => {
     const bridge = read('src/components/ValoriaAssessmentBridge.jsx')
     const page = read('src/app/assessment/bridge/page.jsx')
     const api = read('src/app/api/valu-handoff/route.js')
-    expect(nav).toContain("window.location.assign('/assessment/bridge')")
+    expect(nav).toContain("window.location.assign(hasSavedOpening ? '/assessment/bridge' : '/assessment/start')")
     expect(bridge).toContain("fetch('/api/valu-handoff'")
     expect(bridge).toContain('window.location.replace(destination.toString())')
     expect(bridge).toContain('handoffInFlightRef.current')
