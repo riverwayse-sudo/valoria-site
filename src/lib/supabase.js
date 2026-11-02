@@ -1,8 +1,10 @@
 import { createBrowserClient } from '@supabase/ssr'
+import { normalizeSupabaseProjectUrl } from '@/lib/supabase-url'
 
 // Use placeholder values at build time — real values come from Vercel env vars at runtime.
 // The client is only used in 'use client' components (browser) where real env vars are injected.
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const configuredSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseUrl = normalizeSupabaseProjectUrl(configuredSupabaseUrl)
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key'
 
 // createBrowserClient (rather than plain createClient) writes the session to
