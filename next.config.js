@@ -10,8 +10,8 @@ function normalizeSupabaseBuildUrl(value) {
   if (url.username || url.password || url.search || url.hash) {
     throw new Error('Supabase project URL must not include credentials, query parameters, or a fragment.')
   }
-  url.pathname = url.pathname.replace(/\\/rest\\/v1\\/?$/i, '').replace(/\\/+$/, '')
-  return url.toString().replace(/\\/$/, '')
+  url.pathname = url.pathname.replace(/\/rest\/v1\/?$/i, '').replace(/\/+$/, '')
+  return url.toString().replace(/\/$/, '')
 }
 
 const publicSupabaseUrl = normalizeSupabaseBuildUrl(
