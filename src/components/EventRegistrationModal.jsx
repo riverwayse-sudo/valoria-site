@@ -109,7 +109,7 @@ export default function EventRegistrationModal({ session, onClose }) {
   const state = getSessionState(session)
   const isLive = state === 'live'
   const isEnded = state === 'ended'
-  const target = isLive ? new Date(session.end).getTime() : new Date(session.start).getTime()
+  const target = isLive ? (session.end ? new Date(session.end).getTime() : null) : new Date(session.start).getTime()
 
   return (
     <>
@@ -189,7 +189,7 @@ export default function EventRegistrationModal({ session, onClose }) {
               </div>
 
             </div>
-            {!isEnded && <Countdown target={target} label={isLive ? 'CONVERSATION ENDS IN' : 'CONVERSATION STARTS IN'} live={isLive} />}
+            {!isEnded && (!isLive || target) && <Countdown target={target} label={isLive ? 'CONVERSATION ENDS IN' : 'CONVERSATION STARTS IN'} live={isLive} />}
           </section>
 
           <section className="event-modal-form-panel">
@@ -227,9 +227,9 @@ export function SessionTimer({ session }) {
   useEffect(() => { setNow(Date.now()); const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer) }, [])
   if (now === null) return <div className="session-timer session-timer-open"><Countdown target={null} label="COUNTDOWN" /></div>
   const state = getSessionState(session, now), index = PROFESSIONAL_STANDARD_SERIES.findIndex(item => item.id === session.id), previous = index > 0 ? PROFESSIONAL_STANDARD_SERIES[index - 1] : null
-  const target = state === 'locked' && previous ? new Date(previous.end).getTime() : state === 'registration-open' ? new Date(session.start).getTime() : state === 'live' ? new Date(session.end).getTime() : null
+  const target = state === 'locked' && previous?.end ? new Date(previous.end).getTime() : state === 'registration-open' ? new Date(session.start).getTime() : state === 'live' && session.end ? new Date(session.end).getTime() : null
   if (state === 'coming-soon') return <div className="session-timer session-timer-open"><span>COMING SOON · DATE TO BE CONFIRMED</span></div>
   if (state === 'ended') return <div className="session-timer session-timer-ended">CONVERSATION ENDED</div>
-  if (state === 'live') return <div className="session-timer session-timer-live">● LIVE NOW <Countdown target={target} label="ENDS IN" live /></div>
+  if (state === 'live') return <div className="session-timer session-timer-live">● LIVE NOW {target && <Countdown target={target} label="ENDS IN" live />}</div>
   return <div className={`session-timer ${state === 'locked' ? 'session-timer-locked' : 'session-timer-open'}`}><Countdown target={target} label={state === 'locked' ? 'REGISTRATION OPENS IN' : 'CONVERSATION STARTS IN'} /></div>
 }
