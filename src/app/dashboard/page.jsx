@@ -881,8 +881,8 @@ function DashboardAssessmentHandover({ standalone = false }) {
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap', marginBottom:12 }}>
         <div style={{ flex:'1 1 420px', minWidth:0 }}>
           <div style={{ color:'#C9A84C', fontSize:10, fontWeight:800, letterSpacing:'.2em' }}>YOUR VALORIA JOURNEY</div>
-          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>Your first answers are saved. Ready for the next 49?</h1>
-          <p style={{ margin:0, maxWidth:700, color:'rgba(247,244,238,.68)', fontSize:13, lineHeight:1.7 }}>Your opening nine responses are connected to this account. Continue your 58-question VALU assessment without restarting; your saved answers will carry forward.</p>
+          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>You’ve made a great start. Keep going and unlock a deeper understanding of your strengths and potential.</h1>
+          <p style={{ margin:0, maxWidth:700, color:'rgba(247,244,238,.68)', fontSize:13, lineHeight:1.7 }}>Your earlier responses are connected to this account. Continue your VALU assessment from where you left off; your saved work will carry forward.</p>
         </div>
         <div style={{ flex:'0 1 220px', minWidth:180 }}>
           <VALUJourneyProgress stage="continuation" currentQuestion={10} />
