@@ -68,6 +68,8 @@
 - The project owner has directed the team to use Cloudflare for current deployments; do not revert to Vercel deployment paths without explicit direction.
 - Do not claim a deployment, test, send or fix is complete without evidence.
 
+- Live aggregate registration check on 2 November 2026: records exist for sessions 02 (74) and 03 (9); no session 04 or 05 rows were returned. This is a point-in-time count, not a forecast or approval.
+
 ## 7. Update protocol
 
 After each implementation milestone, update:
