@@ -13,17 +13,23 @@
 - Existing marketing provider: Brevo.
 - Existing lead pipeline documentation: `docs/LEAD_PIPELINE.md`.
 
-## 2. Known event catalogue state
+## 2. Confirmed 14 November 2026 event
 
-- Session 04 is currently represented in code as:
-  - title: “Emotional Intelligence Is Not About Being Nice”;
-  - start: 14 November 2026, 10:00 WAT;
-  - end: 11:30 WAT;
-  - description: “Treat emotional intelligence as a precision instrument for perception, regulation and strategic application.”
-  - `dateApproved: false`.
-- These are current code values only. The false approval flag means they must not be treated as final public event facts until the owner confirms them against the approved flyer.
-- Session 05 is separately represented as a 5 December 2026 provisional record. Do not confuse its title or content with Session 04.
-- An image of Temitayo was supplied in the conversation. The image alone does not establish whether Temitayo is the event speaker, host or facilitator. Confirm the intended role and permission before publication or use in email creative.
+Confirmed in the user's 28–29 October 2026 event discussion:
+- Series: Professional Standard Series · Enterprise.
+- Title: “Influence Without Authority: The Real Currency of Organisational Power”.
+- Date: Saturday, 14 November 2026.
+- Time: 10:00 AM WAT.
+- Guest speaker: Yinlayefa Thompson, SPHRi.
+- Host: Temitayo Adetokunbo.
+- Two planned creatives, in order: speaker profile poster, then main event announcement poster.
+- Existing creative direction: Valoria navy, gold and light blue; user asked to keep the work simple and not add unnecessary elements.
+- User supplied a Temitayo portrait and explicitly asked that it be stored in the codebase. It is the host portrait; do not label it as the guest speaker.
+- No approved event duration/end time, venue/platform, agenda, or further description is evidenced. Do not invent or display these fields.
+
+Session 04 in the codebase has been updated on the working branch to match the confirmed title, Enterprise cluster, date/time, guest speaker and host. The previously coded 90-minute end time was removed because it was not confirmed. The event remains active after its start until an operator explicitly marks it ended; this avoids inventing an end time.
+
+Session 05 is a separate provisional 5 December record with `dateApproved: false`. Do not confuse it with the 14 November event or reuse its unapproved copy.
 
 ## 3. Audience and email history
 
