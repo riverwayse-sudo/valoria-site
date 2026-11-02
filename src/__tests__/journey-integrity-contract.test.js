@@ -387,7 +387,7 @@ describe('journey integrity contract', () => {
     expect(config).toContain('/api/cron/reconciliation-health')
   })
   
-  test('every incomplete VALU dashboard milestone opens the secure assessment bridge', () => {
+  test('every incomplete VALU dashboard milestone opens the secure direct assessment handoff', () => {
     const cards = read('src/components/ValoriaJourneyCards.jsx')
     const dashboard = read('src/app/dashboard/page.jsx')
     const nudge = read('src/components/ValuCompletionNudge.jsx')
@@ -396,7 +396,7 @@ describe('journey integrity contract', () => {
     expect(dashboard).toContain('CONTINUE YOUR ASSESSMENT')
     expect(dashboard).toContain('href="/dashboard" dashboardOnly')
     expect(nudge).toContain('CONTINUE MY ASSESSMENT')
-    expect(nudge).toContain('assessmentStarted?"/dashboard"')
+    expect(nudge).toContain('AssessmentStartLink href="/dashboard" dashboardOnly')
   })
 
   test('journey-state API accepts a verified bearer session as well as the SSR cookie session', () => {
@@ -414,6 +414,8 @@ describe('journey integrity contract', () => {
     const journeyCards = read('src/components/ValoriaJourneyCards.jsx')
     const nudge = read('src/components/ValuCompletionNudge.jsx')
     const continuation = read('src/app/journey/continue/route.js')
+    const legacyBridge = read('src/app/assessment/bridge/page.jsx')
+    expect(legacyBridge).toContain("redirect('/dashboard')")
     expect(dashboard).toContain('AssessmentStartLink')
     expect(dashboard).toContain('dashboardOnly')
     expect(nav).toContain('export function AssessmentStartLink')
@@ -426,7 +428,8 @@ describe('journey integrity contract', () => {
     expect(journey).toContain("assess: '/dashboard'")
     expect(journeyCards).toContain("href:'/dashboard'")
     expect(journeyCards).toContain('AssessmentStartLink')
-    expect(nudge).toContain('assessmentStarted?"/dashboard":"/valu/start"')
+    expect(nudge).toContain('AssessmentStartLink href="/dashboard" dashboardOnly')
+    expect(nudge).toContain('href={assessed?"/profile/setup":"/valu/start"}')
     expect(continuation).toContain("stage === 'assess'")
     expect(continuation).toContain("return NextResponse.redirect(new URL('/dashboard', request.url))")
     expect(continuation).not.toContain('assessment.valoriainstitute.com')
