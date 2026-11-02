@@ -14,9 +14,12 @@
   "observability": {
     "enabled": true
   },
+  "vars": {
+    "CF_WORKERS": "1"
+  },
   "previews": {
     "vars": {
-      "VALU_UPSTREAM_ORIGIN": "https://assessment.valoriainstitute.com"
+      "CF_WORKERS_PREVIEW": "1"
     }
   }
 }
