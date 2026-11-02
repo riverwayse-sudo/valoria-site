@@ -466,6 +466,7 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {stats.length > 0 && (
         <details className="dv-detail dv-overview">
           <summary>Account overview <span>View details</span></summary>
           <div className="dv-detail-content">
@@ -496,6 +497,7 @@ export default function DashboardPage() {
 
           </div>
         </details>
+        )}
 
         {/* MAIN */}
         {isSupply ? (
