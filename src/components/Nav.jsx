@@ -144,7 +144,7 @@ export default function Nav() {
  
 // Route every signed-in VALU start through the authenticated continuation endpoint.
 // Anonymous visitors create an account before choosing a Valoria pathway.
-export function AssessmentStartLink({ href = '/valu/assessment/', className, style, children, onClick, dashboardOnly = false, ...props }) {
+export function AssessmentStartLink({ href = '/valu/assessment/', className, style, children, onClick, dashboardOnly = false, hasSavedOpening = false, ...props }) {
   const [opening, setOpening] = useState(false)
   const [error, setError] = useState('')
 
@@ -162,7 +162,7 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
           window.location.assign('/login?returnTo=%2Fdashboard')
           return
         }
-        window.location.assign('/assessment/bridge')
+        window.location.assign(hasSavedOpening ? '/assessment/bridge' : '/assessment/start')
         return
       }
       // Public navigation is for starting the opening snapshot only. An
