@@ -414,6 +414,8 @@ describe('journey integrity contract', () => {
     const journeyCards = read('src/components/ValoriaJourneyCards.jsx')
     const nudge = read('src/components/ValuCompletionNudge.jsx')
     const continuation = read('src/app/journey/continue/route.js')
+    const legacyBridge = read('src/app/assessment/bridge/page.jsx')
+    expect(legacyBridge).toContain("redirect('/dashboard')")
     expect(dashboard).toContain('AssessmentStartLink')
     expect(dashboard).toContain('dashboardOnly')
     expect(nav).toContain('export function AssessmentStartLink')
