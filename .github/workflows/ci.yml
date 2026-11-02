@@ -3,7 +3,7 @@ name: Valoria CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, migration/cloudflare-opennext]
   pull_request:
     branches: [main]
 
