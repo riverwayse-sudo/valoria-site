@@ -384,4 +384,14 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(migration).toContain('foreach roster_professional_id in array professional_ids')
   })
 
+  test('marketplace readiness blockers provide direct next actions for each missing requirement', () => {
+    const dashboard = read('src/app/dashboard/page.jsx')
+    expect(dashboard).toContain("profile: ['/profile/edit', 'Complete profile']")
+    expect(dashboard).toContain("talent_cv: ['/profile/edit', 'Upload CV']")
+    expect(dashboard).toContain("speaker_evidence_approval: ['/profile/evidence', 'Submit speaker evidence']")
+    expect(dashboard).toContain("facilitator_evidence_approval: ['/profile/evidence', 'Submit facilitator evidence']")
+    expect(dashboard).toContain("valu_assessment_score_35_current: ['/assessment/bridge', 'Complete VALU assessment']")
+    expect(dashboard).toContain('href ? <Link href={href}')
+  })
+
 })
