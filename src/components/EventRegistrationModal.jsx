@@ -40,6 +40,7 @@ export default function EventRegistrationModal({ session, onClose }) {
   const [status, setStatus] = useState('idle')
   const [error, setError] = useState('')
   const [journeyUrl, setJourneyUrl] = useState('')
+  const [confirmationSent, setConfirmationSent] = useState(false)
   const [form, setForm] = useState({ full_name: '', email: '', role: '', organisation: '', whatsapp: '', consent: false })
   const modalRef = useRef(null)
   const firstInputRef = useRef(null)
@@ -97,6 +98,7 @@ export default function EventRegistrationModal({ session, onClose }) {
       const data = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(data.error || 'Registration could not be completed.')
       setJourneyUrl(data.journey_url || '/journey')
+      setConfirmationSent(data.confirmation_email_sent === true)
       setStatus('success')
     } catch (err) {
       setStatus('error')
@@ -182,15 +184,16 @@ export default function EventRegistrationModal({ session, onClose }) {
               <p id="event-modal-description" className="event-modal-description">{session.description}</p>
               <div className="event-modal-event-meta">
                 <div className="event-modal-event-meta-row"><span>WHEN</span><div><strong>{sessionDate}</strong><br/>{sessionTime} WAT</div></div>
-                <div className="event-modal-event-meta-row"><span>FORMAT</span><div><strong>Virtual conversation</strong><br/>90 minutes</div></div>
+                {session.speaker && <div className="event-modal-event-meta-row"><span>GUEST</span><div><strong>{session.speaker}</strong></div></div>}
+                {session.host && <div className="event-modal-event-meta-row"><span>HOST</span><div><strong>{session.host}</strong></div></div>}
               </div>
-              {session.speaker && <div className="event-modal-speaker">Featuring<strong>{session.speaker}</strong></div>}
+
             </div>
             {!isEnded && <Countdown target={target} label={isLive ? 'CONVERSATION ENDS IN' : 'CONVERSATION STARTS IN'} live={isLive} />}
           </section>
 
           <section className="event-modal-form-panel">
-            {status === 'success' ? <div className="event-success"><div className="event-success-mark">✓</div><h3>You are registered.</h3><p>Your place for <strong>{session.title}</strong> has been recorded. A confirmation will be sent to your email with the event details.</p><button type="button" className="event-submit" onClick={onClose}>DONE</button></div> : (
+            {status === 'success' ? <div className="event-success"><div className="event-success-mark">✓</div><h3>You are registered.</h3><p>Your place for <strong>{session.title}</strong> has been recorded. {confirmationSent ? 'A confirmation email has been sent to your inbox.' : 'The confirmation email has not yet been delivered. Your registration is recorded; please contact info@valoriainstitute.com if you need assistance.'}</p><button type="button" className="event-submit" onClick={onClose}>DONE</button></div> : (
               <>
                 <div className="event-modal-form-kicker">Reserve your place</div>
                 <h3 className="event-modal-form-title">Be in the room.</h3>
