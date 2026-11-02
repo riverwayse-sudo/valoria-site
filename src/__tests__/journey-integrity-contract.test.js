@@ -1,3 +1,4 @@
+import { getValuAssessmentOrigin } from '../lib/valu-origin.js'
 const fs = require('fs')
 const path = require('path')
 const { deriveJourneyState } = require('../lib/journey-state')
@@ -211,7 +212,6 @@ describe('journey integrity contract', () => {
 
 
   test('Cloudflare production resolves the assessment Worker while previews stay isolated', () => {
-    const { getValuAssessmentOrigin } = require('../lib/valu-origin')
     expect(getValuAssessmentOrigin({
       CF_WORKERS: '1',
       VALU_UPSTREAM_ORIGIN: 'https://assessment.valoriainstitute.com',
