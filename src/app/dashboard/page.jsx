@@ -917,7 +917,27 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
                           <div style={{ color:PARCH, fontSize:'11px', fontWeight:700, textTransform:'capitalize' }}>{capability.capability}</div>
                           {ready
                             ? <div style={{ color:'#8FC8A8', fontSize:'10px', marginTop:3 }}>Requirements met</div>
-                            : <div style={{ color:DIM, fontSize:'10px', lineHeight:1.6, marginTop:3 }}>{missing.length ? missing.map(item => labels[item] || String(item).replace(/_/g,' ')).join(' · ') : 'Awaiting Valoria eligibility review'}</div>}
+                            : <div style={{ color:DIM, fontSize:'10px', lineHeight:1.6, marginTop:3 }}>{missing.length ? <div style={{display:'grid',gap:7}}>{missing.map(item => {
+                              const actions = {
+                                profile: ['/profile/edit', 'Complete profile'],
+                                capability: ['/profile/edit', 'Review capabilities'],
+                                valu_assessment_score_35_current: ['/assessment/bridge', 'Complete VALU assessment'],
+                                talent_cv: ['/profile/edit', 'Upload CV'],
+                                talent_cv_approval: [null, 'Await Valoria CV approval'],
+                                speaker_topics: ['/profile/edit', 'Add speaking topics'],
+                                speaker_formats: ['/profile/edit', 'Select speaking formats'],
+                                speaker_audience_size: ['/profile/edit', 'Add audience experience'],
+                                speaker_evidence_approval: ['/profile/evidence', 'Submit speaker evidence'],
+                                facilitator_topics: ['/profile/edit', 'Add facilitation topics'],
+                                facilitator_programme_types: ['/profile/edit', 'Select programme types'],
+                                facilitator_evidence_approval: ['/profile/evidence', 'Submit facilitator evidence'],
+                              }
+                              const [href, actionLabel] = actions[item] || [null, labels[item] || String(item).replace(/_/g,' ')]
+                              return <div key={item} style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}>
+                                <span>{labels[item] || String(item).replace(/_/g,' ')}</span>
+                                {href ? <Link href={href} style={{color:GOLD,fontWeight:700,textDecoration:'underline',textUnderlineOffset:3}}>{actionLabel} →</Link> : <span style={{color:'rgba(247,244,238,.5)'}}>{actionLabel}</span>}
+                              </div>
+                            })}</div> : 'Awaiting Valoria eligibility review'}</div>}
                         </div>
                         <span style={{ color:ready ? '#8FC8A8' : GOLD, fontSize:'9px', fontWeight:800, whiteSpace:'nowrap' }}>{ready ? 'READY' : 'ACTION NEEDED'}</span>
                       </div>
