@@ -259,9 +259,26 @@ export default function DashboardPage() {
   )
 
   if (!profile) return (
-    <div style={{ minHeight:'100vh', background: DARK, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'16px', fontFamily:'var(--font,Raleway,sans-serif)', color: PARCH }}>
-      <p style={{ fontSize:'14px', fontWeight:300, color: DIM }}>No profile found yet.</p>
-      <Link href="/profile/setup" style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>COMPLETE YOUR PROFILE</Link>
+    <div style={{ minHeight:'100vh', background:DARK, color:PARCH, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'16px', padding:'24px', fontFamily:'var(--font,Raleway,sans-serif)' }}>
+      {assessmentAccess?.can_continue ? (
+        <>
+          <VALUJourneyProgress stage="continuation" currentQuestion={10} />
+          <h1 style={{fontSize:'clamp(26px,4vw,38px)',textAlign:'center',margin:0}}>Your assessment is ready to continue.</h1>
+          <p style={{maxWidth:560,textAlign:'center',color:DIM,lineHeight:1.7}}>Your saved opening answers are connected to this account. Continue from Question 10 without restarting.</p>
+          <AssessmentStartLink href="/assessment/bridge" dashboardOnly style={{padding:'14px 24px',background:GOLD,color:DARK,fontSize:12,fontWeight:800,textDecoration:'none',borderRadius:999}}>CONTINUE YOUR ASSESSMENT →</AssessmentStartLink>
+        </>
+      ) : assessmentAccess === null ? (
+        <>
+          <h1 style={{fontSize:'clamp(26px,4vw,38px)',textAlign:'center',margin:0}}>Continue your VALU assessment.</h1>
+          <p style={{maxWidth:560,textAlign:'center',color:DIM,lineHeight:1.7}}>We could not confirm your assessment status yet. You can retry the secure continuation; your saved responses will not be discarded.</p>
+          <AssessmentStartLink href="/assessment/bridge" dashboardOnly style={{padding:'14px 24px',background:GOLD,color:DARK,fontSize:12,fontWeight:800,textDecoration:'none',borderRadius:999}}>CONTINUE YOUR ASSESSMENT →</AssessmentStartLink>
+        </>
+      ) : (
+        <>
+          <p style={{fontSize:14,fontWeight:300,color:DIM}}>No professional profile found yet.</p>
+          <Link href="/profile/setup" style={{padding:'12px 22px',background:GOLD,color:DARK,fontSize:11,fontWeight:700,letterSpacing:'.12em',textDecoration:'none'}}>COMPLETE YOUR PROFILE</Link>
+        </>
+      )}
     </div>
   )
 
@@ -883,7 +900,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
               )}
               <div style={{ display:'flex', alignItems:'center', gap:12, flexWrap:'wrap', marginTop:20 }}>
                 {next?.key === 'valu' ? (
-                  <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'13px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:999, transition:'transform .2s ease, box-shadow .2s ease' }}>
+                  <AssessmentStartLink href="/assessment/bridge" dashboardOnly style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'13px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:'10px', fontWeight:800, letterSpacing:'.1em', borderRadius:999, transition:'transform .2s ease, box-shadow .2s ease' }}>
                     {hasSavedOpening ? 'CONTINUE TO QUESTION 10' : 'START YOUR VALU ASSESSMENT'} <span aria-hidden="true">→</span>
                   </AssessmentStartLink>
                 ) : (

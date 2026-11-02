@@ -2,10 +2,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import styles from './ValoriaJourneyCards.module.css'
+import { supabase } from '@/lib/supabase'
 
 const MILESTONES = [
   { key:'connect', title:'Join Valoria', short:'START', description:'Your Valoria account is ready.', href:'/profile/onboarding', icon:'01' },
-  { key:'assess', title:'Complete VALU', short:'VALU', description:'See your professional signal.', href:'/dashboard', icon:'02' },
+  { key:'assess', title:'Complete VALU', short:'VALU', description:'Continue your saved assessment and see your professional signal.', href:'/assessment/bridge', icon:'02' },
   { key:'report', title:'Understand your result', short:'RESULT', description:'Read what your VALU result means.', href:'/report', icon:'03' },
   { key:'profile', title:'Complete your profile', short:'PROFILE', description:'Add your professional details and unlock enhanced marketplace access.', href:'/profile/setup', icon:'04' },
   { key:'capability', title:'Choose your capability', short:'CAPABILITY', description:'Tell Valoria what you want to be discovered for.', href:'/profile/setup', icon:'05' },
@@ -54,6 +55,8 @@ function buildCards(state) {
     let action = complete ? 'VIEW' : current ? 'CONTINUE' : 'LOCKED'
 
     if (m.key === 'assess' && complete) href='/dashboard'
+    // An incomplete VALU milestone must always enter the secure assessment
+    // handoff. Never send a participant back to the dashboard as the action.
     if (m.key === 'report' && complete) href='/report'
     if (m.key === 'profile' && complete) href='/profile/edit'
     if (m.key === 'capability' && complete) href='/profile/passport'
@@ -72,17 +75,25 @@ export default function ValoriaJourneyCards({ compact=false }) {
 
   useEffect(() => {
     let alive = true
-    fetch('/api/journey/state', { cache:'no-store' })
-      .then(r => r.ok ? r.json() : null)
-      .then(data => {
+    async function loadJourney() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        const response = await fetch('/api/journey/state', {
+          cache: 'no-store',
+          headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
+        })
+        const data = response.ok ? await response.json() : null
         if (!alive) return
         if (data?.authenticated) {
           setUser({ authenticated:true })
           setState(data.state)
         }
         setLoading(false)
-      })
-      .catch(() => alive && setLoading(false))
+      } catch {
+        if (alive) setLoading(false)
+      }
+    }
+    loadJourney()
     return () => { alive=false }
   }, [])
 

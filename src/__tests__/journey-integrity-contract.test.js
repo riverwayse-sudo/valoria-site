@@ -383,6 +383,25 @@ describe('journey integrity contract', () => {
     expect(config).toContain('/api/cron/reconciliation-health')
   })
   
+  test('every incomplete VALU dashboard milestone opens the secure assessment bridge', () => {
+    const cards = read('src/components/ValoriaJourneyCards.jsx')
+    const dashboard = read('src/app/dashboard/page.jsx')
+    const nudge = read('src/components/ValuCompletionNudge.jsx')
+    expect(cards).toContain("href:'/assessment/bridge'")
+    expect(cards).toContain('Authorization: `Bearer ${session.access_token}`')
+    expect(dashboard).toContain('CONTINUE YOUR ASSESSMENT')
+    expect(dashboard).toContain('href="/assessment/bridge" dashboardOnly')
+    expect(nudge).toContain('CONTINUE MY ASSESSMENT')
+    expect(nudge).not.toContain('assessmentStarted?"/dashboard"')
+  })
+
+  test('journey-state API accepts a verified bearer session as well as the SSR cookie session', () => {
+    const route = read('src/app/api/journey/state/route.js')
+    expect(route).toContain("request.headers.get('authorization')")
+    expect(route).toContain('verifier.auth.getUser(bearer)')
+    expect(route).toContain('createServerClient')
+  })
+
   test('dashboard is the only authenticated continuation entry point', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
     const nav = read('src/components/Nav.jsx')
@@ -399,9 +418,9 @@ describe('journey integrity contract', () => {
     expect(nav).not.toContain('pending_taster_id')
     expect(nav).not.toContain("continuation.searchParams.set('stage', 'assess')")
     expect(start).toContain('AssessmentStartLink')
-    expect(journey).toContain("assess: '/dashboard'")
-    expect(journeyCards).toContain("href:'/dashboard'")
-    expect(nudge).toContain('assessmentStarted?"/dashboard":"/valu/start"')
+    expect(journey).toContain("assess: '/assessment/bridge'")
+    expect(journeyCards).toContain("href:'/assessment/bridge'")
+    expect(nudge).toContain('assessmentStarted?"/assessment/bridge":"/valu/start"')
     expect(continuation).toContain("stage === 'assess'")
     expect(continuation).toContain("return NextResponse.redirect(new URL('/dashboard', request.url))")
     expect(continuation).not.toContain('assessment.valoriainstitute.com')
