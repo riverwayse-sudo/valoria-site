@@ -58,7 +58,7 @@ export default function AuthModal({ open, onClose, initialMode = 'signin' }) {
           password: form.password,
           options: {
             data: { display_name: form.name.trim() },
-            emailRedirectTo: 'https://valoriainstitute.com/auth/callback',
+            emailRedirectTo: new URL('/auth/callback', window.location.origin).toString(),
           },
         })
         if (authError) throw authError
@@ -131,7 +131,7 @@ export default function AuthModal({ open, onClose, initialMode = 'signin' }) {
     setError('')
     try {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(form.email.trim(), {
-        redirectTo: 'https://valoriainstitute.com/reset-password',
+        redirectTo: new URL('/reset-password', window.location.origin).toString(),
       })
       if (resetError) throw resetError
       setNotice('If an account exists for that email, a password reset link will be sent.')
