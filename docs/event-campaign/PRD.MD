@@ -2,7 +2,7 @@
 
 **Status:** Draft for implementation  
 **Scope:** Reusable event registration and communications workflow in the Valoria public site, integrated with the existing Valoria data and marketing systems.  
-**Event reference:** The next event has been discussed as taking place on 14 November 2026. The event catalogue currently contains Session 04, “Emotional Intelligence Is Not About Being Nice”, dated 14 November 2026 at 10:00 WAT for 90 minutes, but `dateApproved` is currently `false`. This is a provisional codebase record, not evidence of final approval. The owner-approved flyer/content must control public release.
+**Confirmed event reference (28–29 October 2026 discussion):** Professional Standard Series · Enterprise — “Influence Without Authority: The Real Currency of Organisational Power”; 14 November 2026, 10:00 AM WAT; guest speaker Yinlayefa Thompson, SPHRi; host Temitayo Adetokunbo. No event duration, end time, venue/platform, agenda or additional event copy is established in the approved details available to this implementation. Do not add any of those details. The supplied Temitayo portrait is a host image asset; store it in the codebase as requested, without inferring any additional role.
 
 ## 1. Problem
 
@@ -32,7 +32,7 @@ Valoria needs a dependable, repeatable way to publish an event, collect registra
 - Use the canonical event catalogue in `src/lib/professionalStandardSeries.js`.
 - Do not publish an event while its approval state is false.
 - Do not infer missing event details from another session, a previous flyer, or an assistant-generated summary.
-- Keep title, description, speaker, date, start/end time, format, poster and registration state consistent across event card, poster and registration modal.
+- Keep approved title, series/cluster, guest speaker, host, date, start time, poster and registration state consistent across event card, poster, registration modal and confirmation email. Omit unconfirmed description, end time, duration and format.
 - Treat the approved flyer and explicit owner approval as the source of truth for event-specific copy and creative.
 
 ### Registration
