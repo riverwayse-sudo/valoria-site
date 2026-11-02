@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase'
 import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
+import ValoriaHandoverCards from '@/components/ValoriaHandoverCards'
 import { getValuTier } from '@/lib/brand'
 
 // ─── brand tokens — same system as the public profile page ─────────────────
@@ -245,18 +246,7 @@ export default function DashboardPage() {
     </div>
   )
 
-  if (!profile && assessmentAccess?.can_continue) return (
-    <div style={{ minHeight:'100vh', background:DARK, color:PARCH, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'18px', padding:'24px', fontFamily:'var(--font,Raleway,sans-serif)' }}>
-      <div style={{width:'100%',maxWidth:560}}><VALUJourneyProgress stage="continuation" currentQuestion={10} /></div>
-      <div style={{ color:GOLD, fontSize:'11px', fontWeight:700, letterSpacing:'.18em' }}>VALORIA INSTITUTE</div>
-      <h1 style={{ maxWidth:'620px', textAlign:'center', fontSize:'clamp(28px,4vw,42px)', lineHeight:1.15, margin:0 }}>Your first session is saved.</h1>
-      <p style={{ maxWidth:'560px', textAlign:'center', color:DIM, fontSize:'15px', lineHeight:1.8, margin:0 }}>Your opening nine responses are connected to your account. Continue your assessment securely from here; your saved answers will carry forward.</p>
-      <div style={{width:'100%',maxWidth:560,padding:'18px',border:'1px solid rgba(201,168,76,.2)',borderRadius:10,background:'rgba(201,168,76,.05)'}}><div style={{fontSize:9,fontWeight:800,letterSpacing:'.15em',color:GOLD,marginBottom:7}}>YOUR NEXT STEP</div><div style={{fontSize:16,color:PARCH,fontWeight:600}}>Continue at Question 10</div><div style={{fontSize:12,color:DIM,lineHeight:1.65,marginTop:5}}>Complete the remaining questions to receive your official VALU Index and PRIME insights.</div></div>
-      <AssessmentStartLink href="/dashboard" dashboardOnly style={{ padding:'14px 24px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:800, letterSpacing:'.08em', textDecoration:'none', borderRadius:'999px' }}>CONTINUE TO QUESTION 10 →</AssessmentStartLink>
-      <Link href="/marketplace" style={{ color:PARCH, fontSize:'13px', textDecoration:'underline', textUnderlineOffset:'4px' }}>Explore Valoria first</Link>
-      <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')} style={{ marginTop:'10px', background:'transparent', border:'1px solid rgba(201,168,76,.28)', color:DIM, borderRadius:'999px', padding:'9px 18px', cursor:'pointer', fontFamily:'inherit' }}>Sign Out</button>
-    </div>
-  )
+  if (!profile && assessmentAccess?.can_continue) return <DashboardAssessmentHandover standalone />
 
   if (!profile) return (
     <div style={{ minHeight:'100vh', background:DARK, color:PARCH, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'16px', padding:'24px', fontFamily:'var(--font,Raleway,sans-serif)' }}>
@@ -442,8 +432,14 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {assessmentAccess?.can_continue && (
+          <div style={{ maxWidth:'1100px', margin:'24px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+            <DashboardAssessmentHandover />
+          </div>
+        )}
+
         {/* MARKETPLACE JOURNEY — five milestones; not a profile or VALU percentage */}
-        {isSupply && (
+        {isSupply && !assessmentAccess?.can_continue && (
           <div style={{ maxWidth:'1100px', margin:'24px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
             <AccessProgressCard
               profile={p}
@@ -792,6 +788,39 @@ export default function DashboardPage() {
 }
 
 // ── Welcome modal ────────────────────────────────────────────────────────────
+function DashboardAssessmentHandover({ standalone = false }) {
+  const content = (
+    <section aria-label="Continue your saved VALU assessment" style={{ width:'100%', padding:'clamp(20px,3vw,30px)', border:'1px solid rgba(201,168,76,.3)', borderRadius:12, background:'linear-gradient(135deg, rgba(46,46,74,.96), rgba(26,26,46,.98))', color:'#F7F4EE' }}>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap', marginBottom:12 }}>
+        <div style={{ flex:'1 1 420px', minWidth:0 }}>
+          <div style={{ color:'#C9A84C', fontSize:10, fontWeight:800, letterSpacing:'.2em' }}>YOUR VALORIA JOURNEY</div>
+          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>Your first answers are saved. Ready for the next 49?</h1>
+          <p style={{ margin:0, maxWidth:700, color:'rgba(247,244,238,.68)', fontSize:13, lineHeight:1.7 }}>Your opening nine responses are connected to this account. Continue your 58-question VALU assessment without restarting; your saved answers will carry forward.</p>
+        </div>
+        <div style={{ flex:'0 1 220px', minWidth:180 }}>
+          <VALUJourneyProgress stage="continuation" currentQuestion={10} />
+        </div>
+      </div>
+      <ValoriaHandoverCards />
+      <div style={{ display:'flex', justifyContent:'center', marginTop:22 }}>
+        <AssessmentStartLink href="/assessment/bridge" dashboardOnly style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:10, padding:'14px 26px', background:'#C9A84C', color:'#1A1A2E', borderRadius:999, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.12em' }}>
+          CONTINUE YOUR ASSESSMENT <span aria-hidden="true">→</span>
+        </AssessmentStartLink>
+      </div>
+    </section>
+  )
+  if (!standalone) return content
+  return (
+    <main style={{ minHeight:'100vh', background:'#0F0F1A', color:'#F7F4EE', padding:'28px 20px', fontFamily:"'Raleway',Arial,sans-serif" }}>
+      <div style={{ maxWidth:1100, margin:'0 auto 22px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+        <Link href="/" aria-label="Valoria Institute home"><img src="/logo.png" alt="Valoria Institute" style={{ height:38, width:'auto' }} /></Link>
+        <button onClick={() => supabase.auth.signOut().then(() => window.location.assign('/'))} style={{ background:'transparent', border:'1px solid rgba(201,168,76,.3)', color:'rgba(247,244,238,.7)', borderRadius:999, padding:'9px 16px', cursor:'pointer' }}>SIGN OUT</button>
+      </div>
+      <div style={{ maxWidth:1100, margin:'0 auto' }}>{content}</div>
+    </main>
+  )
+}
+
 function AccessProgressCard({ profile, assessment, assessmentAccess, capabilities, hasSavedOpening }) {
   const assessmentDone = !!assessment?.completed_at || !!assessmentAccess?.assessment_completed
   const profileComplete = !!profile?.profile_complete
