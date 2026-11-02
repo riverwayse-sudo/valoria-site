@@ -228,7 +228,7 @@ export default function LoginPage() {
         redirectAfterLogin('/profile/onboarding')
       } else {
         // Returning user — go to dashboard
-        window.location.href = '/dashboard'
+        redirectAfterLogin('/dashboard')
       }
     } catch (err) {
       setError(
