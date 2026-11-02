@@ -464,7 +464,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               {p.valu_score != null ? (
                 <>
                   <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_score}<span style={{ fontSize:'16px', color: DIM, fontWeight:400 }}> points</span></div>
-                  {(getValuTier(p.valu_score, 'full')?.name || p.designation) && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{getValuTier(p.valu_score, 'full')?.name || p.designation.replace(/_/g,' ')}</div>}
+                  {getValuTier(p.valu_score, 'full') && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{getValuTier(p.valu_score, 'full').name} · {getValuTier(p.valu_score, 'full').stars}</div>}
                   {p.cluster_scores && (
                     <div style={{ marginTop:'8px' }}>
                       <PrimeRadarChart scores={p.cluster_scores} />
