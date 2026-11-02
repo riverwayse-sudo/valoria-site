@@ -1,7 +1,9 @@
+import { normalizeSupabaseProjectUrl } from '@/lib/supabase-url'
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+const configuredSBUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const SB_URL = configuredSBUrl ? normalizeSupabaseProjectUrl(configuredSBUrl) : null
 const SB_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY
 function getAdmin() {
