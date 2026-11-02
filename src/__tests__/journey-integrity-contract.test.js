@@ -495,7 +495,7 @@ describe('journey integrity contract', () => {
     expect(bridge).toContain("fetch('/api/valu-handoff'")
     expect(bridge).toContain('window.location.replace(destination.toString())')
     expect(bridge).toContain('handoffInFlightRef.current')
-    expect(bridge).toContain('Do not add an artificial delay')
+    expect(bridge).not.toContain('setTimeout')
     expect(bridge).toContain("status === 'error'")
     expect(bridge).toContain('RETURN TO DASHBOARD')
     expect(bridge).not.toContain('ValoriaHandoverCards')
