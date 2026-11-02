@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
+import { normalizeSupabaseProjectUrl } from '@/lib/supabase-url'
 import { createServerClient } from '@supabase/ssr'
 
-const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+const configuredSBUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const SB_URL = configuredSBUrl ? normalizeSupabaseProjectUrl(configuredSBUrl) : null
 const SB_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 export async function middleware(request) {
