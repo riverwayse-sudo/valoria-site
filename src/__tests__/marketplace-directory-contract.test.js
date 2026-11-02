@@ -1,3 +1,4 @@
+// Protect the public roster projection, VALU report summary and card identity contract.
 const fs = require('fs')
 const path = require('path')
 
