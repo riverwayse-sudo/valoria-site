@@ -116,7 +116,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Secure assessment access is temporarily unavailable. Please try again.' }, { status: 503 })
   }
 
-  const destination = new URL('/', assessmentOrigin)
+  const destination = new URL('/remaining', assessmentOrigin)
   // Preserve the exact production host that issued the handoff. Supabase
   // browser cookies are host-scoped, so switching between apex and www
   // can make a valid dashboard session appear to be signed out.
