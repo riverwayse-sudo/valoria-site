@@ -63,7 +63,7 @@ export default function HomePage() {
               <span><b>9</b> QUESTIONS</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
             </div>
             <div className="home-dual-actions">
-              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START MY VALU INDEX SNAPSHOT <span aria-hidden="true">→</span></a>
+              <a href={BRAND.assessmentUrl} className="btn-gold">START MY VALU INDEX SNAPSHOT <span aria-hidden="true">→</span></a>
               <a href="/valu" className="text-link">SEE HOW THE VALU INDEX WORKS <span aria-hidden="true">→</span></a>
             </div>
             <p className="valu-conversion-note">Your first result is directional. It is the starting signal for the wider Valoria journey — not a label and not the end of the process.</p>
@@ -94,7 +94,7 @@ export default function HomePage() {
               <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Full VALU Index assessment + profile</small></div></div>
               <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Capability, eligibility and marketplace</small></div></div>
             </div>
-            <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="vcc-bottom-cta">BEGIN THE FIRST 9 QUESTIONS <span>→</span></a>
+            <a href={BRAND.assessmentUrl} className="vcc-bottom-cta">BEGIN THE FIRST 9 QUESTIONS <span>→</span></a>
           </Reveal>
         </div>
       </section>
