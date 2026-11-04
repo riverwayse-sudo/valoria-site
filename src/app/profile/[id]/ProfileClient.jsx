@@ -476,7 +476,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                   <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
                     This professional has not yet completed their VALU Index assessment.
                   </p>
-                  <a href="https://valoriainstitute.com/valu/assessment/" target="_blank" rel="noopener noreferrer"
+                  <a href="https://valoriainstitute.com/valu/assessment/"
                     style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
                     ABOUT THE VALU INDEX
                   </a>
@@ -612,7 +612,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                         <div style={{ fontSize:'11px', color:DIM, lineHeight:1.7 }}>{eventDate} · {cert.issuer}</div>
                         <div style={{ marginTop:'16px', paddingTop:'12px', borderTop:`1px solid ${GLINE}`, display:'flex', justifyContent:'space-between', alignItems:'center', gap:'12px' }}>
                           <span style={{ fontSize:'9px', color:'rgba(247,244,238,.38)', letterSpacing:'.06em', fontVariantNumeric:'tabular-nums' }}>{cert.certificate_number}</span>
-                          <Link href={`/certificate/${cert.verification_token}`} target="_blank" style={{ color:GOLD, fontSize:'9px', fontWeight:700, letterSpacing:'.1em', textDecoration:'none', whiteSpace:'nowrap' }}>VERIFY →</Link>
+                          <Link href={`/certificate/${cert.verification_token}`} style={{ color:GOLD, fontSize:'9px', fontWeight:700, letterSpacing:'.1em', textDecoration:'none', whiteSpace:'nowrap' }}>VERIFY →</Link>
                         </div>
                       </article>
                     )
