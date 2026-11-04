@@ -26,7 +26,7 @@ export default function ValuPage() {
           <h1>Where do you stand<br /><em>as a professional?</em></h1>
           <p className="valu-lede">The VALU Index is Valoria's professional readiness diagnostic. It gives you a structured starting point for understanding your professional profile across the five dimensions of PRIME.</p>
           <div className="valu-actions">
-            <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-btn valu-btn-gold">TAKE THE VALU INDEX <span>→</span></a>
+            <a href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">TAKE THE VALU INDEX <span>→</span></a>
             <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW IT WORKS <span>↓</span></a>
           </div>
           <div className="valu-meta"><span>9 QUESTIONS</span><i>·</i><span>INITIAL ASSESSMENT</span><i>·</i><span>BUILT AROUND PRIME</span></div>
@@ -63,11 +63,11 @@ export default function ValuPage() {
       <section className="valu-outcome">
         <div className="valu-wrap valu-outcome-grid">
           <div><div className="valu-kicker valu-dark"><span /> WHAT YOU DO NEXT</div><h2>Your result is a starting point, not a label.</h2></div>
-          <div><p>The VALU assessment has 58 questions and is completed in two sessions. You answer the opening nine straight away, then create your professional account to continue with the remaining 49 from your dashboard.</p><p>The full assessment establishes your official VALU Index, the authoritative marketplace record. Subject to the normal governance checks, your eligible capability can then enter the marketplace.</p><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-inline">START THE VALU INDEX →</a></div>
+          <div><p>The VALU assessment has 58 questions and is completed in two sessions. You answer the opening nine straight away, then create your professional account to continue with the remaining 49 from your dashboard.</p><p>The full assessment establishes your official VALU Index, the authoritative marketplace record. Subject to the normal governance checks, your eligible capability can then enter the marketplace.</p><a href={BRAND.assessmentUrl} className="valu-inline">START THE VALU INDEX →</a></div>
         </div>
       </section>
 
-      <section className="valu-final"><div className="valu-wrap"><div className="valu-kicker"><span /> WORTH. BUILT.</div><h2>Start by understanding<br /><em>where you stand.</em></h2><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-btn valu-btn-gold">TAKE THE VALU INDEX <span>→</span></a></div></section>
+      <section className="valu-final"><div className="valu-wrap"><div className="valu-kicker"><span /> WORTH. BUILT.</div><h2>Start by understanding<br /><em>where you stand.</em></h2><a href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">TAKE THE VALU INDEX <span>→</span></a></div></section>
     </main>
     <Footer />
   </>
