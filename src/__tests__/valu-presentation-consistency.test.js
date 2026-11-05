@@ -9,16 +9,16 @@ describe('VALU presentation consistency', () => {
   test('homepage communicates the approved nine-question entry assessment', () => {
     const home = read('src/app/page.jsx')
     expect(home).toContain('<b>9</b> QUESTION TASTER')
-    expect(home).toContain('<b>58</b> FULL QUESTIONS')
     expect(home).not.toContain('<b>15</b> QUESTIONS')
   })
 
-  test('homepage illustrative VALU card uses points and the current merit designation', () => {
+  test('homepage VALU card distinguishes question count from points-based results', () => {
     const hero = read('src/components/HeroSlider.jsx')
     expect(hero).toContain('vc-num">58')
     expect(hero).toContain('vc-denom">QUESTIONS')
     expect(hero).toContain('results expressed in points')
-    expect(hero).toContain('FORCE TO ALIGN WITH')
+    expect(hero).toContain('54 SCORED · 4 VALIDITY CHECKS')
+    for (const cluster of ['Presence', 'Relationships', 'Intelligence', 'Mastery', 'Enterprise']) expect(hero).toContain(cluster)
     expect(hero).not.toContain('DISTINGUISHED')
     expect(hero).not.toContain('vc-denom">/ 100')
   })
