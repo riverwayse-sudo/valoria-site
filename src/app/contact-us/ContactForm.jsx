@@ -78,6 +78,25 @@ export default function ContactForm({ initialInquiryType = 'general' }) {
           </select>
         </div>
       </div>
+      {form.inquiryType === 'training' && (
+        <div style={styles.trainingGrid}>
+          <div style={styles.field}>
+            <label style={styles.label}>Team / audience</label>
+            <input required value={form.team} onChange={e => setForm({ ...form, team: e.target.value })} style={styles.input} placeholder="Team size, roles and audience" />
+          </div>
+          <div style={styles.field}>
+            <label style={styles.label}>PRIME cluster(s)</label>
+            <select required value={form.cluster} onChange={e => setForm({ ...form, cluster: e.target.value })} style={styles.input}>
+              <option value="">Select a cluster</option>
+              <option>Presence</option><option>Relationships</option><option>Intelligence</option><option>Mastery</option><option>Enterprise</option><option>Multiple clusters</option><option>Not sure yet</option>
+            </select>
+          </div>
+          <div style={styles.field}>
+            <label style={styles.label}>Timeline</label>
+            <input required value={form.timeline} onChange={e => setForm({ ...form, timeline: e.target.value })} style={styles.input} placeholder="When do you need to begin?" />
+          </div>
+        </div>
+      )}
       <div style={styles.field}>
         <label style={styles.label}>Message</label>
         <textarea required rows={5} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} style={{ ...styles.input, resize: 'vertical', fontFamily: "'Raleway', sans-serif" }} placeholder="Tell us what you need." />
@@ -94,7 +113,8 @@ export default function ContactForm({ initialInquiryType = 'general' }) {
 
 const styles = {
   form: { display: 'flex', flexDirection: 'column', gap: '16px', fontFamily: "'Raleway', sans-serif" },
-  row: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' },
+  row: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: '16px' },
+  trainingGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: '16px' },
   field: { display: 'flex', flexDirection: 'column', gap: '6px' },
   label: { fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(247,244,238,.5)', textTransform: 'uppercase' },
   input: { padding: '12px 14px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.2)', borderRadius: '6px', color: '#F7F4EE', fontSize: '14px', fontFamily: "'Raleway', sans-serif", outline: 'none', width: '100%', boxSizing: 'border-box' },
