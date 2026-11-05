@@ -6,7 +6,7 @@ import '../pages.css'
 
 export const metadata = {
   title: 'About Valoria Institute — Worth. Built.',
-  description: 'Valoria Institute is a capability and opportunity platform connecting professional assessment, development and visibility through the PRIME framework and VALU Index.',
+  description: 'Valoria Institute is the institution behind a professional capability and opportunity system, connecting assessment, development and visibility through the PRIME framework and VALU Index.',
   alternates: { canonical: 'https://valoriainstitute.com/about' },
 }
 
@@ -31,8 +31,8 @@ export default function AboutPage() {
         <section className="page-hero">
           <div className="page-hero-inner">
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">ABOUT VALORIA INSTITUTE</span></div>
-            <h1 className="page-title">Worth.<br /><em>Built.</em></h1>
-            <p className="page-sub">Valoria Institute is a capability and opportunity platform. It helps professionals understand their capability, develop what matters and become discoverable for relevant opportunities through a shared standard.</p>
+            <h1 className="page-title">Why Valoria<br /><em>exists.</em></h1>
+            <p className="page-sub">Valoria Institute is the institution behind a professional capability and opportunity system. It helps professionals understand their capability, develop what matters and become discoverable for relevant opportunities through a shared standard.</p>
           </div>
         </section>
 
