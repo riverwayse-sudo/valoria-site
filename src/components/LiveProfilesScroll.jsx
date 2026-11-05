@@ -72,16 +72,17 @@ export default async function LiveProfilesScroll() {
               {qualityProfiles.map((profile) => {
                 const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
                 const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
-                const primaryTrack = normalizedTracks.find(track => TRACK_META[track]) || 'candidate'
-                const meta = TRACK_META[primaryTrack]
+                const primaryTrack = normalizedTracks.find(track => TRACK_META[track]) || null
+                const meta = primaryTrack ? TRACK_META[primaryTrack] : null
                 const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
+                const profileHref = profile.atb_id ? `/profile/${encodeURIComponent(profile.atb_id)}` : '/marketplace'
                 return (
                   <Link
-                    href={meta.href}
+                    href={profileHref}
                     key={profile.id}
                     className="vi-scroll-card"
-                    data-marketplace-intent={primaryTrack}
-                    aria-label={`Discover more ${meta.label.toLowerCase()} professionals`}
+                    data-marketplace-intent={primaryTrack || 'all'}
+                    aria-label={`View public professional profile ${profile.atb_id || ''}`}
                   >
                     <div className="vi-scroll-avatar" aria-hidden="true">
                       <ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} />
@@ -89,7 +90,7 @@ export default async function LiveProfilesScroll() {
                     <div className="vi-scroll-copy">
                       <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>PUBLIC</i></div>
                       <div className="vi-scroll-headline">{profile.assessment_summary}</div>
-                      <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
+                      <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'NO DECLARED ROLE'}</div>
                     </div>
                     <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'}`}>
                       <span className="vi-scroll-score-label">VALU INDEX</span>
