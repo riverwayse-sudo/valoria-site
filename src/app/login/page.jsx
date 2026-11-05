@@ -302,7 +302,7 @@ export default function LoginPage() {
           </p>
           <p style={{ margin: 0 }}>
             Talent or speaker?{' '}
-            <a href="https://valoriainstitute.com/valu/assessment/" style={{ color: GOLD }}>Take the VALU Index</a>
+            <a href="https://valoriainstitute.com/valu/assessment/" style={{ color: GOLD }}>Take the 9-question taster</a>
           </p>
         </div>
       </div>
