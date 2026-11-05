@@ -138,7 +138,7 @@ describe('journey integrity contract', () => {
     const source = read('src/app/api/cron/valu-reminders/route.js')
     expect(source).toContain("https://valoriainstitute.com/login?returnTo=%2Fdashboard")
     expect(source).toContain('RETURN TO YOUR DASHBOARD')
-    expect(source).toContain('Sign in to your account')
+    expect(source).toContain('Sign in to your dashboard')
     expect(source).not.toContain("from('valoria_reentry_links').insert")
     expect(source).not.toContain('CONTINUE TO QUESTION 10')
     expect(source).not.toContain('pending_taster_id')
@@ -178,7 +178,7 @@ describe('journey integrity contract', () => {
     expect(dashboard).toContain('START OR CONTINUE FULL VALU ASSESSMENT')
     expect(dashboard).toContain('Required Profile Details')
     expect(dashboard).toContain('This is separate from your VALU assessment and marketplace eligibility.')
-    expect(dashboard).toContain('five milestones; not a profile or VALU percentage')
+    expect(dashboard).toContain('five milestones; separate from the VALU score display')
     expect(dashboard).toContain('dashboardOnly')
     expect(dashboard).not.toContain('pending_taster_id')
     expect(dashboard).not.toContain('/journey/continue?stage=assess')
@@ -300,7 +300,7 @@ describe('journey integrity contract', () => {
   test('opportunity detail declares every state value used by the application loop', () => {
     const source = read('src/app/opportunities/[slug]/page.jsx')
     for (const [state, setter] of [['error','setError'], ['session','setSession'], ['coverNote','setCoverNote'], ['applied','setApplied'], ['applying','setApplying'], ['applyError','setApplyError']]) {
-      expect(source).toMatch(new RegExp(`\\\\[\\\\s*${state}\\\\s*,\\\\s*${setter}\\\\s*\\\\]`))
+      expect(source).toContain(`[${state}, ${setter}]`)
     }
     expect(source).toContain("supabase.auth.getSession()")
   })
@@ -311,9 +311,9 @@ describe('journey integrity contract', () => {
       read('src/app/marketplace/speakers/page.jsx'),
       read('src/app/marketplace/facilitators/page.jsx'),
     ].join('\n')
-    expect(pages).toContain("getMarketplaceRows('candidate')")
-    expect(pages).toContain("getMarketplaceRows('speaker')")
-    expect(pages).toContain("getMarketplaceRows('facilitator')")
+    expect(pages).toContain("getMarketplaceDirectoryData('candidate')")
+    expect(pages).toContain("getMarketplaceDirectoryData('speaker')")
+    expect(pages).toContain("getMarketplaceDirectoryData('facilitator')")
   })
   test('password recovery waits for the asynchronous Supabase recovery session and surfaces link errors', () => {
     const source = read('src/app/reset-password/page.jsx')
@@ -461,7 +461,7 @@ describe('journey integrity contract', () => {
     expect(dashboard).toContain('You’ll unlock:')
     expect(dashboard).toContain('canStartFullAssessment={!!assessmentAccess?.can_continue}')
     expect(dashboard).toContain('Your taster is saved. Now complete your full VALU Index.')
-    expect(dashboard).toContain('Start or continue your 58-question VALU assessment.')
+    expect(dashboard).toContain('Your 9-question taster is saved separately. Start or resume the full 58-question VALU Index; taster answers do not count toward it.')
     expect(dashboard).not.toContain('Continue from Question 10')
   })
 
