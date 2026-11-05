@@ -29,7 +29,7 @@ export default function ValuPage() {
             <a href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">TAKE THE 9-QUESTION TASTER <span>→</span></a>
             <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW IT WORKS <span>↓</span></a>
           </div>
-          <div className="valu-meta"><span>9-QUESTION TASTER</span><i>·</i><span>SEPARATE 58-QUESTION FULL ASSESSMENT</span><i>·</i><span>POINTS-BASED</div>
+          <div className="valu-meta"><span>9-QUESTION TASTER</span><i>·</i><span>SEPARATE 58-QUESTION FULL ASSESSMENT</span><i>·</i><span>POINTS-BASED</span></div>
         </div>
       </section>
 
