@@ -1,6 +1,6 @@
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
-import { BRAND } from '@/lib/brand'
+import { BRAND, PRIME_CLUSTERS } from '@/lib/brand'
 
 export const metadata = {
   title: 'VALU Index',
@@ -8,13 +8,7 @@ export const metadata = {
   alternates: { canonical: 'https://valoriainstitute.com/valu' },
 }
 
-const dimensions = [
-  ['P', 'Presence', 'How you show up with clarity, credibility and professional presence.'],
-  ['R', 'Relationships', 'How effectively you build trust, collaborate and create value through professional relationships.'],
-  ['I', 'Intelligence', 'How you think, interpret complexity and exercise sound professional judgement.'],
-  ['M', 'Mastery', 'How consistently you deliver, deepen capability and maintain professional standards.'],
-  ['E', 'Enterprise', 'How you create value, recognise opportunity and think beyond the immediate task.'],
-]
+const dimensions = PRIME_CLUSTERS.map(({ letter, name, description }) => [letter, name, description])
 
 export default function ValuPage() {
   return <>
