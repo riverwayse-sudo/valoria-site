@@ -147,7 +147,7 @@ const registryPath = path.join(root, 'src/components/LiveProfilesScroll.jsx');
 if (fs.existsSync(registryPath)) {
   const registry = fs.readFileSync(registryPath, 'utf8');
   if (!registry.includes('vi-scroll-track-static') ||
-      !registry.includes('getMarketplaceRows')) {
+      !registry.includes('getMarketplaceDirectoryData')) {
     violations.push('LiveProfilesScroll: public profiles must render from the verified, deduplicated server roster');
   }
 }
