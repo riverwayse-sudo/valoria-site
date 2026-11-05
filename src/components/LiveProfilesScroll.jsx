@@ -38,11 +38,7 @@ export default async function LiveProfilesScroll() {
 
   const qualityProfiles = unique.filter(profile => typeof profile.assessment_summary === 'string' && profile.assessment_summary.trim().length >= 12)
   const discoverableCount = count
-  const trackCounts = unique.reduce((acc, profile) => {
-    const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
-    tracks.forEach(track => { const normalized = track === 'talent' ? 'candidate' : track; if (TRACK_META[normalized]) acc[normalized] = (acc[normalized] || 0) + 1 })
-    return acc
-  }, {})
+
 
   return (
     <section className="live-profiles" aria-labelledby="marketplace-title">
@@ -108,11 +104,6 @@ export default async function LiveProfilesScroll() {
           </div>
 
           <div className="live-profiles-bottom">
-            <div className="live-profiles-counts">
-              {Object.entries(TRACK_META).map(([track, meta]) => (
-                <span key={track}><b>{trackCounts[track] || 0}</b> {meta.label.toLowerCase()} profiles</span>
-              ))}
-            </div>
             <Link href="/marketplace" className="live-profiles-link" data-marketplace-intent="all">VIEW THE MARKETPLACE <span>→</span></Link>
           </div>
         </>
