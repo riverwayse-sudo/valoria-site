@@ -1262,6 +1262,20 @@
   outline: none;
 }
 
+.vi-scroll-mask-static {
+  overflow-x: auto;
+  -webkit-mask-image: none;
+  mask-image: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201,168,76,.45) transparent;
+}
+.vi-scroll-track-static {
+  width: max-content;
+  animation: none !important;
+  transform: none !important;
+  will-change: auto;
+}
+
 .vi-scroll-mask {
   width: 100%;
   overflow: hidden;
