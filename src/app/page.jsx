@@ -18,7 +18,7 @@ export const metadata = {
 }
 
 const pathwayCards = [
-  { label: 'FOR PROFESSIONALS', title: 'Understand your capability.', body: 'Start with the taster, complete the full VALU Index and build a professional profile that makes your experience easier to understand.', href: '/valu', cta: 'TAKE THE 9-QUESTION TASTER' },
+  { label: 'FOR PROFESSIONALS', title: 'Understand your capability.', body: 'Start with the taster, complete the full VALU Index and build a professional profile that makes your experience easier to understand.', href: BRAND.assessmentUrl, cta: 'TAKE THE 9-QUESTION TASTER' },
   { label: 'FOR EMPLOYERS', title: 'Find talent by capability.', body: 'Explore public professional profiles by declared role, sector, skill and VALU evidence. If a suitable talent profile is not currently listed, request an ATB Connect sourcing conversation.', href: '/marketplace/talent', cta: 'OPEN ATB CONNECT' },
   { label: 'FOR EVENT ORGANISERS & TRAINING BUYERS', title: 'Find the right people for the room.', body: 'Check public speaker and facilitator listings through ATB Spotlight. For team development, commission a PRIME-based programme through Valoria Develop.', href: '/marketplace/speakers', cta: 'EXPLORE ATB SPOTLIGHT' },
 ]
