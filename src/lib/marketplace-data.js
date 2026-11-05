@@ -19,7 +19,7 @@ function isQualifiedPublicProfile(row) {
   return Boolean(
     row?.professional_id &&
     row.assessment_access === 'full' &&
-    Number.isFinite(Number(row.valu_index)) && Number(row.valu_index) >= 35 &&
+    Number.isFinite(Number(row.valu_index)) &&
     typeof row.assessment_summary === 'string' && row.assessment_summary.trim().length >= 12 &&
     typeof row.full_name === 'string' && row.full_name.trim() &&
     typeof row.headline === 'string' && row.headline.trim() &&
