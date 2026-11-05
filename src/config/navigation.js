@@ -19,6 +19,7 @@ export const NAVIGATION = {
         },
       ],
     },
+    { label: 'Opportunities', href: '/opportunities' },
     {
       label: 'VALU Index',
       groups: [
@@ -57,7 +58,7 @@ export const NAVIGATION = {
     ],
     valu: [
       { label: 'About the VALU Index', href: '/valu' },
-      { label: 'Start the VALU Index', href: BRAND.assessmentUrl, external: true },
+      { label: 'Take the 9-question taster', href: BRAND.assessmentUrl, external: true },
     ],
     about: [
       { label: 'About Valoria', href: '/about' },
