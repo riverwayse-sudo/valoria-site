@@ -25,7 +25,7 @@ const sections = [
   },
   {
     title: '3. Why we collect it',
-    body: `We process your personal data for the following purposes:\n\n• To operate the Valoria Institute marketplace — matching assessed professionals with employers, event organisers, and training buyers.\n• To administer the VALU Index assessment — computing your score, generating your AI report, and maintaining your assessment history.\n• To list your profile in the marketplace — if you are a professional who scores 35 or above and consents to listing.\n• To facilitate introductions between buyers and professionals — all contact is mediated by Valoria; contact details are never shared directly.\n• To send transactional communications — account verification, assessment results, and enquiry notifications.\n• To maintain platform security — detecting unusual activity, integrity flags on assessments, and preventing abuse.`,
+    body: `We process your personal data for the following purposes:\n\n• To operate the Valoria Institute marketplace — matching assessed professionals with employers, event organisers, and training buyers.\n• To administer the VALU Index assessment — computing your score, generating your AI report, and maintaining your assessment history.\n• To list your profile in the marketplace — when you choose public visibility and your profile meets the applicable assessment, completeness, capability, review and listing requirements.\n• To facilitate introductions between buyers and professionals — all contact is mediated by Valoria; contact details are never shared directly.\n• To send transactional communications — account verification, assessment results, and enquiry notifications.\n• To maintain platform security — detecting unusual activity, integrity flags on assessments, and preventing abuse.`,
   },
   {
     title: '4. Legal basis for processing',
@@ -77,10 +77,10 @@ export default function PrivacyPolicyPage() {
             How we handle<br /><em style={{ fontStyle: 'italic', color: GOLD }}>your data.</em>
           </h1>
           <p style={{ fontSize: '15px', fontWeight: 300, color: DIM, lineHeight: 1.8, maxWidth: '560px' }}>
-            African Talent Bureau Ltd is committed to protecting your personal data. This policy explains what we collect, why, and how — in plain language, compliant with the Nigeria Data Protection Act 2023.
+            African Talent Bureau Ltd is committed to protecting your personal data. This policy explains what we collect, why, and how, with reference to the Nigeria Data Protection Act 2023.
           </p>
           <p style={{ fontSize: '12px', color: 'rgba(247,244,238,.3)', marginTop: '16px' }}>
-            Last updated: 1 July 2026 · NDPA 2023 Compliant
+            Last updated: 5 November 2026
           </p>
         </section>
 
