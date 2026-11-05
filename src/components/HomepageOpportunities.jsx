@@ -17,6 +17,7 @@ function closingLabel(value) {
 export default function HomepageOpportunities() {
   const [opportunities, setOpportunities] = useState([])
   const [state, setState] = useState('loading')
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     let active = true
@@ -33,7 +34,7 @@ export default function HomepageOpportunities() {
       })
       .catch(() => { if (active) setState('error') })
     return () => { active = false }
-  }, [])
+  }, [refreshKey])
 
   return (
     <section className="home-opportunity-preview" aria-labelledby="home-opportunity-preview-title">
@@ -47,7 +48,7 @@ export default function HomepageOpportunities() {
         </div>
 
         {state === 'loading' && <p className="home-opportunity-state" role="status">Loading current opportunities…</p>}
-        {state === 'error' && <div className="home-opportunity-state" role="status"><p>Current opportunity listings could not be loaded.</p><Link href="/opportunities">OPEN OPPORTUNITIES →</Link></div>}
+        {state === 'error' && <div className="home-opportunity-state" role="status"><p>Current opportunity listings could not be loaded.</p><button type="button" onClick={() => setRefreshKey(value => value + 1)}>TRY AGAIN</button> <Link href="/opportunities">OPEN OPPORTUNITIES →</Link></div>}
         {state === 'empty' && <div className="home-opportunity-state"><h3>No public opportunities are listed right now.</h3><p>Check the opportunities page for updates. Organisations can submit an opportunity for review.</p><div className="home-dual-actions"><Link href="/opportunities" className="text-link">VIEW OPPORTUNITIES</Link><Link href="/opportunities/submit" className="text-link">SUBMIT AN OPPORTUNITY</Link></div></div>}
 
         {state === 'ready' && (
