@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
+import { getMarketplaceRows, getMarketplaceCounts } from '@/lib/marketplace-data'
 
 const TRACK_META = {
   candidate: { label: 'Talent', href: '/marketplace/talent' },
@@ -7,37 +8,10 @@ const TRACK_META = {
   facilitator: { label: 'Facilitator', href: '/marketplace/facilitators' },
 }
 
-async function getHomepageProfiles() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) return { profiles: [], count: null }
-  const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }
-  try {
-    const [profilesResponse, countResponse] = await Promise.all([
-      fetch(`${url}/rest/v1/rpc/get_homepage_professional_previews_v2`, { method: 'POST', headers, body: '{}', cache: 'no-store' }),
-      fetch(`${url}/rest/v1/rpc/get_homepage_professional_count`, { method: 'POST', headers, body: '{}', cache: 'no-store' }),
-    ])
-    const profilesPayload = profilesResponse.ok ? await profilesResponse.json() : []
-    const countPayload = countResponse.ok ? await countResponse.json() : null
-    return { profiles: Array.isArray(profilesPayload) ? profilesPayload : [], count: typeof countPayload === 'number' ? countPayload : null }
-  } catch (error) {
-    console.error('Homepage profile data fetch failed:', error)
-    return { profiles: [], count: null }
-  }
-}
-
 export default async function LiveProfilesScroll() {
-  const { profiles, count } = await getHomepageProfiles()
-  const unique = []
-  const seen = new Set()
-  for (const profile of profiles) {
-    if (seen.has(profile.id)) continue
-    seen.add(profile.id)
-    unique.push(profile)
-  }
-
-  const qualityProfiles = unique.filter(profile => typeof profile.assessment_summary === 'string' && profile.assessment_summary.trim().length >= 12).slice(0, 5)
-  const discoverableCount = count
+  const [profiles, counts] = await Promise.all([getMarketplaceRows('all'), getMarketplaceCounts()])
+  const qualityProfiles = profiles.slice(0, 5)
+  const discoverableCount = counts.all
 
 
   return (
@@ -70,7 +44,7 @@ export default async function LiveProfilesScroll() {
           <div className="vi-scroll-mask vi-scroll-mask-static">
             <div className="vi-scroll-track vi-scroll-track-static">
               {qualityProfiles.map((profile) => {
-                const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
+                const tracks = Array.isArray(profile.capabilities) ? profile.capabilities : []
                 const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
                 const primaryTrack = normalizedTracks.find(track => TRACK_META[track]) || null
                 const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
