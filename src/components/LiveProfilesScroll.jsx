@@ -36,7 +36,7 @@ export default async function LiveProfilesScroll() {
     unique.push(profile)
   }
 
-  const qualityProfiles = unique.filter(profile => typeof profile.assessment_summary === 'string' && profile.assessment_summary.trim().length >= 12)
+  const qualityProfiles = unique.filter(profile => typeof profile.assessment_summary === 'string' && profile.assessment_summary.trim().length >= 12).slice(0, 5)
   const discoverableCount = count
 
 
@@ -73,7 +73,6 @@ export default async function LiveProfilesScroll() {
                 const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
                 const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
                 const primaryTrack = normalizedTracks.find(track => TRACK_META[track]) || null
-                const meta = primaryTrack ? TRACK_META[primaryTrack] : null
                 const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
                 const profileHref = profile.atb_id ? `/profile/${encodeURIComponent(profile.atb_id)}` : '/marketplace'
                 return (
