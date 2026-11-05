@@ -17,13 +17,13 @@ const dimensions = [
 ]
 
 const faqs = [
-  ['How does it work?', 'The VALU assessment is one continuous journey of 58 questions. Answer the opening nine, create your account at the natural break, then continue with Questions 10–58 from your dashboard. Your answers stay connected.'],
-  ['Do I need an account first?', 'No. You start the assessment immediately. You only create your account after the first nine questions, at a natural break.'],
+  ['How does it work?', 'Valoria has two separate assessment stages. Complete the 9-question taster first. If you choose to continue, create your account and complete the separate 58-question full VALU assessment, starting at Question 1.'],
+  ['Do I need an account first?', 'No account is needed for the 9-question taster. An account is required before you start the separate 58-question full assessment.'],
   ['Who is it for?', 'It is designed for African professionals who want a clearer view of their current professional capability and a stronger foundation for development, visibility and opportunity.'],
   ['Is it free?', 'Yes. The VALU Index is free to take. It is the entry point into the wider Valoria professional ecosystem.'],
   ['Does the result define me?', 'No. Your VALU Index is directional, not a permanent label. It gives you a starting point for understanding where you are and deciding what to build next.'],
   ['What happens after I finish?', 'You create your professional account, complete your profile and, subject to Valoria’s normal governance checks, become discoverable through the professional marketplace.'],
-  ['Can I pause part-way through?', 'Yes. Your answers are saved as you go. After the opening nine, your account becomes the secure bridge into Questions 10–58; you can return to your dashboard and continue without starting again.'],
+  ['Can I pause part-way through?', 'Yes. Progress in the full 58-question assessment is saved independently. Return to your dashboard to resume the full assessment at your saved position. Taster answers are stored separately.'],
 ]
 
 export default function ValuStartPage() {
@@ -81,10 +81,10 @@ export default function ValuStartPage() {
       <section className="vs-light vs-journey">
         <div className="vs-shell">
           <div className="vs-kicker dark"><span /> HOW IT WORKS</div>
-          <h2>Start. Continue. Understand.<br /><em>Then become discoverable.</em></h2>
+          <h2>Start. Continue. Receive your official VALU Index and a view across the five PRIME dimensions..<br /><em>Then become discoverable.</em></h2>
           <div className="vs-journey-grid">
-            <article><span>01</span><h3>Start</h3><p>Answer the first nine questions of the 58-question VALU assessment. No account needed.</p></article>
-            <article><span>02</span><h3>Continue</h3><p>Create your account to unlock the remaining 49 questions and keep your answers.</p></article>
+            <article><span>01</span><h3>Start</h3><p>Complete the separate 9-question taster. No account is needed.</p></article>
+            <article><span>02</span><h3>Continue</h3><p>Create your account and confirm your email. Your taster remains a separate snapshot.</p></article>
             <article><span>03</span><h3>Understand</h3><p>Receive your official VALU Index and a view across the five PRIME dimensions.</p></article>
             <article><span>04</span><h3>Discover</h3><p>Subject to governance checks, become discoverable through the marketplace.</p></article>
           </div>
@@ -94,8 +94,8 @@ export default function ValuStartPage() {
       <section className="vs-result">
         <div className="vs-shell">
           <div className="vs-result-grid">
-            <div><div className="vs-kicker"><span /> YOUR RESULT</div><h2>One assessment.<br /><em>One continuous journey.</em></h2></div>
-            <div className="vs-result-copy"><p>Answer Questions 1–9, create your account at the natural break, then continue with Questions 10–58. Your saved answers carry across. One completed assessment produces one official VALU Index.</p><ul><li><b>VALU Index</b><span>Your official result in points</span></li><li><b>PRIME profile</b><span>A view across five capability dimensions</span></li><li><b>Next pathway</b><span>A clearer basis for what to build next</span></li></ul></div>
+            <div><div className="vs-kicker"><span /> YOUR RESULT</div><h2>Two separate assessments.<br /><em>One connected journey.</em></h2></div>
+            <div className="vs-result-copy"><p>The 9-question taster is separate from the 58-question full VALU assessment. Taster answers are not included in the full assessment and do not reduce its question count. After the taster, create your account and start the full assessment at Question 1. Your full-assessment progress is saved independently and can be resumed from your dashboard.</p><ul><li><b>VALU Index</b><span>Your official result in points</span></li><li><b>PRIME profile</b><span>A view across five capability dimensions</span></li><li><b>Next pathway</b><span>A clearer basis for what to build next</span></li></ul></div>
           </div>
         </div>
       </section>
