@@ -156,7 +156,7 @@ export default function EventsPage() {
               <div className="page-kicker">REPLAY</div>
               <h2 className="section-title">Why being good at your job is no longer <em>enough.</em></h2>
               <p className="page-sub">The opening Valoria conversation on professional worth, visibility, influence and the infrastructure required to turn capability into recognised opportunity.</p>
-              <a className="btn-gold" href={BRAND.assessmentUrl}>START YOUR VALU INDEX →</a>
+              <a className="btn-gold" href={BRAND.assessmentUrl}>TAKE THE 9-QUESTION TASTER →</a>
             </div>
             <div className="replay-video"><iframe src="https://www.youtube.com/embed/B9dD22vTErI" title="Valoria Institute replay" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
           </div>
