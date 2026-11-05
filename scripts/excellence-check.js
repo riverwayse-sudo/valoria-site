@@ -79,6 +79,57 @@ if (fs.existsSync(profileClientPath)) {
   }
 }
 
+// Public profile privacy is a release-critical invariant: only consent-verified
+// public profiles may be rendered or indexed, and private fields stay server-side.
+const publicProfilePath = path.join(root, 'src/lib/public-profile.js');
+if (!fs.existsSync(publicProfilePath)) {
+  violations.push('consent-verified public profile access helper missing');
+} else {
+  const publicProfile = fs.readFileSync(publicProfilePath, 'utf8');
+  for (const required of [
+    'professional_profile_acknowledgements',
+    'PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION',
+    "acknowledgement_type', 'profile_submission'",
+    "acknowledgement_version', PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION",
+    "visibility', 'public'",
+    "listing_status', 'listed'",
+    "is_test', false",
+    ".is('revoked_at', null)",
+  ]) {
+    if (!publicProfile.includes(required)) violations.push('public profile helper missing consent/visibility invariant: ' + required);
+  }
+  const publicFields = publicProfile.match(/const PUBLIC_PROFILE_FIELDS = \[([\s\S]*?)\]\.join/);
+  if (publicFields && /'phone'|'username'|'cv_url'|'cv_summary'|'salary_expectation'|'fee_range'/.test(publicFields[1])) {
+    violations.push('public profile projection includes a private contact, CV or compensation field');
+  }
+}
+if (fs.existsSync(profileRoutePath)) {
+  const route = fs.readFileSync(profileRoutePath, 'utf8');
+  if (!route.includes('getConsentVerifiedPublicProfile')) {
+    violations.push('public profile route must use the consent-verifying server helper');
+  }
+}
+const profileLayoutPath = path.join(root, 'src/app/profile/[id]/layout.jsx');
+if (fs.existsSync(profileLayoutPath)) {
+  const layout = fs.readFileSync(profileLayoutPath, 'utf8');
+  if (!layout.includes('getConsentVerifiedPublicProfile')) {
+    violations.push('public profile metadata must use the consent-verifying server helper');
+  }
+}
+const sitemapPath = path.join(root, 'src/app/sitemap.js');
+if (fs.existsSync(sitemapPath)) {
+  const sitemap = fs.readFileSync(sitemapPath, 'utf8');
+  if (!sitemap.includes('getConsentVerifiedPublicProfileSitemapRows')) {
+    violations.push('sitemap must include only consent-verified public profiles');
+  }
+}
+if (fs.existsSync(profileClientPath)) {
+  const client = fs.readFileSync(profileClientPath, 'utf8');
+  if (!client.includes('if (!user || user.id !== id)')) {
+    violations.push('public profile client must not fall back to broad anonymous profile reads');
+  }
+}
+
 // Product-level regression guards for the VALU Index journey and looping registry.
 const nudgePath = path.join(root, 'src/components/ValuCompletionNudge.jsx');
 if (fs.existsSync(nudgePath)) {
