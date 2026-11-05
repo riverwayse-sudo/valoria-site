@@ -138,10 +138,10 @@ export default function SignupPage() {
                 TALENT & SPEAKERS
               </div>
               <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.6, margin: '0 0 12px' }}>
-                If you're a professional or speaker, your account is created through the VALU Index — the assessment is the entry point, not a separate signup.
+                If you are a professional or speaker, start with the separate 9-question taster. If you choose to continue, create your account and complete the full 58-question VALU Index. The taster is not part of the full assessment.
               </p>
               <a
-                href="https://valoriainstitute.com/valu/assessment/"
+                href="/valu/assessment/"
                
                 rel="noopener noreferrer"
                 style={{ display: 'inline-block', padding: '10px 20px', background: GOLD, color: MIDNIGHT, fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', borderRadius: '999px', textDecoration: 'none' }}
