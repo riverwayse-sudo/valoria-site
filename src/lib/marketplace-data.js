@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js'
 const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,fee_range,salary_expectation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
 const EXCLUDED_ATB_IDS = new Set(['ATB-C-SAA-00179', 'ATB-C-OAA-00157', 'ATB-68A5E7D8', 'ATB-C-𝙾𝙴𝙾-00387'])
-const PUBLIC_PROFILE_ACK_VERSION = 'profile-visibility-v1-2026-11-05'
+const PUBLIC_PROFILE_ACK_VERSION = 'public-profile-visibility-v1-2026-11-05'
 
 function getAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
