@@ -158,6 +158,72 @@ if (fs.existsSync(navPath)) {
     violations.push('Nav: use the canonical VALU Index name, not standalone VALU naming');
   }
 }
+// Public content must preserve the separate assessment model and approved claims.
+const valuStartPath = path.join(root, 'src/app/valu/start/page.jsx');
+const signupPath = path.join(root, 'src/app/signup/page.jsx');
+const aboutPath = path.join(root, 'src/app/about/page.jsx');
+const programmesPath = path.join(root, 'src/app/programmes/page.jsx');
+if (fs.existsSync(valuStartPath)) {
+  const valuStart = fs.readFileSync(valuStartPath, 'utf8');
+  if (!valuStart.includes('The 9-question taster is separate from the 58-question full VALU assessment.')) {
+    violations.push('VALU entry page must state that the 9-question taster and 58-question full assessment are separate');
+  }
+  if (!valuStart.includes('TAKE THE 9-QUESTION TASTER') || !valuStart.includes('POINTS')) {
+    violations.push('VALU entry page must label the taster CTA and show VALU results in points');
+  }
+}
+if (fs.existsSync(signupPath)) {
+  const signup = fs.readFileSync(signupPath, 'utf8');
+  if (/Question 10|remaining 49|9 of 58/i.test(signup)) {
+    violations.push('Signup page contains the retired combined-assessment journey');
+  }
+}
+if (fs.existsSync(aboutPath)) {
+  const about = fs.readFileSync(aboutPath, 'utf8');
+  for (const statement of ['Vision', 'Mission', 'Purpose', 'An Africa where professional merit always finds its platform.', 'To bridge the gap between latent brilliance and institutional scale.']) {
+    if (!about.includes(statement)) violations.push('About page is missing approved institutional foundation: ' + statement);
+  }
+}
+if (fs.existsSync(programmesPath)) {
+  const programmes = fs.readFileSync(programmesPath, 'utf8');
+  if (!programmes.includes('PRIME Certified Professional') || !programmes.includes('IN DEVELOPMENT') ||
+      !programmes.includes('participation in this pathway does not currently confer a Valoria certification')) {
+    violations.push('Valoria Develop must mark the certification pathway as in development and not conferring certification');
+  }
+  if (/certified facilitators|90-day re-measurement|90-day remeasurement/i.test(programmes)) {
+    violations.push('Valoria Develop contains an unconfirmed facilitator certification or remeasurement claim');
+  }
+}
+
+// Retired or unsupported public claims must not reappear in primary site copy.
+const publicCopyPaths = [
+  'src/app/page.jsx',
+  'src/app/about/page.jsx',
+  'src/app/prime/page.jsx',
+  'src/app/valu/page.jsx',
+  'src/app/valu/start/page.jsx',
+  'src/app/programmes/page.jsx',
+  'src/app/marketplace/page.jsx',
+  'src/components/HeroSlider.jsx',
+  'src/components/MarketplaceDirectory.jsx',
+];
+const retiredPublicClaims = [
+  [/Africa's human capital institution/i, 'retired institutional positioning'],
+  [/Explore the Bureau/i, 'retired Bureau navigation'],
+  [/21 professionals/i, 'unverified marketplace headcount'],
+  [/certified facilitators/i, 'unverified facilitator certification'],
+  [/Question 10|remaining 49|Questions 10–58/i, 'retired combined-assessment journey'],
+  [/\\bElite\\b|\\bDistinguished\\b|\\bProficient\\b/, 'retired merit designation'],
+];
+for (const relativePath of publicCopyPaths) {
+  const absolutePath = path.join(root, relativePath);
+  if (!fs.existsSync(absolutePath)) continue;
+  const text = fs.readFileSync(absolutePath, 'utf8');
+  for (const [pattern, label] of retiredPublicClaims) {
+    if (pattern.test(text)) violations.push(relativePath + ': ' + label + ' must not appear in public copy');
+  }
+}
+
 const pkg = JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
 if (!pkg.scripts?.['design:check']) violations.push('package.json: design:check gate missing');
 if (!fs.existsSync(path.join(root, 'src/lib/password-policy.js'))) violations.push('authentication control missing: src/lib/password-policy.js');
