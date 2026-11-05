@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { BRAND, PRIME_CLUSTERS } from '@/lib/brand'
-import { getMarketplaceRows, getMarketplaceCounts } from '@/lib/marketplace-data'
+import { getMarketplaceDirectoryData } from '@/lib/marketplace-data'
 
 const TRACK_META = {
   candidate: { label: 'Talent', href: '/marketplace/talent' },
@@ -24,7 +24,9 @@ export default async function LiveProfilesScroll() {
   let counts = { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
   let dataUnavailable = false
   try {
-    ;[profiles, counts] = await Promise.all([getMarketplaceRows('all'), getMarketplaceCounts()])
+    const data = await getMarketplaceDirectoryData('all')
+    profiles = data.rows
+    counts = data.counts
   } catch (error) {
     console.error('Homepage marketplace data unavailable:', error)
     dataUnavailable = true
