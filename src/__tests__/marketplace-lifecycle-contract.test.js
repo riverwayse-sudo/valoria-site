@@ -12,19 +12,17 @@ describe('VALUI marketplace lifecycle contract', () => {
     const facilitators = read('src/app/marketplace/facilitators/page.jsx')
 
     expect(rootSource).toContain("import MarketplaceDirectory from '@/components/MarketplaceDirectory'")
-    expect(rootSource).toContain("getMarketplaceRows('all')")
-    expect(rootSource).toContain('getMarketplaceCounts')
+    expect(rootSource).toContain("getMarketplaceDirectoryData('all')")
     expect(rootSource).toContain('activeTrack="all"')
 
     for (const source of [talent, speakers, facilitators]) {
       expect(source).toContain("import MarketplaceDirectory from '@/components/MarketplaceDirectory'")
-      expect(source).toContain('getMarketplaceRows')
-      expect(source).toContain('getMarketplaceCounts')
+      expect(source).toContain('getMarketplaceDirectoryData')
       expect(source).toContain('activeTrack=')
     }
-    expect(talent).toContain("getMarketplaceRows('candidate')")
-    expect(speakers).toContain("getMarketplaceRows('speaker')")
-    expect(facilitators).toContain("getMarketplaceRows('facilitator')")
+    expect(talent).toContain("getMarketplaceDirectoryData('candidate')")
+    expect(speakers).toContain("getMarketplaceDirectoryData('speaker')")
+    expect(facilitators).toContain("getMarketplaceDirectoryData('facilitator')")
   })
 
   test('public marketplace requires the separate full VALU assessment', () => {
@@ -44,6 +42,14 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).not.toContain('fee_range')
     expect(directory).not.toContain('SALARY EXPECTATION')
     expect(directory).not.toContain('FEE RANGE')
+  })
+
+  test('marketplace counts and category filters reuse one consent-verified roster read', () => {
+    const source = read('src/lib/marketplace-data.js')
+    expect(source).toContain('export async function getMarketplaceDirectoryData(track = \'all\')')
+    expect(source).toContain("const allRows = await getMarketplaceRows('all')")
+    expect(source).toContain('counts: countMarketplaceRows(allRows)')
+    expect(source).toContain('allRows.filter(row => row.capabilities.includes(normalizedTrack))')
   })
 
   test('marketplace data is professional-first and deduplicates capabilities', () => {
