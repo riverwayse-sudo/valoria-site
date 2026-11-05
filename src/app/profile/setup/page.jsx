@@ -80,7 +80,7 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   // section. Skills are assessed objectively by the VALU Index rather than
   // self-reported in the wizard; self-reporting them again was the
   // redundant "manual syncing" Temitayo flagged.
-  if (isSpeaker || isFacilitator) s.push({ key:'topics', kind:'multi-chip', section:'Expertise', title:'What topics do you speak on?', sub:'Select up to 6.', options:TOPICS_POOL, max:6, required:true })
+  if (isSpeaker || isFacilitator) s.push({ key:'topics', kind:'multi-chip', section:'Expertise', title: isSpeaker ? 'What topics do you speak on?' : 'What areas do you facilitate?', sub:'Select up to 6.', options:TOPICS_POOL, max:6, required:true })
   if (isSpeaker) s.push({ key:'format_capabilities', kind:'multi-chip', section:'Expertise', title:'What speaking formats do you offer?', sub:'Select all that apply.', options:FORMAT_CAPS, required:true, color:'GOLD' })
   if (isSpeaker) s.push({ key:'audience_sizes', kind:'multi-chip', section:'Expertise', title:'What audience sizes have you spoken to?', sub:'Select all that apply.', options:AUDIENCE_SIZES, required:true, color:'GOLD' })
   if (isSpeaker) s.push({ key:'past_events', kind:'list', section:'Expertise', title:'Any past speaking engagements?', sub:'Up to 3. These build trust with people viewing your profile.', fields:[{ key:'name', placeholder:'Event name' }, { key:'role', placeholder:'Your role' }], max:3, addLabel:'+ Add event', required:true })
