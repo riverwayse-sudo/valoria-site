@@ -22,7 +22,7 @@ const faqs = [
   ['Who is it for?', 'It is designed for African professionals who want a clearer view of their current professional capability and a stronger foundation for development, visibility and opportunity.'],
   ['Is it free?', 'Yes. The VALU Index is free to take. It is the entry point into the wider Valoria professional ecosystem.'],
   ['Does the result define me?', 'No. Your VALU Index is directional, not a permanent label. It gives you a starting point for understanding where you are and deciding what to build next.'],
-  ['What happens after I finish?', 'You create your professional account, complete your profile and, subject to Valoria’s normal governance checks, become discoverable through the professional marketplace.'],
+  ['What happens after the full assessment?', 'Complete your professional profile and choose whether it can be publicly visible. Discoverability depends on consent, verification and Valoria’s applicable listing requirements.'],
   ['Can I pause part-way through?', 'Yes. Progress in the full 58-question assessment is saved independently. Return to your dashboard to resume the full assessment at your saved position. Taster answers are stored separately.'],
 ]
 
@@ -41,16 +41,16 @@ export default function ValuStartPage() {
               <h1 style={{ maxWidth: "12.5ch", fontSize: "clamp(1.85rem, 3.1vw, 3.1rem)", lineHeight: 1.12, letterSpacing: "-0.045em", marginBlock: "0 1.1rem" }}>Your CV tells people what you’ve done.<br /><em>VALU shows what you can become.</em></h1>
               <p className="vs-lede">A professional diagnostic built around PRIME to give you a clearer starting point for understanding your capability, direction and professional presence.</p>
               <div className="vs-actions">
-                <AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">START YOUR VALU INDEX <b>→</b></AssessmentStartLink>
+                <AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">TAKE THE 9-QUESTION TASTER <b>→</b></AssessmentStartLink>
                 <a href="#how" className="vs-btn vs-secondary">SEE HOW IT WORKS <b>↓</b></a>
               </div>
-              <div className="vs-proof"><span>9 QUESTIONS</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
+              <div className="vs-proof"><span>9-QUESTION TASTER</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
             </div>
-            <div className="vs-score" style={{ borderRadius: "22px", overflow: "hidden", minWidth: 0 }} aria-label="Illustrative VALU Index result">
+            <div className="vs-score" style={{ borderRadius: "22px", overflow: "hidden", minWidth: 0 }} aria-label="Illustrative full VALU Index result in points">
               <div className="vs-score-top"><span>VALU INDEX</span><span>01</span></div>
-              <div className="vs-ring"><strong>74</strong><small>INDEX</small></div>
+              <div className="vs-ring"><strong>74</strong><small>POINTS</small></div>
               <div className="vs-bars">{dimensions.map(([letter, title], i) => <div key={letter} className="vs-bar"><span>{letter}</span><div><i className={`vs-bar-fill score-${i + 1}`} /></div><b>{title}</b></div>)}</div>
-              <p>Illustrative result view</p>
+              <p>Illustrative full VALU Index result</p>
             </div>
           </div>
         </div>
@@ -84,7 +84,7 @@ export default function ValuStartPage() {
           <h2>Taster. Account. Full assessment.<br /><em>Then become discoverable.</em></h2>
           <div className="vs-journey-grid">
             <article><span>01</span><h3>Start</h3><p>Complete the separate 9-question taster. No account is needed.</p></article>
-            <article><span>02</span><h3>Continue</h3><p>Create your account and confirm your email. Your taster remains a separate snapshot.</p></article>
+            <article><span>02</span><h3>Create your account</h3><p>Create your account and confirm your email. Your taster remains a separate snapshot.</p></article>
             <article><span>03</span><h3>Complete the full assessment</h3><p>Start the separate 58-question full VALU Index at Question 1. Receive your official result in points across the five PRIME dimensions.</p></article>
             <article><span>04</span><h3>Discover</h3><p>Subject to governance checks, become discoverable through the marketplace.</p></article>
           </div>
@@ -103,7 +103,7 @@ export default function ValuStartPage() {
       <section className="vs-light vs-next">
         <div className="vs-shell">
           <div className="vs-next-grid">
-            <div><div className="vs-kicker dark"><span /> AFTER VALU</div><h2>One assessment opens a much bigger professional journey.</h2></div>
+            <div><div className="vs-kicker dark"><span /> AFTER VALU</div><h2>The full assessment opens a much bigger professional journey.</h2></div>
             <div className="vs-copy"><p>Once you complete the full VALU assessment, you create your professional profile. From there, Valoria connects capability with professional visibility and opportunity.</p><div className="vs-next-list"><div><b>01</b><span>Complete your professional profile</span></div><div><b>02</b><span>Make your capabilities discoverable</span></div><div><b>03</b><span>Explore deeper assessment and development pathways</span></div></div></div>
           </div>
         </div>
