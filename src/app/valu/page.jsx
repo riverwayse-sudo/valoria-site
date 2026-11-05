@@ -4,7 +4,7 @@ import { BRAND } from '@/lib/brand'
 
 export const metadata = {
   title: 'VALU Index',
-  description: 'Understand where you stand as a professional through the VALU Index and the PRIME framework.',
+  description: 'Start with a separate 9-question taster, then complete the full 58-question VALU Index to understand your professional capability in points.',
   alternates: { canonical: 'https://valoriainstitute.com/valu' },
 }
 
@@ -23,20 +23,20 @@ export default function ValuPage() {
       <section className="valu-hero">
         <div className="valu-wrap">
           <div className="valu-kicker"><span /> THE VALU INDEX</div>
-          <h1>Where do you stand<br /><em>as a professional?</em></h1>
-          <p className="valu-lede">The VALU Index is Valoria's professional readiness diagnostic. It gives you a structured starting point for understanding your professional profile across the five dimensions of PRIME.</p>
+          <h1>Know where you stand,<br /><em>in points.</em></h1>
+          <p className="valu-lede">Start with a separate 9-question taster. If you choose to continue, complete the full 58-question VALU Index: 54 scored questions and four validity checks. The full assessment measures capability across the five PRIME clusters and reports your results in points.</p>
           <div className="valu-actions">
-            <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-btn valu-btn-gold">TAKE THE VALU INDEX <span>→</span></a>
+            <a href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">TAKE THE 9-QUESTION TASTER <span>→</span></a>
             <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW IT WORKS <span>↓</span></a>
           </div>
-          <div className="valu-meta"><span>9 QUESTIONS</span><i>·</i><span>INITIAL ASSESSMENT</span><i>·</i><span>BUILT AROUND PRIME</span></div>
+          <div className="valu-meta"><span>9-QUESTION TASTER</span><i>·</i><span>SEPARATE 58-QUESTION FULL ASSESSMENT</span><i>·</i><span>POINTS-BASED</div>
         </div>
       </section>
 
       <section className="valu-intro" id="how-it-works">
         <div className="valu-wrap valu-two">
           <div><div className="valu-kicker valu-dark"><span /> WHY VALU</div><h2>Professional capability is bigger than a job title.</h2></div>
-          <div><p>Experience tells part of the story. The VALU Index creates a clearer starting point for understanding how you currently show up across the professional dimensions that influence development, visibility and opportunity.</p><p>You do not need a perfect score to begin. The purpose of the initial assessment is direction: understand where you stand, then decide what to do next.</p></div>
+          <div><p>Experience tells part of the story. The VALU Index creates a structured view of how your capability shows up across the five PRIME clusters. The taster is a first step; the full assessment establishes your official VALU Index.</p><p>You do not need a perfect score to begin. The taster helps you decide whether to continue. Your full assessment produces a points score, a designation and a professional profile that remains valid for 12 months.</p></div>
         </div>
       </section>
 
@@ -45,10 +45,10 @@ export default function ValuPage() {
           <div className="valu-kicker"><span /> THE JOURNEY</div>
           <h2>Four steps from<br /><em>assessment to opportunity.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Start the assessment</h3><p>Answer the first nine of 58 questions. No account needed to begin.</p></article>
-            <article><b>02</b><h3>Understand your profile</h3><p>See your directional result through the PRIME framework.</p></article>
-            <article><b>03</b><h3>Create your record</h3><p>Create your professional account and complete the authoritative VALU assessment.</p></article>
-            <article><b>04</b><h3>Become discoverable</h3><p>Complete your professional profile, clear the governance gates and enter the relevant marketplace.</p></article>
+            <article><b>01</b><h3>Take the taster</h3><p>Complete nine separate questions. No account is needed for the taster.</p></article>
+            <article><b>02</b><h3>Complete the full assessment</h3><p>Complete the separate 58-question VALU Index: 54 scored questions and four validity checks. It takes about 15 to 20 minutes and requires an account.</p></article>
+            <article><b>03</b><h3>Build your profile</h3><p>Create your professional profile, add your declared capabilities and complete the required profile information.</p></article>
+            <article><b>04</b><h3>Get found</h3><p>Public discoverability follows profile completeness, consent, verification and the applicable listing rules. Eligibility and actual discoverability are not the same state.</p></article>
           </div>
         </div>
       </section>
@@ -63,11 +63,11 @@ export default function ValuPage() {
       <section className="valu-outcome">
         <div className="valu-wrap valu-outcome-grid">
           <div><div className="valu-kicker valu-dark"><span /> WHAT YOU DO NEXT</div><h2>Your result is a starting point, not a label.</h2></div>
-          <div><p>The VALU assessment has 58 questions and is completed in two sessions. You answer the opening nine straight away, then create your professional account to continue with the remaining 49 from your dashboard.</p><p>The full assessment establishes your official VALU Index, the authoritative marketplace record. Subject to the normal governance checks, your eligible capability can then enter the marketplace.</p><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-inline">START THE VALU INDEX →</a></div>
+          <div><p>The 9-question taster is separate from the 58-question full assessment. The taster answers are not included in the full assessment and do not reduce its question count.</p><p>The full assessment produces your official VALU Index in points, a designation and a profile valid for 12 months. The VALU Index is not a badge you buy, a subscription tier or a score that repeated attempts can inflate. A lower score points to a development pathway; it does not block access to the platform.</p><a href={BRAND.assessmentUrl} className="valu-inline">TAKE THE 9-QUESTION TASTER →</a></div>
         </div>
       </section>
 
-      <section className="valu-final"><div className="valu-wrap"><div className="valu-kicker"><span /> WORTH. BUILT.</div><h2>Start by understanding<br /><em>where you stand.</em></h2><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="valu-btn valu-btn-gold">TAKE THE VALU INDEX <span>→</span></a></div></section>
+      <section className="valu-final"><div className="valu-wrap"><div className="valu-kicker"><span /> WORTH. BUILT.</div><h2>Start by understanding<br /><em>where you stand.</em></h2><a href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">TAKE THE 9-QUESTION TASTER <span>→</span></a></div></section>
     </main>
     <Footer />
   </>
