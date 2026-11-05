@@ -19,7 +19,7 @@ const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Ma
 
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
-const cleanSkill = v => displayText(v).replace(/\\s*★$/, '')
+const cleanSkill = v => displayText(v).replace(/\s*★$/, '')
 
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
   const router = useRouter()
@@ -63,9 +63,20 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     <main>
       <section className={styles.hero}>
         <div className={styles.container}>
-          <p className={styles.eyebrow}>VALORIA MARKETPLACE</p>
-          <h1>{activeTrack === 'all' ? <>Find professionals<br/><i>by capability.</i></> : <>{TRACKS.find(t=>t[0]===activeTrack)?.[1]}<br/><i>on Valoria.</i></>}</h1>
-          <p className={styles.lede}>Explore public professional profiles that meet Valoria’s full-assessment and listing requirements. Each profile presents declared roles, VALU points and assessment-derived capability insight.</p>
+          <p className={styles.eyebrow}>{activeTrack === 'candidate' ? 'ATB CONNECT' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'ATB SPOTLIGHT' : 'VALORIA MARKETPLACE'}</p>
+          <h1>
+            {activeTrack === 'all' && <>Find professionals<br/><i>by capability.</i></>}
+            {activeTrack === 'candidate' && <>Precision hiring,<br/><i>not CV triage.</i></>}
+            {activeTrack === 'speaker' && <>Find a speaker<br/><i>who can hold a room.</i></>}
+            {activeTrack === 'facilitator' && <>Find a facilitator<br/><i>for the work ahead.</i></>}
+          </h1>
+          <p className={styles.lede}>
+            {activeTrack === 'all' && 'Explore public professional profiles that meet Valoria’s full-assessment and listing requirements. Each profile presents declared roles, VALU points and assessment-derived capability insight.'}
+            {activeTrack === 'candidate' && 'ATB Connect helps employers explore public professional profiles by declared capability, VALU points and sector. Talent listings appear only when the relevant profile and listing requirements are met.'}
+            {activeTrack === 'speaker' && 'ATB Spotlight helps event organisers discover public speakers by declared expertise and PRIME capability. Profiles show assessment-derived insight and the professional information available for each person.'}
+            {activeTrack === 'facilitator' && 'ATB Spotlight helps training buyers discover public facilitators by declared expertise and PRIME capability. For a structured team development programme, explore Valoria Develop.'}
+          </p>
+          {activeTrack === 'facilitator' && <Link className={styles.view} href="/programmes">EXPLORE VALORIA DEVELOP</Link>}
           <nav className={styles.tabs} aria-label="Filter by declared role">{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
         </div>
       </section>
@@ -86,7 +97,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
           </select>
           {(query || sector || cluster || skill) && <button onClick={clearFilters}>CLEAR</button>}
         </div>
-        <p className={styles.filterNote}>Role, PRIME cluster, declared skill and sector filters are available. Seniority filtering requires an approved seniority field in the public profile data.</p>
+        <p className={styles.filterNote}>Filter by declared role, PRIME cluster, declared skill and sector. Seniority is not currently included in the public roster; private work-history data is not inferred or exposed as a filter.</p>
       </section>
       <section className={styles.directory}>
         <div className={styles.container}>
@@ -95,7 +106,15 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             <span>VALU INDEX × PRIME</span>
           </div>
           {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p}/>)}</div> :
-            <div className={styles.empty}><strong>No public professionals match these filters.</strong><p>Try clearing a filter or selecting another declared role.</p></div>}
+            rows.length === 0 && activeTrack !== 'all' ? (
+              <div className={styles.empty}>
+                <strong>{activeTrack === 'candidate' ? 'No public talent profiles are available yet.' : activeTrack === 'speaker' ? 'No public speaker profiles are available yet.' : 'No public facilitator profiles are available yet.'}</strong>
+                <p>{activeTrack === 'candidate' ? 'ATB Connect search becomes useful when public profiles are available for the roles employers need. Contact Valoria to discuss a sourcing requirement.' : 'ATB Spotlight will show profiles when professionals meet the relevant listing and visibility requirements. Contact Valoria to discuss an event or facilitation requirement.'}</p>
+                <a className={styles.view} href={activeTrack === 'candidate' ? 'mailto:info@valoriainstitute.com?subject=ATB%20Connect%20Access%20Enquiry' : 'mailto:info@valoriainstitute.com?subject=ATB%20Spotlight%20Enquiry'}>CONTACT VALORIA →</a>
+              </div>
+            ) : (
+              <div className={styles.empty}><strong>No public professionals match these filters.</strong><p>Try clearing a filter or selecting another declared role.</p></div>
+            )}
         </div>
       </section>
     </main>
