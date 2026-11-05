@@ -21,7 +21,7 @@ const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' 
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
 const cleanSkill = v => displayText(v).replace(/\s*★$/, '')
 
-export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
+export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all', dataUnavailable = false }) {
   const router = useRouter()
   const [query,setQuery] = useState('')
   const [sector,setSector] = useState('')
@@ -102,11 +102,23 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       <section className={styles.directory}>
         <div className={styles.container}>
           <div className={styles.directoryHead}>
-            <div><p className={styles.eyebrow}>PUBLIC MARKETPLACE</p><h2>{results.length} {results.length===1?'professional':'professionals'}</h2></div>
+            <div><p className={styles.eyebrow}>PUBLIC MARKETPLACE</p><h2>{dataUnavailable ? 'Directory unavailable' : `${results.length} ${results.length===1?'professional':'professionals'}`}</h2></div>
             <span>VALU INDEX × PRIME</span>
           </div>
-          {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p}/>)}</div> :
-            rows.length === 0 && activeTrack !== 'all' ? (
+          {dataUnavailable ? (
+            <div className={styles.empty}>
+              <strong>Marketplace data could not be verified.</strong>
+              <p>The directory is temporarily unavailable. Try again shortly.</p>
+              <button type="button" className={styles.view} onClick={() => router.refresh()}>RETRY →</button>
+            </div>
+          ) : results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p}/>)}</div> :
+            rows.length === 0 && activeTrack === 'all' ? (
+              <div className={styles.empty}>
+                <strong>No public professional profiles are currently available.</strong>
+                <p>Public listings appear after a professional completes the required profile, chooses public visibility, records consent and meets the applicable listing requirements.</p>
+                <Link className={styles.view} href="/login?returnTo=%2Fprofile%2Fsetup">EXISTING PROFESSIONAL? REVIEW YOUR PROFILE →</Link>
+              </div>
+            ) : rows.length === 0 && activeTrack !== 'all' ? (
               <div className={styles.empty}>
                 <strong>{activeTrack === 'candidate' ? 'No public talent profiles are available yet.' : activeTrack === 'speaker' ? 'No public speaker profiles are available yet.' : 'No public facilitator profiles are available yet.'}</strong>
                 <p>{activeTrack === 'candidate' ? 'ATB Connect search becomes useful when public profiles are available for the roles employers need. Contact Valoria to discuss a sourcing requirement.' : 'ATB Spotlight will show profiles when professionals meet the relevant listing and visibility requirements. Contact Valoria to discuss an event or facilitation requirement.'}</p>
@@ -158,6 +170,8 @@ function Profile({p}) {
     .filter(([key,value]) => CLUSTER_NAMES[key] && Number.isFinite(Number(value)))
     .sort((a,b) => Number(a[1])-Number(b[1]))[0]
   const developmentFocus = weakest ? CLUSTER_NAMES[weakest[0]] : 'Not available'
+  const skills = labelValues(p.skills).slice(0, 3)
+  const availability = displayText(p.availability_status)
   return <article className={styles.card}>
     <div className={styles.identity}>
       <ValoriaAvatar src={p.photo_url} seed={p.professional_id || profileId} size={64} className={styles.avatar}/>
@@ -169,6 +183,9 @@ function Profile({p}) {
     </div>
     <p className={styles.career}>{displayText(p.headline)}</p>
     <p className={styles.specialisation}>{displayText(p.current_job_title)}{p.industry ? ` · ${displayText(p.industry)}` : ''}</p>
+    <div className={styles.profileDetails}>{[p.location, availability && `Availability: ${titleCase(availability)}`].filter(Boolean).map(value=><span key={value}>{displayText(value)}</span>)}</div>
+    {(p.salary_expectation || p.fee_range) && <div className={styles.profileCompensation}>{p.salary_expectation && <span><small>SALARY EXPECTATION</small>{displayText(p.salary_expectation)}</span>}{p.fee_range && <span><small>FEE RANGE</small>{displayText(p.fee_range)}</span>}</div>}
+    {skills.length > 0 && <div className={styles.profileSkills}>{skills.map(value=><span key={value}>{value}</span>)}</div>}
     <div className={styles.signalRow}>
       <div className={styles.scoreBlock}>
         <small>VALU INDEX</small>
