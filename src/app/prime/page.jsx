@@ -11,13 +11,6 @@ export const metadata = {
   alternates: { canonical: 'https://valoriainstitute.com/prime' },
 }
 
-const CLUSTER_COPY = {
-  P: 'Presence is how you show up: communicate with clarity, negotiate with intention and make your professional value understood.',
-  R: 'Relationships are how you connect: build trust, resolve conflict, develop people and manage stakeholders.',
-  I: 'Intelligence is how you think: apply critical and strategic thinking, business judgement and AI fluency.',
-  M: 'Mastery is how you deliver: take accountability, lead yourself through challenge and adapt your execution.',
-  E: 'Enterprise is how you create: generate commercial value, influence without authority and collaborate with AI.',
-}
 
 const DESIGNATIONS = [
   { name: 'Force to Align With', range: '80–100 points', meaning: 'Operating at the highest expression of professional capability.' },
@@ -39,7 +32,7 @@ export default function PrimePage() {
             <p className="page-sub">PRIME describes how professional capability shows up in the work. The VALU Index measures it.</p>
             <div className="page-hero-actions">
               <a href="/valu" className="btn-gold">UNDERSTAND THE VALU INDEX</a>
-              <a href="/valu/assessment/" className="btn-outline">TAKE THE TASTER</a>
+              <a href="/valu/assessment/" className="btn-outline">TAKE THE 9-QUESTION TASTER</a>
             </div>
           </div>
         </section>
@@ -56,7 +49,7 @@ export default function PrimePage() {
                   <div>
                     <div className="cluster-name prime-name">{cluster.name}</div>
                     <div className="prime-subtitle">{cluster.subtitle}</div>
-                    <p className="prime-body">{CLUSTER_COPY[cluster.letter]}</p>
+                    <p className="prime-body">{cluster.description}</p>
                     <ul className="prime-signals">
                       {cluster.skills.map(skill => <li key={skill} className="prime-signal"><span className="prime-signal-mark">✦</span>{skill}</li>)}
                     </ul>
