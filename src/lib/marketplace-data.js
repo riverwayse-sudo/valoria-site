@@ -100,7 +100,6 @@ async function getApprovedPublicProfessionalIds(admin, ids) {
 
 export async function getMarketplaceRows(track = 'all') {
   const admin = getAdminClient()
-  const admin = getAdminClient()
 
   const { data, error } = await admin
     .from(SOURCE)
