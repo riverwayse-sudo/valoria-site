@@ -313,3 +313,5 @@
   .events-page .poster-bottom{grid-template-columns:1fr;gap:16px}
   .events-page .poster-details{border-left:0;border-top:1px solid rgba(247,244,238,.2);padding:16px 0 0}
 }
+
+.about-boundaries p{margin:0 0 14px}.about-boundaries p:last-child{margin-bottom:0}
