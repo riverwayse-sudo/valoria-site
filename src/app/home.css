@@ -1271,7 +1271,6 @@
 }
 .vi-scroll-track-static {
   width: max-content;
-  animation: none !important;
   transform: none !important;
   will-change: auto;
 }
