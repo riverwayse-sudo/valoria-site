@@ -26,16 +26,34 @@ export default async function LiveProfilesScroll() {
           {typeof discoverableCount === 'number' && <div className="live-profiles-proof" aria-label="Public marketplace profile count"><strong>{discoverableCount}</strong><span>public professional profiles</span></div>}
         </div>
 
-        <div className="live-profiles-actions" aria-label="Marketplace actions">
-          <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent">
-            <span><small>HIRING / SOURCING</small>Find talent</span><b>→</b>
-          </Link>
-          <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker">
-            <span><small>EVENTS / PROGRAMMES</small>Find a speaker</span><b>→</b>
-          </Link>
-          <Link href="/marketplace/facilitators" className="live-profile-action" data-marketplace-intent="facilitator">
-            <span><small>WORKSHOPS / CHANGE</small>Find a facilitator</span><b>→</b>
-          </Link>
+        <div className="live-profiles-actions" aria-label="Marketplace and development actions">
+          {counts.candidate > 0 ? (
+            <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent">
+              <span><small>ATB CONNECT</small>Find talent</span><b>→</b>
+            </Link>
+          ) : (
+            <a href="mailto:info@valoriainstitute.com?subject=ATB%20Connect%20Access%20Enquiry" className="live-profile-action primary">
+              <span><small>ATB CONNECT</small>Request sourcing access</span><b>→</b>
+            </a>
+          )}
+          {counts.speaker > 0 ? (
+            <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker">
+              <span><small>ATB SPOTLIGHT</small>Find a speaker</span><b>→</b>
+            </Link>
+          ) : (
+            <a href="mailto:info@valoriainstitute.com?subject=ATB%20Spotlight%20Speaker%20Enquiry" className="live-profile-action">
+              <span><small>ATB SPOTLIGHT</small>Discuss a speaker brief</span><b>→</b>
+            </a>
+          )}
+          {counts.facilitator > 0 ? (
+            <Link href="/marketplace/facilitators" className="live-profile-action" data-marketplace-intent="facilitator">
+              <span><small>ATB SPOTLIGHT</small>Find a facilitator</span><b>→</b>
+            </Link>
+          ) : (
+            <Link href="/programmes" className="live-profile-action">
+              <span><small>VALORIA DEVELOP</small>Commission a PRIME programme</span><b>→</b>
+            </Link>
+          )}
         </div>
       </div>
 
