@@ -140,8 +140,8 @@ export default function AboutPage() {
               <h2 className="section-title">African in origin.<br /><em>Built to travel.</em></h2>
             </Reveal>
             <Reveal>
-              <p className="page-copy">Africa is Valoria’s first market, with Nigeria as its jurisdiction. Continental expansion beyond Nigeria is a 2028 priority.</p>
-              <p className="page-copy page-copy-spaced">The platform is designed to be understandable to professionals and buyers internationally. Its current market, opportunity availability and eligibility must remain clear; the site does not imply access to markets where Valoria is not yet operating.</p>
+              <p className="page-copy">Valoria is African in origin and built for an international professional audience. Its current operating jurisdiction is Nigeria; continental expansion beyond Nigeria is a 2028 priority.</p>
+              <p className="page-copy page-copy-spaced">The website and product are designed for international professionals and buyers. Market-specific services, eligibility and opportunity availability depend on where Valoria is operating; the site does not imply that every service or listing is available in every country.</p>
             </Reveal>
           </div>
         </section>
