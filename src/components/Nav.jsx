@@ -69,7 +69,7 @@ export default function Nav() {
 
   const close = () => setMenuOpen(false)
   // Keep the primary CTA stable during auth hydration. Previously it changed
-  // from START VALU to MY PROFILE/DASHBOARD after getUser(), causing a visible
+  // between the anonymous taster CTA and the signed-in full-assessment continuation after getSession(), causing a visible
   // header layout shift on every page for signed-in users.
   const cta = { label: 'TAKE THE 9-QUESTION TASTER', href: NAVIGATION.assessmentUrl, external: true }
 
