@@ -64,7 +64,6 @@ export default function PrimePage() {
                 </article>
               </Reveal>
             ))}
-            <p className="prime-copy">★ Future-ready skill — critical for the professional talent market of 2025 to 2035.</p>
           </div>
         </section>
         <section className="page-section alt">
