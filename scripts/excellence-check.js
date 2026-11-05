@@ -213,7 +213,7 @@ const retiredPublicClaims = [
   [/21 professionals/i, 'unverified marketplace headcount'],
   [/certified facilitators/i, 'unverified facilitator certification'],
   [/Question 10|remaining 49|Questions 10–58/i, 'retired combined-assessment journey'],
-  [/\\bElite\\b|\\bDistinguished\\b|\\bProficient\\b/, 'retired merit designation'],
+  [/\bElite\b|\bDistinguished\b|\bProficient\b/, 'retired merit designation'],
 ];
 for (const relativePath of publicCopyPaths) {
   const absolutePath = path.join(root, relativePath);
