@@ -41,7 +41,7 @@ describe('VALUI marketplace lifecycle contract', () => {
       expect(source).toContain(approved)
     }
     expect(source).toContain('IN DEVELOPMENT')
-    expect(source).toContain('formal certification process is in development and is not currently conferred')
+    expect(source).toContain('certification process is in development; participation in this pathway does not currently confer a Valoria certification')
     expect(source).not.toContain('certified facilitators')
     expect(source).not.toContain('90-day re-measurement')
     expect(source).not.toContain('90-day remeasurement')
