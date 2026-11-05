@@ -18,11 +18,11 @@ export const COLORS = {
 }
 
 export const PRIME_CLUSTERS = [
-  { letter: 'P', name: 'Presence', color: COLORS.gold, subtitle: 'How you show up', skills: ['Communication', 'Negotiation', 'Personal Brand & Executive Presence'] },
-  { letter: 'R', name: 'Relationships', color: COLORS.gold, subtitle: 'How you connect', skills: ['Emotional Intelligence', 'Conflict Resolution', 'People Development', 'Stakeholder Management'] },
-  { letter: 'I', name: 'Intelligence', color: COLORS.gold, subtitle: 'How you think', skills: ['Critical Thinking', 'Strategic Thinking', 'Business Acumen', 'AI Fluency'] },
-  { letter: 'M', name: 'Mastery', color: COLORS.gold, subtitle: 'How you deliver', skills: ['Execution & Accountability', 'Resilience & Self-Leadership', 'Adaptability'] },
-  { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you create', skills: ['Commercial Creativity', 'Influence Without Authority', 'Human-AI Collaboration'] },
+  { letter: 'P', name: 'Presence', color: COLORS.gold, subtitle: 'How you show up', description: 'Communication, Executive Presence and Composure Under Scrutiny describe how you show up with clarity, confidence and composure.', skills: ['Communication', 'Executive Presence', 'Composure Under Scrutiny'] },
+  { letter: 'R', name: 'Relationships', color: COLORS.gold, subtitle: 'How you connect', description: 'Trust-Building, Collaborative Intelligence and Network Quality describe how you build and sustain professional relationships.', skills: ['Trust-Building', 'Collaborative Intelligence', 'Network Quality'] },
+  { letter: 'I', name: 'Intelligence', color: COLORS.gold, subtitle: 'How you think', description: 'Critical Thinking, Analytical Depth, Decision-Making and Cognitive Agility describe how you interpret information and make sound decisions.', skills: ['Critical Thinking', 'Analytical Depth', 'Decision-Making', 'Cognitive Agility'] },
+  { letter: 'M', name: 'Mastery', color: COLORS.gold, subtitle: 'How you deliver', description: 'Execution Discipline, Accountability, Resilience and Adaptability describe how you deliver and respond to challenge.', skills: ['Execution Discipline', 'Accountability', 'Resilience', 'Adaptability'] },
+  { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you build', description: 'Commercial Thinking, Systems Building and Venture Mindset describe how you build value and develop ideas into scalable work.', skills: ['Commercial Thinking', 'Systems Building', 'Venture Mindset'] },
 ]
 
 // VALU Index values are points out of 100, not percentages.
@@ -62,7 +62,9 @@ export const TIER_DESIGNATIONS = [
   { level: 4, min: 80, max: 100, name: 'Force to Align With', stars: '✦✦', badgeClass: 'forceToAlignWith' },
   { level: 3, min: 65, max: 79, name: 'Emerging Force', stars: '', badgeClass: 'emergingForce' },
   { level: 2, min: 50, max: 64, name: 'Developing Professional', stars: '', badgeClass: 'developingProfessional' },
-  { level: 1, min: 35, max: 49, name: 'Building Foundations', stars: '', badgeClass: 'buildingFoundations' },
+  { level: 1, min: 35, max: 49, name: 'Building Foundations', stars: '', badgeClass: 'buildingFoundations', listable: true },
+  // Explanatory designation only; scores below 35 do not receive a public marketplace card.
+  { level: 0, min: 0, max: 34, name: 'At the Starting Point', stars: '', badgeClass: 'atTheStartingPoint', listable: false },
 ]
 
 export function getValuTier(points, assessmentLevel = 'full') {
