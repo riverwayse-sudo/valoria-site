@@ -528,7 +528,7 @@ function ProfileSetupForm() {
           <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'28px', textAlign:'left' }}>
             <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>WHAT HAPPENS NEXT</div>
             <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.8, margin:0 }}>
-              Status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? 'Listed' : 'Not yet listed'}</strong>. Complete the full VALU assessment, keep your professional profile complete and meet the relevant capability gates. A current VALU Index score of 35 points or above is required for marketplace eligibility.
+              Status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? 'Listed' : 'Not yet listed'}</strong>. Complete the full VALU assessment, keep your professional profile complete and meet the relevant capability gates. Marketplace eligibility depends on a current full VALU Index and the applicable capability and listing rules. Completing the assessment does not automatically publish a profile.
             </p>
           </div>
 
@@ -1117,7 +1117,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
         <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
           <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — VALU INDEX ASSESSMENT</div>
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
-            Your profile is not yet listed because the full VALU assessment is not complete. Complete VALU and you will be listed first; completing your professional profile then unlocks additional visibility and opportunities.
+            Your profile is not yet listed because the full VALU assessment is not complete. Complete the separate 58-question assessment to receive your official VALU Index. Your profile must also meet the applicable completeness, eligibility and visibility requirements before it becomes public.
           </p>
           <a href="https://valoriainstitute.com/valu/assessment/" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
             COMPLETE THE FULL VALU ASSESSMENT →
