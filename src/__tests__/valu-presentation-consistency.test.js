@@ -8,13 +8,16 @@ function read(relative) {
 describe('VALU presentation consistency', () => {
   test('homepage communicates the approved nine-question entry assessment', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('<b>9</b> QUESTIONS')
+    expect(home).toContain('<b>9</b> QUESTION TASTER')
+    expect(home).toContain('<b>58</b> FULL QUESTIONS')
     expect(home).not.toContain('<b>15</b> QUESTIONS')
   })
 
   test('homepage illustrative VALU card uses points and the current merit designation', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('vc-denom">POINTS')
+    expect(hero).toContain('vc-num">58')
+    expect(hero).toContain('vc-denom">QUESTIONS')
+    expect(hero).toContain('results expressed in points')
     expect(hero).toContain('FORCE TO ALIGN WITH')
     expect(hero).not.toContain('DISTINGUISHED')
     expect(hero).not.toContain('vc-denom">/ 100')
@@ -48,7 +51,8 @@ describe('VALU presentation consistency', () => {
     const prototype = read('src/app/test/assessment/page.jsx')
     expect(prototype).toContain('const teaser = [')
     expect(prototype).toContain('].slice(0, 9)')
-    expect(prototype).toContain('9 opening questions followed by the remaining 49 questions (58 in total)')
+    expect(prototype).toContain('a separate 9-question taster and a separate 58-question full assessment')
+    expect(prototype).toContain('The taster does not count toward the full assessment')
     expect(prototype).not.toContain('15 thoughtful questions')
   })
 })
