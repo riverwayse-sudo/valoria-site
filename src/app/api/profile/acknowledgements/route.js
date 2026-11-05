@@ -3,7 +3,8 @@ import { createClient } from '@supabase/supabase-js'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
-const ACKNOWLEDGEMENT_VERSION = 'profile-visibility-v1-2026-11-05'
+const PUBLIC_ACKNOWLEDGEMENT_VERSION = 'public-profile-visibility-v1-2026-11-05'
+const REGISTERED_ACKNOWLEDGEMENT_VERSION = 'registered-profile-submission-v1-2026-11-05'
 
 function getAdmin() {
   if (!SUPABASE_URL || !SERVICE_ROLE_KEY) return null
@@ -55,6 +56,7 @@ export async function POST(request) {
   }
 
   const visibility = body.visibility
+  const acknowledgementVersion = visibility === 'public' ? PUBLIC_ACKNOWLEDGEMENT_VERSION : REGISTERED_ACKNOWLEDGEMENT_VERSION
   const acknowledgementText = visibility === 'public'
     ? 'I confirm that the information I provided is accurate. I consent to Valoria displaying the public profile fields associated with my professional record in the Valoria Marketplace when the applicable assessment, completeness, capability, review and listing requirements are met. I understand that completing the VALU assessment does not guarantee public listing, and I can change my visibility preference.'
     : 'I confirm that the information I provided is accurate. I choose registered-only visibility for my professional profile. I understand that my profile will not be displayed to public visitors while this setting remains in place, and I can change my visibility preference.'
@@ -77,7 +79,7 @@ export async function POST(request) {
     .insert({
       professional_id: user.id,
       acknowledgement_type: 'profile_submission',
-      acknowledgement_version: ACKNOWLEDGEMENT_VERSION,
+      acknowledgement_version: acknowledgementVersion,
       acknowledgement_text: acknowledgementText,
       source: 'profile_setup',
       acknowledged_at: new Date().toISOString(),
@@ -102,6 +104,6 @@ export async function POST(request) {
   return NextResponse.json({
     ok: true,
     visibility,
-    acknowledgement_version: ACKNOWLEDGEMENT_VERSION,
+    acknowledgement_version: acknowledgementVersion,
   })
 }
