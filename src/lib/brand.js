@@ -7,9 +7,7 @@ export const BRAND = {
   belief: 'Talent is not the problem. Infrastructure is.',
   promise: ['Develop', 'Surface', 'Connect'],
   email: 'info@valoriainstitute.com',
-  copyrightEntity: 'African Talent Bureau Ltd',
   location: 'Lagos, Nigeria',
-  compliance: 'NDPA 2023 Compliant',
   assessmentUrl: '/valu/assessment/',
   logo: '/logo.png',
 }
