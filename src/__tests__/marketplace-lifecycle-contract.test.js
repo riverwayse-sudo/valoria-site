@@ -35,6 +35,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).not.toContain('BASIC · SNAPSHOT')
   })
 
+  test('About uses the approved Vision, Mission and Purpose statements', () => {
+    const source = read('src/app/about/page.jsx')
+    for (const statement of ['Vision', 'Mission', 'Purpose', 'An Africa where professional merit always finds its platform.', "To build and operate Africa's premier human capital institution.", 'To bridge the gap between latent brilliance and institutional scale.']) {
+      expect(source).toContain(statement)
+    }
+    expect(source).toContain('not a certification body')
+    expect(source).not.toContain('Africa\'s human capital institution</')
+  })
+
   test('Valoria Develop uses the approved formats and withholds unconfirmed certification and commercial claims', () => {
     const source = read('src/app/programmes/page.jsx')
     for (const approved of ['PRIME Sprint', 'PRIME Cluster Programme', 'PRIME Certified Professional', 'Executive Immersion', 'One day', 'Six weeks', 'Six months', 'Three days', '70% Experiential', '20% Social', '10% Formal']) {
