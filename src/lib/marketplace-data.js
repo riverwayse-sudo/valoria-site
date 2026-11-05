@@ -1,7 +1,7 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 
-const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,fee_range,salary_expectation,availability_status,assessment_access'
+const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
 const EXCLUDED_ATB_IDS = new Set(['ATB-C-SAA-00179', 'ATB-C-OAA-00157', 'ATB-68A5E7D8', 'ATB-C-𝙾𝙴𝙾-00387'])
 const PUBLIC_PROFILE_ACK_VERSION = 'public-profile-visibility-v1-2026-11-05'
@@ -19,7 +19,7 @@ function isQualifiedPublicProfile(row) {
   return Boolean(
     row?.professional_id &&
     row.assessment_access === 'full' &&
-    Number.isFinite(Number(row.valu_index)) &&
+    row.valu_index !== null && row.valu_index !== undefined && Number.isFinite(Number(row.valu_index)) &&
     typeof row.assessment_summary === 'string' && row.assessment_summary.trim().length >= 12 &&
     typeof row.full_name === 'string' && row.full_name.trim() &&
     typeof row.headline === 'string' && row.headline.trim() &&
