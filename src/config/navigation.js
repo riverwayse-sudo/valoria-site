@@ -10,9 +10,8 @@ export const NAVIGATION = {
           label: '',
           items: [
             { label: 'Marketplace', href: '/marketplace', description: 'Find professionals by capability.' },
-            { label: 'Opportunities', href: '/opportunities', description: 'Explore current professional opportunities.' },
             { label: 'Find Facilitators', href: '/marketplace/facilitators', description: 'Discover facilitators by declared capability.' },
-            { label: 'Programmes', href: '/programmes', description: 'Develop capability with structured learning.' },
+            { label: 'Valoria Develop', href: '/programmes', description: 'Develop capability with structured learning.' },
             { label: 'Events', href: '/events', description: 'Join Valoria conversations and events.' },
             { label: 'Insights', href: '/insights', description: 'Ideas and perspectives for the modern professional.' },
           ],
@@ -50,9 +49,8 @@ export const NAVIGATION = {
   mobile: {
     explore: [
       { label: 'Marketplace', href: '/marketplace' },
-      { label: 'Opportunities', href: '/opportunities' },
       { label: 'Find Facilitators', href: '/marketplace/facilitators' },
-      { label: 'Programmes', href: '/programmes' },
+      { label: 'Valoria Develop', href: '/programmes' },
       { label: 'Events', href: '/events' },
       { label: 'Insights', href: '/insights' },
     ],
