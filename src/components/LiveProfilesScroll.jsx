@@ -45,11 +45,11 @@ export default async function LiveProfilesScroll() {
   }, {})
 
   return (
-    <section className="live-profiles" aria-labelledby="registry-title">
+    <section className="live-profiles" aria-labelledby="marketplace-title">
       <div className="live-profiles-shell">
         <div className="live-profiles-copy">
           <div className="live-profiles-kicker">THE VALORIA MARKETPLACE</div>
-          <h2 id="registry-title" className="live-profiles-title">Find professionals <em>by capability.</em></h2>
+          <h2 id="marketplace-title" className="live-profiles-title">Find professionals <em>by capability.</em></h2>
           <p className="live-profiles-subtitle">
             Explore public professional profiles that meet Valoria’s listing requirements. Each profile presents structured capability information and VALU evidence where available.
           </p>
