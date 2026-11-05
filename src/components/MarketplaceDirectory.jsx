@@ -19,6 +19,7 @@ const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Ma
 
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
+const cleanSkill = v => displayText(v).replace(/\\s*★$/, '')
 
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
   const router = useRouter()
@@ -40,7 +41,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
   }, [router])
 
   const sectors = useMemo(() => [...new Set(rows.map(r=>displayText(r.industry)).filter(Boolean))].sort(), [rows])
-  const skills = useMemo(() => [...new Set(rows.flatMap(r=>labelValues(r.skills)))].sort(), [rows])
+  const skills = useMemo(() => [...new Set(PRIME_CLUSTERS.flatMap(cluster => cluster.skills.map(cleanSkill)))].sort(), [])
 
   const results = useMemo(() => {
     const q=query.trim().toLowerCase()
@@ -105,9 +106,9 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
 function labelValues(value) {
   if (!Array.isArray(value)) return []
   return [...new Set(value.map(item => {
-    if (typeof item === 'string') return displayText(item)
+    if (typeof item === 'string') return cleanSkill(item)
     if (!item || typeof item !== 'object') return ''
-    return displayText(item.label ?? item.name ?? item.skill_name ?? item.title ?? item.value)
+    return cleanSkill(item.label ?? item.name ?? item.skill_name ?? item.title ?? item.value)
   }).filter(Boolean))]
 }
 
