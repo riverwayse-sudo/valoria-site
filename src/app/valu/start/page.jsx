@@ -85,7 +85,7 @@ export default function ValuStartPage() {
           <div className="vs-journey-grid">
             <article><span>01</span><h3>Start</h3><p>Complete the separate 9-question taster. No account is needed.</p></article>
             <article><span>02</span><h3>Continue</h3><p>Create your account and confirm your email. Your taster remains a separate snapshot.</p></article>
-            <article><span>03</span><h3>Understand</h3><p>Receive your official VALU Index and a view across the five PRIME dimensions.</p></article>
+            <article><span>03</span><h3>Complete the full assessment</h3><p>Start the separate 58-question full VALU Index at Question 1. Receive your official result in points across the five PRIME dimensions.</p></article>
             <article><span>04</span><h3>Discover</h3><p>Subject to governance checks, become discoverable through the marketplace.</p></article>
           </div>
         </div>
