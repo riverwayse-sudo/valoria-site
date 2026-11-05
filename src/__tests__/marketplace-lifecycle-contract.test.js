@@ -27,20 +27,21 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(facilitators).toContain("getMarketplaceRows('facilitator')")
   })
 
-  test('marketplace distinguishes Basic snapshot access from Full VALU assessment', () => {
+  test('public marketplace requires the separate full VALU assessment', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
     const data = read('src/lib/marketplace-data.js')
     expect(data).toContain('assessment_access')
+    expect(data).toContain("row.assessment_access === 'full'")
     expect(directory).toContain("p.assessment_access === 'full'")
-    expect(directory).toContain('BASIC · SNAPSHOT')
-    expect(directory).toContain('official points, merit tier and assessment insight')
+    expect(directory).toContain('FULL VALU ASSESSED')
+    expect(directory).not.toContain('BASIC · SNAPSHOT')
   })
 
   test('marketplace data is professional-first and deduplicates capabilities', () => {
     const source = read('src/lib/marketplace-data.js')
     expect(source).toContain('professional_id')
     expect(source).toContain('new Set')
-    expect(source).toContain('all: all.size')
+    expect(source).toContain('all: rows.length')
     expect(source).toContain('candidate: byTrack.candidate.size')
     expect(source).toContain('speaker: byTrack.speaker.size')
     expect(source).toContain('facilitator: byTrack.facilitator.size')
@@ -55,8 +56,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).toContain('Array.isArray(p.selectedCapabilities)')
     expect(directory).toContain('Array.isArray(p.selected_capabilities)')
     expect(directory).toContain('selectedCaps.has')
-    expect(directory).toContain('Selection status only; category listing eligibility is assessed separately')
-    expect(directory).toContain('CAPABILITY SELECTION')
+    expect(directory).toContain('aria-label={`Declared roles:')
+    expect(directory).toContain('DECLARED ROLES')
     expect(directory).toContain("key:'candidate'")
     expect(directory).toContain("key:'speaker'")
     expect(directory).toContain("key:'facilitator'")
@@ -229,30 +230,34 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(login).toContain('/api/link-taster')
   })
 
-  test('public VALU pages use the authoritative PRIME vocabulary', () => {
+  test('public VALU pages render the canonical PRIME cluster definitions', () => {
     const valu = read('src/app/valu/page.jsx')
-    const start = read('src/app/valu/start/page.jsx')
-    for (const source of [valu, start]) {
-      expect(source).toContain('Presence')
-      expect(source).toContain('Relationships')
-      expect(source).toContain('Intelligence')
-      expect(source).toContain('Mastery')
-      expect(source).toContain('Enterprise')
+    const prime = read('src/app/prime/page.jsx')
+    const brand = read('src/lib/brand.js')
+    expect(valu).toContain('PRIME_CLUSTERS.map')
+    expect(prime).toContain('PRIME_CLUSTERS.map')
+    for (const name of ['Presence', 'Relationships', 'Intelligence', 'Mastery', 'Enterprise']) {
+      expect(brand).toContain(name)
     }
-    expect(start).not.toContain("'Professionalism'")
-    expect(start).not.toContain("'Motivation & Stamina'")
+    expect(prime).not.toContain("'Professionalism'")
+    expect(prime).not.toContain("'Motivation & Stamina'")
   })
 
-  test('public copy describes the two-session VALU assessment, not the retired fifteen-question snapshot', () => {
+  test('public copy describes the separate 9-question taster and 58-question full assessment', () => {
     const prime = read('src/app/prime/page.jsx')
+    const start = read('src/app/valu/start/page.jsx')
     const reminders = read('src/app/api/cron/valu-reminders/route.js')
-    for (const source of [prime, reminders]) {
+    for (const source of [prime, start, reminders]) {
       expect(source).not.toContain('15-question')
       expect(source).not.toContain('15 question')
+      expect(source).not.toContain('Question 10')
+      expect(source).not.toContain('remaining 49')
     }
-    expect(prime).toContain('completed in two sessions')
+    expect(start).toContain('The 9-question taster is separate from the 58-question full VALU assessment.')
+    expect(start).toContain('separate 58-question full assessment')
+    expect(prime).toContain('58 questions: 54 scored questions and four validity checks')
+    expect(reminders).toContain('separate 58-question full VALU assessment')
     expect(reminders).toContain('RETURN TO YOUR DASHBOARD')
-    expect(reminders).not.toContain('CONTINUE TO QUESTION 10')
   })
 
   test('profile capability selection is reconciled through an authenticated server endpoint', () => {
