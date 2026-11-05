@@ -90,10 +90,11 @@ export async function getMarketplaceCounts() {
     return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
   }
 
+  const qualifiedRows = dedupeProfessionals((data || []).filter(isQualifiedPublicProfile))
   const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
   const all = new Set()
 
-  for (const row of data || []) {
+  for (const row of qualifiedRows) {
     if (!row.professional_id) continue
     all.add(row.professional_id)
     const values = new Set([
