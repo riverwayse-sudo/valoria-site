@@ -117,7 +117,7 @@ export default function ValuStartPage() {
       </section>
 
       <section className="vs-final">
-        <div className="vs-shell"><div className="vs-kicker"><span /> WORTH. BUILT.</div><h2>Your capability deserves<br /><em>more than a CV.</em></h2><p>Start with a clearer understanding of where you stand.</p><AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">START YOUR VALU INDEX <b>→</b></AssessmentStartLink><Link href="/valu" className="vs-back">Learn more about VALU →</Link></div>
+        <div className="vs-shell"><div className="vs-kicker"><span /> WORTH. BUILT.</div><h2>Your capability deserves<br /><em>more than a CV.</em></h2><p>Start with a clearer understanding of where you stand.</p><AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">TAKE THE 9-QUESTION TASTER <b>→</b></AssessmentStartLink><Link href="/valu" className="vs-back">Learn more about VALU →</Link></div>
       </section>
     </main>
     <Footer />
