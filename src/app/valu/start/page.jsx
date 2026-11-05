@@ -81,7 +81,7 @@ export default function ValuStartPage() {
       <section className="vs-light vs-journey">
         <div className="vs-shell">
           <div className="vs-kicker dark"><span /> HOW IT WORKS</div>
-          <h2>Start. Continue. Receive your official VALU Index and a view across the five PRIME dimensions..<br /><em>Then become discoverable.</em></h2>
+          <h2>Taster. Account. Full assessment.<br /><em>Then become discoverable.</em></h2>
           <div className="vs-journey-grid">
             <article><span>01</span><h3>Start</h3><p>Complete the separate 9-question taster. No account is needed.</p></article>
             <article><span>02</span><h3>Continue</h3><p>Create your account and confirm your email. Your taster remains a separate snapshot.</p></article>
