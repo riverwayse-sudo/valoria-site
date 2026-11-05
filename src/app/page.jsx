@@ -12,14 +12,14 @@ export const revalidate = 0
 
 export const metadata = {
   title: 'Valoria Institute — Worth. Built.',
-  description: 'Valoria Institute builds the infrastructure that develops, surfaces and connects professional merit to opportunity.',
+  description: 'Find professionals by capability. Valoria assesses African professionals on one standard, develops them and connects them to opportunity.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
 }
 
 const pathwayCards = [
-  { label: 'FOR PROFESSIONALS', title: 'Build a verified professional presence.', body: 'Understand where you stand, complete your profile and become discoverable for the right opportunities.', href: '/valu', cta: 'START WITH THE VALU INDEX' },
-  { label: 'FOR EMPLOYERS', title: 'Find capability with context.', body: 'Discover professionals through structured profiles built around capability, experience and verified pathways.', href: '/marketplace', cta: 'EXPLORE MARKETPLACE' },
-  { label: 'FOR EVENT ORGANISERS', title: 'Find speakers and facilitators.', body: 'Access professionals with relevant expertise for conversations, programmes and organisational moments.', href: '/marketplace/speakers', cta: 'FIND PROFESSIONALS' }
+  { label: 'FOR PROFESSIONALS', title: 'Find out where you stand.', body: 'Understand your professional capability, complete your profile and make your experience easier for relevant buyers to find.', href: '/valu', cta: 'TAKE THE VALU TASTER' },
+  { label: 'FOR EMPLOYERS', title: 'Hire by capability, not CV triage.', body: 'Search public professional profiles by declared capability and explore the evidence available for each person.', href: '/marketplace/talent', cta: 'FIND TALENT' },
+  { label: 'FOR EVENT ORGANISERS & TRAINING BUYERS', title: 'Find speakers and facilitators who can hold a room.', body: 'Explore professionals by expertise and declared capability for events, programmes and organisational needs.', href: '/marketplace', cta: 'FIND SPEAKERS & FACILITATORS' }
 ]
 
 export default function HomePage() {
@@ -27,8 +27,6 @@ export default function HomePage() {
     <Nav />
     <main id="main-content" className="home-redesign-root">
       <HeroSlider />
-      <HomepageEvents />
-
       <section className="home-pathways" aria-labelledby="pathways-title">
         <div className="container">
           <Reveal className="home-section-heading">
@@ -36,7 +34,7 @@ export default function HomePage() {
               <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">START HERE</span></div>
               <h2 id="pathways-title">What brings you<br/><em>to Valoria?</em></h2>
             </div>
-            <p>Choose the path that matches what you need today. One institutional standard connects professional development, visibility and opportunity.</p>
+            <p>Choose the path that matches what you need today. One clear standard connects professional development, visibility and opportunity.</p>
           </Reveal>
 
           <Reveal className="home-pathway-grid" as="div">
@@ -63,7 +61,7 @@ export default function HomePage() {
               <span><b>9</b> QUESTIONS</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
             </div>
             <div className="home-dual-actions">
-              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START MY VALU INDEX SNAPSHOT <span aria-hidden="true">→</span></a>
+              <a href={BRAND.assessmentUrl} className="btn-gold">TAKE THE VALU TASTER <span aria-hidden="true">→</span></a>
               <a href="/valu" className="text-link">SEE HOW THE VALU INDEX WORKS <span aria-hidden="true">→</span></a>
             </div>
             <p className="valu-conversion-note">Your first result is directional. It is the starting signal for the wider Valoria journey — not a label and not the end of the process.</p>
@@ -90,16 +88,24 @@ export default function HomePage() {
               <div className="vcc-radar-center">VALU INDEX</div>
             </div>
             <div className="vcc-steps">
-              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>First 9 questions, no account needed</small></div></div>
-              <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Full VALU Index assessment + profile</small></div></div>
-              <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Capability, eligibility and marketplace</small></div></div>
+              <div className="vcc-step is-active"><span>01</span><div><b>Take the taster</b><small>9 questions, no account needed</small></div></div>
+              <div className="vcc-step"><span>02</span><div><b>Complete the full assessment</b><small>58 questions: 54 scored and 4 validity checks</small></div></div>
+              <div className="vcc-step"><span>03</span><div><b>Build your profile</b><small>Complete your professional record and declare your capabilities</small></div></div>
+              <div className="vcc-step"><span>04</span><div><b>Get found</b><small>Become discoverable when your profile meets the listing standard</small></div></div>
             </div>
-            <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="vcc-bottom-cta">BEGIN THE FIRST 9 QUESTIONS <span>→</span></a>
+            <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="vcc-bottom-cta">BEGIN THE VALU TASTER <span>→</span></a>
           </Reveal>
         </div>
       </section>
 
       <LiveProfilesScroll />
+      <section className="home-pathways" aria-label="Professional opportunities">
+        <div className="container">
+          <div className="home-section-heading"><div><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">CURRENT OPPORTUNITIES</span></div><h2>Stay close to the<br/><em>next opportunity.</em></h2></div><p>Explore current professional opportunities and Valoria conversations.</p></div>
+          <div className="home-dual-actions"><a href="/opportunities" className="btn-gold">EXPLORE OPPORTUNITIES</a><a href="/events" className="text-link">VIEW VALORIA EVENTS →</a></div>
+        </div>
+      </section>
+      <HomepageEvents />
     </main>
     <Footer />
   </>
