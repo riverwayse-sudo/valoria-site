@@ -1160,7 +1160,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
         <input type="checkbox" checked={form.consent} onChange={e => set('consent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
         <span style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7 }}>
           {form.visibility === 'public'
-            ? 'I confirm that the information I provided is accurate and consent to Valoria displaying the public profile fields associated with my professional record when the applicable assessment, completeness, capability, review and listing requirements are met. I understand that completing VALU does not guarantee public listing.'
+            ? 'I confirm that the information I provided is accurate and consent to Valoria displaying my professional name and the public profile fields associated with my professional record when the applicable assessment, completeness, capability, review and listing requirements are met. I understand that completing VALU does not guarantee public listing.'
             : 'I confirm that the information I provided is accurate and choose registered-only visibility. I understand that my profile will not be displayed to public visitors while this setting remains in place.'}
         </span>
       </label>
