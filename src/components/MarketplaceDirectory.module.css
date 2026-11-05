@@ -161,3 +161,11 @@
   .filterNote{padding-left:16px;padding-right:16px}
   .card{height:auto;min-height:500px;max-height:none}
 }
+
+.profileDetails{display:flex;flex-wrap:wrap;gap:6px 12px;margin:0 0 10px;color:#777064;font-size:9px;line-height:1.5}
+.profileCompensation{display:flex;flex-wrap:wrap;gap:8px 16px;margin:0 0 10px;padding:9px 10px;background:#FAFAF7;border:1px solid #EDE8DC;border-radius:5px}
+.profileCompensation span{display:flex;flex-direction:column;gap:4px;color:#2E2E4A;font-size:10px;font-weight:700}
+.profileCompensation small{color:#777064;font-size:7px;letter-spacing:.1em}
+.profileSkills{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.profileSkills span{padding:5px 8px;background:#F7F4EE;border:1px solid #EDE8DC;border-radius:4px;color:#5D584F;font-size:8px}
+.empty button{border:0;background:transparent;cursor:pointer}
