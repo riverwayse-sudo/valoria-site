@@ -31,3 +31,22 @@
 .opportunities-match-note{margin:12px 0 28px}
 @media(max-width:760px){.opportunities-shell,.opportunities-content{width:min(100% - 32px,1180px)}.opportunities-grid{grid-template-columns:1fr}.opportunities-list-head{align-items:flex-start;flex-direction:column}.opportunities-hero{padding-top:54px}}
 @media(max-width:480px){.opportunities-content{padding-top:28px;padding-bottom:56px}.op-listing-card,.opportunity-card{padding:18px}.opportunities-submit{width:100%;box-sizing:border-box}}
+
+.op-submit-form{max-width:900px;margin:0 auto;padding:28px;border:1px solid rgba(212,201,168,.2);border-radius:8px;background:rgba(46,46,74,.24)}
+.op-submit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.op-submit-grid>label{display:flex;flex-direction:column;gap:8px;color:rgba(247,244,238,.78);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.op-submit-grid input,.op-submit-grid select,.op-submit-grid textarea{width:100%;box-sizing:border-box;min-height:44px;padding:12px 13px;border:1px solid rgba(212,201,168,.3);border-radius:5px;background:rgba(26,26,46,.8);color:var(--parchment,#F7F4EE);font:inherit;font-size:12px;letter-spacing:normal;text-transform:none;outline:none}
+.op-submit-grid input:focus,.op-submit-grid select:focus,.op-submit-grid textarea:focus{border-color:var(--gold,#C9A84C);box-shadow:0 0 0 2px rgba(201,168,76,.12)}
+.op-submit-grid textarea{resize:vertical;line-height:1.6}
+.op-submit-full{grid-column:1/-1}
+.op-submit-full small{color:rgba(247,244,238,.5);font-size:10px;line-height:1.5;font-weight:400;letter-spacing:normal;text-transform:none}
+.op-submit-grid fieldset{margin:0;padding:14px;border:1px solid rgba(212,201,168,.24);border-radius:5px}
+.op-submit-grid legend{padding:0 6px;color:rgba(247,244,238,.78);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.op-submit-checks{display:flex;flex-wrap:wrap;gap:12px 20px}
+.op-submit-checks label{display:flex;align-items:center;gap:8px;color:rgba(247,244,238,.72);font-size:12px}
+.op-submit-checks input{width:15px;min-height:15px;accent-color:var(--gold,#C9A84C)}
+.op-submit-honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+.op-submit-error{margin:18px 0;color:#F2A09A;font-size:12px}
+.op-submit-form>.opportunities-submit{border:0;cursor:pointer}
+.op-submit-form>.opportunities-submit:disabled{opacity:.65;cursor:not-allowed}
+@media(max-width:640px){.op-submit-form{padding:18px}.op-submit-grid{grid-template-columns:1fr}.op-submit-full{grid-column:auto}}
