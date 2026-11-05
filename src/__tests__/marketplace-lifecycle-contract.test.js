@@ -78,7 +78,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     const source = read('src/lib/marketplace-data.js')
     expect(source).toContain('professional_id')
     expect(source).toContain('new Set')
-    expect(source).toContain('all: rows.length')
+    expect(source).toContain('all: (rows || []).length')
     expect(source).toContain('candidate: byTrack.candidate.size')
     expect(source).toContain('speaker: byTrack.speaker.size')
     expect(source).toContain('facilitator: byTrack.facilitator.size')
