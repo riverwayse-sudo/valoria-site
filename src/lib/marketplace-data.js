@@ -2,6 +2,24 @@ import { createClient } from '@supabase/supabase-js'
 
 const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,fee_range,salary_expectation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
+const EXCLUDED_ATB_IDS = new Set(['ATB-C-SAA-00179', 'ATB-C-OAA-00157', 'ATB-68A5E7D8', 'ATB-C-𝙾𝙴𝙾-00387'])
+
+// The public roster already enforces public visibility, listing status, profile completeness,
+// current assessment eligibility and revocation controls. The application adds the homepage
+// quality bar so no Basic snapshot or profile without a usable assessment descriptor is shown.
+function isQualifiedPublicProfile(row) {
+  return Boolean(
+    row?.professional_id &&
+    row.assessment_access === 'full' &&
+    Number.isFinite(Number(row.valu_index)) && Number(row.valu_index) >= 35 &&
+    typeof row.assessment_summary === 'string' && row.assessment_summary.trim().length >= 12 &&
+    typeof row.full_name === 'string' && row.full_name.trim() &&
+    typeof row.headline === 'string' && row.headline.trim() &&
+    typeof row.designation === 'string' && row.designation.trim() &&
+    typeof row.atb_id === 'string' && row.atb_id.trim() &&
+    !EXCLUDED_ATB_IDS.has(row.atb_id)
+  )
+}
 
 function normalizeTrack(value) {
   const v = String(value || '').toLowerCase()
@@ -53,7 +71,7 @@ export async function getMarketplaceRows(track = 'all') {
     return []
   }
 
-  const rows = dedupeProfessionals(data)
+  const rows = dedupeProfessionals((data || []).filter(isQualifiedPublicProfile))
   return rows.filter(row => track === 'all' || row.capabilities.includes(normalizeTrack(track)))
 }
 
@@ -65,7 +83,7 @@ export async function getMarketplaceCounts() {
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
   const { data, error } = await supabase
     .from(SOURCE)
-    .select('professional_id,capability,track,capabilities')
+    .select('professional_id,capability,track,capabilities,assessment_access,assessment_summary,valu_index,designation,atb_id,full_name,headline')
 
   if (error) {
     console.error('Marketplace count query failed:', error)
