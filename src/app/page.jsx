@@ -13,7 +13,7 @@ export const revalidate = 0
 
 export const metadata = {
   title: 'Valoria Institute — Worth. Built.',
-  description: 'Find professionals by capability. Valoria assesses African professionals on one standard, develops them and connects them to opportunity.',
+  description: 'Find professionals by capability. Valoria assesses professional capability through one standard, develops what matters and connects professionals to relevant opportunities. Built in Africa, designed for an international audience.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
 }
 
