@@ -12,9 +12,9 @@ const INQUIRY_TYPES = [
   { id: 'general', label: 'General Question' },
 ]
 
-export default function ContactForm() {
+export default function ContactForm({ initialInquiryType = 'general' }) {
   const [currentUser, setCurrentUser] = useState(null)
-  const [form, setForm] = useState({ name: '', email: '', organisation: '', inquiryType: 'general', message: '' })
+  const [form, setForm] = useState({ name: '', email: '', organisation: '', inquiryType: initialInquiryType, team: '', cluster: '', timeline: '', message: '' })
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [formError, setFormError] = useState('')
@@ -33,7 +33,7 @@ export default function ContactForm() {
         sender_id: currentUser?.id || null,
         recipient_profile_id: null,
         subject: `${typeLabel} — ${form.name}${form.organisation ? ` (${form.organisation})` : ''}`,
-        body: `From: ${form.name} (${form.email})\nOrganisation: ${form.organisation || '—'}\nType: ${typeLabel}\n\n${form.message}`,
+        body: `From: ${form.name} (${form.email})\nOrganisation: ${form.organisation || '—'}\nType: ${typeLabel}\nTeam / audience: ${form.team || '—'}\nPRIME cluster(s): ${form.cluster || '—'}\nTimeline: ${form.timeline || '—'}\n\n${form.message}`,
       })
       if (error) throw error
       setSent(true)
