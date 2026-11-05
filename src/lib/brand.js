@@ -22,9 +22,9 @@ export const COLORS = {
 export const PRIME_CLUSTERS = [
   { letter: 'P', name: 'Presence', color: COLORS.gold, subtitle: 'How you show up', skills: ['Communication', 'Negotiation', 'Personal Brand & Executive Presence'] },
   { letter: 'R', name: 'Relationships', color: COLORS.gold, subtitle: 'How you connect', skills: ['Emotional Intelligence', 'Conflict Resolution', 'People Development', 'Stakeholder Management'] },
-  { letter: 'I', name: 'Intelligence', color: COLORS.gold, subtitle: 'How you think', skills: ['Critical Thinking', 'Strategic Thinking', 'Business Acumen', 'AI Fluency ★'] },
+  { letter: 'I', name: 'Intelligence', color: COLORS.gold, subtitle: 'How you think', skills: ['Critical Thinking', 'Strategic Thinking', 'Business Acumen', 'AI Fluency'] },
   { letter: 'M', name: 'Mastery', color: COLORS.gold, subtitle: 'How you deliver', skills: ['Execution & Accountability', 'Resilience & Self-Leadership', 'Adaptability'] },
-  { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you create', skills: ['Commercial Creativity', 'Influence Without Authority', 'Human-AI Collaboration ★'] },
+  { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you create', skills: ['Commercial Creativity', 'Influence Without Authority', 'Human-AI Collaboration'] },
 ]
 
 // VALU Index values are points out of 100, not percentages.
