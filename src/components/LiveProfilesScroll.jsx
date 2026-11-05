@@ -91,7 +91,7 @@ export default async function LiveProfilesScroll() {
                       <ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} />
                     </div>
                     <div className="vi-scroll-copy">
-                      <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>LIVE</i></div>
+                      <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>PUBLIC</i></div>
                       <div className="vi-scroll-headline">{profile.assessment_summary}</div>
                       <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
                     </div>
