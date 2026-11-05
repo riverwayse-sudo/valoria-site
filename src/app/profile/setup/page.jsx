@@ -71,10 +71,9 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   ], required:true })
   s.push({ key:'bio', kind:'textarea', section:'Profile', title:'Write a short bio.', sub:'First person, 3–4 sentences. What you do, who you serve, what makes you distinct.', placeholder:'I\u2019m a fintech growth strategist with 12 years of experience...', maxLength:600, required:true })
   s.push({ key:'languages', kind:'multi-chip', section:'Profile', title:'Which languages do you speak?', sub:'Select all that apply.', options:LANGUAGES, required:true })
-  // Visibility choice removed (1 Aug 2026) — every profile must be
-  // available in the marketplace, so this is no longer a decision the
-  // person makes; visibility is hardcoded to 'registered_only' in
-  // saveProgress below instead.
+  // Visibility is selected explicitly at the final review step. New profiles
+  // default to registered_only; public visibility is applied only after the
+  // user confirms the public-profile consent statement.
 
   // The self-report "What are your core skills?" question was removed here —
   // replaced by the current/preferred industry pair at the top of this
@@ -87,7 +86,6 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   if (isSpeaker) s.push({ key:'past_events', kind:'list', section:'Expertise', title:'Any past speaking engagements?', sub:'Up to 3. These build trust with people viewing your profile.', fields:[{ key:'name', placeholder:'Event name' }, { key:'role', placeholder:'Your role' }], max:3, addLabel:'+ Add event', required:true })
   if (isFacilitator) s.push({ key:'programme_types', kind:'multi-chip', section:'Expertise', title:'What programme types do you run?', sub:'Select all that apply.', options:PROGRAMME_TYPES, required:true, color:'GOLD' })
   if (isFacilitator) s.push({ key:'past_clients', kind:'list', section:'Expertise', title:'Any past clients or programmes?', sub:'Up to 3.', fields:[{ key:'name', placeholder:'Organisation' }, { key:'programme', placeholder:'Programme delivered' }], max:3, addLabel:'+ Add client', required:true })
-  if (isFacilitator) s.push({ key:'pcp_certified', kind:'boolean', section:'Expertise', title:'Do you hold a Valoria PCP certification?', sub:'PRIME-Certified Practitioner.' })
   if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Up to 3 roles. Helps people understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organisation' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:true })
   if (isCandidate) s.push({ key:'certifications', kind:'text', section:'Expertise', title:'Any certifications or credentials?', sub:'Comma separated.', placeholder:'PMP, Google Analytics, HubSpot Marketing', required:true })
 
@@ -492,6 +490,29 @@ function ProfileSetupForm() {
       setSaveError('Your details and capabilities were saved, but Valoria has not confirmed profile completion. Review the required profile details and try again.')
       return
     }
+    let acknowledgementResponse
+    try {
+      acknowledgementResponse = await fetch('/api/profile/acknowledgements', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ consent: form.consent, visibility: form.visibility }),
+      })
+    } catch (error) {
+      console.error('Profile consent request failed:', error)
+      setSaving(false)
+      setSaveError('Your profile was saved, but your consent could not be recorded. Please try again.')
+      return
+    }
+    const acknowledgementResult = await acknowledgementResponse.json().catch(() => ({}))
+    if (!acknowledgementResponse.ok) {
+      setSaving(false)
+      setSaveError(acknowledgementResult.error || 'Your profile consent could not be recorded. Please try again.')
+      return
+    }
+
     setSaving(false)
     setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: row?.listing_status || 'pending' })
   }
@@ -513,7 +534,7 @@ function ProfileSetupForm() {
           </div>
           <Title>You&apos;re in,<br/><Em>{form.display_name?.split(' ')[0] || 'welcome'}.</Em></Title>
           <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.75, marginBottom:'28px' }}>
-            Your profile has been submitted to the founding cohort.
+            Your professional profile has been saved and submitted for Valoria review.
           </p>
 
           <div style={{ background:MID, border:`1px solid ${GLINE}`, padding:'24px', marginBottom:'24px' }}>
@@ -1108,9 +1129,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
             {form.designation ? <> — <strong style={{ color:'GOLD' }}>{form.designation}</strong></> : null}.
           </p>
           <p style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.6, margin:0 }}>
-            {Number(form.valu_index) >= 35
-              ? 'You\u2019re eligible for marketplace listing once this profile is reviewed.'
-              : 'Your completed VALU assessment keeps your marketplace listing active. Build out your profile to unlock more of what Valoria can make available to you.'}
+            Your public listing status depends on the current VALU result, profile completeness, capability requirements, review and the visibility preference you selected. Completing the assessment does not guarantee public listing.
           </p>
         </div>
       ) : (
@@ -1125,10 +1144,24 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
         </div>
       )}
 
+      <fieldset style={{ border:`1px solid ${GLINE}`, padding:'18px', margin:'0 0 22px', background:'rgba(201,168,76,.03)' }}>
+        <legend style={{ padding:'0 8px', color:GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em' }}>PROFILE VISIBILITY</legend>
+        <label style={{ display:'flex', alignItems:'flex-start', gap:'10px', marginBottom:'14px', cursor:'pointer' }}>
+          <input type="radio" name="profile-visibility" value="registered_only" checked={form.visibility === 'registered_only'} onChange={() => set('visibility','registered_only')} style={{ marginTop:'3px', accentColor:GOLD }} />
+          <span style={{ fontSize:'13px', color:PARCH, lineHeight:1.6 }}><strong>Registered Valoria members only</strong><br/><small style={{ color:DIM }}>Your profile will not appear to public visitors.</small></span>
+        </label>
+        <label style={{ display:'flex', alignItems:'flex-start', gap:'10px', cursor:'pointer' }}>
+          <input type="radio" name="profile-visibility" value="public" checked={form.visibility === 'public'} onChange={() => set('visibility','public')} style={{ marginTop:'3px', accentColor:GOLD }} />
+          <span style={{ fontSize:'13px', color:PARCH, lineHeight:1.6 }}><strong>Public marketplace</strong><br/><small style={{ color:DIM }}>Your approved public profile fields may be viewed by visitors when all listing requirements are met.</small></span>
+        </label>
+      </fieldset>
+
       <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'28px' }}>
         <input type="checkbox" checked={form.consent} onChange={e => set('consent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
         <span style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7 }}>
-          I confirm all information provided is accurate. I understand that completing VALU establishes my marketplace listing, while completing my professional profile unlocks additional visibility and opportunities.
+          {form.visibility === 'public'
+            ? 'I confirm that the information I provided is accurate and consent to Valoria displaying the public profile fields associated with my professional record when the applicable assessment, completeness, capability, review and listing requirements are met. I understand that completing VALU does not guarantee public listing.'
+            : 'I confirm that the information I provided is accurate and choose registered-only visibility. I understand that my profile will not be displayed to public visitors while this setting remains in place.'}
         </span>
       </label>
 
