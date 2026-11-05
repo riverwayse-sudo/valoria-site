@@ -4,6 +4,7 @@ import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import HomepageEvents from '@/components/HomepageEvents'
+import HomepageOpportunities from '@/components/HomepageOpportunities'
 import { BRAND, PRIME_CLUSTERS } from '@/lib/brand'
 import './home.css'
 
@@ -19,7 +20,7 @@ export const metadata = {
 const pathwayCards = [
   { label: 'FOR PROFESSIONALS', title: 'Understand your capability.', body: 'Start with the taster, complete the full VALU Index and build a professional profile that makes your experience easier to understand.', href: '/valu', cta: 'TAKE THE VALU TASTER' },
   { label: 'FOR EMPLOYERS', title: 'Find talent by capability.', body: 'Explore public professional profiles by declared role, sector, skill and the VALU evidence available for each person.', href: '/marketplace/talent', cta: 'FIND TALENT' },
-  { label: 'FOR EVENT ORGANISERS & TRAINING BUYERS', title: 'Find people for the work.', body: 'Discover speakers, facilitators and professionals by expertise and declared capability for events and development programmes.', href: '/marketplace', cta: 'EXPLORE PROFESSIONALS' },
+  { label: 'FOR EVENT ORGANISERS & TRAINING BUYERS', title: 'Find people for the work.', body: 'Discover speakers and facilitators by expertise, or commission PRIME-based development for your team.', href: '/marketplace', cta: 'FIND SPEAKERS & FACILITATORS', secondaryHref: '/programmes', secondaryCta: 'EXPLORE DEVELOPMENT' },
 ]
 
 export default function HomePage() {
@@ -27,6 +28,7 @@ export default function HomePage() {
     <Nav />
     <main id="main-content" className="home-redesign-root">
       <HeroSlider />
+      <HomepageOpportunities />
 
       <section className="home-intro home-problem" aria-labelledby="home-problem-title">
         <div className="container home-intro-grid">
@@ -111,21 +113,13 @@ export default function HomePage() {
                 <h3>{card.title}</h3>
                 <p>{card.body}</p>
                 <span className="home-pathway-cta">{card.cta} <span aria-hidden="true">→</span></span>
+                {card.secondaryHref && <span className="home-pathway-secondary">{card.secondaryCta} <span aria-hidden="true">→</span></span>}
               </a>
             ))}
           </Reveal>
         </div>
       </section>
 
-      <section className="home-pathways home-opportunities" aria-labelledby="home-opportunities-title">
-        <div className="container">
-          <div className="home-section-heading">
-            <div><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">CURRENT OPPORTUNITIES</span></div><h2 id="home-opportunities-title">Make the next move<br/><em>with better context.</em></h2></div>
-            <p>Explore opportunities reviewed through Valoria and conversations that help professionals build capability.</p>
-          </div>
-          <div className="home-dual-actions"><a href="/opportunities" className="btn-gold">EXPLORE OPPORTUNITIES</a><a href="/events" className="text-link">VIEW VALORIA EVENTS →</a></div>
-        </div>
-      </section>
       <HomepageEvents />
 
       <section className="home-close">
