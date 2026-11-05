@@ -42,7 +42,7 @@ export default function ContactPage() {
               <div className="info-card">
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">LOCATION</span></div>
                 <p className="contact-location">{BRAND.location}</p>
-                <p className="contact-note">A {BRAND.copyrightEntity} initiative. {BRAND.compliance}.</p>
+                <p className="contact-note">Valoria Institute is based in Lagos, Nigeria.</p>
               </div>
             </Reveal>
           </div>
