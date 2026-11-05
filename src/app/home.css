@@ -1825,3 +1825,25 @@
   .vcc-framework-list>div{padding:10px;gap:8px}
   .vcc-framework-list strong{font-size:23px}
 }
+
+/* Evidence-backed opportunity preview. It renders published public listings only. */
+.home-opportunity-preview{padding:clamp(52px,6vw,84px) 0;background:var(--dark-mid);border-top:1px solid rgba(201,168,76,.16);border-bottom:1px solid rgba(201,168,76,.16)}
+.home-opportunity-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:32px}
+.home-opportunity-card{display:flex;flex-direction:column;min-width:0;padding:22px;background:rgba(26,26,46,.74);border:1px solid rgba(212,201,168,.2);border-radius:8px}
+.home-opportunity-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-bottom:18px;color:var(--gold);font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.home-opportunity-card h3{margin:0 0 7px;color:var(--parchment);font-size:19px;line-height:1.25;font-weight:800}
+.home-opportunity-org{margin:0 0 14px;color:rgba(247,244,238,.66);font-size:12px}
+.home-opportunity-summary{margin:0 0 16px;color:rgba(247,244,238,.72);font-size:12px;line-height:1.7}
+.home-opportunity-details{display:flex;flex-wrap:wrap;gap:7px 14px;margin:0 0 14px;color:rgba(247,244,238,.55);font-size:10px}
+.home-opportunity-skills{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px}
+.home-opportunity-skills span{padding:5px 8px;border:1px solid rgba(201,168,76,.24);border-radius:4px;color:rgba(247,244,238,.72);font-size:9px}
+.home-opportunity-link{margin-top:auto;padding-top:16px;border-top:1px solid rgba(212,201,168,.16);color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.1em;text-decoration:none}
+.home-opportunity-link:hover,.home-opportunity-footer a:hover{color:var(--parchment)}
+.home-opportunity-state{margin-top:26px;padding:24px;border:1px solid rgba(212,201,168,.2);border-radius:8px;color:rgba(247,244,238,.72);font-size:13px;line-height:1.7}
+.home-opportunity-state h3{margin:0 0 8px;color:var(--parchment);font-size:19px}
+.home-opportunity-state p{margin:0 0 12px}
+.home-opportunity-state>a,.home-opportunity-state .text-link{color:var(--gold);font-weight:800;font-size:10px;letter-spacing:.08em;text-decoration:none}
+.home-opportunity-footer{display:flex;justify-content:flex-end;margin-top:24px}
+.home-pathway-secondary{display:block;margin-top:10px;color:rgba(247,244,238,.65);font-size:9px;font-weight:800;letter-spacing:.08em}
+@media(max-width:900px){.home-opportunity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.home-opportunity-grid{grid-template-columns:1fr}.home-opportunity-card{padding:18px}.home-opportunity-footer{justify-content:stretch}.home-opportunity-footer .btn-gold{width:100%;text-align:center}}
