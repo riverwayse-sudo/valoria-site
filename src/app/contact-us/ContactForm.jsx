@@ -29,6 +29,7 @@ export default function ContactForm({ initialInquiryType = 'general' }) {
     setFormError('')
     try {
       const typeLabel = INQUIRY_TYPES.find(t => t.id === form.inquiryType)?.label || 'General Question'
+      const trainingDetails = form.inquiryType === 'training' ? `\\nTeam / audience: ${form.team}\\nPRIME cluster(s): ${form.cluster}\\nTimeline: ${form.timeline}` : ''
       const { error } = await supabase.from('messages').insert({
         sender_id: currentUser?.id || null,
         recipient_profile_id: null,
