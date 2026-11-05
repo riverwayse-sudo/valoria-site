@@ -19,7 +19,7 @@ export const metadata = {
 const FORMATS = [
   { name: 'PRIME Sprint', duration: 'One day', detail: 'A focused workshop built around one skill.' },
   { name: 'PRIME Cluster Programme', duration: 'Six weeks', detail: 'A structured development programme focused on one PRIME cluster.' },
-  { name: 'PRIME Certified Professional', duration: 'Six months', detail: 'A development pathway spanning all five PRIME clusters. The formal certification process is in development and is not currently conferred.', status: 'IN DEVELOPMENT' },
+  { name: 'PRIME Certified Professional', duration: 'Six months', detail: 'A development pathway spanning all five PRIME clusters. The certification process is in development; participation in this pathway does not currently confer a Valoria certification.', status: 'IN DEVELOPMENT' },
   { name: 'Executive Immersion', duration: 'Three days', detail: 'An intensive experience for no more than 12 senior participants.' },
 ]
 
