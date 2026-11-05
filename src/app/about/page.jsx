@@ -93,7 +93,14 @@ export default function AboutPage() {
               <h2 className="section-title">A standard for<br /><em>capability and opportunity.</em></h2>
             </Reveal>
             <Reveal>
-              <p className="page-copy">Valoria is not a recruitment agency; it does not recruit or employ professionals on behalf of organisations.\n\nValoria is not a training company; Valoria Develop provides defined PRIME-based development programmes.\n\nValoria is not a speaker bureau; ATB Spotlight supports discovery of speakers and facilitators by declared capability.\n\nValoria is not a certification body; certification remains a separate programme and must not be claimed before it is complete.\n\nValoria is not a jobs board; public opportunities must have verified supply and a working application or enquiry route.\n\nValoria provides a structured capability framework, a points-based assessment, development pathways and a platform for professional visibility and opportunity.</p>
+              <div className="page-copy about-boundaries">
+                <p>Valoria is not a recruitment agency; it does not recruit or employ professionals on behalf of organisations.</p>
+                <p>Valoria is not a training company; Valoria Develop provides defined PRIME-based development programmes.</p>
+                <p>Valoria is not a speaker bureau; ATB Spotlight supports discovery of speakers and facilitators by declared capability.</p>
+                <p>Valoria is not a certification body; certification remains a separate programme and must not be claimed before it is complete.</p>
+                <p>Valoria is not a jobs board; public opportunities must have verified supply and a working application or enquiry route.</p>
+                <p>Valoria provides a structured capability framework, a points-based assessment, development pathways and a platform for professional visibility and opportunity.</p>
+              </div>
               <p className="page-copy page-copy-spaced">Assessment completion, listing eligibility and public discoverability are distinct. A profile becomes public only when the applicable requirements and the professional’s visibility choice are in place.</p>
             </Reveal>
           </div>
