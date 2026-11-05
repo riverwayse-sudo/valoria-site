@@ -52,6 +52,33 @@ export default function AboutPage() {
         <section className="page-section alt">
           <div className="page-section-inner">
             <Reveal>
+              <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">THE FOUNDING FOUNDATIONS</span><div className="eyebrow-line" /></div>
+              <h2 className="section-title section-title-centered">A clear reason<br /><em>to exist.</em></h2>
+            </Reveal>
+            <div className="about-principles-grid">
+              <Reveal>
+                <article className="card-gold">
+                  <div className="vi-card-num">01</div>
+                  <div className="vi-card-name about-principle-name">Vision</div>
+                  <p className="vi-card-body">An Africa where professional merit always finds its platform.</p>
+                  <p className="vi-card-body">Where careers are built with architecture, not shaped by chance. Where businesses make their most important hires with confidence and clarity.</p>
+                </article>
+              </Reveal>
+              <Reveal>
+                <article className="card-gold">
+                  <div className="vi-card-num">02</div>
+                  <div className="vi-card-name about-principle-name">Purpose</div>
+                  <p className="vi-card-body">To bridge the gap between latent brilliance and institutional scale.</p>
+                  <p className="vi-card-body">We exist because talent is not the problem. Infrastructure is. For every professional whose career has stalled not for lack of ability, but lack of access. Valoria Institute is the answer.</p>
+                </article>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        <section className="page-section alt">
+          <div className="page-section-inner">
+            <Reveal>
               <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">WHAT VALORIA DOES</span><div className="eyebrow-line" /></div>
               <h2 className="section-title section-title-centered">Assess.<br /><em>Develop. Connect.</em></h2>
             </Reveal>
