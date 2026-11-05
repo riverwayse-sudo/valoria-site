@@ -43,7 +43,7 @@ export default function AboutPage() {
               <h2 className="section-title">Capability can be<br /><em>hard to see.</em></h2>
             </Reveal>
             <Reveal>
-              <p className="page-copy">Professional decisions often rely on job titles, polished CVs, familiar names and existing networks. These signals do not always make a person’s actual capability clear.</p>
+              <p className="page-copy">Talent is not the problem. The mechanisms that turn talent into opportunity are. Valoria is that mechanism. Professional decisions still rely on job titles, polished CVs, familiar names and existing networks. Those signals do not always make a person’s actual capability clear.</p>
               <p className="page-copy page-copy-spaced">Professionals need a consistent way to understand and communicate their strengths. Employers, event organisers and training buyers need clearer context when they evaluate people for work and opportunity.</p>
             </Reveal>
           </div>
@@ -93,8 +93,21 @@ export default function AboutPage() {
               <h2 className="section-title">A standard for<br /><em>capability and opportunity.</em></h2>
             </Reveal>
             <Reveal>
-              <p className="page-copy">Valoria is not a recruitment agency, a training company, a speaker bureau, a certification body or a jobs board. It provides a structured capability framework, a points-based assessment, development pathways and a curated layer for professional visibility and opportunity.</p>
+              <p className="page-copy">Valoria is not a recruitment agency; it does not recruit or employ professionals on behalf of organisations.\n\nValoria is not a training company; Valoria Develop provides defined PRIME-based development programmes.\n\nValoria is not a speaker bureau; ATB Spotlight supports discovery of speakers and facilitators by declared capability.\n\nValoria is not a certification body; certification remains a separate programme and must not be claimed before it is complete.\n\nValoria is not a jobs board; public opportunities must have verified supply and a working application or enquiry route.\n\nValoria provides a structured capability framework, a points-based assessment, development pathways and a platform for professional visibility and opportunity.</p>
               <p className="page-copy page-copy-spaced">Assessment completion, listing eligibility and public discoverability are distinct. A profile becomes public only when the applicable requirements and the professional’s visibility choice are in place.</p>
+            </Reveal>
+          </div>
+        </section>
+
+        <section className="page-section alt">
+          <div className="page-section-inner two-col">
+            <Reveal>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WHERE WE WORK</span></div>
+              <h2 className="section-title">African in origin.<br /><em>Built to travel.</em></h2>
+            </Reveal>
+            <Reveal>
+              <p className="page-copy">Africa is Valoria’s first market, with Nigeria as its jurisdiction. Continental expansion beyond Nigeria is a 2028 priority.</p>
+              <p className="page-copy page-copy-spaced">The platform is designed to be understandable to professionals and buyers internationally. Its current market, opportunity availability and eligibility must remain clear; the site does not imply access to markets where Valoria is not yet operating.</p>
             </Reveal>
           </div>
         </section>
