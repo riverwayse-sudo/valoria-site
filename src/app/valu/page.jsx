@@ -45,7 +45,7 @@ export default function ValuPage() {
           <div className="valu-kicker"><span /> THE JOURNEY</div>
           <h2>Four steps from<br /><em>assessment to opportunity.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Take the taster</h3><p>Complete nine separate questions. No account is needed for the taster.</p></article>
+            <article><b>01</b><h3>Take the taster</h3><p>Complete nine separate questions with no account required. The taster gives a first read on four Intelligence skills and introduces the other PRIME clusters.</p></article>
             <article><b>02</b><h3>Complete the full assessment</h3><p>Complete the separate 58-question VALU Index: 54 scored questions and four validity checks. It takes about 15 to 20 minutes and requires an account.</p></article>
             <article><b>03</b><h3>Build your profile</h3><p>Create your professional profile, add your declared capabilities and complete the required profile information.</p></article>
             <article><b>04</b><h3>Get found</h3><p>Public discoverability follows profile completeness, consent, verification and the applicable listing rules. Eligibility and actual discoverability are not the same state.</p></article>
