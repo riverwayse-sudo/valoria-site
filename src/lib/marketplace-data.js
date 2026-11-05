@@ -9,7 +9,7 @@ const PUBLIC_PROFILE_ACK_VERSION = 'public-profile-visibility-v1-2026-11-05'
 function getAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) return null
+  if (!url || !key) throw new Error('Marketplace service credentials are unavailable.')
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
 }
 
@@ -71,7 +71,7 @@ async function getApprovedPublicProfessionalIds(admin, ids) {
 
   if (error) {
     console.error('Public profile quality verification failed:', error)
-    return new Set()
+    throw new Error('Public profile quality could not be verified.')
   }
 
   const { data: acknowledgements, error: acknowledgementError } = await admin
@@ -82,7 +82,7 @@ async function getApprovedPublicProfessionalIds(admin, ids) {
 
   if (acknowledgementError) {
     console.error('Public profile consent verification failed:', acknowledgementError)
-    return new Set()
+    throw new Error('Public profile consent could not be verified.')
   }
 
   const consentedIds = new Set((acknowledgements || []).map(item => item.professional_id))
@@ -100,10 +100,7 @@ async function getApprovedPublicProfessionalIds(admin, ids) {
 
 export async function getMarketplaceRows(track = 'all') {
   const admin = getAdminClient()
-  if (!admin) {
-    console.error('Marketplace service role is unavailable; public directory is failing closed.')
-    return []
-  }
+  const admin = getAdminClient()
 
   const { data, error } = await admin
     .from(SOURCE)
@@ -113,7 +110,7 @@ export async function getMarketplaceRows(track = 'all') {
 
   if (error) {
     console.error('Marketplace query failed:', error)
-    return []
+    throw new Error('Marketplace listings could not be loaded.')
   }
 
   const projected = dedupeProfessionals((data || []).filter(isQualifiedPublicProfile))
