@@ -60,7 +60,7 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   // since a bare "which industry do you know best" reads as ambiguous next
   // to the preferred-industry question right after it.
   s.push({ key:'industry', kind:'industry-pair', section:'Profile', title:'Which industry are you in?', options:INDUSTRIES, required:true })
-  s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your name stays private — it\u2019s only shared once Valoria facilitates an introduction.', placeholder:'Your full professional name', required:true })
+  s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your name appears on your public profile only if you choose public marketplace visibility; otherwise it remains visible only within Valoria.', placeholder:'Your full professional name', required:true })
   s.push({ key:'username', kind:'text', section:'Profile', title:'Choose a username.', sub:'This is how you\u2019ll be identified on Valoria. Letters, numbers, dots, underscores or hyphens — no spaces.', placeholder:'e.g. chioma_adeyemi', required:true, validator:'username' })
   s.push({ key:'phone', kind:'text', section:'Profile', inputType:'tel', title:'What\u2019s your phone number?', sub:'Kept private — only shared once Valoria facilitates an introduction.', placeholder:'+234 801 234 5678', required:true, validator:'phone' })
   s.push({ key:'current_job_title', kind:'text', section:'Profile', title:'What\u2019s your current job title?', sub:'Your actual title — this stays factual and separate from your headline below.', placeholder:'e.g. Senior Product Manager', required:true })
