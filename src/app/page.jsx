@@ -56,7 +56,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="home-cluster-list" aria-label="PRIME clusters">
-            {PRIME_CLUSTERS.map(cluster => <div className="home-cluster-card" key={cluster.letter}><span>{cluster.letter}</span><strong>{cluster.name}</strong><small>{cluster.subtitle}</small></div>)}
+            {PRIME_CLUSTERS.map(cluster => <div className="home-cluster-card" key={cluster.letter}><span>{cluster.letter}</span><strong>{cluster.name}</strong><small>{cluster.description}</small></div>)}
           </div>
         </div>
       </section>
