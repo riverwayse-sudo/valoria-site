@@ -1847,3 +1847,5 @@
 .home-pathway-secondary{display:block;margin-top:10px;color:rgba(247,244,238,.65);font-size:9px;font-weight:800;letter-spacing:.08em}
 @media(max-width:900px){.home-opportunity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.home-opportunity-grid{grid-template-columns:1fr}.home-opportunity-card{padding:18px}.home-opportunity-footer{justify-content:stretch}.home-opportunity-footer .btn-gold{width:100%;text-align:center}}
+
+.home-opportunity-state button{margin:8px 12px 0 0;padding:9px 14px;border:1px solid rgba(201,168,76,.5);border-radius:999px;background:transparent;color:var(--gold);font:inherit;font-size:9px;font-weight:800;letter-spacing:.1em;cursor:pointer}
