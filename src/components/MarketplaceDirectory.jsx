@@ -19,6 +19,7 @@ const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Ma
 
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
+const titleCase = v => String(v || '').replace(/[_-]+/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase())
 const cleanSkill = v => displayText(v).replace(/\s*★$/, '')
 
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all', dataUnavailable = false }) {
