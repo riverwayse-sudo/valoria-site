@@ -368,23 +368,13 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
 
-  test('full-assessment roster projects only selected, active, eligible capabilities while preserving Basic taster listings', () => {
-    const migration = read('supabase/migrations/20261030122017_marketplace_roster_capability_eligibility_20261030100000.sql')
-    const fullBranch = migration.slice(
-      migration.indexOf("if assessment_ok and p.visibility = 'public'"),
-      migration.indexOf("select * into t", migration.indexOf("if assessment_ok and p.visibility = 'public'"))
-    )
-    const tasterBranch = migration.slice(migration.indexOf("select * into t"))
-
-    expect(fullBranch).toContain('public.professional_capabilities')
-    expect(fullBranch).toContain('pc.is_active = true')
-    expect(fullBranch).toContain('pc.eligible_for_listing = true')
-    expect(fullBranch).toContain("pc.eligibility_status = 'listed'")
-    expect(fullBranch).toContain("caps := '{}'::text[]")
-    expect(fullBranch).toContain('General marketplace presence is independent of capability readiness')
-    expect(fullBranch).not.toContain("if cardinality(caps) = 0 then caps := array['talent']")
-    expect(tasterBranch).toContain("array['talent']::text[]")
-    expect(tasterBranch).toContain("'basic'")
+  test('public marketplace rendering excludes Basic taster-only records', () => {
+    const data = read('src/lib/marketplace-data.js')
+    expect(data).toContain("row.assessment_access === 'full'")
+    expect(data).toContain("assessment_access")
+    expect(data).toContain("profile.visibility === 'public'")
+    expect(data).toContain("profile.listing_status === 'listed'")
+    expect(data).toContain("consentedIds.has(profile.id)")
   })
 
   test('existing capability eligibility is reconciled after historical evidence is marked pending', () => {
