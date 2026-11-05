@@ -1,7 +1,7 @@
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
-import { PRIME_CLUSTERS } from '@/lib/brand'
+import { BRAND, PRIME_CLUSTERS } from '@/lib/brand'
 import '../pages.css'
 
 export const metadata = {
@@ -152,7 +152,7 @@ export default function AboutPage() {
             <h2 className="section-title">Make your capability<br /><em>easier to see.</em></h2>
             <p className="page-sub about-cta-copy">Start with the separate 9-question taster, then decide whether to complete the full VALU Index.</p>
             <div className="page-hero-actions eyebrow-center">
-              <a href="https://assessment.valoriainstitute.com/" className="btn-gold">TAKE THE 9-QUESTION TASTER</a>
+              <a href={BRAND.assessmentUrl} className="btn-gold">TAKE THE 9-QUESTION TASTER</a>
               <a href="/contact-us" className="btn-outline">GET IN TOUCH</a>
             </div>
           </Reveal>
