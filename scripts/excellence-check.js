@@ -52,9 +52,8 @@ if (fs.existsSync(profileRoutePath)) {
   if (!/const\s+resolvedSearchParams\s*=\s*await\s+searchParams\b/.test(route)) {
     violations.push('public profile route must await Next.js 15 async searchParams');
   }
-  if (!/\.eq\(\s*['"]visibility['"]\s*,\s*['"]public['"]\s*\)/.test(route) ||
-      !/\.eq\(\s*['"]listing_status['"]\s*,\s*['"]listed['"]\s*\)/.test(route)) {
-    violations.push('public profile route must enforce public visibility and listed status');
+  if (!route.includes('getConsentVerifiedPublicProfile')) {
+    violations.push('public profile route must use the consent-verified server projection');
   }
   if (/\.eq\(\s*['"]profile_complete['"]/.test(route)) {
     violations.push('public profile route must not confuse profile completion with public listing eligibility');
@@ -147,9 +146,9 @@ if (fs.existsSync(nudgePath)) {
 const registryPath = path.join(root, 'src/components/LiveProfilesScroll.jsx');
 if (fs.existsSync(registryPath)) {
   const registry = fs.readFileSync(registryPath, 'utf8');
-  if (!registry.includes('aria-hidden={index >= unique.length ? true : undefined}') ||
-      !registry.includes('tabIndex={index >= unique.length ? -1 : undefined}')) {
-    violations.push('LiveProfilesScroll: decorative marquee duplicates must be hidden from assistive navigation');
+  if (!registry.includes('vi-scroll-track-static') ||
+      !registry.includes('getMarketplaceRows')) {
+    violations.push('LiveProfilesScroll: public profiles must render from the verified, deduplicated server roster');
   }
 }
 const navPath = path.join(root, 'src/components/Nav.jsx');
