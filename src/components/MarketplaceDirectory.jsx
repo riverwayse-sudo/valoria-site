@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { getValuTier } from '@/lib/brand'
+import { PRIME_CLUSTERS } from '@/lib/brand'
 
 const TRACKS = [
   ['all','All', '/marketplace'],
@@ -15,6 +15,7 @@ const TRACKS = [
   ['speaker','Speakers','/marketplace/speakers'],
   ['facilitator','Facilitators','/marketplace/facilitators'],
 ]
+const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Mastery', E:'Enterprise' }
 
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
@@ -22,7 +23,10 @@ const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, 
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
   const router = useRouter()
   const [query,setQuery] = useState('')
-  // Keep an open directory in sync with the database-backed roster without requiring a manual refresh.
+  const [sector,setSector] = useState('')
+  const [cluster,setCluster] = useState('')
+  const [skill,setSkill] = useState('')
+
   useEffect(() => {
     const refreshWhenVisible = () => {
       if (document.visibilityState === 'visible') router.refresh()
@@ -34,51 +38,65 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       document.removeEventListener('visibilitychange', refreshWhenVisible)
     }
   }, [router])
-  const [industry,setIndustry] = useState('')
-  const industries = useMemo(() => [...new Set(rows.map(r=>displayText(r.industry)).filter(Boolean))].sort(), [rows])
+
+  const sectors = useMemo(() => [...new Set(rows.map(r=>displayText(r.industry)).filter(Boolean))].sort(), [rows])
+  const skills = useMemo(() => [...new Set(rows.flatMap(r=>labelValues(r.skills)))].sort(), [rows])
 
   const results = useMemo(() => {
     const q=query.trim().toLowerCase()
     return rows.filter(p => {
       const caps=[...(p.capabilities || p.tracks || [p.track])].map(normalize)
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
-      if(industry && displayText(p.industry) !== industry) return false
+      if(sector && displayText(p.industry) !== sector) return false
+      if(cluster && !Number.isFinite(Number(p.cluster_scores?.[cluster]))) return false
+      if(skill && !labelValues(p.skills).some(v=>v.toLowerCase()===skill.toLowerCase())) return false
       if(!q) return true
-      return [p.atb_id,p.headline,p.current_job_title,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
+      return [p.full_name,p.headline,p.current_job_title,p.atb_id,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
     })
-  },[rows,activeTrack,query,industry])
+  },[rows,activeTrack,query,sector,cluster,skill])
+
+  const clearFilters = () => { setQuery(''); setSector(''); setCluster(''); setSkill('') }
 
   return <div className={styles.page}>
     <Nav />
     <main>
-    <section className={styles.hero}>
-      <div className={styles.container}>
-        <p className={styles.eyebrow}>THE AFRICAN TALENT BUREAU</p>
-        <h1>{activeTrack === 'all' ? <>Find capability.<br/><i>Engage confidently.</i></> : <>{TRACKS.find(t=>t[0]===activeTrack)?.[1]}<br/><i>on Valoria.</i></>}</h1>
-        <p className={styles.lede}>Discover professionals at different stages of the Valoria journey. Basic snapshot listings introduce emerging profiles; a completed VALU Index unlocks official points, merit tier and assessment insight.</p>
-        <nav className={styles.tabs}>{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
-      </div>
-    </section>
-    <section className={styles.controls}>
-      <div className={styles.containerControl}>
-        <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search professionals, skills or industries…" aria-label="Search marketplace"/>
-        <select value={industry} onChange={e=>setIndustry(e.target.value)} aria-label="Filter by industry">
-          <option value="">All industries</option>
-          {industries.map(v=><option key={v} value={v}>{v}</option>)}
-        </select>
-        {(query || industry) && <button onClick={()=>{setQuery('');setIndustry('')}}>CLEAR</button>}
-      </div>
-    </section>
-    <section className={styles.directory}>
-      <div className={styles.container}>
-        <div className={styles.directoryHead}>
-          <div><p className={styles.eyebrow}>VERIFIED DIRECTORY</p><h2>{results.length} {results.length===1?'professional':'professionals'}</h2></div>
-          <span>VALU INDEX × PRIME</span>
+      <section className={styles.hero}>
+        <div className={styles.container}>
+          <p className={styles.eyebrow}>VALORIA MARKETPLACE</p>
+          <h1>{activeTrack === 'all' ? <>Find professionals<br/><i>by capability.</i></> : <>{TRACKS.find(t=>t[0]===activeTrack)?.[1]}<br/><i>on Valoria.</i></>}</h1>
+          <p className={styles.lede}>Explore public professional profiles that meet Valoria’s full-assessment and listing requirements. Each profile presents declared roles, VALU points and assessment-derived capability insight.</p>
+          <nav className={styles.tabs} aria-label="Filter by declared role">{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
         </div>
-        {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p}/>)}</div> :
-          <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
-      </div>
-    </section>
+      </section>
+      <section className={styles.controls}>
+        <div className={styles.containerControl}>
+          <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search professionals, skills or sectors…" aria-label="Search marketplace"/>
+          <select value={cluster} onChange={e=>setCluster(e.target.value)} aria-label="Filter by PRIME cluster">
+            <option value="">All PRIME clusters</option>
+            {PRIME_CLUSTERS.map(item=><option key={item.letter} value={item.letter}>{item.name}</option>)}
+          </select>
+          <select value={skill} onChange={e=>setSkill(e.target.value)} aria-label="Filter by skill">
+            <option value="">All declared skills</option>
+            {skills.map(value=><option key={value} value={value}>{value}</option>)}
+          </select>
+          <select value={sector} onChange={e=>setSector(e.target.value)} aria-label="Filter by sector">
+            <option value="">All sectors</option>
+            {sectors.map(value=><option key={value} value={value}>{value}</option>)}
+          </select>
+          {(query || sector || cluster || skill) && <button onClick={clearFilters}>CLEAR</button>}
+        </div>
+        <p className={styles.filterNote}>Role, PRIME cluster, declared skill and sector filters are available. Seniority filtering requires an approved seniority field in the public profile data.</p>
+      </section>
+      <section className={styles.directory}>
+        <div className={styles.container}>
+          <div className={styles.directoryHead}>
+            <div><p className={styles.eyebrow}>PUBLIC MARKETPLACE</p><h2>{results.length} {results.length===1?'professional':'professionals'}</h2></div>
+            <span>VALU INDEX × PRIME</span>
+          </div>
+          {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p}/>)}</div> :
+            <div className={styles.empty}><strong>No public professionals match these filters.</strong><p>Try clearing a filter or selecting another declared role.</p></div>}
+        </div>
+      </section>
     </main>
     <Footer />
   </div>
@@ -94,9 +112,6 @@ function labelValues(value) {
 }
 
 function Profile({p}) {
-  // Show the professional's selected capabilities, not only capabilities
-  // that have passed the separate listing-eligibility gate. Category pages
-  // continue to filter against the eligible `capabilities` field above.
   const selectedCaps = new Set([
     ...(Array.isArray(p.selectedCapabilities) ? p.selectedCapabilities : []),
     ...(Array.isArray(p.selected_capabilities) ? p.selected_capabilities : []),
@@ -104,52 +119,52 @@ function Profile({p}) {
     ...(Array.isArray(p.tracks) ? p.tracks : []),
     p.track,
   ].map(normalize).filter(Boolean))
-  // Keep all three capability lanes visible on every card. Selection is a
-  // profile preference; category listing eligibility remains a separate gate.
   const capabilityBadges = [
     { key:'candidate', title:'TALENT', selected:selectedCaps.has('candidate') },
     { key:'speaker', title:'SPEAKER', selected:selectedCaps.has('speaker') },
     { key:'facilitator', title:'FACILITATOR', selected:selectedCaps.has('facilitator') },
   ]
-  const specialisation=displayText(p.industry || '')
-  // Fail closed: only an explicitly full assessment can expose an official score/designation.
-  const isFullAssessment = p.assessment_access === 'full' && p.valu_index != null
-  const isBasic = !isFullAssessment
-  const tier = isFullAssessment ? getValuTier(p.valu_index, 'full') : null
-  const profileId = displayText(p.atb_id || 'PROFILE ID PENDING')
-  // This text is sourced from the canonical VALU Index report projection, never the member's bio/headline.
-  const assessmentSummary = isFullAssessment ? displayText(p.assessment_summary || '') : ''
+  const isFullAssessment = p.assessment_access === 'full' && p.valu_index != null && Boolean(p.assessment_summary)
+  const designation = displayText(p.designation)
+  const designationClass = {
+    'Force to Align With': styles.forceToAlignWith,
+    'Emerging Force': styles.emergingForce,
+    'Developing Professional': styles.developingProfessional,
+    'Building Foundations': styles.buildingFoundations,
+  }[designation] || ''
+  const profileId = displayText(p.atb_id)
+  const clusterScores = p.cluster_scores && typeof p.cluster_scores === 'object' ? p.cluster_scores : {}
+  const weakest = Object.entries(clusterScores)
+    .filter(([key,value]) => CLUSTER_NAMES[key] && Number.isFinite(Number(value)))
+    .sort((a,b) => Number(a[1])-Number(b[1]))[0]
+  const developmentFocus = weakest ? CLUSTER_NAMES[weakest[0]] : 'Not available'
   return <article className={styles.card}>
     <div className={styles.identity}>
-      <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
+      <ValoriaAvatar src={p.photo_url} seed={p.professional_id || profileId} size={64} className={styles.avatar}/>
       <div className={styles.identityCopy}>
-        <small>ATB PROFILE ID</small>
-        <strong>{profileId}</strong>
-        <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : '✓ VALORIA ASSESSED'}</span>
+        <strong className={styles.profileName}>{displayText(p.full_name)}</strong>
+        <small>{profileId}</small>
+        <span className={styles.assessedStatus}>{isFullAssessment ? '✓ FULL VALU ASSESSED' : 'ASSESSMENT PENDING'}</span>
       </div>
     </div>
-    <p className={styles.specialisation} title={specialisation}>{specialisation || 'Professional capability'}</p>
-    <div className={styles.assessmentInsight}>
-      <small>VALU INDEX ASSESSMENT INSIGHT</small>
-      {isFullAssessment
-        ? (assessmentSummary
-          ? <p className={styles.assessmentSummary} title={assessmentSummary}>{assessmentSummary}</p>
-          : <p className={styles.assessmentPending}>Assessment insight is being prepared.</p>)
-        : <p className={styles.assessmentPending}>Complete the full VALU Index assessment to unlock this insight.</p>}
-    </div>
+    <p className={styles.career}>{displayText(p.headline)}</p>
+    <p className={styles.specialisation}>{displayText(p.current_job_title)}{p.industry ? ` · ${displayText(p.industry)}` : ''}</p>
     <div className={styles.signalRow}>
       <div className={styles.scoreBlock}>
         <small>VALU INDEX</small>
-        <strong>{isFullAssessment ? <>{p.valu_index}<span> POINTS</span></> : <span className={styles.snapshotScore}>SNAPSHOT</span>}</strong>
+        <strong>{isFullAssessment ? <>{p.valu_index}<span> POINTS</span></> : '—'}</strong>
       </div>
-      {isFullAssessment && tier
-        ? <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>
-            {tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}
-            <span>{tier.name}</span>
-          </span>
-        : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>FULL ASSESSMENT<br/>PENDING</span>}
+      <span className={`${styles.tierBadge} ${designationClass}`}>{designation}</span>
     </div>
-    <div className={styles.capabilities} aria-label={`Capability selection: ${capabilityBadges.filter(b=>b.selected).map(b=>b.title).join(', ') || 'none selected'}`} title="Selection status only; category listing eligibility is assessed separately"><small className={styles.capabilityLabel}>CAPABILITY SELECTION</small>{capabilityBadges.map(badge=><span className={`${styles.capabilityBadge} ${badge.selected ? styles.capabilitySelected : styles.capabilityUnselected}`} key={badge.key}><strong>{badge.title}</strong><small>{badge.selected ? 'SELECTED' : 'NOT SELECTED'}</small></span>)}</div>
+    <div className={styles.developmentFocus}><small>TOP DEVELOPMENT AREA</small><strong>{developmentFocus}</strong></div>
+    <div className={styles.capabilities} aria-label={`Declared roles: ${capabilityBadges.filter(b=>b.selected).map(b=>b.title).join(', ') || 'none selected'}`}>
+      <small className={styles.capabilityLabel}>DECLARED ROLES</small>
+      {capabilityBadges.map(badge=><span className={`${styles.capabilityBadge} ${badge.selected ? styles.capabilitySelected : styles.capabilityUnselected}`} key={badge.key}><strong>{badge.title}</strong><small>{badge.selected ? 'SELECTED' : 'NOT SELECTED'}</small></span>)}
+    </div>
+    <div className={styles.assessmentInsight}>
+      <small>VALU INDEX ASSESSMENT INSIGHT</small>
+      <p className={styles.assessmentSummary}>{displayText(p.assessment_summary)}</p>
+    </div>
     <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE</Link>
   </article>
 }
