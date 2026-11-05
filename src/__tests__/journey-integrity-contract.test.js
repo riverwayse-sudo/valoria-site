@@ -299,8 +299,8 @@ describe('journey integrity contract', () => {
 
   test('opportunity detail declares every state value used by the application loop', () => {
     const source = read('src/app/opportunities/[slug]/page.jsx')
-    for (const marker of ['[error,setError]', '[session,setSession]', '[coverNote,setCoverNote]', '[applied,setApplied]', '[applying,setApplying]', '[applyError,setApplyError]']) {
-      expect(source).toContain(marker)
+    for (const [state, setter] of [['error','setError'], ['session','setSession'], ['coverNote','setCoverNote'], ['applied','setApplied'], ['applying','setApplying'], ['applyError','setApplyError']]) {
+      expect(source).toMatch(new RegExp(`\\\\[\\\\s*${state}\\\\s*,\\\\s*${setter}\\\\s*\\\\]`))
     }
     expect(source).toContain("supabase.auth.getSession()")
   })
