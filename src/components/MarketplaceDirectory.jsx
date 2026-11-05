@@ -185,7 +185,7 @@ function Profile({p}) {
     <p className={styles.career}>{displayText(p.headline)}</p>
     <p className={styles.specialisation}>{displayText(p.current_job_title)}{p.industry ? ` · ${displayText(p.industry)}` : ''}</p>
     <div className={styles.profileDetails}>{[p.location, availability && `Availability: ${titleCase(availability)}`].filter(Boolean).map(value=><span key={value}>{displayText(value)}</span>)}</div>
-    {(p.salary_expectation || p.fee_range) && <div className={styles.profileCompensation}>{p.salary_expectation && <span><small>SALARY EXPECTATION</small>{displayText(p.salary_expectation)}</span>}{p.fee_range && <span><small>FEE RANGE</small>{displayText(p.fee_range)}</span>}</div>}
+
     {skills.length > 0 && <div className={styles.profileSkills}>{skills.map(value=><span key={value}>{value}</span>)}</div>}
     <div className={styles.signalRow}>
       <div className={styles.scoreBlock}>
