@@ -9,7 +9,8 @@ export const NAVIGATION = {
         {
           label: '',
           items: [
-            { label: 'Marketplace', href: '/marketplace', description: 'Discover professionals and their capabilities.' },
+            { label: 'Marketplace', href: '/marketplace', description: 'Find professionals by capability.' },
+            { label: 'Opportunities', href: '/opportunities', description: 'Explore current professional opportunities.' },
             { label: 'Facilitators', href: '/facilitators', description: 'Find people who can lead the room.' },
             { label: 'Programmes', href: '/programmes', description: 'Develop capability with structured learning.' },
             { label: 'Events', href: '/events', description: 'Join Valoria conversations and events.' },
