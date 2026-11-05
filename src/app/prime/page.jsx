@@ -4,16 +4,107 @@ import Reveal from '@/components/Reveal'
 import { PRIME_CLUSTERS } from '@/lib/brand'
 import '../pages.css'
 
-export const metadata = { title: 'The PRIME Framework', description: 'PRIME is Valoria Institute’s proprietary capability architecture across Presence, Relationships, Intelligence, Mastery and Enterprise.', keywords: ['PRIME framework', 'VALU Index', 'African professional capability'], alternates: { canonical: 'https://valoriainstitute.com/prime' } }
-
-const CLUSTER_DATA = {
-  P: { body: 'How you show up. Presence measures whether professional capability is communicated with clarity, credibility and composure when the stakes are real.', signals: ['Communication', 'Executive Presence', 'Composure Under Scrutiny'] },
-  R: { body: 'How you connect. Relationships measures the ability to build trust, work intelligently with others and sustain networks that create mutual value.', signals: ['Trust-Building', 'Collaborative Intelligence', 'Network Quality'] },
-  I: { body: 'How you think. Intelligence measures the quality of professional judgment: critical thinking, analytical depth, decision-making and cognitive agility.', signals: ['Critical Thinking', 'Analytical Depth', 'Decision-Making', 'Cognitive Agility'] },
-  M: { body: 'How you deliver. Mastery measures disciplined execution, ownership, resilience and adaptability in the work itself.', signals: ['Execution Discipline', 'Accountability', 'Resilience', 'Adaptability'] },
-  E: { body: 'How you build. Enterprise measures the capacity to create value beyond a task: commercial thinking, systems building and venture mindset.', signals: ['Commercial Thinking', 'Systems Building', 'Venture Mindset'] },
+export const metadata = {
+  title: 'PRIME Framework — Valoria Institute',
+  description: 'PRIME describes how professional capability shows up in the work. The VALU Index measures it across five clusters and seventeen skills.',
+  keywords: ['PRIME framework', 'VALU Index', 'professional capability'],
+  alternates: { canonical: 'https://valoriainstitute.com/prime' },
 }
 
+const CLUSTER_COPY = {
+  P: 'Presence is how you show up: communicate with clarity, negotiate with intention and make your professional value understood.',
+  R: 'Relationships are how you connect: build trust, resolve conflict, develop people and manage stakeholders.',
+  I: 'Intelligence is how you think: apply critical and strategic thinking, business judgement and AI fluency.',
+  M: 'Mastery is how you deliver: take accountability, lead yourself through challenge and adapt your execution.',
+  E: 'Enterprise is how you create: generate commercial value, influence without authority and collaborate with AI.',
+}
+
+const DESIGNATIONS = [
+  { name: 'Force to Align With', range: '80–100 points', meaning: 'Operating at the highest expression of professional capability.' },
+  { name: 'Emerging Force', range: '65–79 points', meaning: 'Strong assessed capability with clear cluster strengths.' },
+  { name: 'Developing Professional', range: '50–64 points', meaning: 'Solid assessed baseline. Eligible for marketplace listing.' },
+  { name: 'Building Foundations', range: '35–49 points', meaning: 'Early-stage capability. Development pathway recommended.' },
+  { name: 'At the Starting Point', range: 'Below 35 points', meaning: 'Not yet listed. Development is the first step.' },
+]
+
 export default function PrimePage() {
-  return <><Nav /><main id="main-content"><section className="page-hero"><div className="page-hero-inner"><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">THE PROPRIETARY CAPABILITY ARCHITECTURE</span></div><h1 className="page-title">Five clusters.<br/>Seventeen <em>skills.</em></h1><p className="page-sub">PRIME is the intellectual architecture beneath Valoria Institute. It powers professional assessment, development and structured talent visibility across the ecosystem.</p><div className="page-hero-actions"><a href="https://valoriainstitute.com/valu/assessment/" className="btn-gold" target="_blank" rel="noopener noreferrer">START THE VALU INDEX</a><a href="/programmes" className="btn-outline">EXPLORE DEVELOPMENT</a></div></div></section><section className="page-section"><div className="page-section-inner" className="prime-narrow"><Reveal><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">THE FIVE CLUSTERS</span></div><h2 className="section-title" className="section-title prime-clusters-title">What PRIME<br/><em>actually measures.</em></h2></Reveal>{PRIME_CLUSTERS.map(c=>{const data=CLUSTER_DATA[c.letter];return <Reveal key={c.letter}><div className="prime-cluster"><div className="cluster-letter prime-letter">{c.letter}</div><div><div className="cluster-name prime-name">{c.name}</div><div className="prime-subtitle">{c.subtitle}</div><p className="prime-body">{data.body}</p><ul className="prime-signals">{data.signals.map(s=><li key={s} className="prime-signal"><span className="prime-signal-mark">✦</span>{s}</li>)}</ul></div></div></Reveal>})}</div></section><section className="page-section alt"><div className="page-section-inner"><Reveal><div className="eyebrow" className="eyebrow eyebrow-center"><div className="eyebrow-line"/><span className="eyebrow-text">THE VALU INDEX</span><div className="eyebrow-line"/></div><h2 className="section-title" className="section-title prime-centered-title">One architecture.<br/><em>One standard.</em></h2><p className="page-sub" className="page-sub prime-centered-copy">The VALU assessment has 58 questions across all five PRIME clusters, completed in two sessions. You answer the opening nine questions straight away, then create your account to finish the remaining 49 and receive your official VALU Index.</p></Reveal></div></section><section className="page-section"><div className="page-section-inner two-col"><Reveal><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">MERIT MADE VISIBLE</span></div><h2 className="section-title">Advancement is<br/><em>earned.</em></h2><p className="prime-copy">The Valoria tier system is score-based. It is a trust credential, never a subscription tier or a paid upgrade.</p></Reveal><Reveal><div className="prime-tier-list">{[{tier:'Elite',range:'90–100',desc:'Top-percentile performance across all five PRIME clusters.',stars:'✦✦✦'},{tier:'Distinguished',range:'75–89',desc:'Strong performance with clear cluster strengths.',stars:'✦✦'},{tier:'Proficient',range:'55–74',desc:'Solid assessed baseline and eligible for continued development.',stars:'✦'}].map(t=><div key={t.tier} className="card-gold prime-tier"><div className="prime-tier-meta"><div>{t.stars}</div><div>{t.tier}</div><small className="prime-tier-range">{t.range}</small></div><p className="cluster-desc prime-tier-copy">{t.desc}</p></div>)}</div></Reveal></div></section></main><Footer /></>
+  return (
+    <>
+      <Nav />
+      <main id="main-content">
+        <section className="page-hero">
+          <div className="page-hero-inner">
+            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE PRIME FRAMEWORK</span></div>
+            <h1 className="page-title">Five clusters.<br />Seventeen <em>skills.</em></h1>
+            <p className="page-sub">PRIME describes how professional capability shows up in the work. The VALU Index measures it.</p>
+            <div className="page-hero-actions">
+              <a href="/valu" className="btn-gold">UNDERSTAND THE VALU INDEX</a>
+              <a href="/valu/assessment/" className="btn-outline">TAKE THE TASTER</a>
+            </div>
+          </div>
+        </section>
+        <section className="page-section">
+          <div className="page-section-inner">
+            <Reveal>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE FIVE CLUSTERS</span></div>
+              <h2 className="section-title">How capability<br /><em>shows up in the work.</em></h2>
+            </Reveal>
+            {PRIME_CLUSTERS.map(cluster => (
+              <Reveal key={cluster.letter}>
+                <article className="prime-cluster">
+                  <div className="cluster-letter prime-letter">{cluster.letter}</div>
+                  <div>
+                    <div className="cluster-name prime-name">{cluster.name}</div>
+                    <div className="prime-subtitle">{cluster.subtitle}</div>
+                    <p className="prime-body">{CLUSTER_COPY[cluster.letter]}</p>
+                    <ul className="prime-signals">
+                      {cluster.skills.map(skill => <li key={skill} className="prime-signal"><span className="prime-signal-mark">✦</span>{skill}</li>)}
+                    </ul>
+                  </div>
+                </article>
+              </Reveal>
+            ))}
+            <p className="prime-copy">★ Future-ready skill — critical for the professional talent market of 2025 to 2035.</p>
+          </div>
+        </section>
+        <section className="page-section alt">
+          <div className="page-section-inner">
+            <Reveal>
+              <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">THE VALU INDEX</span><div className="eyebrow-line" /></div>
+              <h2 className="section-title section-title-centered">One framework.<br /><em>Scores in points.</em></h2>
+              <p className="page-sub prime-centered-copy">The full VALU Index contains 58 questions: 54 scored questions and four validity checks. Results run from 0 to 100 points across the five PRIME clusters.</p>
+            </Reveal>
+          </div>
+        </section>
+        <section className="page-section">
+          <div className="page-section-inner">
+            <Reveal>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FIVE SCORE-BASED DESIGNATIONS</span></div>
+              <h2 className="section-title">Progress is<br /><em>earned, not purchased.</em></h2>
+            </Reveal>
+            <div className="prime-tier-list">
+              {DESIGNATIONS.map(item => (
+                <article key={item.name} className="card-gold prime-tier">
+                  <div className="prime-tier-meta"><div>{item.name}</div><small className="prime-tier-range">{item.range}</small></div>
+                  <p className="cluster-desc prime-tier-copy">{item.meaning}</p>
+                </article>
+              ))}
+            </div>
+            <p className="prime-copy">Designations are score-based. They cannot be purchased, upgraded by subscription, or transferred. A lower score points to a development pathway; it does not block access to the platform.</p>
+          </div>
+        </section>
+        <section className="page-section alt cta-banner">
+          <Reveal>
+            <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">WORTH. BUILT.</span><div className="eyebrow-line" /></div>
+            <h2 className="section-title">Take the taster.<br /><em>See your first signal.</em></h2>
+            <div className="page-hero-actions eyebrow-center">
+              <a href="/valu/assessment/" className="btn-gold">TAKE THE 9-QUESTION TASTER</a>
+              <a href="/valu" className="btn-outline">HOW VALU WORKS</a>
+            </div>
+          </Reveal>
+        </section>
+      </main>
+      <Footer />
+    </>
+  )
 }
