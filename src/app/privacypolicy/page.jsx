@@ -4,7 +4,7 @@ import '../pages.css'
 
 export const metadata = {
   title: 'Privacy Policy | Valoria Institute',
-  description: 'How Valoria Institute collects, uses, and protects your personal data. NDPA 2023 compliant.',
+  description: 'How Valoria Institute collects, uses, and protects personal data.',
   robots: { index: true, follow: true },
   alternates: { canonical: 'https://valoriainstitute.com/privacypolicy' },
 }
@@ -21,7 +21,7 @@ const sections = [
   },
   {
     title: '2. Data we collect',
-    body: `We collect the following categories of personal data:\n\n• Waitlist sign-ups: full name, email address, professional role.\n• Account registration: full name, email address, password (hashed — never stored in plaintext), user type (professional, employer, event organiser, or training buyer), and company name where applicable.\n• VALU Index assessment: your 55 responses, time taken per question, and a shuffle map used for server-side scoring. We do not collect biometric data.\n• Professional profile: any information you choose to add — headline, bio, photo, location, industry, skills, speaking topics, video links, LinkedIn URL, and availability. This is voluntary.\n• Enquiries: messages sent through the platform between buyers and professionals, including subject and body text.\n• Technical data: IP address, browser type, and session data collected automatically for security and platform integrity purposes.`,
+    body: `We collect the following categories of personal data:\n\n• Waitlist sign-ups: full name, email address, professional role.\n• Account registration: full name, email address, password (hashed — never stored in plaintext), user type (professional, employer, event organiser, or training buyer), and company name where applicable.\n• VALU Index assessment: responses to the separate 9-question taster and the full 58-question VALU Index (54 scored questions and four validity checks), where applicable; time taken per question; and a shuffle map used for server-side scoring. We do not collect biometric data.\n• Professional profile: any information you choose to add — headline, bio, photo, location, industry, skills, speaking topics, video links, LinkedIn URL, and availability. This is voluntary.\n• Enquiries: messages sent through the platform between buyers and professionals, including subject and body text.\n• Technical data: IP address, browser type, and session data collected automatically for security and platform integrity purposes.`,
   },
   {
     title: '3. Why we collect it',
