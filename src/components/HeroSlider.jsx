@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { BRAND } from '@/lib/brand'
-import MarketplaceCTA from './MarketplaceCTA'
 import EventRegistrationModal, { SessionTimer } from './EventRegistrationModal'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
 
@@ -37,10 +36,10 @@ export default function HeroSlider() {
         <div className={`hero-slide ${active === 0 ? 'is-active' : ''}`} aria-hidden={active !== 0}>
           <div className="container hero-inner">
             <div>
-              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">AFRICA'S HUMAN CAPITAL INSTITUTION</span></div>
-              <h1 className="hero-title au d2">Talent is not<br />the problem.<br /><em>Infrastructure is.</em></h1>
-              <p className="hero-sub au d3">Valoria Institute builds the infrastructure through which African professional merit is developed, surfaced and connected to opportunity with precision.</p>
-              <div className="hero-actions au d4"><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START THE VALU INDEX</a><MarketplaceCTA className="btn-outline">EXPLORE THE BUREAU</MarketplaceCTA></div>
+              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">AFRICA'S TALENT MARKETPLACE FOR PROFESSIONALS</span></div>
+              <h1 className="hero-title au d2">Capability should decide<br />who gets seen.<br /><em>Valoria is the room.</em></h1>
+              <p className="hero-sub au d3">Valoria assesses African professionals on one standard, develops them where they fall short, and connects them to employers, event organisers and training buyers.</p>
+              <div className="hero-actions au d4"><a href={BRAND.assessmentUrl} className="btn-gold">TAKE THE 9-QUESTION TASTER</a><a href="/valu#how-it-works" className="btn-outline">SEE HOW IT WORKS</a></div>
               <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">84 <small style={{fontSize:10,letterSpacing:'.08em'}}>POINTS</small></div><div className="hmc-right"><div className="hmc-desig">FORCE TO ALIGN WITH · ✦✦</div><div className="hmc-bars">{bars.map((w, i) => <div key={i} className={`hmc-bar score-${w}`} />)}</div></div></div></div>
             </div>
             <div className="valu-card au d4" aria-label="Illustrative VALU profile">
