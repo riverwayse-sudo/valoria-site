@@ -36,8 +36,8 @@ export default async function LiveProfilesScroll() {
     unique.push(profile)
   }
 
-  const loop = [...unique, ...unique]
-  const discoverableCount = count ?? unique.length
+  const qualityProfiles = unique.filter(profile => typeof profile.assessment_summary === 'string' && profile.assessment_summary.trim().length >= 12)
+  const discoverableCount = count
   const trackCounts = unique.reduce((acc, profile) => {
     const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
     tracks.forEach(track => { const normalized = track === 'talent' ? 'candidate' : track; if (TRACK_META[normalized]) acc[normalized] = (acc[normalized] || 0) + 1 })
@@ -48,15 +48,12 @@ export default async function LiveProfilesScroll() {
     <section className="live-profiles" aria-labelledby="registry-title">
       <div className="live-profiles-shell">
         <div className="live-profiles-copy">
-          <div className="live-profiles-kicker">THE VALORIA REGISTRY · LIVE</div>
-          <h2 id="registry-title" className="live-profiles-title">See who is already <em>discoverable.</em></h2>
+          <div className="live-profiles-kicker">THE VALORIA MARKETPLACE</div>
+          <h2 id="registry-title" className="live-profiles-title">Find professionals <em>by capability.</em></h2>
           <p className="live-profiles-subtitle">
-            This is not a feature preview. These are professionals in the live Valoria marketplace — assessed, positioned and discoverable by capability.
+            Explore public professional profiles that meet Valoria’s listing requirements. Each profile presents structured capability information and VALU evidence where available.
           </p>
-          <div className="live-profiles-proof" aria-label="Registry summary">
-            <strong>{discoverableCount}</strong>
-            <span>professionals currently discoverable</span>
-          </div>
+          {typeof discoverableCount === 'number' && <div className="live-profiles-proof" aria-label="Public marketplace profile count"><strong>{discoverableCount}</strong><span>public professional profiles</span></div>}
         </div>
 
         <div className="live-profiles-actions" aria-label="Marketplace actions">
@@ -72,11 +69,11 @@ export default async function LiveProfilesScroll() {
         </div>
       </div>
 
-      {unique.length > 0 ? (
+      {qualityProfiles.length > 0 ? (
         <>
-          <div className="vi-scroll-mask">
-            <div className="vi-scroll-track">
-              {loop.map((profile, index) => {
+          <div className="vi-scroll-mask vi-scroll-mask-static">
+            <div className="vi-scroll-track vi-scroll-track-static">
+              {qualityProfiles.map((profile) => {
                 const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
                 const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
                 const primaryTrack = normalizedTracks.find(track => TRACK_META[track]) || 'candidate'
@@ -85,19 +82,17 @@ export default async function LiveProfilesScroll() {
                 return (
                   <Link
                     href={meta.href}
-                    key={`${profile.id}-${index}`}
+                    key={profile.id}
                     className="vi-scroll-card"
                     data-marketplace-intent={primaryTrack}
                     aria-label={`Discover more ${meta.label.toLowerCase()} professionals`}
-                    aria-hidden={index >= unique.length ? true : undefined}
-                    tabIndex={index >= unique.length ? -1 : undefined}
                   >
                     <div className="vi-scroll-avatar" aria-hidden="true">
                       <ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} />
                     </div>
                     <div className="vi-scroll-copy">
                       <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>LIVE</i></div>
-                      <div className="vi-scroll-headline">{profile.assessment_summary || 'Assessment-based capability descriptor unavailable.'}</div>
+                      <div className="vi-scroll-headline">{profile.assessment_summary}</div>
                       <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
                     </div>
                     <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'}`}>
@@ -118,20 +113,20 @@ export default async function LiveProfilesScroll() {
                 <span key={track}><b>{trackCounts[track] || 0}</b> {meta.label.toLowerCase()} profiles</span>
               ))}
             </div>
-            <Link href="/marketplace" className="live-profiles-link" data-marketplace-intent="all">OPEN THE FULL REGISTRY <span>→</span></Link>
+            <Link href="/marketplace" className="live-profiles-link" data-marketplace-intent="all">VIEW THE MARKETPLACE <span>→</span></Link>
           </div>
         </>
       ) : (
-        <div className="live-profiles-public-state"><span className="live-profiles-dot" />The public registry is being populated. Start with VALU to build a discoverable professional record.</div>
+        <div className="live-profiles-public-state"><span className="live-profiles-dot" />No public professional profiles currently meet the homepage display standard. Visit the marketplace to see current listings.</div>
       )}
 
       <div className="live-profiles-professional-cta">
         <span className="live-profiles-professional-rule" />
         <div>
           <small>WANT TO BE DISCOVERED?</small>
-          <strong>Build the professional record that makes your capability visible.</strong>
+          <strong>Build a professional profile that helps relevant buyers understand your capabilities.</strong>
         </div>
-        <Link href="/valu">START WITH VALU INDEX <span>→</span></Link>
+        <Link href="/valu">BUILD YOUR PROFESSIONAL PROFILE <span>→</span></Link>
       </div></section>
   )
 }
