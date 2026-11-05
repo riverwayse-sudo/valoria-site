@@ -118,20 +118,33 @@ export async function getMarketplaceRows(track = 'all') {
   return rows.filter(row => track === 'all' || row.capabilities.includes(normalizeTrack(track)))
 }
 
-export async function getMarketplaceCounts() {
-  const rows = await getMarketplaceRows('all')
+function countMarketplaceRows(rows) {
   const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
 
-  for (const row of rows) {
+  for (const row of rows || []) {
     for (const capability of row.capabilities || []) {
       if (byTrack[capability]) byTrack[capability].add(row.professional_id)
     }
   }
 
   return {
-    all: rows.length,
+    all: (rows || []).length,
     candidate: byTrack.candidate.size,
     speaker: byTrack.speaker.size,
     facilitator: byTrack.facilitator.size,
+  }
+}
+
+export async function getMarketplaceCounts(existingRows) {
+  const rows = Array.isArray(existingRows) ? existingRows : await getMarketplaceRows('all')
+  return countMarketplaceRows(rows)
+}
+
+export async function getMarketplaceDirectoryData(track = 'all') {
+  const allRows = await getMarketplaceRows('all')
+  const normalizedTrack = normalizeTrack(track)
+  return {
+    rows: normalizedTrack === 'all' ? allRows : allRows.filter(row => row.capabilities.includes(normalizedTrack)),
+    counts: countMarketplaceRows(allRows),
   }
 }
