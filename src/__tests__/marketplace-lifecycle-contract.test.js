@@ -35,13 +35,17 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).not.toContain('BASIC · SNAPSHOT')
   })
 
-  test('Valoria Develop does not publish unconfirmed programme formats or delivery claims', () => {
+  test('Valoria Develop uses the approved formats and withholds unconfirmed certification and commercial claims', () => {
     const source = read('src/app/programmes/page.jsx')
-    for (const unsupported of ['PRIME Certified Professional', 'certified facilitators', '70% Experiential', '20% Social', '10% Formal', 'Six months', 'Six weeks', 'Three days']) {
-      expect(source).not.toContain(unsupported)
+    for (const approved of ['PRIME Sprint', 'PRIME Cluster Programme', 'PRIME Certified Professional', 'Executive Immersion', 'One day', 'Six weeks', 'Six months', 'Three days', '70% Experiential', '20% Social', '10% Formal']) {
+      expect(source).toContain(approved)
     }
-    expect(source).toContain('availability is confirmed before any programme is offered')
-    expect(source).toContain('A development enquiry is a conversation')
+    expect(source).toContain('IN DEVELOPMENT')
+    expect(source).toContain('formal certification process is in development and is not currently conferred')
+    expect(source).not.toContain('certified facilitators')
+    expect(source).not.toContain('90-day re-measurement')
+    expect(source).not.toContain('90-day remeasurement')
+    expect(source).not.toContain('PRICE')
   })
 
   test('public marketplace cards do not expose compensation fields', () => {
