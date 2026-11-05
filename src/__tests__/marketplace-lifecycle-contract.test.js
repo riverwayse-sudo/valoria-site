@@ -37,6 +37,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).not.toContain('BASIC · SNAPSHOT')
   })
 
+  test('public marketplace cards do not expose compensation fields', () => {
+    const data = read('src/lib/marketplace-data.js')
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    expect(data).not.toContain('salary_expectation')
+    expect(data).not.toContain('fee_range')
+    expect(directory).not.toContain('SALARY EXPECTATION')
+    expect(directory).not.toContain('FEE RANGE')
+  })
+
   test('marketplace data is professional-first and deduplicates capabilities', () => {
     const source = read('src/lib/marketplace-data.js')
     expect(source).toContain('professional_id')
