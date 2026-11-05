@@ -21,6 +21,7 @@ export default function HomepageOpportunities() {
 
   useEffect(() => {
     let active = true
+    setState('loading')
     fetch('/api/opportunities', { headers: { Accept: 'application/json' } })
       .then(async response => {
         const payload = await response.json().catch(() => ({}))
