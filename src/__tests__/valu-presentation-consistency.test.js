@@ -12,12 +12,22 @@ describe('VALU presentation consistency', () => {
     expect(home).not.toContain('<b>15</b> QUESTIONS')
   })
 
-  test('homepage illustrative VALU card uses points and the current merit designation', () => {
+  test('homepage hero prioritises institutional positioning over an illustrative VALU score', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('vc-denom">POINTS')
-    expect(hero).toContain('FORCE TO ALIGN WITH')
-    expect(hero).not.toContain('DISTINGUISHED')
-    expect(hero).not.toContain('vc-denom">/ 100')
+    expect(hero).toContain('AFRICA’S HUMAN CAPITAL INSTITUTION')
+    expect(hero).toContain('Talent is not the problem.')
+    expect(hero).toContain('Infrastructure is.')
+    expect(hero).toContain('DISCOVER YOUR VALU INDEX')
+    expect(hero).not.toContain('vc-denom')
+    expect(hero).not.toContain('FORCE TO ALIGN WITH')
+    expect(hero).not.toContain('84')
+  })
+
+  test('homepage registry explains VALU points and privacy context', () => {
+    const registry = read('src/components/LiveProfilesScroll.jsx')
+    expect(registry).toContain('VALU Index results are expressed in points on a 100-point scale')
+    expect(registry).toContain('BRAND.compliance')
+    expect(registry).toContain('/privacypolicy')
   })
 
   test('public registry and professional-facing score cards use points', () => {
