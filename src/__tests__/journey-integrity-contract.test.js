@@ -440,7 +440,7 @@ describe('journey integrity contract', () => {
   })
 
 
-  test('the separate taster, account confirmation and full VALU assessment read as one journey', () => {
+  test('the taster, account confirmation and VALU assessment read as one journey', () => {
     const progress = read('src/components/VALUJourneyProgress.jsx')
     const signup = read('src/app/professional-signup/page.jsx')
     const dashboard = read('src/app/dashboard/page.jsx')
@@ -480,7 +480,7 @@ describe('journey integrity contract', () => {
     expect(report).toContain(' points</span>')
   })
 
-  test('public VALU explanation describes the separate taster and full assessment', () => {
+  test('public VALU explanation describes the taster value and next step', () => {
     const start = read('src/app/valu/start/page.jsx')
     expect(start).toContain('Start with the 9-question taster.')
     expect(start).toContain('The taster gives you an initial directional read.')
@@ -490,15 +490,15 @@ describe('journey integrity contract', () => {
   })
 
 
-  test('the account bridge explains email confirmation and the separate full assessment', () => {
+  test('the account bridge explains email confirmation and the next step', () => {
     const signup = read('src/app/professional-signup/page.jsx')
     const callback = read('src/app/auth/callback/page.jsx')
     expect(signup).toContain('ACCOUNT BRIDGE · ACCOUNT SETUP')
     expect(signup).toContain('ACCOUNT BRIDGE · EMAIL CONFIRMATION')
     expect(signup).toContain('Confirm your email.')
-    expect(signup).toContain('Then start the full assessment.')
+    expect(signup).toContain('continue with the VALU Index.')
     expect(signup).toContain('continue with the VALU Index from your dashboard')
-    expect(signup).toContain('9-question taster saved')
+    expect(signup).toContain('Your snapshot is saved.')
     expect(callback).toContain("router.replace('/dashboard?welcome=profile')")
     expect(callback).not.toContain('VALUJourneyProgress')
     expect(callback).not.toContain('Your next steps')
