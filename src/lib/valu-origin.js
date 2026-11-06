@@ -1,7 +1,7 @@
 const PRODUCTION_ASSESSMENT_ORIGIN = 'https://assessment.valoriainstitute.com'
 
 export function getValuAssessmentOrigin(env = process.env) {
-  const isCloudflarePreview = env.CF_WORKERS_PREVIEW === '1'
+  const isCloudflarePreview = env.CF_WORKERS_PREVIEW === '1' || env.VALU_PREVIEW === '1' || env.NEXT_PUBLIC_VALU_PREVIEW === '1' || env.VERCEL_ENV === 'preview'
   const isCloudflareProduction = env.CF_WORKERS === '1' && !isCloudflarePreview
   const isProduction = env.VERCEL_ENV === 'production' || isCloudflareProduction
   const configured = (isCloudflarePreview
