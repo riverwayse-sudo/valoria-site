@@ -19,12 +19,40 @@ as $$
     from public.professional_profile_acknowledgements acknowledgement
     where acknowledgement.professional_id = p_professional_id
       and acknowledgement.acknowledgement_type = 'profile_submission'
-      and acknowledgement.acknowledgement_version = 'public-profile-visibility-v1-2026-11-05'
+      and acknowledgement.acknowledgement_version = 'public-profile-visibility-v2-2026-11-06'
   );
 $$;
 
 revoke all on function private.has_public_profile_consent(uuid) from public;
 grant execute on function private.has_public_profile_consent(uuid) to anon, authenticated;
+
+create or replace function private.is_public_profile_eligible(p_professional_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = pg_catalog
+as $
+  select exists (
+    select 1
+    from public.marketplace_public_roster roster
+    join public.professional_profiles profile
+      on profile.id = roster.professional_id
+    where roster.professional_id = p_professional_id
+      and roster.assessment_access = 'full'
+      and roster.assessment_summary is not null
+      and length(btrim(roster.assessment_summary)) >= 12
+      and cardinality(coalesce(roster.capabilities, '{}'::text[])) > 0
+      and profile.profile_complete is true
+      and profile.is_test is false
+      and profile.visibility = 'public'
+      and profile.listing_status = 'listed'
+      and profile.revoked_at is null
+  );
+$;
+
+revoke all on function private.is_public_profile_eligible(uuid) from public;
+grant execute on function private.is_public_profile_eligible(uuid) to anon, authenticated;
 
 drop policy if exists pp_public_read_listed on public.professional_profiles;
 drop policy if exists pp_owner_admin_read on public.professional_profiles;
@@ -41,6 +69,7 @@ create policy pp_public_read_consent_verified
     and listing_status = 'listed'
     and revoked_at is null
     and private.has_public_profile_consent(id)
+    and private.is_public_profile_eligible(id)
   );
 
 create policy pp_owner_admin_read
@@ -119,17 +148,9 @@ stable
 security definer
 set search_path = pg_catalog
 as $$
-  select exists (
-    select 1
-    from public.professional_profiles profile
-    where profile.id = p_professional_id
-      and profile.profile_complete is true
-      and profile.is_test is false
-      and profile.visibility = 'public'
-      and profile.listing_status = 'listed'
-      and profile.revoked_at is null
-      and private.has_public_profile_consent(profile.id)
-  );
+  select
+    private.has_public_profile_consent(p_professional_id)
+    and private.is_public_profile_eligible(p_professional_id);
 $$;
 
 revoke all on function private.can_read_public_professional_certificate(uuid) from public;
