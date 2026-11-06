@@ -12,13 +12,15 @@ export const revalidate = 0
 
 export const metadata = {
   title: 'Valoria Institute — Worth, Built.',
-  description: 'Valoria Institute builds the infrastructure that develops, surfaces and connects professional merit to opportunity.'
+  description: 'An international professional capability institution helping individuals understand, develop and demonstrate their capabilities — and helping organisations discover and engage expertise.'
 }
 
 const pathwayCards = [
-  { label: 'FOR PROFESSIONALS', title: 'Build a verified professional presence.', body: 'Understand where you stand, complete your profile and become discoverable for the right opportunities.', href: '/valu', cta: 'START WITH VALU' },
-  { label: 'FOR EMPLOYERS', title: 'Find capability with context.', body: 'Discover professionals through structured profiles built around capability, experience and verified pathways.', href: '/marketplace', cta: 'EXPLORE MARKETPLACE' },
-  { label: 'FOR EVENT ORGANISERS', title: 'Find speakers and facilitators.', body: 'Access professionals with relevant expertise for conversations, programmes and organisational moments.', href: '/marketplace/speakers', cta: 'FIND PROFESSIONALS' }
+  { label: 'FOR PROFESSIONALS', title: 'Understand and develop your capabilities.', body: 'Gain a clearer view of your professional capabilities, identify areas for growth and build a profile that communicates your value.', href: '/valu', cta: 'EXPLORE VALU' },
+  { label: 'FOR EMPLOYERS', title: 'Discover talent with greater context.', body: 'Explore professionals through structured capability profiles, experience and areas of expertise.', href: '/marketplace/talent', cta: 'DISCOVER TALENT' },
+  { label: 'FOR FACILITATORS & EXPERTS', title: 'Make your expertise discoverable.', body: 'Present your subject expertise, specialisations and facilitation strengths to organisations seeking professional contributors.', href: '/marketplace/facilitators', cta: 'EXPLORE FACILITATORS' },
+  { label: 'FOR EVENT ORGANISERS', title: 'Find the right voices for your programmes.', body: 'Discover speakers and subject-matter experts whose experience and expertise align with your event or programme.', href: '/marketplace/speakers', cta: 'FIND SPEAKERS' },
+  { label: 'FOR INSTITUTIONS & PARTNERS', title: 'Build meaningful professional partnerships.', body: 'Explore collaboration around professional capability, development programmes, talent and institutional initiatives.', href: '/contact-us', cta: 'START A CONVERSATION' }
 ]
 
 export default function HomePage() {
@@ -34,7 +36,7 @@ export default function HomePage() {
               <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">START HERE</span></div>
               <h2 id="pathways-title">What brings you<br/><em>to Valoria?</em></h2>
             </div>
-            <p>Choose the path that matches what you need today. One professional standard connects development, visibility and opportunity.</p>
+            <p>Whether you are developing your capabilities, sharing expertise, discovering talent or building institutional partnerships, choose the pathway that reflects what you want to achieve.</p>
           </Reveal>
 
           <Reveal className="home-pathway-grid" as="div">
@@ -56,12 +58,12 @@ export default function HomePage() {
           <Reveal className="valu-conversion-intro">
             <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">START WITH THE VALU INDEX</span></div>
             <h2 id="home-valu-title" className="valu-title">Before you build your next move, <em>know where you stand.</em></h2>
-            <p className="valu-desc">The 9-question Intelligence taster gives you a directional starting point. Complete the full 54-question VALU Index for an assessment across all five PRIME clusters.</p>
+            <p className="valu-desc">Begin with the VALU taster for an initial perspective on your professional capabilities. Continue with the full VALU Index for a structured assessment across all five PRIME clusters.</p>
             <div className="valu-conversion-proof" aria-label="Assessment details">
-              <span><b>9</b> QUESTIONS</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span>FULL INDEX · 5 CLUSTERS</span>
+              <span>FOCUSED TASTER</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span>FULL INDEX · 5 CLUSTERS</span>
             </div>
             <div className="home-dual-actions">
-              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START THE VALU TASTER <span aria-hidden="true">→</span></a>
+              <a href={BRAND.assessmentUrl} className="btn-gold">START THE VALU TASTER <span aria-hidden="true">→</span></a>
               <a href="/valu" className="text-link">SEE HOW VALU WORKS <span aria-hidden="true">→</span></a>
             </div>
             <p className="valu-conversion-note">Your first result is directional. It is the starting signal for the wider Valoria journey — not a label and not the end of the process.</p>
@@ -88,11 +90,11 @@ export default function HomePage() {
               <div className="vcc-radar-center">VALU</div>
             </div>
             <div className="vcc-steps">
-              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>9-question Intelligence taster</small></div></div>
-              <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Full 54-question VALU Index + profile</small></div></div>
+              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>Focused VALU taster</small></div></div>
+              <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Full VALU Index + professional profile</small></div></div>
               <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Capability, eligibility and marketplace</small></div></div>
             </div>
-            <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="vcc-bottom-cta">BEGIN THE VALU TASTER <span>→</span></a>
+            <a href={BRAND.assessmentUrl} className="vcc-bottom-cta">BEGIN THE VALU TASTER <span>→</span></a>
           </Reveal>
         </div>
       </section>
