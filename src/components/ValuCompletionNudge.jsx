@@ -26,8 +26,9 @@ export default function ValuCompletionNudge(){
       ])
 
       if(!profile||profile.profile_complete)return
+      const fullAssessmentComplete = !!assessment?.completed_at
       if(active){
-        setAssessed(!!assessment?.completed_at)
+        setAssessed(fullAssessmentComplete)
         setShow(true)
       }
     }
