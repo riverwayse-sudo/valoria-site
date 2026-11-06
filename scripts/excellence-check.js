@@ -158,15 +158,21 @@ if (fs.existsSync(navPath)) {
     violations.push('Nav: use the canonical VALU Index name, not standalone VALU naming');
   }
 }
-// Public content must preserve the separate assessment model and approved claims.
+// Public content must explain the VALU journey without exposing internal assessment mechanics.
 const valuStartPath = path.join(root, 'src/app/valu/start/page.jsx');
 const signupPath = path.join(root, 'src/app/signup/page.jsx');
 const aboutPath = path.join(root, 'src/app/about/page.jsx');
 const programmesPath = path.join(root, 'src/app/programmes/page.jsx');
 if (fs.existsSync(valuStartPath)) {
   const valuStart = fs.readFileSync(valuStartPath, 'utf8');
-  if (!valuStart.includes('The 9-question taster is separate from the 58-question full VALU assessment.')) {
-    violations.push('VALU entry page must state that the 9-question taster and 58-question full assessment are separate');
+  if (!valuStart.includes('The taster offers an initial directional read.') || !valuStart.includes('VALU Index')) {
+    violations.push('VALU entry page must explain the taster's directional value and the official VALU Index');
+  }
+  if (/The 9-question taster is separate from the 58-question full VALU assessment|Valoria has two separate assessment stages|Two separate assessments/i.test(valuStart)) {
+    violations.push('VALU entry page must not expose internal assessment separation mechanics');
+  }
+  if (/Question\\s+\\d+\\s+of\\s+\\d+/i.test(valuStart)) {
+    violations.push('VALU entry page must not display question-count progress labels');
   }
   if (!valuStart.includes('TAKE THE 9-QUESTION TASTER') || !valuStart.includes('POINTS')) {
     violations.push('VALU entry page must label the taster CTA and show VALU results in points');
@@ -213,6 +219,8 @@ const retiredPublicClaims = [
   [/21 professionals/i, 'unverified marketplace headcount'],
   [/certified facilitators/i, 'unverified facilitator certification'],
   [/Question 10|remaining 49|Questions 10–58/i, 'retired combined-assessment journey'],
+  [/Question\\s+\\d+\\s+of\\s+\\d+/i, 'question-count progress label must not appear in public copy'],
+  [/The 9-question taster is separate from the 58-question full VALU assessment|Valoria has two separate assessment stages|Two separate assessments/i, 'internal assessment separation mechanics must not appear in public copy'],
   [/\bElite\b|\bDistinguished\b|\bProficient\b/, 'retired merit designation'],
 ];
 for (const relativePath of publicCopyPaths) {
