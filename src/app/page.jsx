@@ -58,7 +58,7 @@ export default function HomePage() {
           <Reveal className="valu-conversion-intro">
             <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">START WITH THE 9-QUESTION TASTER</span></div>
             <h2 id="home-valu-title" className="valu-title">Before you build your next move, <em>know where you stand.</em></h2>
-            <p className="valu-desc">The 9-question VALU taster gives you a directional starting point across Presence, Relationships, Intelligence, Mastery and Enterprise. The separate 58-question formal assessment produces your official VALU Index and PRIME points.</p>
+            <p className="valu-desc">The VALU taster gives you a directional starting point across Presence, Relationships, Intelligence, Mastery and Enterprise. Complete your full assessment to receive your official VALU Index and PRIME points.</p>
             <div className="valu-conversion-proof" aria-label="Assessment details">
               <span><b>9</b> QUESTIONS</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
             </div>
@@ -90,7 +90,7 @@ export default function HomePage() {
               <div className="vcc-radar-center">VALU INDEX</div>
             </div>
             <div className="vcc-steps">
-              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>Separate 9-question taster; no account needed</small></div></div>
+              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>A directional starting point; no account needed</small></div></div>
               <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Full VALU Index assessment + profile</small></div></div>
               <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Capability, eligibility and marketplace</small></div></div>
             </div>
