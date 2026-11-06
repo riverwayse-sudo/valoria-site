@@ -150,7 +150,7 @@ describe('journey integrity contract', () => {
     const source = read('src/app/professional-signup/page.jsx')
     expect(source).not.toContain('https://valoriainstitute.com/journey/continue?stage=assess&taster_id=')
     expect(source).toContain('GO TO MY DASHBOARD')
-    expect(source).toContain('Sign in to connect your saved taster and begin the separate formal assessment.')
+    expect(source).toContain('Sign in to connect your saved taster and continue your full assessment.')
     expect(source).toContain('continueSignedInUser')
     expect(source).toContain("window.location.replace('/dashboard?welcome=profile')")
     expect(source).toContain("localStorage.removeItem('pending_taster_id')")
