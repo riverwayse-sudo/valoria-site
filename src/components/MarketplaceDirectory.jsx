@@ -179,7 +179,12 @@ function Profile({p}) {
       <div className={styles.identityCopy}>
         <strong className={styles.profileName}>{displayText(p.full_name)}</strong>
         <small>{profileId}</small>
-        <span className={styles.assessedStatus}>{isFullAssessment ? '✓ FULL VALU ASSESSED' : 'ASSESSMENT PENDING'}</span>
+        <span className={styles.assessedStatus}>✓ FULL VALU ASSESSED</span>
+      </div>
+      <div className={styles.valu} aria-label={`VALU Index ${p.valu_index} points`}>
+        <small>VALU INDEX</small>
+        <b>{p.valu_index}</b>
+        <span>POINTS</span>
       </div>
     </div>
     <p className={styles.career}>{displayText(p.headline)}</p>
@@ -188,10 +193,6 @@ function Profile({p}) {
 
     {skills.length > 0 && <div className={styles.profileSkills}>{skills.map(value=><span key={value}>{value}</span>)}</div>}
     <div className={styles.signalRow}>
-      <div className={styles.scoreBlock}>
-        <small>VALU INDEX</small>
-        <strong>{isFullAssessment ? <>{p.valu_index}<span> POINTS</span></> : '—'}</strong>
-      </div>
       <span className={`${styles.tierBadge} ${designationClass}`}>{designation}</span>
     </div>
     <div className={styles.developmentFocus}><small>TOP DEVELOPMENT AREA</small><strong>{developmentFocus}</strong></div>
