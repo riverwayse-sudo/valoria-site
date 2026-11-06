@@ -280,7 +280,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(prime).not.toContain("'Motivation & Stamina'")
   })
 
-  test('public copy describes the separate 9-question taster and 58-question full assessment', () => {
+  test('public copy explains the VALU journey without exposing assessment mechanics', () => {
     const prime = read('src/app/prime/page.jsx')
     const start = read('src/app/valu/start/page.jsx')
     const reminders = read('src/app/api/cron/valu-reminders/route.js')
@@ -290,7 +290,7 @@ describe('VALUI marketplace lifecycle contract', () => {
       expect(source).not.toContain('Question 10')
       expect(source).not.toContain('remaining 49')
     }
-    expect(start).toContain('The taster offers an initial directional read.')
+    expect(start).toContain('The taster gives you an initial directional read.')
     expect(start).toContain('58-question VALU Index')
     expect(prime).toContain('58 questions: 54 scored questions and four validity checks')
     expect(reminders).toContain('start or resume your VALU Index')
