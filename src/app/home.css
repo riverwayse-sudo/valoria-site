@@ -2457,3 +2457,135 @@
     height: 52px;
   }
 }
+
+
+/* Supporting copy and registry metadata: accessible editorial sizing and contrast. */
+.home-redesign-root .hero-slider .hero-sub {
+  color: rgba(247,244,238,.84);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.home-redesign-root .hero-system-kicker {
+  font-size: 10px;
+}
+
+.home-redesign-root .hero-system-steps li small {
+  color: rgba(247,244,238,.80);
+  font-size: 12px;
+}
+
+.home-redesign-root .valu-conversion .valu-desc {
+  color: rgba(247,244,238,.82);
+  font-size: 17px;
+}
+
+.home-redesign-root .valu-conversion-note {
+  font-size: 13px;
+}
+
+.home-redesign-root .valu-conversion .vcc-top span {
+  font-size: 9px;
+}
+
+.home-redesign-root .valu-conversion .vcc-radar-labels text {
+  font-size: 4px;
+}
+
+.home-redesign-root .valu-conversion .vcc-step small {
+  color: rgba(247,244,238,.76);
+  font-size: 11px;
+}
+
+.home-pathway-label {
+  font-size: 10px;
+}
+
+.home-redesign-root .home-pathway-card > p {
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.home-redesign-root .home-pathway-cta {
+  min-height: 48px;
+  font-size: 10px;
+  letter-spacing: .10em;
+}
+
+.home-framework-card p {
+  font-size: 15px;
+}
+
+.home-redesign-root .home-events-status,
+.home-redesign-root .home-events-meta {
+  font-size: 10px;
+}
+
+.home-redesign-root .home-events-cluster {
+  font-size: 10px;
+}
+
+.home-redesign-root .home-events-slider > p {
+  color: rgba(247,244,238,.80);
+  font-size: 15px;
+}
+
+.home-redesign-root .home-events-footer span,
+.home-redesign-root .home-events-footer a {
+  font-size: 9px;
+}
+
+.home-redesign-root .home-events-poster-action {
+  font-size: 10px;
+}
+
+.home-redesign-root .live-profiles-kicker {
+  font-size: 10px;
+}
+
+.home-redesign-root .live-profiles-subtitle {
+  color: rgba(247,244,238,.80);
+  font-size: 16px;
+}
+
+.home-redesign-root .live-profiles-proof span {
+  font-size: 10px;
+}
+
+.home-redesign-root .live-profiles-trust {
+  font-size: 12px;
+}
+
+.home-redesign-root .vi-scroll-topline {
+  font-size: 9px;
+}
+
+.home-redesign-root .vi-scroll-headline {
+  font-size: 13px;
+}
+
+.home-redesign-root .vi-scroll-track-label {
+  font-size: 8px;
+}
+
+.home-redesign-root .vi-scroll-score-label,
+.home-redesign-root .vi-scroll-score-max {
+  font-size: 8px;
+}
+
+.home-redesign-root .vi-scroll-score strong {
+  font-size: 27px;
+}
+
+.home-redesign-root .live-profiles-professional-cta small {
+  font-size: 9px;
+}
+
+.home-redesign-root .live-profiles-professional-cta strong {
+  color: rgba(247,244,238,.88);
+  font-size: 16px;
+}
+
+.home-redesign-root .live-profiles-professional-cta a {
+  font-size: 10px;
+}
