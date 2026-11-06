@@ -10,6 +10,7 @@ const homepageFiles = [
   'src/app/home.css',
   'src/components/Nav.jsx',
   'src/components/HeroSlider.jsx',
+  'src/components/HomepageEvents.jsx',
   'src/components/LiveProfilesScroll.jsx',
   'src/components/Footer.jsx',
   'src/styles/motion.css',
@@ -85,8 +86,31 @@ if (/\.reveal\s*\{|@keyframes\s+fade-up|\.au\s*\{[^}]*animation/i.test(globals))
   add('src/styles/globals.css: legacy reveal/entrance motion competes with canonical motion.css');
 }
 const homeCss = existing.find((x) => x.file === 'src/app/home.css')?.text || '';
+if (/text-align\s*:\s*center\b/i.test(homeCss) || /justify-items\s*:\s*center\b/i.test(homeCss)) {
+  add('src/app/home.css: homepage content must remain left-aligned; centered text or grid alignment is prohibited');
+}
 if (/\b(?:transition|animation)\s*:/i.test(homeCss)) add('src/app/home.css: transition/animation declarations must live in src/styles/motion.css');
 if (/@keyframes\s+/.test(homeCss)) add('src/app/home.css: keyframes are prohibited; motion.css is the sole animation authority');
+const hero = existing.find((x) => x.file === 'src/components/HeroSlider.jsx')?.text || '';
+if (/setInterval|hero-event-slide|hero-slider-controls/.test(hero)) {
+  add('HeroSlider: institutional positioning must remain static; event promotion cannot rotate into the hero');
+}
+const homepageEvents = existing.find((x) => x.file === 'src/components/HomepageEvents.jsx')?.text || '';
+if (/<iframe\b/i.test(homepageEvents)) add('HomepageEvents: do not embed an unverified video; use the branded replay link');
+if (!page.includes('FOR FACILITATORS') || !page.includes('FOR EVENT ORGANISERS')) {
+  add('src/app/page.jsx: facilitator and event organiser pathways must both be visible');
+}
+const navConfigPath = path.join(root, 'src/config/navigation.js');
+if (fs.existsSync(navConfigPath)) {
+  const navConfig = fs.readFileSync(navConfigPath, 'utf8');
+  if (/58\s+questions|separate\s+9-question/i.test(navConfig)) {
+    add('src/config/navigation.js: do not expose internal assessment mechanics in public navigation');
+  }
+  if (/Start the VALU Taster/i.test(navConfig)) {
+    add('src/config/navigation.js: avoid duplicating the VALU entry CTA inside the navigation menu');
+  }
+}
+
 const spacingTokens = ['--space-section','--space-section-tight','--space-content'];
 for (const token of spacingTokens) if (!homeCss.includes(token)) add(`src/app/home.css: missing canonical homepage spacing token ${token}`);
 if (!/\.home-redesign-root\s*>\s*section:not\(\.hero\)/.test(homeCss)) add('src/app/home.css: major homepage sections must inherit the canonical section-spacing rule');
