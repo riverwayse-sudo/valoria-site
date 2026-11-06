@@ -13,6 +13,7 @@ describe('participant-facing assessment clarity', () => {
       read('src/app/valu/page.jsx'),
       read('src/app/valu/start/page.jsx'),
       read('src/app/dashboard/page.jsx'),
+      read('src/app/dashboard/ExperiencePreview.jsx'),
       read('src/app/professional-signup/page.jsx'),
       read('src/components/ValuCompletionNudge.jsx'),
       read('src/app/terms-of-use/page.jsx'),
@@ -20,6 +21,13 @@ describe('participant-facing assessment clarity', () => {
     for (const source of sources) {
       expect(source).not.toMatch(/(?:9|58)[- ]questions?|Question\\s*(?:1|10)|remaining 49/i)
     }
+  })
+
+  test('the isolated dashboard preview launches the interactive taster', () => {
+    const preview = read('src/app/dashboard/ExperiencePreview.jsx')
+    expect(preview).toContain('AssessmentStartLink href="/valu/assessment/"')
+    expect(preview).toContain('START THE VALU TASTER')
+    expect(preview).not.toContain('58')
   })
 
   test('internal assessment links remain in the current browser tab', () => {
