@@ -306,8 +306,8 @@ export default function DashboardPage() {
         <>
           <VALUJourneyProgress stage="full" />
           <h1 style={{fontSize:'clamp(26px,4vw,38px)',textAlign:'center',margin:0}}>Your formal assessment is ready.</h1>
-          <p style={{maxWidth:560,textAlign:'center',color:DIM,lineHeight:1.7}}>Your 9-question taster is complete and remains separate. Begin the full 58-question assessment at Question 1; if you have already started it, your saved formal progress will be restored independently.</p>
-          <AssessmentStartLink href="/dashboard" dashboardOnly style={{padding:'14px 24px',background:GOLD,color:DARK,fontSize:12,fontWeight:800,textDecoration:'none',borderRadius:999}}>START / CONTINUE THE 58-QUESTION ASSESSMENT →</AssessmentStartLink>
+          <p style={{maxWidth:560,textAlign:'center',color:DIM,lineHeight:1.7}}>Your taster is complete. Begin your full assessment, or resume your saved progress if you have already started.</p>
+          <AssessmentStartLink href="/dashboard" dashboardOnly style={{padding:'14px 24px',background:GOLD,color:DARK,fontSize:12,fontWeight:800,textDecoration:'none',borderRadius:999}}>START / CONTINUE YOUR FULL ASSESSMENT →</AssessmentStartLink>
         </>
       ) : assessmentAccess === null ? (
         <>
@@ -611,7 +611,7 @@ export default function DashboardPage() {
                       </div>
                       <p style={{ fontSize:'11px', fontWeight:300, color:DIM, lineHeight:1.65, margin:0 }}>
                         {assessmentAccess?.can_continue
-                          ? 'Your 9-question taster is complete; the separate 58-question formal assessment is next.'
+                          ? 'Your taster is complete. Your full assessment is the next step.'
                           : 'Your official VALU Index and PRIME insights will appear here when your assessment is complete.'}
                       </p>
                     </div>
@@ -883,8 +883,8 @@ function DashboardAssessmentHandover({ standalone = false }) {
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap', marginBottom:12 }}>
         <div style={{ flex:'1 1 420px', minWidth:0 }}>
           <div style={{ color:'#C9A84C', fontSize:10, fontWeight:800, letterSpacing:'.2em' }}>YOUR VALORIA JOURNEY</div>
-          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>Your taster is complete. Continue into the separate 58-question formal assessment.</h1>
-          <p style={{ margin:0, maxWidth:700, color:'rgba(247,244,238,.68)', fontSize:13, lineHeight:1.7 }}>Your 9-question taster is linked to this account. The formal assessment is separate and begins at Question 1. If you have already started it, your saved formal progress will be restored independently.</p>
+          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>Your taster is complete. Continue into your full assessment.</h1>
+          <p style={{ margin:0, maxWidth:700, color:'rgba(247,244,238,.68)', fontSize:13, lineHeight:1.7 }}>Your taster is linked to this account. Begin your full assessment from here, or resume your saved progress.</p>
         </div>
         <div style={{ flex:'0 1 220px', minWidth:180 }}>
           <VALUJourneyProgress stage="full" />
@@ -941,7 +941,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
             : 'Publish your Registry presence.'
 
   const explanation = !next ? 'Explore opportunities and keep your professional presence current.'
-    : next.key === 'valu' ? 'Begin with the separate 9-question VALU taster. It is directional; your official VALU Index is produced only after the separate 58-question formal assessment.'
+    : next.key === 'valu' ? 'Begin with the VALU taster for a directional starting point. Your official VALU Index is produced after completing your full assessment.'
       : next.key === 'profile' ? 'Add the details that help organisations understand your experience and strengths.'
         : next.key === 'capability' ? 'Select the professional capabilities you want Valoria to represent.'
           : next.key === 'eligibility' ? 'Review the remaining requirements for each capability.'
@@ -988,7 +988,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
         <div style={{ display:'flex', alignItems:'center', gap:14, flexWrap:'wrap', marginTop:18 }}>
           {next?.key === 'valu' ? (
             <AssessmentStartLink href={nextHref} style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
-              START THE 9-QUESTION TASTER <span aria-hidden="true">→</span>
+              START THE VALU TASTER <span aria-hidden="true">→</span>
             </AssessmentStartLink>
           ) : (
             <Link href={nextHref} style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
@@ -1269,7 +1269,7 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
   const isListed = listedCapabilities.length > 0
 
   const current = !hasAssessment
-    ? { label:'Continue your VALU assessment', text:'Your 9-question taster is complete. Start the separate 58-question formal assessment at Question 1, or resume any saved formal progress.', href:'/dashboard/continue-assessment' }
+    ? { label:'Continue your VALU assessment', text:'Your taster is complete. Start your full assessment, or resume any saved progress.', href:'/dashboard/continue-assessment' }
     : !hasProfile
       ? { label:'Build your profile', text:'Tell us about your work so people can understand you.', href:'/profile/onboarding' }
       : !hasCapability
