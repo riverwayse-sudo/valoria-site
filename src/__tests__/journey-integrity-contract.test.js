@@ -203,6 +203,8 @@ describe('journey integrity contract', () => {
     expect(reportTrigger).toContain('getValuAssessmentOrigin(process.env)')
     expect(origin).toContain("env.CF_WORKERS === '1'")
     expect(origin).toContain("env.CF_WORKERS_PREVIEW === '1'")
+    expect(origin).toContain("env.VALU_PREVIEW === '1'")
+    expect(origin).toContain("env.NEXT_PUBLIC_VALU_PREVIEW === '1'")
     expect(origin).toContain('VALU_PREVIEW_ASSESSMENT_ORIGIN')
     expect(origin).toContain("url.hostname === 'assessment.valoriainstitute.com'")
     expect(signup).toContain('href="/valu/assessment/"')
