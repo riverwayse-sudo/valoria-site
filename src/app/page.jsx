@@ -17,7 +17,7 @@ export const metadata = {
 }
 
 const pathwayCards = [
-  { label: 'FOR PROFESSIONALS', title: 'Build a verified professional presence.', body: 'Understand where you stand, complete your profile and become discoverable for the right opportunities.', href: '/valu', cta: 'START WITH THE VALU INDEX' },
+  { label: 'FOR PROFESSIONALS', title: 'Build a verified professional presence.', body: 'Understand where you stand, complete your profile and become discoverable for the right opportunities.', href: '/valu', cta: 'START WITH THE 9-QUESTION TASTER' },
   { label: 'FOR EMPLOYERS', title: 'Find capability with context.', body: 'Discover professionals through structured profiles built around capability, experience and verified pathways.', href: '/marketplace', cta: 'EXPLORE MARKETPLACE' },
   { label: 'FOR EVENT ORGANISERS', title: 'Find speakers and facilitators.', body: 'Access professionals with relevant expertise for conversations, programmes and organisational moments.', href: '/marketplace/speakers', cta: 'FIND PROFESSIONALS' }
 ]
@@ -56,14 +56,14 @@ export default function HomePage() {
       <section className="valu-section valu-conversion" id="valu" aria-labelledby="home-valu-title">
         <div className="container valu-conversion-shell">
           <Reveal className="valu-conversion-intro">
-            <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">START WITH THE VALU INDEX</span></div>
+            <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">START WITH THE 9-QUESTION TASTER</span></div>
             <h2 id="home-valu-title" className="valu-title">Before you build your next move, <em>know where you stand.</em></h2>
-            <p className="valu-desc">The VALU Index gives you a directional picture of your professional capability across Presence, Relationships, Intelligence, Mastery and Enterprise — so you can see what to strengthen, what to surface and what to build next.</p>
+            <p className="valu-desc">The 9-question VALU taster gives you a directional starting point across Presence, Relationships, Intelligence, Mastery and Enterprise. The separate 58-question formal assessment produces your official VALU Index and PRIME points.</p>
             <div className="valu-conversion-proof" aria-label="Assessment details">
               <span><b>9</b> QUESTIONS</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
             </div>
             <div className="home-dual-actions">
-              <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">START MY VALU INDEX SNAPSHOT <span aria-hidden="true">→</span></AssessmentStartLink>
+              <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">START THE VALU TASTER <span aria-hidden="true">→</span></AssessmentStartLink>
               <a href="/valu" className="text-link">SEE HOW THE VALU INDEX WORKS <span aria-hidden="true">→</span></a>
             </div>
             <p className="valu-conversion-note">Your first result is directional. It is the starting signal for the wider Valoria journey — not a label and not the end of the process.</p>
