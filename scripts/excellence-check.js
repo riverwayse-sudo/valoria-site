@@ -214,11 +214,12 @@ const publicCopyPaths = [
   'src/app/professional-signup/page.jsx',
   'src/app/profile/setup/page.jsx',
   'src/app/test/assessment/page.jsx',
+  'src/components/VALUJourneyProgress.jsx',
   'src/components/HeroSlider.jsx',
   'src/components/MarketplaceDirectory.jsx',
 ];
 const retiredPublicClaims = [
-  [/Africa's human capital institution/i, 'retired institutional positioning'],
+  [/Africa's human capital institution|human capital institution/i, 'retired institutional positioning'],
   [/Explore the Bureau/i, 'retired Bureau navigation'],
   [/21 professionals/i, 'unverified marketplace headcount'],
   [/certified facilitators/i, 'unverified facilitator certification'],
