@@ -1,5 +1,6 @@
 import Nav, { AssessmentStartLink } from '@/components/Nav'
 import Footer from '@/components/Footer'
+import { BRAND } from '@/lib/brand'
 
 export const metadata = {
   title: 'VALU Index | Valoria Institute',
@@ -25,7 +26,7 @@ export default function ValuPage() {
           <h1>Make your capability<br /><em>visible and actionable.</em></h1>
           <p className="valu-lede">The VALU Index gives professionals a structured view of capability across the five dimensions of PRIME. Start with a short directional snapshot, then complete the separate full assessment to establish your official VALU Index.</p>
           <div className="valu-actions">
-            <AssessmentStartLink href="https://assessment.valoriainstitute.com/valu/assessment/" className="valu-btn valu-btn-gold">START THE 9-QUESTION TASTER <span>→</span></AssessmentStartLink>
+            <AssessmentStartLink href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">START THE 9-QUESTION TASTER <span>→</span></AssessmentStartLink>
             <a href="#how-it-works" className="valu-btn valu-btn-ghost">UNDERSTAND THE TWO ASSESSMENTS <span>↓</span></a>
           </div>
           <div className="valu-meta"><span>9-QUESTION TASTER</span><i>·</i><span>SEPARATE 58-QUESTION FULL ASSESSMENT</span><i>·</i><span>5 PRIME DIMENSIONS</span></div>
@@ -62,11 +63,11 @@ export default function ValuPage() {
       <section className="valu-outcome">
         <div className="valu-wrap valu-outcome-grid">
           <div><div className="valu-kicker valu-dark"><span /> WHAT THE FULL ASSESSMENT ADDS</div><h2>Move from a directional snapshot to an official professional record.</h2></div>
-          <div><p>The 9-question taster and 58-question full assessment are separate experiences. Completing the taster does not complete nine questions of the full assessment, and the full assessment remains 58 questions.</p><p>Your completed full assessment establishes your official VALU Index and PRIME dimension results in points. Your professional profile and marketplace access then reflect your completed assessment and the applicable eligibility requirements.</p><AssessmentStartLink href="https://assessment.valoriainstitute.com/valu/assessment/" className="valu-inline">START THE 9-QUESTION TASTER →</AssessmentStartLink></div>
+          <div><p>The 9-question taster and 58-question full assessment are separate experiences. Completing the taster does not complete nine questions of the full assessment, and the full assessment remains 58 questions.</p><p>Your completed full assessment establishes your official VALU Index and PRIME dimension results in points. Your professional profile and marketplace access then reflect your completed assessment and the applicable eligibility requirements.</p><AssessmentStartLink href={BRAND.assessmentUrl} className="valu-inline">START THE 9-QUESTION TASTER →</AssessmentStartLink></div>
         </div>
       </section>
 
-      <section className="valu-final"><div className="valu-wrap"><div className="valu-kicker"><span /> WORTH. BUILT.</div><h2>Start with a clearer view<br /><em>of your capability.</em></h2><AssessmentStartLink href="https://assessment.valoriainstitute.com/valu/assessment/" className="valu-btn valu-btn-gold">START THE 9-QUESTION TASTER <span>→</span></AssessmentStartLink></div></section>
+      <section className="valu-final"><div className="valu-wrap"><div className="valu-kicker"><span /> WORTH. BUILT.</div><h2>Start with a clearer view<br /><em>of your capability.</em></h2><AssessmentStartLink href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">START THE 9-QUESTION TASTER <span>→</span></AssessmentStartLink></div></section>
     </main>
     <Footer />
   </>
