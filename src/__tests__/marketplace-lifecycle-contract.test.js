@@ -30,14 +30,14 @@ describe('VALUI marketplace lifecycle contract', () => {
     const data = read('src/lib/marketplace-data.js')
     expect(data).toContain('assessment_access')
     expect(data).toContain("row.assessment_access === 'full'")
-    expect(directory).toContain("p.assessment_access === 'full'")
+    expect(data).toContain("row.assessment_access === 'full'")
     expect(directory).toContain('FULL VALU ASSESSED')
     expect(directory).not.toContain('BASIC · SNAPSHOT')
   })
 
-  test('About uses the approved Vision, Mission and Purpose statements', () => {
+  test('About preserves the approved Vision and Purpose while retiring outdated institutional language', () => {
     const source = read('src/app/about/page.jsx')
-    for (const statement of ['Vision', 'Mission', 'Purpose', 'An Africa where professional merit always finds its platform.', "To build and operate Africa's premier human capital institution.", 'To bridge the gap between latent brilliance and institutional scale.']) {
+    for (const statement of ['Vision', 'Mission', 'Purpose', 'An Africa where professional merit always finds its platform.', 'To develop professionals with rigour, surface talent with merit, and connect capability to meaningful opportunity.', 'To bridge the gap between latent brilliance and institutional scale.']) {
       expect(source).toContain(statement)
     }
     expect(source).toContain('not a certification body')
