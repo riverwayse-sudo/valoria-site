@@ -1,4 +1,4 @@
-import Nav from '@/components/Nav'
+import Nav, { AssessmentStartLink } from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
@@ -63,7 +63,7 @@ export default function HomePage() {
               <span><b>9</b> QUESTIONS</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
             </div>
             <div className="home-dual-actions">
-              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START MY VALU INDEX SNAPSHOT <span aria-hidden="true">→</span></a>
+              <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">START MY VALU INDEX SNAPSHOT <span aria-hidden="true">→</span></AssessmentStartLink>
               <a href="/valu" className="text-link">SEE HOW THE VALU INDEX WORKS <span aria-hidden="true">→</span></a>
             </div>
             <p className="valu-conversion-note">Your first result is directional. It is the starting signal for the wider Valoria journey — not a label and not the end of the process.</p>
@@ -90,7 +90,7 @@ export default function HomePage() {
               <div className="vcc-radar-center">VALU INDEX</div>
             </div>
             <div className="vcc-steps">
-              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>First 9 questions, no account needed</small></div></div>
+              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>Separate 9-question taster; no account needed</small></div></div>
               <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Full VALU Index assessment + profile</small></div></div>
               <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Capability, eligibility and marketplace</small></div></div>
             </div>
