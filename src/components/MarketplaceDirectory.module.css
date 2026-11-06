@@ -144,3 +144,7 @@
 .capabilityUnselected small{color:#8A8578!important}
 
 .capabilities .capabilityLabel{grid-column:1/-1}
+
+.previewUnavailable{padding:28px 24px;border:1px dashed rgba(201,168,76,.35);background:rgba(46,46,74,.24);color:#FAFAF7}
+.previewUnavailable strong{display:block;font-size:14px;font-weight:700;line-height:1.5}
+.previewUnavailable p{max-width:620px;margin:8px 0 0;color:rgba(250,250,247,.62);font-size:12px;line-height:1.7}
