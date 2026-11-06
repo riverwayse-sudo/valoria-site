@@ -536,4 +536,25 @@ describe('journey integrity contract', () => {
   })
 
 
+
+  test('internal Valoria journeys do not force navigation into a new browser tab', () => {
+    const paths = [
+      'src/app/page.jsx',
+      'src/app/valu/page.jsx',
+      'src/app/prime/page.jsx',
+      'src/app/login/page.jsx',
+      'src/app/signup/page.jsx',
+      'src/app/profile/setup/page.jsx',
+      'src/app/profile/[id]/ProfileClient.jsx',
+      'src/components/Nav.jsx',
+      'src/components/Footer.jsx',
+      'src/components/SessionSeriesGrid.jsx',
+      'src/components/SessionShowcase.jsx',
+      'src/components/HeroSlider.jsx',
+    ]
+    for (const path of paths) {
+      expect(read(path)).not.toContain('target="_blank"')
+    }
+  })
+
 })
