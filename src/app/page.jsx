@@ -129,7 +129,6 @@ export default function HomePage() {
                     <text x="6" y="21">ENTERPRISE</text>
                   </g>
                 </svg>
-                <div className="vcc-radar-center">FIVE DIMENSIONS</div>
               </div>
               <div className="vcc-steps">
                 <div className="vcc-step is-active">
