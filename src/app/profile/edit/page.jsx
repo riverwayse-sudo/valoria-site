@@ -343,7 +343,7 @@ function EditPageInner() {
 
         <Section title="About & Languages" dirty={dirty.about} saving={saving.about} saved={saved.about}
           onSave={() => saveSection('about', ['bio','languages'])}>
-          <Field label="Bio"><TextArea value={form.bio} onChange={v => setField('about','bio',v)} /></Field>
+          <Field label="Background notes (not shown as your public summary)"><TextArea value={form.bio} onChange={v => setField('about','bio',v)} /></Field>
           <Field label="Languages"><ChipGroup options={LANGUAGES} selected={form.languages} onToggle={v => {
             const cur = form.languages || []
             setField('about','languages', cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v])
