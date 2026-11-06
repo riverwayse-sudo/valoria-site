@@ -18,18 +18,7 @@ export const NAVIGATION = {
         },
       ],
     },
-    {
-      label: 'VALU Index',
-      groups: [
-        {
-          label: 'Understand',
-          items: [
-            { label: 'About the VALU Index', href: '/valu', description: 'Understand the VALU Index and its assessment journey.' },
-            { label: 'Start the VALU Taster', href: BRAND.assessmentUrl, external: true, description: 'Begin with the separate 9-question taster; the official Index follows the full 58-question assessment.' },
-          ],
-        },
-      ],
-    },
+    { label: 'VALU Index', href: '/valu' },
     {
       label: 'About',
       groups: [
@@ -54,8 +43,7 @@ export const NAVIGATION = {
       { label: 'Insights', href: '/insights' },
     ],
     valu: [
-      { label: 'About the VALU Index', href: '/valu' },
-      { label: 'Start the VALU Taster', href: BRAND.assessmentUrl, external: true },
+      { label: 'Explore the VALU Index', href: '/valu' },
     ],
     about: [
       { label: 'About Valoria', href: '/about-us' },
