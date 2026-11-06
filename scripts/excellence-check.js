@@ -165,8 +165,8 @@ const aboutPath = path.join(root, 'src/app/about/page.jsx');
 const programmesPath = path.join(root, 'src/app/programmes/page.jsx');
 if (fs.existsSync(valuStartPath)) {
   const valuStart = fs.readFileSync(valuStartPath, 'utf8');
-  if (!valuStart.includes('The taster offers an initial directional read.') || !valuStart.includes('VALU Index')) {
-    violations.push('VALU entry page must explain the taster's directional value and the official VALU Index');
+  if (!valuStart.includes('The taster gives you an initial directional read.') || !valuStart.includes('VALU Index')) {
+    violations.push('VALU entry page must explain the taster value and the official VALU Index');
   }
   if (/The 9-question taster is separate from the 58-question full VALU assessment|Valoria has two separate assessment stages|Two separate assessments/i.test(valuStart)) {
     violations.push('VALU entry page must not expose internal assessment separation mechanics');
