@@ -34,7 +34,7 @@ const frameworkStages = [
   {
     number: '03',
     title: 'Connect to opportunity',
-    body: 'The African Talent Bureau helps organisations discover professionals through capability-led profiles and pathways.',
+    body: 'The Valoria Talent Marketplace helps organisations discover professionals through capability-led profiles and pathways.',
     href: '/marketplace',
     cta: 'EXPLORE THE BUREAU',
   },
@@ -63,11 +63,18 @@ const pathwayCards = [
     cta: 'FIND SPEAKERS',
   },
   {
-    label: 'FOR FACILITATORS',
-    title: 'Connect expertise to action.',
-    body: 'Make your facilitation capability visible and connect with organisations looking for experienced programme partners.',
-    href: '/marketplace/facilitators',
-    cta: 'EXPLORE FACILITATORS',
+    label: 'FOR FACILITATORS & EXPERTS',
+    title: 'Put expertise to work.',
+    body: 'Make your facilitation and specialist expertise visible to organisations seeking people who can lead learning and meaningful change.',
+    href: '/facilitators',
+    cta: 'EXPLORE FACILITATOR PATHWAYS',
+  },
+  {
+    label: 'FOR INSTITUTIONS & PARTNERS',
+    title: 'Build capability together.',
+    body: 'Work with Valoria on professional development, institutional programmes and partnerships that connect capability to opportunity.',
+    href: '/contact-us',
+    cta: 'DISCUSS A PARTNERSHIP',
   },
 ]
 
@@ -183,9 +190,9 @@ export default function HomePage() {
             <Reveal className="home-section-heading">
               <div>
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">PATHWAYS INTO VALORIA</span></div>
-                <h2 id="pathways-title">One institution.<br /><em>Four ways to engage.</em></h2>
+                <h2 id="pathways-title">One institution.<br /><em>Five ways to engage.</em></h2>
               </div>
-              <p>Whether you are building your professional standing or looking for expertise, there is a clear pathway into the Valoria ecosystem.</p>
+              <p>For professionals, organisations and institutions, Valoria creates clear pathways to capability, expertise and meaningful collaboration.</p>
             </Reveal>
 
             <Reveal className="home-pathway-grid" as="div">
