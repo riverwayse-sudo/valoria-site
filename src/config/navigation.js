@@ -25,7 +25,7 @@ export const NAVIGATION = {
           label: 'Understand',
           items: [
             { label: 'About the VALU Index', href: '/valu', description: 'Understand the VALU Index and its assessment journey.' },
-            { label: 'Start the VALU Index', href: BRAND.assessmentUrl, external: true, description: 'Begin your VALU Index assessment.' },
+            { label: 'Start the VALU Taster', href: BRAND.assessmentUrl, external: true, description: 'Begin with the separate 9-question taster; the official Index follows the full 58-question assessment.' },
           ],
         },
       ],
