@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import {
+  PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION,
+  REGISTERED_PROFILE_ACKNOWLEDGEMENT_VERSION,
+  PUBLIC_PROFILE_CONSENT_TEXT,
+  REGISTERED_PROFILE_CONSENT_TEXT,
+} from '@/lib/profile-consent-copy'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
-const PUBLIC_ACKNOWLEDGEMENT_VERSION = 'public-profile-visibility-v1-2026-11-05'
-const REGISTERED_ACKNOWLEDGEMENT_VERSION = 'registered-profile-submission-v1-2026-11-05'
 
 function getAdmin() {
   if (!SUPABASE_URL || !SERVICE_ROLE_KEY) return null
@@ -57,10 +61,8 @@ export async function POST(request) {
 
   const visibility = body.visibility
   const acknowledgementSource = body.source === 'profile_edit' ? 'profile_edit' : 'profile_setup'
-  const acknowledgementVersion = visibility === 'public' ? PUBLIC_ACKNOWLEDGEMENT_VERSION : REGISTERED_ACKNOWLEDGEMENT_VERSION
-  const acknowledgementText = visibility === 'public'
-    ? 'I confirm that the information I provided is accurate. I consent to Valoria displaying the public profile fields associated with my professional record in the Valoria Marketplace when the applicable assessment, completeness, capability, review and listing requirements are met. I understand that completing the VALU assessment does not guarantee public listing, and I can change my visibility preference.'
-    : 'I confirm that the information I provided is accurate. I choose registered-only visibility for my professional profile. I understand that my profile will not be displayed to public visitors while this setting remains in place, and I can change my visibility preference.'
+  const acknowledgementVersion = visibility === 'public' ? PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION : REGISTERED_PROFILE_ACKNOWLEDGEMENT_VERSION
+  const acknowledgementText = visibility === 'public' ? PUBLIC_PROFILE_CONSENT_TEXT : REGISTERED_PROFILE_CONSENT_TEXT
 
   // For public visibility, record consent before changing the profile to public.
   // For registered-only visibility, apply the restrictive setting before recording.
