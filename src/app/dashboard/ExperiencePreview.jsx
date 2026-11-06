@@ -33,7 +33,7 @@ export default function DashboardExperiencePreview() {
           <div className={styles.nextCopy}>
             <p className={styles.eyebrow}>RECOMMENDED NEXT STEP</p>
             <h2 id="next-step-title">Complete your full VALU assessment.</h2>
-            <p>The 58-question full assessment is separate from the 9-question taster. It establishes your official VALU Index and PRIME results in points.</p>
+            <p>The full assessment establishes your official VALU Index and PRIME results in points.</p>
             <Link href="/valu" className={styles.primaryAction}>UNDERSTAND THE ASSESSMENT <span>→</span></Link>
           </div>
           <div className={styles.assessmentMeta}>
