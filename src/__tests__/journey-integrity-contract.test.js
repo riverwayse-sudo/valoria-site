@@ -138,7 +138,7 @@ describe('journey integrity contract', () => {
     const source = read('src/app/api/cron/valu-reminders/route.js')
     expect(source).toContain("https://valoriainstitute.com/login?returnTo=%2Fdashboard")
     expect(source).toContain('RETURN TO YOUR DASHBOARD')
-    expect(source).toContain('Sign in to your account')
+    expect(source).toContain('Sign in to your dashboard')
     expect(source).not.toContain("from('valoria_reentry_links').insert")
     expect(source).not.toContain('CONTINUE TO QUESTION 10')
     expect(source).not.toContain('pending_taster_id')
