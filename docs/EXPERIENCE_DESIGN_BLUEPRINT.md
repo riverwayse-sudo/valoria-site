@@ -147,6 +147,9 @@ Test 1440px, 1280px, 768px and 390px:
 8. Confirm production DNS, Workers and Supabase data were not modified.
 9. Obtain explicit user acceptance before any production promotion.
 
+## Deployment target
+The staging site is built and deployed to the isolated Cloudflare Worker named valoria-staging-site. It must not deploy to valoria-institute-site or bind production hostnames.
+
 ## Staging review checklist
 
 - Homepage: value proposition, audience pathways, proof, conversion.
