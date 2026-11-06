@@ -19,6 +19,15 @@ describe('staging preview safety boundary', () => {
     expect(read('src/components/ValuCompletionNudge.jsx')).toContain("if(process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') return")
   })
 
+  test('the OpenNext Worker handles dynamic routes before static asset fallback', () => {
+    const wrangler = read('wrangler.jsonc')
+    const nextConfig = read('next.config.js')
+    expect(wrangler).toContain('"run_worker_first": true')
+    expect(wrangler).toContain('"VALU_PREVIEW_ASSESSMENT_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev"')
+    expect(nextConfig).toContain("source: '/valu/assessment/:path*'")
+    expect(nextConfig).toContain('VALU_PREVIEW_ASSESSMENT_ORIGIN')
+  })
+
   test('preview metadata is not indexable and production analytics are disabled', () => {
     const layout = read('src/app/layout.jsx')
     expect(layout).toContain('index: false')
