@@ -435,7 +435,9 @@ describe('journey integrity contract', () => {
     expect(journeyCards).toContain('AssessmentStartLink')
     expect(nudge).toContain('AssessmentStartLink')
     expect(nudge).toContain('dashboardOnly')
-    expect(nudge).toContain('href={assessed?"/profile/setup":"/valu/start"}')
+    expect(nudge).toContain('AssessmentStartLink href="/valu/assessment/"')
+    expect(nudge).toContain('href="/profile/setup"')
+    expect(nudge).not.toContain('/valu/start')
     expect(continuation).toContain("stage === 'assess'")
     expect(continuation).toContain("return NextResponse.redirect(new URL('/dashboard', request.url))")
     expect(continuation).not.toContain('assessment.valoriainstitute.com')
@@ -490,13 +492,13 @@ describe('journey integrity contract', () => {
   })
 
 
-  test('the account bridge explains email confirmation, signed-in return and Question 10 as the next action', () => {
+  test('the account bridge explains email confirmation and dashboard return before the formal assessment', () => {
     const signup = read('src/app/professional-signup/page.jsx')
     const callback = read('src/app/auth/callback/page.jsx')
     expect(signup).toContain('ACCOUNT BRIDGE · STEP 2 OF 3')
     expect(signup).toContain('ACCOUNT BRIDGE · EMAIL CONFIRMATION')
     expect(signup).toContain('One quick confirmation.')
-    expect(signup).toContain('Then Question 10.')
+    expect(signup).toContain('Then your formal assessment.')
     expect(signup).toContain('Question 1')
     expect(signup).toContain('Opening nine saved')
     expect(callback).toContain("window.location.replace('/dashboard?welcome=profile')")
