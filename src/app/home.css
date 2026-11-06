@@ -2275,3 +2275,47 @@
   border-color: var(--gold-light);
   text-decoration: none;
 }
+
+
+/* Homepage footer: keep the institutional close consistently left-aligned and legible. */
+.vi-footer,
+.vi-footer .uf-grid,
+.vi-footer .uf-brand,
+.vi-footer .uf-desc,
+.vi-footer .uf-tagline,
+.vi-footer .uf-col-title,
+.vi-footer .uf-links,
+.vi-footer .uf-links li,
+.vi-footer .uf-links a,
+.vi-footer .uf-links button,
+.vi-footer .uf-bottom,
+.vi-footer .uf-bottom span {
+  text-align: left;
+}
+
+.vi-footer .uf-grid {
+  align-items: start;
+}
+
+.vi-footer .uf-desc {
+  color: rgba(247,244,238,.78);
+}
+
+.vi-footer .uf-tagline {
+  color: var(--gold);
+}
+
+.vi-footer .uf-bottom {
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+}
+
+.vi-footer .uf-bottom span {
+  color: rgba(247,244,238,.76);
+}
+
+.vi-footer .uf-bottom a {
+  color: rgba(247,244,238,.82) !important;
+}
