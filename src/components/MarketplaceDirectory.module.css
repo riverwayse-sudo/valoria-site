@@ -169,3 +169,10 @@
 .profileSkills{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
 .profileSkills span{padding:5px 8px;background:#F7F4EE;border:1px solid #EDE8DC;border-radius:4px;color:#5D584F;font-size:8px}
 .empty button{border:0;background:transparent;cursor:pointer}
+
+/* Keep the VALU points visible beside the profile identity and ATB ID. */
+.identity{position:relative;padding-right:62px!important}
+.valu{position:absolute;top:2px;right:0;width:54px;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.valu small{font-size:6px;line-height:1.2;letter-spacing:.12em;font-weight:800;color:#6F6A60}
+.valu b{font-size:20px;line-height:1;font-weight:900;color:#1A1A2E}
+.valu span{font-size:6px;line-height:1.2;letter-spacing:.1em;font-weight:800;color:#6F6A60}
