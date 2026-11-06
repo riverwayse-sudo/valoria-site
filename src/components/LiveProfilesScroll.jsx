@@ -49,15 +49,21 @@ export default async function LiveProfilesScroll() {
     <section className="live-profiles" aria-labelledby="registry-title">
       <div className="live-profiles-shell">
         <div className="live-profiles-copy">
-          <div className="live-profiles-kicker">THE VALORIA REGISTRY · LIVE</div>
-          <h2 id="registry-title" className="live-profiles-title">See who is already <em>discoverable.</em></h2>
+          <div className="live-profiles-kicker">{unique.length > 0 ? 'THE VALORIA REGISTRY · LIVE' : 'THE AFRICAN TALENT BUREAU'}</div>
+          <h2 id="registry-title" className="live-profiles-title">
+            {unique.length > 0 ? <>See who is already <em>discoverable.</em></> : <>Professional capability, <em>made discoverable.</em></>}
+          </h2>
           <p className="live-profiles-subtitle">
-            This is not a feature preview. These are professionals in the live Valoria marketplace — assessed, positioned and discoverable by capability.
+            {unique.length > 0
+              ? 'These are professionals in the Valoria marketplace — assessed, positioned and discoverable by capability.'
+              : 'A capability-led professional registry connecting organisations with talent, speakers and facilitators across Africa.'}
           </p>
-          <div className="live-profiles-proof" aria-label="Registry summary">
-            <strong>{discoverableCount}</strong>
-            <span>professionals currently discoverable</span>
-          </div>
+          {discoverableCount > 0 && (
+            <div className="live-profiles-proof" aria-label="Registry summary">
+              <strong>{discoverableCount}</strong>
+              <span>professionals currently discoverable</span>
+            </div>
+          )}
           <p className="live-profiles-trust">
             VALU Index results are expressed in points on a 100-point scale. Explore each profile for capability context. {BRAND.compliance}. <Link href="/privacypolicy">Read our Privacy Policy</Link>.
           </p>
@@ -126,7 +132,19 @@ export default async function LiveProfilesScroll() {
           </div>
         </>
       ) : (
-        <div className="live-profiles-public-state"><span className="live-profiles-dot" />The public registry is being populated. Start with VALU to build a discoverable professional record.</div>
+        <div className="live-profiles-public-state">
+          <div className="live-profiles-empty-copy">
+            <span className="live-profiles-empty-kicker">THE AFRICAN TALENT BUREAU</span>
+            <strong>Make professional expertise easier to find.</strong>
+            <p>Explore the pathways through which employers, event organisers and programme teams can discover relevant expertise.</p>
+            <Link href="/marketplace" className="live-profiles-empty-link">EXPLORE THE BUREAU <span aria-hidden="true">→</span></Link>
+          </div>
+          <div className="live-profiles-empty-grid">
+            <div className="live-profiles-empty-card"><span>01 · TALENT</span><strong>Professional capability</strong><small>For hiring and sourcing.</small></div>
+            <div className="live-profiles-empty-card"><span>02 · SPEAKERS</span><strong>Subject expertise</strong><small>For events and conversations.</small></div>
+            <div className="live-profiles-empty-card"><span>03 · FACILITATORS</span><strong>Learning and change</strong><small>For programmes and workshops.</small></div>
+          </div>
+        </div>
       )}
 
       <div className="live-profiles-professional-cta">
