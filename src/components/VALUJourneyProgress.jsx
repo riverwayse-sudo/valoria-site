@@ -1,15 +1,17 @@
-export default function VALUJourneyProgress({ stage = 'bridge', currentQuestion }) {
+export default function VALUJourneyProgress({ stage = 'taster', currentQuestion }) {
   const steps = [
-    { key: 'opening', title: 'Opening', detail: 'Questions 1–9' },
-    { key: 'bridge', title: 'Account', detail: 'Save & confirm' },
-    { key: 'continuation', title: 'Continue', detail: 'Questions 10–58' },
+    { key: 'taster', title: 'Taster', detail: '9 questions' },
+    { key: 'account', title: 'Account', detail: 'Confirm email' },
+    { key: 'full', title: 'Full assessment', detail: '58 questions' },
   ]
   const active = Math.max(0, steps.findIndex(step => step.key === stage))
   return (
-    <section aria-label="One VALU assessment journey" style={{ margin: '0 0 22px' }}>
+    <section aria-label="Separate VALU taster and formal assessment journey" style={{ margin: '0 0 22px' }}>
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:12, marginBottom:11 }}>
-        <span style={{ color:'#C9A84C', fontSize:9, fontWeight:800, letterSpacing:'.16em' }}>ONE VALU ASSESSMENT</span>
-        <span style={{ color:'rgba(247,244,238,.48)', fontSize:10 }}>{Number.isInteger(currentQuestion) ? `QUESTION ${currentQuestion} OF 58` : 'YOUR PROGRESS IS PRESERVED'}</span>
+        <span style={{ color:'#C9A84C', fontSize:9, fontWeight:800, letterSpacing:'.16em' }}>TASTER → FORMAL ASSESSMENT</span>
+        <span style={{ color:'rgba(247,244,238,.48)', fontSize:10 }}>
+          {Number.isInteger(currentQuestion) ? `QUESTION ${currentQuestion} OF 58` : stage === 'full' ? '58-QUESTION FORMAL ASSESSMENT' : 'YOUR NEXT STEP'}
+        </span>
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(3,minmax(0,1fr))', gap:8 }}>
         {steps.map((step,index) => {
