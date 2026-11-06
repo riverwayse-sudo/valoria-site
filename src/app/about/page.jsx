@@ -68,7 +68,7 @@ export default function AboutPage() {
                 <article className="card-gold">
                   <div className="vi-card-num">02</div>
                   <div className="vi-card-name about-principle-name">Mission</div>
-                  <p className="vi-card-body">To build and operate Africa's premier human capital institution.</p>
+                  <p className="vi-card-body">To develop professionals with rigour, surface talent with merit, and connect capability to meaningful opportunity.</p>
                   <p className="vi-card-body">One that develops professionals with rigour, surfaces talent with merit, and enables precision hiring through a technology ecosystem designed for the seriousness the African professional market has always deserved.</p>
                 </article>
               </Reveal>
