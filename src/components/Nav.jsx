@@ -171,6 +171,10 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
         })
         const data = await response.json().catch(() => ({}))
         if (!response.ok || !data.url) {
+          if (response.status === 404) {
+            window.location.assign(href)
+            return
+          }
           if (data.already_completed) {
             window.location.assign('/dashboard')
             return
