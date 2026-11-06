@@ -481,7 +481,7 @@
   padding: 9px 3px;
   border: 1px solid rgba(201,168,76,.14);
   background: rgba(26,26,46,.38);
-  text-align: center;
+  text-align: left;
 }
 
 .hero-event-panel .event-modal-countdown-unit strong {
