@@ -987,7 +987,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
         <p style={{ fontSize:13, color:DIM, margin:0, lineHeight:1.7, maxWidth:720 }}>{explanation}</p>
         <div style={{ display:'flex', alignItems:'center', gap:14, flexWrap:'wrap', marginTop:18 }}>
           {next?.key === 'valu' ? (
-            <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
+            <AssessmentStartLink href={nextHref} style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
               START THE 9-QUESTION TASTER <span aria-hidden="true">→</span>
             </AssessmentStartLink>
           ) : (
