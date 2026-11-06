@@ -94,7 +94,7 @@ export default function HomePage() {
               <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Full VALU Index assessment + profile</small></div></div>
               <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Capability, eligibility and marketplace</small></div></div>
             </div>
-            <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="vcc-bottom-cta">BEGIN THE FIRST 9 QUESTIONS <span>→</span></a>
+            <AssessmentStartLink href={BRAND.assessmentUrl} className="vcc-bottom-cta">BEGIN THE 9-QUESTION TASTER <span>→</span></AssessmentStartLink>
           </Reveal>
         </div>
       </section>
