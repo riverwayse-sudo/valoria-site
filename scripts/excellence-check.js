@@ -223,7 +223,7 @@ const retiredPublicClaims = [
   [/21 professionals/i, 'unverified marketplace headcount'],
   [/certified facilitators/i, 'unverified facilitator certification'],
   [/Question 10|remaining 49|Questions 10–58/i, 'retired combined-assessment journey'],
-  [/Question\\s+\\d+\\s+of\\s+\\d+/i, 'question-count progress label must not appear in public copy'],
+  [/Question\s+\d+\s+of\s+\d+/i, 'question-count progress label must not appear in public copy'],
   [/The 9-question taster is separate from the 58-question full VALU assessment|Valoria has two separate assessment stages|Two separate assessments/i, 'internal assessment separation mechanics must not appear in public copy'],
   [/\bElite\b|\bDistinguished\b|\bProficient\b/, 'retired merit designation'],
 ];
