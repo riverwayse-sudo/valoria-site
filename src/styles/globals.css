@@ -138,3 +138,7 @@ body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-i
 
 /* Responsive connected grids. */
 @media (max-width: 900px) { .vi-card-grid-2,.vi-card-grid-3,.vi-card-grid-4 { grid-template-columns: 1fr; } .vi-card-grid > .vi-card { border-right: 0; border-bottom: 1px solid rgba(201,168,76,.12); } .vi-card-grid > .vi-card:last-child { border-bottom: 0; } }
+
+
+/* Staging-only environment indicator; rendered only by the isolated staging build. */
+.staging-site-banner{position:relative;z-index:1000;padding:7px 16px;background:#C9A84C;color:#1A1A2E;text-align:center;font-size:9px;font-weight:800;letter-spacing:.16em}
