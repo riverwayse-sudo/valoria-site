@@ -9,7 +9,7 @@ export default function DashboardLayout({ children }) {
   return (
     <>
       {children}
-      <ValoriaJourneyCards />
+      {process.env.NEXT_PUBLIC_VALU_PREVIEW !== '1' && <ValoriaJourneyCards />}
     </>
   )
 }
