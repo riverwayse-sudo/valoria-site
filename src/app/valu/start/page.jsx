@@ -94,7 +94,7 @@ export default function ValuStartPage() {
       <section className="vs-result">
         <div className="vs-shell">
           <div className="vs-result-grid">
-            <div><div className="vs-kicker"><span /> YOUR RESULT</div><h2>One assessment.<br /><em>One continuous journey.</em></h2></div>
+            <div><div className="vs-kicker"><span /> YOUR RESULT</div><h2>A clear first signal.<br /><em>A complete formal picture.</em></h2></div>
             <div className="vs-result-copy"><p>The 9-question taster is a separate directional experience. The 58-question formal assessment begins at Question 1 after account confirmation. Completing the full assessment produces one official VALU Index in points.</p><ul><li><b>VALU Index</b><span>Your official result in points</span></li><li><b>PRIME profile</b><span>A view across five capability dimensions</span></li><li><b>Next pathway</b><span>A clearer basis for what to build next</span></li></ul></div>
           </div>
         </div>
