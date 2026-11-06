@@ -481,12 +481,12 @@ describe('journey integrity contract', () => {
     expect(report).toContain(' points</span>')
   })
 
-  test('public VALU explanation describes one continuous 58-question journey with an account bridge', () => {
+  test('public VALU explanation distinguishes the taster from the formal assessment', () => {
     const start = read('src/app/valu/start/page.jsx')
-    expect(start).toContain('one continuous journey of 58 questions')
+    expect(start).toContain('9-question directional taster')
     expect(start).toContain('separate 58-question formal assessment')
     expect(start).not.toContain('Questions 10–58')
-    expect(start).toContain('One continuous journey.')
+    expect(start).toContain('A clear first signal.')
     expect(start).not.toContain('Two sessions. One result.')
     expect(start).toContain('Your official result in points')
   })
@@ -500,8 +500,8 @@ describe('journey integrity contract', () => {
     expect(signup).toContain('One quick confirmation.')
     expect(signup).toContain('Then your formal assessment.')
     expect(signup).toContain('Question 1')
-    expect(signup).toContain('Opening nine saved')
-    expect(callback).toContain("window.location.replace('/dashboard?welcome=profile')")
+    expect(signup).toContain('9-question taster saved')
+    expect(callback).toContain("router.replace('/dashboard?welcome=profile')")
     expect(callback).not.toContain('VALUJourneyProgress')
     expect(callback).not.toContain('Your next steps')
     expect(callback).not.toContain('Continue at Question 10')
