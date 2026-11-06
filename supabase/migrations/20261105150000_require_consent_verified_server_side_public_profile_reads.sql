@@ -108,3 +108,38 @@ end;
 $$;
 
 grant select on table public.marketplace_public_roster to service_role;
+
+-- Certificate visibility must use the same consent gate without requiring
+-- anonymous clients to SELECT private visibility/governance columns.
+create or replace function private.can_read_public_professional_certificate(p_professional_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = pg_catalog
+as $$
+  select exists (
+    select 1
+    from public.professional_profiles profile
+    where profile.id = p_professional_id
+      and profile.profile_complete is true
+      and profile.is_test is false
+      and profile.visibility = 'public'
+      and profile.listing_status = 'listed'
+      and profile.revoked_at is null
+      and private.has_public_profile_consent(profile.id)
+  );
+$$;
+
+revoke all on function private.can_read_public_professional_certificate(uuid) from public;
+grant execute on function private.can_read_public_professional_certificate(uuid) to anon, authenticated;
+
+drop policy if exists certificates_public_verified_read on public.professional_certificates;
+create policy certificates_public_verified_read
+  on public.professional_certificates
+  for select
+  to anon, authenticated
+  using (
+    revoked_at is null
+    and private.can_read_public_professional_certificate(professional_id)
+  );
