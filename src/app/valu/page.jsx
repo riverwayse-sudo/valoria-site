@@ -4,7 +4,7 @@ import { BRAND, PRIME_CLUSTERS } from '@/lib/brand'
 
 export const metadata = {
   title: 'VALU Index',
-  description: 'Start with a separate 9-question taster, then complete the full 58-question VALU Index to understand your professional capability in points.',
+  description: 'Start with the 9-question taster, then complete the 58-question VALU Index to understand your professional capability in points.',
   alternates: { canonical: 'https://valoriainstitute.com/valu' },
 }
 
@@ -18,12 +18,12 @@ export default function ValuPage() {
         <div className="valu-wrap">
           <div className="valu-kicker"><span /> THE VALU INDEX</div>
           <h1>Know where you stand,<br /><em>in points.</em></h1>
-          <p className="valu-lede">Start with a separate 9-question taster. If you choose to continue, complete the full 58-question VALU Index: 54 scored questions and four validity checks. The full assessment measures capability across the five PRIME clusters and reports your results in points.</p>
+          <p className="valu-lede">Start with the 9-question taster. If you choose to continue, complete the 58-question VALU Index: 54 scored questions and four validity checks. The VALU Index measures capability across the five PRIME clusters and reports your results in points.</p>
           <div className="valu-actions">
             <a href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">TAKE THE 9-QUESTION TASTER <span>→</span></a>
             <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW IT WORKS <span>↓</span></a>
           </div>
-          <div className="valu-meta"><span>9-QUESTION TASTER</span><i>·</i><span>SEPARATE 58-QUESTION FULL ASSESSMENT</span><i>·</i><span>POINTS-BASED</span></div>
+          <div className="valu-meta"><span>9-QUESTION TASTER</span><i>·</i><span>FULL 58-QUESTION VALU INDEX</span><i>·</i><span>POINTS-BASED</span></div>
         </div>
       </section>
 
@@ -39,9 +39,9 @@ export default function ValuPage() {
           <div className="valu-kicker"><span /> THE JOURNEY</div>
           <h2>Four steps from<br /><em>assessment to opportunity.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Take the taster</h3><p>Complete nine separate questions with no account required. The taster gives a first read on four Intelligence skills and introduces the other PRIME clusters.</p></article>
-            <article><b>02</b><h3>Create your account</h3><p>Choose to continue, create your Valoria account and confirm your email. Your taster remains a separate snapshot.</p></article>
-            <article><b>03</b><h3>Complete the full assessment</h3><p>Start the separate 58-question VALU Index at Question 1: 54 scored questions and four validity checks. It takes about 15 to 20 minutes and saves progress independently.</p></article>
+            <article><b>01</b><h3>Take the taster</h3><p>Complete nine questions with no account required. The taster gives a first read on professional capability.</p></article>
+            <article><b>02</b><h3>Create your account</h3><p>Choose to continue, create your Valoria account and confirm your email. Your responses are saved as you go.</p></article>
+            <article><b>03</b><h3>Complete the full assessment</h3><p>Complete the 58-question VALU Index: 54 scored questions and four validity checks. It takes about 15 to 20 minutes, and your progress is saved.</p></article>
             <article><b>04</b><h3>Build your profile and get found</h3><p>Complete your professional profile and choose public visibility. Discoverability follows consent, verification and the applicable listing rules.</p></article>
           </div>
         </div>
@@ -57,7 +57,7 @@ export default function ValuPage() {
       <section className="valu-outcome">
         <div className="valu-wrap valu-outcome-grid">
           <div><div className="valu-kicker valu-dark"><span /> WHAT YOU DO NEXT</div><h2>Your result is a starting point, not a label.</h2></div>
-          <div><p>The 9-question taster is separate from the 58-question full assessment. The taster answers are not included in the full assessment and do not reduce its question count.</p><p>The full assessment produces your official VALU Index in points, a designation and a profile valid for 12 months. The VALU Index is not a badge you buy, a subscription tier or a score that repeated attempts can inflate. A lower score points to a development pathway; it does not block access to the platform.</p><a href={BRAND.assessmentUrl} className="valu-inline">TAKE THE 9-QUESTION TASTER →</a></div>
+          <div><p>The taster offers an initial directional read. The VALU Index establishes your official result in points across five PRIME clusters.</p><p>The full assessment produces your official VALU Index in points, a designation and a profile valid for 12 months. The VALU Index is not a badge you buy, a subscription tier or a score that repeated attempts can inflate. A lower score points to a development pathway; it does not block access to the platform.</p><a href={BRAND.assessmentUrl} className="valu-inline">TAKE THE 9-QUESTION TASTER →</a></div>
         </div>
       </section>
 
