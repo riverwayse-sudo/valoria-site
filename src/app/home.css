@@ -1356,7 +1356,7 @@
     font-size: clamp(30px, 4.6vw, 44px);
   }
 
-  .hero-slider .valu-card,
+  .hero-slider .hero-stage,
   .hero-slider .hero-event-panel {
     max-width: 460px;
   }
@@ -1404,14 +1404,24 @@
     padding-block: 28px 58px;
   }
 
-  .hero-slider .valu-card,
+  .hero-slider .hero-stage,
   .hero-slider .hero-event-panel {
     display: block;
     justify-self: stretch;
     max-width: none;
   }
 
-  .hero-slider .hero-stage { padding:16px 16px 14px; }\n  .hero-stage-core { min-height:225px; }\n  .hero-stage-v { font-size:180px; }\n  .hero-stage-orbit-one { width:215px;height:215px; }\n  .hero-stage-orbit-two { width:165px;height:165px; }\n  .hero-stage-node-two { right:calc(50% - 120px); }\n  .hero-stage-node-five { left:calc(50% - 120px); }\n  .hero-stage-clusters span { font-size:7px; }\n  .hero-stage-foot { font-size:6px;letter-spacing:.08em; }\n\n  .hero-slider .hero-mobile-card {
+  .hero-slider .hero-stage { padding:16px 16px 14px; }
+  .hero-stage-core { min-height:225px; }
+  .hero-stage-v { font-size:180px; }
+  .hero-stage-orbit-one { width:215px;height:215px; }
+  .hero-stage-orbit-two { width:165px;height:165px; }
+  .hero-stage-node-two { right:calc(50% - 120px); }
+  .hero-stage-node-five { left:calc(50% - 120px); }
+  .hero-stage-clusters span { font-size:7px; }
+  .hero-stage-foot { font-size:6px;letter-spacing:.08em; }
+
+  .hero-slider .hero-mobile-card {
     display: none;
   }
 
@@ -1475,6 +1485,7 @@
   }
 
   .home-section-heading {
+    grid-template-columns: 1fr;
     gap: 14px;
     margin-bottom: 30px;
   }
