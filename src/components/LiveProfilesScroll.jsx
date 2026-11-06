@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
+import { BRAND } from '@/lib/brand'
 
 const TRACK_META = {
   candidate: { label: 'Talent', href: '/marketplace/talent' },
@@ -57,6 +58,9 @@ export default async function LiveProfilesScroll() {
             <strong>{discoverableCount}</strong>
             <span>professionals currently discoverable</span>
           </div>
+          <p className="live-profiles-trust">
+            VALU Index results are expressed in points on a 100-point scale. Explore each profile for capability context. {BRAND.compliance}. <Link href="/privacypolicy">Read our Privacy Policy</Link>.
+          </p>
         </div>
 
         <div className="live-profiles-actions" aria-label="Marketplace actions">
