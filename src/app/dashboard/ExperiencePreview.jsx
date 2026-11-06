@@ -6,7 +6,6 @@ const dimensions = ['Presence', 'Relationships', 'Intelligence', 'Mastery', 'Ent
 export default function DashboardExperiencePreview() {
   return (
     <main className={styles.page}>
-      <div className={styles.notice}>STAGING PREVIEW · ILLUSTRATIVE INTERFACE · NOT PRODUCTION</div>
       <header className={styles.header}>
         <Link href="/" className={styles.wordmark}>VALORIA <span>INSTITUTE</span></Link>
         <nav className={styles.nav} aria-label="Preview navigation">
