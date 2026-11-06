@@ -63,7 +63,7 @@ export default function ValuPage() {
       <section className="valu-outcome">
         <div className="valu-wrap valu-outcome-grid">
           <div><div className="valu-kicker valu-dark"><span /> WHAT THE FULL ASSESSMENT ADDS</div><h2>Move from a directional snapshot to an official professional record.</h2></div>
-          <div><p>The VALU taster and full assessment are separate experiences. Completing the taster does not complete nine questions of the full assessment, and the full assessment remains 58 questions.</p><p>Your completed full assessment establishes your official VALU Index and PRIME dimension results in points. Your professional profile and marketplace access then reflect your completed assessment and the applicable eligibility requirements.</p><AssessmentStartLink href={BRAND.assessmentUrl} className="valu-inline">START THE VALU TASTER →</AssessmentStartLink></div>
+          <div><p>The VALU taster offers a directional starting point. Your official VALU Index is established after completing the full assessment.</p><p>Your completed full assessment establishes your official VALU Index and PRIME dimension results in points. Your professional profile and marketplace access then reflect your completed assessment and the applicable eligibility requirements.</p><AssessmentStartLink href={BRAND.assessmentUrl} className="valu-inline">START THE VALU TASTER →</AssessmentStartLink></div>
         </div>
       </section>
 
