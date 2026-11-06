@@ -47,10 +47,10 @@ button, [role="button"], input[type="submit"], input[type="button"] { font-famil
 
 :root {
   --gold: #C9A84C;
-  --gold-light: #E2C97E;
-  --dark: #0F0F1A;
-  --dark-mid: #1A1A2E;
-  --dark-card: #161624;
+  --gold-light: #D4C9A8;
+  --dark: #1A1A2E;
+  --dark-mid: #2E2E4A;
+  --dark-card: #2E2E4A;
   --parchment: #F7F4EE;
   --dim: rgba(247, 244, 238, .55);
   --faint: rgba(247, 244, 238, .22);
@@ -61,7 +61,7 @@ button, [role="button"], input[type="submit"], input[type="button"] { font-famil
   --pad: clamp(24px, 5vw, 64px);
   --btn-radius: 9999px;
   --card-radius: 22px;
-  --nav-bg: #0F0F1A;
+  --nav-bg: #1A1A2E;
 }
 
 html { scroll-behavior: auto; }
