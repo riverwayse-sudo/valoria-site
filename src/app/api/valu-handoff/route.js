@@ -122,9 +122,12 @@ export async function POST(request) {
   // browser cookies are host-scoped, so switching between apex and www
   // can make a valid dashboard session appear to be signed out.
   const requestOrigin = new URL(request.url).origin
-  const siteOrigin = ['https://valoriainstitute.com', 'https://www.valoriainstitute.com'].includes(requestOrigin)
-    ? requestOrigin
-    : 'https://valoriainstitute.com'
+  const isPreview = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'
+  const configuredPreviewSiteOrigin = process.env.VALU_PREVIEW_SITE_ORIGIN
+  const allowedPreviewOrigins = [configuredPreviewSiteOrigin, 'https://staging.valoriainstitute.com'].filter(Boolean)
+  const siteOrigin = isPreview
+    ? (allowedPreviewOrigins.includes(requestOrigin) ? requestOrigin : configuredPreviewSiteOrigin || requestOrigin)
+    : (['https://valoriainstitute.com', 'https://www.valoriainstitute.com'].includes(requestOrigin) ? requestOrigin : 'https://valoriainstitute.com')
   destination.search = new URLSearchParams({ full: '1', site_origin: siteOrigin }).toString()
   destination.hash = new URLSearchParams({ handoff_code: handoffCode }).toString()
   return NextResponse.json({ url: destination.toString(), expires_in: HANDOFF_TTL_SECONDS }, {
