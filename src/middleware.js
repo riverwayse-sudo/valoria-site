@@ -10,7 +10,7 @@ const SB_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 export async function middleware(request) {
   const { pathname } = request.nextUrl
   // Staging experience previews are intentionally unauthenticated and must never query production or placeholder Supabase.
-  if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') return NextResponse.next()
+  if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1') return NextResponse.next()
 
   if (pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname === '/favicon.ico' || pathname.match(/\.(png|jpg|jpeg|svg|ico|webp|woff|woff2|ttf)$/)) return NextResponse.next()
   if (!SB_URL || !SB_ANON_KEY) return NextResponse.next()
