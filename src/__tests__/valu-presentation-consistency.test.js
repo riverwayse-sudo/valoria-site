@@ -12,15 +12,28 @@ describe('VALU presentation consistency', () => {
     expect(home).not.toContain('<b>15</b> QUESTIONS')
   })
 
-  test('homepage hero prioritises institutional positioning over an illustrative VALU score', () => {
+  test('homepage hero communicates Valoria’s international professional capability positioning', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('AFRICA’S HUMAN CAPITAL INSTITUTION')
-    expect(hero).toContain('Talent is not the problem.')
-    expect(hero).toContain('Infrastructure is.')
-    expect(hero).toContain('DISCOVER YOUR VALU INDEX')
+    expect(hero).toContain('AN INTERNATIONAL PROFESSIONAL CAPABILITY INSTITUTION')
+    expect(hero).toContain('Your professional worth')
+    expect(hero).toContain('deserves to be <em>understood.</em>')
+    expect(hero).toContain('across industries and borders')
+    expect(hero).toContain('DISCOVER YOUR CAPABILITIES')
+    expect(hero).toContain('hero-stage')
+    expect(hero).toContain('THE PRIME FRAMEWORK')
     expect(hero).not.toContain('vc-denom')
     expect(hero).not.toContain('FORCE TO ALIGN WITH')
     expect(hero).not.toContain('84')
+  })
+
+  test('homepage presents five distinct audience pathways', () => {
+    const home = read('src/app/page.jsx')
+    expect(home).toContain('Five ways to engage.')
+    expect(home).toContain('FOR PROFESSIONALS')
+    expect(home).toContain('FOR EMPLOYERS')
+    expect(home).toContain('FOR EVENT ORGANISERS')
+    expect(home).toContain('FOR FACILITATORS & EXPERTS')
+    expect(home).toContain('FOR INSTITUTIONS & PARTNERS')
   })
 
   test('homepage registry explains VALU points and privacy context', () => {
