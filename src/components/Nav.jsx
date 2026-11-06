@@ -36,6 +36,7 @@ export default function Nav() {
   }, [])
 
   useEffect(() => {
+    if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') { setUser(null); setAuthChecked(true); return }
     supabase.auth.getUser().then(({ data: { user: u } }) => {
       setUser(u)
       setAuthChecked(true)
@@ -45,7 +46,7 @@ export default function Nav() {
   }, [])
 
   useEffect(() => {
-    if (!user) { setAccountType(null); return }
+    if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || !user) { setAccountType(null); return }
     let cancelled = false
     async function checkAccountType() {
       const { data: proProfile } = await supabase.from('professional_profiles').select('id').eq('id', user.id).maybeSingle()
