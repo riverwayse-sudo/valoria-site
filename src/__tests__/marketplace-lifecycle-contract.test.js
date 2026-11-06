@@ -469,4 +469,13 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(profile).not.toContain('revocation_reason')
   })
 
+
+  test('public profile reads are consent-gated for anonymous and signed-in visitors while anonymous writes are revoked', () => {
+    const migration = read('supabase/migrations/20261105150000_require_consent_verified_server_side_public_profile_reads.sql')
+    expect(migration).toContain('to anon, authenticated')
+    expect(migration).toContain('private.has_public_profile_consent(id)')
+    expect(migration).toContain('revoke insert, update, delete on table public.professional_profiles from anon, public')
+    expect(migration).toContain('revoke insert, update, delete on table public.professional_certificates from anon, public')
+  })
+
 })
