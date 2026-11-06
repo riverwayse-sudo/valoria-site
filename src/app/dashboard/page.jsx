@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import VALUJourneyProgress from '@/components/VALUJourneyProgress'
 import Link from 'next/link'
 import { AssessmentStartLink } from '@/components/Nav'
+import DashboardExperiencePreview from './ExperiencePreview'
 import { supabase } from '@/lib/supabase'
 import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
@@ -100,6 +101,7 @@ function memberSince(dateStr) {
 }
 
 export default function DashboardPage() {
+  if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') return <DashboardExperiencePreview />
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [isSupply, setIsSupply] = useState(false)
