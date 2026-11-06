@@ -54,7 +54,7 @@ describe('VALU presentation consistency', () => {
     expect(prototype).not.toContain('a separate 9-question taster and a separate 58-question full assessment')
     expect(prototype).not.toContain('The taster does not count toward the full assessment')
     expect(prototype).not.toContain('15 thoughtful questions')
-    expect(prototype).not.toMatch(/Question\\s+\\$?\\{[^}]+\\}\\s+of\\s+\\$?\\{/i)
+    expect(prototype).not.toMatch(/Question\s+\\$?\\{[^}]+\\}\\s+of\\s+\\$?\\{/i)
     expect(prototype).toContain('ASSESSMENT IN PROGRESS')
   })
 })
