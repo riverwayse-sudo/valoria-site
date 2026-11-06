@@ -33,7 +33,7 @@ drop policy if exists pp_public_read_consent_verified on public.professional_pro
 create policy pp_public_read_consent_verified
   on public.professional_profiles
   for select
-  to anon
+  to anon, authenticated
   using (
     profile_complete is true
     and is_test is false
@@ -55,6 +55,7 @@ create policy pp_owner_admin_read
 -- Remove table-level and legacy column-level public reads before granting the
 -- explicit public projection. This preserves the legacy platform showcase,
 -- which selects only these seven fields from professional_profiles.
+revoke insert, update, delete on table public.professional_profiles from anon, public;
 revoke select on table public.professional_profiles from anon, public;
 do $$
 declare
@@ -133,6 +134,8 @@ $$;
 
 revoke all on function private.can_read_public_professional_certificate(uuid) from public;
 grant execute on function private.can_read_public_professional_certificate(uuid) to anon, authenticated;
+
+revoke insert, update, delete on table public.professional_certificates from anon, public;
 
 drop policy if exists certificates_public_verified_read on public.professional_certificates;
 create policy certificates_public_verified_read
