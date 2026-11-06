@@ -71,7 +71,7 @@ function AuthCallbackFlow() {
           localStorage.removeItem('pending_taster_id')
           localStorage.removeItem('pending_taster_name')
           localStorage.removeItem('pending_taster_role')
-          setMessage('Email confirmed. You’re signed in and your 9-question taster are connected. Taking you to your dashboard…')
+          setMessage('Email confirmed. You’re signed in and your 9-question taster is connected. Taking you to your dashboard…')
           await new Promise(resolve => setTimeout(resolve, 1400))
           if (!cancelled) router.replace('/dashboard?welcome=profile')
           return
