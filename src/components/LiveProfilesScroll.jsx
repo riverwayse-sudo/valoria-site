@@ -38,7 +38,7 @@ export default async function LiveProfilesScroll() {
   }
 
   const loop = [...unique, ...unique]
-  const discoverableCount = count ?? unique.length
+  const discoverableCount = Math.max(count ?? 0, unique.length)
   const trackCounts = unique.reduce((acc, profile) => {
     const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
     tracks.forEach(track => { const normalized = track === 'talent' ? 'candidate' : track; if (TRACK_META[normalized]) acc[normalized] = (acc[normalized] || 0) + 1 })
@@ -58,7 +58,7 @@ export default async function LiveProfilesScroll() {
               ? 'These are professionals in the Valoria marketplace — assessed, positioned and discoverable by capability.'
               : 'A capability-led professional registry connecting organisations with talent, speakers and facilitators across Africa.'}
           </p>
-          {discoverableCount > 0 && (
+          {discoverableCount > 0 && unique.length > 0 && (
             <div className="live-profiles-proof" aria-label="Registry summary">
               <strong>{discoverableCount}</strong>
               <span>professionals currently discoverable</span>
