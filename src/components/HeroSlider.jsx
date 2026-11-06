@@ -1,5 +1,3 @@
-'use client'
-
 import MarketplaceCTA from './MarketplaceCTA'
 import { AssessmentStartLink } from './Nav'
 import { BRAND } from '@/lib/brand'
