@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { AssessmentStartLink } from '@/components/Nav'
 import styles from './ExperiencePreview.module.css'
 
 const dimensions = ['Presence', 'Relationships', 'Intelligence', 'Mastery', 'Enterprise']
@@ -32,14 +33,14 @@ export default function DashboardExperiencePreview() {
         <section className={styles.nextStep} aria-labelledby="next-step-title">
           <div className={styles.nextCopy}>
             <p className={styles.eyebrow}>RECOMMENDED NEXT STEP</p>
-            <h2 id="next-step-title">Complete your full VALU assessment.</h2>
-            <p>The full assessment establishes your official VALU Index and PRIME results in points.</p>
-            <Link href="/valu" className={styles.primaryAction}>UNDERSTAND THE ASSESSMENT <span>→</span></Link>
+            <h2 id="next-step-title">Begin with your VALU taster.</h2>
+            <p>Start with a directional snapshot, then complete your full assessment to establish your official VALU Index and PRIME results in points.</p>
+            <AssessmentStartLink href="/valu/assessment/" className={styles.primaryAction}>START THE VALU TASTER <span>→</span></AssessmentStartLink>
           </div>
           <div className={styles.assessmentMeta}>
-            <span className={styles.metaNumber}>58</span>
-            <span className={styles.metaUnit}>QUESTIONS</span>
-            <span className={styles.metaRule}>Separate full assessment</span>
+            <span className={styles.metaNumber}>01</span>
+            <span className={styles.metaUnit}>YOUR NEXT STEP</span>
+            <span className={styles.metaRule}>A clearer starting point</span>
           </div>
         </section>
 
