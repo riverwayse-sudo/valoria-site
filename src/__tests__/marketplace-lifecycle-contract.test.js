@@ -492,4 +492,19 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(endpoint).toContain('Confirm your email before submitting your profile.')
   })
 
+
+  test('marketplace cards place VALU points beside the profile identity and use report-derived insight', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    const styles = read('src/components/MarketplaceDirectory.module.css')
+    const identity = directory.slice(directory.indexOf('<div className={styles.identity}>'), directory.indexOf('<p className={styles.career}>'))
+    expect(identity).toContain('profileId')
+    expect(identity).toContain('className={styles.valu}')
+    expect(identity).toContain('p.valu_index')
+    expect(directory).toContain('TOP DEVELOPMENT AREA')
+    expect(directory).toContain('displayText(p.assessment_summary)')
+    expect(directory).not.toContain('displayText(p.bio)')
+    expect(styles).toContain('.identity{position:relative;padding-right:62px!important}')
+    expect(styles).toContain('.valu{position:absolute')
+  })
+
 })
