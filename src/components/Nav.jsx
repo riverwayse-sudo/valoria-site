@@ -72,7 +72,7 @@ export default function Nav() {
   // Keep the primary CTA stable during auth hydration. Previously it changed
   // from START VALU to MY PROFILE/DASHBOARD after getUser(), causing a visible
   // header layout shift on every page for signed-in users.
-  const cta = { label: 'ENTER VALU JOURNEY', href: NAVIGATION.assessmentUrl, external: true }
+  const cta = { label: 'DISCOVER YOUR VALU INDEX', href: NAVIGATION.assessmentUrl, external: true }
 
   const renderItem = (item, className = 'nav-dropdown-link') => {
     const active = isPathActive(pathname, item.href)
@@ -94,13 +94,13 @@ export default function Nav() {
       <ul className="nav-links" role="list">
         {NAVIGATION.primary.map((item) => item.groups ? (
           <li className="vi-nav-menu" key={item.label}>
-            <button className={`nav-link nav-trigger${item.groups.some(g => g.items.some(i => isPathActive(pathname, i.href))) ? ' active' : ''}`} aria-expanded={openMenu === item.label} onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === item.label ? null : item.label) }}>
+            <button className={`nav-link nav-trigger${openMenu === item.label || (!openMenu && item.groups.some(g => g.items.some(i => isPathActive(pathname, i.href))) ? ' active' : '')}${openMenu === item.label ? ' is-open' : ''}`} aria-expanded={openMenu === item.label} aria-haspopup="true" onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === item.label ? null : item.label) }}>
               {item.label}<span className="nav-chevron">⌄</span>
             </button>
             <div className={`nav-dropdown${openMenu === item.label ? ' open' : ''}${item.groups.length === 1 ? ' nav-dropdown-single' : ''}`}>
               <div className={`nav-dropdown-grid${item.groups.length === 1 ? ' nav-dropdown-single' : ''}`}>
                 {item.groups.map((group) => <div key={group.label}>
-                  <div className="nav-dropdown-label">{group.label}</div>
+                  {group.label && <div className="nav-dropdown-label">{group.label}</div>}
                   {group.items.map((entry) => <div key={entry.label}>{renderItem(entry)}{entry.description && <span className="nav-dropdown-description">{entry.description}</span>}</div>)}
                 </div>)}
               </div>
