@@ -69,17 +69,19 @@ export default async function LiveProfilesScroll() {
           </p>
         </div>
 
-        <div className="live-profiles-actions" aria-label="Marketplace actions">
-          <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent">
-            <span><small>HIRING / SOURCING</small>Find talent</span><b>→</b>
-          </Link>
-          <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker">
-            <span><small>EVENTS / PROGRAMMES</small>Find a speaker</span><b>→</b>
-          </Link>
-          <Link href="/marketplace/facilitators" className="live-profile-action" data-marketplace-intent="facilitator">
-            <span><small>WORKSHOPS / CHANGE</small>Find a facilitator</span><b>→</b>
-          </Link>
-        </div>
+        {unique.length > 0 && (
+          <div className="live-profiles-actions" aria-label="Marketplace actions">
+            <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent">
+              <span><small>HIRING / SOURCING</small>Find talent</span><b>→</b>
+            </Link>
+            <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker">
+              <span><small>EVENTS / PROGRAMMES</small>Find a speaker</span><b>→</b>
+            </Link>
+            <Link href="/marketplace/facilitators" className="live-profile-action" data-marketplace-intent="facilitator">
+              <span><small>WORKSHOPS / CHANGE</small>Find a facilitator</span><b>→</b>
+            </Link>
+          </div>
+        )}
       </div>
 
       {unique.length > 0 ? (
