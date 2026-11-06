@@ -271,7 +271,7 @@
 }
 
 .hero-slider .vb-s {
-  text-align: right;
+  text-align: left;
 }
 
 .hero-slider .vb-bg {
@@ -1371,7 +1371,7 @@
 .vi-scroll-score {
   padding-left: 10px;
   border-left: 1px solid rgba(201,168,76,.16);
-  text-align: right;
+  text-align: left;
 }
 
 .vi-scroll-score-label {
