@@ -56,6 +56,7 @@ export async function POST(request) {
   }
 
   const visibility = body.visibility
+  const acknowledgementSource = body.source === 'profile_edit' ? 'profile_edit' : 'profile_setup'
   const acknowledgementVersion = visibility === 'public' ? PUBLIC_ACKNOWLEDGEMENT_VERSION : REGISTERED_ACKNOWLEDGEMENT_VERSION
   const acknowledgementText = visibility === 'public'
     ? 'I confirm that the information I provided is accurate. I consent to Valoria displaying the public profile fields associated with my professional record in the Valoria Marketplace when the applicable assessment, completeness, capability, review and listing requirements are met. I understand that completing the VALU assessment does not guarantee public listing, and I can change my visibility preference.'
@@ -81,7 +82,7 @@ export async function POST(request) {
       acknowledgement_type: 'profile_submission',
       acknowledgement_version: acknowledgementVersion,
       acknowledgement_text: acknowledgementText,
-      source: 'profile_setup',
+      source: acknowledgementSource,
       acknowledged_at: new Date().toISOString(),
     })
 
