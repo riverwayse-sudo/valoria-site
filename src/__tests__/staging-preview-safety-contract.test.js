@@ -30,8 +30,8 @@ describe('staging preview safety boundary', () => {
 
   test('preview metadata is not indexable and production analytics are disabled', () => {
     const layout = read('src/app/layout.jsx')
-    expect(layout).toContain('index: false')
-    expect(layout).toContain('follow: false')
+    expect(layout).toMatch(/index:\s*false/)
+    expect(layout).toMatch(/follow:\s*false/)
     expect(layout).toContain('IS_STAGING')
     expect(layout).toContain('!IS_STAGING')
   })
