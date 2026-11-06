@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
+import { PUBLIC_PROFILE_CONSENT_TEXT, REGISTERED_PROFILE_CONSENT_TEXT } from '@/lib/profile-consent-copy'
 import {
   GOLD, DARK, MID, PARCH, DIM, GLINE,
   INDUSTRIES, SKILLS_POOL, TOPICS_POOL, PROGRAMME_TYPES, LANGUAGES,
@@ -467,7 +468,7 @@ function EditPageInner() {
           </div>
           <label style={{ display:'flex', gap:'10px', alignItems:'flex-start', color:'rgba(247,244,238,.72)', fontSize:'11px', lineHeight:1.65, marginTop:'18px' }}>
             <input type="checkbox" checked={consentConfirmed} onChange={e => setConsentConfirmed(e.target.checked)} />
-            <span>I confirm that my profile information is accurate and consent to the visibility preference selected above. I understand that public visibility does not guarantee marketplace listing and that I can change this preference later.</span>
+            <span>{visibilityChoice === 'public' ? PUBLIC_PROFILE_CONSENT_TEXT : REGISTERED_PROFILE_CONSENT_TEXT}</span>
           </label>
           {consentError && <p role="alert" style={{ color:'#F09595', fontSize:'12px', marginTop:'12px' }}>{consentError}</p>}
           {consentMessage && <p role="status" style={{ color:GOLD, fontSize:'12px', marginTop:'12px' }}>{consentMessage}</p>}
