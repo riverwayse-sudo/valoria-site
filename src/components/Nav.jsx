@@ -150,6 +150,10 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
     if (onClick) onClick(event)
     if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
     event.preventDefault()
+    if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') {
+      window.location.assign(dashboardOnly ? '/valu/assessment/?full=1&preview=1' : href)
+      return
+    }
     if (opening) return
     setOpening(true)
     setError('')
@@ -191,7 +195,7 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
   // The anchor must advertise the actual assessment destination. Normal clicks
   // still obtain a fresh, short-lived handoff code before navigating, so this
   // canonical URL is never used as a substitute for the authenticated token.
-  const linkHref = dashboardOnly ? 'https://assessment.valoriainstitute.com/remaining' : href
+  const linkHref = dashboardOnly ? (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? '/valu/assessment/?full=1&preview=1' : 'https://assessment.valoriainstitute.com/remaining') : href
 
   return <>
     <a href={linkHref} className={className} style={style} onClick={handleClick} aria-busy={opening} {...props}>
