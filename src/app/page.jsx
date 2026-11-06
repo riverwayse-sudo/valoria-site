@@ -154,6 +154,8 @@ export default function HomePage() {
           </div>
         </section>
 
+        <LiveProfilesScroll />
+
         <section className="home-framework" aria-labelledby="home-framework-title">
           <div className="container">
             <Reveal className="home-section-heading">
@@ -200,7 +202,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        <LiveProfilesScroll />
         <HomepageEvents />
       </main>
       <Footer />
