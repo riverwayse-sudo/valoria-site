@@ -76,7 +76,9 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
           <span>VALU INDEX × PRIME</span>
         </div>
         {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p}/>)}</div> :
-          <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
+          process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'
+            ? <div className={styles.previewUnavailable} role="status"><strong>Registry data is intentionally disconnected in this staging preview.</strong><p>Profile cards, counts and eligibility states will be reviewed against a separately approved staging dataset. No live member records are exposed here.</p></div>
+            : <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
       </div>
     </section>
     </main>
