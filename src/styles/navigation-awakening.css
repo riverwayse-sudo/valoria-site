@@ -126,3 +126,49 @@
 .nav-dropdown-link:focus-visible {
   background: rgba(201,168,76,.10);
 }
+
+
+.nav-dropdown-entry {
+  display: grid;
+  gap: 3px;
+  padding: 0 0 9px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.nav-dropdown-entry:last-child {
+  padding-bottom: 0;
+}
+
+.nav-dropdown-entry:hover,
+.nav-dropdown-entry:focus-within {
+  background: rgba(201,168,76,.08);
+}
+
+.nav-dropdown-link {
+  padding-top: 11px;
+  font-size: 14px;
+}
+
+.nav-dropdown-description {
+  margin-bottom: 0;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.nav-dropdown-link:hover,
+.nav-dropdown-link.active {
+  background: transparent;
+}
+
+.nav-cta,
+.nav-mobile .m-cta {
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+.nav-mobile,
+.nav-mobile .m-label,
+.nav-mobile .nav-mobile-link {
+  text-align: left;
+}
