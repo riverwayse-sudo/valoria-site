@@ -55,7 +55,7 @@ export const NAVIGATION = {
     ],
     valu: [
       { label: 'About the VALU Index', href: '/valu' },
-      { label: 'Start the VALU Index', href: BRAND.assessmentUrl, external: true },
+      { label: 'Start the VALU Taster', href: BRAND.assessmentUrl, external: true },
     ],
     about: [
       { label: 'About Valoria', href: '/about-us' },
