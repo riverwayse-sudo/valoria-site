@@ -456,4 +456,17 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(page).toContain('Upload or update your CV in profile settings')
   })
 
+
+  test('public certificate reads enforce the same consent gate without exposing private profile columns', () => {
+    const migration = read('supabase/migrations/20261105150000_require_consent_verified_server_side_public_profile_reads.sql')
+    const profile = read('src/app/profile/[id]/ProfileClient.jsx')
+    expect(migration).toContain('private.can_read_public_professional_certificate')
+    expect(migration).toContain('private.has_public_profile_consent(profile.id)')
+    expect(migration).toContain('certificates_public_verified_read')
+    expect(migration).toContain('grant execute on function private.can_read_public_professional_certificate(uuid) to anon, authenticated')
+    expect(profile).toContain(".from('professional_certificates')")
+    expect(profile).toContain('certificate_number,title,event_title,event_date,issuer,issued_at,verification_token')
+    expect(profile).not.toContain('revocation_reason')
+  })
+
 })
