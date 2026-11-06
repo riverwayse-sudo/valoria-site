@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
+import { PUBLIC_PROFILE_CONSENT_TEXT, REGISTERED_PROFILE_CONSENT_TEXT } from '@/lib/profile-consent-copy'
 
 import {
   GOLD, DARK, MID, PARCH, DIM, GLINE,
@@ -1159,9 +1160,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
       <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'28px' }}>
         <input type="checkbox" checked={form.consent} onChange={e => set('consent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
         <span style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7 }}>
-          {form.visibility === 'public'
-            ? 'I confirm that the information I provided is accurate and consent to Valoria displaying my professional name and the public profile fields associated with my professional record when the applicable assessment, completeness, capability, review and listing requirements are met. I understand that completing VALU does not guarantee public listing.'
-            : 'I confirm that the information I provided is accurate and choose registered-only visibility. I understand that my profile will not be displayed to public visitors while this setting remains in place.'}
+          {form.visibility === 'public' ? PUBLIC_PROFILE_CONSENT_TEXT : REGISTERED_PROFILE_CONSENT_TEXT}
         </span>
       </label>
 
