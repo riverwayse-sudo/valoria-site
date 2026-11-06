@@ -8,7 +8,6 @@ import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from
 
 export default function HeroSlider() {
   const bars = [88, 90, 82, 80, 75]
-  const scores = [['P', 88], ['R', 90], ['I', 82], ['M', 80], ['E', 75]]
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
   const [selectedSession, setSelectedSession] = useState(null)
