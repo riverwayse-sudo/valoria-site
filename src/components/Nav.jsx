@@ -101,7 +101,7 @@ export default function Nav() {
               <div className={`nav-dropdown-grid${item.groups.length === 1 ? ' nav-dropdown-single' : ''}`}>
                 {item.groups.map((group) => <div key={group.label}>
                   {group.label && <div className="nav-dropdown-label">{group.label}</div>}
-                  {group.items.map((entry) => <div key={entry.label}>{renderItem(entry)}{entry.description && <span className="nav-dropdown-description">{entry.description}</span>}</div>)}
+                  {group.items.map((entry) => <div className="nav-dropdown-entry" key={entry.label}>{renderItem(entry)}{entry.description && <span className="nav-dropdown-description">{entry.description}</span>}</div>)}
                 </div>)}
               </div>
             </div>
