@@ -57,3 +57,17 @@ Use Valoria's established palette: Deep Midnight #1A1A2E, Gold #C9A84C, Slate In
 
 ## Validation
 Test the full journey at desktop and mobile widths with a staging-only identity. Verify all route transitions, session continuity, separate assessment data models, point-based reporting, keyboard use, empty/loading/error states, and no production network or data access from preview mode.
+
+
+## Staging deployment and browser-verification boundary
+
+The paired Cloudflare staging Workers are intentionally isolated from production:
+
+- Site: `https://valoria-staging-site.riverwayse.workers.dev`
+- Assessment: `https://valoria-staging-assessment.riverwayse.workers.dev`
+
+The site preview must resolve assessment pages and API paths to the assessment staging Worker, never to the production assessment host. Build-time preview origins are explicitly configured to these two staging Worker URLs.
+
+The assessment Worker has a staging-only runtime guard. Until an isolated staging database and staging-only credentials are configured, assessment persistence endpoints return HTTP 503. The taster and full 58-question screens may be exercised in local-only simulation mode; that mode must not create accounts, write answers, generate a VALU Index, or access participant data.
+
+A browser-verification pass must confirm the noindex staging banner, homepage and dashboard preview, assessment route and asset loading, the nine-question taster, the account bridge, the independent 58-question flow, responsive layouts, keyboard operation, and absence of production analytics or production data access.
