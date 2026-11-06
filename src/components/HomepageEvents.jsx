@@ -57,11 +57,6 @@ export default function HomepageEvents() {
           </div>
         </div>
 
-        <div className="home-events-footer">
-          <span>PROFESSIONAL THINKING · CAPABILITY · PRACTICAL ACTION</span>
-          <a href={youtubeUrl}>WATCH ON YOUTUBE <span aria-hidden="true">→</span></a>
-          <a href="/events">VIEW ALL EVENTS <span aria-hidden="true">→</span></a>
-        </div>
       </div>
     </section>
   )
