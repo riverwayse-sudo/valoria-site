@@ -478,4 +478,18 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(migration).toContain('revoke insert, update, delete on table public.professional_certificates from anon, public')
   })
 
+
+  test('existing professionals can actively choose visibility and record consent from profile editing', () => {
+    const edit = read('src/app/profile/edit/page.jsx')
+    const endpoint = read('src/app/api/profile/acknowledgements/route.js')
+    expect(edit).toContain('Public visibility & consent')
+    expect(edit).toContain('visibilityChoice')
+    expect(edit).toContain('consentConfirmed')
+    expect(edit).toContain("'/api/profile/acknowledgements'")
+    expect(edit).toContain("source: 'profile_edit'")
+    expect(endpoint).toContain("body.source === 'profile_edit' ? 'profile_edit' : 'profile_setup'")
+    expect(endpoint).toContain('PUBLIC_ACKNOWLEDGEMENT_VERSION')
+    expect(endpoint).toContain('Confirm your email before submitting your profile.')
+  })
+
 })
