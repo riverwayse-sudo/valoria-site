@@ -524,7 +524,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
             <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
               <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'12px' }}>Profile ID</div>
               <div style={{ fontSize:'13px', fontWeight:700, color: PARCH, letterSpacing:'.06em', marginBottom:'8px', fontVariantNumeric:'tabular-nums' }}>{atbId}</div>
-              <div style={{ fontSize:'11px', fontWeight:300, color: DIM, lineHeight:1.6 }}>Registered with African Talent Bureau Ltd.</div>
+              <div style={{ fontSize:'11px', fontWeight:300, color: DIM, lineHeight:1.6 }}>Listed in the Valoria professional registry.</div>
             </div>
 
             {/* Links — gated */}
