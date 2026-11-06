@@ -2589,3 +2589,128 @@
 .home-redesign-root .live-profiles-professional-cta a {
   font-size: 10px;
 }
+
+
+/* Honest staging-safe Bureau presentation: no invented or synthetic professional records. */
+.home-redesign-root .live-profiles-public-state {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  align-items: start;
+  gap: clamp(24px, 4vw, 48px);
+  width: min(var(--space-content-width), calc(100% - 48px));
+  max-width: var(--space-content-width);
+  margin: 0 auto;
+  padding: clamp(24px, 3.5vw, 38px) 0;
+  border-top: 1px solid rgba(201,168,76,.16);
+  border-bottom: 1px solid rgba(201,168,76,.16);
+  color: var(--parchment);
+  text-align: left;
+}
+
+.live-profiles-empty-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 11px;
+  text-align: left;
+}
+
+.live-profiles-empty-kicker {
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .15em;
+  text-align: left;
+}
+
+.live-profiles-empty-copy > strong {
+  max-width: 420px;
+  color: var(--parchment);
+  font-size: clamp(24px, 2.8vw, 34px);
+  font-weight: 400;
+  line-height: 1.15;
+  text-align: left;
+}
+
+.live-profiles-empty-copy > p {
+  max-width: 480px;
+  margin: 0;
+  color: rgba(247,244,238,.80);
+  font-size: 14px;
+  line-height: 1.7;
+  text-align: left;
+}
+
+.live-profiles-empty-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  margin-top: 5px;
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-align: left;
+  text-decoration: none;
+}
+
+.live-profiles-empty-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  text-align: left;
+}
+
+.live-profiles-empty-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 160px;
+  padding: 17px;
+  border: 1px solid rgba(201,168,76,.22);
+  background: rgba(247,244,238,.035);
+  text-align: left;
+}
+
+.live-profiles-empty-card > span {
+  color: var(--gold);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-align: left;
+}
+
+.live-profiles-empty-card > strong {
+  color: var(--parchment);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: left;
+}
+
+.live-profiles-empty-card > small {
+  margin-top: auto;
+  color: rgba(247,244,238,.76);
+  font-size: 11px;
+  line-height: 1.45;
+  text-align: left;
+}
+
+@media (max-width: 900px) {
+  .home-redesign-root .live-profiles-public-state {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .live-profiles-empty-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .live-profiles-empty-card {
+    min-height: 0;
+  }
+}
