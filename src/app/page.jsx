@@ -41,7 +41,7 @@ export default function HomePage() {
 
           <Reveal className="home-pathway-grid" as="div">
             {pathwayCards.map((card, index) => (
-              <a className={`home-pathway-card ${index === 0 ? 'is-primary' : ''}`} href={card.href} key={card.label}>
+              <a className={`home-pathway-card ${index === 0 ? 'is-primary' : index === 1 ? 'is-secondary' : ''}`} href={card.href} key={card.label}>
                 <span className="home-pathway-number">0{index + 1}</span>
                 <span className="home-pathway-label">{card.label}</span>
                 <h3>{card.title}</h3>
