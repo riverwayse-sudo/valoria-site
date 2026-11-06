@@ -114,7 +114,7 @@ export default function Nav() {
         ))}
 
         {authChecked && user && <li className="nav-account"><Link href="/dashboard" className={`nav-link${isPathActive(pathname, '/dashboard') ? ' active' : ''}`}>Dashboard</Link><NotificationBell userId={user.id} /><button onClick={signOut} className="nav-link nav-signout">Sign Out</button></li>}
-        {authChecked && !user && <li><Link href="/login" className={`nav-link${isPathActive(pathname, '/login') ? ' active' : ''}`}>Sign In</Link></li>}
+        {process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? <li><Link href="/dashboard" className={`nav-link${isPathActive(pathname, '/dashboard') ? ' active' : ''}`}>Dashboard Preview</Link></li> : authChecked && !user && <li><Link href="/login" className={`nav-link${isPathActive(pathname, '/login') ? ' active' : ''}`}>Sign In</Link></li>}
         <li><AssessmentStartLink href={cta.href} className="nav-cta">{cta.label}</AssessmentStartLink></li>
       </ul>
 
@@ -129,7 +129,7 @@ export default function Nav() {
       <div className="m-label">About</div>
       {NAVIGATION.mobile.about.map(item => <div key={item.label}>{renderItem(item, 'nav-mobile-link')}</div>)}
       <div className="m-label">Account</div>
-      {authChecked && user ? <>
+      {process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? <div>{renderItem({ label: 'Dashboard Preview', href: '/dashboard' }, 'nav-mobile-link')}</div> : authChecked && user ? <>
         <div>{renderItem({ label: 'Dashboard', href: '/dashboard' }, 'nav-mobile-link')}</div>
         <div>{renderItem({ label: 'My Profile', href: `/profile/${user.id}` }, 'nav-mobile-link')}</div>
         <button className="nav-signout" onClick={() => { close(); signOut() }}>Sign Out</button>
