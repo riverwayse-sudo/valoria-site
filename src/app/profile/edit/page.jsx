@@ -282,7 +282,7 @@ function EditPageInner() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ consent: true, visibility: visibilityChoice }),
+        body: JSON.stringify({ consent: true, visibility: visibilityChoice, source: 'profile_edit' }),
       })
       const result = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(result.error || 'Your visibility preference could not be saved.')
