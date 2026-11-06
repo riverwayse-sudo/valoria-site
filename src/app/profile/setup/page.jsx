@@ -1136,7 +1136,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
         <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
           <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — VALU INDEX ASSESSMENT</div>
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
-            Your profile is not yet listed because the full VALU assessment is not complete. Complete the separate 58-question assessment to receive your official VALU Index. Your profile must also meet the applicable completeness, eligibility and visibility requirements before it becomes public.
+            Your profile is not yet listed because the full VALU assessment is not complete. Complete the VALU Index to receive your official result. Your profile must also meet the applicable completeness, eligibility and visibility requirements before it becomes public.
           </p>
           <a href="https://valoriainstitute.com/valu/assessment/" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
             COMPLETE THE FULL VALU ASSESSMENT →
