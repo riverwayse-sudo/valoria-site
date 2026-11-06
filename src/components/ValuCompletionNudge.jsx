@@ -61,7 +61,7 @@ export default function ValuCompletionNudge(){
       <p style={S.copy}>
         {assessed
           ? 'Your professional profile is ready to complete. Finish your details to establish your marketplace presence. Eligibility and public listing are determined separately by Valoria’s requirements.'
-          : 'Start with the separate 9-question VALU taster. If you have already completed it, we will take you directly to the independent 58-question formal assessment. Taster responses never count toward your official VALU Index.'}
+          : 'Start with the VALU taster. If you have already completed it, continue to your full assessment. Your official VALU Index is available after the full assessment.'}
       </p>
       {assessed
         ? <a href="/profile/setup" style={S.button}>COMPLETE MY PROFILE →</a>
