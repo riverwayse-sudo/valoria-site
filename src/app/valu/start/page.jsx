@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/brand'
 
 export const metadata = {
   title: 'Start the VALU Taster — Valoria Institute',
-  description: 'Begin with a separate 9-question VALU taster. Then complete the independent 58-question formal assessment to receive your official VALU Index and PRIME points.',
+  description: 'Begin with the VALU taster, then complete your full assessment to receive your official VALU Index and PRIME points.',
 }
 
 const dimensions = [
@@ -17,13 +17,13 @@ const dimensions = [
 ]
 
 const faqs = [
-  ['How does it work?', 'The VALU journey has two distinct instruments: a 9-question directional taster and a separate 58-question formal assessment. Taster responses are not included in formal assessment answers or scoring. After account confirmation, the formal assessment begins at Question 1.'],
-  ['Do I need an account first?', 'No. Start with the 9-question taster first. Create or confirm your account before beginning the separate 58-question formal assessment.'],
+  ['How does it work?', 'Start with a directional taster, then complete your full assessment. Your official VALU Index and PRIME points are generated from the completed full assessment.'],
+  ['Do I need an account first?', 'No. Begin with the taster. Create or confirm your account before continuing to your full assessment.'],
   ['Who is it for?', 'It is designed for professionals across industries and markets—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight, visibility and access to opportunity.'],
-  ['Is it free?', 'Yes. The 9-question taster and the separate 58-question formal assessment are free to take. The wider Valoria ecosystem connects insight to development, visibility and opportunity.'],
-  ['Does the result define me?', 'No. The taster is directional, not an official score or permanent label. Your official VALU Index is produced only after completing the separate 58-question formal assessment.'],
+  ['Is it free?', 'Yes. The taster and full assessment are free to take. The wider Valoria ecosystem connects insight to development, visibility and opportunity.'],
+  ['Does the result define me?', 'No. The taster is directional, not an official score or permanent label. Your official VALU Index is produced after completing your full assessment.'],
   ['What happens after I finish?', 'You create your professional account, complete your profile and, subject to Valoria’s normal governance checks, become discoverable through the professional marketplace.'],
-  ['Can I pause part-way through?', 'Yes. Taster responses are saved separately. Progress in the formal 58-question assessment is also saved and can be resumed independently without restarting.'],
+  ['Can I pause part-way through?', 'Yes. Your progress is saved as you go, and you can return to your dashboard to continue without restarting.'],
 ]
 
 export default function ValuStartPage() {
@@ -41,10 +41,10 @@ export default function ValuStartPage() {
               <h1 style={{ maxWidth: "12.5ch", fontSize: "clamp(1.85rem, 3.1vw, 3.1rem)", lineHeight: 1.12, letterSpacing: "-0.045em", marginBlock: "0 1.1rem" }}>Your CV tells people what you’ve done.<br /><em>VALU shows what you can become.</em></h1>
               <p className="vs-lede">A professional diagnostic built around PRIME to give you a clearer starting point for understanding your capability, direction and professional presence.</p>
               <div className="vs-actions">
-                <AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">START THE 9-QUESTION TASTER <b>→</b></AssessmentStartLink>
+                <AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">START THE VALU TASTER <b>→</b></AssessmentStartLink>
                 <a href="#how" className="vs-btn vs-secondary">SEE HOW IT WORKS <b>↓</b></a>
               </div>
-              <div className="vs-proof"><span>9 QUESTIONS</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
+              <div className="vs-proof"><span>A QUICK START</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
             </div>
             <div className="vs-score" style={{ borderRadius: "22px", overflow: "hidden", minWidth: 0 }} aria-label="Illustrative VALU Index result">
               <div className="vs-score-top"><span>VALU INDEX</span><span>01</span></div>
@@ -83,8 +83,8 @@ export default function ValuStartPage() {
           <div className="vs-kicker dark"><span /> HOW IT WORKS</div>
           <h2>Start. Continue. Understand.<br /><em>Then become discoverable.</em></h2>
           <div className="vs-journey-grid">
-            <article><span>01</span><h3>Start</h3><p>Answer nine separate taster questions for a directional starting point. No account needed.</p></article>
-            <article><span>02</span><h3>Continue</h3><p>Create or confirm your account, then begin the separate 58-question formal assessment at Question 1.</p></article>
+            <article><span>01</span><h3>Start</h3><p>Begin with a short taster for a directional starting point. No account needed.</p></article>
+            <article><span>02</span><h3>Continue</h3><p>Create or confirm your account, then continue to your full assessment.</p></article>
             <article><span>03</span><h3>Understand</h3><p>Complete all 58 formal questions to receive your official VALU Index in points and your PRIME capability profile.</p></article>
             <article><span>04</span><h3>Discover</h3><p>Subject to governance checks, become discoverable through the marketplace.</p></article>
           </div>
@@ -95,7 +95,7 @@ export default function ValuStartPage() {
         <div className="vs-shell">
           <div className="vs-result-grid">
             <div><div className="vs-kicker"><span /> YOUR RESULT</div><h2>A clear first signal.<br /><em>A complete formal picture.</em></h2></div>
-            <div className="vs-result-copy"><p>The 9-question taster is a separate directional experience. The 58-question formal assessment begins at Question 1 after account confirmation. Completing the full assessment produces one official VALU Index in points.</p><ul><li><b>VALU Index</b><span>Your official result in points</span></li><li><b>PRIME profile</b><span>A view across five capability dimensions</span></li><li><b>Next pathway</b><span>A clearer basis for what to build next</span></li></ul></div>
+            <div className="vs-result-copy"><p>The taster offers a directional starting point. Completing your full assessment produces your official VALU Index in points.</p><ul><li><b>VALU Index</b><span>Your official result in points</span></li><li><b>PRIME profile</b><span>A view across five capability dimensions</span></li><li><b>Next pathway</b><span>A clearer basis for what to build next</span></li></ul></div>
           </div>
         </div>
       </section>
@@ -117,7 +117,7 @@ export default function ValuStartPage() {
       </section>
 
       <section className="vs-final">
-        <div className="vs-shell"><div className="vs-kicker"><span /> WORTH. BUILT.</div><h2>Your capability deserves<br /><em>more than a CV.</em></h2><p>Start with the separate 9-question taster, then decide when to begin the formal assessment.</p><AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">START THE 9-QUESTION TASTER <b>→</b></AssessmentStartLink><Link href="/valu" className="vs-back">Learn more about VALU →</Link></div>
+        <div className="vs-shell"><div className="vs-kicker"><span /> WORTH. BUILT.</div><h2>Your capability deserves<br /><em>more than a CV.</em></h2><p>Start with the VALU taster, then decide when to continue your full assessment.</p><AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">START THE VALU TASTER <b>→</b></AssessmentStartLink><Link href="/valu" className="vs-back">Learn more about VALU →</Link></div>
       </section>
     </main>
     <Footer />
