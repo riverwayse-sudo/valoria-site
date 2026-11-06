@@ -2319,3 +2319,141 @@
 .vi-footer .uf-bottom a {
   color: rgba(247,244,238,.82) !important;
 }
+
+
+/* Improve section rhythm: use the institutional parchment surface for the framework
+   and a contrasting midnight surface for audience pathways. */
+.home-framework {
+  background: var(--parchment);
+  color: var(--dark-mid);
+}
+
+.home-framework .home-section-heading h2 {
+  color: var(--dark-mid);
+}
+
+.home-framework .home-section-heading h2 em {
+  color: var(--valoria-gold-deep);
+}
+
+.home-framework .home-section-heading > p {
+  color: #555565;
+}
+
+.home-framework-card {
+  background: var(--valoria-ivory);
+  border-color: var(--valoria-brass);
+}
+
+.home-framework-number {
+  color: var(--valoria-gold-deep);
+}
+
+.home-framework-card h3 {
+  color: var(--dark-mid);
+}
+
+.home-framework-card p {
+  color: #555565;
+}
+
+.home-framework-link {
+  color: var(--valoria-gold-deep);
+  border-bottom-color: var(--valoria-brass);
+}
+
+.home-framework-link:hover,
+.home-framework-link:focus-visible {
+  color: var(--dark-mid);
+  border-color: var(--valoria-gold-deep);
+}
+
+.home-pathways {
+  background: var(--dark-mid);
+  color: var(--parchment);
+  border-top-color: rgba(201,168,76,.20);
+  border-bottom-color: rgba(201,168,76,.20);
+}
+
+.home-pathways .home-section-heading h2 {
+  color: var(--parchment);
+}
+
+.home-pathways .home-section-heading h2 em {
+  color: var(--gold);
+}
+
+.home-pathways .home-section-heading > p {
+  color: rgba(247,244,238,.76);
+}
+
+.home-pathways .home-pathway-grid {
+  border-color: rgba(212,201,168,.28);
+}
+
+.home-pathways .home-pathway-card {
+  background: rgba(247,244,238,.035);
+  border-right-color: rgba(212,201,168,.22);
+  color: var(--parchment);
+}
+
+.home-pathways .home-pathway-card h3 {
+  color: var(--parchment);
+}
+
+.home-pathways .home-pathway-card > p {
+  color: rgba(247,244,238,.76);
+}
+
+.home-pathways .home-pathway-label {
+  color: var(--valoria-brass);
+}
+
+.home-pathways .home-pathway-cta {
+  color: var(--gold);
+  border-bottom-color: rgba(201,168,76,.48);
+}
+
+.home-pathways .home-pathway-card:hover .home-pathway-cta,
+.home-pathways .home-pathway-card:focus-visible .home-pathway-cta {
+  color: var(--parchment);
+  border-color: var(--gold);
+  background: transparent;
+}
+
+.live-profiles-trust {
+  max-width: 680px;
+  margin: 18px 0 0;
+  color: rgba(247,244,238,.76);
+  font-size: 11px;
+  line-height: 1.65;
+  text-align: left;
+}
+
+.live-profiles-trust a {
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.vi-scroll-card {
+  grid-template-columns: 68px minmax(170px,1fr) 64px 22px;
+  width: min(420px, 82vw);
+}
+
+.vi-scroll-avatar {
+  width: 64px;
+  height: 64px;
+}
+
+@media (max-width: 640px) {
+  .vi-scroll-card {
+    grid-template-columns: 54px minmax(120px,1fr) 54px 16px;
+    width: calc(100vw - 36px);
+  }
+
+  .vi-scroll-avatar {
+    width: 52px;
+    height: 52px;
+  }
+}
