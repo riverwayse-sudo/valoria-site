@@ -1,5 +1,4 @@
 .page{min-height:100vh;background:#1A1A2E;color:#FAFAF7;font-family:Raleway,sans-serif}
-.notice{padding:7px 16px;background:#C9A84C;color:#1A1A2E;text-align:center;font-size:9px;font-weight:800;letter-spacing:.16em}
 .header{height:72px;padding:0 max(24px,calc((100vw - 1240px)/2));display:flex;align-items:center;justify-content:space-between;gap:24px;border-bottom:1px solid rgba(212,201,168,.18);background:#1A1A2E}
 .wordmark{color:#FAFAF7;text-decoration:none;font-size:15px;font-weight:900;letter-spacing:.16em;white-space:nowrap}
 .wordmark span{display:block;margin-top:3px;color:#D4C9A8;font-size:8px;font-weight:600;letter-spacing:.25em}
