@@ -290,10 +290,10 @@ describe('VALUI marketplace lifecycle contract', () => {
       expect(source).not.toContain('Question 10')
       expect(source).not.toContain('remaining 49')
     }
-    expect(start).toContain('The 9-question taster is separate from the 58-question full VALU assessment.')
-    expect(start).toContain('separate 58-question full assessment')
+    expect(start).toContain('The taster offers an initial directional read.')
+    expect(start).toContain('58-question VALU Index')
     expect(prime).toContain('58 questions: 54 scored questions and four validity checks')
-    expect(reminders).toContain('separate 58-question full VALU assessment')
+    expect(reminders).toContain('start or resume your VALU Index')
     expect(reminders).toContain('RETURN TO YOUR DASHBOARD')
   })
 
