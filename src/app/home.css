@@ -36,15 +36,15 @@
 /* Shared editorial hierarchy */
 .home-section-heading {
   display: grid;
-  justify-items: center;
+  justify-items: start;
   gap: 18px;
-  margin: 0 auto clamp(40px, 5vw, 60px);
+  margin: 0 0 clamp(40px, 5vw, 60px);
   max-width: 820px;
-  text-align: center;
+  text-align: left;
 }
 
 .home-section-heading .eyebrow {
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .home-section-heading h2 {
@@ -65,7 +65,7 @@
 
 .home-section-heading > p {
   max-width: 680px;
-  margin: 0 auto;
+  margin: 0;
   color: #555565;
   font-size: 16px;
   line-height: 1.7;
@@ -599,7 +599,7 @@
   font-weight: 800;
   letter-spacing: .14em;
   line-height: 1;
-  text-align: center;
+  text-align: left;
   text-decoration: none;
 }
 
@@ -676,7 +676,7 @@
 .home-events-slider {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   min-width: 0;
   padding: clamp(30px, 5vw, 58px);
   border-left: 1px solid rgba(201,168,76,.14);
@@ -810,7 +810,7 @@
 .home-events-watch-link {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 14px;
   min-height: 48px;
   padding: 0 18px;
@@ -1095,7 +1095,7 @@
   display: flex;
   min-height: 48px;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 8px;
   margin-top: 16px;
   padding: 0 16px;
@@ -1399,7 +1399,7 @@
 .vi-scroll-card-arrow {
   color: rgba(201,168,76,.72);
   font-size: 17px;
-  text-align: center;
+  text-align: left;
 }
 
 .live-profiles-bottom {
