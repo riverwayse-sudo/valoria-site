@@ -21,16 +21,22 @@ const frameworkStages = [
     number: '01',
     title: 'Assess capability',
     body: 'The VALU Index provides a structured view of professional capability across the PRIME dimensions.',
+    href: '/valu',
+    cta: 'EXPLORE THE VALU INDEX',
   },
   {
     number: '02',
     title: 'Develop with intention',
     body: 'The PRIME framework gives professionals a shared language for strengthening Presence, Relationships, Intelligence, Mastery and Enterprise.',
+    href: '/programmes',
+    cta: 'EXPLORE PROGRAMMES',
   },
   {
     number: '03',
     title: 'Connect to opportunity',
     body: 'The African Talent Bureau helps organisations discover professionals through capability-led profiles and pathways.',
+    href: '/marketplace',
+    cta: 'EXPLORE THE BUREAU',
   },
 ]
 
@@ -86,7 +92,7 @@ export default function HomePage() {
                 The VALU Index helps you understand your professional capability across Presence, Relationships, Intelligence, Mastery and Enterprise. Begin with a free taster and take a clearer view of what to build next.
               </p>
               <div className="valu-conversion-proof" aria-label="VALU Index entry details">
-                <span><b>9</b> QUESTIONS</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
+                <span><b>9</b> QUESTIONS</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span>NO ACCOUNT NEEDED</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
               </div>
               <div className="home-dual-actions">
                 <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">
@@ -163,6 +169,7 @@ export default function HomePage() {
                   <span className="home-framework-number">{stage.number}</span>
                   <h3>{stage.title}</h3>
                   <p>{stage.body}</p>
+                  <a className="home-framework-link" href={stage.href}>{stage.cta} <span aria-hidden="true">→</span></a>
                 </article>
               ))}
             </Reveal>
