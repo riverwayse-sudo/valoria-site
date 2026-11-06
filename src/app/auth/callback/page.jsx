@@ -57,7 +57,7 @@ function AuthCallbackFlow() {
         }
 
         if (pendingTasterId) {
-          setMessage('Email confirmed. Connecting your saved opening nine…')
+          setMessage('Email confirmed. Connecting your saved 9-question taster…')
           const linkRes = await fetch('/api/link-taster', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
@@ -71,7 +71,7 @@ function AuthCallbackFlow() {
           localStorage.removeItem('pending_taster_id')
           localStorage.removeItem('pending_taster_name')
           localStorage.removeItem('pending_taster_role')
-          setMessage('Email confirmed. You’re signed in and your opening nine are connected. Taking you to your dashboard…')
+          setMessage('Email confirmed. You’re signed in and your 9-question taster are connected. Taking you to your dashboard…')
           await new Promise(resolve => setTimeout(resolve, 1400))
           if (!cancelled) router.replace('/dashboard?welcome=profile')
           return
