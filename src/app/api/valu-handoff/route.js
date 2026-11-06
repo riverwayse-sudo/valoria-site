@@ -125,9 +125,12 @@ export async function POST(request) {
   const isPreview = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'
   const configuredPreviewSiteOrigin = process.env.VALU_PREVIEW_SITE_ORIGIN
   const allowedPreviewOrigins = [configuredPreviewSiteOrigin, 'https://staging.valoriainstitute.com'].filter(Boolean)
-  const siteOrigin = isPreview
-    ? (allowedPreviewOrigins.includes(requestOrigin) ? requestOrigin : configuredPreviewSiteOrigin || requestOrigin)
-    : (['https://valoriainstitute.com', 'https://www.valoriainstitute.com'].includes(requestOrigin) ? requestOrigin : 'https://valoriainstitute.com')
+  const isKnownStagingOrigin = allowedPreviewOrigins.includes(requestOrigin)
+  const siteOrigin = isKnownStagingOrigin
+    ? requestOrigin
+    : (['https://valoriainstitute.com', 'https://www.valoriainstitute.com'].includes(requestOrigin)
+      ? requestOrigin
+      : isPreview ? configuredPreviewSiteOrigin || requestOrigin : 'https://valoriainstitute.com')
   destination.search = new URLSearchParams({ full: '1', site_origin: siteOrigin }).toString()
   destination.hash = new URLSearchParams({ handoff_code: handoffCode }).toString()
   return NextResponse.json({ url: destination.toString(), expires_in: HANDOFF_TTL_SECONDS }, {
