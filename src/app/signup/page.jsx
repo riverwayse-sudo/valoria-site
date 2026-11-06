@@ -138,7 +138,7 @@ export default function SignupPage() {
                 TALENT & SPEAKERS
               </div>
               <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.6, margin: '0 0 12px' }}>
-                If you are a professional or speaker, start with the separate 9-question taster. If you choose to continue, create your account and complete the full 58-question VALU Index. The taster is not part of the full assessment.
+                If you are a professional or speaker, start with the 9-question taster. If you choose to continue, create your account and complete the 58-question VALU Index.
               </p>
               <a
                 href="/valu/assessment/"
