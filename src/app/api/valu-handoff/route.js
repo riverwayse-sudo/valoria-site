@@ -76,12 +76,13 @@ export async function GET(request) {
   if (auth.error) return auth.error
   const snapshot = await getOwnedSnapshot(admin, auth.user)
   if (snapshot.error) {
-    if (snapshot.status === 404) return NextResponse.json({ can_continue: false, assessment_completed: false }, { headers: { 'Cache-Control': 'no-store' } })
+    if (snapshot.status === 404) return NextResponse.json({ can_continue: false, assessment_completed: false, taster_completed: false }, { headers: { 'Cache-Control': 'no-store' } })
     return NextResponse.json({ error: snapshot.error }, { status: snapshot.status })
   }
   return NextResponse.json({
     can_continue: !snapshot.completed,
     assessment_completed: snapshot.completed,
+    taster_completed: true,
   }, { headers: { 'Cache-Control': 'no-store' } })
 }
 
