@@ -43,11 +43,20 @@ export default function HeroSlider() {
               <div className="hero-actions au d4"><a href={BRAND.assessmentUrl} className="btn-gold">DISCOVER YOUR CAPABILITIES</a><MarketplaceCTA className="btn-outline">EXPLORE THE BUREAU</MarketplaceCTA></div>
               <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">84</div><div className="hmc-right"><div className="hmc-desig">FORCE TO ALIGN WITH · ✦✦</div><div className="hmc-bars">{bars.map((w, i) => <div key={i} className={`hmc-bar score-${w}`} />)}</div></div></div></div>
             </div>
-            <div className="valu-card au d4" aria-label="Illustrative VALU profile">
-              <div className="vc-label">VALU INDEX · ILLUSTRATIVE PROFILE</div><div className="vc-score"><span className="vc-num">84</span><span className="vc-denom">/ 100</span></div><div className="vc-desig">FORCE TO ALIGN WITH · ✦✦</div>
-              <div className="vc-modalities"><span className="mod-pill" >CANDIDATE</span><span className="mod-pill" >SPEAKER</span></div>
-              <div className="vc-bars">{scores.map(([l, s]) => <div className="vb" key={l}><span className="vb-l">{l}</span><div className="vb-bg"><div className={`vb-fill score-${s}`} /></div><span className="vb-s">{s}</span></div>)}</div><div className="vc-foot">illustrative profile · merit made visible</div>
-            </div>
+            <aside className="hero-stage au d4" aria-label="The Valoria capability framework">
+              <div className="hero-stage-top"><span>THE VALORIA FRAMEWORK</span><span>01 — 05</span></div>
+              <div className="hero-stage-core">
+                <div className="hero-stage-orbit hero-stage-orbit-one" />
+                <div className="hero-stage-orbit hero-stage-orbit-two" />
+                <div className="hero-stage-v">V</div>
+                <div className="hero-stage-node hero-stage-node-one">P</div><div className="hero-stage-node hero-stage-node-two">R</div><div className="hero-stage-node hero-stage-node-three">I</div><div className="hero-stage-node hero-stage-node-four">M</div><div className="hero-stage-node hero-stage-node-five">E</div>
+                <div className="hero-stage-caption">WORTH.<br/><em>BUILT.</em></div>
+              </div>
+              <div className="hero-stage-clusters">
+                <div><b>01</b><span>Presence</span></div><div><b>02</b><span>Relationships</span></div><div><b>03</b><span>Intelligence</span></div><div><b>04</b><span>Mastery</span></div><div><b>05</b><span>Enterprise</span></div>
+              </div>
+              <div className="hero-stage-foot"><span>CAPABILITY</span><i>→</i><span>EVIDENCE</span><i>→</i><span>OPPORTUNITY</span></div>
+            </aside>
           </div>
         </div>
 
