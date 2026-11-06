@@ -171,7 +171,7 @@ if (fs.existsSync(valuStartPath)) {
   if (/The 9-question taster is separate from the 58-question full VALU assessment|Valoria has two separate assessment stages|Two separate assessments/i.test(valuStart)) {
     violations.push('VALU entry page must not expose internal assessment separation mechanics');
   }
-  if (/Question\\s+\\d+\\s+of\\s+\\d+/i.test(valuStart)) {
+  if (/Question\s+\d+\s+of\s+\d+/i.test(valuStart)) {
     violations.push('VALU entry page must not display question-count progress labels');
   }
   if (!valuStart.includes('TAKE THE 9-QUESTION TASTER') || !valuStart.includes('POINTS')) {
@@ -210,6 +210,10 @@ const publicCopyPaths = [
   'src/app/valu/start/page.jsx',
   'src/app/programmes/page.jsx',
   'src/app/marketplace/page.jsx',
+  'src/app/dashboard/page.jsx',
+  'src/app/professional-signup/page.jsx',
+  'src/app/profile/setup/page.jsx',
+  'src/app/test/assessment/page.jsx',
   'src/components/HeroSlider.jsx',
   'src/components/MarketplaceDirectory.jsx',
 ];
