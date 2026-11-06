@@ -157,7 +157,6 @@ function Profile({p}) {
     { key:'speaker', title:'SPEAKER', selected:selectedCaps.has('speaker') },
     { key:'facilitator', title:'FACILITATOR', selected:selectedCaps.has('facilitator') },
   ]
-  const isFullAssessment = p.assessment_access === 'full' && p.valu_index != null && Boolean(p.assessment_summary)
   const designation = displayText(p.designation)
   const designationClass = {
     'Force to Align With': styles.forceToAlignWith,
