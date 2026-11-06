@@ -101,7 +101,7 @@ function memberSince(dateStr) {
 }
 
 export default function DashboardPage() {
-  if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') return <DashboardExperiencePreview />
+  if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1') return <DashboardExperiencePreview />
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [isSupply, setIsSupply] = useState(false)
