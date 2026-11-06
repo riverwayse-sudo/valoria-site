@@ -199,7 +199,7 @@
 
 .hero-slider .vc-label {
   margin-bottom: 12px;
-  color: rgba(201,168,76,.62);
+  color: rgba(201,168,76,.96);
   font-size: 8px;
   font-weight: 800;
   letter-spacing: .20em;
@@ -344,7 +344,7 @@
 }
 
 .hero-slider .hero-slider-index {
-  color: rgba(247,244,238,.38);
+  color: rgba(247,244,238,.76);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: .16em;
@@ -358,7 +358,7 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  color: rgba(247,244,238,.42);
+  color: rgba(247,244,238,.76);
   font-size: 8px;
   letter-spacing: .18em;
   text-transform: uppercase;
@@ -496,7 +496,7 @@
 .hero-event-panel .event-modal-countdown-unit span {
   display: block;
   margin-top: 5px;
-  color: rgba(247,244,238,.30);
+  color: rgba(247,244,238,.76);
   font-size: 6px;
   font-weight: 800;
   letter-spacing: .10em;
@@ -691,7 +691,7 @@
 }
 .home-events-status {
   margin-bottom: 24px;
-  color: rgba(247,244,238,.38);
+  color: rgba(247,244,238,.76);
   font-size: 8px;
   font-weight: 800;
   letter-spacing: .15em;
@@ -729,7 +729,7 @@
   padding-block: 16px;
   border-top: 1px solid rgba(247,244,238,.10);
   border-bottom: 1px solid rgba(247,244,238,.10);
-  color: rgba(247,244,238,.42);
+  color: rgba(247,244,238,.76);
   font-size: 8px;
   font-weight: 800;
   letter-spacing: .10em;
@@ -788,7 +788,7 @@
   padding-top: 20px;
 }
 .home-events-footer span {
-  color: rgba(247,244,238,.28);
+  color: rgba(247,244,238,.76);
   font-size: 7px;
   font-weight: 800;
   letter-spacing: .12em;
@@ -957,7 +957,7 @@
 .valu-conversion-note {
   max-width: 590px;
   margin-top: 18px;
-  color: rgba(247,244,238,.36);
+  color: rgba(247,244,238,.76);
   font-size: 11px;
   line-height: 1.6;
 }
@@ -1184,7 +1184,7 @@
 }
 
 .live-profiles-proof span {
-  color: rgba(247,244,238,.38);
+  color: rgba(247,244,238,.76);
   font-size: 9px;
   font-weight: 800;
   letter-spacing: .11em;
@@ -1377,7 +1377,7 @@
 .vi-scroll-score-label {
   display: block;
   margin-bottom: 3px;
-  color: rgba(247,244,238,.36);
+  color: rgba(247,244,238,.76);
   font-size: 6px;
   font-weight: 800;
   letter-spacing: .14em;
@@ -1392,7 +1392,7 @@
 
 .vi-scroll-score-max {
   margin-left: 2px;
-  color: rgba(247,244,238,.30);
+  color: rgba(247,244,238,.76);
   font-size: 6px;
 }
 
@@ -1420,7 +1420,7 @@
 }
 
 .live-profiles-counts span {
-  color: rgba(247,244,238,.34);
+  color: rgba(247,244,238,.76);
   font-size: 7px;
   font-weight: 800;
   letter-spacing: .10em;
@@ -1448,7 +1448,7 @@
   max-width: var(--space-content-width);
   margin-inline: auto;
   padding-bottom: 28px;
-  color: rgba(247,244,238,.38);
+  color: rgba(247,244,238,.76);
   font-size: 11px;
 }
 
@@ -1477,7 +1477,7 @@
 }
 
 .live-profiles-professional-cta small {
-  color: rgba(201,168,76,.62);
+  color: rgba(201,168,76,.96);
   font-size: 7px;
   font-weight: 800;
   letter-spacing: .17em;
