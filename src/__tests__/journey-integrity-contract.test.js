@@ -6,6 +6,36 @@ function read(relative) {
   return fs.readFileSync(path.join(process.cwd(), relative), 'utf8')
 }
 
+describe('participant-facing assessment clarity', () => {
+  test('assessment pages and progress indicators do not expose question-count mechanics', () => {
+    const sources = [
+      read('src/components/VALUJourneyProgress.jsx'),
+      read('src/app/valu/page.jsx'),
+      read('src/app/valu/start/page.jsx'),
+      read('src/app/dashboard/page.jsx'),
+      read('src/app/professional-signup/page.jsx'),
+      read('src/components/ValuCompletionNudge.jsx'),
+      read('src/app/terms-of-use/page.jsx'),
+    ]
+    for (const source of sources) {
+      expect(source).not.toMatch(/(?:9|58)[- ]questions?|Question\\s*(?:1|10)|remaining 49/i)
+    }
+  })
+
+  test('internal assessment links remain in the current browser tab', () => {
+    const sources = [
+      read('src/app/prime/page.jsx'),
+      read('src/app/about-us/page.jsx'),
+      read('src/app/events/page.jsx'),
+      read('src/app/login/page.jsx'),
+      read('src/app/profile/setup/page.jsx'),
+    ]
+    for (const source of sources) {
+      expect(source).not.toContain('target="_blank"')
+    }
+  })
+})
+
 describe('journey integrity contract', () => {
   test('profile completeness remains true when the full VALU assessment is expired', () => {
     const state = deriveJourneyState({
