@@ -175,7 +175,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
 
       const { data: real, error: realError } = await supabase
         .from('professional_profiles')
-        .select('id, display_name, headline, current_job_title, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, cv_summary, programme_types')
+        .select('id, display_name, headline, current_job_title, location, industry, experience_years, skills, topics, facilitation_topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, programme_types, format_capabilities, audience_sizes, past_events, past_clients, languages')
         .eq('id', id)
         .maybeSingle()
 
@@ -553,16 +553,11 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               ) : null
             })()}
 
-            {/* About — a brief introduction in the professional's own words.
-                The VALU Index summary used to live here, but that's now
-                covered by the Key Strengths card below, so this section
-                is free to just be the bio. */}
-            <Section label="About">
-              {p.bio
-                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
-                : p.cv_summary
-                  ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.cv_summary}</p>
-                  : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No bio added yet.</p>}
+            {/* The public profile summary is generated from the VALU report, not a self-written bio or CV summary. */}
+            <Section label="VALU Index Summary">
+              {p.assessment_summary
+                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
+                : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>Your VALU Index summary will appear here when your assessment and listing requirements are complete.</p>}
             </Section>
 
             {/* Key Strengths — rectangular card, gold background per brand,
@@ -599,6 +594,32 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                     <span key={t} style={{ padding:'8px 16px', border:`1px solid ${GLINE2}`, fontSize:'12px', fontWeight:400, color: DIM, letterSpacing:'.04em' }}>
                       {t}
                     </span>
+                  ))}
+                </div>
+              </Section>
+            )}
+
+            {displayTrack === 'speaker' && p.past_events?.length > 0 && (
+              <Section label="Speaking Engagements">
+                <div style={{ display:'grid', gap:'10px' }}>
+                  {p.past_events.filter(event => event?.name).map((event, index) => (
+                    <article key={`${event.name}-${index}`} style={{ background:MID, border:`1px solid ${GLINE}`, padding:'16px 18px' }}>
+                      <h3 style={{ fontSize:'14px', fontWeight:600, color:PARCH, margin:0 }}>{event.name}</h3>
+                      {event.role && <p style={{ fontSize:'11px', color:DIM, margin:'6px 0 0' }}>{event.role}</p>}
+                    </article>
+                  ))}
+                </div>
+              </Section>
+            )}
+
+            {displayTrack === 'facilitator' && p.past_clients?.length > 0 && (
+              <Section label="Clients & Programmes">
+                <div style={{ display:'grid', gap:'10px' }}>
+                  {p.past_clients.filter(client => client?.name).map((client, index) => (
+                    <article key={`${client.name}-${index}`} style={{ background:MID, border:`1px solid ${GLINE}`, padding:'16px 18px' }}>
+                      <h3 style={{ fontSize:'14px', fontWeight:600, color:PARCH, margin:0 }}>{client.name}</h3>
+                      {client.programme && <p style={{ fontSize:'11px', color:DIM, margin:'6px 0 0' }}>{client.programme}</p>}
+                    </article>
                   ))}
                 </div>
               </Section>
