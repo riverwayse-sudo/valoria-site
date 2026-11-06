@@ -44,11 +44,12 @@ describe('VALU presentation consistency', () => {
     expect(brand).not.toContain("displaySuffix: '/100'")
   })
 
-  test('the prototype is explicitly non-production and starts with nine questions', () => {
+  test('the legacy prototype redirects to the canonical separate taster', () => {
     const prototype = read('src/app/test/assessment/page.jsx')
-    expect(prototype).toContain('const teaser = [')
-    expect(prototype).toContain('].slice(0, 9)')
-    expect(prototype).toContain('9 opening questions followed by the remaining 49 questions (58 in total)')
+    expect(prototype).toContain("redirect('/valu/assessment/')")
+    expect(prototype).not.toContain('QUESTIONS.slice(0, 9)')
+    expect(prototype).not.toContain('remaining 49')
+    expect(prototype).not.toContain('9 opening questions')
     expect(prototype).not.toContain('15 thoughtful questions')
   })
 })
