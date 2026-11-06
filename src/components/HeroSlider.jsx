@@ -41,7 +41,7 @@ export default function HeroSlider() {
               <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">A GLOBAL INSTITUTION FOR PROFESSIONAL MERIT</span></div>
               <h1 className="hero-title au d2">Talent is not<br />the problem.<br /><em>Infrastructure is.</em></h1>
               <p className="hero-sub au d3">Valoria Institute builds the infrastructure through which professional capability is developed, surfaced and connected to opportunity across industries and markets.</p>
-              <div className="hero-actions au d4"><AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">START THE VALU INDEX</AssessmentStartLink><MarketplaceCTA className="btn-outline">EXPLORE THE BUREAU</MarketplaceCTA></div>
+              <div className="hero-actions au d4"><AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">START THE VALU TASTER</AssessmentStartLink><MarketplaceCTA className="btn-outline">EXPLORE THE BUREAU</MarketplaceCTA></div>
               <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">84 <small style={{fontSize:10,letterSpacing:'.08em'}}>POINTS</small></div><div className="hmc-right"><div className="hmc-desig">FORCE TO ALIGN WITH · ✦✦</div><div className="hmc-bars">{bars.map((w, i) => <div key={i} className={`hmc-bar score-${w}`} />)}</div></div></div></div>
             </div>
             <div className="valu-card au d4" aria-label="Illustrative VALU profile">
