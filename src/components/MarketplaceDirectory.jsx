@@ -195,6 +195,6 @@ function Profile({p}) {
       <small>CAPABILITY SNAPSHOT</small>
       <p>{summary}</p>
     </div>
-    <Link href={`/profile/${p.id}`} className={styles.view}>VIEW PROFILE</Link>
+    <Link href={`/profile/${p.id}${activeTrack === 'speaker' || activeTrack === 'facilitator' ? `?track=${activeTrack}` : ''}`} className={styles.view}>VIEW PROFILE</Link>
   </article>
 }
