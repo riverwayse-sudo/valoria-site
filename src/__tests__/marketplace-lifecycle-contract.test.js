@@ -700,4 +700,35 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain("style={{ background:'#1A1A2E', color:'#F7F4EE' }}")
   })
 
+
+  test('public marketplace cards open an accessible profile preview modal', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    const styles = read('src/components/MarketplaceDirectory.module.css')
+    expect(directory).toContain('const [selectedProfile, setSelectedProfile] = useState(null)')
+    expect(directory).toContain('aria-haspopup="dialog"')
+    expect(directory).toContain('function ProfilePreviewModal({ profile, onClose })')
+    expect(directory).toContain('role="dialog"')
+    expect(directory).toContain('aria-modal="true"')
+    expect(directory).toContain("event.key === 'Escape'")
+    expect(directory).toContain("event.key !== 'Tab'")
+    expect(directory).toContain('OPEN FULL PROFILE')
+    expect(styles).toContain('.modalBackdrop')
+    expect(styles).toContain('.modalDialog')
+    expect(styles).toContain('@media(max-width:760px)')
+    expect(styles).toContain('prefers-reduced-motion:reduce')
+  })
+
+  test('public profile preview keeps Basic and Full VALU treatment separate and hides private fields', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    const modal = directory.slice(directory.indexOf('function ProfilePreviewModal'), directory.length)
+    expect(modal).toContain("profile.assessment_access === 'full'")
+    expect(modal).toContain('profile.assessment_summary')
+    expect(modal).toContain("key: 'candidate'")
+    expect(modal).toContain("key: 'speaker'")
+    expect(modal).toContain("key: 'facilitator'")
+    expect(modal).not.toContain('profile.email')
+    expect(modal).not.toContain('profile.phone')
+    expect(modal).not.toContain('profile.bio')
+  })
+
 })
