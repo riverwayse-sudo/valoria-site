@@ -243,6 +243,7 @@ function Profile({p, onSelect}) {
 }
 
 
+// The public preview receives only the consent-gated, route-safe roster projection.
 function ProfilePreviewModal({ profile, onClose }) {
   const closeButtonRef = useRef(null)
 
