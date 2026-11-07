@@ -10,6 +10,7 @@ import './pages.css'
 import Script from 'next/script'
 import ValuCompletionNudge from '../components/ValuCompletionNudge'
 import MarketingInstrumentation from '../components/MarketingInstrumentation'
+import ParallaxController from '../components/ParallaxController'
 
 const SITE_URL = 'https://valoriainstitute.com'
 const SITE_NAME = 'Valoria Institute'
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
         {IS_STAGING ? <div className="staging-site-banner" role="status">STAGING PREVIEW · NOT PRODUCTION · ISOLATED TEST ENVIRONMENT</div> : <MarketingInstrumentation />}
         {!IS_STAGING && GA_MEASUREMENT_ID && <><Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive"/><Script id="ga4-init" strategy="afterInteractive">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_MEASUREMENT_ID}');`}</Script></>}
         {!IS_STAGING && META_PIXEL_ID && <><Script id="meta-pixel" strategy="afterInteractive">{`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f.fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${META_PIXEL_ID}');fbq('track','PageView');`}</Script><noscript><img height="1" width="1" alt="" style={{display:'none'}} src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}/></noscript></>}
+        <ParallaxController rootSelector="body" />
         {children}
         {!IS_STAGING && <ValuCompletionNudge />}
       </body>
