@@ -1,5 +1,5 @@
 name: Deploy Valoria site to isolated Cloudflare staging
-# Final marketplace validation: build, deploy and smoke-test the accessible profile-preview modal and consent-gated roster.
+# Final roster integrity validation: verify duplicate-name review flags, premium profile preview and consent-gated listing.
 
 on:
   pull_request:
