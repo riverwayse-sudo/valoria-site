@@ -89,7 +89,7 @@ jobs:
           done
 
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
-          grep -Eq '^Disallow: /
+          grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
 
           curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
           grep -q 'staging.valoriainstitute.com' /tmp/valoria-sitemap.xml
@@ -122,17 +122,3 @@ jobs:
           grep -Fq '.vi-nav .nav-dropdown' /tmp/valoria-css-bundle.css
           grep -Fq '.nav-mobile .nav-dropdown' /tmp/valoria-css-bundle.css
           grep -Fq 'text-align:left!important' /tmp/valoria-css-bundle.css
- /tmp/valoria-robots.txt
-
-          curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
-          grep -q 'staging.valoriainstitute.com' /tmp/valoria-sitemap.xml
-          grep -q '/knowledge/prime-framework' /tmp/valoria-sitemap.xml
-          grep -q '/jobs' /tmp/valoria-sitemap.xml
-
-          curl -fsS "$base/llms.txt" -o /tmp/valoria-llms.txt
-          grep -q 'Human-AI Collaboration' /tmp/valoria-llms.txt
-          grep -q 'Basic is a marketplace access state, not a merit tier' /tmp/valoria-llms.txt
-
-          curl -fsS "$base/" -o /tmp/valoria-home.html
-          grep -q 'THE PROFESSIONAL CAPABILITY MARKETPLACE' /tmp/valoria-home.html
-          grep -q 'FOUR WAYS TO ENGAGE' /tmp/valoria-home.html
