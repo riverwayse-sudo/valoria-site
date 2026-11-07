@@ -70,14 +70,25 @@ jobs:
           routes=(
             /
             /valu
+            /valu/start
+            /valu/assessment
             /prime
             /about-us
+            /atb-connect
+            /atb-spotlight
+            /develop
+            /careers
+            /contact-us
+            /login
+            /professional-signup
+            /dashboard
             /marketplace
             /marketplace/talent
             /marketplace/speakers
             /marketplace/facilitators
             /jobs
             /opportunities
+            /opportunities/submit
             /events
             /knowledge
             /knowledge/valu-index
