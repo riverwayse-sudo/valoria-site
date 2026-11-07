@@ -7,10 +7,10 @@ describe('staging preview safety boundary', () => {
   test('site API routes are blocked before the unauthenticated preview bypass', () => {
     const middleware = read('src/middleware.js')
     expect(middleware).toContain("process.env.VALU_PREVIEW === '1'")
-    expect(middleware).toContain("if (isPreview && pathname.startsWith('/api/'))")
+    expect(middleware).toContain("if (isReadOnlyPreview && pathname.startsWith('/api/'))")
     expect(middleware).toContain("status: 503")
     expect(middleware).toContain('Staging preview is simulation-only; API access is disabled.')
-    expect(middleware.indexOf("if (isPreview && pathname.startsWith('/api/'))")).toBeLessThan(middleware.indexOf('if (isReadOnlyPreview) return NextResponse.next()'))
+    expect(middleware.indexOf("if (isReadOnlyPreview && pathname.startsWith('/api/'))")).toBeLessThan(middleware.indexOf('if (isReadOnlyPreview) return NextResponse.next()'))
   })
 
   test('preview navigation, journey cards, and reminders do not query account data', () => {
