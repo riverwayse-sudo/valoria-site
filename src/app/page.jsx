@@ -2,6 +2,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
+import ParallaxController from '@/components/ParallaxController'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import HomepageEvents from '@/components/HomepageEvents'
 import { BRAND } from '@/lib/brand'
@@ -87,6 +88,7 @@ export default function HomePage() {
   return (
     <>
       <Nav />
+      <ParallaxController rootSelector="#main-content" />
       <main id="main-content" className="home-redesign-root">
         <HeroSlider />
 
@@ -120,6 +122,7 @@ export default function HomePage() {
         </section>
 
         <section className="home-framework" aria-labelledby="home-framework-title">
+          <div className="home-framework-atmosphere" data-parallax-speed="0.035" aria-hidden="true" />
           <div className="container">
             <Reveal className="home-section-heading">
               <div>
