@@ -64,9 +64,7 @@ const nextConfig = {
     if (!valuOrigin) return []
     const origin = valuOrigin
     return [
-      { source: '/valu/assessment', destination: `${origin}/` },
       // Preserve the platform's Vite base path so its JS/CSS assets resolve.
-      { source: '/valu/assessment/:path*', destination: `${origin}/valu/assessment/:path*` },
 
       // The assessment bundle calls root-level platform APIs. Keep these
       // explicit so the site's own unrelated /api routes remain local.
