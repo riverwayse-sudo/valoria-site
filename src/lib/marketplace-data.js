@@ -99,15 +99,25 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
     .from('professional_profile_acknowledgements')
     .select('professional_id')
     .eq('acknowledgement_type', 'profile_submission')
-    .eq('acknowledgement_version', PUBLIC_PROFILE_ACK_VERSION)
     .in('professional_id', ids)
+    .order('acknowledged_at', { ascending: false })
+    .order('created_at', { ascending: false })
+    .order('id', { ascending: false })
 
   if (acknowledgementError) {
     console.error('Public profile consent verification failed:', acknowledgementError)
     throw new Error('Public profile consent could not be verified.')
   }
 
-  const consentedIds = new Set((acknowledgements || []).map(item => item.professional_id))
+  const latestAcknowledgements = new Map()
+  for (const acknowledgement of acknowledgements || []) {
+    if (!latestAcknowledgements.has(acknowledgement.professional_id)) {
+      latestAcknowledgements.set(acknowledgement.professional_id, acknowledgement.acknowledgement_version)
+    }
+  }
+  const consentedIds = new Set([...latestAcknowledgements.entries()]
+    .filter(([, version]) => version === PUBLIC_PROFILE_ACK_VERSION)
+    .map(([professionalId]) => professionalId))
   const profileById = new Map((profiles || []).map(profile => [profile.id, profile]))
   return new Set(rows.filter(row => {
     const profile = profileById.get(row.professional_id)
