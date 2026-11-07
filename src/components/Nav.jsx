@@ -71,7 +71,7 @@ export default function Nav() {
   // Keep the primary CTA stable during auth hydration. Previously it changed
   // between the anonymous taster CTA and the signed-in full-assessment continuation after getSession(), causing a visible
   // header layout shift on every page for signed-in users.
-  const cta = { label: 'TAKE THE 9-QUESTION TASTER', href: NAVIGATION.assessmentUrl, external: true }
+  const cta = { label: 'TAKE THE VALU TASTER', href: NAVIGATION.assessmentUrl, external: true }
 
   const renderItem = (item, className = 'nav-dropdown-link') => {
     const active = isPathActive(pathname, item.href)
