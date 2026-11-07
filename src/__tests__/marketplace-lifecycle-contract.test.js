@@ -506,7 +506,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(helper).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
     expect(helper).toContain('acknowledgement.acknowledgement_version')
     expect(helper).toContain('hasCompletedTaster')
-    expect(directory).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
+    expect(directory).toContain('PUBLIC_PROFILE_ACK_VERSION')
     expect(directory).toContain('consentedIds.has(profile.id)')
     expect(directory).toContain("profile.visibility !== 'public'")
   })
