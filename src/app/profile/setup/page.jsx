@@ -402,7 +402,7 @@ function ProfileSetupForm() {
     if (!silent) setSaving(false)
     if (error) {
       console.error('Profile save failed:', error)
-      const safeMessage = String(error.message || '').replace(/[\\r\\n]+/g, ' ').slice(0, 180)
+      const safeMessage = String(error.message || '').replace(/[\r\n]+/g, ' ').slice(0, 180)
       setSaveError(
         error.code === '23505' && /username/i.test(error.message || '')
           ? 'That username is already taken — please choose another.'
