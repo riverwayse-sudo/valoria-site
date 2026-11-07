@@ -99,10 +99,10 @@ jobs:
             /llms.txt
           )
           for route in "${routes[@]}"; do
-            status="$(curl -fsSL --retry 4 --retry-all-errors --max-time 25 -o /tmp/valoria-route-response -w '%{http_code}' "$base$route")"
+            status="$(curl -sSL --retry 4 --retry-all-errors --max-time 25 -o /tmp/valoria-route-response -w '%{http_code}' "$base$route" || true)"
             if [[ "$status" != "200" ]]; then
               echo "Route $route returned HTTP $status"
-              cat /tmp/valoria-route-response
+              cat /tmp/valoria-route-response || true
               exit 1
             fi
           done
