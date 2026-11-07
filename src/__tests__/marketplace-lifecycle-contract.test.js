@@ -431,6 +431,17 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(read('src/components/LiveProfilesScroll.jsx')).toContain('getMarketplaceDirectoryData')
   })
 
+  test('unlinked taster participants can self-serve account recovery using confirmed email and taster name', () => {
+    const recovery = read('src/app/professional-signup/recover/page.jsx')
+    const callback = read('src/app/auth/callback/page.jsx')
+    const login = read('src/app/login/page.jsx')
+    expect(recovery).toContain("user_type: 'professional'")
+    expect(recovery).toContain('/auth/callback?claim_taster=true')
+    expect(callback).toContain("params.get('claim_taster') === 'true'")
+    expect(callback).toContain("fetch('/api/claim-taster'")
+    expect(login).toContain('/professional-signup/recover')
+  })
+
   test('Full listings enforce the 35-point threshold while Basic taster listings do not', () => {
     const helper = read('src/lib/public-profile.js')
     const data = read('src/lib/marketplace-data.js')
