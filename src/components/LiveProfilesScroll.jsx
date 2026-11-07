@@ -167,7 +167,7 @@ export default async function LiveProfilesScroll() {
           <small>WANT TO BE DISCOVERED?</small>
           <strong>Build the professional record that makes your capability visible.</strong>
         </div>
-        <Link href="/valu">START WITH THE 9-QUESTION TASTER <span>→</span></Link>
+        <Link href="/valu">START WITH THE VALU TASTER <span>→</span></Link>
       </div></section>
   )
 }
