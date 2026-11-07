@@ -154,5 +154,31 @@ export async function GET(request) {
     }]
   })
 
-  return Response.json({ candidates })
+  // A shared normalized account/profile name across different authenticated IDs is
+  // a manual identity-review condition, not proof that the records are duplicates.
+  // Keep both records visible to administrators, but fail closed for publication.
+  const candidateIdsByName = new Map()
+  for (const candidate of candidates) {
+    const keys = [...new Set([normaliseName(candidate.display_name), normaliseName(candidate.account_name)].filter(Boolean))]
+    for (const key of keys) {
+      const ids = candidateIdsByName.get(key) || new Set()
+      ids.add(candidate.id)
+      candidateIdsByName.set(key, ids)
+    }
+  }
+
+  const reviewedCandidates = candidates.map(candidate => {
+    const keys = [...new Set([normaliseName(candidate.display_name), normaliseName(candidate.account_name)].filter(Boolean))]
+    const identityReviewRequired = keys.some(key => (candidateIdsByName.get(key)?.size || 0) > 1)
+    return {
+      ...candidate,
+      identity_review_required: identityReviewRequired,
+      identity_review_reason: identityReviewRequired
+        ? 'Another account uses the same normalized profile or account name. Confirm whether these are separate people before publication.'
+        : null,
+      public_ready: candidate.public_ready && !identityReviewRequired,
+    }
+  })
+
+  return Response.json({ candidates: reviewedCandidates })
 }
