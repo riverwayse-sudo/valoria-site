@@ -25,3 +25,13 @@ describe('public sitemap privacy and route contract', () => {
     expect(sitemap).toContain('https://staging.valoriainstitute.com')
   })
 })
+
+
+describe('staging crawler isolation', () => {
+  test('preview robots block indexing and do not advertise a sitemap', () => {
+    const robots = read('src/app/robots.js')
+    expect(robots).toContain("process.env.VALU_PREVIEW === '1'")
+    expect(robots).toContain("disallow: '/'")
+    expect(robots).toContain("https://valoriainstitute.com/sitemap.xml")
+  })
+})
