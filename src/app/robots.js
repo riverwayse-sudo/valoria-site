@@ -1,7 +1,8 @@
 const SITE_URL = 'https://valoriainstitute.com'
+const IS_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'
 
 export default function robots() {
-  if (process.env.VALU_PREVIEW === '1') {
+  if (IS_PREVIEW) {
     return {
       rules: [{ userAgent: '*', disallow: '/' }],
     }
