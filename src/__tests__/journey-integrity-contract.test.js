@@ -331,9 +331,11 @@ describe('journey integrity contract', () => {
     expect(source).toContain('status:502')
   })
 
-  test('opportunity submission removes the created opportunity if submission persistence fails', () => {
+  test('employer opportunity submissions use an atomic idempotent publishing RPC', () => {
     const source = read('src/app/api/opportunities/route.js')
-    expect(source).toContain("from('opportunities').delete()")
+    expect(source).toContain('create_employer_opportunity_submission')
+    expect(source).toContain('p_submission_key')
+    expect(source).not.toContain(".from('opportunities').insert")
   })
 
   test('opportunity application flow has both professional and employer endpoints', () => {
