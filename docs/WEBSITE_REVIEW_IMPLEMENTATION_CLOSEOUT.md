@@ -33,7 +33,7 @@ This closeout separates implemented code from production state, unverified behav
 | Review area | Implementation status | Remaining verification |
 |---|---|---|
 | Information architecture and navigation | Implemented | Browser walkthrough on desktop and mobile. |
-| Global content alignment | Implemented | Global stylesheet and regression tests cover all route content, cards, forms, CTAs, desktop dropdowns, nested links and mobile navigation. Visual verification at target widths remains required. |
+| Global content alignment and basic keyboard access | Implemented | Global stylesheet and regression tests cover all route content, cards, forms, CTAs, desktop dropdowns, nested links and mobile navigation. Added a site-wide skip link and reduced-motion support. Visual and assistive-technology verification at target widths remains required. |
 | Typography foundation | Implemented | Single canonical Raleway request, shared approved weight/line-height tokens and automated design-check enforcement. Visual verification at target widths remains required. |
 | Value proposition and conversion paths | Implemented | Validate buyer and professional journeys with stakeholders. |
 | Assessment journey and session continuity | Code changes implemented across site/platform branches | Taster and Full VALU now share the left-alignment contract; regression coverage verifies the Full screen wrapper, progress labels and assessment navigation. Full staging E2E remains required: save/resume, confirmation, dashboard handoff and completion. |
