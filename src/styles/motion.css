@@ -206,3 +206,32 @@ nav.vi-nav.scrolled,
 
 /* Static homepage registry layout; suppress the legacy marquee motion. */
 .home-redesign-root .vi-scroll-track { animation: none; }
+
+/* VALORIA PARALLAX SYSTEM — restrained, transform-only depth layers.
+   Scroll remains native; ParallaxController updates only visible marked layers.
+*/
+[data-parallax-speed] {
+  --vi-parallax-y: 0px;
+  transform: translate3d(0, var(--vi-parallax-y), 0);
+  will-change: transform;
+}
+
+.hero-slider .hero-bg[data-parallax-speed] {
+  transform: translate3d(0, var(--vi-parallax-y), 0) scale(1.06);
+}
+
+.hero-slider .hero-grid[data-parallax-speed] {
+  transform: translate3d(0, var(--vi-parallax-y), 0);
+}
+
+.home-framework-atmosphere[data-parallax-speed] {
+  transform: translate3d(0, var(--vi-parallax-y), 0);
+}
+
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+  [data-parallax-speed] {
+    --vi-parallax-y: 0px;
+    transform: none !important;
+    will-change: auto;
+  }
+}

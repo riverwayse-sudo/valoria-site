@@ -1973,10 +1973,30 @@
 }
 
 .home-framework {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   background: var(--dark);
   color: var(--parchment);
   border-top: 1px solid rgba(201,168,76,.12);
   border-bottom: 1px solid rgba(201,168,76,.12);
+}
+
+.home-framework > .container {
+  position: relative;
+  z-index: 1;
+}
+
+.home-framework-atmosphere {
+  position: absolute;
+  z-index: 0;
+  inset: -12% -8%;
+  pointer-events: none;
+  opacity: .62;
+  background:
+    radial-gradient(ellipse 34% 58% at 14% 46%, rgba(201,168,76,.105), transparent 72%),
+    radial-gradient(ellipse 28% 48% at 88% 58%, rgba(46,46,74,.62), transparent 74%),
+    linear-gradient(112deg, transparent 0 48%, rgba(201,168,76,.035) 48.1% 48.2%, transparent 48.3% 100%);
 }
 
 .home-framework .home-section-heading h2 {
