@@ -467,11 +467,11 @@ function ProfileSetupForm() {
     // redirected silently with no confirmation of any kind.
     const { data: row } = await supabase
       .from('professional_profiles')
-      .select('atb_id, listing_status')
+      .select('atb_id, listing_status, visibility')
       .eq('id', user.id)
       .maybeSingle()
     setSaving(false)
-    setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: row?.listing_status || 'pending' })
+    setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: row?.listing_status || 'pending', visibility: row?.visibility || 'registered_only' })
   }
 
   async function handleSaveExit() {
@@ -506,7 +506,7 @@ function ProfileSetupForm() {
           <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'28px', textAlign:'left' }}>
             <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>WHAT HAPPENS NEXT</div>
             <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.8, margin:0 }}>
-              Status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? 'Listed' : 'Not yet listed'}</strong>. Basic marketplace access can follow a completed VALU taster. Full marketplace access requires a current Full VALU Index score of at least 35 points, a complete profile and the relevant capability checks. Public display also requires your explicit permission.
+              Status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? (submittedInfo.visibility === 'public' ? 'Public listing' : 'Registered-only listing') : 'Not yet listed'}</strong>. Basic marketplace access can follow a completed VALU taster. Full marketplace access requires a current Full VALU Index score of at least 35 points, a complete profile and the relevant capability checks. Public display also requires your explicit permission.
             </p>
           </div>
 
