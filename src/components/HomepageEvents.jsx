@@ -44,7 +44,7 @@ export default function HomepageEvents() {
             <p>{replay.description}</p>
             <div className="home-events-meta">
               <span>{formatSessionDate(replay)}</span>
-              <span>{replay.speaker || 'VALORIA INSTITUTE'}</span>
+              {replay.speaker && replay.speakerApproved !== false && <span>{replay.speaker}</span>}
             </div>
             <div className="home-events-watch-actions">
               <a className="home-events-watch-link" href={youtubeUrl}>
