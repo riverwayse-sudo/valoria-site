@@ -83,8 +83,8 @@ export default function IntelligenceShowcase() {
           </div>
         </div>
         <div className={styles.heroVisual} aria-label="Illustration of connected capability intelligence">
-          <div className={styles.orbit orbitOne} />
-          <div className={styles.orbit orbitTwo} />
+          <div className={`${styles.orbit} ${styles.orbitOne}`} />
+          <div className={`${styles.orbit} ${styles.orbitTwo}`} />
           <div className={styles.core}>
             <span>VALU</span>
             <strong>Capability</strong>
