@@ -50,7 +50,29 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     })
   },[rows,activeTrack,query,industry])
 
+  const itemListSchema = useMemo(() => ({
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: activeTrack === 'all' ? 'Valoria Professional Marketplace' : 'Valoria ' + activeTrack + ' Marketplace',
+    numberOfItems: results.length,
+    itemListOrder: 'https://schema.org/ItemListOrderAscending',
+    itemListElement: results.map((profile, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'Person',
+        name: profile.full_name,
+        url: 'https://valoriainstitute.com/profile/' + profile.id,
+        jobTitle: profile.headline || profile.current_job_title || undefined,
+      },
+    })),
+  }), [results, activeTrack])
+  const itemListSchemaJson = results.length
+    ? JSON.stringify(itemListSchema).replace(/</g, '\\u003c')
+    : null
+
   return <div className={styles.page}>
+    {itemListSchemaJson && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: itemListSchemaJson }} />}
     <Nav />
     <main>
     <section className={styles.hero}>
