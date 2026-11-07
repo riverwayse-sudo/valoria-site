@@ -94,7 +94,7 @@ export async function getMarketplaceCounts() {
   if (IS_READ_ONLY_PREVIEW) return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
 
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
