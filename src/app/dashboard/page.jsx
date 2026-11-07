@@ -664,7 +664,7 @@ export default function DashboardPage() {
                 <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
                   <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'12px' }}>Profile ID</div>
                   <div style={{ fontSize:'13px', fontWeight:700, color: PARCH, letterSpacing:'.06em', marginBottom:'8px', fontVariantNumeric:'tabular-nums' }}>{atbId}</div>
-                  <div style={{ fontSize:'11px', fontWeight:300, color: DIM, lineHeight:1.6 }}>Registered with African Talent Bureau Ltd.</div>
+                  <div style={{ fontSize:'11px', fontWeight:300, color: DIM, lineHeight:1.6 }}>Your Valoria account.</div>
                 </div>
               )}
 
@@ -923,7 +923,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
     { key:'profile', label:'Professional profile', done:profileComplete },
     { key:'capability', label:'Capabilities', done:capabilityReady },
     { key:'eligibility', label:'Eligibility', done:eligibilityReady },
-    { key:'listed', label:'Registry listing', done:listedReady },
+    { key:'listed', label:'Marketplace listing', done:listedReady },
   ]
   const nextIndex = steps.findIndex(step => !step.done)
   const next = nextIndex >= 0 ? steps[nextIndex] : null
@@ -938,7 +938,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
       : next.key === 'profile' ? 'Complete your professional profile.'
         : next.key === 'capability' ? 'Choose how your expertise is represented.'
           : next.key === 'eligibility' ? 'Complete your readiness requirements.'
-            : 'Publish your Registry presence.'
+            : 'Publish your Marketplace profile.'
 
   const explanation = !next ? 'Explore opportunities and keep your professional presence current.'
     : next.key === 'valu' ? 'Begin with the VALU taster for a directional starting point. Your official VALU Index is produced after completing your full assessment.'
@@ -1059,12 +1059,12 @@ function WelcomeModal({ firstName, isSupply, isOrganiser, pct, onClose }) {
 
   const beats = isSupply ? [
     { eyebrow:'PROFILE DETAILS', title:`Your profile is taking shape, ${firstName}.`, body:`${pct}% of your required profile details are complete. This is separate from your VALU assessment and marketplace eligibility.`, icon:'✓' },
-    { eyebrow:"YOU'RE IN GOOD COMPANY", title:'Welcome to Valoria.', body:"Every professional here is independently assessed. You're not just listed — you're verified.", icon:'◈' },
+    { eyebrow:"YOU'RE IN GOOD COMPANY", title:'Welcome to Valoria.', body:"Your professional profile and VALU assessment are separate parts of your Valoria journey. Marketplace visibility follows the applicable eligibility and visibility rules.", icon:'◈' },
     { eyebrow:'WHAT HAPPENS NEXT', title:'Your next opportunity could start today.', body:'Stay visible to the right people. We’ll let you know when someone expresses interest in connecting with you.', icon:'→' },
   ] : [
     { eyebrow:"YOU'RE IN", title:`Welcome, ${firstName}.`, body:'Your account is set up and ready to go.', icon:'✓' },
-    { eyebrow:'WHAT YOU HAVE ACCESS TO', title:'Welcome to Valoria.', body:`You now have access to Africa's independently verified ${isOrganiser ? 'speaker' : 'professional'} network.`, icon:'◈' },
-    { eyebrow:'READY WHEN YOU ARE', title:'Find your first match.', body:`Search the marketplace and send your first enquiry — most ${isOrganiser ? 'speakers' : 'professionals'} respond within days.`, icon:'→' },
+    { eyebrow:'WHAT YOU HAVE ACCESS TO', title:'Welcome to Valoria.', body:`Explore the Valoria Marketplace and the public professional profiles available for your pathway.`, icon:'◈' },
+    { eyebrow:'READY WHEN YOU ARE', title:'Explore relevant profiles.', body:`Explore public profiles and express interest where an enquiry route is available.`, icon:'→' },
   ]
 
   const isLast = step === beats.length - 1
@@ -1275,7 +1275,7 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
       : !hasCapability
         ? { label:'Show what you can do', text:'Choose the capability you want Valoria to show.', href:'/profile/setup' }
         : !isListed
-          ? { label:'Become discoverable', text:'Finish your readiness steps to enter the Registry.', href:'/profile/passport' }
+          ? { label:'Become discoverable', text:'Finish your readiness steps to become eligible for Marketplace visibility.', href:'/profile/passport' }
           : { label:'Find opportunities', text:'See opportunities that fit what you do.', href:'/opportunities' }
 
   return (
