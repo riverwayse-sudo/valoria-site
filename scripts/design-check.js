@@ -125,6 +125,12 @@ const layout = existing.find((x) => x.file === 'src/app/layout.jsx')?.text || ''
 if (!layout.includes('ParallaxController') || !layout.includes('rootSelector="body"')) {
   add('src/app/layout.jsx: the shared parallax controller must be mounted once at the public-site root');
 }
+if (!parallaxController.includes("usePathname") || !parallaxController.includes("[rootSelector, pathname]")) {
+  add('ParallaxController must rescan page atmospheres after App Router navigation');
+}
+if (!parallaxController.includes("addEventListener?.('change'") || !parallaxController.includes("removeEventListener?.('change'")) {
+  add('ParallaxController must respond to runtime reduced-motion and pointer-preference changes');
+}
 if (!parallaxController.includes("prefers-reduced-motion: reduce") ||
     !parallaxController.includes('requestAnimationFrame') ||
     !parallaxController.includes('IntersectionObserver') ||
