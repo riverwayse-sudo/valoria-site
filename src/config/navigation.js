@@ -9,9 +9,11 @@ export const NAVIGATION = {
         {
           label: '',
           items: [
+            { label: 'Opportunities', href: '/opportunities', description: 'Explore published professional opportunities.' },
             { label: 'Marketplace', href: '/marketplace', description: 'Discover professionals and their capabilities.' },
-            { label: 'Facilitators', href: '/facilitators', description: 'Find people who can lead the room.' },
-            { label: 'Programmes', href: '/programmes', description: 'Develop capability with structured learning.' },
+            { label: 'ATB Connect', href: '/atb-connect', description: 'Explore capability-led talent discovery.' },
+            { label: 'ATB Spotlight', href: '/atb-spotlight', description: 'Find speakers and facilitators for your brief.' },
+            { label: 'Valoria Develop', href: '/develop', description: 'Explore PRIME-based development pathways.' },
             { label: 'Events', href: '/events', description: 'Join Valoria conversations and events.' },
             { label: 'Insights', href: '/insights', description: 'Ideas and perspectives for the modern professional.' },
           ],
@@ -36,9 +38,11 @@ export const NAVIGATION = {
   ],
   mobile: {
     explore: [
+      { label: 'Opportunities', href: '/opportunities' },
       { label: 'Marketplace', href: '/marketplace' },
-      { label: 'Facilitators', href: '/facilitators' },
-      { label: 'Programmes', href: '/programmes' },
+      { label: 'ATB Connect', href: '/atb-connect' },
+      { label: 'ATB Spotlight', href: '/atb-spotlight' },
+      { label: 'Valoria Develop', href: '/develop' },
       { label: 'Events', href: '/events' },
       { label: 'Insights', href: '/insights' },
     ],
