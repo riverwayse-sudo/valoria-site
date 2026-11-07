@@ -151,7 +151,7 @@ export default function ValuCompletionNudge() {
         </div>
       </section>
 
-      <style>{\`
+      <style>{`
         .vi-nudge-overlay{position:fixed;inset:0;z-index:9998;display:grid;place-items:center;padding:clamp(12px,3vw,30px);background:rgba(10,11,20,.76);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);animation:viNudgeFade .24s ease both}
         .vi-nudge-dialog{position:relative;display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);width:min(900px,100%);max-height:min(90dvh,760px);overflow:auto;border:1px solid rgba(201,168,76,.38);background:#F7F4EE;box-shadow:0 34px 110px rgba(0,0,0,.42);animation:viNudgeRise .38s cubic-bezier(.2,.8,.2,1) both}
         .vi-nudge-close{position:absolute;z-index:5;top:16px;right:16px;width:40px;height:40px;display:grid;place-items:center;border:1px solid rgba(26,26,46,.13);border-radius:50%;background:rgba(247,244,238,.94);color:#1A1A2E;font-size:25px;font-weight:300;cursor:pointer;transition:background .2s,transform .2s}
@@ -196,7 +196,7 @@ export default function ValuCompletionNudge() {
         @media(max-width:700px){.vi-nudge-overlay{padding:10px}.vi-nudge-dialog{grid-template-columns:1fr;max-height:94dvh}.vi-nudge-editorial{min-height:215px;padding:24px 25px}.vi-nudge-brand{font-size:8px}.vi-nudge-brand-mark{width:32px;height:32px;font-size:20px}.vi-nudge-editorial-body{margin:30px 0 20px}.vi-nudge-editorial-body p{max-width:500px;margin:10px 0 14px;font-size:31px}.vi-nudge-editorial-body small{display:none}.vi-nudge-editorial-foot{padding-top:11px}.vi-nudge-orbit{right:-210px;bottom:-210px}.vi-nudge-content{padding:28px 25px 30px}.vi-nudge-content h2{font-size:30px}.vi-nudge-copy{margin:12px 0 18px}.vi-nudge-steps{margin-bottom:18px}.vi-nudge-close{top:11px;right:11px;width:35px;height:35px}}
         @media(max-width:390px){.vi-nudge-editorial{min-height:190px;padding:20px}.vi-nudge-editorial-body{margin:23px 0 16px}.vi-nudge-editorial-body p{font-size:28px}.vi-nudge-content{padding:23px 20px 24px}.vi-nudge-content h2{font-size:27px}}
         @media(prefers-reduced-motion:reduce){.vi-nudge-overlay,.vi-nudge-dialog{animation:none}.vi-nudge-close,.vi-nudge-primary,.vi-nudge-primary b{transition:none}}
-      \`}</style>
+      `}</style>
     </div>
   )
 }
