@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 
 const MAX_PARALLAX_OFFSET = 42
 const MAX_PARALLAX_SPEED = 0.16
@@ -9,8 +10,11 @@ const PAGE_ATMOSPHERE_SELECTOR = '.page-hero, .valu-hero, .vs-hero, .events-hero
 /**
  * Applies restrained, transform-only parallax to decorative layers and page
  * atmosphere layers. Page content and layout geometry are never transformed.
+ * Re-scan after App Router navigation so each page receives its own atmosphere.
  */
 export default function ParallaxController({ rootSelector = 'body' }) {
+  const pathname = usePathname()
+
   useEffect(() => {
     const root = document.querySelector(rootSelector)
     if (!root) return
@@ -22,15 +26,20 @@ export default function ParallaxController({ rootSelector = 'body' }) {
 
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')
     const finePointer = window.matchMedia?.('(hover: hover) and (pointer: fine)')
-    if (reducedMotion?.matches || (finePointer && !finePointer.matches)) return
+    const shouldAnimate = () => !reducedMotion?.matches && (!finePointer || finePointer.matches)
+    const resetLayers = () => layers.forEach((layer) => layer.style.setProperty('--vi-parallax-y', '0px'))
 
     const activeLayers = new Set()
     let frameId = 0
 
     const update = () => {
       frameId = 0
-      const viewportHeight = window.innerHeight || 0
+      if (!shouldAnimate()) {
+        resetLayers()
+        return
+      }
 
+      const viewportHeight = window.innerHeight || 0
       activeLayers.forEach((layer) => {
         const isPageAtmosphere = layer.matches(PAGE_ATMOSPHERE_SELECTOR)
         const configuredSpeed = layer.getAttribute('data-parallax-speed')
@@ -58,6 +67,12 @@ export default function ParallaxController({ rootSelector = 'body' }) {
     }
 
     const scheduleUpdate = () => {
+      if (!shouldAnimate()) {
+        if (frameId) window.cancelAnimationFrame(frameId)
+        frameId = 0
+        resetLayers()
+        return
+      }
       if (!frameId) frameId = window.requestAnimationFrame(update)
     }
 
@@ -80,8 +95,11 @@ export default function ParallaxController({ rootSelector = 'body' }) {
       else activeLayers.add(layer)
     })
 
+    const onMotionPreferenceChange = () => scheduleUpdate()
     window.addEventListener('scroll', scheduleUpdate, { passive: true })
     window.addEventListener('resize', scheduleUpdate, { passive: true })
+    reducedMotion?.addEventListener?.('change', onMotionPreferenceChange)
+    finePointer?.addEventListener?.('change', onMotionPreferenceChange)
     scheduleUpdate()
 
     return () => {
@@ -89,10 +107,12 @@ export default function ParallaxController({ rootSelector = 'body' }) {
       observer?.disconnect()
       window.removeEventListener('scroll', scheduleUpdate)
       window.removeEventListener('resize', scheduleUpdate)
-      layers.forEach((layer) => layer.style.removeProperty('--vi-parallax-y'))
+      reducedMotion?.removeEventListener?.('change', onMotionPreferenceChange)
+      finePointer?.removeEventListener?.('change', onMotionPreferenceChange)
+      resetLayers()
       activeLayers.clear()
     }
-  }, [rootSelector])
+  }, [rootSelector, pathname])
 
   return null
 }
