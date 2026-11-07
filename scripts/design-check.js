@@ -167,7 +167,7 @@ for (const { file, text } of parallaxSources) {
   }
 }
 
-const layoutSource = existing.find((x) => x.file === 'src/app/layout.jsx')?.text || '';
+
 const alignment = existing.find((x) => x.file === 'src/styles/left-alignment.css')?.text || '';
 if (!layoutSource.includes("import '../styles/left-alignment.css'")) {
   add('src/app/layout.jsx: site-wide left-alignment standard is not loaded');
