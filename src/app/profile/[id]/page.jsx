@@ -36,6 +36,7 @@ export default async function ProfilePage({ params, searchParams }) {
 
   if (error) console.error('public Marketplace profile fetch failed:', error)
 
+  const profileContentNotReady = Boolean(row && !isPublicProfileContentReady(row))
   const publicProfile = isPublicProfileContentReady(row) ? toPublicProfile(row) : null
   const profileUrl = publicProfile?.id ? `https://valoriainstitute.com/profile/${publicProfile.id}` : null
   const profileSchema = publicProfile ? {
@@ -59,7 +60,7 @@ export default async function ProfilePage({ params, searchParams }) {
   return (
     <>
       {profileSchemaJson && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: profileSchemaJson }} />}
-      <ProfileClient id={id} searchParams={resolvedSearchParams} initialProfile={publicProfile} />
+      <ProfileClient id={id} searchParams={resolvedSearchParams} initialProfile={publicProfile} profileContentNotReady={profileContentNotReady} />
     </>
   )
 }
