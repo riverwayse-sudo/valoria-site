@@ -131,6 +131,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
     // or assessment-derived summary.
     assessment_summary: roster.assessment_access === 'full' ? roster.assessment_summary : null,
     valu_index: roster.assessment_access === 'full' ? profile.valu_index : null,
+    valu_score: roster.assessment_access === 'full' ? profile.valu_index : null,
     cluster_scores: roster.assessment_access === 'full' ? profile.cluster_scores : null,
     designation: roster.assessment_access === 'full' ? profile.designation : null,
     capabilities: roster.capabilities || [],
