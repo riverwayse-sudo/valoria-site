@@ -3512,3 +3512,38 @@
 .vi-footer .uf-bottom {
   align-items: flex-start;
 }
+
+
+/* Clear operating scope without implying broader live coverage. */
+.home-market-scope {
+  background: #1A1A2E;
+  border-bottom: 1px solid rgba(201, 168, 76, .16);
+  padding: 14px 0;
+}
+.home-market-scope .container {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  text-align: left;
+}
+.home-market-scope span {
+  flex: 0 0 auto;
+  color: #C9A84C;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+.home-market-scope p {
+  margin: 0;
+  color: rgba(247, 244, 238, .72);
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: left;
+}
+@media (max-width: 640px) {
+  .home-market-scope .container {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+}
