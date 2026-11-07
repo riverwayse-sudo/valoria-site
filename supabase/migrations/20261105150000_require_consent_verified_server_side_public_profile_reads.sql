@@ -20,7 +20,7 @@ as $$
     from public.professional_profile_acknowledgements acknowledgement
     where acknowledgement.professional_id = p_professional_id
       and acknowledgement.acknowledgement_type = 'profile_submission'
-      and acknowledgement.acknowledgement_version = 'public-profile-visibility-v2-2026-11-06'
+      and acknowledgement.acknowledgement_version = 'public-profile-visibility-v3-2026-11-07'
   );
 $$;
 
