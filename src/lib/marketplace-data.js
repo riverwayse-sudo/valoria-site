@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,fee_range,salary_expectation,availability_status,assessment_access'
+const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,fee_range,salary_expectation,availability_status,assessment_access,professional_profiles!marketplace_public_roster_professional_id_fkey!inner(visibility,listing_status,is_test)'
 const SOURCE = 'marketplace_public_roster'
 
 function normalizeTrack(value) {
@@ -45,6 +45,9 @@ export async function getMarketplaceRows(track = 'all') {
   const { data, error } = await supabase
     .from(SOURCE)
     .select(FIELDS)
+    .in('professional_profiles.visibility', ['public', 'marketplace'])
+    .in('professional_profiles.listing_status', ['listed', 'active'])
+    .eq('professional_profiles.is_test', false)
     .order('valu_index', { ascending: false, nullsFirst: false })
     .order('full_name', { ascending: true })
 
@@ -53,7 +56,7 @@ export async function getMarketplaceRows(track = 'all') {
     return []
   }
 
-  const rows = dedupeProfessionals(data)
+  const rows = dedupeProfessionals(data).map(({ professional_profiles, ...row }) => row)
   return rows.filter(row => track === 'all' || row.capabilities.includes(normalizeTrack(track)))
 }
 
@@ -65,7 +68,10 @@ export async function getMarketplaceCounts() {
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
   const { data, error } = await supabase
     .from(SOURCE)
-    .select('professional_id,capability,track,capabilities')
+    .select('professional_id,capability,track,capabilities,professional_profiles!marketplace_public_roster_professional_id_fkey!inner(visibility,listing_status,is_test)')
+    .in('professional_profiles.visibility', ['public', 'marketplace'])
+    .in('professional_profiles.listing_status', ['listed', 'active'])
+    .eq('professional_profiles.is_test', false)
 
   if (error) {
     console.error('Marketplace count query failed:', error)
