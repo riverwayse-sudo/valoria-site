@@ -1,5 +1,5 @@
 name: Deploy Valoria site to isolated Cloudflare staging
-# Final integrated validation: build and smoke-test the complete current staging experience before promotion.
+# Roster integrity validation: test first-name abbreviation handling, revoked-account exclusion and the full staging experience.
 
 on:
   pull_request:
