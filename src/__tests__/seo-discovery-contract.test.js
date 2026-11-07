@@ -47,6 +47,14 @@ describe('Valoria SEO and discovery foundation', () => {
     expect(directory).toContain("'@type': 'ListItem'")
   })
 
+  test('homepage states Nigeria as the initial market without overstating regional availability', () => {
+    const home = read('src/app/page.jsx')
+    expect(home).toContain('INITIAL MARKET')
+    expect(home).toContain('initial operating focus is Nigeria')
+    expect(home).toContain('broader African and international audiences in view')
+    expect(home).toContain('Starting in Nigeria')
+  })
+
   test('root layout publishes Organization and WebSite entities', () => {
     const layout = read('src/app/layout.jsx')
     expect(layout).toContain('organizationSchema')
