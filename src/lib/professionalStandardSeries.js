@@ -25,7 +25,7 @@ export const PROFESSIONAL_STANDARD_SERIES = [
     id: '04', cluster: 'ENTERPRISE',
     title: 'Influence Without Authority: The Real Currency of Organisational Power',
     description: '',
-    start: '2026-11-14T10:00:00+01:00', dateApproved: true,
+    start: '2026-11-14T10:00:00+01:00', end: '2026-11-14T11:30:00+01:00', dateApproved: true,
     speaker: 'Yinlayefa Thompson, SPHRi', host: 'Temitayo Adetokunbo',
   },
   {
