@@ -5,7 +5,7 @@ import { BRAND, PRIME_CLUSTERS } from '@/lib/brand'
 import '../pages.css'
 
 export const metadata = {
-  title: 'About Valoria Institute — Worth. Built.',
+  title: 'About Valoria Institute — Worth, Built.',
   description: 'Valoria Institute is the institution behind a professional capability and opportunity system, connecting assessment, development and visibility through the PRIME framework and VALU Index.',
   alternates: { canonical: 'https://valoriainstitute.com/about' },
 }
@@ -155,7 +155,7 @@ export default function AboutPage() {
 
         <section className="page-section alt cta-banner">
           <Reveal>
-            <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">WORTH. BUILT.</span><div className="eyebrow-line" /></div>
+            <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">WORTH, BUILT.</span><div className="eyebrow-line" /></div>
             <h2 className="section-title">Make your capability<br /><em>easier to see.</em></h2>
             <p className="page-sub about-cta-copy">Start with the VALU taster, then decide whether to continue with the VALU Index.</p>
             <div className="page-hero-actions eyebrow-center">
