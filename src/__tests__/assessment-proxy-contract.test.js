@@ -11,6 +11,8 @@ describe('production assessment Worker proxy', () => {
     expect(route).toContain('init.body = request.body')
     expect(route).toContain('export async function POST(request)')
     expect(route).toContain('export async function OPTIONS(request)')
+    expect(route).not.toContain('VALU_PREVIEW_ASSESSMENT_ORIGIN')
+    expect(route).not.toContain('valoria-staging-assessment.riverwayse.workers.dev')
     expect(route).toContain("const isApiRequest = target.pathname.startsWith('/api/')")
     expect(route).toContain("responseHeaders.set('cache-control', isApiRequest ? 'no-store'")
   })
