@@ -251,7 +251,7 @@ if (!fs.existsSync(globalStylesPath) || !fs.existsSync(rootLayoutPath) || !fs.ex
   if (!rootLayout.includes("import '../styles/globals.css'")) {
     violations.push('main website global alignment stylesheet must be loaded by the root layout');
   }
-  if (!/html\\s+body,\\s*html\\s+body \\*\\s*\\{\\s*text-align:\\s*left\\s*!important;/i.test(globalStyles)) {
+  if (!/html\s+body,\s*html\s+body \*\s*\{\s*text-align:\s*left\s*!important;/i.test(globalStyles)) {
     violations.push('all main website page content must inherit the left-alignment contract');
   }
   for (const selector of ['.nav-dropdown', '.nav-dropdown-grid', '.nav-dropdown-link', '.nav-dropdown-description', '.nav-mobile', '.nav-mobile-link']) {
