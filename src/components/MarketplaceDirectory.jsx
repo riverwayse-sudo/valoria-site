@@ -51,7 +51,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       if(cluster && getLeadingCluster(p) !== cluster) return false
       if(skill && !labelValues(p.skills).includes(skill)) return false
       if(!q) return true
-      return [p.atb_id,p.headline,p.current_job_title,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
+      return [p.atb_id,p.headline,p.current_job_title,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
     })
   },[rows,activeTrack,query,industry,cluster,skill])
 
@@ -127,7 +127,7 @@ function getLeadingCluster(profile) {
   const scores = profile.cluster_scores
   if (!scores || typeof scores !== 'object' || Array.isArray(scores)) return ''
   const entries = Object.entries(scores).filter(([letter, value]) =>
-    PRIME_CLUSTERS.some(cluster => cluster.letter === letter) && Number.isFinite(Number(value))
+    PRIME_CLUSTERS.some(cluster => cluster.letter === letter) && value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value))
   )
   if (entries.length !== 5) return ''
   entries.sort((a, b) => Number(b[1]) - Number(a[1]))
