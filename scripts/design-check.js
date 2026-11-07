@@ -131,7 +131,7 @@ if (!/main :where\\(h1, h2, h3, h4, h5, h6, p, li, label, blockquote, figcaption
   add('src/styles/left-alignment.css: public page editorial copy must be left-aligned');
 }
 
-if (violations.length)
+if (violations.length) {
   console.error('\nValoria design check FAILED — production promotion blocked\n');
   for (const violation of [...new Set(violations)]) console.error('• ' + violation);
   process.exit(1);
