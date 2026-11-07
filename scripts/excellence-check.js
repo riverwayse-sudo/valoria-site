@@ -238,6 +238,29 @@ for (const relativePath of publicCopyPaths) {
   }
 }
 
+// Site-wide left alignment is a production requirement, including desktop dropdowns and mobile navigation.
+const globalStylesPath = path.join(root, 'src/styles/globals.css');
+const rootLayoutPath = path.join(root, 'src/app/layout.jsx');
+const navigationPath = path.join(root, 'src/components/Nav.jsx');
+if (!fs.existsSync(globalStylesPath) || !fs.existsSync(rootLayoutPath) || !fs.existsSync(navigationPath)) {
+  violations.push('main website global alignment contract is missing its stylesheet, root layout or navigation component');
+} else {
+  const globalStyles = fs.readFileSync(globalStylesPath, 'utf8');
+  const rootLayout = fs.readFileSync(rootLayoutPath, 'utf8');
+  const navigation = fs.readFileSync(navigationPath, 'utf8');
+  if (!rootLayout.includes("import '../styles/globals.css'")) {
+    violations.push('main website global alignment stylesheet must be loaded by the root layout');
+  }
+  if (!/html\\s+body,\\s*html\\s+body \\*\\s*\\{\\s*text-align:\\s*left\\s*!important;/i.test(globalStyles)) {
+    violations.push('all main website page content must inherit the left-alignment contract');
+  }
+  for (const selector of ['.nav-dropdown', '.nav-dropdown-grid', '.nav-dropdown-link', '.nav-dropdown-description', '.nav-mobile', '.nav-mobile-link']) {
+    if (!globalStyles.includes(selector) || !navigation.includes(selector.slice(1))) {
+      violations.push('desktop/mobile navigation alignment contract missing: ' + selector);
+    }
+  }
+}
+
 const pkg = JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
 if (!pkg.scripts?.['design:check']) violations.push('package.json: design:check gate missing');
 if (!fs.existsSync(path.join(root, 'src/lib/password-policy.js'))) violations.push('authentication control missing: src/lib/password-policy.js');
