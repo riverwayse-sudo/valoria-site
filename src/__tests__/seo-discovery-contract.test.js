@@ -71,5 +71,6 @@ describe('Valoria SEO and discovery foundation', () => {
     expect(read('src/config/navigation.js')).not.toContain("href: '/jobs'")
     expect(read('src/components/Footer.jsx')).not.toContain('href="/jobs"')
     expect(read('src/app/sitemap.js')).not.toContain("path: '/jobs'")
+    expect(read('next.config.js')).toContain("source: '/jobs', destination: '/opportunities', permanent: true")
   })
 })
