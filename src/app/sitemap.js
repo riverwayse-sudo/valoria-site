@@ -19,6 +19,7 @@ export default async function sitemap() {
     { path: '/atb-spotlight', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/events', priority: 0.7, changeFrequency: 'weekly' },
     { path: '/insights', priority: 0.7, changeFrequency: 'weekly' },
+    { path: '/intelligence', priority: 0.85, changeFrequency: 'monthly' },
     { path: '/about-us', priority: 0.6, changeFrequency: 'monthly' },
     { path: '/contact-us', priority: 0.5, changeFrequency: 'yearly' },
     { path: '/careers', priority: 0.6, changeFrequency: 'weekly' },
