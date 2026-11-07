@@ -18,9 +18,8 @@ function normaliseName(value) {
 function namesAlign(profileName, accountName) {
   const profile = normaliseName(profileName)
   const account = normaliseName(accountName)
-  return Boolean(profile && account && (
-    profile === account || profile.startsWith(account) || account.startsWith(profile)
-  ))
+  // Identity reconciliation must be exact; prefix similarity is not proof of ownership.
+  return Boolean(profile && account && profile === account)
 }
 
 export async function GET(request) {
