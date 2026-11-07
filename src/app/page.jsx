@@ -66,8 +66,8 @@ const pathwayCards = [
     label: 'FOR FACILITATORS & EXPERTS',
     title: 'Put expertise to work.',
     body: 'Make your facilitation and specialist expertise visible to organisations seeking people who can lead learning and meaningful change.',
-    href: '/facilitators',
-    cta: 'EXPLORE FACILITATOR PATHWAYS',
+    href: '/marketplace/facilitators',
+    cta: 'FIND FACILITATORS',
   },
   {
     label: 'FOR INSTITUTIONS & PARTNERS',
