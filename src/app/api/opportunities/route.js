@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
 
-const IS_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'
+const IS_READ_ONLY_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' && process.env.VALU_STAGING_API_ENABLED !== '1'
 
 function db(){
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}})
@@ -13,14 +13,14 @@ function clientKey(request,email){
   return createHash('sha256').update(`${ip}:${email.toLowerCase().trim()}`).digest('hex')
 }
 export async function GET(){
-  if (IS_PREVIEW) return Response.json({ opportunities: [], preview: true })
+  if (IS_READ_ONLY_PREVIEW) return Response.json({ opportunities: [], preview: true })
   const sb=db()
   const {data,error}=await sb.from('opportunities').select('id,slug,title,opportunity_type,summary,organisation_name,location,work_mode,employment_type,experience_level,industry,capabilities,skills,compensation,application_method,application_url,closing_at').eq('status','published').eq('access_level','public').or('closing_at.is.null,closing_at.gt.'+new Date().toISOString()).order('published_at',{ascending:false})
   if(error)return Response.json({error:error.message},{status:500})
   return Response.json({opportunities:data||[]})
 }
 export async function POST(request){
-  if (IS_PREVIEW) return Response.json({ error: 'Opportunity submissions are disabled in staging preview. No data was written.' }, { status: 503 })
+  if (IS_READ_ONLY_PREVIEW) return Response.json({ error: 'Opportunity submissions are disabled in read-only staging preview. No data was written.' }, { status: 503 })
   const body=await request.json().catch(()=>null)
   if(body?.website)return Response.json({ok:true,status:'pending_review'})
   if(!body?.title||!body?.description||!body?.organisation_name||!body?.submitter_name||!body?.submitter_email)return Response.json({error:'Title, description, organisation, name and email are required.'},{status:400})
