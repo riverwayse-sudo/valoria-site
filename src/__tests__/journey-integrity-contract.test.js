@@ -455,7 +455,8 @@ describe('journey integrity contract', () => {
     expect(signup).toContain('VALUJourneyProgress stage="account"')
     expect(dashboard).toContain('VALUJourneyProgress stage="full"')
     expect(signup).not.toContain('9-QUESTION VALU INDEX COMPLETE')
-    expect(signup).toContain('Snapshot · Saved')
+    expect(signup).toContain('TASTER STATUS')
+    expect(signup).toContain('Saved')
     expect(dashboard).toContain('CONTINUE YOUR VALU JOURNEY')
   })
 
