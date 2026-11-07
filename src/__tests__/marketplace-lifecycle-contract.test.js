@@ -33,7 +33,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain('assessment_access')
     expect(directory).toContain("p.assessment_access === 'full'")
     expect(directory).toContain('BASIC · SNAPSHOT')
-    expect(directory).toContain('official points, merit tier and assessment insight')
+    expect(directory).toContain('Complete the full VALU Index assessment to unlock this insight.')
   })
 
   test('marketplace data is professional-first and deduplicates capabilities', () => {
