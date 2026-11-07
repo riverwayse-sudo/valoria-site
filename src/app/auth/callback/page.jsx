@@ -77,6 +77,26 @@ function AuthCallbackFlow() {
           return
         }
 
+        if (params.get('claim_taster') === 'true') {
+          setMessage('Email confirmed. Checking for your saved VALU taster…')
+          const claimRes = await fetch('/api/claim-taster', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+          })
+          const claimData = await claimRes.json().catch(() => ({}))
+          if (!claimRes.ok) throw new Error(claimData.error || 'Your saved taster could not be checked yet.')
+          if (claimData.reconciled > 0) {
+            setMessage('Your saved VALU taster is connected. Complete profile setup and choose your visibility preference to publish your Basic listing.')
+          } else if (claimData.conflicts > 0) {
+            setMessage('Your account is confirmed, but the saved taster needs a manual identity review. The original record has been preserved; continue to your dashboard.')
+          } else {
+            setMessage('Your account is confirmed. We could not find a saved taster matching these details, but you can start the VALU taster from your dashboard.')
+          }
+          await new Promise(resolve => setTimeout(resolve, 1400))
+          if (!cancelled) router.replace('/dashboard?welcome=profile')
+          return
+        }
+
         const { data: buyerProfile } = await supabase.from('profiles').select('id').eq('id', user.id).maybeSingle()
         if (cancelled) return
         setMessage(buyerProfile ? 'Email confirmed. You’re signed in. Taking you to your dashboard…' : 'Email confirmed. You’re signed in. Taking you to your dashboard…')
