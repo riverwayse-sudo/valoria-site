@@ -14,18 +14,18 @@ export default function HeroSlider() {
             <div className="hero-copy">
               <div className="hero-eyebrow">
                 <div className="hero-eyebrow-line" />
-                <span className="hero-eyebrow-text">AN INTERNATIONAL PROFESSIONAL CAPABILITY INSTITUTION</span>
+                <span className="hero-eyebrow-text">AFRICA'S PROFESSIONAL CAPABILITY MARKETPLACE</span>
               </div>
               <h1 className="hero-title" id="valoria-hero-title">
-                Your professional worth<br />
-                deserves to be <em>understood.</em>
+                Capability should decide<br />
+                who gets <em>seen.</em>
               </h1>
               <p className="hero-sub">
-                Valoria Institute helps people understand, develop and demonstrate their professional capabilities — connecting expertise with meaningful opportunities across industries and borders.
+                Valoria helps professionals understand their capabilities, build a stronger professional presence and connect with opportunities where their expertise can make a difference.
               </p>
               <div className="hero-actions">
                 <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">
-                  DISCOVER YOUR CAPABILITIES <span aria-hidden="true">→</span>
+                  START THE 9-QUESTION TASTER <span aria-hidden="true">→</span>
                 </AssessmentStartLink>
                 <MarketplaceCTA className="btn-outline">
                   EXPLORE THE TALENT MARKETPLACE <span aria-hidden="true">→</span>
