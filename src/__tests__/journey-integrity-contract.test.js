@@ -269,6 +269,7 @@ describe('journey integrity contract', () => {
     const assessmentProxy = read('src/app/valu/assessment/[[...path]]/route.js')
     expect(assessmentProxy).toContain('valoria-staging-assessment.riverwayse.workers.dev')
     expect(assessmentProxy).toContain("redirect: 'follow'")
+    expect(assessmentProxy).toContain("suffix ? `/valu/assessment/${suffix}` : '/'")
     expect(assessmentProxy).toContain('export async function GET')
     expect(assessmentProxy).toContain('export async function HEAD')
     expect(config).not.toContain("source: '/valu/assessment'")
