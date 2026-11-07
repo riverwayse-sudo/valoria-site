@@ -152,13 +152,20 @@ export async function POST(request) {
     if (!UUID_RE.test(String(professional_profile_id || '')) || !enquiry_type) {
       return Response.json({ error: 'A valid professional profile and enquiry type are required.' }, { status: 400 })
     }
-    if (!buyer_name?.trim() || !buyer_email?.trim() || !message?.trim()) {
+    if (typeof buyer_name !== 'string' || typeof buyer_email !== 'string' || typeof message !== 'string') {
       return Response.json({ error: 'Name, email and message are required.' }, { status: 400 })
     }
-    if (buyer_name.trim().length > 200 || buyer_email.trim().length > 254 || String(message).trim().length > 5000 || String(buyer_company || '').trim().length > 200) {
+    const normalizedName = buyer_name.trim()
+    const normalizedEmail = buyer_email.trim().toLowerCase()
+    const normalizedCompany = typeof buyer_company === 'string' ? buyer_company.trim() : ''
+    const normalizedSubject = typeof subject === 'string' ? subject.trim() : ''
+    const normalizedMessage = message.trim()
+    if (!normalizedName || !normalizedEmail || !normalizedMessage) {
+      return Response.json({ error: 'Name, email and message are required.' }, { status: 400 })
+    }
+    if (normalizedName.length > 200 || normalizedEmail.length > 254 || normalizedMessage.length > 5000 || normalizedCompany.length > 200 || normalizedSubject.length > 200) {
       return Response.json({ error: 'One or more fields exceed the allowed length.' }, { status: 400 })
     }
-    const normalizedEmail = buyer_email.trim().toLowerCase()
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
       return Response.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     }
@@ -205,9 +212,6 @@ export async function POST(request) {
       return Response.json({ error: 'Too many requests from this connection. Please try again later.' }, { status: 429 })
     }
 
-    const normalizedName = buyer_name.trim()
-    const normalizedCompany = buyer_company?.trim() || null
-    const normalizedMessage = message.trim()
     const canonicalAtbId = publicProfile.atb_id || 'Valoria professional'
     const { error: insertError } = await supabase.from('enquiries').insert([{
       buyer_user_id: null,
@@ -215,7 +219,7 @@ export async function POST(request) {
       buyer_email: normalizedEmail,
       buyer_company: normalizedCompany,
       professional_profile_id,
-      subject: subject?.trim() || null,
+      subject: normalizedSubject || null,
       body: normalizedMessage,
       enquiry_type,
       status: 'pending',
@@ -230,11 +234,11 @@ export async function POST(request) {
     }
 
     const actionUrl = `/profile/${professional_profile_id}`
-    notifyAdmin({ enquiryType: enquiry_type, atbId: canonicalAtbId, buyerName: normalizedName, buyerEmail: normalizedEmail, buyerCompany: normalizedCompany, subject, body: normalizedMessage })
+    notifyAdmin({ enquiryType: enquiry_type, atbId: canonicalAtbId, buyerName: normalizedName, buyerEmail: normalizedEmail, buyerCompany: normalizedCompany || null, subject: normalizedSubject, body: normalizedMessage })
       .catch(error => console.error('Admin enquiry notification failed:', error))
     confirmToBuyer({ enquiryType: enquiry_type, atbId: canonicalAtbId, buyerName: normalizedName, buyerEmail: normalizedEmail })
       .catch(error => console.error('Buyer enquiry confirmation failed:', error))
-    notifyProfessional({ supabase, professionalProfileId: professional_profile_id, enquiryType: enquiry_type, atbId: canonicalAtbId, buyerName: normalizedName, buyerCompany: normalizedCompany, actionUrl })
+    notifyProfessional({ supabase, professionalProfileId: professional_profile_id, enquiryType: enquiry_type, atbId: canonicalAtbId, buyerName: normalizedName, buyerCompany: normalizedCompany || null, actionUrl })
       .catch(error => console.error('Professional enquiry notification failed:', error))
 
     return Response.json({
