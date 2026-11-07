@@ -147,10 +147,16 @@ html body * {
 }
 
 /* Directional controls retain their own layout; only their text alignment is normalised. */
-.vi-nav-dropdown,
-.vi-nav-dropdown-grid,
-.vi-nav-dropdown-link,
-.vi-nav-dropdown-description {
+.nav-dropdown,
+.nav-dropdown-grid,
+.nav-dropdown-link,
+.nav-dropdown-description,
+.nav-mobile,
+.nav-mobile-link,
+.nav-link,
+.nav-trigger,
+.nav-cta,
+.m-cta {
   text-align: left !important;
 }
 
