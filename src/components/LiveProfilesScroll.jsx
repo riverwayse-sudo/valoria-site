@@ -32,31 +32,46 @@ export default async function LiveProfilesScroll() {
   const unique = []
   const seen = new Set()
   for (const profile of profiles) {
-    if (seen.has(profile.id)) continue
+    const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
+    const summary = String(profile.assessment_summary || '').trim()
+    const headline = String(profile.headline || '').trim()
+    const profileId = String(profile.atb_id || '').trim()
+    const points = Number(profile.valu_index)
+    const placeholderHeadlines = new Set(['model', 'valoria professional', 'growth dev'])
+    const isQualityReady = Boolean(
+      profile.id &&
+      profileId &&
+      summary.length >= 24 &&
+      headline.length >= 8 &&
+      !placeholderHeadlines.has(headline.toLowerCase()) &&
+      !/descriptor unavailable/i.test(summary) &&
+      Number.isInteger(points) &&
+      points >= 0 &&
+      points <= 100 &&
+      tracks.some(track => TRACK_META[track === 'talent' ? 'candidate' : track])
+    )
+    if (!isQualityReady || seen.has(profile.id)) continue
     seen.add(profile.id)
     unique.push(profile)
   }
 
   const loop = [...unique, ...unique]
-  const discoverableCount = Math.max(count ?? 0, unique.length)
-  const trackCounts = unique.reduce((acc, profile) => {
-    const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
-    tracks.forEach(track => { const normalized = track === 'talent' ? 'candidate' : track; if (TRACK_META[normalized]) acc[normalized] = (acc[normalized] || 0) + 1 })
-    return acc
-  }, {})
+  // The count endpoint covers the full public roster, while previews are capped at 24.
+  // Only show a count when every public row was returned and passed the same quality bar.
+  const discoverableCount = count !== null && count <= 24 && count === unique.length ? count : null
 
   return (
     <section className="live-profiles" aria-labelledby="registry-title">
       <div className="live-profiles-shell">
         <div className="live-profiles-copy">
-          <div className="live-profiles-kicker">{unique.length > 0 ? 'THE VALORIA REGISTRY · LIVE' : 'THE AFRICAN TALENT BUREAU'}</div>
+          <div className="live-profiles-kicker">{unique.length > 0 ? 'THE VALORIA MARKETPLACE · LIVE' : 'THE VALORIA MARKETPLACE'}</div>
           <h2 id="registry-title" className="live-profiles-title">
             {unique.length > 0 ? <>See who is already <em>discoverable.</em></> : <>Professional capability, <em>made discoverable.</em></>}
           </h2>
           <p className="live-profiles-subtitle">
             {unique.length > 0
               ? 'These are professionals in the Valoria marketplace — assessed, positioned and discoverable by capability.'
-              : 'A capability-led professional registry connecting organisations with talent, speakers and facilitators across Africa.'}
+              : 'A capability-led marketplace for employers, event organisers and training buyers to discover professional expertise.'}
           </p>
           {discoverableCount > 0 && unique.length > 0 && (
             <div className="live-profiles-proof" aria-label="Registry summary">
@@ -65,7 +80,7 @@ export default async function LiveProfilesScroll() {
             </div>
           )}
           <p className="live-profiles-trust">
-            VALU Index results are expressed in points on a 100-point scale. Explore each profile for capability context. {BRAND.compliance}. <Link href="/privacypolicy">Read our Privacy Policy</Link>.
+            VALU Index results are expressed in points. Public profiles appear according to Valoria's eligibility and visibility rules. <Link href="/privacypolicy">Read our Privacy Policy</Link>.
           </p>
         </div>
 
@@ -125,12 +140,7 @@ export default async function LiveProfilesScroll() {
           </div>
 
           <div className="live-profiles-bottom">
-            <div className="live-profiles-counts">
-              {Object.entries(TRACK_META).map(([track, meta]) => (
-                <span key={track}><b>{trackCounts[track] || 0}</b> {meta.label.toLowerCase()} profiles</span>
-              ))}
-            </div>
-            <Link href="/marketplace" className="live-profiles-link" data-marketplace-intent="all">OPEN THE FULL REGISTRY <span>→</span></Link>
+            <Link href="/marketplace" className="live-profiles-link" data-marketplace-intent="all">OPEN THE MARKETPLACE <span>→</span></Link>
           </div>
         </>
       ) : (
@@ -139,7 +149,7 @@ export default async function LiveProfilesScroll() {
             <span className="live-profiles-empty-kicker">THE AFRICAN TALENT BUREAU</span>
             <strong>Make professional expertise easier to find.</strong>
             <p>Explore the pathways through which employers, event organisers and programme teams can discover relevant expertise.</p>
-            <Link href="/marketplace" className="live-profiles-empty-link">EXPLORE THE BUREAU <span aria-hidden="true">→</span></Link>
+            <Link href="/marketplace" className="live-profiles-empty-link">EXPLORE THE MARKETPLACE <span aria-hidden="true">→</span></Link>
           </div>
           <div className="live-profiles-empty-grid">
             <div className="live-profiles-empty-card"><span>01 · TALENT</span><strong>Professional capability</strong><small>For hiring and sourcing.</small></div>
@@ -155,7 +165,7 @@ export default async function LiveProfilesScroll() {
           <small>WANT TO BE DISCOVERED?</small>
           <strong>Build the professional record that makes your capability visible.</strong>
         </div>
-        <Link href="/valu">START WITH VALU INDEX <span>→</span></Link>
+        <Link href="/valu">START WITH THE 9-QUESTION TASTER <span>→</span></Link>
       </div></section>
   )
 }
