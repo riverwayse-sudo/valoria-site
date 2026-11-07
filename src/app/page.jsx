@@ -2,7 +2,6 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
-import ParallaxController from '@/components/ParallaxController'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import HomepageEvents from '@/components/HomepageEvents'
 import { BRAND } from '@/lib/brand'
@@ -88,7 +87,6 @@ export default function HomePage() {
   return (
     <>
       <Nav />
-      <ParallaxController rootSelector="#main-content" />
       <main id="main-content" className="home-redesign-root">
         <HeroSlider />
 
