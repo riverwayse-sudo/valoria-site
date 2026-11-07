@@ -51,6 +51,7 @@ as $$
           and roster.assessment_summary is not null
           and length(btrim(roster.assessment_summary)) >= 12
           and profile.profile_complete is true
+          and private.is_full_marketplace_listing_ready(profile.id)
         )
         or
         (
