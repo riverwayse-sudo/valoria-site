@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import PublicMarketplaceVisibility from '@/components/PublicMarketplaceVisibility'
 import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
 import {
   GOLD, DARK, MID, PARCH, DIM, GLINE,
@@ -278,6 +279,8 @@ function EditPageInner() {
 
       <div className="profile-edit-container" style={S.container}>
         {errorMsg && <div style={S.errorBanner}>{errorMsg}</div>}
+
+        <PublicMarketplaceVisibility />
 
         <Section title="Basics" dirty={dirty.basics} saving={saving.basics} saved={saved.basics}
           onSave={() => saveSection('basics', ['display_name','username','phone','current_job_title','headline','industry','preferred_industry','location','experience_years'])}>
