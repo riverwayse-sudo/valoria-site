@@ -15,10 +15,10 @@ describe('VALU presentation consistency', () => {
 
   test('homepage hero communicates Valoria’s capability-marketplace positioning', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('AFRICAN-ROOTED. GLOBALLY CONNECTED.')
+    expect(hero).toContain('NIGERIA-ROOTED. AFRICA-FOCUSED.')
     expect(hero).toContain('Capability should decide')
     expect(hero).toContain('who gets <em>seen.</em>')
-    expect(hero).toContain('build a stronger professional presence')
+    expect(hero).toContain('capability-led professional profiles')
     expect(hero).toContain('START THE VALU TASTER')
     expect(hero).not.toMatch(/(?:9|58)[- ]questions?/i)
     expect(hero).toContain('hero-stage')
