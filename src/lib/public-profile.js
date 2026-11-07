@@ -171,6 +171,10 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
   const { profile_complete: _profileComplete, ...publicProfile } = profile
   return {
     ...publicProfile,
+    display_name: normalizePublicDisplayText(profile.display_name),
+    display_initials: normalizePublicDisplayText(profile.display_initials),
+    headline: normalizePublicDisplayText(profile.headline),
+    current_job_title: normalizePublicDisplayText(profile.current_job_title),
     // Basic listings intentionally do not display an unverified/full VALU score
     // or assessment-derived summary.
     assessment_summary: roster.assessment_access === 'full' ? roster.assessment_summary : null,
