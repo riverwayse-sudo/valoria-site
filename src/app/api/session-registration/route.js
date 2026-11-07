@@ -12,6 +12,9 @@ function getSupabase() {
 function normaliseError(error) { return String(error?.message || 'BREVO_SYNC_FAILED').slice(0, 160) }
 
 export async function POST(request) {
+  if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') {
+    return Response.json({ error: 'Event registration is disabled in staging preview. No data was saved and no email was sent.' }, { status: 503 })
+  }
   try {
     const supabase = getSupabase()
     const body = await request.json()
