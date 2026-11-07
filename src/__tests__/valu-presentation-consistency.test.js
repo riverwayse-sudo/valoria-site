@@ -12,13 +12,13 @@ describe('VALU presentation consistency', () => {
     expect(home).not.toContain('<b>15</b> QUESTIONS')
   })
 
-  test('homepage hero communicates Valoria’s international professional capability positioning', () => {
+  test('homepage hero communicates Valoria’s capability-marketplace positioning', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('AN INTERNATIONAL PROFESSIONAL CAPABILITY INSTITUTION')
-    expect(hero).toContain('Your professional worth')
-    expect(hero).toContain('deserves to be <em>understood.</em>')
-    expect(hero).toContain('across industries and borders')
-    expect(hero).toContain('DISCOVER YOUR CAPABILITIES')
+    expect(hero).toContain('AFRICA\'S PROFESSIONAL CAPABILITY MARKETPLACE')
+    expect(hero).toContain('Capability should decide')
+    expect(hero).toContain('who gets <em>seen.</em>')
+    expect(hero).toContain('build a stronger professional presence')
+    expect(hero).toContain('START THE 9-QUESTION TASTER')
     expect(hero).toContain('hero-stage')
     expect(hero).toContain('THE PRIME FRAMEWORK')
     expect(hero).not.toContain('vc-denom')
@@ -38,8 +38,8 @@ describe('VALU presentation consistency', () => {
 
   test('homepage registry explains VALU points and privacy context', () => {
     const registry = read('src/components/LiveProfilesScroll.jsx')
-    expect(registry).toContain('VALU Index results are expressed in points on a 100-point scale')
-    expect(registry).toContain('BRAND.compliance')
+    expect(registry).toContain('VALU Index results are expressed in points')
+    expect(registry).toContain('eligibility and visibility rules')
     expect(registry).toContain('/privacypolicy')
   })
 
