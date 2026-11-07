@@ -29,7 +29,7 @@
 .insights-bridge .section-title{margin:16px 0 14px}
 .insights-bridge .page-sub{margin-bottom:28px;color:#555565}
 .events-page .events-list{background:var(--valoria-parchment)}
-.events-list-head{display:flex;justify-content:space-between;align-items:end;gap:40px;margin-bottom:48px}
+.events-list-head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-bottom:48px}
 .events-list-head .section-title{margin:14px 0 0}
 .events-list-head>p{max-width:430px;color:#555565;line-height:1.7;margin:0}
 .events-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
