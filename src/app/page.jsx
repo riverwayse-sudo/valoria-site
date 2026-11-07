@@ -35,7 +35,7 @@ const institutionalCapabilities = [
   {
     number: '03',
     label: 'TALENT ACCESS',
-    title: 'African Talent Bureau',
+    title: 'Valoria Marketplace',
     body: 'A capability-led route for employers, event organisers and programme teams to discover professionals, speakers and facilitators.',
     outcome: 'Relevant expertise, easier to find.',
   },
