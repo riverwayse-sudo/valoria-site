@@ -17,12 +17,15 @@ export default function LoginPage() {
   const [resetting, setResetting] = useState(false)
   const [redirecting, setRedirecting] = useState(false)
   const [returnTo, setReturnTo] = useState('')
+  const [claimName, setClaimName] = useState('')
 
   // Check for identity_hash in URL (from email confirmation redirect)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const identityHash = params.get('identity_hash')
     const requestedReturnTo = params.get('returnTo') || ''
+    const requestedClaimName = params.get('claim_name') || ''
+    if (requestedClaimName) setClaimName(requestedClaimName)
     try {
       const requestedTarget = new URL(requestedReturnTo, window.location.origin)
       if (requestedTarget.origin === window.location.origin) {
@@ -165,7 +168,7 @@ export default function LoginPage() {
           const recoveryRes = await fetch('/api/claim-taster', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
-            body: JSON.stringify({}),
+            body: JSON.stringify(claimName ? { claimed_name: claimName } : {}),
           })
           const recovery = await recoveryRes.json().catch(() => ({}))
           if (recoveryRes.ok && recovery.linked > 0) {
