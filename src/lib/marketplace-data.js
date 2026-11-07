@@ -118,8 +118,8 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
     if (row.assessment_access === 'full') return profile.profile_complete === true
     return row.assessment_access === 'basic'
       && linkedTasterIds.has(profile.id)
-      && Boolean(profile.display_name?.trim())
-      && Boolean(profile.headline?.trim() || profile.current_job_title?.trim())
+      && Boolean((profile.display_name || row.full_name)?.trim())
+      && Boolean((profile.headline || profile.current_job_title || row.headline || row.current_job_title)?.trim())
   }).map(row => row.professional_id))
 }
 
