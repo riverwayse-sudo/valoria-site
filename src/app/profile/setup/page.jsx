@@ -515,6 +515,10 @@ function ProfileSetupForm() {
     }
 
     setSaving(false)
+    window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'profile_setup_completed', params: { profile_complete: row.profile_complete === true, assessment_access: acknowledgementResult.assessment_access || 'unknown', visibility_choice: acknowledgementResult.visibility || form.visibility } } }))
+    if ((acknowledgementResult.visibility || form.visibility) === 'public') {
+      window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'public_visibility_consent_granted', params: { source: 'profile_setup' } } }))
+    }
     setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: acknowledgementResult.listing_status || row?.listing_status || 'pending', visibility: acknowledgementResult.visibility || form.visibility, assessment_access: acknowledgementResult.assessment_access || null })
   }
 
