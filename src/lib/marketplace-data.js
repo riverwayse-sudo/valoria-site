@@ -11,7 +11,8 @@ const PLACEHOLDER_HEADLINES = new Set([
   'valoria professional',
 ])
 
-export function isValidAtbId(value) {
+export // Only canonical route-safe ATB identifiers can enter the public profile projection.
+function isValidAtbId(value) {
   return /^ATB-[A-Z0-9-]{4,40}$/i.test(String(value || '').trim())
 }
 
