@@ -77,13 +77,13 @@ export const ENTRY_POINTS = [
     id: 'atb-connect', num: '01', name: 'ATB Connect', buyer: 'FOR EMPLOYERS', color: COLORS.gold,
     modality: 'PRECISION TALENT SOURCING',
     desc: 'Discover professionals through capability-led profiles, experience and role fit. VALU points and assessment insight appear where the full assessment is complete.',
-    href: '/marketplace/talent', linkLabel: 'SEARCH TALENT',
+    href: '/atb-connect', linkLabel: 'EXPLORE ATB CONNECT',
   },
   {
     id: 'spotlight', num: '02', name: 'ATB Spotlight', buyer: 'FOR EVENT ORGANISERS & TRAINING BUYERS', color: COLORS.gold,
     modality: 'MERIT-BASED VISIBILITY',
     desc: 'Discover speakers and facilitators through capability-led profiles, demonstrated experience and selected expertise. Availability depends on the public Marketplace inventory.',
-    href: '/marketplace/speakers', linkLabel: 'DISCOVER SPEAKERS & FACILITATORS',
+    href: '/atb-spotlight', linkLabel: 'EXPLORE ATB SPOTLIGHT',
   },
   {
     id: 'develop', num: '03', name: 'Valoria Develop', buyer: 'FOR PROFESSIONALS & ORGANISATIONS', color: COLORS.gold,
