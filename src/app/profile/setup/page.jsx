@@ -4,6 +4,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
+import { BRAND } from '@/lib/brand'
+import { MARKETPLACE_CONSENT_TEXT } from '@/lib/marketplace-consent'
 
 import {
   GOLD, DARK, MID, PARCH, DIM, GLINE,
@@ -35,7 +37,8 @@ const EMPTY_FORM = {
   modality: [],
   notice_period: '',
   salary_expectation: '', fee_range: '',
-  consent: false,
+  accuracyConfirmed: false,
+  marketplacePublicConsent: false,
 }
 
 // Builds the flattened, one-question-per-screen sequence. Recomputed live
@@ -477,6 +480,16 @@ function ProfileSetupForm() {
       setSaveError(result.error || 'Your profile was saved, but your capability selection could not be synchronized. Please try again.')
       return
     }
+    const { error: visibilityError } = await supabase.rpc('set_marketplace_public_listing_consent', {
+      p_enabled: Boolean(form.marketplacePublicConsent),
+    })
+    if (visibilityError) {
+      console.error('Marketplace visibility consent update failed:', visibilityError)
+      setSaving(false)
+      setSaveError('Your profile was saved, but your Marketplace visibility preference could not be updated. Please try again.')
+      return
+    }
+
     // profile_complete is calculated by the database from required profile fields.
     // Do not write this derived governance field from the client.
     // Fetch back what the database actually assigned (atb_id is set by a
@@ -484,7 +497,7 @@ function ProfileSetupForm() {
     // redirected silently with no confirmation of any kind.
     const { data: row } = await supabase
       .from('professional_profiles')
-      .select('atb_id, listing_status, profile_complete')
+      .select('atb_id, listing_status, profile_complete, visibility')
       .eq('id', user.id)
       .maybeSingle()
     if (!row?.profile_complete) {
@@ -493,7 +506,7 @@ function ProfileSetupForm() {
       return
     }
     setSaving(false)
-    setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: row?.listing_status || 'pending' })
+    setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: row?.listing_status || 'pending', visibility: row?.visibility || 'registered_only' })
   }
 
   async function handleSaveExit() {
@@ -513,7 +526,7 @@ function ProfileSetupForm() {
           </div>
           <Title>You&apos;re in,<br/><Em>{form.display_name?.split(' ')[0] || 'welcome'}.</Em></Title>
           <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.75, marginBottom:'28px' }}>
-            Your profile has been submitted to the founding cohort.
+            Your professional profile has been saved. Your Marketplace visibility preference has been recorded.
           </p>
 
           <div style={{ background:MID, border:`1px solid ${GLINE}`, padding:'24px', marginBottom:'24px' }}>
@@ -521,14 +534,14 @@ function ProfileSetupForm() {
             {submittedInfo.atb_id ? (
               <div style={{ fontSize:'22px', fontWeight:700, color:GOLD, letterSpacing:'.04em', fontFamily:'monospace' }}>{submittedInfo.atb_id}</div>
             ) : (
-              <div style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.6 }}>Your ID will appear on your dashboard once your profile clears review — usually within 48 hours.</div>
+              <div style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.6 }}>Your profile ID will appear here when it has been assigned.</div>
             )}
           </div>
 
           <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'28px', textAlign:'left' }}>
             <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>WHAT HAPPENS NEXT</div>
             <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.8, margin:0 }}>
-              Status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? 'Listed' : 'Not yet listed'}</strong>. Complete the full VALU assessment, keep your professional profile complete and meet the relevant capability gates. A current VALU Index score of 35 points or above is required for marketplace eligibility.
+              Visibility: <strong style={{ color:PARCH }}>{submittedInfo.visibility === 'public' ? (submittedInfo.listing_status === 'listed' ? 'Publicly listed' : 'Public listing pending') : 'Private — not publicly listed'}</strong>. A VALU Index of 35 points is an eligibility threshold for some marketplace capabilities; it does not automatically publish a profile. Public listing also depends on profile completeness, relevant capability evidence and your explicit consent. You can change visibility from Edit Profile.
             </p>
           </div>
 
@@ -1117,27 +1130,37 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
         <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
           <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — VALU INDEX ASSESSMENT</div>
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
-            Your profile is not yet listed because the full VALU assessment is not complete. Complete VALU and you will be listed first; completing your professional profile then unlocks additional visibility and opportunities.
+            Your profile can be saved now. Some marketplace capabilities require a completed VALU assessment. Completing the assessment does not automatically publish your profile; public listing is optional and requires your consent.
           </p>
-          <a href="https://valoriainstitute.com/valu/assessment/" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
-            COMPLETE THE FULL VALU ASSESSMENT →
-          </a>
+          <Link href={BRAND.assessmentUrl} style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
+            COMPLETE THE VALU ASSESSMENT →
+          </Link>
         </div>
       )}
 
-      <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'28px' }}>
-        <input type="checkbox" checked={form.consent} onChange={e => set('consent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
-        <span style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7 }}>
-          I confirm all information provided is accurate. I understand that completing VALU establishes my marketplace listing, while completing my professional profile unlocks additional visibility and opportunities.
-        </span>
-      </label>
+      <div style={{ marginBottom:'18px' }}>
+        <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'18px' }}>
+          <input type="checkbox" checked={form.accuracyConfirmed} onChange={e => set('accuracyConfirmed', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
+          <span style={{ fontSize:'13px', fontWeight:500, color:PARCH, lineHeight:1.7 }}>
+            I confirm that the information in my profile is accurate and up to date.
+          </span>
+        </label>
+        <div style={{ borderTop:`1px solid ${GLINE}`, paddingTop:'18px' }}>
+          <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.16em', color:'rgba(201,168,76,.55)', marginBottom:'9px' }}>OPTIONAL · PUBLIC MARKETPLACE VISIBILITY</div>
+          <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer' }}>
+            <input type="checkbox" checked={form.marketplacePublicConsent} onChange={e => set('marketplacePublicConsent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'3px', flexShrink:0 }} />
+            <span style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.75 }}>{MARKETPLACE_CONSENT_TEXT}</span>
+          </label>
+          <p style={{ fontSize:'11px', color:'rgba(247,244,238,.4)', lineHeight:1.6, margin:'10px 0 0 28px' }}>Public listing is optional. You can save your profile without making it publicly visible.</p>
+        </div>
+      </div>
 
       {saveError && (
         <p style={{ fontSize:'12px', color:'#F09595', margin:'0 0 14px', lineHeight:1.6 }}>{saveError}</p>
       )}
 
-      <button onClick={handleFinish} disabled={!form.consent || saving}
-        style={{ display:'block', width:'100%', padding:'16px', background: form.consent && !saving ? GOLD : 'rgba(201,168,76,.2)', color: form.consent && !saving ? DARK : 'rgba(201,168,76,.4)', fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor: form.consent && !saving ? 'pointer' : 'not-allowed', fontFamily:'inherit' }}>
+      <button onClick={handleFinish} disabled={!form.accuracyConfirmed || saving}
+        style={{ display:'block', width:'100%', padding:'16px', background: form.accuracyConfirmed && !saving ? GOLD : 'rgba(201,168,76,.2)', color: form.accuracyConfirmed && !saving ? DARK : 'rgba(201,168,76,.4)', fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor: form.accuracyConfirmed && !saving ? 'pointer' : 'not-allowed', fontFamily:'inherit' }}>
         {saving ? 'SUBMITTING…' : 'SUBMIT PROFILE FOR REVIEW'}
       </button>
     </div>
