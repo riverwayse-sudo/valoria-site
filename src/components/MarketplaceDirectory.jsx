@@ -133,8 +133,8 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             ) : rows.length === 0 && activeTrack !== 'all' ? (
               <div className={styles.empty}>
                 <strong>{activeTrack === 'candidate' ? 'No public talent profiles are available yet.' : activeTrack === 'speaker' ? 'No public speaker profiles are available yet.' : 'No public facilitator profiles are available yet.'}</strong>
-                <p>{activeTrack === 'candidate' ? 'ATB Connect search becomes useful when public profiles are available for the roles employers need. Contact Valoria to discuss a sourcing requirement.' : 'ATB Spotlight will show profiles when professionals meet the relevant listing and visibility requirements. Contact Valoria to discuss an event or facilitation requirement.'}</p>
-                <a className={styles.view} href={activeTrack === 'candidate' ? 'mailto:info@valoriainstitute.com?subject=ATB%20Connect%20Access%20Enquiry' : 'mailto:info@valoriainstitute.com?subject=ATB%20Spotlight%20Enquiry'}>CONTACT VALORIA →</a>
+                <p>{activeTrack === 'candidate' ? 'ATB Connect search becomes useful when public profiles are available for the roles employers need. Request sourcing access to discuss the roles and capability requirements your organisation needs.' : 'ATB Spotlight will show profiles when professionals meet the relevant listing and visibility requirements. Discuss your event brief, audience and facilitation requirements with Valoria.'}</p>
+                <a className={styles.view} href={activeTrack === 'candidate' ? 'mailto:info@valoriainstitute.com?subject=ATB%20Connect%20Access%20Enquiry' : 'mailto:info@valoriainstitute.com?subject=ATB%20Spotlight%20Enquiry'}>{activeTrack === 'candidate' ? 'REQUEST SOURCING ACCESS' : 'DISCUSS AN EVENT BRIEF'} →</a>
               </div>
             ) : (
               <div className={styles.empty}><strong>No public professionals match these filters.</strong><p>Try clearing a filter or selecting another declared role.</p></div>
