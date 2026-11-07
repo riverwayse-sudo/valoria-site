@@ -33,10 +33,10 @@ const frameworkStages = [
   },
   {
     number: '03',
-    title: 'Connect to opportunity',
-    body: 'The Valoria Marketplace helps employers, event organisers and training buyers discover professionals through capability-led profiles and pathways.',
-    href: '/marketplace',
-    cta: 'EXPLORE THE MARKETPLACE',
+    title: 'Find relevant opportunities',
+    body: 'Explore published professional opportunities when verified listings and a clear application or enquiry route are available.',
+    href: '/opportunities',
+    cta: 'EXPLORE OPPORTUNITIES',
   },
 ]
 
