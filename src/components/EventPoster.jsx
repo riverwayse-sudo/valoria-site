@@ -36,7 +36,7 @@ export default function EventPoster({ session }) {
         </div>
         <div className="poster-details">
           <div><b>{date.replace(', 2026', '')}</b><span>{time} WAT</span></div>
-          {session.speaker && <div><b>{session.speaker}</b><span>GUEST SPEAKER</span></div>}
+          {session.speaker && session.speakerApproved !== false && <div><b>{session.speaker}</b><span>GUEST SPEAKER</span></div>}
           {session.host && <div><b>{session.host}</b><span>HOST</span></div>}
         </div>
       </div>
