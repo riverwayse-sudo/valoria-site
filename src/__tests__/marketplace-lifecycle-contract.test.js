@@ -236,6 +236,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(protocol).toContain('Do not promote to production')
   })
 
+  test('unlinked taster claims require corroborated contact evidence and exact authenticated identity', () => {
+    const source = read('src/app/api/claim-taster/route.js')
+    expect(source).toContain(".in('identity_status', ['contact_candidate', 'account_linked'])")
+    expect(source).toContain('evidence_source_count')
+    expect(source).toContain('Number(candidate.evidence_source_count) < 2')
+    expect(source).toContain('norm(accountName) !== norm(taster.name)')
+    expect(source).not.toContain("'unresolved', 'account_linked'")
+  })
+
   test('taster account linking stitches a completed assessment and exposes its outcome', () => {
     const source = read('src/app/api/link-taster/route.js')
     expect(source).toContain("eq('taster_id', tasterId)")
