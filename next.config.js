@@ -60,6 +60,12 @@ const nextConfig = {
     ...(publicSupabaseUrl ? { NEXT_PUBLIC_SUPABASE_URL: publicSupabaseUrl } : {}),
     ...(serverSupabaseUrl ? { SUPABASE_URL: serverSupabaseUrl } : {}),
   },
+  async redirects() {
+    return [
+      { source: '/privacypolicy', destination: '/privacy', permanent: true },
+      { source: '/terms-of-use', destination: '/terms', permanent: true },
+    ]
+  },
   async rewrites() {
     if (!valuOrigin) return []
     const origin = valuOrigin
