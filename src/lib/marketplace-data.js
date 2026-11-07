@@ -25,7 +25,7 @@ function isQualifiedPublicProfile(row) {
   return Boolean(
     row.assessment_access === 'full' &&
     Array.isArray(row.capabilities) && row.capabilities.length > 0 &&
-    row.valu_index !== null && row.valu_index !== undefined && Number.isFinite(Number(row.valu_index)) &&
+    row.valu_index !== null && row.valu_index !== undefined && Number.isFinite(Number(row.valu_index)) && Number(row.valu_index) >= 35 &&
     typeof row.assessment_summary === 'string' && row.assessment_summary.trim().length >= 12 &&
     typeof row.designation === 'string' && row.designation.trim()
   )
@@ -125,7 +125,7 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
       || profile.listing_status !== 'listed' || profile.revoked_at != null
       || !consentedIds.has(profile.id)) return false
 
-    if (row.assessment_access === 'full') return profile.profile_complete === true
+    if (row.assessment_access === 'full') return profile.profile_complete === true && Number(row.valu_index) >= 35
     return row.assessment_access === 'basic'
       && linkedTasterIds.has(profile.id)
       && Boolean(profile.display_name?.trim() || row.full_name?.trim())
