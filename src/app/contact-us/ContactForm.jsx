@@ -6,8 +6,9 @@ const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
 
 const INQUIRY_TYPES = [
-  { id: 'hiring', label: 'Hiring Enquiry — ATB Connect' },
-  { id: 'speaker', label: 'Speaker Booking — ATB Spotlight' },
+  { id: 'candidate', label: 'Hiring Enquiry — ATB Connect' },
+  { id: 'speaker_booking', label: 'Speaker Booking — ATB Spotlight' },
+  { id: 'facilitator_commission', label: 'Facilitator Commission — ATB Spotlight' },
   { id: 'training', label: 'Training Enquiry — Valoria Develop' },
   { id: 'general', label: 'General Question' },
 ]
@@ -29,14 +30,29 @@ export default function ContactForm({ initialInquiryType = 'general' }) {
     setFormError('')
     try {
       const typeLabel = INQUIRY_TYPES.find(t => t.id === form.inquiryType)?.label || 'General Question'
-      const trainingDetails = form.inquiryType === 'training' ? `\nTeam / audience: ${form.team}\nPRIME cluster(s): ${form.cluster}\nTimeline: ${form.timeline}` : ''
-      const { error } = await supabase.from('messages').insert({
-        sender_id: currentUser?.id || null,
-        recipient_profile_id: null,
-        subject: `${typeLabel} — ${form.name}${form.organisation ? ` (${form.organisation})` : ''}`,
-        body: `From: ${form.name} (${form.email})\nOrganisation: ${form.organisation || '—'}\nType: ${typeLabel}${trainingDetails}\n\n${form.message}`,
+      const trainingDetails = form.inquiryType === 'training'
+        ? `\n\nTeam / audience: ${form.team}\nPRIME cluster(s): ${form.cluster}\nTimeline: ${form.timeline}`
+        : ''
+      const { data: sessionData } = await supabase.auth.getSession()
+      const accessToken = sessionData?.session?.access_token
+      const response = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+        body: JSON.stringify({
+          enquiry_type: form.inquiryType,
+          buyer_name: form.name.trim(),
+          buyer_email: form.email.trim(),
+          buyer_company: form.organisation.trim(),
+          subject: typeLabel,
+          message: `${form.message.trim()}${trainingDetails}`,
+        }),
       })
-      if (error) throw error
+      const payload = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(payload.error || 'Your enquiry could not be sent. Please try again.')
+      window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'buyer_enquiry_submitted', params: { enquiry_type: form.inquiryType } } }))
       setSent(true)
     } catch (err) {
       setFormError(err.message || 'Something went wrong. Please try again, or email us directly below.')
