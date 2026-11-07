@@ -147,3 +147,10 @@ jobs:
           grep -Fq '.vi-nav .nav-dropdown' /tmp/valoria-css-bundle.css
           grep -Fq '.nav-mobile .nav-dropdown' /tmp/valoria-css-bundle.css
           grep -Fq 'text-align:left!important' /tmp/valoria-css-bundle.css
+
+          status="$(curl -sS -o /tmp/valu-handoff-noauth -w '%{http_code}' "$base/api/valu-handoff")"
+          [[ "$status" == "401" ]] || { echo "Unauthenticated VALU handoff returned HTTP $status"; cat /tmp/valu-handoff-noauth || true; exit 1; }
+          status="$(curl -sS -o /tmp/valu-link-taster-noauth -w '%{http_code}' -X POST "$base/api/link-taster" -H 'Content-Type: application/json' -d '{}')"
+          [[ "$status" == "401" ]] || { echo "Unauthenticated taster link returned HTTP $status"; cat /tmp/valu-link-taster-noauth || true; exit 1; }
+          status="$(curl -sS -o /tmp/valu-opportunities-disabled -w '%{http_code}' "$base/api/opportunities")"
+          [[ "$status" == "503" ]] || { echo "Read-only staging opportunity API returned HTTP $status"; cat /tmp/valu-opportunities-disabled || true; exit 1; }
