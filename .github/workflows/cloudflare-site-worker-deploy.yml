@@ -24,7 +24,6 @@ jobs:
   deploy-production:
     name: Build, deploy and smoke-test production Cloudflare Worker
     runs-on: ubuntu-latest
-    environment: production
     steps:
       - uses: actions/checkout@v4
 
