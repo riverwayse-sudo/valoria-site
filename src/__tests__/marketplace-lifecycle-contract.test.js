@@ -504,4 +504,17 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(modal).toContain('Contact details and individual assessment answers are not displayed')
   })
 
+
+  test('admin roster flags shared normalized names across account IDs for manual review', () => {
+    const route = read('src/app/api/admin/marketplace-roster/route.js')
+    const page = read('src/app/admin/marketplace-roster/page.jsx')
+    expect(route).toContain('candidateIdsByName')
+    expect(route).toContain('identity_review_required')
+    expect(route).toContain('public_ready: candidate.public_ready && !identityReviewRequired')
+    expect(route).toContain('Confirm whether these are separate people before publication')
+    expect(page).toContain('IDENTITY REVIEW REQUIRED')
+    expect(page).toContain('identityReviewCount')
+    expect(page).toContain('identity_review_reason')
+  })
+
 })
