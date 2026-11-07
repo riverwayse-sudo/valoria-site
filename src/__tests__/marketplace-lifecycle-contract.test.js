@@ -528,4 +528,11 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(page).toContain('atbIdReviewCount')
   })
 
+
+  test('public marketplace projection rejects non-canonical ATB identifiers', () => {
+    const data = read('src/lib/marketplace-data.js')
+    expect(data).toContain('/^ATB-[A-Z0-9-]{4,40}$/i')
+    expect(data).toContain('isValidAtbId(row.atb_id)')
+  })
+
 })
