@@ -39,9 +39,9 @@ export default function ValuPage() {
           <div className="valu-kicker"><span /> A CLEAR PROFESSIONAL STARTING POINT</div>
           <h2>A clear starting point.<br /><em>A fuller professional picture.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Start with the 9-question taster</h3><p>Begin with a free snapshot of four Intelligence skills. No account is needed to start. The taster is separate from the full assessment; its questions are not included in the full assessment.</p></article>
+            <article><b>01</b><h3>Start with a guided taster</h3><p>Begin with a free snapshot of four Intelligence skills. No account is needed to start. The taster is an introductory experience and does not form part of the formal assessment.</p></article>
             <article><b>02</b><h3>Create your account</h3><p>When you are ready to continue, create or confirm your account. You will move into your dashboard and can continue to the full assessment without losing your taster progress.</p></article>
-            <article><b>03</b><h3>Complete the full assessment</h3><p>The separate full assessment contains 58 questions: 54 scored questions and 4 validity checks. It takes about 15 to 20 minutes and requires an account. Your progress is saved so you can return later.</p></article>
+            <article><b>03</b><h3>Complete the full assessment</h3><p>The formal assessment requires an account. Your progress is saved so you can return later.</p></article>
             <article><b>04</b><h3>Receive your official VALU Index</h3><p>Completion establishes your official VALU Index in points across all five PRIME clusters, together with your earned designation. Results remain valid for 12 months.</p></article>
           </div>
         </div>
@@ -57,7 +57,7 @@ export default function ValuPage() {
       <section className="valu-outcome">
         <div className="valu-wrap valu-outcome-grid">
           <div><div className="valu-kicker valu-dark"><span /> WHAT THE FULL ASSESSMENT ADDS</div><h2>Move from a directional snapshot to an official professional record.</h2></div>
-          <div><p>The 9-question taster offers an initial perspective on four Intelligence skills. It does not establish your official VALU Index, and its questions are not part of the separate 58-question full assessment.</p><p>The formal assessment covers all 17 PRIME skills across Presence, Relationships, Intelligence, Mastery and Enterprise. It establishes your official VALU Index and PRIME results in points, with a 12-month validity period. Your professional profile and marketplace access then reflect your completed assessment and the applicable eligibility requirements.</p><AssessmentStartLink href={BRAND.assessmentUrl} className="valu-inline">START THE VALU TASTER →</AssessmentStartLink></div>
+          <div><p>The taster offers an initial perspective on selected Intelligence skills. It does not establish your official VALU Index; the formal assessment is a separate step.</p><p>The formal assessment covers all 17 PRIME skills across Presence, Relationships, Intelligence, Mastery and Enterprise. It establishes your official VALU Index and PRIME results in points, with a 12-month validity period. Your professional profile and marketplace access then reflect your completed assessment and the applicable eligibility requirements.</p><AssessmentStartLink href={BRAND.assessmentUrl} className="valu-inline">START THE VALU TASTER →</AssessmentStartLink></div>
         </div>
       </section>
 
