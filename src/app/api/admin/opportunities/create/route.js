@@ -32,7 +32,8 @@ export async function POST(request) {
   const title = String(body.title).trim()
   const organisation = String(body.organisation_name).trim()
   const description = String(body.description).trim()
-  if (title.length > 180 || organisation.length > 180 || description.length > 10000) {
+  if (!title || !organisation || !description) return Response.json({ error: 'Job title, organisation and full description cannot be blank.' }, { status: 400 })
+  if (title.length > 180 || organisation.length > 180 || description.length > 10000 || String(body.summary || '').length > 500) {
     return Response.json({ error: 'One or more fields exceed the allowed length.' }, { status: 400 })
   }
   const applicationUrl = String(body.application_url || '').trim()
@@ -44,22 +45,28 @@ export async function POST(request) {
       return Response.json({ error: 'Enter a valid http or https application URL.' }, { status: 400 })
     }
   }
+  const workMode = body.work_mode || null
+  if (workMode && !['onsite', 'hybrid', 'remote'].includes(workMode)) return Response.json({ error: 'Choose a supported work mode.' }, { status: 400 })
+  const employmentType = body.employment_type || null
+  if (employmentType && !['full-time', 'part-time', 'contract', 'temporary', 'internship'].includes(employmentType)) return Response.json({ error: 'Choose a supported employment type.' }, { status: 400 })
+  const closingAt = body.closing_at ? new Date(body.closing_at) : null
+  if (closingAt && Number.isNaN(closingAt.getTime())) return Response.json({ error: 'Enter a valid application deadline.' }, { status: 400 })
   const email = admin.email || user.email || ''
   const name = admin.full_name || user.user_metadata?.full_name || email || 'Valoria Administrator'
-  let slug = slugify(title)
+  let slug = slugify(title) || 'job-' + Date.now().toString(36)
   const { data: existing } = await supabase.from('opportunities').select('id').eq('slug', slug).maybeSingle()
   if (existing) slug = slug + '-' + Date.now().toString().slice(-6)
   const now = new Date().toISOString()
   const opportunityPayload = {
     slug,
     title,
-    opportunity_type: body.opportunity_type || 'job',
+    opportunity_type: 'job',
     summary: String(body.summary || '').trim() || null,
     description,
     organisation_name: organisation,
     location: String(body.location || '').trim() || null,
-    work_mode: body.work_mode || null,
-    employment_type: body.employment_type || null,
+    work_mode: workMode,
+    employment_type: employmentType,
     experience_level: String(body.experience_level || '').trim() || null,
     industry: String(body.industry || '').trim() || null,
     capabilities: Array.isArray(body.capabilities) ? body.capabilities : [],
@@ -67,7 +74,7 @@ export async function POST(request) {
     compensation: String(body.compensation || '').trim() || null,
     application_method: body.application_url ? 'external' : 'valoria',
     application_url: applicationUrl || null,
-    closing_at: body.closing_at || null,
+    closing_at: closingAt ? closingAt.toISOString() : null,
     status: 'published',
     access_level: 'public',
     created_by: user.id,
