@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
@@ -11,6 +11,7 @@ export default function AdminCreateOpportunity() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [published, setPublished] = useState(null)
+  const submissionKey = useRef(null)
   const set = (key, value) => setForm(current => ({ ...current, [key]: value }))
 
   async function submit(event) {
@@ -20,10 +21,11 @@ export default function AdminCreateOpportunity() {
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { window.location.href = '/admin/login'; return }
+      if (!submissionKey.current) submissionKey.current = window.crypto.randomUUID()
       const response = await fetch('/api/admin/opportunities/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session.access_token },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, submission_key: submissionKey.current }),
       })
       const result = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(result.error || 'The job could not be published.')
@@ -37,7 +39,7 @@ export default function AdminCreateOpportunity() {
 
   const field = (key, label, required = false, type = 'text') => <label className="vi-job-field" key={key}>{label}{required && <span> *</span>}<input required={required} type={type} value={form[key]} onChange={event => set(key, event.target.value)} /></label>
 
-  if (published) return <main className="vi-job-admin"><section className="vi-job-admin-card"><div className="vi-job-kicker">VALORIA · JOB PUBLISHED</div><h1>Your job listing is live.</h1><p>The listing is now available on the public Jobs page and has been recorded in the administrator review history.</p><div className="vi-job-actions"><Link href={'/opportunities/' + published.slug}>VIEW LISTING ↗</Link><Link href="/admin/opportunities">RETURN TO OPPORTUNITY ADMIN</Link><button onClick={() => { setForm(initial); setPublished(null) }}>ADD ANOTHER JOB</button></div></section><style jsx>{`
+  if (published) return <main className="vi-job-admin"><section className="vi-job-admin-card"><div className="vi-job-kicker">VALORIA · JOB PUBLISHED</div><h1>Your job listing is live.</h1><p>The listing is now available on the public Jobs page and has been recorded in the administrator review history.</p><div className="vi-job-actions"><Link href={'/opportunities/' + published.slug}>VIEW LISTING ↗</Link><Link href="/admin/opportunities">RETURN TO OPPORTUNITY ADMIN</Link><button onClick={() => { setForm(initial); setPublished(null); submissionKey.current = window.crypto.randomUUID() }}>ADD ANOTHER JOB</button></div></section><style jsx>{`
     .vi-job-admin{min-height:100vh;background:#0F0F1A;color:#F7F4EE;font-family:Raleway,Arial,sans-serif;padding-bottom:70px}
     .vi-job-admin-card{max-width:900px;margin:55px auto;padding:clamp(24px,5vw,54px);background:#1A1A2E;border:1px solid rgba(201,168,76,.18);border-radius:16px}
     .vi-job-kicker{font-size:10px;font-weight:800;letter-spacing:.18em;color:#C9A84C}
@@ -60,7 +62,7 @@ export default function AdminCreateOpportunity() {
           {field('organisation_name', 'ORGANISATION', true)}
           <label className="vi-job-field">EMPLOYMENT TYPE<select value={form.employment_type} onChange={event => set('employment_type', event.target.value)}>{['full-time','part-time','contract','temporary','internship'].map(x => <option key={x}>{x}</option>)}</select></label>
           {field('location', 'LOCATION')}
-          <label className="vi-job-field">WORK MODE<select value={form.work_mode} onChange={event => set('work_mode', event.target.value)}>{['onsite','hybrid','remote','flexible'].map(x => <option key={x}>{x}</option>)}</select></label>
+          <label className="vi-job-field">WORK MODE<select value={form.work_mode} onChange={event => set('work_mode', event.target.value)}>{['onsite','hybrid','remote'].map(x => <option key={x}>{x}</option>)}</select></label>
           {field('industry', 'INDUSTRY')}
           {field('experience_level', 'EXPERIENCE LEVEL')}
           {field('compensation', 'COMPENSATION / SALARY')}
