@@ -18,7 +18,7 @@ export default function ValuPage() {
         <div className="valu-wrap">
           <div className="valu-kicker"><span /> THE VALU INDEX</div>
           <h1>Make your capability<br /><em>visible and actionable.</em></h1>
-          <p className="valu-lede">The VALU Index gives professionals a structured view of capability across the 17 skills in PRIME. Begin with a short, guided taster, then continue to the full assessment when you are ready to establish your official VALU Index in points.</p>
+          <p className="valu-lede">The VALU Index gives professionals a structured view of capability across the 17 skills in PRIME. Register your details first, complete a guided snapshot, then create your Valoria account when you are ready to continue to the full assessment and establish your official VALU Index in points.</p>
           <div className="valu-actions">
             <AssessmentStartLink href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">START THE VALU TASTER <span>→</span></AssessmentStartLink>
             <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW VALU SUPPORTS YOUR GROWTH <span>↓</span></a>
@@ -39,10 +39,10 @@ export default function ValuPage() {
           <div className="valu-kicker"><span /> A CLEAR PROFESSIONAL STARTING POINT</div>
           <h2>A clear starting point.<br /><em>A fuller professional picture.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Start with a guided taster</h3><p>Begin with a free, guided snapshot of your professional capability. No account is needed to start. It offers a useful first signal and helps you decide what to explore next.</p></article>
-            <article><b>02</b><h3>Create your account</h3><p>When you are ready to continue, create or confirm your account. Your dashboard will guide you to the full assessment, and your assessment progress will be saved.</p></article>
-            <article><b>03</b><h3>Complete the full assessment</h3><p>The formal assessment requires an account. Your progress is saved so you can return later.</p></article>
-            <article><b>04</b><h3>Receive your official VALU Index</h3><p>Completion establishes your official VALU Index in points across all five PRIME clusters, together with your earned designation. Results remain valid for 12 months.</p></article>
+            <article><b>01</b><h3>Register your details</h3><p>Share your name, email and professional context first. This creates the record that keeps your snapshot and Valoria follow-up connected. It is not your Valoria account.</p></article>
+            <article><b>02</b><h3>Complete your guided snapshot</h3><p>Begin with a free, guided view of your professional capability. Your responses are saved against your registration so you can return without losing your place.</p></article>
+            <article><b>03</b><h3>Create your Valoria account</h3><p>When you choose to continue, secure your account, confirm your email and enter your dashboard. Your registration and snapshot remain connected.</p></article>
+            <article><b>04</b><h3>Complete the full assessment</h3><p>The formal assessment covers all 17 PRIME skills. Completion establishes your official VALU Index in points and your earned designation. Results remain valid for 12 months.</p></article>
           </div>
         </div>
       </section>
