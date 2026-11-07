@@ -85,7 +85,7 @@ export default function ValuStartPage() {
           <div className="vs-journey-grid">
             <article><span>01</span><h3>Start</h3><p>Begin with a short taster for a directional starting point. No account needed.</p></article>
             <article><span>02</span><h3>Continue</h3><p>Create or confirm your account, then continue to your full assessment.</p></article>
-            <article><span>03</span><h3>Understand</h3><p>Complete all 58 formal questions to receive your official VALU Index in points and your PRIME capability profile.</p></article>
+            <article><span>03</span><h3>Understand</h3><p>Complete your formal assessment to receive your official VALU Index in points and your PRIME capability profile.</p></article>
             <article><span>04</span><h3>Discover</h3><p>Subject to governance checks, become discoverable through the marketplace.</p></article>
           </div>
         </div>
