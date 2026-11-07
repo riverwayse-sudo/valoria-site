@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { getValuTier } from '@/lib/brand'
+import { getValuTier, PRIME_CLUSTERS } from '@/lib/brand'
 
 const TRACKS = [
   ['all','All', '/marketplace'],
@@ -36,7 +36,10 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     }
   }, [router])
   const [industry,setIndustry] = useState('')
+  const [cluster,setCluster] = useState('')
+  const [skill,setSkill] = useState('')
   const industries = useMemo(() => [...new Set(rows.map(r=>displayText(r.industry)).filter(Boolean))].sort(), [rows])
+  const skills = useMemo(() => [...new Set(rows.flatMap(r=>labelValues(r.skills)))].sort(), [rows])
 
   const results = useMemo(() => {
     const q=query.trim().toLowerCase()
@@ -45,10 +48,12 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       const caps=[...(p.capabilities || p.tracks || [p.track])].map(normalize)
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
       if(industry && displayText(p.industry) !== industry) return false
+      if(cluster && getLeadingCluster(p) !== cluster) return false
+      if(skill && !labelValues(p.skills).includes(skill)) return false
       if(!q) return true
       return [p.atb_id,p.headline,p.current_job_title,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
     })
-  },[rows,activeTrack,query,industry])
+  },[rows,activeTrack,query,industry,cluster,skill])
 
   const itemListSchema = useMemo(() => ({
     '@context': 'https://schema.org',
@@ -86,11 +91,19 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     <section className={styles.controls}>
       <div className={styles.containerControl}>
         <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search professionals, skills or industries…" aria-label="Search marketplace"/>
-        <select value={industry} onChange={e=>setIndustry(e.target.value)} aria-label="Filter by industry">
-          <option value="">All industries</option>
-          {industries.map(v=><option key={v} value={v}>{v}</option>)}
+        <select value={cluster} onChange={e=>setCluster(e.target.value)} aria-label="Filter by leading PRIME cluster">
+          <option value="">All PRIME clusters</option>
+          {PRIME_CLUSTERS.map(item=><option key={item.letter} value={item.letter}>{item.name}</option>)}
         </select>
-        {(query || industry) && <button onClick={()=>{setQuery('');setIndustry('')}}>CLEAR</button>}
+        <select value={skill} onChange={e=>setSkill(e.target.value)} aria-label="Filter by professional skill">
+          <option value="">All skills</option>
+          {skills.map(value=><option key={value} value={value}>{value}</option>)}
+        </select>
+        <select value={industry} onChange={e=>setIndustry(e.target.value)} aria-label="Filter by sector">
+          <option value="">All sectors</option>
+          {industries.map(value=><option key={value} value={value}>{value}</option>)}
+        </select>
+        {(query || industry || cluster || skill) && <button type="button" onClick={()=>{setQuery('');setIndustry('');setCluster('');setSkill('')}}>CLEAR</button>}
       </div>
     </section>
     <section className={styles.directory}>
@@ -108,6 +121,17 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     </main>
     <Footer />
   </div>
+}
+
+function getLeadingCluster(profile) {
+  const scores = profile.cluster_scores
+  if (!scores || typeof scores !== 'object' || Array.isArray(scores)) return ''
+  const entries = Object.entries(scores).filter(([letter, value]) =>
+    PRIME_CLUSTERS.some(cluster => cluster.letter === letter) && Number.isFinite(Number(value))
+  )
+  if (entries.length !== 5) return ''
+  entries.sort((a, b) => Number(b[1]) - Number(a[1]))
+  return entries[0][0]
 }
 
 function labelValues(value) {
