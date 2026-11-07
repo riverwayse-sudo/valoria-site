@@ -35,5 +35,30 @@ export default async function ProfilePage({ params, searchParams }) {
 
   if (error) console.error('public Marketplace profile fetch failed:', error)
 
-  return <ProfileClient id={id} searchParams={resolvedSearchParams} initialProfile={toPublicProfile(row)} />
+  const publicProfile = toPublicProfile(row)
+  const profileUrl = publicProfile?.id ? `https://valoriainstitute.com/profile/${publicProfile.id}` : null
+  const profileSchema = publicProfile ? {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    url: profileUrl,
+    mainEntity: {
+      '@type': 'Person',
+      name: publicProfile.display_name,
+      url: profileUrl,
+      jobTitle: publicProfile.headline || publicProfile.current_job_title || undefined,
+      description: publicProfile.assessment_summary || publicProfile.bio || publicProfile.headline || undefined,
+      image: publicProfile.photo_url || undefined,
+      knowsAbout: publicProfile.skills?.length ? publicProfile.skills : undefined,
+    },
+  } : null
+  const profileSchemaJson = profileSchema
+    ? JSON.stringify(profileSchema).replace(/</g, '\\u003c')
+    : null
+
+  return (
+    <>
+      {profileSchemaJson && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: profileSchemaJson }} />}
+      <ProfileClient id={id} searchParams={resolvedSearchParams} initialProfile={publicProfile} />
+    </>
+  )
 }
