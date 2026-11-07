@@ -171,6 +171,51 @@ html body * {
   text-align: left !important;
 }
 
+/* Editorial and CTA alignment: override legacy centered wrappers without moving decorative icon controls. */
+html body .eyebrow-center,
+html body .page-hero-actions-centered {
+  justify-content: flex-start !important;
+}
+
+html body .home-section-heading {
+  justify-items: start !important;
+  text-align: left !important;
+}
+
+html body .home-section-heading .eyebrow {
+  justify-content: flex-start !important;
+}
+
+html body .cta-banner,
+html body .bridge-card {
+  text-align: left !important;
+}
+
+html body .home-section-heading > p,
+html body .cta-banner .page-sub,
+html body .prime-centered-copy,
+html body .about-cta-copy,
+html body .vs-back,
+html body .vs-score > p {
+  text-align: left !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Text-bearing CTA controls start at the same left edge as surrounding copy. */
+html body .btn-gold,
+html body .btn-secondary,
+html body .btn-tertiary,
+html body .btn-ghost,
+html body .btn-outline,
+html body .home-pathway-cta,
+html body .home-events-watch-link,
+html body .valu-conversion .vcc-bottom-cta,
+html body .vs-btn {
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
 /* Prevent browser/user-agent centring from reappearing in semantic content regions. */
 main,
 main section,
