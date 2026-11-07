@@ -39,7 +39,7 @@ export default function ValuPage() {
           <div className="valu-kicker"><span /> A CLEAR PROFESSIONAL STARTING POINT</div>
           <h2>A clear starting point.<br /><em>A fuller professional picture.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Start with a guided taster</h3><p>Begin with a free snapshot of four Intelligence skills. No account is needed to start. The taster is an introductory experience. It provides an initial view and does not establish your official VALU Index.</p></article>
+            <article><b>01</b><h3>Start with a guided taster</h3><p>Begin with a free, guided snapshot of your professional capability. No account is needed to start. It offers a useful first signal and helps you decide what to explore next.</p></article>
             <article><b>02</b><h3>Create your account</h3><p>When you are ready to continue, create or confirm your account. Your dashboard will guide you to the full assessment, and your assessment progress will be saved.</p></article>
             <article><b>03</b><h3>Complete the full assessment</h3><p>The formal assessment requires an account. Your progress is saved so you can return later.</p></article>
             <article><b>04</b><h3>Receive your official VALU Index</h3><p>Completion establishes your official VALU Index in points across all five PRIME clusters, together with your earned designation. Results remain valid for 12 months.</p></article>
@@ -57,7 +57,7 @@ export default function ValuPage() {
       <section className="valu-outcome">
         <div className="valu-wrap valu-outcome-grid">
           <div><div className="valu-kicker valu-dark"><span /> WHAT THE FULL ASSESSMENT ADDS</div><h2>Move from a directional snapshot to an official professional record.</h2></div>
-          <div><p>The taster offers an initial perspective on selected Intelligence skills. Your official VALU Index is established when you complete the full assessment.</p><p>The formal assessment covers all 17 PRIME skills across Presence, Relationships, Intelligence, Mastery and Enterprise. It establishes your official VALU Index and PRIME results in points, with a 12-month validity period. Your professional profile and marketplace access then reflect your completed assessment and the applicable eligibility requirements.</p><AssessmentStartLink href={BRAND.assessmentUrl} className="valu-inline">START THE VALU TASTER →</AssessmentStartLink></div>
+          <div><p>The taster offers an initial perspective on your professional capability. Your official VALU Index is established when you complete the assessment journey.</p><p>The formal assessment covers all 17 PRIME skills across Presence, Relationships, Intelligence, Mastery and Enterprise. It establishes your official VALU Index and PRIME results in points, with a 12-month validity period. Your professional profile and marketplace access then reflect your completed assessment and the applicable eligibility requirements.</p><AssessmentStartLink href={BRAND.assessmentUrl} className="valu-inline">START THE VALU TASTER →</AssessmentStartLink></div>
         </div>
       </section>
 
