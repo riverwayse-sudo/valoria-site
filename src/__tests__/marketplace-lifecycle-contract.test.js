@@ -258,6 +258,19 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(reminders).not.toContain('CONTINUE TO QUESTION 10')
   })
 
+  test('Marketplace cards show VALU points beside the profile identity and all five designations', () => {
+    const brand = read('src/lib/brand.js')
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    const styles = read('src/components/MarketplaceDirectory.module.css')
+    expect(brand).toContain("name: 'At the Starting Point'")
+    expect(brand).toContain('min: 0, max: 34')
+    expect(directory).toContain('className={styles.valu}')
+    expect(directory).toContain('FULL ASSESSMENT COMPLETE')
+    expect(directory).toContain('CAPABILITY SELECTION')
+    expect(directory).not.toContain('tier.stars')
+    expect(styles).toContain('.atStartingPoint')
+  })
+
   test('marketplace queries exclude registered-only and test profiles', () => {
     const data = read('src/lib/marketplace-data.js')
     expect(data).toContain("const SOURCE = 'marketplace_public_roster'")
