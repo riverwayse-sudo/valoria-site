@@ -12,15 +12,20 @@ export async function middleware(request) {
   const isPreview = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1'
   const stagingApiEnabled = process.env.VALU_STAGING_API_ENABLED === '1'
   const isReadOnlyPreview = isPreview && !stagingApiEnabled
-  // The preview is read-only until a separate staging database is configured and explicitly enabled.
-  if (isReadOnlyPreview && pathname.startsWith('/api/')) {
+  // Keep the public staging site read-only, but permit only the two authenticated
+  // endpoints required to link a confirmed taster and issue a one-time assessment handoff.
+  const isPreviewApiAllowed =
+    (pathname === '/api/link-taster' && request.method === 'POST') ||
+    (pathname === '/api/valu-handoff' && ['GET', 'POST'].includes(request.method))
+  if (isReadOnlyPreview && pathname.startsWith('/api/') && !isPreviewApiAllowed) {
     return NextResponse.json(
       { error: 'Staging preview is simulation-only; API access is disabled.' },
       { status: 503, headers: { 'Cache-Control': 'no-store' } }
     )
   }
-  // Read-only previews bypass Supabase. When staging APIs are explicitly enabled, auth runs against the configured isolated staging project.
-  if (isReadOnlyPreview) return NextResponse.next()
+  // All other read-only preview routes bypass Supabase. The allow-listed API
+  // routes continue below and independently verify the confirmed user token.
+  if (isReadOnlyPreview && !isPreviewApiAllowed) return NextResponse.next()
 
   if (pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname === '/favicon.ico' || pathname.match(/\.(png|jpg|jpeg|svg|ico|webp|woff|woff2|ttf)$/)) return NextResponse.next()
   if (!SB_URL || !SB_ANON_KEY) return NextResponse.next()
