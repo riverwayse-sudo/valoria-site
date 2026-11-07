@@ -40,8 +40,10 @@ export default function OpportunityDetail({ params }) {
         const payload = await response.json().catch(() => ({}))
         if (!response.ok) throw new Error(payload.error || 'Opportunities could not be loaded.')
         if (active) {
-          setOpportunity((payload.opportunities || []).find(item => item.slug === params.slug) || null)
+          const item = (payload.opportunities || []).find(item => item.slug === params.slug) || null
+          setOpportunity(item)
           setSession(sessionResult.data?.session || null)
+          if (item) window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'opportunity_view', params: { opportunity_type: item.opportunity_type || 'unspecified', work_mode: item.work_mode || 'unspecified' } } }))
         }
       } catch (err) {
         if (active) setError(err.message || 'Opportunity could not be loaded.')
@@ -69,6 +71,7 @@ export default function OpportunityDetail({ params }) {
       const payload = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(payload.error || 'Application could not be submitted.')
       setApplied(true)
+      window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'opportunity_application_submitted', params: { opportunity_type: opportunity.opportunity_type || 'unspecified' } } }))
     } catch (err) {
       setApplyError(err.message || 'Application could not be submitted.')
     } finally {
