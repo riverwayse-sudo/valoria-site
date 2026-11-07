@@ -95,6 +95,36 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
     linkedTasterIds = new Set((tasters || []).map(row => row.user_id))
   }
 
+  const fullIds = rows
+    .filter(row => row.assessment_access === 'full')
+    .map(row => row.professional_id)
+  let fullReadyIds = new Set()
+  if (fullIds.length) {
+    const { data: capabilities, error: capabilityError } = await admin
+      .from('professional_capabilities')
+      .select('professional_id,eligible_for_listing,eligibility_status,missing_requirements')
+      .in('professional_id', fullIds)
+      .eq('is_active', true)
+    if (capabilityError) {
+      console.error('Full capability evidence verification failed:', capabilityError)
+      throw new Error('Full capability evidence could not be verified.')
+    }
+    const capabilitiesById = new Map()
+    for (const capability of capabilities || []) {
+      const list = capabilitiesById.get(capability.professional_id) || []
+      list.push(capability)
+      capabilitiesById.set(capability.professional_id, list)
+    }
+    fullReadyIds = new Set(fullIds.filter(id => {
+      const active = capabilitiesById.get(id) || []
+      return active.length > 0 && active.every(capability =>
+        capability.eligible_for_listing === true
+        && capability.eligibility_status === 'listed'
+        && (!Array.isArray(capability.missing_requirements) || capability.missing_requirements.length === 0)
+      )
+    }))
+  }
+
   const { data: acknowledgements, error: acknowledgementError } = await admin
     .from('professional_profile_acknowledgements')
     .select('professional_id,acknowledgement_version')
@@ -125,7 +155,7 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
       || profile.listing_status !== 'listed' || profile.revoked_at != null
       || !consentedIds.has(profile.id)) return false
 
-    if (row.assessment_access === 'full') return profile.profile_complete === true && Number(row.valu_index) >= 35
+    if (row.assessment_access === 'full') return profile.profile_complete === true && Number(row.valu_index) >= 35 && fullReadyIds.has(profile.id)
     return row.assessment_access === 'basic'
       && linkedTasterIds.has(profile.id)
       && Boolean(profile.display_name?.trim() || row.full_name?.trim())
