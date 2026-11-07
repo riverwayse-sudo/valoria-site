@@ -122,7 +122,7 @@ function AuthCallbackFlow() {
       <section style={{ width: '100%', maxWidth: 520, padding: 'clamp(28px, 5vw, 52px)', border: '1px solid rgba(201,168,76,.25)', borderRadius: 16, background: '#1A1A2E', textAlign: 'center' }}>
         <div style={{ margin: '0 auto 30px', textAlign: 'center' }} aria-label="Valoria Institute">
           <div style={{ color: GOLD, fontSize: 12, letterSpacing: '.24em', fontWeight: 800 }}>VALORIA INSTITUTE</div>
-          <div style={{ color: PARCHMENT, fontFamily: "'Raleway', Arial, sans-serif", fontSize: 15, marginTop: 7 }}>Worth. Built.</div>
+          <div style={{ color: PARCHMENT, fontFamily: "'Raleway', Arial, sans-serif", fontSize: 15, marginTop: 7 }}>Worth, Built.</div>
         </div>
         <div aria-live="polite" role={failed ? 'alert' : 'status'}>
           <div style={{ color: GOLD, fontSize: 11, letterSpacing: '.18em', fontWeight: 700, marginBottom: 14 }}>{failed ? 'CONFIRMATION NEEDS ATTENTION' : 'VALORIA ACCOUNT'}</div>
