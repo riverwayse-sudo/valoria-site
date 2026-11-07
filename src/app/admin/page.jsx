@@ -63,7 +63,17 @@ export default function AdminPage() {
       ])
       if (a.ok) setAnalytics(await a.json())
       if (ad.ok) setAdmins((await ad.json()).admins || [])
-      if (roster.ok) setRosterCandidates((await roster.json()).candidates || [])
+      if (roster.ok) {
+        const rosterData = await roster.json()
+        setRosterCandidates((rosterData.candidates || []).map(p => ({
+          ...p,
+          accountName: p.account_name,
+          assessmentAccess: p.assessment_access,
+          fullScore: p.valu_points,
+          publicConsent: p.public_consent,
+          capabilityLabels: p.capability_labels || [],
+        })))
+      }
       else setError('The internal roster review could not be loaded. Please refresh or check admin access.')
     } catch {}
     setLoading(false)
