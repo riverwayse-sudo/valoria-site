@@ -13,12 +13,15 @@ const PLACEHOLDER_HEADLINES = new Set([
 
 export function isPublicProfileContentReady(row) {
   const headline = String(row.headline || row.current_job_title || '').trim()
+  const isFullAssessment = row.assessment_access === 'full' && row.valu_index !== null && row.valu_index !== undefined
+  const assessmentSummary = String(row.assessment_summary || '').trim()
   return Boolean(
     row.full_name &&
     row.atb_id &&
     headline.length >= 8 &&
     !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
-    !/[\u{1D400}-\u{1D7FF}]/u.test(headline)
+    !/[\u{1D400}-\u{1D7FF}]/u.test(headline) &&
+    (!isFullAssessment || assessmentSummary.length >= 12)
   )
 }
 
@@ -92,7 +95,7 @@ export async function getMarketplaceCounts() {
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
   const { data, error } = await supabase
     .from(SOURCE)
-    .select('professional_id,full_name,atb_id,headline,current_job_title,capability,track,capabilities')
+    .select('professional_id,full_name,atb_id,headline,current_job_title,assessment_access,valu_index,assessment_summary,capability,track,capabilities')
 
   if (error) {
     console.error('Marketplace count query failed:', error)
