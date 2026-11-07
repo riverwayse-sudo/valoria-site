@@ -431,6 +431,16 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(read('src/components/LiveProfilesScroll.jsx')).toContain('getMarketplaceDirectoryData')
   })
 
+  test('Full listings enforce the 35-point threshold while Basic taster listings do not', () => {
+    const helper = read('src/lib/public-profile.js')
+    const data = read('src/lib/marketplace-data.js')
+    const migration = read('supabase/migrations/20261105150000_require_consent_verified_server_side_public_profile_reads.sql')
+    expect(helper).toContain('Number(profile.valu_index) < 35')
+    expect(data).toContain('Number(row.valu_index) >= 35')
+    expect(migration).toContain('profile.valu_index >= 35')
+    expect(data).toContain("if (row.assessment_access === 'basic') return true")
+  })
+
   test('public Basic listings require a linked completed taster and explicit consent', () => {
     const data = read('src/lib/marketplace-data.js')
     expect(data).toContain("row.assessment_access === 'basic'")
