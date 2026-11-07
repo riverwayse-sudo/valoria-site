@@ -1,19 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import ProfileClient from './ProfileClient'
-import { toPublicProfile } from '@/lib/public-profile'
+import { toPublicProfile, PUBLIC_PROFILE_SELECT } from '@/lib/public-profile'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
-
-const PUBLIC_ROSTER_FIELDS = [
-  'professional_id', 'full_name', 'bio', 'location', 'languages', 'headline',
-  'current_job_title', 'capability', 'track', 'capabilities', 'selected_capabilities',
-  'atb_id', 'display_initials', 'photo_url', 'industry', 'skills', 'topics',
-  'programme_types', 'availability', 'valu_index', 'cluster_scores', 'designation',
-  'fee_range', 'salary_expectation', 'availability_status', 'assessment_access',
-  'assessment_summary',
-].join(',')
 
 export default async function ProfilePage({ params, searchParams }) {
   const { id } = await params
@@ -38,7 +29,7 @@ export default async function ProfilePage({ params, searchParams }) {
   // projection. The underlying professional_profiles table remains private.
   const { data: row, error } = await supabase
     .from('marketplace_public_roster')
-    .select(PUBLIC_ROSTER_FIELDS)
+    .select(PUBLIC_PROFILE_SELECT)
     .eq(isUuid ? 'professional_id' : 'atb_id', id)
     .maybeSingle()
 
