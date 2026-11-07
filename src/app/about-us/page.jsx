@@ -1,5 +1,4 @@
-import Nav, { AssessmentStartLink } from '@/components/Nav'
-import { BRAND } from '@/lib/brand'
+import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import '../pages.css'
@@ -160,7 +159,7 @@ export default function AboutPage() {
               <p className="page-sub">Valoria Institute is rooted in African professional experience and designed for continental growth. Nigeria is its current operating market, with broader expansion guided by institutional readiness and partnerships.</p>
               <div className="page-hero-actions">
                 <a href="/contact-us" className="btn-gold">DISCUSS A PARTNERSHIP</a>
-                <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-outline">EXPLORE THE VALU INDEX</AssessmentStartLink>
+                <a href="/valu" className="btn-outline">EXPLORE THE VALU INDEX</a>
               </div>
             </Reveal>
           </div>
