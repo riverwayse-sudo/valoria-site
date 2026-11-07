@@ -84,7 +84,6 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
 
   const professionalId = roster.professional_id
   if (roster.assessment_access === 'full') {
-    if (Number(profile.valu_index) < 35) return null
     if (!Array.isArray(roster.capabilities) || roster.capabilities.length === 0) return null
     if (!roster.assessment_summary || roster.assessment_summary.trim().length < 12) return null
   } else if (!(await hasCompletedTaster(admin, professionalId))) {
@@ -124,7 +123,25 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
   }
   if (!profile) return null
 
-  if (roster.assessment_access === 'full' && profile.profile_complete !== true) return null
+  if (roster.assessment_access === 'full') {
+    if (profile.profile_complete !== true || Number(profile.valu_index) < 35) return null
+    const { data: activeCapabilities, error: capabilityError } = await admin
+      .from('professional_capabilities')
+      .select('capability,eligible_for_listing,eligibility_status,missing_requirements')
+      .eq('professional_id', professionalId)
+      .eq('is_active', true)
+    if (capabilityError) {
+      console.error('Full capability evidence verification failed:', capabilityError)
+      throw new Error('Full profile capability evidence could not be verified.')
+    }
+    const capabilitiesReady = (activeCapabilities || []).length > 0
+      && activeCapabilities.every(capability =>
+        capability.eligible_for_listing === true
+        && capability.eligibility_status === 'listed'
+        && (!Array.isArray(capability.missing_requirements) || capability.missing_requirements.length === 0)
+      )
+    if (!capabilitiesReady) return null
+  }
   if (roster.assessment_access === 'basic' && !hasBasicPublicIdentity(profile, roster)) return null
 
   const { profile_complete: _profileComplete, ...publicProfile } = profile
@@ -159,16 +176,16 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
   }
 
   const rosterById = new Map((roster || [])
-    .filter(row => row.assessment_access !== 'full' || (Array.isArray(row.capabilities) && row.capabilities.length > 0 && Number(profileById.get(row.professional_id)?.valu_index) >= 35))
     .filter(row => row.assessment_access !== 'full'
-      || (row.assessment_summary && row.assessment_summary.trim().length >= 12))
+      || (Array.isArray(row.capabilities) && row.capabilities.length > 0
+        && row.assessment_summary && row.assessment_summary.trim().length >= 12))
     .map(row => [row.professional_id, row]))
   const candidateIds = [...rosterById.keys()]
   if (!candidateIds.length) return []
 
   const { data: profiles, error: profileError } = await admin
     .from('professional_profiles')
-    .select('id,updated_at,display_name,headline,current_job_title,profile_complete')
+    .select('id,updated_at,display_name,headline,current_job_title,profile_complete,valu_index')
     .in('id', candidateIds)
     .eq('is_test', false)
     .eq('visibility', 'public')
@@ -180,6 +197,36 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
     throw new Error('Public profile sitemap could not be verified.')
   }
   if (!profiles?.length) return []
+
+  const fullIds = profiles
+    .filter(profile => rosterById.get(profile.id)?.assessment_access === 'full')
+    .map(profile => profile.id)
+  let fullReadyIds = new Set()
+  if (fullIds.length) {
+    const { data: capabilities, error: capabilityError } = await admin
+      .from('professional_capabilities')
+      .select('professional_id,eligible_for_listing,eligibility_status,missing_requirements')
+      .in('professional_id', fullIds)
+      .eq('is_active', true)
+    if (capabilityError) {
+      console.error('Full profile sitemap capability verification failed:', capabilityError)
+      throw new Error('Full profile sitemap capability evidence could not be verified.')
+    }
+    const capabilitiesById = new Map()
+    for (const capability of capabilities || []) {
+      const list = capabilitiesById.get(capability.professional_id) || []
+      list.push(capability)
+      capabilitiesById.set(capability.professional_id, list)
+    }
+    fullReadyIds = new Set(fullIds.filter(id => {
+      const active = capabilitiesById.get(id) || []
+      return active.length > 0 && active.every(capability =>
+        capability.eligible_for_listing === true
+        && capability.eligibility_status === 'listed'
+        && (!Array.isArray(capability.missing_requirements) || capability.missing_requirements.length === 0)
+      )
+    }))
+  }
 
   const basicIds = profiles
     .filter(profile => rosterById.get(profile.id)?.assessment_access === 'basic')
@@ -224,7 +271,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
   return profiles.filter(profile => {
     const access = rosterById.get(profile.id)?.assessment_access
     const ready = access === 'full'
-      ? profile.profile_complete === true
+      ? profile.profile_complete === true && Number(profile.valu_index) >= 35 && fullReadyIds.has(profile.id)
       : access === 'basic'
         && tasterIds.has(profile.id)
         && hasBasicPublicIdentity(profile, rosterById.get(profile.id))
