@@ -10,3 +10,6 @@ Dispatch permissions and staging-only Vite preview environment have been verifie
 
 
 Additional transitive remediation: pin patched browserslist, baseline-browser-mapping, and js-yaml release lines before the next staging validation run.
+
+
+Staging visual correction: root parallax controller is now mounted once in the shared layout; redeploy both staging Workers and rerun smoke checks.
