@@ -260,10 +260,10 @@ describe('VALUI marketplace lifecycle contract', () => {
 
   test('marketplace queries exclude registered-only and test profiles', () => {
     const data = read('src/lib/marketplace-data.js')
-    expect(data).toContain('professional_profiles!marketplace_public_roster_professional_id_fkey!inner')
-    expect(data).toContain(".in('professional_profiles.visibility', ['public', 'marketplace'])")
-    expect(data).toContain(".in('professional_profiles.listing_status', ['listed', 'active'])")
-    expect(data).toContain(".eq('professional_profiles.is_test', false)")
+    expect(data).toContain("const SOURCE = 'marketplace_public_roster'")
+    expect(data).toContain(".from(SOURCE)")
+    expect(data).not.toContain('professional_profiles!inner')
+    expect(data).not.toContain('professional_profiles.visibility')
   })
 
   test('profile capability selection is reconciled through an authenticated server endpoint', () => {
