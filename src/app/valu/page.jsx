@@ -18,10 +18,10 @@ export default function ValuPage() {
         <div className="valu-wrap">
           <div className="valu-kicker"><span /> THE VALU INDEX</div>
           <h1>Make your capability<br /><em>visible and actionable.</em></h1>
-          <p className="valu-lede">The VALU Index gives professionals a structured view of capability across the 17 skills in PRIME. Begin with a separate 9-question taster, then complete the full 58-question assessment to establish your official VALU Index in points.</p>
+          <p className="valu-lede">The VALU Index gives professionals a structured view of capability across the 17 skills in PRIME. Begin with a short, guided taster, then continue to the formal assessment when you are ready to establish your official VALU Index in points.</p>
           <div className="valu-actions">
             <AssessmentStartLink href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">START THE VALU TASTER <span>→</span></AssessmentStartLink>
-            <a href="#how-it-works" className="valu-btn valu-btn-ghost">UNDERSTAND THE TWO ASSESSMENTS <span>↓</span></a>
+            <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW VALU SUPPORTS YOUR GROWTH <span>↓</span></a>
           </div>
           <div className="valu-meta"><span>VALU TASTER</span><i>·</i><span>FULL ASSESSMENT</span><i>·</i><span>5 PRIME DIMENSIONS</span></div>
         </div>
@@ -36,13 +36,13 @@ export default function ValuPage() {
 
       <section className="valu-process">
         <div className="valu-wrap">
-          <div className="valu-kicker"><span /> TWO DISTINCT ASSESSMENTS</div>
+          <div className="valu-kicker"><span /> A CLEAR PROFESSIONAL STARTING POINT</div>
           <h2>A clear starting point.<br /><em>A fuller professional picture.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>VALU taster</h3><p>Nine questions, no account required. The taster gives a first read on four Intelligence skills and introduces the wider PRIME framework. It is separate from the full assessment and does not produce an official VALU Index.</p></article>
-            <article><b>02</b><h3>Create your account</h3><p>Create or confirm your account after the taster. After email confirmation, return to your dashboard without signing in again.</p></article>
-            <article><b>03</b><h3>full assessment</h3><p>A separate 58-question assessment: 54 scored questions and 4 validity anchors. It requires an account and takes about 15–20 minutes.</p></article>
-            <article><b>04</b><h3>Build visibility</h3><p>Your completed assessment produces a points score across five clusters, an earned designation and a professional profile that remains valid for 12 months. Listing eligibility and public visibility are separate decisions.</p></article>
+            <article><b>01</b><h3>Begin with insight</h3><p>Start with a short, guided reflection that introduces the PRIME framework and gives you an initial perspective on your professional capability.</p></article>
+            <article><b>02</b><h3>Build your professional record</h3><p>Create your account and develop a professional profile that brings your experience, expertise and ambitions into context.</p></article>
+            <article><b>03</b><h3>Complete your assessment</h3><p>Continue to the formal assessment when you are ready. Your progress is preserved, so you can return and complete it without losing your place.</p></article>
+            <article><b>04</b><h3>Make capability visible</h3><p>Your completed assessment establishes your official VALU Index in points and informs the next steps in your professional development and visibility.</p></article>
           </div>
         </div>
       </section>
