@@ -5,8 +5,8 @@ import EventPoster from '@/components/EventPoster'
 import EventRegistrationTrigger from '@/components/EventRegistrationTrigger'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState } from '@/lib/professionalStandardSeries'
 
-const SESSION = PROFESSIONAL_STANDARD_SERIES.find((item) => item.id === '03')
-const DISMISS_KEY = 'valoria-home-event-popup-dismissed-2026-10'
+const SESSION = PROFESSIONAL_STANDARD_SERIES.find((item) => item.id === '04')
+const DISMISS_KEY = 'valoria-home-event-popup-dismissed-2026-11'
 
 export default function HomepageEventPopup() {
   const [open, setOpen] = useState(false)
@@ -61,8 +61,8 @@ export default function HomepageEventPopup() {
         </div>
         <div className="homepage-event-popup-copy">
           <p className="homepage-event-popup-eyebrow">THE NEXT VALORIA CONVERSATION</p>
-          <h2 id="homepage-event-popup-title">Your next level of performance should not cost you your wellbeing.</h2>
-          <p>Explore the gap between being busy and creating impact — and how high performers can build a more sustainable way to work.</p>
+          <h2 id="homepage-event-popup-title">{SESSION.title}</h2>
+          <p>{SESSION.description}</p>
           <div className="homepage-event-popup-actions">
             <EventRegistrationTrigger session={SESSION} className="event-register-button" >RESERVE YOUR PLACE <span aria-hidden="true">→</span></EventRegistrationTrigger>
             <button className="homepage-event-popup-dismiss" type="button" onClick={close}>Maybe later</button>
