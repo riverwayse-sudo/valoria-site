@@ -114,7 +114,7 @@ function PrimeRadarChart({ scores, size = 260 }) {
 }
 
 // ─── component ─────────────────────────────────────────────
-export default function ProfileClient({ id, searchParams, initialProfile = null, previewUnavailable = false }) {
+export default function ProfileClient({ id, searchParams, initialProfile = null, previewUnavailable = false, profileContentNotReady = false }) {
   const [profile, setProfile]     = useState(initialProfile)
   const [loading, setLoading]     = useState(!initialProfile)
   const [notFound, setNotFound]   = useState(false)
@@ -169,6 +169,18 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
       if (cancelled) return
       setCurrentUser(user)
 
+      if (profileContentNotReady) {
+        if (user && user.id === id) {
+          window.location.href = '/profile/setup'
+          return
+        }
+        if (!cancelled) {
+          setNotFound(true)
+          setLoading(false)
+        }
+        return
+      }
+
       if (initialProfile) {
         await loadCertificates(initialProfile.id)
         if (cancelled) return
@@ -216,7 +228,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
     })
 
     return () => { cancelled = true }
-  }, [id, initialProfile, previewUnavailable])
+  }, [id, initialProfile, previewUnavailable, profileContentNotReady]
 
   function copyLink() {
     if (typeof window === 'undefined') return
