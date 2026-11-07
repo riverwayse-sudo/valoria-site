@@ -103,6 +103,8 @@ jobs:
           curl -fsS "$base/" -o /tmp/valoria-home.html
           grep -q 'THE PROFESSIONAL CAPABILITY MARKETPLACE' /tmp/valoria-home.html
           grep -q 'FOUR WAYS TO ENGAGE' /tmp/valoria-home.html
+          grep -q 'INITIAL MARKET' /tmp/valoria-home.html
+          grep -q 'initial operating focus is Nigeria' /tmp/valoria-home.html
 
           : > /tmp/valoria-css-bundle.css
           css_assets="$(grep -oE 'href="[^"]+\.css[^"]*"' /tmp/valoria-home.html | cut -d '"' -f 2)"
