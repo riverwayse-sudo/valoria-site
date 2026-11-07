@@ -31,7 +31,7 @@ async function proxyAssessment(request) {
 
   const incoming = new URL(request.url)
   const suffix = incoming.pathname.replace(/^\/valu\/assessment\/?/, '')
-  const target = new URL(suffix ? `/valu/assessment/${suffix}` : '/valu/assessment/', origin)
+  const target = new URL(suffix ? `/valu/assessment/${suffix}` : '/', origin)
   target.search = incoming.search
 
   const headers = new Headers()
