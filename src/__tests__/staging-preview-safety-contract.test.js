@@ -78,6 +78,13 @@ describe('staging preview safety boundary', () => {
     expect(workflow).toContain('npx wrangler deploy')
   })
 
+  test('staging smoke tests verify authenticated handoff and disabled public writes', () => {
+    const workflow = read('.github/workflows/cloudflare-staging-deploy.yml')
+    expect(workflow).toContain('Unauthenticated VALU handoff returned HTTP')
+    expect(workflow).toContain('Unauthenticated taster link returned HTTP')
+    expect(workflow).toContain('Read-only staging opportunity API returned HTTP')
+  })
+
   test('preview metadata is not indexable and production analytics are disabled', () => {
     const layout = read('src/app/layout.jsx')
     expect(layout).toMatch(/index:\s*false/)
