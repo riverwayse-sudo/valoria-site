@@ -1,0 +1,56 @@
+name: Deploy Valoria site to isolated Cloudflare staging
+
+on:
+  push:
+    branches: ["experience/staging-redesign-20261106"]
+    paths:
+      - "src/**"
+      - "next.config.js"
+      - "open-next.config.ts"
+      - "wrangler.jsonc"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/cloudflare-staging-deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: valoria-site-cloudflare-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy-staging:
+    name: Build and deploy isolated staging Worker
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Install locked application dependencies
+        run: npm ci
+      - name: Provide CI-only build configuration
+        run: |
+          cat > .env <<'EOF'
+          NEXT_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder-anon-key
+          SUPABASE_SERVICE_ROLE_KEY=placeholder-service-role-key
+          ANTHROPIC_API_KEY=placeholder-anthropic-key
+          VALU_UPSTREAM_ORIGIN=https://assessment-preview.invalid
+          EOF
+      - name: Install pinned Cloudflare build tools
+        run: npm install --no-save @opennextjs/cloudflare@1.20.15 wrangler@4.156.1
+      - name: Build OpenNext output
+        run: npx @opennextjs/cloudflare build
+        env:
+          CI: true
+          NEXT_TELEMETRY_DISABLED: 1
+      - name: Deploy only the staging Worker
+        run: npx wrangler deploy --config wrangler.jsonc --env staging
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
