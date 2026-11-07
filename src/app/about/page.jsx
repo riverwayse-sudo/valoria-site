@@ -11,7 +11,7 @@ export const metadata = {
 }
 
 const PATHWAYS = [
-  { number: '01', title: 'Assess', body: 'The VALU Index measures professional capability across the PRIME framework. The full assessment contains 58 questions: 54 scored questions and four validity checks. Results are expressed in points.' },
+  { number: '01', title: 'Assess', body: 'The VALU Index measures professional capability across the PRIME framework. Results are expressed in points and interpreted across the five capability dimensions.' },
   { number: '02', title: 'Develop', body: 'Valoria Develop offers structured learning formats designed around the capability areas professionals and organisations want to strengthen.' },
   { number: '03', title: 'Connect', body: 'The marketplace and opportunities layer helps professionals become easier to understand and discover when their profile meets the applicable listing and visibility requirements.' },
 ]
@@ -158,9 +158,9 @@ export default function AboutPage() {
           <Reveal>
             <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">WORTH. BUILT.</span><div className="eyebrow-line" /></div>
             <h2 className="section-title">Make your capability<br /><em>easier to see.</em></h2>
-            <p className="page-sub about-cta-copy">Start with the 9-question taster, then decide whether to continue with the VALU Index.</p>
+            <p className="page-sub about-cta-copy">Start with the VALU taster, then decide whether to continue with the VALU Index.</p>
             <div className="page-hero-actions eyebrow-center">
-              <a href={BRAND.assessmentUrl} className="btn-gold">TAKE THE 9-QUESTION TASTER</a>
+              <a href={BRAND.assessmentUrl} className="btn-gold">TAKE THE VALU TASTER</a>
               <a href="/contact-us" className="btn-outline">GET IN TOUCH</a>
             </div>
           </Reveal>
