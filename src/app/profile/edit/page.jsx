@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { MARKETPLACE_CONSENT_TEXT } from '@/lib/marketplace-consent'
 import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
 import {
   GOLD, DARK, MID, PARCH, DIM, GLINE,
@@ -122,6 +123,10 @@ function EditPageInner() {
   // values per section so we know what's actually dirty and what to send.
   const [form, setForm] = useState(null)
   const [original, setOriginal] = useState(null)
+  const [marketplaceConsentChecked, setMarketplaceConsentChecked] = useState(false)
+  const [visibilitySaving, setVisibilitySaving] = useState(false)
+  const [visibilityError, setVisibilityError] = useState('')
+  const [visibilitySaved, setVisibilitySaved] = useState(false)
 
   useEffect(() => {
     (async () => {
@@ -261,6 +266,25 @@ function EditPageInner() {
     } finally {
       setCvUploading(false)
     }
+  }
+
+  async function updateMarketplaceVisibility(enabled) {
+    setVisibilitySaving(true)
+    setVisibilityError('')
+    setVisibilitySaved(false)
+    const { data, error } = await supabase.rpc('set_marketplace_public_listing_consent', { p_enabled: enabled })
+    if (error) {
+      console.error('Marketplace visibility update failed:', error)
+      setVisibilityError('Your visibility preference could not be updated. Please try again.')
+      setVisibilitySaving(false)
+      return
+    }
+    const nextVisibility = data?.visibility || (enabled ? 'public' : 'registered_only')
+    setForm(current => ({ ...current, visibility: nextVisibility }))
+    setOriginal(current => ({ ...current, visibility: nextVisibility }))
+    setMarketplaceConsentChecked(false)
+    setVisibilitySaved(true)
+    setVisibilitySaving(false)
   }
 
   const tracks = form.active_tracks || []
@@ -414,6 +438,33 @@ function EditPageInner() {
             }} />
           </Field>
         </Section>
+
+        <section style={S.section} aria-labelledby="marketplace-visibility-title">
+          <div className="profile-edit-section-head" style={S.sectionHead}>
+            <h2 id="marketplace-visibility-title" style={S.sectionTitle}>Marketplace visibility</h2>
+            <span style={{ fontSize:'10px', color:form.visibility === 'public' || form.visibility === 'marketplace' ? '#65C79A' : 'rgba(247,244,238,.42)', letterSpacing:'.08em', fontWeight:700 }}>
+              {form.visibility === 'public' || form.visibility === 'marketplace' ? 'PUBLIC VISIBILITY ON' : 'PRIVATE'}
+            </span>
+          </div>
+          <p style={{ fontSize:'12px', color:DIM, lineHeight:1.7, margin:'0 0 16px' }}>
+            {form.visibility === 'public' || form.visibility === 'marketplace'
+              ? 'Your profile has opted into public visibility. It appears in the Marketplace only when the relevant profile, capability and eligibility requirements are met.'
+              : 'Your profile is private and will not appear in the public Marketplace. You can still use your account and continue developing your profile.'}
+          </p>
+          {!(form.visibility === 'public' || form.visibility === 'marketplace') && (
+            <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'16px' }}>
+              <input type="checkbox" checked={marketplaceConsentChecked} onChange={e => setMarketplaceConsentChecked(e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'3px', flexShrink:0 }} />
+              <span style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.75 }}>{MARKETPLACE_CONSENT_TEXT}</span>
+            </label>
+          )}
+          {visibilityError && <p style={{ fontSize:'11px', color:'#F09595', margin:'0 0 12px' }}>{visibilityError}</p>}
+          {visibilitySaved && <p style={{ fontSize:'11px', color:'#65C79A', margin:'0 0 12px' }}>Marketplace visibility preference saved.</p>}
+          <button type="button" onClick={() => updateMarketplaceVisibility(!(form.visibility === 'public' || form.visibility === 'marketplace'))}
+            disabled={visibilitySaving || (!(form.visibility === 'public' || form.visibility === 'marketplace') && !marketplaceConsentChecked)}
+            style={{ ...S.ghostBtn, opacity:visibilitySaving || (!(form.visibility === 'public' || form.visibility === 'marketplace') && !marketplaceConsentChecked) ? .45 : 1, cursor:visibilitySaving || (!(form.visibility === 'public' || form.visibility === 'marketplace') && !marketplaceConsentChecked) ? 'not-allowed' : 'pointer' }}>
+            {visibilitySaving ? 'Saving…' : form.visibility === 'public' || form.visibility === 'marketplace' ? 'Make profile private' : 'Make profile public'}
+          </button>
+        </section>
       </div>
       <style>{`
         .profile-edit-header { gap: 16px; }
