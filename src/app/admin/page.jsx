@@ -43,71 +43,28 @@ export default function AdminPage() {
     if (!currentUser) { window.location.href = '/admin/login'; return }
     setUser(currentUser)
 
-    const [msg, prof, buyer, capabilityRows, accountRows, assessmentRows, tasterRows, acknowledgementRows] = await Promise.all([
+    const [msg, prof, buyer, capabilityRows] = await Promise.all([
       supabase.from('enquiries').select('*, recipient:professional_profile_id(id,display_name,headline,active_tracks,photo_url)').order('created_at', { ascending: false }),
       supabase.from('professional_profiles').select('id,display_name,atb_id,headline,active_tracks,listing_status,visibility,eligible_for_listing,is_test,industry,availability,created_at,profile_complete,valu_index').order('created_at', { ascending: false }),
       supabase.from('profiles').select('id,user_type'),
       supabase.from('professional_capabilities').select('professional_id,capability,is_active,eligibility_status,eligible_for_listing'),
-      supabase.from('users').select('id,full_name,user_type'),
-      supabase.from('valu_assessments').select('user_id,total_score,completed_at').not('completed_at', 'is', null).order('completed_at', { ascending: false }),
-      supabase.from('taster_sessions').select('user_id,completed_at').not('completed_at', 'is', null),
-      supabase.from('professional_profile_acknowledgements').select('professional_id,acknowledgement_type,acknowledgement_version,acknowledged_at,created_at').eq('acknowledgement_type', 'profile_submission').order('acknowledged_at', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false }),
     ])
     setMessages((msg.data || []).map(x => ({ ...x, recipient_profile_id: x.professional_profile_id })))
     setProfiles(prof.data || [])
     setBuyers(buyer.data || [])
     setCapabilities(capabilityRows.data || [])
 
-    const accountById = new Map((accountRows.data || []).map(row => [row.id, row]))
-    const latestFullById = new Map()
-    for (const row of assessmentRows.data || []) {
-      if (row.user_id && !latestFullById.has(row.user_id)) latestFullById.set(row.user_id, row)
-    }
-    const tasterCountById = new Map()
-    for (const row of tasterRows.data || []) {
-      if (row.user_id) tasterCountById.set(row.user_id, (tasterCountById.get(row.user_id) || 0) + 1)
-    }
-    const latestAcknowledgementById = new Map()
-    for (const row of acknowledgementRows.data || []) {
-      if (row.professional_id && !latestAcknowledgementById.has(row.professional_id)) latestAcknowledgementById.set(row.professional_id, row)
-    }
-    const normaliseName = value => String(value || '').normalize('NFKC').trim().toLocaleLowerCase('en')
-    const candidates = (prof.data || []).flatMap(profile => {
-      const account = accountById.get(profile.id)
-      if (profile.is_test || account?.user_type !== 'professional') return []
-      const profileName = normaliseName(profile.display_name)
-      const accountName = normaliseName(account.full_name)
-      const namesAlign = !!profileName && !!accountName && (
-        profileName === accountName || profileName.startsWith(accountName) || accountName.startsWith(profileName)
-      )
-      if (!namesAlign) return []
-      const fullAssessment = latestFullById.get(profile.id)
-      const completedTasters = tasterCountById.get(profile.id) || 0
-      const assessmentAccess = fullAssessment ? 'full' : completedTasters > 0 ? 'basic' : null
-      if (!assessmentAccess) return []
-      const acknowledgement = latestAcknowledgementById.get(profile.id)
-      const publicConsent = acknowledgement?.acknowledgement_version === 'public-profile-visibility-v3-2026-11-07'
-      const capabilityRowsForProfile = (capabilityRows.data || []).filter(row => row.professional_id === profile.id && row.is_active)
-      return [{
-        ...profile,
-        accountName: account.full_name,
-        assessmentAccess,
-        fullScore: fullAssessment ? Number(fullAssessment.total_score) : null,
-        completedTasters,
-        publicConsent,
-        capabilityLabels: [...new Set(capabilityRowsForProfile.map(row => row.capability))],
-      }]
-    }).sort((a, b) => String(a.display_name || '').localeCompare(String(b.display_name || '')))
-    setRosterCandidates(candidates)
-
     try {
       const t = await token()
-      const [a, ad] = await Promise.all([
+      const [a, ad, roster] = await Promise.all([
         fetch('/api/admin/analytics', { headers: { Authorization: `Bearer ${t}` } }),
         fetch('/api/admin/create-admin', { headers: { Authorization: `Bearer ${t}` } }),
+        fetch('/api/admin/marketplace-roster', { headers: { Authorization: `Bearer ${t}` } }),
       ])
       if (a.ok) setAnalytics(await a.json())
       if (ad.ok) setAdmins((await ad.json()).admins || [])
+      if (roster.ok) setRosterCandidates((await roster.json()).candidates || [])
+      else setError('The internal roster review could not be loaded. Please refresh or check admin access.')
     } catch {}
     setLoading(false)
   }
