@@ -470,4 +470,38 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(route).toContain('profile.is_test || profile.revoked_at')
   })
 
+
+  test('marketplace opens an accessible profile preview modal from each public card', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    const styles = read('src/components/MarketplaceDirectory.module.css')
+    expect(directory).toContain('const [selectedProfile, setSelectedProfile] = useState(null)')
+    expect(directory).toContain('aria-haspopup="dialog"')
+    expect(directory).toContain('function ProfilePreviewModal({ profile, onClose })')
+    expect(directory).toContain('role="dialog"')
+    expect(directory).toContain('aria-modal="true"')
+    expect(directory).toContain("event.key === 'Escape'")
+    expect(directory).toContain("event.key !== 'Tab'")
+    expect(directory).toContain('onMouseDown={event => { if (event.target === event.currentTarget) onClose() }}')
+    expect(directory).toContain('OPEN FULL PROFILE')
+    expect(styles).toContain('.modalBackdrop')
+    expect(styles).toContain('.modalDialog')
+    expect(styles).toContain('@media(max-width:760px)')
+    expect(styles).toContain('prefers-reduced-motion:reduce')
+  })
+
+  test('marketplace profile preview exposes only public projection fields and report-backed insight', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    const modal = directory.slice(directory.indexOf('function ProfilePreviewModal'), directory.length)
+    expect(modal).toContain('profile.assessment_summary')
+    expect(modal).toContain('profile.assessment_access')
+    expect(modal).toContain('getCapabilitySelection(profile)')
+    expect(modal).toContain("key: 'candidate'")
+    expect(modal).toContain("key: 'speaker'")
+    expect(modal).toContain("key: 'facilitator'")
+    expect(modal).not.toContain('profile.email')
+    expect(modal).not.toContain('profile.phone')
+    expect(modal).not.toContain('profile.bio')
+    expect(modal).toContain('Contact details and individual assessment answers are not displayed')
+  })
+
 })
