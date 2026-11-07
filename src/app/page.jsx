@@ -99,11 +99,11 @@ export default function HomePage() {
                 The VALU Index helps you understand your professional capability across Presence, Relationships, Intelligence, Mastery and Enterprise. Begin with a free taster and take a clearer view of what to build next.
               </p>
               <div className="valu-conversion-proof" aria-label="VALU Index entry details">
-                <span><b>9</b> QUESTIONS</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span>NO ACCOUNT NEEDED</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
+                <span>SHORT REFLECTION</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span>NO ACCOUNT NEEDED</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
               </div>
               <div className="home-dual-actions">
                 <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">
-                  START THE 9-QUESTION TASTER <span aria-hidden="true">→</span>
+                  START THE VALU TASTER <span aria-hidden="true">→</span>
                 </AssessmentStartLink>
                 <a href="/valu" className="text-link">
                   UNDERSTAND THE VALU INDEX <span aria-hidden="true">→</span>
