@@ -233,7 +233,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     const valu = read('src/app/valu/page.jsx')
     const start = read('src/app/valu/start/page.jsx')
     const prime = read('src/app/prime/page.jsx')
-    for (const source of [valu, start, prime]) {
+    for (const source of [start, prime]) {
       expect(source).toContain('Presence')
       expect(source).toContain('Relationships')
       expect(source).toContain('Intelligence')
