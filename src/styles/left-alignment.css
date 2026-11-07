@@ -113,3 +113,115 @@ main :where(.btn-gold, .btn-primary, .btn-secondary, .btn-tertiary, .btn-outline
   .wl-btn, .event-register-button) {
   text-align: center !important;
 }
+
+
+/* --------------------------------------------------------------------------
+   SITE-WIDE ALIGNMENT ENFORCEMENT
+   The earlier rules covered selected copy but left page-level flex/grid
+   alignment untouched. These rules establish a shared left reading edge
+   across every route while preserving the approved centred button treatment.
+   -------------------------------------------------------------------------- */
+
+/* Every page's editorial text follows the same left edge, including nested
+   content components whose own styles previously re-centred their copy. */
+main :where(h1,h2,h3,h4,h5,h6,p,li,label,blockquote,figcaption,legend,
+  span,strong,em,b,i,small,summary,dt,dd,th,td,caption) {
+  text-align: left !important;
+}
+
+/* Common page shells and section headers must not centre their child content. */
+main :where(.page-hero,.page-hero-inner,.page-header,.page-intro,.page-heading,
+  .page-section,.page-section-inner,.section,.section-wrap,.section-inner,
+  .section-heading,.section-header,.section-intro,.content-wrap,.content-inner,
+  .page-content,.about-cta,.about-cta-inner,.prime-header,.valu-hero,
+  .opportunities-hero,.coaching-hero,.cta-banner) {
+  text-align: left !important;
+}
+
+/* Remove auto-centering from common copy blocks and their action rows. */
+main :where(.page-hero,.page-hero-inner,.page-header,.page-intro,.page-heading,
+  .section-heading,.section-header,.section-intro,.content-wrap,.content-inner,
+  .page-content,.about-cta,.about-cta-inner,.cta-banner) {
+  align-items: flex-start !important;
+  justify-items: start !important;
+}
+
+main :where(.page-title,.page-sub,.page-copy,.section-title,.section-subtitle,
+  .section-description,.about-cta-copy,.prime-centered-copy,.page-lead) {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+main :where(.hero-actions,.page-hero-actions,.cta-actions,.button-group,
+  .about-cta-actions,.section-actions) {
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+}
+
+/* Explicitly preserve the approved centred label treatment for pill controls. */
+main :where(.btn-gold,.btn-primary,.btn-secondary,.btn-tertiary,.btn-outline,
+  .btn-ghost,.nav-cta,.valu-btn,.valu-btn-gold,.valu-btn-ghost,.wl-btn,
+  .event-register-button,.ps-card-cta,.live-profile-action) {
+  text-align: center !important;
+}
+
+/* Desktop dropdowns: force both text and layout alignment at every depth. */
+.vi-nav .nav-dropdown,
+.vi-nav .nav-dropdown-grid,
+.vi-nav .nav-dropdown-grid > div,
+.vi-nav .nav-dropdown-entry,
+.vi-nav .nav-dropdown-label,
+.vi-nav .nav-dropdown-link,
+.vi-nav .nav-dropdown-description,
+.vi-nav [role="menu"],
+.vi-nav [role="menu"] [role="menu"] {
+  text-align: left !important;
+}
+
+.vi-nav .nav-dropdown-grid > div,
+.vi-nav .nav-dropdown-entry {
+  display: grid;
+  justify-items: stretch !important;
+  justify-content: start !important;
+  align-items: start !important;
+}
+
+.vi-nav .nav-dropdown-link {
+  display: block !important;
+  width: 100%;
+  text-align: left !important;
+}
+
+/* Mobile menu and nested expandable content use the same left edge. */
+.nav-mobile,
+.nav-mobile > div,
+.nav-mobile .m-label,
+.nav-mobile .nav-mobile-link,
+.nav-mobile .nav-dropdown,
+.nav-mobile .nav-dropdown-grid,
+.nav-mobile .nav-dropdown-grid > div,
+.nav-mobile .nav-dropdown-entry,
+.nav-mobile .nav-dropdown-label,
+.nav-mobile .nav-dropdown-link,
+.nav-mobile .nav-dropdown-description,
+.nav-mobile [role="menu"],
+.nav-mobile [role="menu"] [role="menu"] {
+  text-align: left !important;
+}
+
+.nav-mobile > div,
+.nav-mobile .nav-dropdown-grid > div,
+.nav-mobile .nav-dropdown-entry {
+  justify-items: stretch !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+}
+
+.nav-mobile :where(.nav-mobile-link,.nav-dropdown-link,.nav-dropdown-entry) {
+  text-align: left !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+}
+
+/* Keep the top-level navigation controls and brand mark in their existing
+   positions; this standard applies to dropdown and page content, not the logo. */
