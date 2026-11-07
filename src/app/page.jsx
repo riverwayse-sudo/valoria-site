@@ -1,87 +1,77 @@
-import Nav, { AssessmentStartLink } from '@/components/Nav'
+import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import HomepageEvents from '@/components/HomepageEvents'
 import { BRAND } from '@/lib/brand'
+import { AssessmentStartLink } from '@/components/Nav'
 import './home.css'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export const metadata = {
-  title: 'Valoria Institute — Worth. Built.',
-  description: 'Valoria helps professionals understand their capabilities, build a stronger professional presence and connect with opportunities where their expertise can make a difference.',
+  title: 'Valoria Institute — Africa’s Human Capital Institution',
+  description: 'Valoria Institute builds the infrastructure through which African professional capability is understood, developed, surfaced and connected to opportunity.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
 }
 
-const frameworkStages = [
+const institutionalCapabilities = [
   {
     number: '01',
-    title: 'Start with the taster',
-    body: 'Begin with a short, guided introduction to PRIME. No account is needed to start.',
-    href: '/valu',
-    cta: 'START WITH THE TASTER',
+    label: 'A SHARED STANDARD',
+    title: 'PRIME Framework',
+    body: 'A structured framework for understanding professional capability across Presence, Relationships, Intelligence, Mastery and Enterprise.',
+    outcome: 'A common language for capability.',
   },
   {
     number: '02',
-    title: 'Complete the full assessment',
-    body: 'Continue to the separate formal assessment to establish your official VALU Index in points.',
-    href: '/valu',
-    cta: 'UNDERSTAND THE ASSESSMENT',
+    label: 'ASSESSMENT & INSIGHT',
+    title: 'VALU Index',
+    body: 'An assessment-led view of capability that helps professionals understand their strengths and gives development decisions a clearer starting point.',
+    outcome: 'Evidence to inform the next decision.',
   },
   {
     number: '03',
-    title: 'Build your professional profile',
-    body: 'Bring your assessment-informed capabilities, experience and professional direction into one clear record. Public visibility follows eligibility and consent.',
-    href: '/marketplace',
-    cta: 'EXPLORE PROFILES',
+    label: 'TALENT ACCESS',
+    title: 'African Talent Bureau',
+    body: 'A capability-led route for employers, event organisers and programme teams to discover professionals, speakers and facilitators.',
+    outcome: 'Relevant expertise, easier to find.',
   },
   {
     number: '04',
-    title: 'Get found for relevant work',
-    body: 'Explore published opportunities and buyer pathways when verified listings and clear engagement routes are available.',
-    href: '/opportunities',
-    cta: 'EXPLORE OPPORTUNITIES',
+    label: 'CAPABILITY DEVELOPMENT',
+    title: 'Valoria Develop',
+    body: 'Structured learning and development pathways that help individuals and organisations build the capabilities that matter.',
+    outcome: 'Development connected to real needs.',
   },
 ]
 
-const pathwayCards = [
+const decisionPathways = [
   {
-    label: 'FOR PROFESSIONALS',
-    title: 'Make your capability visible.',
-    body: 'Understand where you stand, build a stronger professional record and become discoverable for relevant opportunities.',
-    href: '/valu',
-    cta: 'START WITH THE TASTER',
-  },
-  {
-    label: 'FOR EMPLOYERS',
-    title: 'Find capability with context.',
-    body: 'Explore professionals through structured profiles that bring capability, experience and professional pathways into view.',
+    number: '01',
+    label: 'FOR EMPLOYERS & TALENT LEADERS',
+    title: 'Make better talent decisions.',
+    body: 'Bring capability, professional context and role requirements into the same conversation. Explore a more considered approach to talent discovery and sourcing.',
     href: '/atb-connect',
     cta: 'EXPLORE ATB CONNECT',
   },
   {
+    number: '02',
     label: 'FOR EVENT ORGANISERS',
-    title: 'Find the right voices.',
-    body: 'Discover speakers with relevant expertise for conversations, conferences, programmes and organisational moments.',
+    title: 'Find expertise for the room.',
+    body: 'Identify speakers and facilitators whose knowledge and experience are relevant to your audience, event or programme.',
     href: '/atb-spotlight',
     cta: 'EXPLORE ATB SPOTLIGHT',
   },
   {
-    label: 'FOR FACILITATORS & EXPERTS',
-    title: 'Put expertise to work.',
-    body: 'Make your facilitation and specialist expertise visible to organisations seeking people who can lead learning and meaningful change.',
-    href: '/marketplace/facilitators',
-    cta: 'FIND FACILITATORS',
-  },
-  {
-    label: 'FOR INSTITUTIONS & PARTNERS',
-    title: 'Build capability together.',
-    body: 'Work with Valoria on professional development, institutional programmes and partnerships that connect capability to opportunity.',
-    href: '/contact-us',
-    cta: 'DISCUSS A PARTNERSHIP',
+    number: '03',
+    label: 'FOR INSTITUTIONS & PROGRAMME LEADERS',
+    title: 'Build capability at scale.',
+    body: 'Explore development programmes and institutional partnerships that connect professional growth to organisational and sector priorities.',
+    href: '/develop',
+    cta: 'EXPLORE VALORIA DEVELOP',
   },
 ]
 
@@ -92,138 +82,108 @@ export default function HomePage() {
       <main id="main-content" className="home-redesign-root">
         <HeroSlider />
 
-        <section className="home-framework home-problem" aria-labelledby="home-problem-title">
+        <section className="home-institutional-case" aria-labelledby="institutional-case-title">
           <div className="container">
             <Reveal className="home-section-heading">
               <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE PROBLEM</span></div>
-                <h2 id="home-problem-title">Careers still turn on who was in the <em>right room.</em></h2>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE INFRASTRUCTURE GAP</span></div>
+                <h2 id="institutional-case-title">Talent exists. The systems to recognise and mobilise it must work <em>better.</em></h2>
               </div>
-              <p>Your capability has not changed. The room has. Valoria gives professional capability a clearer way to be understood, developed and connected to opportunity.</p>
+              <p>Across hiring, leadership, learning and events, organisations need more than access to résumés or networks. They need clearer ways to understand capability, develop it and connect it to the right opportunity.</p>
             </Reveal>
-          </div>
-        </section>
-
-        <section className="valu-section valu-conversion" id="valu" aria-labelledby="home-valu-title">
-          <div className="container valu-conversion-shell">
-            <Reveal className="valu-conversion-intro">
-              <div className="eyebrow">
-                <div className="eyebrow-line" />
-                <span className="eyebrow-text">A CLEAR STARTING POINT</span>
+            <Reveal className="home-institutional-proof" as="div">
+              <div className="home-institutional-proof-item">
+                <span>THE CHALLENGE</span>
+                <strong>Capability is difficult to compare.</strong>
+                <p>Experience, potential and professional strengths are often presented in disconnected ways.</p>
               </div>
-              <h2 id="home-valu-title" className="valu-title">
-                Before you build your next move, <em>know where you stand.</em>
-              </h2>
-              <p className="valu-desc">
-                The VALU Index helps you understand your professional capability across Presence, Relationships, Intelligence, Mastery and Enterprise. Begin with a free taster and take a clearer view of what to build next.
-              </p>
-              <div className="valu-conversion-proof" aria-label="VALU Index entry details">
-                <span>SHORT REFLECTION</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span>NO ACCOUNT NEEDED</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
+              <div className="home-institutional-proof-item">
+                <span>THE OPPORTUNITY</span>
+                <strong>Better decisions need better context.</strong>
+                <p>Shared language and structured insight can strengthen how people are assessed, developed and discovered.</p>
               </div>
-              <div className="home-dual-actions">
-                <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">
-                  START THE VALU TASTER <span aria-hidden="true">→</span>
-                </AssessmentStartLink>
-                <a href="/valu" className="text-link">
-                  UNDERSTAND THE VALU INDEX <span aria-hidden="true">→</span>
-                </a>
-              </div>
-              <p className="valu-conversion-note">
-                A considered starting point for understanding your strengths and deciding what to build next.
-              </p>
-            </Reveal>
-
-            <Reveal className="valu-conversion-card">
-              <div className="vcc-top">
-                <span>YOUR PROFESSIONAL STARTING POINT</span>
-                <strong>VALU INDEX</strong>
-              </div>
-              <div className="vcc-radar" aria-hidden="true">
-                <svg className="vcc-radar-svg" viewBox="0 0 100 100" role="presentation">
-                  <g className="vcc-radar-grid">
-                    <polygon points="50,42 57.6,44.5 54.7,53.6 45.3,53.6 42.4,44.5" />
-                    <polygon points="50,34 65.2,39 59.5,57.3 40.5,57.3 34.8,39" />
-                    <polygon points="50,26 72.8,33.5 64.3,61 35.7,61 27.2,33.5" />
-                    <polygon points="50,18 80.4,28 69,64.6 31,64.6 19.6,28" />
-                    <polygon points="50,10 88,22.5 73.8,68.2 26.2,68.2 12,22.5" />
-                    <line x1="50" y1="50" x2="50" y2="10" />
-                    <line x1="50" y1="50" x2="88" y2="22.5" />
-                    <line x1="50" y1="50" x2="73.8" y2="68.2" />
-                    <line x1="50" y1="50" x2="26.2" y2="68.2" />
-                    <line x1="50" y1="50" x2="12" y2="22.5" />
-                  </g>
-                  <polygon className="vcc-radar-area" points="50,20 78,30 67,62 31,60 20,29" />
-                  <g className="vcc-radar-labels">
-                    <text x="50" y="5" textAnchor="middle">PRESENCE</text>
-                    <text x="94" y="21" textAnchor="end">RELATIONSHIPS</text>
-                    <text x="79" y="78" textAnchor="middle">INTELLIGENCE</text>
-                    <text x="21" y="78" textAnchor="middle">MASTERY</text>
-                    <text x="6" y="21">ENTERPRISE</text>
-                  </g>
-                </svg>
-              </div>
-              <div className="vcc-steps">
-                <div className="vcc-step is-active">
-                  <span>01</span>
-                  <div><b>Understand your capability</b><small>Start with a structured view of your strengths.</small></div>
-                </div>
-                <div className="vcc-step">
-                  <span>02</span>
-                  <div><b>Build your professional picture</b><small>Bring capability and experience into context.</small></div>
-                </div>
-                <div className="vcc-step">
-                  <span>03</span>
-                  <div><b>Explore relevant opportunities</b><small>Connect your professional record to the Marketplace.</small></div>
-                </div>
+              <div className="home-institutional-proof-item">
+                <span>THE VALORIA RESPONSE</span>
+                <strong>One connected capability infrastructure.</strong>
+                <p>Framework, assessment, development and talent access working as parts of one institutional system.</p>
               </div>
             </Reveal>
           </div>
         </section>
-
-        <LiveProfilesScroll />
 
         <section className="home-framework" aria-labelledby="home-framework-title">
           <div className="container">
             <Reveal className="home-section-heading">
               <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE VALORIA FRAMEWORK</span></div>
-                <h2 id="home-framework-title">From professional capability to <em>meaningful opportunity.</em></h2>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">HOW THE INSTITUTION WORKS</span></div>
+                <h2 id="home-framework-title">Four connected capabilities. <em>One institutional system.</em></h2>
               </div>
-              <p>Valoria connects assessment, development and professional visibility through one institutional framework.</p>
+              <p>Valoria Institute is the parent institution. Each part of its system has a distinct role, from the framework that defines capability to the pathways that help put it to work.</p>
             </Reveal>
-            <Reveal className="home-framework-grid" as="div">
-              {frameworkStages.map((stage) => (
-                <article className="home-framework-card" key={stage.number}>
-                  <span className="home-framework-number">{stage.number}</span>
-                  <h3>{stage.title}</h3>
-                  <p>{stage.body}</p>
-                  <a className="home-framework-link" href={stage.href}>{stage.cta} <span aria-hidden="true">→</span></a>
+            <Reveal className="home-framework-grid home-institutional-grid" as="div">
+              {institutionalCapabilities.map((item) => (
+                <article className="home-framework-card home-institutional-card" key={item.number}>
+                  <span className="home-framework-number">{item.number}</span>
+                  <span className="home-institutional-card-label">{item.label}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                  <strong className="home-institutional-outcome">{item.outcome}</strong>
                 </article>
               ))}
             </Reveal>
           </div>
         </section>
 
-        <section className="home-pathways" aria-labelledby="pathways-title">
+        <section className="home-pathways home-decision-pathways" aria-labelledby="decision-pathways-title">
           <div className="container">
             <Reveal className="home-section-heading">
               <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">PATHWAYS INTO VALORIA</span></div>
-                <h2 id="pathways-title">One institution.<br /><em>Five ways to engage.</em></h2>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">BUILT AROUND YOUR DECISIONS</span></div>
+                <h2 id="decision-pathways-title">Start with the outcome your organisation <em>needs.</em></h2>
               </div>
-              <p>For professionals, organisations and institutions, Valoria creates clear pathways to capability, expertise and meaningful collaboration.</p>
+              <p>Whether you are sourcing talent, curating an event or building workforce capability, Valoria provides a clear route into the relevant part of the institution.</p>
             </Reveal>
-
-            <Reveal className="home-pathway-grid" as="div">
-              {pathwayCards.map((card, index) => (
-                <a className="home-pathway-card" href={card.href} key={card.label}>
-                  <span className="home-pathway-number">0{index + 1}</span>
-                  <span className="home-pathway-label">{card.label}</span>
-                  <h3>{card.title}</h3>
-                  <p>{card.body}</p>
-                  <span className="home-pathway-cta">{card.cta} <span aria-hidden="true">→</span></span>
+            <Reveal className="home-pathway-grid home-decision-grid" as="div">
+              {decisionPathways.map((item) => (
+                <a className="home-pathway-card" href={item.href} key={item.number}>
+                  <span className="home-pathway-number">{item.number}</span>
+                  <span className="home-pathway-label">{item.label}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                  <span className="home-pathway-cta">{item.cta} <span aria-hidden="true">→</span></span>
                 </a>
               ))}
+            </Reveal>
+          </div>
+        </section>
+
+        <LiveProfilesScroll />
+
+        <section className="home-partnership-band" aria-labelledby="partnership-band-title">
+          <div className="container">
+            <Reveal className="home-partnership-content">
+              <div>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR ORGANISATIONS & INSTITUTIONS</span></div>
+                <h2 id="partnership-band-title">The next step is a better <em>capability conversation.</em></h2>
+                <p>Tell us what your organisation is trying to solve. We can explore talent access, professional development, event expertise or a wider institutional partnership.</p>
+              </div>
+              <a href="/contact-us" className="btn-gold">START A CONVERSATION <span aria-hidden="true">→</span></a>
+            </Reveal>
+          </div>
+        </section>
+
+        <section className="home-professional-entry" aria-labelledby="professional-entry-title">
+          <div className="container">
+            <Reveal className="home-professional-entry-content">
+              <div>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR PROFESSIONALS</span></div>
+                <h2 id="professional-entry-title">Make your capability <em>clearer.</em></h2>
+                <p>Explore the VALU Index and begin with a short reflection on the five PRIME dimensions. Use the insight as a starting point for your next professional move.</p>
+              </div>
+              <div className="home-professional-entry-actions">
+                <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">START THE VALU TASTER <span aria-hidden="true">→</span></AssessmentStartLink>
+                <a href="/valu" className="home-professional-secondary">UNDERSTAND THE VALU INDEX <span aria-hidden="true">→</span></a>
+              </div>
             </Reveal>
           </div>
         </section>
