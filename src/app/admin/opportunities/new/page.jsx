@@ -60,7 +60,7 @@ export default function AdminCreateOpportunity() {
           {field('organisation_name', 'ORGANISATION', true)}
           <label className="vi-job-field">EMPLOYMENT TYPE<select value={form.employment_type} onChange={event => set('employment_type', event.target.value)}>{['full-time','part-time','contract','temporary','internship'].map(x => <option key={x}>{x}</option>)}</select></label>
           {field('location', 'LOCATION')}
-          <label className="vi-job-field">WORK MODE<select value={form.work_mode} onChange={event => set('work_mode', event.target.value)}>{['onsite','hybrid','remote','flexible'].map(x => <option key={x}>{x}</option>)}</select></label>
+          <label className="vi-job-field">WORK MODE<select value={form.work_mode} onChange={event => set('work_mode', event.target.value)}>{['onsite','hybrid','remote'].map(x => <option key={x}>{x}</option>)}</select></label>
           {field('industry', 'INDUSTRY')}
           {field('experience_level', 'EXPERIENCE LEVEL')}
           {field('compensation', 'COMPENSATION / SALARY')}
