@@ -9,8 +9,8 @@ describe('main website left-alignment contract', () => {
   test('the global alignment stylesheet is loaded by the root layout', () => {
     const layout = read('src/app/layout.jsx')
     expect(layout).toContain("import '../styles/globals.css'")
-    expect(layout).toContain('href="#main-content"')
-    expect(layout).toContain('id="main-content" tabIndex={-1}')
+    expect(layout).toContain('href="#site-content-start"')
+    expect(layout).toContain('id="site-content-start" tabIndex={-1}')
   })
 
   test('all page copy is left aligned across every route, including inline-styled elements', () => {
