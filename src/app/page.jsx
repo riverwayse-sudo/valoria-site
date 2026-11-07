@@ -16,7 +16,7 @@ export const metadata = {
   title: 'Valoria Institute — Worth, Built.',
   openGraph: { title: 'Valoria Institute — Worth, Built.', description: 'Starting in Nigeria, Valoria helps professionals understand capability, build credible profiles and discover relevant opportunities through a capability-led marketplace.', url: 'https://valoriainstitute.com/' },
   twitter: { card: 'summary_large_image', title: 'Valoria Institute — Worth, Built.' },
-  description: 'Assess professional capability, build a credible professional profile and discover opportunities through Valoria’s capability-led marketplace.',
+  description: 'Starting in Nigeria, Valoria helps professionals understand capability, build credible profiles and discover relevant opportunities through a capability-led marketplace.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
 }
 
