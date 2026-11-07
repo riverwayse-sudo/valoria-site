@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { getValuTier } from '@/lib/brand'
+import { getValuTier, PRIME_CLUSTERS } from '@/lib/brand'
 
 const TRACKS = [
   ['all','All', '/marketplace'],
@@ -18,6 +18,7 @@ const TRACKS = [
 
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
+const IS_READ_ONLY_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' && process.env.NEXT_PUBLIC_VALU_STAGING_API_ENABLED !== '1'
 
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
   const router = useRouter()
@@ -35,53 +36,117 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     }
   }, [router])
   const [industry,setIndustry] = useState('')
+  const [cluster,setCluster] = useState('')
+  const [skill,setSkill] = useState('')
+  const [declaredRole,setDeclaredRole] = useState('')
   const industries = useMemo(() => [...new Set(rows.map(r=>displayText(r.industry)).filter(Boolean))].sort(), [rows])
+  const skills = useMemo(() => [...new Set(rows.flatMap(r=>labelValues(r.skills)))].sort(), [rows])
 
   const results = useMemo(() => {
     const q=query.trim().toLowerCase()
     return rows.filter(p => {
+      if (!displayText(p.full_name)) return false
       const caps=[...(p.capabilities || p.tracks || [p.track])].map(normalize)
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
       if(industry && displayText(p.industry) !== industry) return false
+      if(cluster && getLeadingCluster(p) !== cluster) return false
+      if(skill && !labelValues(p.skills).includes(skill)) return false
+      if(declaredRole && !getSelectedCapabilities(p).includes(declaredRole)) return false
       if(!q) return true
-      return [p.atb_id,p.headline,p.current_job_title,p.industry,...(p.skills||[]),...(p.topics||[])].some(v=>displayText(v).toLowerCase().includes(q))
+      return [p.atb_id,p.headline,p.current_job_title,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
     })
-  },[rows,activeTrack,query,industry])
+  },[rows,activeTrack,query,industry,cluster,skill,declaredRole])
+
+  const itemListSchema = useMemo(() => ({
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: activeTrack === 'all' ? 'Valoria Professional Marketplace' : 'Valoria ' + activeTrack + ' Marketplace',
+    numberOfItems: results.length,
+    itemListOrder: 'https://schema.org/ItemListOrderAscending',
+    itemListElement: results.map((profile, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'Person',
+        name: profile.full_name,
+        url: 'https://valoriainstitute.com/profile/' + profile.id,
+        jobTitle: profile.headline || profile.current_job_title || undefined,
+      },
+    })),
+  }), [results, activeTrack])
+  const itemListSchemaJson = results.length
+    ? JSON.stringify(itemListSchema).replace(/</g, '\\u003c')
+    : null
 
   return <div className={styles.page}>
+    {itemListSchemaJson && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: itemListSchemaJson }} />}
     <Nav />
     <main>
     <section className={styles.hero}>
       <div className={styles.container}>
-        <p className={styles.eyebrow}>THE AFRICAN TALENT BUREAU</p>
+        <p className={styles.eyebrow}>THE VALORIA MARKETPLACE</p>
         <h1>{activeTrack === 'all' ? <>Find capability.<br/><i>Engage confidently.</i></> : <>{TRACKS.find(t=>t[0]===activeTrack)?.[1]}<br/><i>on Valoria.</i></>}</h1>
-        <p className={styles.lede}>Discover professionals at different stages of the Valoria journey. Basic snapshot listings introduce emerging profiles; a completed VALU Index unlocks official points, merit tier and assessment insight.</p>
+        <p className={styles.lede}>A completed VALU snapshot may support a Basic listing, subject to eligibility and public visibility rules. Completing the full assessment establishes your official VALU Index in points, your earned designation and assessment insight.</p>
         <nav className={styles.tabs}>{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
       </div>
     </section>
     <section className={styles.controls}>
       <div className={styles.containerControl}>
         <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search professionals, skills or industries…" aria-label="Search marketplace"/>
-        <select value={industry} onChange={e=>setIndustry(e.target.value)} aria-label="Filter by industry">
-          <option value="">All industries</option>
-          {industries.map(v=><option key={v} value={v}>{v}</option>)}
+        <select value={cluster} onChange={e=>setCluster(e.target.value)} aria-label="Filter by leading PRIME cluster">
+          <option value="">All PRIME clusters</option>
+          {PRIME_CLUSTERS.map(item=><option key={item.letter} value={item.letter}>{item.name}</option>)}
         </select>
-        {(query || industry) && <button onClick={()=>{setQuery('');setIndustry('')}}>CLEAR</button>}
+        <select value={skill} onChange={e=>setSkill(e.target.value)} aria-label="Filter by professional skill">
+          <option value="">All skills</option>
+          {skills.map(value=><option key={value} value={value}>{value}</option>)}
+        </select>
+        <select value={industry} onChange={e=>setIndustry(e.target.value)} aria-label="Filter by sector">
+          <option value="">All sectors</option>
+          {industries.map(value=><option key={value} value={value}>{value}</option>)}
+        </select>
+        <select value={declaredRole} onChange={e=>setDeclaredRole(e.target.value)} aria-label="Filter by declared role">
+          <option value="">All declared roles</option>
+          <option value="candidate">Candidate / Talent</option>
+          <option value="speaker">Speaker</option>
+          <option value="facilitator">Facilitator</option>
+        </select>
+        {(query || industry || cluster || skill || declaredRole) && <button type="button" onClick={()=>{setQuery('');setIndustry('');setCluster('');setSkill('');setDeclaredRole('')}}>CLEAR</button>}
       </div>
     </section>
     <section className={styles.directory}>
       <div className={styles.container}>
         <div className={styles.directoryHead}>
-          <div><p className={styles.eyebrow}>VERIFIED DIRECTORY</p><h2>{results.length} {results.length===1?'professional':'professionals'}</h2></div>
+          <div><p className={styles.eyebrow}>PUBLIC PROFESSIONAL MARKETPLACE</p><h2>{results.length} {results.length===1?'professional':'professionals'}</h2></div>
           <span>VALU INDEX × PRIME</span>
         </div>
         {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p}/>)}</div> :
-          <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
+          IS_READ_ONLY_PREVIEW
+            ? <div className={styles.previewUnavailable} role="status"><strong>Marketplace data is intentionally disconnected in this staging preview.</strong><p>Profile cards, counts and eligibility states will be reviewed against a separately approved staging dataset. No live member records are exposed here.</p></div>
+            : <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
       </div>
     </section>
     </main>
     <Footer />
   </div>
+}
+
+function getSelectedCapabilities(profile) {
+  return [...new Set([
+    ...(Array.isArray(profile.selectedCapabilities) ? profile.selectedCapabilities : []),
+    ...(Array.isArray(profile.selected_capabilities) ? profile.selected_capabilities : []),
+  ].map(normalize).filter(Boolean))]
+}
+
+function getLeadingCluster(profile) {
+  const scores = profile.cluster_scores
+  if (!scores || typeof scores !== 'object' || Array.isArray(scores)) return ''
+  const entries = Object.entries(scores).filter(([letter, value]) =>
+    PRIME_CLUSTERS.some(cluster => cluster.letter === letter) && value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value))
+  )
+  if (entries.length !== 5) return ''
+  entries.sort((a, b) => Number(b[1]) - Number(a[1]))
+  return entries[0][0]
 }
 
 function labelValues(value) {
@@ -98,8 +163,7 @@ function Profile({p}) {
   // that have passed the separate listing-eligibility gate. Category pages
   // continue to filter against the eligible `capabilities` field above.
   const selectedCaps = new Set([
-    ...(Array.isArray(p.selectedCapabilities) ? p.selectedCapabilities : []),
-    ...(Array.isArray(p.selected_capabilities) ? p.selected_capabilities : []),
+    ...getSelectedCapabilities(p),
     ...(Array.isArray(p.capabilities) ? p.capabilities : []),
     ...(Array.isArray(p.tracks) ? p.tracks : []),
     p.track,
@@ -125,9 +189,16 @@ function Profile({p}) {
       <div className={styles.identityCopy}>
         <small>ATB PROFILE ID</small>
         <strong>{profileId}</strong>
-        <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : '✓ VALORIA ASSESSED'}</span>
+        <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : 'FULL ASSESSMENT COMPLETE'}</span>
+      </div>
+      <div className={styles.valu}>
+        <small>VALU INDEX</small>
+        <b>{isFullAssessment ? p.valu_index : '—'}</b>
+        <span>{isFullAssessment ? 'POINTS' : 'BASIC'}</span>
       </div>
     </div>
+    <h3 className={styles.professionalName}>{displayText(p.full_name)}</h3>
+    {displayText(p.headline) && <p className={styles.professionalHeadline}>{displayText(p.headline)}</p>}
     <p className={styles.specialisation} title={specialisation}>{specialisation || 'Professional capability'}</p>
     <div className={styles.assessmentInsight}>
       <small>VALU INDEX ASSESSMENT INSIGHT</small>
@@ -138,16 +209,9 @@ function Profile({p}) {
         : <p className={styles.assessmentPending}>Complete the full VALU Index assessment to unlock this insight.</p>}
     </div>
     <div className={styles.signalRow}>
-      <div className={styles.scoreBlock}>
-        <small>VALU INDEX</small>
-        <strong>{isFullAssessment ? <>{p.valu_index}<span> POINTS</span></> : <span className={styles.snapshotScore}>SNAPSHOT</span>}</strong>
-      </div>
       {isFullAssessment && tier
-        ? <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>
-            {tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}
-            <span>{tier.name}</span>
-          </span>
-        : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>FULL ASSESSMENT<br/>PENDING</span>}
+        ? <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>{tier.name}</span>
+        : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>OFFICIAL VALU RESULT<br/>PENDING</span>}
     </div>
     <div className={styles.capabilities} aria-label={`Capability selection: ${capabilityBadges.filter(b=>b.selected).map(b=>b.title).join(', ') || 'none selected'}`} title="Selection status only; category listing eligibility is assessed separately"><small className={styles.capabilityLabel}>CAPABILITY SELECTION</small>{capabilityBadges.map(badge=><span className={`${styles.capabilityBadge} ${badge.selected ? styles.capabilitySelected : styles.capabilityUnselected}`} key={badge.key}><strong>{badge.title}</strong><small>{badge.selected ? 'SELECTED' : 'NOT SELECTED'}</small></span>)}</div>
     <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE</Link>

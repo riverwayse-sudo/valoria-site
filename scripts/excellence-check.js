@@ -52,14 +52,22 @@ if (fs.existsSync(profileRoutePath)) {
   if (!/const\s+resolvedSearchParams\s*=\s*await\s+searchParams\b/.test(route)) {
     violations.push('public profile route must await Next.js 15 async searchParams');
   }
-  if (!/\.eq\(\s*['"]visibility['"]\s*,\s*['"]public['"]\s*\)/.test(route) ||
-      !/\.eq\(\s*['"]listing_status['"]\s*,\s*['"]listed['"]\s*\)/.test(route)) {
-    violations.push('public profile route must enforce public visibility and listed status');
+  if (!route.includes(".from('marketplace_public_roster')")) {
+    violations.push('public profile route must read from the restricted Marketplace roster projection');
+  }
+  if (route.includes(".from('professional_profiles')")) {
+    violations.push('public profile route must not query the private professional_profiles table');
+  }
+  if (!route.includes('toPublicProfile')) {
+    violations.push('public profile route must map the safe roster projection before rendering');
   }
   if (/\.eq\(\s*['"]profile_complete['"]/.test(route)) {
     violations.push('public profile route must not confuse profile completion with public listing eligibility');
   }
-  if (!/return\s*<ProfileClient\b/.test(route) || !/initialProfile=\{initialProfile\}/.test(route)) {
+  const passesServerFetchedProfile =
+    route.includes('initialProfile={toPublicProfile(row)}') ||
+    (route.includes('initialProfile={publicProfile}') && route.includes('toPublicProfile(row)'));
+  if (!/<ProfileClient\b/.test(route) || !passesServerFetchedProfile) {
     violations.push('public profile route must pass its server-fetched profile into ProfileClient');
   }
 }

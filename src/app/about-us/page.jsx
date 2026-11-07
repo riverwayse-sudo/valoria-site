@@ -1,11 +1,171 @@
-// Vercel build verification: corrected JSX is now the staging source of truth.
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import '../pages.css'
 
-export const metadata = { title: 'About Valoria Institute — Worth. Built.', description: 'Valoria Institute builds the infrastructure that develops, surfaces and connects African professional talent through a merit-based standard.', keywords: ['about Valoria Institute', 'African talent bureau', 'VALU Index', 'professional assessment Africa', 'Lagos talent marketplace'], openGraph: { title: 'About Valoria Institute', description: 'Built on one idea: capability should be visible, verifiable, and worth more than a polished CV.', url: 'https://valoriainstitute.com/about-us' }, alternates: { canonical: 'https://valoriainstitute.com/about-us' } }
-const PRINCIPLES=[{num:'01',title:'Merit over familiarity.',body:'Capability should be developed and assessed against a consistent standard. Visibility should follow merit rather than familiarity, network proximity or a polished presentation.'},{num:'02',title:'Development before visibility.',body:'Valoria is development-first. The institution exists to help professionals build capability with architecture before that capability is surfaced and connected to opportunity.'},{num:'03',title:'One institution. Multiple pathways.',body:'PRIME is the shared intellectual architecture beneath development, professional visibility and precision matching across the Valoria ecosystem.'}]
-const TIMELINE=[{year:'The problem',label:"The same names recirculate across hiring, speaking, and training — not because they're the most capable, but because they're the most visible. Genuinely capable professionals get passed over for lack of a recognisable signal."},{year:'The hypothesis',label:'If capability could be independently assessed and consistently signalled — the same way a credit score makes creditworthiness readable — the market would move toward the most capable, not the most visible.'},{year:'The build',label:'Valoria Institute was built as infrastructure. PRIME is the proprietary capability architecture beneath development and assessment. Valoria Develop builds capability; the African Talent Bureau creates structured visibility and precision connection.'},{year:'The standard',label:'The institution uses structured capability signals to make professional merit more legible. Score-based tiers are credentials, never paid upgrades.'}]
-export default function AboutPage(){return <><Nav/><main id="main-content"><section className="page-hero"><div className="page-hero-inner"><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">ABOUT VALORIA INSTITUTE</span></div><h1 className="page-title">Worth.<br/><em>Built.</em></h1><p className="page-sub">Valoria Institute builds and operates human capital infrastructure for African professional talent. We develop capability with architecture, surface merit with clarity and connect professionals to opportunity with precision.</p></div></section><section className="page-section"><div className="page-section-inner two-col"><Reveal><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">THE PROBLEM WE BUILT AGAINST</span></div><h2 className="section-title">A great CV and a<br/><em>great hire</em> aren&apos;t the same thing.</h2><p className="page-copy">Across hiring, speaking, and training, the same names keep recirculating — not because they&apos;re the most capable, but because they&apos;re the most visible. Genuinely exceptional professionals get passed over daily for lack of a recognisable signal. Buyers default to familiarity. Supply defaults to networking harder. Neither produces the best outcome.</p><p className="page-copy page-copy-spaced">Valoria Institute exists to fix the signal, not the people. African professionals are not underperforming. They are underrepresented in the systems that distribute professional opportunity — and that is an infrastructure problem, not a capability one.</p></Reveal><Reveal><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">WHAT WE BUILT</span></div><h2 className="section-title">Develop.<br/><em>Surface. Connect.</em></h2><p className="page-copy">PRIME provides the capability architecture. Valoria Develop builds capability. The African Talent Bureau surfaces assessed professionals through ATB Connect and ATB Spotlight. These are institutional pathways—not separate identities competing for the definition of Valoria.</p><p className="page-copy page-copy-spaced">One institution. One standard. Multiple pathways for professional merit.</p></Reveal></div></section><section className="page-section alt"><div className="page-section-inner"><Reveal><div className="eyebrow eyebrow-center"><div className="eyebrow-line"/><span className="eyebrow-text">WHAT WE OPERATE BY</span><div className="eyebrow-line"/></div><h2 className="section-title section-title-centered">Three principles that<br/><em>don&apos;t move.</em></h2></Reveal><div className="about-principles-grid">{PRINCIPLES.map(p=><Reveal key={p.num}><div className="card-gold"><div className="vi-card-num">{p.num}</div><div className="vi-card-name about-principle-name">{p.title}</div><p className="vi-card-body">{p.body}</p></div></Reveal>)}</div></div></section><section className="page-section"><div className="page-section-inner about-story"><Reveal><div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">HOW WE GOT HERE</span></div><h2 className="section-title">Built on a<br/><em>provable hypothesis.</em></h2></Reveal><div className="about-timeline">{TIMELINE.map((t,i)=><Reveal key={i}><div className={`about-timeline-row${i<TIMELINE.length-1?' has-divider':''}`}><div className="about-timeline-label">{t.year}</div><p className="about-timeline-copy">{t.label}</p></div></Reveal>)}</div></div></section><section className="page-section alt cta-banner"><Reveal><div className="eyebrow eyebrow-center"><div className="eyebrow-line"/><span className="eyebrow-text">WHO WE ARE</span><div className="eyebrow-line"/></div><h2 className="section-title">Valoria Institute.<br/><em>African in foundation. Global in ambition.</em></h2><p className="page-sub about-cta-copy">Valoria Institute is building toward a continent-wide human capital standard while remaining proudly African in its point of view and globally ambitious in its operating standard. African Talent Bureau Ltd remains the legal operating entity where applicable.</p><div className="page-hero-actions eyebrow-center"><a href="https://assessment.valoriainstitute.com/" className="btn-gold" target="_blank" rel="noopener noreferrer">START THE VALU INDEX</a><a href="/contact-us" className="btn-outline">GET IN TOUCH</a></div></Reveal></section></main><Footer/></>}
+export const metadata = {
+  title: 'About Valoria Institute | Professional Capability Marketplace',
+  description: 'Valoria Institute helps professionals understand, develop and present their capabilities, connecting relevant expertise with opportunity through a structured marketplace.',
+  keywords: ['Valoria Institute', 'professional capability', 'PRIME framework', 'VALU Index', 'professional development', 'talent marketplace'],
+  openGraph: {
+    title: 'About Valoria Institute',
+    description: 'The marketplace connecting professional capability to development, visibility and opportunity.',
+    url: 'https://valoriainstitute.com/about-us',
+  },
+  alternates: { canonical: 'https://valoriainstitute.com/about-us' },
+}
 
+const PRINCIPLES = [
+  { num: '01', title: 'Merit over familiarity.', body: 'Capability should be developed and assessed against a consistent standard. Visibility should follow merit rather than familiarity, network proximity or a polished presentation.' },
+  { num: '02', title: 'Development before visibility.', body: 'Professional growth comes before public recognition. Valoria helps people strengthen capability before connecting that capability to relevant opportunities.' },
+  { num: '03', title: 'One institution. Multiple pathways.', body: 'PRIME is the shared capability framework beneath assessment, development and professional visibility across Valoria.' },
+]
+
+const FOUNDATIONS = [
+  { title: 'Mission', body: 'Develop professional capability, make merit more visible, and connect people to meaningful opportunity.' },
+  { title: 'Vision', body: 'An Africa where professional capability is recognised, developed and connected to opportunity.' },
+  { title: 'Purpose', body: 'Build the institutional infrastructure that helps people and organisations understand, strengthen and mobilise capability.' },
+]
+
+const POSITIONING = [
+  { title: 'Not a conventional recruitment agency', body: 'The African Talent Bureau supports capability-led discovery. Hiring decisions remain with the organisations making them.' },
+  { title: 'More than a training catalogue', body: 'Valoria Institute provides the institutional framework. Valoria Develop translates PRIME into structured development pathways.' },
+  { title: 'More than a speaker directory', body: 'ATB Spotlight helps event organisers and programme teams discover speakers and facilitators through capability-led professional profiles.' },
+  { title: 'Credentials are governed, not implied', body: 'Certification pathways are being developed. No professional is described as certified until the relevant assessment, approval and issuance process is operational.' },
+  { title: 'Not simply a jobs board', body: 'Opportunities are presented as active only when there is real supply and a working application or enquiry route.' },
+]
+
+const TIMELINE = [
+  { year: 'The challenge', label: 'Across hiring, speaking and training, buyers often make decisions with incomplete signals. CVs, biographies and referrals describe parts of a person’s experience, but do not always provide a consistent view of capability.' },
+  { year: 'The framework', label: 'PRIME establishes a shared language for professional capability across Presence, Relationships, Intelligence, Mastery and Enterprise.' },
+  { year: 'The assessment', label: 'The VALU Index translates assessment into a structured view of capability, expressed in points and used to inform professional development.' },
+  { year: 'The connection', label: 'The African Talent Bureau creates pathways through which employers, event organisers and programme teams can discover relevant professional expertise.' },
+]
+
+export default function AboutPage() {
+  return (
+    <>
+      <Nav />
+      <main id="main-content" className="about-page">
+        <section className="page-hero">
+          <div className="page-hero-inner">
+            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">ABOUT VALORIA INSTITUTE</span></div>
+            <h1 className="page-title">Talent is not the problem.<br /><em>Infrastructure is.</em></h1>
+            <p className="page-sub">Valoria Institute builds the infrastructure through which African professional capability is understood, developed, surfaced and connected to opportunity.</p>
+          </div>
+        </section>
+
+        <section className="page-section">
+          <div className="page-section-inner two-col">
+            <Reveal>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE PROBLEM WE ADDRESS</span></div>
+              <h2 className="section-title">A great CV and a <em>great decision</em> are not the same thing.</h2>
+              <p className="page-copy">In hiring, speaking and training, buyers often have to make decisions with incomplete signals. A CV or biography can describe experience, but it may not show how a person thinks, works or contributes. Professionals can be overlooked when access and familiarity shape who gets considered.</p>
+              <p className="page-copy page-copy-spaced">Valoria Institute exists to make professional capability easier to understand, develop and present. Its approach connects a shared framework, an assessment-led index, development pathways and a capability-led talent bureau.</p>
+            </Reveal>
+            <Reveal>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE INSTITUTIONAL RESPONSE</span></div>
+              <h2 className="section-title">Develop.<br /><em>Surface. Connect.</em></h2>
+              <p className="page-copy">PRIME provides the capability framework. The VALU Index provides an assessment-led view of capability. Valoria Develop supports structured growth. The African Talent Bureau connects employers, event organisers and programme teams with relevant professional expertise.</p>
+              <p className="page-copy page-copy-spaced">One institution. One connected system. Distinct pathways for professional merit.</p>
+            </Reveal>
+          </div>
+        </section>
+
+        <section className="page-section">
+          <div className="page-section-inner">
+            <Reveal>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">MISSION, VISION & PURPOSE</span></div>
+              <h2 className="section-title">The conviction <em>behind the institution.</em></h2>
+            </Reveal>
+            <div className="about-principles-grid">
+              {FOUNDATIONS.map((item, i) => (
+                <Reveal key={item.title}>
+                  <div className="card-gold">
+                    <div className="vi-card-num">0{i + 1}</div>
+                    <div className="vi-card-name about-principle-name">{item.title}</div>
+                    <p className="vi-card-body">{item.body}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="page-section alt">
+          <div className="page-section-inner">
+            <Reveal>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WHAT WE OPERATE BY</span></div>
+              <h2 className="section-title">Three principles that <em>do not move.</em></h2>
+            </Reveal>
+            <div className="about-principles-grid">
+              {PRINCIPLES.map((item) => (
+                <Reveal key={item.num}>
+                  <div className="card-gold">
+                    <div className="vi-card-num">{item.num}</div>
+                    <div className="vi-card-name about-principle-name">{item.title}</div>
+                    <p className="vi-card-body">{item.body}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="page-section">
+          <div className="page-section-inner">
+            <Reveal>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">A DISTINCT INSTITUTIONAL ROLE</span></div>
+              <h2 className="section-title">What Valoria is.<br /><em>And how it is different.</em></h2>
+            </Reveal>
+            <div className="about-principles-grid">
+              {POSITIONING.map((item, i) => (
+                <Reveal key={item.title}>
+                  <div className="card-gold">
+                    <div className="vi-card-num">0{i + 1}</div>
+                    <div className="vi-card-name about-principle-name">{item.title}</div>
+                    <p className="vi-card-body">{item.body}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="page-section">
+          <div className="page-section-inner about-story">
+            <Reveal>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE INSTITUTIONAL MODEL</span></div>
+              <h2 className="section-title">From capability <em>to opportunity.</em></h2>
+            </Reveal>
+            <div className="about-timeline">
+              {TIMELINE.map((item, i) => (
+                <Reveal key={item.year}>
+                  <div className={`about-timeline-row${i < TIMELINE.length - 1 ? ' has-divider' : ''}`}>
+                    <div className="about-timeline-label">{item.year}</div>
+                    <p className="about-timeline-copy">{item.label}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="page-section alt">
+          <div className="page-section-inner">
+            <Reveal>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WORK WITH VALORIA</span></div>
+              <h2 className="section-title">Build a stronger <em>capability ecosystem.</em></h2>
+              <p className="page-sub">Valoria Institute is rooted in African professional experience and designed for continental growth. Nigeria is its current operating market, with broader expansion guided by institutional readiness and partnerships.</p>
+              <div className="page-hero-actions">
+                <a href="/contact-us" className="btn-gold">DISCUSS A PARTNERSHIP</a>
+                <a href="/valu" className="btn-outline">EXPLORE THE VALU INDEX</a>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </>
+  )
+}

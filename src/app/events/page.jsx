@@ -51,8 +51,32 @@ export default function EventsPage() {
     return getSessionState(session) === 'coming-soon'
   })
 
+  // Only owner-approved sessions receive Event structured data. Provisional
+  // dates remain excluded until the event catalogue marks them approved.
+  const approvedEvents = PROFESSIONAL_STANDARD_SERIES.filter(session => session.dateApproved)
+  const eventSchema = {
+    '@context': 'https://schema.org',
+    '@graph': approvedEvents.map(session => ({
+      '@type': 'Event',
+      name: session.title,
+      description: session.description,
+      startDate: session.start,
+      endDate: session.end || undefined,
+      url: 'https://valoriainstitute.com/events' + (session.replay ? '#replay' : '#event-' + session.id),
+      eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
+      eventStatus: new Date(session.start) > new Date() ? 'https://schema.org/EventScheduled' : undefined,
+      location: { '@type': 'VirtualLocation', url: 'https://valoriainstitute.com/events' },
+      organizer: { '@type': 'Organization', name: 'Valoria Institute', url: 'https://valoriainstitute.com' },
+      performer: session.speaker ? { '@type': 'Person', name: session.speaker } : undefined,
+    })),
+  }
+  const eventSchemaJson = approvedEvents.length
+    ? JSON.stringify(eventSchema).replace(/</g, '\\u003c')
+    : null
+
   return (
     <>
+      {eventSchemaJson && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: eventSchemaJson }} />}
       <Nav />
       <main className="events-page">
         <section className="page-hero events-hero">
@@ -87,7 +111,7 @@ export default function EventsPage() {
                   />
                 </div>
                 <p style={{ marginTop: 14, fontSize: 14, lineHeight: 1.7 }}>
-                  If the video does not load, <a href={`https://youtube.com/live/${webinar.youtubeVideoId}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C9A84C', textDecoration: 'underline' }}>watch the webinar directly on YouTube</a>.
+                  If the video does not load, <a href={`https://youtube.com/live/${webinar.youtubeVideoId}`} style={{ color: '#735B20', textDecoration: 'underline' }}>watch the webinar directly on YouTube</a>.
                 </p>
               </div>
             </div>
@@ -156,7 +180,7 @@ export default function EventsPage() {
               <div className="page-kicker">REPLAY</div>
               <h2 className="section-title">Why being good at your job is no longer <em>enough.</em></h2>
               <p className="page-sub">The opening Valoria conversation on professional worth, visibility, influence and the infrastructure required to turn capability into recognised opportunity.</p>
-              <a className="btn-gold" href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer">START YOUR VALU INDEX →</a>
+              <a className="btn-gold" href={BRAND.assessmentUrl}>START YOUR VALU INDEX →</a>
             </div>
             <div className="replay-video"><iframe src="https://www.youtube.com/embed/B9dD22vTErI" title="Valoria Institute replay" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
           </div>

@@ -33,7 +33,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain('assessment_access')
     expect(directory).toContain("p.assessment_access === 'full'")
     expect(directory).toContain('BASIC · SNAPSHOT')
-    expect(directory).toContain('official points, merit tier and assessment insight')
+    expect(directory).toContain('Complete the full VALU Index assessment to unlock this insight.')
   })
 
   test('marketplace data is professional-first and deduplicates capabilities', () => {
@@ -52,8 +52,9 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain('selected_capabilities')
     expect(data).toContain('selectedCapabilities: []')
     expect(data).toContain('target.selectedCapabilities')
-    expect(directory).toContain('Array.isArray(p.selectedCapabilities)')
-    expect(directory).toContain('Array.isArray(p.selected_capabilities)')
+    expect(directory).toContain('function getSelectedCapabilities(profile)')
+    expect(directory).toContain('Array.isArray(profile.selectedCapabilities)')
+    expect(directory).toContain('Array.isArray(profile.selected_capabilities)')
     expect(directory).toContain('selectedCaps.has')
     expect(directory).toContain('Selection status only; category listing eligibility is assessed separately')
     expect(directory).toContain('CAPABILITY SELECTION')
@@ -64,6 +65,17 @@ describe('VALUI marketplace lifecycle contract', () => {
     const categoryFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
     expect(categoryFilter).toContain('p.capabilities || p.tracks || [p.track]')
     expect(categoryFilter).not.toContain('selectedCapabilities')
+  })
+
+  test('marketplace discovery filters use consented PRIME, skill, sector and declared-role data', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    expect(directory).toContain('Filter by leading PRIME cluster')
+    expect(directory).toContain('Filter by professional skill')
+    expect(directory).toContain('Filter by sector')
+    expect(directory).toContain('Filter by declared role')
+    expect(directory).toContain('getLeadingCluster(p)')
+    expect(directory).toContain('labelValues(p.skills)')
+    expect(directory).toContain('getSelectedCapabilities(p)')
   })
 
   test('open marketplace directories refresh server-rendered counts automatically', () => {
@@ -232,7 +244,8 @@ describe('VALUI marketplace lifecycle contract', () => {
   test('public VALU pages use the authoritative PRIME vocabulary', () => {
     const valu = read('src/app/valu/page.jsx')
     const start = read('src/app/valu/start/page.jsx')
-    for (const source of [valu, start]) {
+    const prime = read('src/app/prime/page.jsx')
+    for (const source of [start, prime]) {
       expect(source).toContain('Presence')
       expect(source).toContain('Relationships')
       expect(source).toContain('Intelligence')
@@ -243,16 +256,39 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(start).not.toContain("'Motivation & Stamina'")
   })
 
-  test('public copy describes the two-session VALU assessment, not the retired fifteen-question snapshot', () => {
+  test('public copy explains the taster and formal assessment without exposing internal mechanics', () => {
     const prime = read('src/app/prime/page.jsx')
     const reminders = read('src/app/api/cron/valu-reminders/route.js')
     for (const source of [prime, reminders]) {
       expect(source).not.toContain('15-question')
       expect(source).not.toContain('15 question')
     }
-    expect(prime).toContain('completed in two sessions')
+    expect(prime).toContain('The VALU taster offers a guided introduction to the PRIME framework.')
+    expect(prime).toContain('Completing it establishes your official VALU Index in points')
+    expect(prime).not.toMatch(/(?:9|58)[- ]questions?|54 scored|validity anchors|15–20 minutes/i)
     expect(reminders).toContain('RETURN TO YOUR DASHBOARD')
     expect(reminders).not.toContain('CONTINUE TO QUESTION 10')
+  })
+
+  test('Marketplace cards show VALU points beside the profile identity and all five designations', () => {
+    const brand = read('src/lib/brand.js')
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    const styles = read('src/components/MarketplaceDirectory.module.css')
+    expect(brand).toContain("name: 'At the Starting Point'")
+    expect(brand).toContain('min: 0, max: 34')
+    expect(directory).toContain('className={styles.valu}')
+    expect(directory).toContain('FULL ASSESSMENT COMPLETE')
+    expect(directory).toContain('CAPABILITY SELECTION')
+    expect(directory).not.toContain('tier.stars')
+    expect(styles).toContain('.atStartingPoint')
+  })
+
+  test('marketplace queries exclude registered-only and test profiles', () => {
+    const data = read('src/lib/marketplace-data.js')
+    expect(data).toContain("const SOURCE = 'marketplace_public_roster'")
+    expect(data).toContain(".from(SOURCE)")
+    expect(data).not.toContain('professional_profiles!inner')
+    expect(data).not.toContain('professional_profiles.visibility')
   })
 
   test('profile capability selection is reconciled through an authenticated server endpoint', () => {

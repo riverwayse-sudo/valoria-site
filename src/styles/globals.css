@@ -47,10 +47,10 @@ button, [role="button"], input[type="submit"], input[type="button"] { font-famil
 
 :root {
   --gold: #C9A84C;
-  --gold-light: #E2C97E;
-  --dark: #0F0F1A;
-  --dark-mid: #1A1A2E;
-  --dark-card: #161624;
+  --gold-light: #D4C9A8;
+  --dark: #1A1A2E;
+  --dark-mid: #2E2E4A;
+  --dark-card: #2E2E4A;
   --parchment: #F7F4EE;
   --dim: rgba(247, 244, 238, .55);
   --faint: rgba(247, 244, 238, .22);
@@ -61,7 +61,7 @@ button, [role="button"], input[type="submit"], input[type="button"] { font-famil
   --pad: clamp(24px, 5vw, 64px);
   --btn-radius: 9999px;
   --card-radius: 22px;
-  --nav-bg: #0F0F1A;
+  --nav-bg: #1A1A2E;
 }
 
 html { scroll-behavior: auto; }
@@ -138,3 +138,7 @@ body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-i
 
 /* Responsive connected grids. */
 @media (max-width: 900px) { .vi-card-grid-2,.vi-card-grid-3,.vi-card-grid-4 { grid-template-columns: 1fr; } .vi-card-grid > .vi-card { border-right: 0; border-bottom: 1px solid rgba(201,168,76,.12); } .vi-card-grid > .vi-card:last-child { border-bottom: 0; } }
+
+
+/* Staging-only environment indicator; rendered only by the isolated staging build. */
+.staging-site-banner{position:relative;z-index:1000;padding:7px 16px;background:#C9A84C;color:#1A1A2E;text-align:center;font-size:9px;font-weight:800;letter-spacing:.16em}

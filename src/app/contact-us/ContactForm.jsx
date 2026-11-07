@@ -8,13 +8,14 @@ const MIDNIGHT = '#1A1A2E'
 const INQUIRY_TYPES = [
   { id: 'hiring', label: 'Hiring Enquiry — ATB Connect' },
   { id: 'speaker', label: 'Speaker Booking — ATB Spotlight' },
-  { id: 'training', label: 'Training Enquiry — Valoria Develop' },
-  { id: 'general', label: 'General Question' },
+  { id: 'training', label: 'Capability Development — Valoria Develop' },
+  { id: 'partnership', label: 'Institutional Partnership — Strategy / Programme / Sector Collaboration' },
+  { id: 'general', label: 'General Enquiry' },
 ]
 
 export default function ContactForm() {
   const [currentUser, setCurrentUser] = useState(null)
-  const [form, setForm] = useState({ name: '', email: '', organisation: '', inquiryType: 'general', message: '' })
+  const [form, setForm] = useState({ name: '', email: '', organisation: '', inquiryType: 'partnership', message: '' })
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [formError, setFormError] = useState('')
@@ -58,29 +59,29 @@ export default function ContactForm() {
     <form onSubmit={handleSubmit} style={styles.form}>
       <div style={styles.row}>
         <div style={styles.field}>
-          <label style={styles.label}>Name</label>
-          <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} style={styles.input} placeholder="Your full name" />
+          <label htmlFor="contact-name" style={styles.label}>Name</label>
+          <input id="contact-name" name="name" autoComplete="name" type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} style={styles.input} placeholder="Your full name" />
         </div>
         <div style={styles.field}>
-          <label style={styles.label}>Email</label>
-          <input type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} style={styles.input} placeholder="you@example.com" />
+          <label htmlFor="contact-email" style={styles.label}>Email</label>
+          <input id="contact-email" name="email" autoComplete="email" type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} style={styles.input} placeholder="you@example.com" />
         </div>
       </div>
       <div style={styles.row}>
         <div style={styles.field}>
-          <label style={styles.label}>Organisation</label>
-          <input type="text" value={form.organisation} onChange={e => setForm({ ...form, organisation: e.target.value })} style={styles.input} placeholder="Company or event name" />
+          <label htmlFor="contact-organisation" style={styles.label}>Organisation</label>
+          <input id="contact-organisation" name="organisation" autoComplete="organization" type="text" value={form.organisation} onChange={e => setForm({ ...form, organisation: e.target.value })} style={styles.input} placeholder="Company or event name" />
         </div>
         <div style={styles.field}>
-          <label style={styles.label}>What&apos;s this about</label>
-          <select value={form.inquiryType} onChange={e => setForm({ ...form, inquiryType: e.target.value })} style={styles.input}>
+          <label htmlFor="contact-inquiry-type" style={styles.label}>What&apos;s this about</label>
+          <select id="contact-inquiry-type" name="inquiryType" value={form.inquiryType} onChange={e => setForm({ ...form, inquiryType: e.target.value })} style={styles.input}>
             {INQUIRY_TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
           </select>
         </div>
       </div>
       <div style={styles.field}>
-        <label style={styles.label}>Message</label>
-        <textarea required rows={5} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} style={{ ...styles.input, resize: 'vertical', fontFamily: "'Raleway', sans-serif" }} placeholder="Tell us what you need." />
+        <label htmlFor="contact-message" style={styles.label}>Message</label>
+        <textarea id="contact-message" name="message" required rows={5} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} style={{ ...styles.input, resize: 'vertical', fontFamily: "'Raleway', sans-serif" }} placeholder="Tell us what you need." />
       </div>
 
       {formError && <div style={styles.errorBox}>{formError}</div>}
@@ -98,9 +99,9 @@ const styles = {
   field: { display: 'flex', flexDirection: 'column', gap: '6px' },
   label: { fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(247,244,238,.5)', textTransform: 'uppercase' },
   input: { padding: '12px 14px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.2)', borderRadius: '6px', color: '#F7F4EE', fontSize: '14px', fontFamily: "'Raleway', sans-serif", outline: 'none', width: '100%', boxSizing: 'border-box' },
-  btnGold: { padding: '16px', background: GOLD, color: MIDNIGHT, fontSize: '12px', fontWeight: 700, letterSpacing: '.14em', borderRadius: '999px', border: 'none', cursor: 'pointer', textAlign: 'center', marginTop: '8px' },
+  btnGold: { padding: '16px', background: GOLD, color: MIDNIGHT, fontSize: '12px', fontWeight: 700, letterSpacing: '.14em', borderRadius: '999px', border: 'none', cursor: 'pointer', textAlign: 'left', marginTop: '8px' },
   errorBox: { padding: '12px 14px', background: 'rgba(216,90,48,.12)', border: '1px solid rgba(216,90,48,.3)', borderRadius: '6px', fontSize: '13px', color: '#F09595' },
-  successCard: { textAlign: 'center', padding: '40px 20px' },
+  successCard: { textAlign: 'left', padding: '40px 20px' },
   successIcon: { fontSize: '32px', color: GOLD, marginBottom: '12px' },
   successTitle: { fontSize: '24px', fontWeight: 200, color: '#F7F4EE', marginBottom: '8px', fontFamily: "'Raleway', sans-serif" },
   successSub: { fontSize: '14px', color: 'rgba(247,244,238,.5)' },

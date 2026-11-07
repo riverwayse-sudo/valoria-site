@@ -7,10 +7,10 @@ const GOLD='#C9A84C', DARK='#0F0F1A', PARCH='#F7F4EE'
 export default function ValuCompletionNudge(){
   const [show,setShow]=useState(false)
   const [assessed,setAssessed]=useState(false)
-  const [assessmentStarted,setAssessmentStarted]=useState(false)
   const closeButtonRef=useRef(null)
 
   useEffect(()=>{
+    if(process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') return
     let active=true
     async function load(){
       try{
@@ -20,17 +20,14 @@ export default function ValuCompletionNudge(){
       const {data:{user}}=await supabase.auth.getUser()
       if(!user||!active)return
 
-      const [{data:profile},{data:assessment},{data:latestSession}]=await Promise.all([
+      const [{data:profile},{data:assessment}]=await Promise.all([
         supabase.from('professional_profiles').select('profile_complete').eq('id',user.id).maybeSingle(),
         supabase.from('valu_assessments').select('id,total_score,completed_at').eq('user_id',user.id).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle(),
-        supabase.from('assessment_sessions').select('id,completed_at,updated_at').eq('user_id',user.id).order('updated_at',{ascending:false}).limit(1).maybeSingle()
       ])
 
       if(!profile||profile.profile_complete)return
-      const fullAssessmentComplete=!!assessment?.completed_at
+      const fullAssessmentComplete = !!assessment?.completed_at
       if(active){
-        const started = !!latestSession?.id && !latestSession?.completed_at
-        setAssessmentStarted(started)
         setAssessed(fullAssessmentComplete)
         setShow(true)
       }
@@ -57,20 +54,18 @@ export default function ValuCompletionNudge(){
   return <div style={S.overlay} role="dialog" aria-modal="true" aria-labelledby="valu-nudge-title">
     <div style={S.card}>
       <button ref={closeButtonRef} onClick={dismiss} aria-label="Close" style={S.close}>×</button>
-      <div style={S.eyebrow}>{assessed?'VALU INDEX ASSESSMENT COMPLETE':assessmentStarted?'ASSESSMENT IN PROGRESS':'YOUR NEXT STEP'}</div>
+      <div style={S.eyebrow}>{assessed?'VALU INDEX COMPLETE':'YOUR NEXT STEP'}</div>
       <h2 id="valu-nudge-title" style={S.title}>
-        {assessed?'Your VALU Index assessment is complete.':assessmentStarted?'Continue your VALU Index assessment.':'Start your VALU Index assessment.'}
+        {assessed?'Your VALU Index assessment is complete.':'Make your professional capability visible.'}
       </h2>
       <p style={S.copy}>
         {assessed
           ? 'Your professional profile is ready to complete. Finish your details to establish your marketplace presence. Eligibility and public listing are determined separately by Valoria’s requirements.'
-          : assessmentStarted
-            ? 'Your progress is saved. Continue from your last answered question without restarting.'
-            : 'Start the VALU Index assessment to understand your professional capability and take the next step with Valoria.'}
+          : 'Start with the VALU taster. If you have already completed it, continue to your full assessment. Your official VALU Index is available after the full assessment.'}
       </p>
-      {assessmentStarted
-        ? <AssessmentStartLink href="/dashboard" dashboardOnly style={S.button}>CONTINUE MY ASSESSMENT →</AssessmentStartLink>
-        : <a href={assessed?"/profile/setup":"/valu/start"} style={S.button}>{assessed?"COMPLETE MY PROFILE":"START THE VALU INDEX"} →</a>}
+      {assessed
+        ? <a href="/profile/setup" style={S.button}>COMPLETE MY PROFILE →</a>
+        : <AssessmentStartLink href="/valu/assessment/" style={S.button}>START / CONTINUE VALU JOURNEY →</AssessmentStartLink>}
       <button onClick={dismiss} style={S.later}>Remind me later</button>
     </div>
   </div>

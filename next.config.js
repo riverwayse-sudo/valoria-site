@@ -22,7 +22,7 @@ const serverSupabaseUrl = normalizeSupabaseBuildUrl(
 )
 
 const productionVALUOrigin = 'https://assessment.valoriainstitute.com'
-const isCloudflarePreview = process.env.CF_WORKERS_PREVIEW === '1'
+const isCloudflarePreview = process.env.CF_WORKERS_PREVIEW === '1' || process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview'
 const isCloudflareProduction = process.env.CF_WORKERS === '1' && !isCloudflarePreview
 const isProduction = process.env.VERCEL_ENV === 'production' || isCloudflareProduction
 const isPreview = process.env.VERCEL_ENV === 'preview' || isCloudflarePreview

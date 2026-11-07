@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
+import { BRAND } from '@/lib/brand'
 
 const TRACK_META = {
   candidate: { label: 'Talent', href: '/marketplace/talent' },
@@ -9,9 +10,13 @@ const TRACK_META = {
 
 async function getHomepageProfiles() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  // This is a public homepage projection: use the anon key so roster RLS enforces visibility.
+  // Never use a service-role key for public Marketplace discovery reads.
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   if (!url || !key) return { profiles: [], count: null }
-  const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }
+  const headers = { apikey: key, 'Content-Type': 'application/json' }
+  // Publishable API keys are sent in the apikey header, not as a Bearer JWT.
+  if (!key.startsWith('sb_publishable_')) headers.Authorization = `Bearer ${key}`
   try {
     const [profilesResponse, countResponse] = await Promise.all([
       fetch(`${url}/rest/v1/rpc/get_homepage_professional_previews_v2`, { method: 'POST', headers, body: '{}', cache: 'no-store' }),
@@ -31,45 +36,72 @@ export default async function LiveProfilesScroll() {
   const unique = []
   const seen = new Set()
   for (const profile of profiles) {
-    if (seen.has(profile.id)) continue
+    const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
+    const summary = String(profile.assessment_summary || '').trim()
+    const headline = String(profile.headline || '').trim()
+    const profileId = String(profile.atb_id || '').trim()
+    const points = Number(profile.valu_index)
+    const placeholderHeadlines = new Set(['model', 'valoria professional', 'growth dev', 'help people find meaning in their life and career'])
+    const isQualityReady = Boolean(
+      profile.id &&
+      profileId &&
+      summary.length >= 24 &&
+      headline.length >= 8 &&
+      !placeholderHeadlines.has(headline.toLowerCase()) &&
+      !/[\u{1D400}-\u{1D7FF}]/u.test(headline) &&
+      !/descriptor unavailable/i.test(summary) &&
+      Number.isInteger(points) &&
+      points >= 0 &&
+      points <= 100 &&
+      tracks.some(track => TRACK_META[track === 'talent' ? 'candidate' : track])
+    )
+    if (!isQualityReady || seen.has(profile.id)) continue
     seen.add(profile.id)
     unique.push(profile)
   }
 
-  const loop = [...unique, ...unique]
-  const discoverableCount = count ?? unique.length
-  const trackCounts = unique.reduce((acc, profile) => {
-    const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
-    tracks.forEach(track => { const normalized = track === 'talent' ? 'candidate' : track; if (TRACK_META[normalized]) acc[normalized] = (acc[normalized] || 0) + 1 })
-    return acc
-  }, {})
+  const loop = unique.slice(0, 4)
+  // The count endpoint covers the full public roster, while previews are capped at 24.
+  // Only show a count when every public row was returned and passed the same quality bar.
+  const discoverableCount = count !== null && count <= 24 && count === unique.length ? count : null
 
   return (
-    <section className="live-profiles" aria-labelledby="registry-title">
+    <section className="live-profiles" aria-labelledby="marketplace-title">
       <div className="live-profiles-shell">
         <div className="live-profiles-copy">
-          <div className="live-profiles-kicker">THE VALORIA REGISTRY · LIVE</div>
-          <h2 id="registry-title" className="live-profiles-title">See who is already <em>discoverable.</em></h2>
+          <div className="live-profiles-kicker">{unique.length > 0 ? 'THE VALORIA MARKETPLACE · LIVE' : 'THE VALORIA MARKETPLACE'}</div>
+          <h2 id="marketplace-title" className="live-profiles-title">
+            {unique.length > 0 ? <>See who is already <em>discoverable.</em></> : <>Professional capability, <em>made discoverable.</em></>}
+          </h2>
           <p className="live-profiles-subtitle">
-            This is not a feature preview. These are professionals in the live Valoria marketplace — assessed, positioned and discoverable by capability.
+            {unique.length > 0
+              ? 'These are professionals in the Valoria marketplace — assessed, positioned and discoverable by capability.'
+              : 'A capability-led marketplace for employers, event organisers and training buyers to discover professional expertise.'}
           </p>
-          <div className="live-profiles-proof" aria-label="Registry summary">
-            <strong>{discoverableCount}</strong>
-            <span>professionals currently discoverable</span>
-          </div>
+          {discoverableCount > 0 && unique.length > 0 && (
+            <div className="live-profiles-proof" aria-label="Marketplace summary">
+              <strong>{discoverableCount}</strong>
+              <span>professionals currently discoverable</span>
+            </div>
+          )}
+          <p className="live-profiles-trust">
+            VALU Index results are expressed in points. Public profiles appear according to Valoria's eligibility and visibility rules. <Link href="/privacypolicy">Read our Privacy Policy</Link>.
+          </p>
         </div>
 
-        <div className="live-profiles-actions" aria-label="Marketplace actions">
-          <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent">
-            <span><small>HIRING / SOURCING</small>Find talent</span><b>→</b>
-          </Link>
-          <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker">
-            <span><small>EVENTS / PROGRAMMES</small>Find a speaker</span><b>→</b>
-          </Link>
-          <Link href="/marketplace/facilitators" className="live-profile-action" data-marketplace-intent="facilitator">
-            <span><small>WORKSHOPS / CHANGE</small>Find a facilitator</span><b>→</b>
-          </Link>
-        </div>
+        {unique.length > 0 && (
+          <div className="live-profiles-actions" aria-label="Marketplace actions">
+            <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent">
+              <span><small>HIRING / SOURCING</small>Find talent</span><b>→</b>
+            </Link>
+            <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker">
+              <span><small>EVENTS / PROGRAMMES</small>Find a speaker</span><b>→</b>
+            </Link>
+            <Link href="/marketplace/facilitators" className="live-profile-action" data-marketplace-intent="facilitator">
+              <span><small>WORKSHOPS / CHANGE</small>Find a facilitator</span><b>→</b>
+            </Link>
+          </div>
+        )}
       </div>
 
       {unique.length > 0 ? (
@@ -113,16 +145,23 @@ export default async function LiveProfilesScroll() {
           </div>
 
           <div className="live-profiles-bottom">
-            <div className="live-profiles-counts">
-              {Object.entries(TRACK_META).map(([track, meta]) => (
-                <span key={track}><b>{trackCounts[track] || 0}</b> {meta.label.toLowerCase()} profiles</span>
-              ))}
-            </div>
-            <Link href="/marketplace" className="live-profiles-link" data-marketplace-intent="all">OPEN THE FULL REGISTRY <span>→</span></Link>
+            <Link href="/marketplace" className="live-profiles-link" data-marketplace-intent="all">OPEN THE MARKETPLACE <span>→</span></Link>
           </div>
         </>
       ) : (
-        <div className="live-profiles-public-state"><span className="live-profiles-dot" />The public registry is being populated. Start with VALU to build a discoverable professional record.</div>
+        <div className="live-profiles-public-state">
+          <div className="live-profiles-empty-copy">
+            <span className="live-profiles-empty-kicker">THE VALORIA MARKETPLACE</span>
+            <strong>Make professional expertise easier to find.</strong>
+            <p>Explore the pathways through which employers, event organisers and programme teams can discover relevant expertise.</p>
+            <Link href="/marketplace" className="live-profiles-empty-link">EXPLORE THE MARKETPLACE <span aria-hidden="true">→</span></Link>
+          </div>
+          <div className="live-profiles-empty-grid">
+            <div className="live-profiles-empty-card"><span>01 · TALENT</span><strong>Professional capability</strong><small>For hiring and sourcing.</small></div>
+            <div className="live-profiles-empty-card"><span>02 · SPEAKERS</span><strong>Subject expertise</strong><small>For events and conversations.</small></div>
+            <div className="live-profiles-empty-card"><span>03 · FACILITATORS</span><strong>Learning and change</strong><small>For programmes and workshops.</small></div>
+          </div>
+        </div>
       )}
 
       <div className="live-profiles-professional-cta">
@@ -131,7 +170,7 @@ export default async function LiveProfilesScroll() {
           <small>WANT TO BE DISCOVERED?</small>
           <strong>Build the professional record that makes your capability visible.</strong>
         </div>
-        <Link href="/valu">START WITH VALU INDEX <span>→</span></Link>
+        <Link href="/valu">START WITH THE VALU TASTER <span>→</span></Link>
       </div></section>
   )
 }

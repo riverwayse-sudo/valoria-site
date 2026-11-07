@@ -4,8 +4,8 @@ import '../pages.css'
 
 export const metadata = {
   title: 'Terms of Use | Valoria Institute',
-  description: 'Terms governing your use of the Valoria Institute platform — for professionals, employers, event organisers, and training buyers.',
-  robots: { index: true, follow: true },
+  description: 'Draft terms for the Valoria Institute platform. Legal operator identity and final legal review are pending before production publication.',
+  robots: process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? { index: false, follow: false } : { index: true, follow: true },
   alternates: { canonical: 'https://valoriainstitute.com/terms-of-use' },
 }
 
@@ -13,11 +13,12 @@ const GOLD = '#C9A84C'
 const PARCHMENT = '#F7F4EE'
 const DARK = '#0F0F1A'
 const DIM = 'rgba(247,244,238,.55)'
+const IS_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'
 
 const sections = [
   {
     title: '1. About these terms',
-    body: `These Terms of Use govern your access to and use of the Valoria Institute platform, including the marketplace at valoriainstitute.com and the VALU Index assessment at valoriainstitute.com/valu/assessment, operated by African Talent Bureau Ltd ("Valoria Institute", "we", "us").\n\nBy creating an account or joining the waitlist, you agree to these terms. If you do not agree, do not use the platform.`,
+    body: `These Terms of Use govern your access to and use of the Valoria Institute website, professional Marketplace, VALU Index assessment experience and associated services. “Valoria Institute” is the public-facing service name used in these terms. The registered legal entity responsible for the service and its registered address are pending confirmation and must be inserted before production publication.\n\nBy creating an account or using the platform, you agree to the terms that are approved and published for the service.`,
   },
   {
     title: '2. Who can use the platform',
@@ -25,11 +26,11 @@ const sections = [
   },
   {
     title: '3. The VALU Index assessment',
-    body: `The VALU Index is a self-assessment tool designed to measure professional capability across five clusters. By taking the assessment, you agree that:\n\n• You will complete it independently and honestly. Attempts to game or manipulate results — including rushing through questions, selecting uniform responses, or using assistance — may trigger integrity flags and may result in a score penalty or assessment invalidation.\n• Your score is valid for 12 months from the date of assessment. After expiry, your listing is automatically suspended until you reassess.\n• Valoria Institute reserves the right to review flagged assessments and may override, adjust, or invalidate scores where integrity concerns are substantiated.\n• Your score is not a guarantee of employment, booking, or commission. It is one input into a buyer's decision.`,
+    body: `The VALU taster is a separate, directional starting point and is not an official VALU Index. The formal assessment provides a comprehensive view of professional capability. Only completion of the formal assessment produces the official VALU Index and PRIME results.\n\n• Official VALU results are represented in points, not percentages. The result is valid for 12 months from the date of the full assessment.\n• You must complete the assessment honestly and independently. Attempts to manipulate assessment integrity may be reviewed under Valoria's assessment integrity procedures.\n• A completed assessment does not guarantee marketplace listing, employment, a speaking engagement or a commission.\n• The VALU Index is one structured input into a buyer's decision; it is not a guarantee of future performance or outcome.`,
   },
   {
     title: '4. Marketplace listing',
-    body: `Professionals who score 35 or above and have no unresolved integrity flags are eligible for marketplace listing. Listing is not automatic — it requires:\n\n• A completed profile with at minimum: display name, headline, bio, and photo.\n• Explicit consent to be visible in marketplace search results.\n\nValoria Institute reserves the right to suspend or remove any listing that violates these terms, contains false information, or is associated with integrity concerns.\n\nYour contact details are never shown to buyers. All introductions are facilitated by Valoria Institute. You may receive communication from buyers only via the platform's managed introduction process.`,
+    body: `Marketplace listing is not automatic. Eligibility depends on the applicable assessment state, profile completeness, capability-specific requirements, evidence and governance checks. Public visibility also requires the relevant consent and visibility settings. Completing the taster or full assessment does not by itself guarantee listing.\n\nValoria may suspend or remove a listing that violates these terms, contains materially false information or presents a substantiated integrity concern. Private account contact details and raw assessment answers are not displayed as public profile fields. Information shared during a managed introduction is governed by the applicable request and consent process.`,
   },
   {
     title: '5. Buyer obligations',
@@ -45,11 +46,11 @@ const sections = [
   },
   {
     title: '8. AI-generated reports',
-    body: `Your VALU Index AI report is generated by an AI system (powered by Anthropic's Claude) based on your anonymised score profile. By completing the assessment, you consent to this processing.\n\nAI reports are provided for informational purposes only. They do not constitute professional advice, coaching, or psychological assessment. Valoria Institute makes no warranties about the accuracy or completeness of AI-generated content.`,
+    body: `Your VALU report is generated using Anthropic's Claude. The report-generation request includes your name, professional role, overall VALU score, designation, PRIME cluster scores and skill scores. Raw assessment responses are not included in that report-generation request. Resend is used to deliver transactional messages and report emails, and may therefore process your email address, name, assessment score, designation and report content.\n\nAI reports are provided for informational purposes only. They do not constitute professional advice, coaching or psychological assessment. AI-generated content may require human review and should not be treated as a substitute for professional judgement. The processing details and consent wording must be reviewed before production publication.`,
   },
   {
     title: '9. Limitation of liability',
-    body: `Valoria Institute provides the platform on an "as is" basis. We do not warrant uninterrupted availability, error-free operation, or guaranteed outcomes from marketplace participation.\n\nTo the extent permitted by Nigerian law, Valoria Institute's liability for any claim arising from use of the platform is limited to the amount you paid to us in the 12 months preceding the claim, or ₦50,000, whichever is greater.`,
+    body: `The platform is provided subject to applicable law. Availability, service levels, warranties, remedies and any limitation of liability must be set out in the final terms after review by Valoria's legal adviser. No unapproved liability cap is asserted in this staging draft.`,
   },
   {
     title: '10. Termination',
@@ -65,7 +66,7 @@ const sections = [
   },
   {
     title: '13. Contact',
-    body: `African Talent Bureau Ltd\nValoria Institute\nLagos, Nigeria\n\nEmail: info@valoriainstitute.com\nPrivacy enquiries: privacy@valoriainstitute.com`,
+    body: `Valoria Institute (public-facing service name)\nNigeria (current operating jurisdiction)\n\nRegistered legal entity and registered address: pending confirmation.\n\nEmail: info@valoriainstitute.com\nPrivacy enquiries: privacy@valoriainstitute.com`,
   },
 ]
 
@@ -75,6 +76,7 @@ export default function TermsPage() {
       <Nav />
       <main id="main-content" style={{ minHeight: '100vh', background: DARK, fontFamily: "'Raleway','Helvetica Neue',Arial,sans-serif", color: PARCHMENT }}>
 
+        {IS_PREVIEW && <div role="status" style={{maxWidth:'860px',margin:'24px auto 0',padding:'14px 20px',border:'1px solid rgba(201,168,76,.35)',background:'rgba(201,168,76,.07)',color:PARCHMENT,fontSize:'12px',lineHeight:1.7}}>LEGAL REVIEW REQUIRED — This staging draft must not be treated as final terms. Confirm the registered legal entity, assessment integrity rules, marketplace eligibility policy, liability provisions and contact details before production.</div>}
         {/* Hero */}
         <section style={{ padding: 'clamp(64px,8vw,120px) clamp(24px,5vw,80px) 48px', borderBottom: '1px solid rgba(201,168,76,.1)', maxWidth: '860px', margin: '0 auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
@@ -88,7 +90,7 @@ export default function TermsPage() {
             These terms govern your use of Valoria Institute — the marketplace, the VALU Index, and all associated services. They apply to all user types: professionals, employers, event organisers, and training buyers.
           </p>
           <p style={{ fontSize: '12px', color: 'rgba(247,244,238,.3)', marginTop: '16px' }}>
-            Last updated: 1 July 2026 · Governing law: Federal Republic of Nigeria
+            Draft for legal review · 7 November 2026 · Proposed governing law: Nigeria (subject to legal approval)
           </p>
         </section>
 

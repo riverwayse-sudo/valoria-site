@@ -28,6 +28,12 @@ const INTEREST_LABELS = {
 export const revalidate = 30
 
 export async function GET() {
+  // The isolated preview has no service-role secret and must not attempt
+  // to read the private waitlist table with a public key.
+  if (process.env.VALU_PREVIEW === '1' && !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return Response.json({ total: null, recent: [] })
+  }
+
   try {
     const supabase = getSupabase()
     const { count, error: countError } = await supabase

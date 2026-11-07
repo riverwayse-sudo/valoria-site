@@ -8,6 +8,8 @@ function sessionListId(sessionId) { return process.env[`BREVO_SESSION_${sessionI
 function escapeHtml(value = '') { return value.replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char])) }
 
 export async function syncEventRegistrationToBrevo({ email, fullName, role, organisation, whatsapp, session, journeyUrl }) {
+  const isPreview = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1'
+  if (isPreview) return { synced: false, emailSent: false, errorCode: 'PREVIEW_DISABLED' }
   const key = process.env.BREVO_API_KEY
   if (!key) return { synced: false, emailSent: false, errorCode: 'BREVO_NOT_CONFIGURED' }
 

@@ -34,7 +34,7 @@ async function getOwnedSnapshot(admin, user) {
     .limit(1)
     .maybeSingle()
   if (error) return { error: 'Could not verify your saved VALU snapshot.', status: 502 }
-  if (!taster) return { error: 'No completed VALU snapshot is linked to this account.', status: 404 }
+  if (!taster) return { error: 'No completed VALU taster is linked to this account.', status: 404 }
 
   const { data: candidate, error: candidateError } = await admin.from('taster_identity_candidates')
     .select('candidate_email,candidate_role,linked_user_id')
@@ -76,12 +76,13 @@ export async function GET(request) {
   if (auth.error) return auth.error
   const snapshot = await getOwnedSnapshot(admin, auth.user)
   if (snapshot.error) {
-    if (snapshot.status === 404) return NextResponse.json({ can_continue: false, assessment_completed: false }, { headers: { 'Cache-Control': 'no-store' } })
+    if (snapshot.status === 404) return NextResponse.json({ can_continue: false, assessment_completed: false, taster_completed: false }, { headers: { 'Cache-Control': 'no-store' } })
     return NextResponse.json({ error: snapshot.error }, { status: snapshot.status })
   }
   return NextResponse.json({
     can_continue: !snapshot.completed,
     assessment_completed: snapshot.completed,
+    taster_completed: true,
   }, { headers: { 'Cache-Control': 'no-store' } })
 }
 
@@ -121,9 +122,15 @@ export async function POST(request) {
   // browser cookies are host-scoped, so switching between apex and www
   // can make a valid dashboard session appear to be signed out.
   const requestOrigin = new URL(request.url).origin
-  const siteOrigin = ['https://valoriainstitute.com', 'https://www.valoriainstitute.com'].includes(requestOrigin)
+  const isPreview = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'
+  const configuredPreviewSiteOrigin = process.env.VALU_PREVIEW_SITE_ORIGIN
+  const allowedPreviewOrigins = [configuredPreviewSiteOrigin, 'https://staging.valoriainstitute.com'].filter(Boolean)
+  const isKnownStagingOrigin = allowedPreviewOrigins.includes(requestOrigin)
+  const siteOrigin = isKnownStagingOrigin
     ? requestOrigin
-    : 'https://valoriainstitute.com'
+    : (['https://valoriainstitute.com', 'https://www.valoriainstitute.com'].includes(requestOrigin)
+      ? requestOrigin
+      : isPreview ? configuredPreviewSiteOrigin || requestOrigin : 'https://valoriainstitute.com')
   destination.search = new URLSearchParams({ full: '1', site_origin: siteOrigin }).toString()
   destination.hash = new URLSearchParams({ handoff_code: handoffCode }).toString()
   return NextResponse.json({ url: destination.toString(), expires_in: HANDOFF_TTL_SECONDS }, {

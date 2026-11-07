@@ -1,39 +1,64 @@
-// src/app/api/enquiries/route.js
-// Real enquiry capture: writes to `enquiries` (so demand-side activity is no
-// longer invisible to the platform) and notifies info@valoriainstitute.com
-// via Brevo. Previously the "REQUEST INTRO" / "BOOK SPEAKER" / "REQUEST
-// FACILITATOR" buttons were plain mailto: links — no DB record, no admin
-// visibility, no way to measure conversion. This is the fix.
-
+// Public Marketplace enquiry capture. Public visibility and capability eligibility
+// are verified through the anon-key roster; writes use the isolated server key.
 import { createClient } from '@supabase/supabase-js'
 
-function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) throw new Error('Supabase server configuration is missing.')
-  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
-}
-
+const IS_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'
+  || process.env.VALU_PREVIEW === '1'
+  || process.env.VERCEL_ENV === 'preview'
+  || process.env.CF_WORKERS_PREVIEW === '1'
+const EMAIL_DELIVERY_ENABLED = !IS_PREVIEW || process.env.VALU_STAGING_EMAILS_ENABLED === '1'
 const BREVO_KEY = process.env.BREVO_API_KEY
 const FROM_EMAIL = 'info@valoriainstitute.com'
-const FROM_NAME  = 'Valoria Institute'
+const FROM_NAME = 'Valoria Institute'
+const PRIVACY_NOTICE_VERSION = '2026-11-07-draft'
 
 const TYPE_LABELS = {
   candidate: 'Candidate Introduction',
-  speaker_booking: 'Speaker Booking',
-  facilitator_commission: 'Facilitator Commission',
+  speaker_booking: 'Speaker Enquiry',
+  facilitator_commission: 'Facilitator Enquiry',
+}
+const TYPE_CAPABILITY = {
+  candidate: 'candidate',
+  speaker_booking: 'speaker',
+  facilitator_commission: 'facilitator',
+}
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY
+  if (!url || !key) throw new Error('Isolated Supabase server configuration is missing.')
+  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+}
+
+function getPublicSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !key) throw new Error('Public Supabase configuration is missing.')
+  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  })[character])
+}
+
+function normaliseCapability(value) {
+  const track = String(value || '').trim().toLowerCase()
+  return track === 'talent' ? 'candidate' : track
 }
 
 async function notifyAdmin({ enquiryType, atbId, buyerName, buyerEmail, buyerCompany, subject, body }) {
-  if (!BREVO_KEY) return
+  if (!BREVO_KEY || !EMAIL_DELIVERY_ENABLED) return
   const label = TYPE_LABELS[enquiryType] || 'Enquiry'
   const html = `
     <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;">
-      <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">NEW ${label.toUpperCase()}</p>
-      <p><strong>Professional:</strong> ${atbId}</p>
-      <p><strong>From:</strong> ${buyerName} &lt;${buyerEmail}&gt;${buyerCompany ? ` — ${buyerCompany}` : ''}</p>
-      <p><strong>Subject:</strong> ${subject || '(none given)'}</p>
-      <p><strong>Message:</strong><br/>${(body || '').replace(/\n/g, '<br/>')}</p>
+      <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">NEW ${escapeHtml(label.toUpperCase())}</p>
+      <p><strong>Professional:</strong> ${escapeHtml(atbId)}</p>
+      <p><strong>From:</strong> ${escapeHtml(buyerName)} &lt;${escapeHtml(buyerEmail)}&gt;${buyerCompany ? ` — ${escapeHtml(buyerCompany)}` : ''}</p>
+      <p><strong>Subject:</strong> ${escapeHtml(subject || '(none given)')}</p>
+      <p><strong>Message:</strong><br/>${escapeHtml(body).replace(/\n/g, '<br/>')}</p>
       <p style="margin-top:20px;"><a href="https://valoriainstitute.com/admin">Review in admin dashboard</a></p>
     </div>`
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -52,13 +77,14 @@ async function notifyAdmin({ enquiryType, atbId, buyerName, buyerEmail, buyerCom
 }
 
 async function confirmToBuyer({ enquiryType, atbId, buyerName, buyerEmail }) {
-  if (!BREVO_KEY) return
-  const label = TYPE_LABELS[enquiryType] || 'enquiry'
+  if (!BREVO_KEY || !EMAIL_DELIVERY_ENABLED) return
+  const label = (TYPE_LABELS[enquiryType] || 'enquiry').toLowerCase()
+  const firstName = escapeHtml(buyerName.trim().split(/\s+/)[0] || 'there')
   const html = `
     <div style="font-family:sans-serif;font-size:14px;line-height:1.7;color:#1A1A2E;">
-      <p>Hi ${buyerName.split(' ')[0] || 'there'},</p>
-      <p>We've received your ${label.toLowerCase()} regarding <strong>${atbId}</strong>. Valoria Institute facilitates all introductions — someone from our team will be in touch shortly.</p>
-      <p style="color:#888;font-size:12px;">Valoria Institute · African Talent Bureau Ltd · Lagos, Nigeria</p>
+      <p>Hi ${firstName},</p>
+      <p>We have received your ${escapeHtml(label)} regarding <strong>${escapeHtml(atbId)}</strong>. The Valoria team will review the request and follow up where further information is needed.</p>
+      <p style="color:#888;font-size:12px;">Valoria Institute · Nigeria</p>
     </div>`
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
@@ -67,39 +93,36 @@ async function confirmToBuyer({ enquiryType, atbId, buyerName, buyerEmail }) {
       sender: { name: FROM_NAME, email: FROM_EMAIL },
       to: [{ email: buyerEmail, name: buyerName }],
       replyTo: { email: FROM_EMAIL, name: FROM_NAME },
-      subject: `We've received your ${label.toLowerCase()}`,
+      subject: `We received your ${label}`,
       htmlContent: html,
       tags: ['enquiry-confirmation', enquiryType],
     }),
   })
-  if (!res.ok) console.error('Enquiry buyer confirm failed:', res.status, await res.text().catch(() => ''))
+  if (!res.ok) console.error('Enquiry buyer confirmation failed:', res.status, await res.text().catch(() => ''))
 }
 
-async function notifyProfessional({ professionalProfileId, enquiryType, atbId, buyerName, buyerCompany, actionUrl }) {
-  // In-app bell notification — goes in platform_notifications, the table
-  // NotificationBell.jsx actually reads (see that file's fix note).
+async function notifyProfessional({ supabase, professionalProfileId, enquiryType, atbId, buyerName, buyerCompany, actionUrl }) {
   const label = TYPE_LABELS[enquiryType] || 'Enquiry'
-  const { error: notifError } = await supabase.from('platform_notifications').insert([{
+  const { error: notificationError } = await supabase.from('platform_notifications').insert([{
     user_id: professionalProfileId,
     type: 'enquiry',
     title: `New ${label.toLowerCase()}`,
     body: `${buyerName}${buyerCompany ? ` (${buyerCompany})` : ''} wants to connect with you.`,
     action_url: actionUrl,
   }])
-  if (notifError) console.error('Enquiry professional in-app notify failed:', notifError)
+  if (notificationError) console.error('Enquiry in-app notification failed:', notificationError)
 
-  if (!BREVO_KEY) return
-  // The professional's email lives on auth.users, not professional_profiles.
-  const { data: userRow, error: userErr } = await supabase.auth.admin.getUserById(professionalProfileId)
-  if (userErr || !userRow?.user?.email) {
-    console.error('Enquiry professional email lookup failed:', userErr)
+  if (!BREVO_KEY || !EMAIL_DELIVERY_ENABLED) return
+  const { data: userRow, error: userError } = await supabase.auth.admin.getUserById(professionalProfileId)
+  if (userError || !userRow?.user?.email) {
+    console.error('Enquiry professional email lookup failed:', userError)
     return
   }
   const html = `
     <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;">
-      <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">NEW ${label.toUpperCase()}</p>
-      <p>${buyerName}${buyerCompany ? ` from ${buyerCompany}` : ''} has requested an introduction through Valoria Institute.</p>
-      <p>Valoria will review and be in touch with next steps — no action needed from you right now.</p>
+      <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">NEW ${escapeHtml(label.toUpperCase())}</p>
+      <p>${escapeHtml(buyerName)}${buyerCompany ? ` from ${escapeHtml(buyerCompany)}` : ''} has requested an introduction through Valoria Institute.</p>
+      <p>The Valoria team will review the request and contact you if your input is needed.</p>
       <p style="margin-top:20px;"><a href="https://valoriainstitute.com${actionUrl}">View your profile</a></p>
     </div>`
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -119,68 +142,112 @@ async function notifyProfessional({ professionalProfileId, enquiryType, atbId, b
 export async function POST(request) {
   try {
     const supabase = getSupabase()
+    const publicSupabase = getPublicSupabase()
     const body = await request.json()
     const {
-      professional_profile_id, atb_id, enquiry_type,
-      buyer_name, buyer_email, buyer_company,
-      subject, message, buyer_user_id,
-    } = body
+      professional_profile_id, enquiry_type, buyer_name, buyer_email,
+      buyer_company, subject, message, privacy_consent,
+    } = body || {}
 
-    if (!professional_profile_id || !enquiry_type) {
-      return Response.json({ error: 'Missing profile or enquiry type.' }, { status: 400 })
+    if (!UUID_RE.test(String(professional_profile_id || '')) || !enquiry_type) {
+      return Response.json({ error: 'A valid professional profile and enquiry type are required.' }, { status: 400 })
     }
-    if (!buyer_name?.trim() || !buyer_email?.trim() || !message?.trim()) {
-      return Response.json({ error: 'Name, email, and message are required.' }, { status: 400 })
+    if (typeof buyer_name !== 'string' || typeof buyer_email !== 'string' || typeof message !== 'string') {
+      return Response.json({ error: 'Name, email and message are required.' }, { status: 400 })
     }
-    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRe.test(buyer_email)) {
+    const normalizedName = buyer_name.trim()
+    const normalizedEmail = buyer_email.trim().toLowerCase()
+    const normalizedCompany = typeof buyer_company === 'string' ? buyer_company.trim() : ''
+    const normalizedSubject = typeof subject === 'string' ? subject.trim() : ''
+    const normalizedMessage = message.trim()
+    if (!normalizedName || !normalizedEmail || !normalizedMessage) {
+      return Response.json({ error: 'Name, email and message are required.' }, { status: 400 })
+    }
+    if (normalizedName.length > 200 || normalizedEmail.length > 254 || normalizedMessage.length > 5000 || normalizedCompany.length > 200 || normalizedSubject.length > 200) {
+      return Response.json({ error: 'One or more fields exceed the allowed length.' }, { status: 400 })
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
       return Response.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     }
-    if (!['candidate', 'speaker_booking', 'facilitator_commission'].includes(enquiry_type)) {
+    if (privacy_consent !== true) {
+      return Response.json({ error: 'Please acknowledge the Privacy Notice before submitting.' }, { status: 400 })
+    }
+    if (!Object.prototype.hasOwnProperty.call(TYPE_CAPABILITY, enquiry_type)) {
       return Response.json({ error: 'Invalid enquiry type.' }, { status: 400 })
     }
 
-    // Rate limiting — this is a public, unauthenticated form (anyone can
-    // submit an enquiry without an account), and had zero abuse protection
-    // until now. Keyed by IP, not email, since buyer_email is
-    // self-reported and trivially spoofable per-request.
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || request.headers.get('x-real-ip') || 'unknown'
+    // Resolve the target through the anon-key public projection. This applies
+    // roster RLS and prevents enquiries to registered-only or revoked profiles.
+    const { data: publicProfile, error: publicProfileError } = await publicSupabase
+      .from('marketplace_public_roster')
+      .select('professional_id,atb_id,capabilities,track')
+      .eq('professional_id', professional_profile_id)
+      .maybeSingle()
+
+    if (publicProfileError) {
+      console.error('Public Marketplace profile validation failed:', publicProfileError)
+      return Response.json({ error: 'Marketplace availability could not be verified. Please try again.' }, { status: 503 })
+    }
+    if (!publicProfile) {
+      return Response.json({ error: 'This professional is not currently available for public enquiries.' }, { status: 404 })
+    }
+
+    const capabilities = (Array.isArray(publicProfile.capabilities) ? publicProfile.capabilities : [publicProfile.track])
+      .map(normaliseCapability).filter(Boolean)
+    const requiredCapability = TYPE_CAPABILITY[enquiry_type]
+    if (!capabilities.includes(requiredCapability)) {
+      return Response.json({ error: 'This enquiry type is not available for the selected professional.' }, { status: 400 })
+    }
+
+    const ip = request.headers.get('cf-connecting-ip')
+      || request.headers.get('x-real-ip')
+      || request.headers.get('x-forwarded-for')?.split(',')[0].trim()
+      || 'unknown'
     const { data: allowed, error: rateLimitError } = await supabase.rpc('check_rate_limit', {
       p_key: `enquiry:${ip}`, p_max_count: 5, p_window_seconds: 3600,
     })
     if (rateLimitError) {
-      // Fail open — a broken rate limiter should never be the reason a
-      // real buyer's enquiry gets silently dropped.
-      console.error('Rate limit check failed:', rateLimitError)
+      console.error('Enquiry rate-limit check failed:', rateLimitError)
     } else if (!allowed) {
-      return Response.json({ error: 'Too many requests from this connection — please try again later.' }, { status: 429 })
+      return Response.json({ error: 'Too many requests from this connection. Please try again later.' }, { status: 429 })
     }
 
-    const { error } = await supabase.from('enquiries').insert([{
-      buyer_user_id: buyer_user_id || null,
-      buyer_name: buyer_name.trim(),
-      buyer_email: buyer_email.trim().toLowerCase(),
-      buyer_company: buyer_company?.trim() || null,
+    const canonicalAtbId = publicProfile.atb_id || 'Valoria professional'
+    const { error: insertError } = await supabase.from('enquiries').insert([{
+      buyer_user_id: null,
+      buyer_name: normalizedName,
+      buyer_email: normalizedEmail,
+      buyer_company: normalizedCompany,
       professional_profile_id,
-      subject: subject?.trim() || null,
-      body: message.trim(),
+      subject: normalizedSubject || null,
+      body: normalizedMessage,
       enquiry_type,
       status: 'pending',
+      privacy_consent: true,
+      privacy_consent_at: new Date().toISOString(),
+      privacy_notice_version: PRIVACY_NOTICE_VERSION,
     }])
 
-    if (error) {
-      console.error('Enquiry insert error:', error)
-      return Response.json({ error: 'Something went wrong. Please try again.' }, { status: 500 })
+    if (insertError) {
+      console.error('Enquiry insert failed:', insertError)
+      return Response.json({ error: 'The enquiry could not be saved. Please try again.' }, { status: 500 })
     }
 
-    const atbId = atb_id || 'a Valoria professional'
-    notifyAdmin({ enquiryType: enquiry_type, atbId, buyerName: buyer_name.trim(), buyerEmail: buyer_email.trim(), buyerCompany: buyer_company?.trim(), subject, body: message }).catch(e => console.error('notifyAdmin error:', e))
-    confirmToBuyer({ enquiryType: enquiry_type, atbId, buyerName: buyer_name.trim(), buyerEmail: buyer_email.trim() }).catch(e => console.error('confirmToBuyer error:', e))
-    notifyProfessional({ professionalProfileId: professional_profile_id, enquiryType: enquiry_type, atbId, buyerName: buyer_name.trim(), buyerCompany: buyer_company?.trim(), actionUrl: `/profile/${professional_profile_id}` }).catch(e => console.error('notifyProfessional error:', e))
+    const actionUrl = `/profile/${professional_profile_id}`
+    notifyAdmin({ enquiryType: enquiry_type, atbId: canonicalAtbId, buyerName: normalizedName, buyerEmail: normalizedEmail, buyerCompany: normalizedCompany || null, subject: normalizedSubject, body: normalizedMessage })
+      .catch(error => console.error('Admin enquiry notification failed:', error))
+    confirmToBuyer({ enquiryType: enquiry_type, atbId: canonicalAtbId, buyerName: normalizedName, buyerEmail: normalizedEmail })
+      .catch(error => console.error('Buyer enquiry confirmation failed:', error))
+    notifyProfessional({ supabase, professionalProfileId: professional_profile_id, enquiryType: enquiry_type, atbId: canonicalAtbId, buyerName: normalizedName, buyerCompany: normalizedCompany || null, actionUrl })
+      .catch(error => console.error('Professional enquiry notification failed:', error))
 
-    return Response.json({ message: 'Enquiry sent.' }, { status: 200 })
-  } catch (err) {
-    console.error('Enquiries API error:', err)
+    return Response.json({
+      message: 'Enquiry submitted.',
+      preview: IS_PREVIEW,
+      email_notifications_enabled: Boolean(BREVO_KEY && EMAIL_DELIVERY_ENABLED),
+    }, { status: 200 })
+  } catch (error) {
+    console.error('Enquiries API error:', error)
     return Response.json({ error: 'Server error. Please try again.' }, { status: 500 })
   }
 }

@@ -36,6 +36,7 @@ export default function Nav() {
   }, [])
 
   useEffect(() => {
+    if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') { setUser(null); setAuthChecked(true); return }
     supabase.auth.getUser().then(({ data: { user: u } }) => {
       setUser(u)
       setAuthChecked(true)
@@ -45,7 +46,7 @@ export default function Nav() {
   }, [])
 
   useEffect(() => {
-    if (!user) { setAccountType(null); return }
+    if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || !user) { setAccountType(null); return }
     let cancelled = false
     async function checkAccountType() {
       const { data: proProfile } = await supabase.from('professional_profiles').select('id').eq('id', user.id).maybeSingle()
@@ -71,7 +72,7 @@ export default function Nav() {
   // Keep the primary CTA stable during auth hydration. Previously it changed
   // from START VALU to MY PROFILE/DASHBOARD after getUser(), causing a visible
   // header layout shift on every page for signed-in users.
-  const cta = { label: 'START VALU INDEX', href: NAVIGATION.assessmentUrl, external: true }
+  const cta = { label: 'TALK TO VALORIA', href: '/contact-us' }
 
   const renderItem = (item, className = 'nav-dropdown-link') => {
     const active = isPathActive(pathname, item.href)
@@ -93,14 +94,14 @@ export default function Nav() {
       <ul className="nav-links" role="list">
         {NAVIGATION.primary.map((item) => item.groups ? (
           <li className="vi-nav-menu" key={item.label}>
-            <button className={`nav-link nav-trigger${item.groups.some(g => g.items.some(i => isPathActive(pathname, i.href))) ? ' active' : ''}`} aria-expanded={openMenu === item.label} onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === item.label ? null : item.label) }}>
+            <button className={`nav-link nav-trigger${(openMenu === item.label || (!openMenu && item.groups.some(g => g.items.some(i => isPathActive(pathname, i.href))))) ? ' active' : ''}${openMenu === item.label ? ' is-open' : ''}`} aria-expanded={openMenu === item.label} aria-haspopup="true" onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === item.label ? null : item.label) }}>
               {item.label}<span className="nav-chevron">⌄</span>
             </button>
             <div className={`nav-dropdown${openMenu === item.label ? ' open' : ''}${item.groups.length === 1 ? ' nav-dropdown-single' : ''}`}>
               <div className={`nav-dropdown-grid${item.groups.length === 1 ? ' nav-dropdown-single' : ''}`}>
                 {item.groups.map((group) => <div key={group.label}>
-                  <div className="nav-dropdown-label">{group.label}</div>
-                  {group.items.map((entry) => <div key={entry.label}>{renderItem(entry)}{entry.description && <span className="nav-dropdown-description">{entry.description}</span>}</div>)}
+                  {group.label && <div className="nav-dropdown-label">{group.label}</div>}
+                  {group.items.map((entry) => <div className="nav-dropdown-entry" key={entry.label}>{renderItem(entry)}{entry.description && <span className="nav-dropdown-description">{entry.description}</span>}</div>)}
                 </div>)}
               </div>
             </div>
@@ -114,8 +115,8 @@ export default function Nav() {
         ))}
 
         {authChecked && user && <li className="nav-account"><Link href="/dashboard" className={`nav-link${isPathActive(pathname, '/dashboard') ? ' active' : ''}`}>Dashboard</Link><NotificationBell userId={user.id} /><button onClick={signOut} className="nav-link nav-signout">Sign Out</button></li>}
-        {authChecked && !user && <li><Link href="/login" className={`nav-link${isPathActive(pathname, '/login') ? ' active' : ''}`}>Sign In</Link></li>}
-        <li><AssessmentStartLink href={cta.href} className="nav-cta">{cta.label}</AssessmentStartLink></li>
+        {process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? <li><Link href="/dashboard" className={`nav-link${isPathActive(pathname, '/dashboard') ? ' active' : ''}`}>Dashboard Preview</Link></li> : authChecked && !user && <li><Link href="/login" className={`nav-link${isPathActive(pathname, '/login') ? ' active' : ''}`}>Sign In</Link></li>}
+        <li><Link href={cta.href} className="nav-cta">{cta.label}</Link></li>
       </ul>
 
       <button className={`nav-burger${menuOpen ? ' open' : ''}`} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span/><span/><span/></button>
@@ -129,12 +130,12 @@ export default function Nav() {
       <div className="m-label">About</div>
       {NAVIGATION.mobile.about.map(item => <div key={item.label}>{renderItem(item, 'nav-mobile-link')}</div>)}
       <div className="m-label">Account</div>
-      {authChecked && user ? <>
+      {process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? <div>{renderItem({ label: 'Dashboard Preview', href: '/dashboard' }, 'nav-mobile-link')}</div> : authChecked && user ? <>
         <div>{renderItem({ label: 'Dashboard', href: '/dashboard' }, 'nav-mobile-link')}</div>
         <div>{renderItem({ label: 'My Profile', href: `/profile/${user.id}` }, 'nav-mobile-link')}</div>
         <button className="nav-signout" onClick={() => { close(); signOut() }}>Sign Out</button>
       </> : <div>{renderItem({ label: 'Sign In', href: '/login' }, 'nav-mobile-link')}</div>}
-      <AssessmentStartLink href={cta.href} className="m-cta" onClick={close}>{cta.label}</AssessmentStartLink>
+      <Link href={cta.href} className="m-cta" onClick={close}>{cta.label}</Link>
     </nav>
   </>
 }
@@ -149,6 +150,10 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
     if (onClick) onClick(event)
     if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
     event.preventDefault()
+    if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') {
+      window.location.assign(dashboardOnly ? '/valu/assessment/?full=1&preview=1' : href)
+      return
+    }
     if (opening) return
     setOpening(true)
     setError('')
@@ -166,6 +171,10 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
         })
         const data = await response.json().catch(() => ({}))
         if (!response.ok || !data.url) {
+          if (response.status === 404) {
+            window.location.assign(href)
+            return
+          }
           if (data.already_completed) {
             window.location.assign('/dashboard')
             return
@@ -190,7 +199,7 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
   // The anchor must advertise the actual assessment destination. Normal clicks
   // still obtain a fresh, short-lived handoff code before navigating, so this
   // canonical URL is never used as a substitute for the authenticated token.
-  const linkHref = dashboardOnly ? 'https://assessment.valoriainstitute.com/remaining' : href
+  const linkHref = dashboardOnly ? (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? '/valu/assessment/?full=1&preview=1' : `${process.env.NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN || 'https://assessment.valoriainstitute.com'}/remaining`) : href
 
   return <>
     <a href={linkHref} className={className} style={style} onClick={handleClick} aria-busy={opening} {...props}>

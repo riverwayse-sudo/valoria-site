@@ -10,6 +10,7 @@ const homepageFiles = [
   'src/app/home.css',
   'src/components/Nav.jsx',
   'src/components/HeroSlider.jsx',
+  'src/components/HomepageEvents.jsx',
   'src/components/LiveProfilesScroll.jsx',
   'src/components/Footer.jsx',
   'src/styles/motion.css',
@@ -85,8 +86,31 @@ if (/\.reveal\s*\{|@keyframes\s+fade-up|\.au\s*\{[^}]*animation/i.test(globals))
   add('src/styles/globals.css: legacy reveal/entrance motion competes with canonical motion.css');
 }
 const homeCss = existing.find((x) => x.file === 'src/app/home.css')?.text || '';
+if (/text-align\s*:\s*center\b/i.test(homeCss) || /justify-items\s*:\s*center\b/i.test(homeCss)) {
+  add('src/app/home.css: homepage content must remain left-aligned; centered text or grid alignment is prohibited');
+}
 if (/\b(?:transition|animation)\s*:/i.test(homeCss)) add('src/app/home.css: transition/animation declarations must live in src/styles/motion.css');
 if (/@keyframes\s+/.test(homeCss)) add('src/app/home.css: keyframes are prohibited; motion.css is the sole animation authority');
+const hero = existing.find((x) => x.file === 'src/components/HeroSlider.jsx')?.text || '';
+if (/setInterval|hero-event-slide|hero-slider-controls/.test(hero)) {
+  add('HeroSlider: institutional positioning must remain static; event promotion cannot rotate into the hero');
+}
+const homepageEvents = existing.find((x) => x.file === 'src/components/HomepageEvents.jsx')?.text || '';
+if (/<iframe\b/i.test(homepageEvents)) add('HomepageEvents: do not embed an unverified video; use the branded replay link');
+if (!page.includes('FOR FACILITATORS') || !page.includes('FOR EVENT ORGANISERS')) {
+  add('src/app/page.jsx: facilitator and event organiser pathways must both be visible');
+}
+const navConfigPath = path.join(root, 'src/config/navigation.js');
+if (fs.existsSync(navConfigPath)) {
+  const navConfig = fs.readFileSync(navConfigPath, 'utf8');
+  if (/58\s+questions|separate\s+9-question/i.test(navConfig)) {
+    add('src/config/navigation.js: do not expose internal assessment mechanics in public navigation');
+  }
+  if (/Start the VALU Taster/i.test(navConfig)) {
+    add('src/config/navigation.js: avoid duplicating the VALU entry CTA inside the navigation menu');
+  }
+}
+
 const spacingTokens = ['--space-section','--space-section-tight','--space-content'];
 for (const token of spacingTokens) if (!homeCss.includes(token)) add(`src/app/home.css: missing canonical homepage spacing token ${token}`);
 if (!/\.home-redesign-root\s*>\s*section:not\(\.hero\)/.test(homeCss)) add('src/app/home.css: major homepage sections must inherit the canonical section-spacing rule');
@@ -94,6 +118,44 @@ if (!/\.home-redesign-root\s+\.container\s*\{/.test(homeCss)) add('src/app/home.
 
 const negativeMargin = existing.filter(({ file, text }) => homepageFiles.includes(file) && /margin(?:-(?:top|right|bottom|left))?\s*:\s*-\\d/.test(text));
 for (const { file } of negativeMargin) add(`${file}: negative margin detected; justify or remove before production`);
+
+// Parallax is a bounded visual layer, not a second animation system.
+const parallaxController = existing.find((x) => x.file === 'src/components/ParallaxController.jsx')?.text || '';
+if (!page.includes('ParallaxController')) add('Homepage: parallax controller must be mounted on the public experience');
+if (!parallaxController.includes("prefers-reduced-motion: reduce") ||
+    !parallaxController.includes('requestAnimationFrame') ||
+    !parallaxController.includes('IntersectionObserver') ||
+    !parallaxController.includes('MAX_PARALLAX_OFFSET') ||
+    !parallaxController.includes('previousOffset')) {
+  add('ParallaxController must respect reduced motion, schedule scroll work, observe visible layers and cap displacement');
+}
+if (!motion.includes('[data-parallax-speed]') || !motion.includes('prefers-reduced-motion: reduce')) {
+  add('src/styles/motion.css: canonical parallax styles and reduced-motion fallback are required');
+}
+const parallaxSources = existing.filter(({ file }) => ['src/app/page.jsx','src/components/HeroSlider.jsx'].includes(file));
+for (const { file, text } of parallaxSources) {
+  for (const match of text.matchAll(/data-parallax-speed=["']([^"']+)["']/g)) {
+    const speed = Number(match[1]);
+    if (!Number.isFinite(speed) || Math.abs(speed) > 0.16) {
+      add(file + ': parallax speed must be numeric and no greater than 0.16 in magnitude');
+    }
+  }
+}
+
+const layoutSource = existing.find((x) => x.file === 'src/app/layout.jsx')?.text || '';
+const alignment = existing.find((x) => x.file === 'src/styles/left-alignment.css')?.text || '';
+if (!layoutSource.includes("import '../styles/left-alignment.css'")) {
+  add('src/app/layout.jsx: site-wide left-alignment standard is not loaded');
+}
+for (const selector of ['.nav-dropdown-grid', '.nav-dropdown-entry', '.nav-dropdown-description', '.nav-mobile .nav-mobile-link']) {
+  if (!alignment.includes(selector)) add(`src/styles/left-alignment.css: missing left-alignment coverage for ${selector}`);
+}
+if (
+  !alignment.includes('main :where(h1, h2, h3, h4, h5, h6, p, li, label, blockquote, figcaption, span, strong, a)') ||
+  !/text-align:\s*left\s*!important/.test(alignment)
+) {
+  add('src/styles/left-alignment.css: public page editorial copy must be left-aligned');
+}
 
 if (violations.length) {
   console.error('\nValoria design check FAILED — production promotion blocked\n');

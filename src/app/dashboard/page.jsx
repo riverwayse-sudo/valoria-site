@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import VALUJourneyProgress from '@/components/VALUJourneyProgress'
 import Link from 'next/link'
 import { AssessmentStartLink } from '@/components/Nav'
+import DashboardExperiencePreview from './ExperiencePreview'
 import { supabase } from '@/lib/supabase'
 import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
@@ -100,6 +101,7 @@ function memberSince(dateStr) {
 }
 
 export default function DashboardPage() {
+  if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1') return <DashboardExperiencePreview />
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [isSupply, setIsSupply] = useState(false)
@@ -302,10 +304,10 @@ export default function DashboardPage() {
     <div style={{ minHeight:'100vh', background:DARK, color:PARCH, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'16px', padding:'24px', fontFamily:'var(--font,Raleway,sans-serif)' }}>
       {assessmentAccess?.can_continue ? (
         <>
-          <VALUJourneyProgress stage="continuation" currentQuestion={10} />
-          <h1 style={{fontSize:'clamp(26px,4vw,38px)',textAlign:'center',margin:0}}>Your assessment is ready to continue.</h1>
-          <p style={{maxWidth:560,textAlign:'center',color:DIM,lineHeight:1.7}}>Your saved opening answers are connected to this account. Continue from Question 10 without restarting.</p>
-          <AssessmentStartLink href="/dashboard" dashboardOnly style={{padding:'14px 24px',background:GOLD,color:DARK,fontSize:12,fontWeight:800,textDecoration:'none',borderRadius:999}}>CONTINUE YOUR ASSESSMENT →</AssessmentStartLink>
+          <VALUJourneyProgress stage="full" />
+          <h1 style={{fontSize:'clamp(26px,4vw,38px)',textAlign:'center',margin:0}}>Your formal assessment is ready.</h1>
+          <p style={{maxWidth:560,textAlign:'center',color:DIM,lineHeight:1.7}}>Your taster is complete. Begin your full assessment, or resume your saved progress if you have already started.</p>
+          <AssessmentStartLink href="/dashboard" dashboardOnly style={{padding:'14px 24px',background:GOLD,color:DARK,fontSize:12,fontWeight:800,textDecoration:'none',borderRadius:999}}>START / CONTINUE YOUR FULL ASSESSMENT →</AssessmentStartLink>
         </>
       ) : assessmentAccess === null ? (
         <>
@@ -510,7 +512,7 @@ export default function DashboardPage() {
               assessment={assessment}
               assessmentAccess={assessmentAccess}
               capabilities={capabilities}
-              hasSavedOpening={!!assessmentAccess?.can_continue}
+              
             />
           </div>
         )}
@@ -609,7 +611,7 @@ export default function DashboardPage() {
                       </div>
                       <p style={{ fontSize:'11px', fontWeight:300, color:DIM, lineHeight:1.65, margin:0 }}>
                         {assessmentAccess?.can_continue
-                          ? 'Your opening nine responses are saved.'
+                          ? 'Your taster is complete. Your full assessment is the next step.'
                           : 'Your official VALU Index and PRIME insights will appear here when your assessment is complete.'}
                       </p>
                     </div>
@@ -662,7 +664,7 @@ export default function DashboardPage() {
                 <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
                   <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'12px' }}>Profile ID</div>
                   <div style={{ fontSize:'13px', fontWeight:700, color: PARCH, letterSpacing:'.06em', marginBottom:'8px', fontVariantNumeric:'tabular-nums' }}>{atbId}</div>
-                  <div style={{ fontSize:'11px', fontWeight:300, color: DIM, lineHeight:1.6 }}>Registered with African Talent Bureau Ltd.</div>
+                  <div style={{ fontSize:'11px', fontWeight:300, color: DIM, lineHeight:1.6 }}>Your Valoria account.</div>
                 </div>
               )}
 
@@ -877,20 +879,20 @@ export default function DashboardPage() {
 // ── Welcome modal ────────────────────────────────────────────────────────────
 function DashboardAssessmentHandover({ standalone = false }) {
   const content = (
-    <section aria-label="Continue your saved VALU assessment" style={{ width:'100%', padding:'clamp(20px,3vw,30px)', border:'1px solid rgba(201,168,76,.3)', borderRadius:12, background:'linear-gradient(135deg, rgba(46,46,74,.96), rgba(26,26,46,.98))', color:'#F7F4EE' }}>
+    <section aria-label="Begin or resume your full VALU assessment" style={{ width:'100%', padding:'clamp(20px,3vw,30px)', border:'1px solid rgba(201,168,76,.3)', borderRadius:12, background:'linear-gradient(135deg, rgba(46,46,74,.96), rgba(26,26,46,.98))', color:'#F7F4EE' }}>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap', marginBottom:12 }}>
         <div style={{ flex:'1 1 420px', minWidth:0 }}>
           <div style={{ color:'#C9A84C', fontSize:10, fontWeight:800, letterSpacing:'.2em' }}>YOUR VALORIA JOURNEY</div>
-          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>You’ve made a great start. Keep going and unlock a deeper understanding of your strengths and potential.</h1>
-          <p style={{ margin:0, maxWidth:700, color:'rgba(247,244,238,.68)', fontSize:13, lineHeight:1.7 }}>Your earlier responses are connected to this account. Continue your VALU assessment from where you left off; your saved work will carry forward.</p>
+          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>Your taster is complete. Continue into your full assessment.</h1>
+          <p style={{ margin:0, maxWidth:700, color:'rgba(247,244,238,.68)', fontSize:13, lineHeight:1.7 }}>Your taster is linked to this account. Begin your full assessment from here, or resume your saved progress.</p>
         </div>
         <div style={{ flex:'0 1 220px', minWidth:180 }}>
-          <VALUJourneyProgress stage="continuation" currentQuestion={10} />
+          <VALUJourneyProgress stage="full" />
         </div>
       </div>
       <div style={{ display:'flex', justifyContent:'center', marginTop:22 }}>
         <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:10, padding:'14px 26px', background:'#C9A84C', color:'#1A1A2E', borderRadius:999, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.12em' }}>
-          CONTINUE YOUR ASSESSMENT <span aria-hidden="true">→</span>
+          START / CONTINUE FULL ASSESSMENT <span aria-hidden="true">→</span>
         </AssessmentStartLink>
       </div>
     </section>
@@ -907,7 +909,7 @@ function DashboardAssessmentHandover({ standalone = false }) {
   )
 }
 
-function AccessProgressCard({ profile, assessment, assessmentAccess, capabilities, hasSavedOpening }) {
+function AccessProgressCard({ profile, assessment, assessmentAccess, capabilities }) {
   const assessmentDone = !!assessment?.completed_at || !!assessmentAccess?.assessment_completed
   const profileComplete = !!profile?.profile_complete
   const activeCapabilities = capabilities.filter(c => c.is_active)
@@ -921,12 +923,12 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
     { key:'profile', label:'Professional profile', done:profileComplete },
     { key:'capability', label:'Capabilities', done:capabilityReady },
     { key:'eligibility', label:'Eligibility', done:eligibilityReady },
-    { key:'listed', label:'Registry listing', done:listedReady },
+    { key:'listed', label:'Marketplace listing', done:listedReady },
   ]
   const nextIndex = steps.findIndex(step => !step.done)
   const next = nextIndex >= 0 ? steps[nextIndex] : null
   const comingAfter = nextIndex >= 0 ? steps[nextIndex + 1] : null
-  const nextHref = !assessmentDone ? '/dashboard/continue-assessment'
+  const nextHref = !assessmentDone ? '/valu/assessment/'
     : !profileComplete || !capabilityReady ? '/profile/setup'
       : !eligibilityReady ? '/profile/passport'
         : !listedReady ? '/marketplace' : '/opportunities'
@@ -936,12 +938,10 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
       : next.key === 'profile' ? 'Complete your professional profile.'
         : next.key === 'capability' ? 'Choose how your expertise is represented.'
           : next.key === 'eligibility' ? 'Complete your readiness requirements.'
-            : 'Publish your Registry presence.'
+            : 'Publish your Marketplace profile.'
 
   const explanation = !next ? 'Explore opportunities and keep your professional presence current.'
-    : next.key === 'valu' ? (hasSavedOpening
-      ? 'Your first nine answers are saved. Continue from Question 10 to complete the assessment and receive your official VALU Index.'
-      : 'Start or continue your 58-question VALU assessment. Your answers establish your professional signal and unlock your official VALU Index.')
+    : next.key === 'valu' ? 'Begin with the VALU taster for a directional starting point. Your official VALU Index is produced after completing your full assessment.'
       : next.key === 'profile' ? 'Add the details that help organisations understand your experience and strengths.'
         : next.key === 'capability' ? 'Select the professional capabilities you want Valoria to represent.'
           : next.key === 'eligibility' ? 'Review the remaining requirements for each capability.'
@@ -977,11 +977,6 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
 
   return (
     <section aria-label="Your next step" style={{ maxWidth:'1100px', margin:'20px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
-      {hasSavedOpening && !assessmentDone && (
-        <div style={{ maxWidth:560, marginBottom:12 }}>
-          <VALUJourneyProgress stage="continuation" currentQuestion={10} />
-        </div>
-      )}
       <div className="dv-next-journey" style={{ background:'linear-gradient(120deg, rgba(26,26,46,.98), rgba(26,26,46,.88))', border:`1px solid ${GLINE2}`, borderRadius:12, padding:'clamp(20px,3vw,28px)' }}>
         <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
           <span aria-hidden="true" style={{ width:7, height:7, borderRadius:'50%', background:GOLD }} />
@@ -992,8 +987,8 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
         <p style={{ fontSize:13, color:DIM, margin:0, lineHeight:1.7, maxWidth:720 }}>{explanation}</p>
         <div style={{ display:'flex', alignItems:'center', gap:14, flexWrap:'wrap', marginTop:18 }}>
           {next?.key === 'valu' ? (
-            <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
-              {hasSavedOpening ? 'CONTINUE TO QUESTION 10' : 'START YOUR VALU ASSESSMENT'} <span aria-hidden="true">→</span>
+            <AssessmentStartLink href={nextHref} style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
+              START THE VALU TASTER <span aria-hidden="true">→</span>
             </AssessmentStartLink>
           ) : (
             <Link href={nextHref} style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
@@ -1064,12 +1059,12 @@ function WelcomeModal({ firstName, isSupply, isOrganiser, pct, onClose }) {
 
   const beats = isSupply ? [
     { eyebrow:'PROFILE DETAILS', title:`Your profile is taking shape, ${firstName}.`, body:`${pct}% of your required profile details are complete. This is separate from your VALU assessment and marketplace eligibility.`, icon:'✓' },
-    { eyebrow:"YOU'RE IN GOOD COMPANY", title:'Welcome to Valoria.', body:"Every professional here is independently assessed. You're not just listed — you're verified.", icon:'◈' },
+    { eyebrow:"YOU'RE IN GOOD COMPANY", title:'Welcome to Valoria.', body:"Your professional profile and VALU assessment are separate parts of your Valoria journey. Marketplace visibility follows the applicable eligibility and visibility rules.", icon:'◈' },
     { eyebrow:'WHAT HAPPENS NEXT', title:'Your next opportunity could start today.', body:'Stay visible to the right people. We’ll let you know when someone expresses interest in connecting with you.', icon:'→' },
   ] : [
     { eyebrow:"YOU'RE IN", title:`Welcome, ${firstName}.`, body:'Your account is set up and ready to go.', icon:'✓' },
-    { eyebrow:'WHAT YOU HAVE ACCESS TO', title:'Welcome to Valoria.', body:`You now have access to Africa's independently verified ${isOrganiser ? 'speaker' : 'professional'} network.`, icon:'◈' },
-    { eyebrow:'READY WHEN YOU ARE', title:'Find your first match.', body:`Search the marketplace and send your first enquiry — most ${isOrganiser ? 'speakers' : 'professionals'} respond within days.`, icon:'→' },
+    { eyebrow:'WHAT YOU HAVE ACCESS TO', title:'Welcome to Valoria.', body:`Explore the Valoria Marketplace and the public professional profiles available for your pathway.`, icon:'◈' },
+    { eyebrow:'READY WHEN YOU ARE', title:'Explore relevant profiles.', body:`Explore public profiles and express interest where an enquiry route is available.`, icon:'→' },
   ]
 
   const isLast = step === beats.length - 1
@@ -1274,13 +1269,13 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
   const isListed = listedCapabilities.length > 0
 
   const current = !hasAssessment
-    ? { label:'Continue your VALU assessment', text:'Your opening responses are saved. Continue securely from your dashboard.', href:'/dashboard/continue-assessment' }
+    ? { label:'Continue your VALU assessment', text:'Your taster is complete. Start your full assessment, or resume any saved progress.', href:'/dashboard/continue-assessment' }
     : !hasProfile
       ? { label:'Build your profile', text:'Tell us about your work so people can understand you.', href:'/profile/onboarding' }
       : !hasCapability
         ? { label:'Show what you can do', text:'Choose the capability you want Valoria to show.', href:'/profile/setup' }
         : !isListed
-          ? { label:'Become discoverable', text:'Finish your readiness steps to enter the Registry.', href:'/profile/passport' }
+          ? { label:'Become discoverable', text:'Finish your readiness steps to become eligible for Marketplace visibility.', href:'/profile/passport' }
           : { label:'Find opportunities', text:'See opportunities that fit what you do.', href:'/opportunities' }
 
   return (

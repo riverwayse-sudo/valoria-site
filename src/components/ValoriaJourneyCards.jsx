@@ -7,7 +7,7 @@ import { AssessmentStartLink } from '@/components/Nav'
 
 const MILESTONES = [
   { key:'connect', title:'Join Valoria', short:'START', description:'Your Valoria account is ready.', href:'/profile/onboarding', icon:'01' },
-  { key:'assess', title:'Complete VALU', short:'VALU', description:'Continue your saved assessment and see your professional signal.', href:'/dashboard', icon:'02' },
+  { key:'assess', title:'Complete VALU', short:'VALU', description:'Begin with the VALU taster or continue your full assessment.', href:'/dashboard', icon:'02' },
   { key:'report', title:'Understand your result', short:'RESULT', description:'Read what your VALU result means.', href:'/report', icon:'03' },
   { key:'profile', title:'Complete your profile', short:'PROFILE', description:'Add your professional details and unlock enhanced marketplace access.', href:'/profile/setup', icon:'04' },
   { key:'capability', title:'Choose your capability', short:'CAPABILITY', description:'Tell Valoria what you want to be discovered for.', href:'/profile/setup', icon:'05' },
@@ -75,6 +75,7 @@ export default function ValoriaJourneyCards({ compact=false }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') { setLoading(false); return }
     let alive = true
     async function loadJourney() {
       try {
@@ -124,7 +125,7 @@ export default function ValoriaJourneyCards({ compact=false }) {
           <div key={card.key} className={styles.webNodeWrap} role="listitem">
             {index > 0 && <span className={styles.webLine} aria-hidden="true" />}
             {card.key === 'assess' && card.current ? (
-              <AssessmentStartLink href="/dashboard" dashboardOnly className={[styles.webNode, styles.webCurrent].join(' ')} aria-current="step" aria-label="Continue your saved VALU assessment">
+              <AssessmentStartLink href="/valu/assessment/" className={[styles.webNode, styles.webCurrent].join(' ')} aria-current="step" aria-label="Start or continue your VALU assessment journey">
                 <span>{card.icon}</span>
               </AssessmentStartLink>
             ) : (
@@ -147,7 +148,7 @@ export default function ValoriaJourneyCards({ compact=false }) {
       <div className={styles.next}>
         <span><b>NEXT</b> {state?.journey?.nextAction || current?.title}</span>
         {current && !current.locked && (current.key === 'assess'
-          ? <AssessmentStartLink href="/dashboard" dashboardOnly className={styles.primaryAction}>CONTINUE →</AssessmentStartLink>
+          ? <AssessmentStartLink href="/valu/assessment/" className={styles.primaryAction}>START / CONTINUE →</AssessmentStartLink>
           : <Link href={current.href} className={styles.primaryAction}>CONTINUE →</Link>)}
       </div>
     </section>

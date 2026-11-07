@@ -1,87 +1,82 @@
-'use client'
-
-import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { AssessmentStartLink } from '@/components/Nav'
 import { BRAND } from '@/lib/brand'
-import MarketplaceCTA from './MarketplaceCTA'
-import EventRegistrationModal, { SessionTimer } from './EventRegistrationModal'
-import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
 
 export default function HeroSlider() {
-  const bars = [88, 90, 82, 80, 75]
-  const scores = [['P', 88], ['R', 90], ['I', 82], ['M', 80], ['E', 75]]
-  const [active, setActive] = useState(0)
-  const [paused, setPaused] = useState(false)
-  const [selectedSession, setSelectedSession] = useState(null)
-
-  const upcomingSession = PROFESSIONAL_STANDARD_SERIES.find((session) => getSessionState(session) !== 'ended' && session.id !== '01') || PROFESSIONAL_STANDARD_SERIES[1]
-  const upcomingState = getSessionState(upcomingSession)
-  const canRegister = upcomingState === 'registration-open'
-
-  useEffect(() => {
-    if (paused || selectedSession) return undefined
-    const timer = window.setInterval(() => setActive((index) => (index + 1) % 2), 9000)
-    return () => window.clearInterval(timer)
-  }, [paused, selectedSession])
-
-  const goTo = (index) => setActive(index)
-  const openRegistration = () => {
-    if (canRegister) setSelectedSession(upcomingSession)
-  }
-
   return (
-    <section className="hero hero-slider" id="hero" aria-label="Valoria Institute introduction">
-      <div className="hero-bg" aria-hidden="true" />
-      <div className="hero-grid" aria-hidden="true" />
-
-      <div className="hero-slides" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-        <div className={`hero-slide ${active === 0 ? 'is-active' : ''}`} aria-hidden={active !== 0}>
+    <section className="hero hero-slider hero-institutional" id="hero" aria-labelledby="valoria-hero-title">
+      <div className="hero-bg" data-parallax-speed="0.12" aria-hidden="true" />
+      <div className="hero-grid" data-parallax-speed="0.055" aria-hidden="true" />
+      <div className="hero-slides">
+        <div className="hero-slide is-active">
           <div className="container hero-inner">
-            <div>
-              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">AFRICA'S HUMAN CAPITAL INSTITUTION</span></div>
-              <h1 className="hero-title au d2">Talent is not<br />the problem.<br /><em>Infrastructure is.</em></h1>
-              <p className="hero-sub au d3">Valoria Institute builds the infrastructure through which African professional merit is developed, surfaced and connected to opportunity with precision.</p>
-              <div className="hero-actions au d4"><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START THE VALU INDEX</a><MarketplaceCTA className="btn-outline">EXPLORE THE BUREAU</MarketplaceCTA></div>
-              <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">84 <small style={{fontSize:10,letterSpacing:'.08em'}}>POINTS</small></div><div className="hmc-right"><div className="hmc-desig">FORCE TO ALIGN WITH · ✦✦</div><div className="hmc-bars">{bars.map((w, i) => <div key={i} className={`hmc-bar score-${w}`} />)}</div></div></div></div>
-            </div>
-            <div className="valu-card au d4" aria-label="Illustrative VALU profile">
-              <div className="vc-label">VALU INDEX · ILLUSTRATIVE PROFILE</div><div className="vc-score"><span className="vc-num">84</span><span className="vc-denom">POINTS</span></div><div className="vc-desig">FORCE TO ALIGN WITH · ✦✦</div>
-              <div className="vc-modalities"><span className="mod-pill" >CANDIDATE</span><span className="mod-pill" >SPEAKER</span></div>
-              <div className="vc-bars">{scores.map(([l, s]) => <div className="vb" key={l}><span className="vb-l">{l}</span><div className="vb-bg"><div className={`vb-fill score-${s}`} /></div><span className="vb-s">{s}</span></div>)}</div><div className="vc-foot">illustrative profile · merit made visible</div>
-            </div>
-          </div>
-        </div>
-
-        <div className={`hero-slide hero-event-slide ${active === 1 ? 'is-active' : ''}`} aria-hidden={active !== 1}>
-          <div className="container hero-inner">
-            <div>
-              <div className="hero-event-kicker">UPCOMING AT VALORIA</div>
-              <h1 className="hero-title">The next conversation<br />on the <em>professional standard.</em></h1>
-              <p className="hero-event-copy">The Professional Standard Series brings practical conversations on the capabilities that turn professional performance into recognised opportunity.</p>
-              <div className="hero-event-meta">{formatSessionDate(upcomingSession)} · 10:00 AM WAT · VIRTUAL · 90 MINUTES</div>
-              <div className="hero-actions">
-                <button type="button" className="btn-gold hero-register-cta" onClick={openRegistration} disabled={!canRegister}>REGISTER FOR THIS CONVERSATION →</button>
-                <a href="/events" className="btn-outline">VIEW ALL EVENTS →</a>
+            <div className="hero-copy">
+              <div className="hero-eyebrow">
+                <div className="hero-eyebrow-line" />
+                <span className="hero-eyebrow-text">THE PROFESSIONAL CAPABILITY MARKETPLACE</span>
               </div>
+              <h1 className="hero-title" id="valoria-hero-title">
+                Make your professional<br />
+                <em>capability visible.</em>
+              </h1>
+              <p className="hero-sub hero-institutional-sub">
+                Understand your capabilities, build a stronger professional presence and discover opportunities aligned with what you can contribute.
+              </p>
+              <div className="hero-actions">
+                <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">
+                  START YOUR SNAPSHOT <span aria-hidden="true">→</span>
+                </AssessmentStartLink>
+                <Link href="/opportunities" className="btn-outline">
+                  EXPLORE OPPORTUNITIES <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+              <p className="hero-institutional-note">For professionals, employers, event organisers and facilitators.</p>
             </div>
-            <aside className="hero-event-panel" aria-label={`Upcoming event: ${upcomingSession.title}`}>
-              <div className="hero-event-cluster">{upcomingSession.cluster}</div>
-              <h2>{upcomingSession.title}</h2>
-              <p>{upcomingSession.description}</p>
-              <div className="hero-event-status">{upcomingState === 'coming-soon' ? 'COMING SOON · DATE TO BE CONFIRMED' : formatSessionDate(upcomingSession)}</div>
-              {upcomingState !== 'coming-soon' && <SessionTimer session={upcomingSession} />}
+
+            <aside className="hero-institutional-panel" aria-label="Valoria professional marketplace architecture">
+              <div className="hero-institutional-panel-head">
+                <span>THE VALORIA MARKETPLACE</span>
+                <strong>{BRAND.tagline.toUpperCase()}</strong>
+              </div>
+              <div className="hero-institutional-pillar">
+                <span className="hero-institutional-index">01</span>
+                <div>
+                  <small>CAPABILITY FRAMEWORK</small>
+                  <strong>PRIME</strong>
+                  <p>A shared framework for five dimensions of professional capability.</p>
+                </div>
+              </div>
+              <div className="hero-institutional-pillar">
+                <span className="hero-institutional-index">02</span>
+                <div>
+                  <small>ASSESSMENT &amp; INDEX</small>
+                  <strong>VALU Index</strong>
+                  <p>An assessment-led view of professional capability, expressed in points.</p>
+                </div>
+              </div>
+              <div className="hero-institutional-pillar">
+                <span className="hero-institutional-index">03</span>
+                <div>
+                  <small>PROFESSIONAL DISCOVERY</small>
+                  <strong>Valoria Marketplace</strong>
+                  <p>Capability-led pathways to professionals, speakers and facilitators.</p>
+                </div>
+              </div>
+              <div className="hero-institutional-pillar">
+                <span className="hero-institutional-index">04</span>
+                <div>
+                  <small>CAPABILITY DEVELOPMENT</small>
+                  <strong>Valoria Develop</strong>
+                  <p>Structured development for professionals and organisations.</p>
+                </div>
+              </div>
+              <div className="hero-institutional-panel-foot">
+                <span>ASSESS</span><i>→</i><span>DEVELOP</span><i>→</i><span>CONNECT</span>
+              </div>
             </aside>
           </div>
         </div>
       </div>
-
-      <div className="hero-slider-controls" aria-label="Homepage slides">
-        <button type="button" className={`hero-slider-dot ${active === 0 ? 'is-active' : ''}`} onClick={() => goTo(0)} aria-label="Show Valoria introduction slide" aria-pressed={active === 0} />
-        <button type="button" className={`hero-slider-dot ${active === 1 ? 'is-active' : ''}`} onClick={() => goTo(1)} aria-label="Show upcoming event slide" aria-pressed={active === 1} />
-        <span className="hero-slider-index">0{active + 1} / 02</span>
-      </div>
-      <div className="hero-scroll-cue" aria-hidden="true"><span>Scroll</span><svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></div>
-
-      {selectedSession && <EventRegistrationModal session={selectedSession} onClose={() => setSelectedSession(null)} />}
     </section>
   )
 }
