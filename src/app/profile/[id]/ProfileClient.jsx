@@ -7,6 +7,7 @@ import Footer from '@/components/Footer'
 import EnquiryForm from '@/components/EnquiryForm'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { toPublicProfile, PUBLIC_PROFILE_SELECT } from '@/lib/public-profile'
+import { getValuTier } from '@/lib/brand'
 
 // ─── helpers ─────────────────────────────────────────────
 function getInitials(name) {
@@ -355,7 +356,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                   MARKETPLACE PROFILE
                 </span>
                 {p.valu_score != null && <span style={{ fontSize:'10px', letterSpacing:'.06em', background:'rgba(201,168,76,.12)', border:`1px solid ${GLINE2}`, padding:'4px 9px', borderRadius:'4px', color: GOLD, fontWeight:700 }}>{p.valu_score} VALU POINTS</span>}
-                {p.designation && <span style={{ fontSize:'10px', letterSpacing:'.06em', color: GOLD }}>{p.designation}</span>}
+                {displayDesignation && <span style={{ fontSize:'10px', letterSpacing:'.06em', color: GOLD }}>{displayDesignation}</span>}
               </div>
               {tracks.length > 0 && (
                 <div style={{ display:'flex', gap:'7px', flexWrap:'wrap', marginTop:'10px' }}>
@@ -473,7 +474,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
               {p.valu_score != null ? (
                 <>
                   <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_score}<span style={{ fontSize:'16px', color: DIM, fontWeight:400 }}> points</span></div>
-                  {p.designation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.08em', textTransform:'uppercase' }}>{p.designation}</div>}
+                  {displayDesignation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.08em', textTransform:'uppercase' }}>{displayDesignation}</div>}
                   {p.cluster_scores && (
                     <div style={{ marginTop:'8px' }}>
                       <PrimeRadarChart scores={p.cluster_scores} />
