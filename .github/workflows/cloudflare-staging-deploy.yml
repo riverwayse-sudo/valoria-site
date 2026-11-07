@@ -132,6 +132,14 @@ jobs:
             fi
           done
 
+          assessment_api_status="$(curl -sS --max-time 25 -o /tmp/valu-assessment-api-response -w '%{http_code}' "$base/valu/assessment/api/taster-progress")"
+          if [[ "$assessment_api_status" != "405" ]]; then
+            echo "Assessment API proxy returned HTTP $assessment_api_status; expected 405 for GET."
+            cat /tmp/valu-assessment-api-response || true
+            exit 1
+          fi
+          grep -qi 'Method not allowed' /tmp/valu-assessment-api-response
+
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
           grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
 
