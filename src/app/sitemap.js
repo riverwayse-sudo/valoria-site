@@ -31,6 +31,9 @@ export default async function sitemap() {
     priority: p.priority,
   }))
 
+  // A staging preview must never enumerate live member profiles.
+  if (process.env.VALU_PREVIEW === '1') return staticEntries
+
   // Only enumerate the consented public projection. The underlying
   // professional_profiles table is intentionally not readable by anon.
   let profileEntries = []
