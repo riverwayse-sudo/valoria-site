@@ -229,7 +229,6 @@ const S = {
   pathName: { fontSize:20, fontWeight:600 },
   pathStatus: { marginLeft:'auto', color:T.faint, fontSize:9, letterSpacing:'.08em', textTransform:'uppercase', textAlign:'right' },
   bureau: { color:T.gold, fontSize:10, fontWeight:700, letterSpacing:'.16em', marginTop:18 },
-  path: { textAlign:'left', border:'1px solid rgba(247,244,238,.10)', background:'rgba(247,244,238,.025)', color:T.parchment, padding:20, minHeight:230, cursor:'pointer', fontFamily:'inherit', transition:'transform .2s,border-color .2s,background .2s' },
   pathFooter: { marginTop:20, paddingTop:14, borderTop:'1px solid rgba(247,244,238,.08)', color:T.gold, fontSize:9, fontWeight:700, letterSpacing:'.15em', display:'flex', justifyContent:'space-between' },
   success: { marginTop:18, padding:12, border:'1px solid rgba(29,158,117,.35)', background:'rgba(29,158,117,.08)', color:'#7FD7B8', fontSize:12 },
   error: { marginTop:18, padding:12, border:'1px solid rgba(216,90,48,.35)', background:'rgba(216,90,48,.08)', color:'#F09595', fontSize:12 },
