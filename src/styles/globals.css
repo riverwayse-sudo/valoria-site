@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500&display=swap');
 
 /* Valoria typography lock: Raleway is the only website typeface. */
 html, body, button, input, textarea, select, option { font-family: 'Raleway', sans-serif !important; }
@@ -15,6 +15,17 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif !important; }
   --vi-type-body: 1rem;
   --vi-type-small: .875rem;
   --vi-type-label: .8125rem;
+  --vi-font-family: 'Raleway', sans-serif;
+  --vi-weight-light: 300;
+  --vi-weight-regular: 400;
+  --vi-weight-medium: 500;
+  --vi-weight-semibold: 600;
+  --vi-weight-bold: 700;
+  --vi-weight-extrabold: 800;
+  --vi-weight-black: 900;
+  --vi-leading-tight: 1.12;
+  --vi-leading-heading: 1.2;
+  --vi-leading-body: 1.7;
 }
 h1 { font-size: var(--vi-type-h1) !important; line-height: 1.12 !important; letter-spacing: -.035em; }
 h2 { font-size: var(--vi-type-h2) !important; line-height: 1.16 !important; letter-spacing: -.025em; }
