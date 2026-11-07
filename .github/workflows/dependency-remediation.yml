@@ -35,6 +35,15 @@ jobs:
           npm pkg delete dependencies.@opennextjs/cloudflare || true
           npm pkg set "devDependencies.@opennextjs/cloudflare=1.20.15"
           npm install --save-exact next@15.5.29 @next/third-parties@15.5.29 --ignore-scripts --no-audit --no-fund
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const manifest = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+          manifest.dependencies ||= {}
+          delete manifest.dependencies['@opennextjs/cloudflare']
+          manifest.devDependencies ||= {}
+          manifest.devDependencies['@opennextjs/cloudflare'] = '1.20.15'
+          fs.writeFileSync('package.json', JSON.stringify(manifest, null, 2) + '\\n')
+          NODE
           npm pkg set "overrides.nanoid=3.3.20"
           npm pkg set "overrides.postcss=8.5.31"
           npm pkg set "overrides.source-map-js=1.2.2"
