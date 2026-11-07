@@ -1,7 +1,7 @@
 export default function VALUJourneyProgress({ stage = 'taster' }) {
   const steps = [
     { key: 'registration', title: 'Register', detail: 'Your details are connected' },
-    { key: 'taster', title: 'taster', detail: 'Your starting insight' },
+    { key: 'taster', title: 'Taster', detail: 'Your starting insight' },
     { key: 'account', title: 'Account', detail: 'Secure your profile' },
     { key: 'full', title: 'Assessment', detail: 'Your full capability picture' },
   ]
