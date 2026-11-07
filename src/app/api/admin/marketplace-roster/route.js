@@ -18,8 +18,10 @@ function normaliseName(value) {
 function namesAlign(profileName, accountName) {
   const profile = normaliseName(profileName)
   const account = normaliseName(accountName)
-  // Identity reconciliation must be exact; prefix similarity is not proof of ownership.
-  return Boolean(profile && account && profile === account)
+  // The auth/profile UUID join is the ownership proof. Allow a profile display name
+  // that is exactly the account's first name, but never arbitrary prefix similarity.
+  const accountFirstName = account.split(/\\s+/)[0]
+  return Boolean(profile && account && (profile === account || profile === accountFirstName))
 }
 
 export async function GET(request) {
@@ -100,7 +102,7 @@ export async function GET(request) {
 
   const candidates = (profilesResult.data || []).flatMap(profile => {
     const account = accountById.get(profile.id)
-    if (profile.is_test || account?.user_type !== 'professional' || !namesAlign(profile.display_name, account.full_name)) return []
+    if (profile.is_test || profile.revoked_at || account?.user_type !== 'professional' || !namesAlign(profile.display_name, account.full_name)) return []
 
     const fullAssessment = latestFullById.get(profile.id)
     const completedTasters = tasterCountById.get(profile.id) || 0
