@@ -46,6 +46,8 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
+      - name: Install pinned OpenNext Cloudflare bindings package
+        run: npm install --no-save --package-lock=false @opennextjs/cloudflare@1.20.15
       - name: Create CI build environment
         run: |
           cat > .env <<'EOF'
