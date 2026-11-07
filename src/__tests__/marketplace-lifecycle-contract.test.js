@@ -558,6 +558,29 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(endpoint).toContain(".not('completed_at', 'is', null)")
   })
 
+  test('public PRIME and VALU pages use the approved seventeen-skill framework', () => {
+    const brand = read('src/lib/brand.js')
+    const prime = read('src/app/prime/page.jsx')
+    const valu = read('src/app/valu/page.jsx')
+    const canonicalSkills = [
+      'Communication', 'Negotiation', 'Personal Brand & Executive Presence',
+      'Emotional Intelligence', 'Conflict Resolution', 'People Development', 'Stakeholder Management',
+      'Critical Thinking', 'Strategic Thinking', 'Business Acumen', 'AI Fluency',
+      'Execution & Accountability', 'Resilience & Self-Leadership', 'Adaptability',
+      'Commercial Creativity', 'Influence Without Authority', 'Human-AI Collaboration',
+    ]
+    for (const skill of canonicalSkills) {
+      expect(brand).toContain(skill)
+      expect(prime).toContain(skill === 'AI Fluency' || skill === 'Human-AI Collaboration' ? skill : 'cluster.skills')
+    }
+    expect(brand).toContain("subtitle: 'How you create'")
+    expect(prime).toContain('Future-Ready skill')
+    expect(valu).toContain('valu-skill-list')
+    expect(valu).toContain('Human-AI Collaboration')
+    expect(brand).not.toContain('Composure Under Scrutiny')
+    expect(brand).not.toContain('Managing Ambiguity')
+  })
+
   test('legal pages describe Basic taster tier, consent gates and current data practices', () => {
     const terms = read('src/app/terms-of-use/page.jsx')
     const privacy = read('src/app/privacypolicy/page.jsx')
