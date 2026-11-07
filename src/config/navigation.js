@@ -35,6 +35,7 @@ export const NAVIGATION = {
       { label: 'Find Speakers & Facilitators', href: '/atb-spotlight' },
       { label: 'Marketplace', href: '/marketplace' },
       { label: 'Browse Jobs', href: '/jobs' },
+      { label: 'Capability Intelligence', href: '/intelligence' },
       { label: 'Valoria Develop', href: '/develop' },
       { label: 'Institutional Partnerships', href: '/contact-us' },
     ],
