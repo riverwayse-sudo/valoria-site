@@ -146,7 +146,7 @@ export default async function LiveProfilesScroll() {
       ) : (
         <div className="live-profiles-public-state">
           <div className="live-profiles-empty-copy">
-            <span className="live-profiles-empty-kicker">THE AFRICAN TALENT BUREAU</span>
+            <span className="live-profiles-empty-kicker">THE VALORIA MARKETPLACE</span>
             <strong>Make professional expertise easier to find.</strong>
             <p>Explore the pathways through which employers, event organisers and programme teams can discover relevant expertise.</p>
             <Link href="/marketplace" className="live-profiles-empty-link">EXPLORE THE MARKETPLACE <span aria-hidden="true">→</span></Link>
