@@ -6,10 +6,11 @@ function read(relative) {
 }
 
 describe('VALU presentation consistency', () => {
-  test('homepage communicates the approved nine-question entry assessment', () => {
+  test('homepage communicates the VALU taster without exposing internal assessment mechanics', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('<b>9</b> QUESTIONS')
-    expect(home).not.toContain('<b>15</b> QUESTIONS')
+    expect(home).toContain('SHORT REFLECTION')
+    expect(home).toContain('START WITH A FREE TASTER')
+    expect(home).not.toMatch(/(?:9|58)[- ]questions?|<b>9<\/b> QUESTIONS/i)
   })
 
   test('homepage hero communicates Valoria’s capability-marketplace positioning', () => {
@@ -18,7 +19,8 @@ describe('VALU presentation consistency', () => {
     expect(hero).toContain('Capability should decide')
     expect(hero).toContain('who gets <em>seen.</em>')
     expect(hero).toContain('build a stronger professional presence')
-    expect(hero).toContain('START THE 9-QUESTION TASTER')
+    expect(hero).toContain('START THE VALU TASTER')
+    expect(hero).not.toMatch(/(?:9|58)[- ]questions?/i)
     expect(hero).toContain('hero-stage')
     expect(hero).toContain('THE PRIME FRAMEWORK')
     expect(hero).not.toContain('vc-denom')
