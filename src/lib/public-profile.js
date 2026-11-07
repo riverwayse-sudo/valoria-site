@@ -92,7 +92,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
 
   const { data: acknowledgement, error: acknowledgementError } = await admin
     .from('professional_profile_acknowledgements')
-    .select('id')
+    .select('id,acknowledgement_version')
     .eq('professional_id', professionalId)
     .eq('acknowledgement_type', 'profile_submission')
     .order('acknowledged_at', { ascending: false })
@@ -199,7 +199,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
 
   const { data: acknowledgements, error: acknowledgementError } = await admin
     .from('professional_profile_acknowledgements')
-    .select('professional_id')
+    .select('professional_id,acknowledgement_version')
     .in('professional_id', profiles.map(profile => profile.id))
     .eq('acknowledgement_type', 'profile_submission')
     .order('acknowledged_at', { ascending: false })
