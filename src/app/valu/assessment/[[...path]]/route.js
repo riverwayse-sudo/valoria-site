@@ -22,7 +22,16 @@ function getAssessmentOrigin() {
   }
 }
 
-// Use the bound assessment Worker for same-account traffic; public workers.dev subrequests can be rejected by Cloudflare.
+function getUpstreamPath(pathname) {
+  const suffix = pathname.replace(/^\/valu\/assessment\/?/, '')
+  if (!suffix) return '/'
+  // The Vite app is mounted below /valu/assessment, but its API handlers are
+  // registered at /api/* in the assessment Worker. Strip the mount prefix only
+  // for API requests; preserve it for the app shell and static assets.
+  if (suffix === 'api' || suffix.startsWith('api/')) return `/${suffix}`
+  return `/valu/assessment/${suffix}`
+}
+
 async function proxyAssessment(request) {
   const origin = getAssessmentOrigin()
   if (!origin) {
@@ -33,22 +42,24 @@ async function proxyAssessment(request) {
   }
 
   const incoming = new URL(request.url)
-  const suffix = incoming.pathname.replace(/^\/valu\/assessment\/?/, '')
-  const target = new URL(suffix ? `/valu/assessment/${suffix}` : '/', origin)
+  const target = new URL(getUpstreamPath(incoming.pathname), origin)
   target.search = incoming.search
 
-  const headers = new Headers()
-  for (const name of ['accept', 'accept-language', 'range', 'if-none-match', 'if-modified-since', 'user-agent']) {
-    const value = request.headers.get(name)
-    if (value) headers.set(name, value)
+  const headers = new Headers(request.headers)
+  headers.delete('host')
+  headers.delete('content-length')
+
+  const init = {
+    method: request.method,
+    headers,
+    redirect: 'manual',
+  }
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    init.body = request.body
   }
 
   try {
-    const init = {
-      method: request.method === 'HEAD' ? 'HEAD' : 'GET',
-      headers,
-      redirect: 'follow',
-    }
+    const upstreamRequest = new Request(target, init)
     let service
     try {
       service = getCloudflareContext().env.VALU_ASSESSMENT
@@ -56,10 +67,12 @@ async function proxyAssessment(request) {
       service = null
     }
     const upstream = service
-      ? await service.fetch(new Request(target, init))
-      : await fetch(target, init)
+      ? await service.fetch(upstreamRequest)
+      : await fetch(upstreamRequest)
+
     const responseHeaders = new Headers(upstream.headers)
-    responseHeaders.set('cache-control', responseHeaders.get('cache-control') || 'public, max-age=60')
+    const isApiRequest = target.pathname.startsWith('/api/')
+    responseHeaders.set('cache-control', isApiRequest ? 'no-store' : (responseHeaders.get('cache-control') || 'public, max-age=60'))
     responseHeaders.set('x-content-type-options', 'nosniff')
     return new Response(upstream.body, {
       status: upstream.status,
@@ -84,9 +97,10 @@ export async function HEAD(request) {
   return proxyAssessment(request)
 }
 
-export async function OPTIONS() {
-  return new Response(null, {
-    status: 204,
-    headers: { allow: 'GET, HEAD, OPTIONS', 'cache-control': 'no-store' },
-  })
+export async function POST(request) {
+  return proxyAssessment(request)
+}
+
+export async function OPTIONS(request) {
+  return proxyAssessment(request)
 }
