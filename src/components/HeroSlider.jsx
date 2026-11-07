@@ -36,7 +36,7 @@ export default function HeroSlider() {
             <aside className="hero-institutional-panel" aria-label="Valoria professional marketplace architecture">
               <div className="hero-institutional-panel-head">
                 <span>THE VALORIA MARKETPLACE</span>
-                <strong>WORTH. BUILT.</strong>
+                <strong>{BRAND.tagline.toUpperCase()}</strong>
               </div>
               <div className="hero-institutional-pillar">
                 <span className="hero-institutional-index">01</span>
