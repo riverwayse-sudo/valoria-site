@@ -191,6 +191,7 @@ export default function AdminPage() {
             {rosterCandidates.filter(p=>!rosterSearch || `${p.display_name||''} ${p.atb_id||''}`.toLowerCase().includes(rosterSearch.toLowerCase())).map(p=>{
               const full=p.assessmentAccess==='full'
               const publiclyReady=p.publicConsent && p.listing_status==='listed' && p.visibility==='public' && p.eligible_for_listing
+              const publicationState=publiclyReady?'PUBLICLY READY':!p.publicConsent?'CONSENT NOT RECORDED':p.visibility!=='public'?'REGISTERED-ONLY':p.listing_status!=='listed'||!p.eligible_for_listing?'LISTING CHECKS PENDING':'ADDITIONAL CHECKS PENDING'
               return <article className="vi-admin-card vi-admin-row" key={p.id} style={styles.row}>
                 <div>
                   <div style={styles.rowTitle}>{p.display_name || 'Unnamed professional'}</div>
@@ -199,12 +200,13 @@ export default function AdminPage() {
                     <span style={styles.tag}>{full?'FULL ASSESSMENT':'BASIC · TASTER'}</span>
                     {full && <span style={styles.tag}>VALU {p.fullScore ?? '—'} POINTS</span>}
                     <span style={styles.tag}>{p.profile_complete?'PROFILE COMPLETE':'PROFILE INCOMPLETE'}</span>
+                    <span style={styles.tag}>{p.publicConsent?'PUBLIC CONSENT RECORDED':'PUBLIC CONSENT NOT RECORDED'}</span>
                     {(p.capabilityLabels||[]).map(label=><span key={label} style={styles.tag}>{label}</span>)}
                   </div>
                 </div>
                 <div style={{...styles.actions,flexWrap:'wrap',justifyContent:'flex-end'}}>
                   <span style={{...styles.status,color:p.listing_status==='listed'?'#C9A84C':'#888'}}>{p.listing_status || 'unlisted'}</span>
-                  <span style={{...styles.status,color:publiclyReady?'#74B58B':'#D6A05C'}}>{publiclyReady?'PUBLICLY READY':'PRIVATE / CONSENT PENDING'}</span>
+                  <span style={{...styles.status,color:publiclyReady?'#74B58B':p.publicConsent?'#D6A05C':'#D6A05C'}}>{publicationState}</span>
                   <span style={styles.muted}>{p.visibility || 'visibility unset'}</span>
                   <Link className="vi-admin-control" style={styles.outlineBtn} href={`/profile/${p.id}`}>Review profile</Link>
                 </div>
