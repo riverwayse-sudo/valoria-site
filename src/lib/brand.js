@@ -55,11 +55,13 @@ export const MARKETPLACE_ACCESS_LEVELS = {
   },
 }
 
-// Merit tiers are earned only through the full VALU Index assessment.
+// Merit tiers follow the approved VI-BG-2026-001 score bands.
+// Standard is a platform tier without a decorative badge treatment.
 export const TIER_DESIGNATIONS = [
-  { min: 90, max: 100, name: 'Elite', stars: '✦✦✦' },
-  { min: 75, max: 89, name: 'Distinguished', stars: '✦✦' },
-  { min: 55, max: 74, name: 'Proficient', stars: '✦' },
+  { level: 4, min: 90, max: 100, name: 'Elite', stars: '✦✦✦' },
+  { level: 3, min: 75, max: 89, name: 'Distinguished', stars: '✦✦' },
+  { level: 2, min: 55, max: 74, name: 'Proficient', stars: '✦' },
+  { level: 1, min: 35, max: 54, name: 'Standard', stars: '' },
 ]
 
 export function getValuTier(points, assessmentLevel = 'full') {
