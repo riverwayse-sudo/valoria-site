@@ -4,12 +4,12 @@ import Reveal from '@/components/Reveal'
 import '../pages.css'
 
 export const metadata = {
-  title: 'About Valoria Institute | Professional Capability Marketplace',
-  description: 'Valoria Institute helps professionals understand, develop and present their capabilities, connecting relevant expertise with opportunity through a structured marketplace.',
+  title: 'About Valoria Institute | Professional Capability Institution',
+  description: 'Valoria Institute is a professional capability institution that assesses, develops and connects professional capability through PRIME, the VALU Index and Valoria Marketplace. Nigeria is its current operating market.',
   keywords: ['Valoria Institute', 'professional capability', 'PRIME framework', 'VALU Index', 'professional development', 'talent marketplace'],
   openGraph: {
     title: 'About Valoria Institute',
-    description: 'The marketplace connecting professional capability to development, visibility and opportunity.',
+    description: 'The institution connecting professional capability to development, visibility and opportunity.',
     url: 'https://valoriainstitute.com/about-us',
   },
   alternates: { canonical: 'https://valoriainstitute.com/about-us' },
@@ -28,7 +28,7 @@ const FOUNDATIONS = [
 ]
 
 const POSITIONING = [
-  { title: 'Not a conventional recruitment agency', body: 'The African Talent Bureau supports capability-led discovery. Hiring decisions remain with the organisations making them.' },
+  { title: 'Not a conventional recruitment agency', body: 'The Valoria Marketplace supports capability-led discovery. Hiring decisions remain with the organisations making them.' },
   { title: 'More than a training catalogue', body: 'Valoria Institute provides the institutional framework. Valoria Develop translates PRIME into structured development pathways.' },
   { title: 'More than a speaker directory', body: 'ATB Spotlight helps event organisers and programme teams discover speakers and facilitators through capability-led professional profiles.' },
   { title: 'Credentials are governed, not implied', body: 'Certification pathways are being developed. No professional is described as certified until the relevant assessment, approval and issuance process is operational.' },
@@ -39,7 +39,7 @@ const TIMELINE = [
   { year: 'The challenge', label: 'Across hiring, speaking and training, buyers often make decisions with incomplete signals. CVs, biographies and referrals describe parts of a person’s experience, but do not always provide a consistent view of capability.' },
   { year: 'The framework', label: 'PRIME establishes a shared language for professional capability across Presence, Relationships, Intelligence, Mastery and Enterprise.' },
   { year: 'The assessment', label: 'The VALU Index translates assessment into a structured view of capability, expressed in points and used to inform professional development.' },
-  { year: 'The connection', label: 'The African Talent Bureau creates pathways through which employers, event organisers and programme teams can discover relevant professional expertise.' },
+  { year: 'The connection', label: 'The Valoria Marketplace creates pathways through which employers, event organisers and programme teams can discover relevant professional expertise.' },
 ]
 
 export default function AboutPage() {
@@ -66,7 +66,7 @@ export default function AboutPage() {
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE INSTITUTIONAL RESPONSE</span></div>
               <h2 className="section-title">Develop.<br /><em>Surface. Connect.</em></h2>
-              <p className="page-copy">PRIME provides the capability framework. The VALU Index provides an assessment-led view of capability. Valoria Develop supports structured growth. The African Talent Bureau connects employers, event organisers and programme teams with relevant professional expertise.</p>
+              <p className="page-copy">PRIME provides the capability framework. The VALU Index provides an assessment-led view of capability. Valoria Develop supports structured growth. The Valoria Marketplace connects employers, event organisers and programme teams with relevant professional expertise.</p>
               <p className="page-copy page-copy-spaced">One institution. One connected system. Distinct pathways for professional merit.</p>
             </Reveal>
           </div>
@@ -155,7 +155,7 @@ export default function AboutPage() {
           <div className="page-section-inner">
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WORK WITH VALORIA</span></div>
-              <h2 className="section-title">Build a stronger <em>capability ecosystem.</em></h2>
+              <h2 className="section-title">Build a stronger <em>capability infrastructure.</em></h2>
               <p className="page-sub">Valoria Institute is rooted in African professional experience and designed for continental growth. Nigeria is its current operating market, with broader expansion guided by institutional readiness and partnerships.</p>
               <div className="page-hero-actions">
                 <a href="/contact-us" className="btn-gold">DISCUSS A PARTNERSHIP</a>
