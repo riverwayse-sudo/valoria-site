@@ -5,8 +5,8 @@ import { BRAND } from '@/lib/brand'
 export default function HeroSlider() {
   return (
     <section className="hero hero-slider hero-institutional" id="hero" aria-labelledby="valoria-hero-title">
-      <div className="hero-bg" aria-hidden="true" />
-      <div className="hero-grid" aria-hidden="true" />
+      <div className="hero-bg" data-parallax-speed="0.12" aria-hidden="true" />
+      <div className="hero-grid" data-parallax-speed="0.055" aria-hidden="true" />
       <div className="hero-slides">
         <div className="hero-slide is-active">
           <div className="container hero-inner">
