@@ -5,7 +5,7 @@
  */
 
 /* Public-page editorial copy shares one consistent left reading edge. */
-main :where(h1, h2, h3, h4, h5, h6, p, li, label, blockquote, figcaption) {
+main :where(h1, h2, h3, h4, h5, h6, p, li, label, blockquote, figcaption, span, strong, a) {
   text-align: left !important;
 }
 
@@ -106,3 +106,10 @@ main :where(.page-hero-actions-centered) {
 }
 
 /* Keep the site logo, chevrons, icon controls and pill-button labels undisturbed. */
+
+/* Pill controls keep their established centred label treatment. */
+main :where(.btn-gold, .btn-primary, .btn-secondary, .btn-tertiary, .btn-outline,
+  .btn-ghost, .nav-cta, .valu-btn, .valu-btn-gold, .valu-btn-ghost,
+  .wl-btn, .event-register-button) {
+  text-align: center !important;
+}
