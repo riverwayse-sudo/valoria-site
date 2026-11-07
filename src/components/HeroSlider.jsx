@@ -37,13 +37,13 @@ export default function HeroSlider() {
               <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">AFRICA'S TALENT MARKETPLACE FOR PROFESSIONALS</span></div>
               <h1 className="hero-title au d2">Capability should decide<br />who gets seen.<br /><em>Valoria is the room.</em></h1>
               <p className="hero-sub au d3">Valoria assesses African professionals on one standard, develops them where they fall short, and connects them to employers, event organisers and training buyers.</p>
-              <div className="hero-actions au d4"><a href={BRAND.assessmentUrl} className="btn-gold">TAKE THE 9-QUESTION TASTER</a><a href="/valu#how-it-works" className="btn-outline">SEE HOW IT WORKS</a></div>
-              <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">58 <small style={{fontSize:10,letterSpacing:'.08em'}}>QUESTIONS</small></div><div className="hmc-right"><div className="hmc-desig">54 SCORED · 4 VALIDITY CHECKS</div><div className="hmc-bars"><span>PRIME</span><span>VALU</span></div></div></div></div>
+              <div className="hero-actions au d4"><a href={BRAND.assessmentUrl} className="btn-gold">TAKE THE VALU TASTER</a><a href="/valu#how-it-works" className="btn-outline">SEE HOW IT WORKS</a></div>
+              <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">VALU <small style={{fontSize:10,letterSpacing:'.08em'}}>INDEX</small></div><div className="hmc-right"><div className="hmc-desig">POINTS-BASED CAPABILITY PROFILE</div><div className="hmc-bars"><span>PRIME</span><span>VALU</span></div></div></div></div>
             </div>
             <div className="valu-card au d4" aria-label="The VALU Index assessment structure">
               <div className="vc-label">THE VALU INDEX</div>
-              <div className="vc-score"><span className="vc-num">58</span><span className="vc-denom">QUESTIONS</span></div>
-              <div className="vc-desig">54 SCORED · 4 VALIDITY CHECKS</div>
+              <div className="vc-score"><span className="vc-num">VALU</span><span className="vc-denom">INDEX</span></div>
+              <div className="vc-desig">POINTS-BASED CAPABILITY PROFILE</div>
               <div className="vc-cluster-list"><span>Presence</span><span>Relationships</span><span>Intelligence</span><span>Mastery</span><span>Enterprise</span></div>
               <div className="vc-foot">PRIME framework · results expressed in points</div>
             </div>
