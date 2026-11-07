@@ -3,8 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 
 const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
-const EXCLUDED_ATB_IDS = new Set(['ATB-C-SAA-00179', 'ATB-C-OAA-00157', 'ATB-68A5E7D8', 'ATB-C-𝙾𝙴𝙾-00387'])
-const PUBLIC_PROFILE_ACK_VERSION = 'public-profile-visibility-v1-2026-11-05'
+const PUBLIC_PROFILE_ACK_VERSION = 'public-profile-visibility-v2-2026-11-06'
 
 function getAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -13,19 +12,22 @@ function getAdminClient() {
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
 }
 
-// The public roster is a projection, not proof that every source profile is complete.
-// Re-check owner-controlled status fields before any profile is rendered publicly.
 function isQualifiedPublicProfile(row) {
-  return Boolean(
+  const hasIdentity = Boolean(
     row?.professional_id &&
+    typeof row.full_name === 'string' && row.full_name.trim() &&
+    typeof row.headline === 'string' && row.headline.trim() &&
+    typeof row.atb_id === 'string' && row.atb_id.trim() &&
+    Array.isArray(row.capabilities) && row.capabilities.length > 0
+  )
+  if (!hasIdentity) return false
+
+  if (row.assessment_access === 'basic') return true
+  return Boolean(
     row.assessment_access === 'full' &&
     row.valu_index !== null && row.valu_index !== undefined && Number.isFinite(Number(row.valu_index)) &&
     typeof row.assessment_summary === 'string' && row.assessment_summary.trim().length >= 12 &&
-    typeof row.full_name === 'string' && row.full_name.trim() &&
-    typeof row.headline === 'string' && row.headline.trim() &&
-    typeof row.designation === 'string' && row.designation.trim() &&
-    typeof row.atb_id === 'string' && row.atb_id.trim() &&
-    !EXCLUDED_ATB_IDS.has(row.atb_id)
+    typeof row.designation === 'string' && row.designation.trim()
   )
 }
 
@@ -62,11 +64,12 @@ function dedupeProfessionals(rows) {
   return [...map.values()]
 }
 
-async function getApprovedPublicProfessionalIds(admin, ids) {
-  if (!ids.length) return new Set()
-  const { data, error } = await admin
+async function getApprovedPublicProfessionalIds(admin, rows) {
+  if (!rows.length) return new Set()
+  const ids = rows.map(row => row.professional_id)
+  const { data: profiles, error } = await admin
     .from('professional_profiles')
-    .select('id,profile_complete,is_test,visibility,listing_status,revoked_at')
+    .select('id,display_name,headline,current_job_title,profile_complete,is_test,visibility,listing_status,revoked_at')
     .in('id', ids)
 
   if (error) {
@@ -74,11 +77,30 @@ async function getApprovedPublicProfessionalIds(admin, ids) {
     throw new Error('Public profile quality could not be verified.')
   }
 
+  const basicIds = rows
+    .filter(row => row.assessment_access === 'basic')
+    .map(row => row.professional_id)
+  let linkedTasterIds = new Set()
+  if (basicIds.length) {
+    const { data: tasters, error: tasterError } = await admin
+      .from('taster_sessions')
+      .select('user_id')
+      .in('user_id', basicIds)
+      .not('completed_at', 'is', null)
+
+    if (tasterError) {
+      console.error('Basic listing taster verification failed:', tasterError)
+      throw new Error('Basic listing eligibility could not be verified.')
+    }
+    linkedTasterIds = new Set((tasters || []).map(row => row.user_id))
+  }
+
   const { data: acknowledgements, error: acknowledgementError } = await admin
     .from('professional_profile_acknowledgements')
     .select('professional_id')
     .eq('acknowledgement_type', 'profile_submission')
     .eq('acknowledgement_version', PUBLIC_PROFILE_ACK_VERSION)
+    .in('professional_id', ids)
 
   if (acknowledgementError) {
     console.error('Public profile consent verification failed:', acknowledgementError)
@@ -86,16 +108,19 @@ async function getApprovedPublicProfessionalIds(admin, ids) {
   }
 
   const consentedIds = new Set((acknowledgements || []).map(item => item.professional_id))
-  return new Set((data || [])
-    .filter(profile =>
-      profile.profile_complete === true &&
-      profile.is_test === false &&
-      profile.visibility === 'public' &&
-      profile.listing_status === 'listed' &&
-      profile.revoked_at == null &&
-      consentedIds.has(profile.id)
-    )
-    .map(profile => profile.id))
+  const profileById = new Map((profiles || []).map(profile => [profile.id, profile]))
+  return new Set(rows.filter(row => {
+    const profile = profileById.get(row.professional_id)
+    if (!profile || profile.is_test !== false || profile.visibility !== 'public'
+      || profile.listing_status !== 'listed' || profile.revoked_at != null
+      || !consentedIds.has(profile.id)) return false
+
+    if (row.assessment_access === 'full') return profile.profile_complete === true
+    return row.assessment_access === 'basic'
+      && linkedTasterIds.has(profile.id)
+      && Boolean(profile.display_name?.trim())
+      && Boolean(profile.headline?.trim() || profile.current_job_title?.trim())
+  }).map(row => row.professional_id))
 }
 
 export async function getMarketplaceRows(track = 'all') {
@@ -104,6 +129,7 @@ export async function getMarketplaceRows(track = 'all') {
   const { data, error } = await admin
     .from(SOURCE)
     .select(FIELDS)
+    .in('assessment_access', ['full', 'basic'])
     .order('valu_index', { ascending: false, nullsFirst: false })
     .order('full_name', { ascending: true })
 
@@ -113,8 +139,12 @@ export async function getMarketplaceRows(track = 'all') {
   }
 
   const projected = dedupeProfessionals((data || []).filter(isQualifiedPublicProfile))
-  const approvedIds = await getApprovedPublicProfessionalIds(admin, projected.map(row => row.professional_id))
-  const rows = projected.filter(row => approvedIds.has(row.professional_id))
+  const approvedIds = await getApprovedPublicProfessionalIds(admin, projected)
+  const rows = projected
+    .filter(row => approvedIds.has(row.professional_id))
+    .map(row => row.assessment_access === 'basic'
+      ? { ...row, valu_index: null, cluster_scores: null, assessment_summary: null, designation: null }
+      : row)
   return rows.filter(row => track === 'all' || row.capabilities.includes(normalizeTrack(track)))
 }
 
