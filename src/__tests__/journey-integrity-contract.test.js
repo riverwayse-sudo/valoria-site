@@ -10,7 +10,6 @@ describe('participant-facing assessment clarity', () => {
   test('participant-facing pages and progress indicators do not expose assessment mechanics', () => {
     const sources = [
       read('src/components/VALUJourneyProgress.jsx'),
-      read('src/app/valu/page.jsx'),
       read('src/app/valu/start/page.jsx'),
       read('src/app/dashboard/page.jsx'),
       read('src/app/dashboard/ExperiencePreview.jsx'),
@@ -19,8 +18,15 @@ describe('participant-facing assessment clarity', () => {
       read('src/app/terms-of-use/page.jsx'),
     ]
     for (const source of sources) {
-      expect(source).not.toMatch(/(?:9|58)[- ]questions?|Question\\s*(?:1|10)|remaining 49/i)
+      expect(source).not.toMatch(/Question\\s*(?:1|10)|remaining 49|\\b\\d+\\s+of\\s+(?:9|58)\\b/i)
     }
+  })
+
+  test('public VALU information distinguishes the taster from the full assessment', () => {
+    const valu = read('src/app/valu/page.jsx')
+    expect(valu).toContain('9-question taster')
+    expect(valu).toContain('58-question assessment')
+    expect(valu).toContain('separate')
   })
 
   test('the isolated dashboard preview launches the interactive taster', () => {
