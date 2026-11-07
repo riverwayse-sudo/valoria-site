@@ -13,7 +13,7 @@ export default function ATBConnectPage() {
   return (
     <>
       <Nav />
-      <main id="main-content">
+      <main id="main-content" className="decision-page">
         <section className="page-hero">
           <div className="page-hero-inner">
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">ATB CONNECT · FOR EMPLOYERS</span></div>
@@ -41,11 +41,11 @@ export default function ATBConnectPage() {
             </Reveal>
           </div>
         </section>
-        <section className="page-section alt cta-banner">
+        <section className="page-section alt">
           <Reveal>
             <h2 className="section-title">Hire with<br /><em>more context.</em></h2>
             <p className="page-sub">Tell us about the roles, capability areas and experience your organisation needs. Buyer access and search support are discussed directly.</p>
-            <div className="page-hero-actions eyebrow-center"><a href="/contact-us?topic=ATB%20Connect" className="btn-gold">REQUEST ACCESS</a></div>
+            <div className="page-hero-actions"><a href="/contact-us?topic=ATB%20Connect" className="btn-gold">REQUEST ACCESS</a></div>
           </Reveal>
         </section>
       </main>
