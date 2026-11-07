@@ -20,7 +20,7 @@ function namesAlign(profileName, accountName) {
   const account = normaliseName(accountName)
   // The auth/profile UUID join is the ownership proof. Allow a profile display name
   // that is exactly the account's first name, but never arbitrary prefix similarity.
-  const accountFirstName = account.split(/\\s+/)[0]
+  const accountFirstName = account.split(/\s+/)[0]
   return Boolean(profile && account && (profile === account || profile === accountFirstName))
 }
 
