@@ -19,22 +19,29 @@ export const metadata = {
 const frameworkStages = [
   {
     number: '01',
-    title: 'Understand and develop capability',
-    body: 'Begin with the VALU taster and full assessment to understand your strengths. PRIME provides a structured path for the development that follows.',
+    title: 'Start with the taster',
+    body: 'Begin with a short, guided introduction to PRIME. No account is needed to start.',
     href: '/valu',
-    cta: 'EXPLORE VALU',
+    cta: 'START WITH THE TASTER',
   },
   {
     number: '02',
-    title: 'Surface your capability',
-    body: 'Your professional profile brings VALU results, selected capabilities and experience into a clearer professional presence. Public visibility follows eligibility and consent.',
+    title: 'Complete the full assessment',
+    body: 'Continue to the separate formal assessment to establish your official VALU Index in points.',
+    href: '/valu',
+    cta: 'UNDERSTAND THE ASSESSMENT',
+  },
+  {
+    number: '03',
+    title: 'Build your professional profile',
+    body: 'Bring your assessment-informed capabilities, experience and professional direction into one clear record. Public visibility follows eligibility and consent.',
     href: '/marketplace',
     cta: 'EXPLORE PROFILES',
   },
   {
-    number: '03',
-    title: 'Find relevant opportunities',
-    body: 'Explore published professional opportunities when verified listings and a clear application or enquiry route are available.',
+    number: '04',
+    title: 'Get found for relevant work',
+    body: 'Explore published opportunities and buyer pathways when verified listings and clear engagement routes are available.',
     href: '/opportunities',
     cta: 'EXPLORE OPPORTUNITIES',
   },
@@ -84,6 +91,18 @@ export default function HomePage() {
       <Nav />
       <main id="main-content" className="home-redesign-root">
         <HeroSlider />
+
+        <section className="home-framework home-problem" aria-labelledby="home-problem-title">
+          <div className="container">
+            <Reveal className="home-section-heading">
+              <div>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE PROBLEM</span></div>
+                <h2 id="home-problem-title">Careers still turn on who was in the <em>right room.</em></h2>
+              </div>
+              <p>Your capability has not changed. The room has. Valoria gives professional capability a clearer way to be understood, developed and connected to opportunity.</p>
+            </Reveal>
+          </div>
+        </section>
 
         <section className="valu-section valu-conversion" id="valu" aria-labelledby="home-valu-title">
           <div className="container valu-conversion-shell">
