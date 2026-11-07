@@ -67,7 +67,7 @@ export default function EventsPage() {
       eventStatus: new Date(session.start) > new Date() ? 'https://schema.org/EventScheduled' : undefined,
       location: { '@type': 'VirtualLocation', url: 'https://valoriainstitute.com/events' },
       organizer: { '@type': 'Organization', name: 'Valoria Institute', url: 'https://valoriainstitute.com' },
-      performer: session.speaker ? { '@type': 'Person', name: session.speaker } : undefined,
+      performer: session.speaker && session.speakerApproved !== false ? { '@type': 'Person', name: session.speaker } : undefined,
     })),
   }
   const eventSchemaJson = approvedEvents.length
@@ -96,7 +96,7 @@ export default function EventsPage() {
                   <div className="page-kicker events-list-kicker">{webinarState === 'live' ? 'LIVE WEBINAR' : webinarState === 'ended' ? 'EVENT STREAM' : 'FEATURED WEBINAR'}</div>
                   <h2 className="section-title" id="webinar-title">{webinar.title}</h2>
                 </div>
-                <p>{webinar.speaker} · {formatSessionDate(webinar)} · 10:00 AM WAT · 90 minutes</p>
+                <p>{[webinar.speaker && webinar.speakerApproved !== false ? webinar.speaker : null, formatSessionDate(webinar), '10:00 AM WAT', '90 minutes'].filter(Boolean).join(' · ')}</p>
               </div>
               <div style={{ width: '100%', maxWidth: 1080, margin: '0 auto' }}>
                 <div style={{ position: 'relative', aspectRatio: '16 / 9', width: '100%', overflow: 'hidden', background: '#11111b', border: '1px solid rgba(201,168,76,.28)' }}>
