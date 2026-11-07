@@ -12,7 +12,7 @@ on:
       - "package-lock.json"
       - ".github/workflows/cloudflare-site-worker.yml"
   push:
-    branches: [main, "fix/assessment-proxy-prefix-and-api"]
+    branches: [main, "fix/assessment-proxy-prefix-and-api", "feat/valoria-jobs-and-dual-publishing-20261107"]
     paths:
       - "src/**"
       - "next.config.js"
