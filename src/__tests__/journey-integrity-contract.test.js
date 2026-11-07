@@ -266,6 +266,8 @@ describe('journey integrity contract', () => {
     expect(handoff.indexOf('if (!assessmentOrigin)')).toBeLessThan(handoff.indexOf("admin.from('valoria_reentry_links').insert"));
     expect(config).toContain("process.env.VERCEL_ENV === 'preview'")
     expect(config).toContain('if (!valuOrigin) return []')
+    expect(config).toContain("{ source: '/valu/assessment', destination: `${origin}/valu/assessment/` }")
+    expect(config).toContain("{ source: '/valu/assessment/:path*', destination: `${origin}/valu/assessment/:path*` }")
     expect(reportTrigger).toContain("from '@/lib/valu-origin'")
     expect(reportTrigger).toContain('getValuAssessmentOrigin(process.env)')
     expect(origin).toContain("env.CF_WORKERS === '1'")
