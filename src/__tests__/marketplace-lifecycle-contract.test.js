@@ -160,7 +160,9 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('sub:\'Optional. Valoria uses a professional default avatar')
     expect(source).toContain('required:false })')
     expect(source).toContain(".select('atb_id, listing_status, profile_complete')")
-    expect(source).toContain('if (!row?.profile_complete)')
+    expect(source).not.toContain('if (!row?.profile_complete)')
+    expect(source).toContain('assessment_access')
+    expect(source).toContain('basicEligible')
   })
 
   test('database keeps profile completeness separate from full-assessment and listing eligibility', () => {
@@ -536,13 +538,16 @@ describe('VALUI marketplace lifecycle contract', () => {
     const helper = read('src/lib/public-profile.js')
     const endpoint = read('src/app/api/profile/acknowledgements/route.js')
     const migration = read('supabase/migrations/20261105150000_require_consent_verified_server_side_public_profile_reads.sql')
-    expect(copy).toContain('public-profile-visibility-v2-2026-11-06')
+    expect(copy).toContain('public-profile-visibility-v3-2026-11-07')
     expect(copy).toContain('past speaking engagements')
     expect(copy).toContain('past clients or programmes')
     expect(copy).toContain('professional media links')
     expect(helper).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
     expect(endpoint).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
-    expect(migration).toContain('public-profile-visibility-v2-2026-11-06')
+    expect(endpoint).toContain('basicEligible')
+    expect(endpoint).toContain('fullEligible')
+    expect(endpoint).toContain(".not('completed_at', 'is', null)")
+    expect(migration).toContain('public-profile-visibility-v3-2026-11-07')
   })
 
   test('public profile pages use VALU report summaries and show speaker/facilitator evidence', () => {
