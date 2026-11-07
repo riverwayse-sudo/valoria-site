@@ -37,6 +37,9 @@
   "env": {
     "staging": {
       "name": "valoria-staging-site",
+      "services": [
+        { "binding": "VALU_ASSESSMENT", "service": "valoria-staging-assessment" }
+      ],
       "vars": {
         "VALU_PREVIEW": "1",
         "VALU_STAGING_API_ENABLED": "0",
