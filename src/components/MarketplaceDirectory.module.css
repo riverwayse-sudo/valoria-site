@@ -44,11 +44,10 @@
 .basicAccess{font-size:15px!important;letter-spacing:.07em}
 .snapshotLabel{font-family:var(--font);font-size:7px;letter-spacing:.1em;color:#6F6A60;font-weight:800}
 .tierBadge{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:112px;max-width:145px;min-height:42px;padding:7px 11px;border-radius:6px;font-family:var(--font);font-size:9px;line-height:1.2;font-weight:900;letter-spacing:.04em;text-align:center;flex-shrink:0}
-.forceToAlignWith{background:#C9A84C;color:#1A1A2E;border:1px solid #C9A84C}
-.emergingForce{background:#1A1A2E;color:#C9A84C;border:1px solid #1A1A2E}
-.developingProfessional{background:#EDE8DC;color:#1A1A2E;border:1px solid #D4C9A8}
-.buildingFoundations{background:#F7F4EE;color:#2E2E4A;border:1px solid #D4C9A8}
-.atStartingPoint{background:#2E2E4A;color:#FAFAF7;border:1px solid #2E2E4A}
+.elite{background:#C9A84C;color:#1A1A2E;border:1px solid #C9A84C}
+.distinguished{background:#1A1A2E;color:#C9A84C;border:1px solid #1A1A2E}
+.proficient{background:#EDE8DC;color:#1A1A2E;border:1px solid #D4C9A8}
+.standard{background:#F7F4EE;color:#2E2E4A;border:1px solid #D4C9A8}
 .capabilities{gap:6px;margin-top:13px}
 .capabilities .capabilityBadge{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:0;white-space:normal;padding:7px 9px;border-radius:6px;background:#EDE8DC;border:1px solid #D4C9A8;color:#1A1A2E}
 .capabilityBadge strong{font-family:var(--font);font-size:7px;line-height:1.2;font-weight:900;letter-spacing:.07em}
