@@ -1,0 +1,73 @@
+name: Deploy Valoria assessment Worker to isolated staging
+
+on:
+  push:
+    branches:
+      - experience/staging-redesign-20261106
+    paths:
+      - ".github/workflows/deploy-assessment-staging.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: valoria-assessment-staging-deploy
+  cancel-in-progress: true
+
+jobs:
+  test-build-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout assessment platform source
+        uses: actions/checkout@v4
+        with:
+          repository: riverwayse-sudo/valoria-platform
+          ref: feat/signup-before-taster-identity-20261107
+          path: platform
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: platform/valoria-final/package-lock.json
+
+      - name: Install assessment dependencies
+        working-directory: platform/valoria-final
+        run: npm ci
+
+      - name: Run assessment regression suite
+        working-directory: platform/valoria-final
+        run: npm test -- --runInBand
+
+      - name: Build assessment application
+        working-directory: platform/valoria-final
+        run: npm run build
+
+      - name: Deploy assessment Worker to isolated staging
+        working-directory: platform/valoria-final
+        run: npx --yes wrangler@4.156.0 deploy --config wrangler.jsonc --env staging
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Verify assessment app shell and read-only API gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          origin="https://valoria-staging-assessment.riverwayse.workers.dev"
+          for attempt in $(seq 1 20); do
+            if curl -fsS "$origin/valu/assessment/" -o /tmp/assessment.html; then
+              break
+            fi
+            sleep 3
+          done
+          grep -qi '<title>Valoria Institute</title>' /tmp/assessment.html
+          status=$(curl -sS -o /tmp/assessment-api.json -w '%{http_code}' \
+            -X POST "$origin/api/taster-progress" \
+            -H 'Content-Type: application/json' \
+            --data '{"action":"register"}')
+          test "$status" = "503"
+          grep -qi 'read-only' /tmp/assessment-api.json
