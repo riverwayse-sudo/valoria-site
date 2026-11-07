@@ -25,7 +25,7 @@ function isQualifiedPublicProfile(row) {
   const validAtbId = /^ATB-[A-Z0-9-]{4,40}$/i.test(String(row?.atb_id || '').trim())
   const validHeadline = rawHeadline.length >= 8 &&
     !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
-    !/[\\u{1D400}-\\u{1D7FF}]/u.test(rawHeadline)
+    !/[\u{1D400}-\u{1D7FF}]/u.test(rawHeadline)
   const hasIdentity = Boolean(
     row?.professional_id &&
     typeof row.full_name === 'string' && row.full_name.trim() &&
