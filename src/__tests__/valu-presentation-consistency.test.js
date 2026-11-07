@@ -6,18 +6,18 @@ function read(relative) {
 }
 
 describe('VALU presentation consistency', () => {
-  test('homepage communicates the approved nine-question entry assessment', () => {
+  test('homepage introduces the VALU taster without exposing internal question counts', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('<b>9</b> QUESTION TASTER')
-    expect(home).not.toContain('<b>15</b> QUESTIONS')
+    expect(home).toContain('TAKE THE VALU TASTER')
+    expect(home).not.toMatch(/\\b(?:9|58)\\s+(?:QUESTION|QUESTIONS)/i)
+    expect(home).not.toContain('54 scored questions')
   })
 
-  test('homepage VALU card distinguishes question count from points-based results', () => {
+  test('homepage VALU card communicates points-based capability without exposing assessment mechanics', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('vc-num">58')
-    expect(hero).toContain('vc-denom">QUESTIONS')
-    expect(hero).toContain('results expressed in points')
-    expect(hero).toContain('54 SCORED · 4 VALIDITY CHECKS')
+    expect(hero).toContain('vc-num">VALU')
+    expect(hero).toContain('vc-denom">INDEX')
+    expect(hero).toContain('POINTS-BASED CAPABILITY PROFILE')
     for (const cluster of ['Presence', 'Relationships', 'Intelligence', 'Mastery', 'Enterprise']) expect(hero).toContain(cluster)
     expect(hero).not.toContain('DISTINGUISHED')
     expect(hero).not.toContain('vc-denom">/ 100')
