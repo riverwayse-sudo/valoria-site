@@ -1,5 +1,5 @@
 name: Deploy Valoria site to isolated Cloudflare staging
-# Final public-data validation: verify canonical ATB IDs, identity review, consent gating and safe marketplace projection.
+# Final verification: test canonical ATB IDs, consent-gated public data and premium profile preview.
 
 on:
   pull_request:
