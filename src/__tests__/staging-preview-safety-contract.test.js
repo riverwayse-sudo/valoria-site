@@ -65,7 +65,10 @@ describe('staging preview safety boundary', () => {
     expect(wrangler).toContain('"service": "valoria-staging-assessment"')
     expect(assessmentProxy).toContain('ALLOWED_ASSESSMENT_HOSTS')
     expect(assessmentProxy).toContain('process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN')
-    expect(assessmentProxy).toContain("suffix ? `/valu/assessment/${suffix}` : '/'")
+    expect(assessmentProxy).toContain("const suffix = pathname.replace(/^\\/valu\\/assessment\\/?/, '')")
+    expect(assessmentProxy).toContain("if (!suffix) return '/'")
+    expect(assessmentProxy).toContain("if (suffix === 'api' || suffix.startsWith('api/')) return `/${suffix}`")
+    expect(assessmentProxy).toContain("return `/valu/assessment/${suffix}`")
     expect(nextConfig).not.toContain("source: '/valu/assessment'")
   })
 
