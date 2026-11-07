@@ -26,6 +26,10 @@ describe('Valoria SEO and discovery foundation', () => {
     expect(layout).not.toContain(".from('professional_profiles')")
     expect(layout).toContain('robots: { index: false, follow: true }')
     expect(layout).toContain('openGraph:')
+    const profilePage = read('src/app/profile/[id]/page.jsx')
+    const profileClient = read('src/app/profile/[id]/ProfileClient.jsx')
+    expect(profilePage).toContain('profileContentNotReady={profileContentNotReady}')
+    expect(profileClient).toContain('if (profileContentNotReady)')
   })
 
   test('public profile and marketplace pages expose appropriate structured data', () => {
