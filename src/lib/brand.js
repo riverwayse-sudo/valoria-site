@@ -55,21 +55,20 @@ export const MARKETPLACE_ACCESS_LEVELS = {
   },
 }
 
-// Merit tiers are credentials earned through the full VALU Index assessment.
-// Do not assign a merit tier to a taster-only/basic listing.
+// VALU designations are assigned from full-assessment points.
+// A designation is an assessment result, not a certification or guarantee of performance.
 export const TIER_DESIGNATIONS = [
-  // Canonical five-designation system from the 9 October 2026 founder-approved content brief.
-  // Scores below 35 are not marketplace-listable and therefore receive no public card designation.
-  { level: 4, min: 80, max: 100, name: 'Force to Align With', stars: '✦✦', badgeClass: 'forceToAlignWith' },
-  { level: 3, min: 65, max: 79, name: 'Emerging Force', stars: '', badgeClass: 'emergingForce' },
-  { level: 2, min: 50, max: 64, name: 'Developing Professional', stars: '', badgeClass: 'developingProfessional' },
-  { level: 1, min: 35, max: 49, name: 'Building Foundations', stars: '', badgeClass: 'buildingFoundations' },
+  { level: 5, min: 80, max: 100, name: 'Force to Align With', badgeClass: 'forceToAlignWith', description: 'Operating at the highest expression of professional capability.' },
+  { level: 4, min: 65, max: 79, name: 'Emerging Force', badgeClass: 'emergingForce', description: 'Strong assessed capability with clear cluster strengths.' },
+  { level: 3, min: 50, max: 64, name: 'Developing Professional', badgeClass: 'developingProfessional', description: 'A solid assessed baseline with room for focused development.' },
+  { level: 2, min: 35, max: 49, name: 'Building Foundations', badgeClass: 'buildingFoundations', description: 'An early-stage capability profile; a development pathway is recommended.' },
+  { level: 1, min: 0, max: 34, name: 'At the Starting Point', badgeClass: 'atStartingPoint', description: 'An early capability signal; a development pathway is recommended.' },
 ]
 
 export function getValuTier(points, assessmentLevel = 'full') {
   if (assessmentLevel !== 'full' || points == null || !Number.isFinite(Number(points))) return null
   const score = Number(points)
-  if (score < 35 || score > VALU_SCORE.maximum) return null
+  if (score < 0 || score > VALU_SCORE.maximum) return null
   return TIER_DESIGNATIONS.find(tier => score >= tier.min && score <= tier.max) || null
 }
 
@@ -77,19 +76,19 @@ export const ENTRY_POINTS = [
   {
     id: 'atb-connect', num: '01', name: 'ATB Connect', buyer: 'FOR EMPLOYERS', color: COLORS.gold,
     modality: 'PRECISION TALENT SOURCING',
-    desc: 'Search assessed professionals through structured capability data, experience and role fit. Make hiring decisions with more clarity and confidence.',
+    desc: 'Discover professionals through capability-led profiles, experience and role fit. VALU points and assessment insight appear where the full assessment is complete.',
     href: '/marketplace/talent', linkLabel: 'SEARCH TALENT',
   },
   {
-    id: 'spotlight', num: '02', name: 'ATB Spotlight', buyer: 'FOR EVENT ORGANISERS', color: COLORS.gold,
+    id: 'spotlight', num: '02', name: 'ATB Spotlight', buyer: 'FOR EVENT ORGANISERS & TRAINING BUYERS', color: COLORS.gold,
     modality: 'MERIT-BASED VISIBILITY',
-    desc: 'Discover voices by expertise, demonstrated capability and professional merit — not familiarity or network proximity.',
-    href: '/marketplace/speakers', linkLabel: 'DISCOVER SPEAKERS',
+    desc: 'Discover speakers and facilitators through capability-led profiles, demonstrated experience and selected expertise. Availability depends on the public Marketplace inventory.',
+    href: '/marketplace/speakers', linkLabel: 'DISCOVER SPEAKERS & FACILITATORS',
   },
   {
     id: 'develop', num: '03', name: 'Valoria Develop', buyer: 'FOR PROFESSIONALS & ORGANISATIONS', color: COLORS.gold,
     modality: 'CAPABILITY DEVELOPMENT',
     desc: 'PRIME-mapped development designed around the capability gaps that matter most, with clear pathways for professional growth.',
-    href: '/programmes', linkLabel: 'EXPLORE DEVELOPMENT',
+    href: '/develop', linkLabel: 'EXPLORE DEVELOPMENT',
   },
 ]
