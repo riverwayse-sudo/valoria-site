@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - security/compensating-auth-controls
+      - experience/staging-redesign-20261106
   pull_request:
     branches:
       - main
+      - experience/staging-redesign-20261106
 
 permissions:
   contents: read
