@@ -14,7 +14,9 @@ async function getHomepageProfiles() {
   // Never use a service-role key for public Marketplace discovery reads.
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   if (!url || !key) return { profiles: [], count: null }
-  const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }
+  const headers = { apikey: key, 'Content-Type': 'application/json' }
+  // Publishable API keys are sent in the apikey header, not as a Bearer JWT.
+  if (!key.startsWith('sb_publishable_')) headers.Authorization = `Bearer ${key}`
   try {
     const [profilesResponse, countResponse] = await Promise.all([
       fetch(`${url}/rest/v1/rpc/get_homepage_professional_previews_v2`, { method: 'POST', headers, body: '{}', cache: 'no-store' }),
