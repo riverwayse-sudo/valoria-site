@@ -12,12 +12,25 @@ function getAdminClient() {
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
 }
 
+const PLACEHOLDER_HEADLINES = new Set([
+  'model',
+  'growth dev',
+  'help people find meaning in their life and career',
+  'valoria professional',
+])
+
 function isQualifiedPublicProfile(row) {
+  const rawHeadline = String(row?.headline || row?.current_job_title || '').trim()
+  const headline = normalizePublicDisplayText(rawHeadline)
+  const validAtbId = /^ATB-[A-Z0-9-]{4,40}$/i.test(String(row?.atb_id || '').trim())
+  const validHeadline = rawHeadline.length >= 8 &&
+    !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
+    !/[\\u{1D400}-\\u{1D7FF}]/u.test(rawHeadline)
   const hasIdentity = Boolean(
     row?.professional_id &&
     typeof row.full_name === 'string' && row.full_name.trim() &&
-    typeof row.headline === 'string' && row.headline.trim() &&
-    typeof row.atb_id === 'string' && row.atb_id.trim()
+    validHeadline &&
+    validAtbId
   )
   if (!hasIdentity) return false
 
