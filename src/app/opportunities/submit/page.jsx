@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 const GOLD = '#C9A84C'
 const DARK = '#1A1A2E'
@@ -91,6 +91,7 @@ export default function SubmitOpportunity() {
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
+  const submissionKey = useRef(null)
 
   function set(name, value) {
     setForm(current => ({ ...current, [name]: value }))
@@ -105,10 +106,11 @@ export default function SubmitOpportunity() {
     setSaving(true)
     setError('')
     try {
+      if (!submissionKey.current) submissionKey.current = window.crypto.randomUUID()
       const response = await fetch('/api/opportunities', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, submission_key: submissionKey.current }),
       })
       const payload = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(payload.error || 'Could not submit this opportunity.')
