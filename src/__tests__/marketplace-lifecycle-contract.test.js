@@ -437,9 +437,12 @@ describe('VALUI marketplace lifecycle contract', () => {
     const login = read('src/app/login/page.jsx')
     expect(recovery).toContain("user_type: 'professional'")
     expect(recovery).toContain('/auth/callback?claim_taster=true')
+    expect(recovery).toContain('claim_name=')
     expect(callback).toContain("params.get('claim_taster') === 'true'")
     expect(callback).toContain("fetch('/api/claim-taster'")
     expect(login).toContain('/professional-signup/recover')
+    expect(login).toContain('claimed_name: claimName')
+    expect(read('src/app/api/claim-taster/route.js')).toContain('const claimedName = String(requestBody?.claimed_name || \'\').trim()')
   })
 
   test('Full listings enforce the 35-point threshold while Basic taster listings do not', () => {
