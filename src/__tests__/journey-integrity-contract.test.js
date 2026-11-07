@@ -7,7 +7,7 @@ function read(relative) {
 }
 
 describe('participant-facing assessment clarity', () => {
-  test('assessment pages and progress indicators do not expose question-count mechanics', () => {
+  test('participant-facing pages and progress indicators do not expose assessment mechanics', () => {
     const sources = [
       read('src/components/VALUJourneyProgress.jsx'),
       read('src/app/valu/page.jsx'),
