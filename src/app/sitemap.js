@@ -1,12 +1,17 @@
-const SITE_URL = process.env.VALU_PREVIEW === '1'
-  ? 'https://staging.valoriainstitute.com'
-  : 'https://valoriainstitute.com'
+import { isPublicProfileContentReady } from '@/lib/marketplace-data'
+
+const IS_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'
+const SITE_URL = IS_PREVIEW ? 'https://staging.valoriainstitute.com' : 'https://valoriainstitute.com'
 
 export default async function sitemap() {
   const now = new Date()
   const pages = [
     { path: '', priority: 1.0, changeFrequency: 'weekly' },
     { path: '/valu', priority: 0.95, changeFrequency: 'monthly' },
+    { path: '/knowledge', priority: 0.75, changeFrequency: 'monthly' },
+    { path: '/knowledge/valu-index', priority: 0.75, changeFrequency: 'monthly' },
+    { path: '/knowledge/prime-framework', priority: 0.75, changeFrequency: 'monthly' },
+    { path: '/knowledge/professional-capability', priority: 0.75, changeFrequency: 'monthly' },
     { path: '/prime', priority: 0.85, changeFrequency: 'monthly' },
     { path: '/develop', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/marketplace', priority: 0.95, changeFrequency: 'daily' },
@@ -14,7 +19,6 @@ export default async function sitemap() {
     { path: '/marketplace/speakers', priority: 0.9, changeFrequency: 'daily' },
     { path: '/marketplace/facilitators', priority: 0.9, changeFrequency: 'daily' },
     { path: '/opportunities', priority: 0.9, changeFrequency: 'daily' },
-    { path: '/jobs', priority: 0.95, changeFrequency: 'daily' },
     { path: '/atb-connect', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/atb-spotlight', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/events', priority: 0.7, changeFrequency: 'weekly' },
@@ -34,7 +38,7 @@ export default async function sitemap() {
   }))
 
   // A staging preview must never enumerate live member profiles.
-  if (process.env.VALU_PREVIEW === '1') return staticEntries
+  if (IS_PREVIEW) return staticEntries
 
   // Only enumerate the consented public projection. The underlying
   // professional_profiles table is intentionally not readable by anon.
@@ -47,10 +51,10 @@ export default async function sitemap() {
       const client = createClient(supabaseUrl, supabaseKey)
       const { data, error } = await client
         .from('marketplace_public_roster')
-        .select('professional_id,projection_refreshed_at')
+        .select('professional_id,projection_refreshed_at,full_name,atb_id,headline,current_job_title')
         .not('professional_id', 'is', null)
       if (error) console.error('sitemap: public roster fetch failed:', error)
-      profileEntries = (data || []).map(p => ({
+      profileEntries = (data || []).filter(isPublicProfileContentReady).map(p => ({
         url: `${SITE_URL}/profile/${p.professional_id}`,
         lastModified: p.projection_refreshed_at ? new Date(p.projection_refreshed_at) : now,
         changeFrequency: 'weekly',
