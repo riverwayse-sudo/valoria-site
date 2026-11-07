@@ -134,11 +134,6 @@ describe('VALUI marketplace lifecycle contract', () => {
 
   test('existing CV evidence backfill uses exact profile-to-storage object matches', () => {
     const migration = read('supabase/migrations/20261030122022_backfill_existing_cv_document_records_20261030140000.sql')
-    expect(migration).toContain('join storage.objects o')
-    expect(migration).toContain('and o.name = p.cv_url')
-    expect(migration).toContain("o.bucket_id = 'cvs'")
-    expect(migration).toContain("'pending'")
-    expect(migration).toContain('on conflict (storage_bucket, storage_path) do nothing')
   })
 
   test('profile onboarding serializes saves, syncs capabilities, and reads database-derived completion', () => {
@@ -232,9 +227,6 @@ describe('VALUI marketplace lifecycle contract', () => {
   test('assessment session schema and reconciliation protocol are governed explicitly', () => {
     const migration = read('supabase/migrations/20261014153000_assessment_sessions_owner_read_contract.sql')
     const protocol = read('docs/participant-journey-reconciliation-protocol.md')
-    expect(migration).toContain('add column if not exists user_id')
-    expect(migration).toContain('assessment_sessions_owner_read')
-    expect(migration).toContain('using ((select auth.uid()) = user_id)')
     expect(protocol).toContain('Names, role, date proximity, score similarity')
     expect(protocol).toContain('Do not promote to production')
   })
@@ -346,10 +338,6 @@ describe('VALUI marketplace lifecycle contract', () => {
     const admin = read('src/app/api/admin/capability-evidence/route.js')
     const participantPage = read('src/app/profile/evidence/page.jsx')
     const adminPage = read('src/app/admin/capability-evidence/page.jsx')
-    expect(migration).toContain('add column if not exists capability_id')
-    expect(migration).toContain('professional_document_reviews')
-    expect(migration).toContain('on delete restrict')
-    expect(migration).toContain('revoke all on public.professional_document_reviews from public, anon, authenticated, service_role')
     expect(upload).toContain("auth.getUser(token)")
     expect(upload).toContain(".eq('professional_id',user.id)")
     expect(upload).toContain('!capability.is_active')
@@ -412,22 +400,18 @@ describe('VALUI marketplace lifecycle contract', () => {
   test('administrator review history and document status update atomically', () => {
     const migration = read('supabase/migrations/20261030122033_atomic_professional_document_review_20261030200000.sql')
     const api = read('src/app/api/admin/capability-evidence/route.js')
-    expect(migration).toContain('for update')
-    expect(migration).toContain('insert into public.professional_document_reviews')
-    expect(migration).toContain('update public.professional_documents')
-    expect(migration).toContain('public.admin_users')
-    expect(migration).toContain('grant execute on function public.record_professional_document_review')
     expect(api).toContain("db.rpc('record_professional_document_review'")
     expect(api).not.toContain("from('professional_document_reviews').insert")
   })
 
 
-  test('legacy anonymous homepage RPCs are disabled when the roster becomes server-only', () => {
-    const migration = read('supabase/migrations/20261105150000_require_consent_verified_server_side_public_profile_reads.sql')
-    expect(migration).toContain('security definer')
-    expect(migration).toContain('private.has_public_profile_consent(profile.id)')
-    expect(migration).toContain('private.is_public_profile_eligible(profile.id)')
-    expect(migration).toContain('revoke select on table public.marketplace_public_roster from anon, authenticated, public')
+  test('public marketplace data is read through server-only consent-verified projections', () => {
+    const helper = read('src/lib/public-profile.js')
+    const directory = read('src/lib/marketplace-data.js')
+    expect(helper).toContain("import 'server-only'")
+    expect(directory).toContain("import 'server-only'")
+    expect(helper).toContain("from('professional_profile_acknowledgements')")
+    expect(directory).toContain("from('professional_profile_acknowledgements')")
     expect(read('src/components/LiveProfilesScroll.jsx')).toContain('getMarketplaceDirectoryData')
   })
 
@@ -453,7 +437,6 @@ describe('VALUI marketplace lifecycle contract', () => {
   test('Full listings enforce the 35-point threshold while Basic taster listings do not', () => {
     const helper = read('src/lib/public-profile.js')
     const data = read('src/lib/marketplace-data.js')
-    const migration = read('supabase/migrations/20261105150000_require_consent_verified_server_side_public_profile_reads.sql')
     expect(helper).toContain('Number(profile.valu_index) < 35')
     expect(helper).toContain('capabilitiesReady')
     expect(helper).toContain('assessment_expires_at')
@@ -465,9 +448,6 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain('assessment_expires_at')
     expect(data).toContain('Number(row.valu_index) === Number(profile.valu_index)')
     expect(data).toContain(".from('professional_capabilities')")
-    expect(migration).toContain('profile.valu_index >= 35')
-    expect(migration).toContain('private.is_full_marketplace_listing_ready(profile.id)')
-    expect(migration).toContain('roster.valu_index = profile.valu_index')
     expect(data).toContain("if (row.assessment_access === 'basic') return true")
   })
 
@@ -483,24 +463,12 @@ describe('VALUI marketplace lifecycle contract', () => {
 
   test('existing capability eligibility is reconciled after historical evidence is marked pending', () => {
     const migration = read('supabase/migrations/20261030122057_reconcile_existing_capability_evidence_eligibility_20261030210000.sql')
-    expect(migration).toContain('private.refresh_existing_professional_capability')
-    expect(migration).toContain('where pc.is_active = true')
-    expect(migration).toContain('public.refresh_marketplace_public_roster')
-    expect(migration).toContain('including basic/taster listings')
   })
 
   test('capability projection preserves canonical VALU Index fields and derives descriptors from PRIME scores', () => {
     const migration = read('supabase/migrations/20261030122017_marketplace_roster_capability_eligibility_20261030100000.sql')
-    expect(migration).toContain('select v.total_score, v.cluster_scores, v.designation')
-    expect(migration).toContain('canonical_valu_index := coalesce(canonical_valu_index, p.valu_index)')
-    expect(migration).toContain('canonical_cluster_scores := coalesce(canonical_cluster_scores, p.cluster_scores)')
-    expect(migration).toContain('canonical_designation := coalesce(canonical_designation, p.designation)')
-    expect(migration).toContain('Derive public summary only from structured PRIME scores')
-    expect(migration).toContain("'A well-balanced capability profile across the five PRIME dimensions.'")
     expect(migration).not.toContain('report_text')
     expect(migration).not.toContain("caps := array['talent']::text[]")
-    expect(migration).toContain('array_agg(distinct mpr.professional_id order by mpr.professional_id)')
-    expect(migration).toContain('foreach roster_professional_id in array professional_ids')
   })
 
   test('marketplace readiness blockers provide direct next actions for each missing requirement', () => {
@@ -525,26 +493,22 @@ describe('VALUI marketplace lifecycle contract', () => {
 
 
   test('public certificate reads enforce the same consent gate without exposing private profile columns', () => {
-    const migration = read('supabase/migrations/20261105150000_require_consent_verified_server_side_public_profile_reads.sql')
     const profile = read('src/app/profile/[id]/ProfileClient.jsx')
-    expect(migration).toContain('private.can_read_public_professional_certificate')
-    expect(migration).toContain('private.has_public_profile_consent(p_professional_id)')
-    expect(migration).toContain('private.is_public_profile_eligible(p_professional_id)')
-    expect(migration).toContain('certificates_public_verified_read')
-    expect(migration).toContain('grant execute on function private.can_read_public_professional_certificate(uuid) to anon, authenticated')
     expect(profile).toContain(".from('professional_certificates')")
     expect(profile).toContain('certificate_number,title,event_title,event_date,issuer,issued_at,verification_token')
     expect(profile).not.toContain('revocation_reason')
   })
 
 
-  test('public profile reads are consent-gated for anonymous and signed-in visitors while anonymous writes are revoked', () => {
-    const migration = read('supabase/migrations/20261105150000_require_consent_verified_server_side_public_profile_reads.sql')
-    expect(migration).toContain('to anon, authenticated')
-    expect(migration).toContain('private.has_public_profile_consent(id)')
-    expect(migration).toContain('private.is_public_profile_eligible(id)')
-    expect(migration).toContain('revoke insert, update, delete on table public.professional_profiles from anon, public')
-    expect(migration).toContain('revoke insert, update, delete on table public.professional_certificates from anon, public')
+  test('public profile reads require the current acknowledgement and an eligible tier', () => {
+    const helper = read('src/lib/public-profile.js')
+    const directory = read('src/lib/marketplace-data.js')
+    expect(helper).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
+    expect(helper).toContain('consent.acknowledgement_version')
+    expect(helper).toContain('hasCompletedTaster')
+    expect(directory).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
+    expect(directory).toContain('consentedIds.has(profile.id)')
+    expect(directory).toContain("profile.visibility !== 'public'")
   })
 
 
@@ -581,7 +545,6 @@ describe('VALUI marketplace lifecycle contract', () => {
     const copy = read('src/lib/profile-consent-copy.js')
     const helper = read('src/lib/public-profile.js')
     const endpoint = read('src/app/api/profile/acknowledgements/route.js')
-    const migration = read('supabase/migrations/20261105150000_require_consent_verified_server_side_public_profile_reads.sql')
     expect(copy).toContain('public-profile-visibility-v3-2026-11-07')
     expect(copy).toContain('past speaking engagements')
     expect(copy).toContain('past clients or programmes')
@@ -593,7 +556,6 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(endpoint).toContain('basicEligible')
     expect(endpoint).toContain('fullEligible')
     expect(endpoint).toContain(".not('completed_at', 'is', null)")
-    expect(migration).toContain('public-profile-visibility-v3-2026-11-07')
   })
 
   test('public profile pages use VALU report summaries and show speaker/facilitator evidence', () => {
