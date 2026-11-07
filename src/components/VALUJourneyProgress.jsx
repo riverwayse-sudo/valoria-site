@@ -12,7 +12,7 @@ export default function VALUJourneyProgress({ stage = 'taster' }) {
         <span style={{ color:'#C9A84C', fontSize:9, fontWeight:800, letterSpacing:'.16em' }}>YOUR VALU JOURNEY</span>
         <span style={{ color:'rgba(247,244,238,.48)', fontSize:10 }}>YOUR PROGRESS IS PRESERVED</span>
       </div>
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,minmax(0,1fr))', gap:8 }}>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(88px,1fr))', gap:8 }}>
         {steps.map((step,index) => {
           const done = index < active
           const current = index === active
