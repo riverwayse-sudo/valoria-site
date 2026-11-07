@@ -506,7 +506,7 @@ function ProfileSetupForm() {
           <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'28px', textAlign:'left' }}>
             <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>WHAT HAPPENS NEXT</div>
             <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.8, margin:0 }}>
-              Status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? 'Listed' : 'Not yet listed'}</strong>. Complete the full VALU assessment, keep your professional profile complete and meet the relevant capability gates. A current score of 35 or above is required for marketplace eligibility.
+              Status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? 'Listed' : 'Not yet listed'}</strong>. Basic marketplace access can follow a completed VALU taster. Full marketplace access requires a current Full VALU Index score of at least 35 points, a complete profile and the relevant capability checks. Public display also requires your explicit permission.
             </p>
           </div>
 
@@ -1089,7 +1089,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
         <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
           <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — VALU INDEX ASSESSMENT</div>
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
-            Your profile is not yet listed because the full VALU assessment is not complete. Complete VALU and you will be listed first; completing your professional profile then unlocks additional visibility and opportunities.
+            The VALU taster and Full VALU Index are separate assessments. A completed taster can qualify you for Basic marketplace access. Completing the Full VALU Index and meeting the 35-point, profile and capability requirements can qualify you for Full marketplace access.
           </p>
           <a href="https://valoriainstitute.com/valu/assessment/" target="_blank" rel="noopener noreferrer" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
             COMPLETE THE FULL VALU ASSESSMENT →
