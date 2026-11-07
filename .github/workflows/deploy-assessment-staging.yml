@@ -68,7 +68,7 @@ jobs:
           set -euo pipefail
           origin="https://valoria-staging-assessment.riverwayse.workers.dev"
           for attempt in $(seq 1 20); do
-            if curl -fsS "$origin/valu/assessment/" -o /tmp/assessment.html; then
+            if curl -fsSL "$origin/valu/assessment/" -o /tmp/assessment.html; then
               break
             fi
             sleep 3
