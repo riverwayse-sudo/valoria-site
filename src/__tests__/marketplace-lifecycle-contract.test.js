@@ -594,6 +594,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(privacy).toContain('Meta Pixel')
     expect(privacy).toContain('Brevo')
     expect(privacy).toContain('Cloudflare — website hosting, content delivery, network security and request handling')
+    expect(privacy).toContain('YouTube — embedded event/replay video playback')
     expect(privacy).toContain('professional name, role, aggregate VALU score, cluster scores and skill scores')
     expect(terms).toContain('the platform sends your professional name, role and assessment results')
     expect(terms).not.toContain('anonymised score profile')
