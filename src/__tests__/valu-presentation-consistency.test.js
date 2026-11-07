@@ -6,36 +6,39 @@ function read(relative) {
 }
 
 describe('VALU presentation consistency', () => {
-  test('homepage communicates the VALU taster without exposing internal assessment mechanics', () => {
+  test('homepage keeps the professional VALU entry clear without exposing internal assessment mechanics', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('SHORT REFLECTION')
-    expect(home).toContain('Begin with a free taster')
-    expect(home).not.toMatch(/(?:9|58)[- ]questions?|<b>9<\/b> QUESTIONS/i)
+    expect(home).toContain('START THE VALU TASTER')
+    expect(home).toContain('five PRIME dimensions')
+    expect(home).not.toMatch(/(?:9|58)[- ]questions?|<b>9<\\/b> QUESTIONS/i)
   })
 
-  test('homepage hero communicates Valoria’s capability-marketplace positioning', () => {
+  test('homepage hero leads with institutional positioning and decision-maker action', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('NIGERIA-ROOTED. AFRICA-FOCUSED.')
-    expect(hero).toContain('Capability should decide')
-    expect(hero).toContain('who gets <em>seen.</em>')
-    expect(hero).toContain('capability-led professional profiles')
-    expect(hero).toContain('START THE VALU TASTER')
+    expect(hero).toContain("AFRICA'S HUMAN CAPITAL INSTITUTION")
+    expect(hero).toContain('Talent is not the problem.')
+    expect(hero).toContain('<em>Infrastructure is.</em>')
+    expect(hero).toContain('African professional capability')
+    expect(hero).toContain('DISCUSS AN INSTITUTIONAL PARTNERSHIP')
+    expect(hero).toContain('EXPLORE THE AFRICAN TALENT BUREAU')
+    expect(hero).toContain('hero-institutional-panel')
+    expect(hero).toContain('PRIME')
+    expect(hero).toContain('VALU Index')
+    expect(hero).toContain('African Talent Bureau')
+    expect(hero).toContain('Valoria Develop')
     expect(hero).not.toMatch(/(?:9|58)[- ]questions?/i)
-    expect(hero).toContain('hero-stage')
-    expect(hero).toContain('THE PRIME FRAMEWORK')
-    expect(hero).not.toContain('vc-denom')
-    expect(hero).not.toContain('FORCE TO ALIGN WITH')
     expect(hero).not.toContain('84')
   })
 
-  test('homepage presents five distinct audience pathways', () => {
+  test('homepage presents decision-maker and professional pathways', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('Five ways to engage.')
+    expect(home).toContain('FIVE WAYS TO ENGAGE.')
     expect(home).toContain('FOR PROFESSIONALS')
     expect(home).toContain('FOR EMPLOYERS')
     expect(home).toContain('FOR EVENT ORGANISERS')
     expect(home).toContain('FOR FACILITATORS & EXPERTS')
     expect(home).toContain('FOR INSTITUTIONS & PARTNERS')
+    expect(home).toContain('DISCUSS AN INSTITUTIONAL PARTNERSHIP')
   })
 
   test('homepage registry explains VALU points and privacy context', () => {
