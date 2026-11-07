@@ -62,7 +62,7 @@ export default function ValuPage() {
         </div>
       </section>
 
-      <section className="valu-final"><div className="valu-wrap"><div className="valu-kicker"><span /> WORTH. BUILT.</div><h2>Start by understanding<br /><em>where you stand.</em></h2><a href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">TAKE THE VALU TASTER <span>→</span></a></div></section>
+      <section className="valu-final"><div className="valu-wrap"><div className="valu-kicker"><span /> WORTH, BUILT.</div><h2>Start by understanding<br /><em>where you stand.</em></h2><a href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">TAKE THE VALU TASTER <span>→</span></a></div></section>
     </main>
     <Footer />
   </>
