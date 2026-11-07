@@ -334,3 +334,20 @@
 .about-page .about-timeline-row {
   text-align: left;
 }
+
+
+/* Buyer and development pathways share the institutional left edge. */
+.decision-page,
+.decision-page :where(h1,h2,h3,h4,p,span,small,strong,a,button,li,label) {
+  text-align: left !important;
+}
+
+.decision-page .page-hero-actions,
+.decision-page .eyebrow-center {
+  justify-content: flex-start;
+}
+
+.decision-page .page-sub {
+  margin-left: 0;
+  margin-right: 0;
+}
