@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
+// Public display is opt-in; the server and RLS policy remain the final publication gates.
+
 const GOLD = '#C9A84C'
 const DARK = '#1A1A2E'
 const PARCHMENT = '#F7F4EE'
