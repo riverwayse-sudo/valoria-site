@@ -80,7 +80,7 @@ jobs:
             /llms.txt
           )
           for route in "${routes[@]}"; do
-            status="$(curl -sS -o /tmp/valoria-route-response -w '%{http_code}' "$base$route")"
+            status="$(curl -fsSL --retry 4 --retry-all-errors --max-time 25 -o /tmp/valoria-route-response -w '%{http_code}' "$base$route")"
             if [[ "$status" != "200" ]]; then
               echo "Route $route returned HTTP $status"
               cat /tmp/valoria-route-response
@@ -89,7 +89,40 @@ jobs:
           done
 
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
-          grep -qi 'Disallow: /' /tmp/valoria-robots.txt
+          grep -Eq '^Disallow: /
+
+          curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
+          grep -q 'staging.valoriainstitute.com' /tmp/valoria-sitemap.xml
+          grep -q '/knowledge/prime-framework' /tmp/valoria-sitemap.xml
+          grep -q '/jobs' /tmp/valoria-sitemap.xml
+
+          curl -fsS "$base/llms.txt" -o /tmp/valoria-llms.txt
+          grep -q 'Human-AI Collaboration' /tmp/valoria-llms.txt
+          grep -q 'Basic is a marketplace access state, not a merit tier' /tmp/valoria-llms.txt
+
+          curl -fsS "$base/" -o /tmp/valoria-home.html
+          grep -q 'THE PROFESSIONAL CAPABILITY MARKETPLACE' /tmp/valoria-home.html
+          grep -q 'FOUR WAYS TO ENGAGE' /tmp/valoria-home.html
+
+          : > /tmp/valoria-css-bundle.css
+          css_assets="$(grep -oE 'href="[^"]+\\.css[^"]*"' /tmp/valoria-home.html | cut -d '"' -f 2)"
+          if [[ -z "$css_assets" ]]; then
+            echo "No compiled CSS assets found in homepage HTML"
+            exit 1
+          fi
+          while IFS= read -r asset; do
+            [[ -z "$asset" ]] && continue
+            if [[ "$asset" =~ ^https?:// ]]; then
+              css_url="$asset"
+            else
+              css_url="$base$asset"
+            fi
+            curl -fsSL --retry 4 --retry-all-errors --max-time 25 "$css_url" >> /tmp/valoria-css-bundle.css
+          done <<< "$css_assets"
+          grep -Fq '.vi-nav .nav-dropdown' /tmp/valoria-css-bundle.css
+          grep -Fq '.nav-mobile .nav-dropdown' /tmp/valoria-css-bundle.css
+          grep -Fq 'text-align:left!important' /tmp/valoria-css-bundle.css
+ /tmp/valoria-robots.txt
 
           curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
           grep -q 'staging.valoriainstitute.com' /tmp/valoria-sitemap.xml
