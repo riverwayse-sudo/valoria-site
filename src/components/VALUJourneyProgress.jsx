@@ -1,6 +1,7 @@
 export default function VALUJourneyProgress({ stage = 'taster' }) {
   const steps = [
-    { key: 'taster', title: 'Taster', detail: 'Your starting insight' },
+    { key: 'registration', title: 'Register', detail: 'Your details are connected' },
+    { key: 'taster', title: 'Snapshot', detail: 'Your starting insight' },
     { key: 'account', title: 'Account', detail: 'Secure your profile' },
     { key: 'full', title: 'Assessment', detail: 'Your full capability picture' },
   ]
@@ -11,7 +12,7 @@ export default function VALUJourneyProgress({ stage = 'taster' }) {
         <span style={{ color:'#C9A84C', fontSize:9, fontWeight:800, letterSpacing:'.16em' }}>YOUR VALU JOURNEY</span>
         <span style={{ color:'rgba(247,244,238,.48)', fontSize:10 }}>YOUR PROGRESS IS PRESERVED</span>
       </div>
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,minmax(0,1fr))', gap:8 }}>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,minmax(0,1fr))', gap:8 }}>
         {steps.map((step,index) => {
           const done = index < active
           const current = index === active
