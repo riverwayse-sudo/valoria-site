@@ -30,7 +30,7 @@ describe('production assessment Worker proxy', () => {
     const start = read('src/app/valu/start/page.jsx')
     const valu = read('src/app/valu/page.jsx')
     const signup = read('src/app/signup/page.jsx')
-    expect(start).toContain('Register your contact and professional details before the snapshot')
+    expect(start).toContain('Register your contact and professional details before the taster')
     expect(start).toContain('This is not your Valoria account')
     expect(valu).toContain('Register your details first')
     expect(valu).not.toContain('no account required')
