@@ -881,7 +881,7 @@ function DashboardAssessmentHandover({ standalone = false }) {
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap', marginBottom:12 }}>
         <div style={{ flex:'1 1 420px', minWidth:0 }}>
           <div style={{ color:'#C9A84C', fontSize:10, fontWeight:800, letterSpacing:'.2em' }}>YOUR VALORIA JOURNEY</div>
-          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>Your taster is saved. Now complete your full VALU Index.</h1>
+          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>Your snapshot is saved. Continue your VALU journey.</h1>
           <p style={{ margin:0, maxWidth:700, color:'rgba(247,244,238,.68)', fontSize:13, lineHeight:1.7 }}>Your snapshot is saved. Start or resume your VALU Index here; your progress will be restored.</p>
         </div>
         <div style={{ flex:'0 1 220px', minWidth:180 }}>
@@ -890,7 +890,7 @@ function DashboardAssessmentHandover({ standalone = false }) {
       </div>
       <div style={{ display:'flex', justifyContent:'center', marginTop:22 }}>
         <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:10, padding:'14px 26px', background:'#C9A84C', color:'#1A1A2E', borderRadius:999, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.12em' }}>
-          START OR CONTINUE FULL VALU ASSESSMENT <span aria-hidden="true">→</span>
+          CONTINUE YOUR VALU JOURNEY <span aria-hidden="true">→</span>
         </AssessmentStartLink>
       </div>
     </section>
@@ -979,7 +979,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
     <section aria-label="Your next step" style={{ maxWidth:'1100px', margin:'20px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
       {canStartFullAssessment && !assessmentDone && (
         <div style={{ maxWidth:560, marginBottom:12 }}>
-          <VALUJourneyProgress stage="continuation" currentQuestion={10} />
+          <VALUJourneyProgress stage="full" />
         </div>
       )}
       <div className="dv-next-journey" style={{ background:'linear-gradient(120deg, rgba(26,26,46,.98), rgba(26,26,46,.88))', border:`1px solid ${GLINE2}`, borderRadius:12, padding:'clamp(20px,3vw,28px)' }}>
@@ -993,7 +993,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
         <div style={{ display:'flex', alignItems:'center', gap:14, flexWrap:'wrap', marginTop:18 }}>
           {next?.key === 'valu' ? (
             <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
-              START OR CONTINUE FULL VALU ASSESSMENT <span aria-hidden="true">→</span>
+              CONTINUE YOUR VALU JOURNEY <span aria-hidden="true">→</span>
             </AssessmentStartLink>
           ) : (
             <Link href={nextHref} style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
