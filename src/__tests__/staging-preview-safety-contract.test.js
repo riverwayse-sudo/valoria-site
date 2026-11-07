@@ -27,7 +27,7 @@ describe('staging preview safety boundary', () => {
     expect(marketplace.indexOf('if (IS_READ_ONLY_PREVIEW) return []')).toBeLessThan(marketplace.indexOf('createClient(url, key'))
 
     const sitemap = read('src/app/sitemap.js')
-    expect(sitemap).toContain("if (process.env.VALU_PREVIEW === '1') return staticEntries")
+    expect(sitemap).toContain('if (IS_PREVIEW) return staticEntries')
     expect(sitemap.indexOf("if (process.env.VALU_PREVIEW === '1') return staticEntries")).toBeLessThan(sitemap.indexOf("await import('@supabase/supabase-js')"))
   })
 
