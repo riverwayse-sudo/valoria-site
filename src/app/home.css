@@ -3471,3 +3471,24 @@
     white-space: normal;
   }
 }
+
+
+/* Footer belongs to the same left-aligned editorial system as the homepage. */
+.vi-footer,
+.vi-footer :where(h1,h2,h3,h4,p,span,small,strong,a,button,li,label) {
+  text-align: left !important;
+}
+
+.vi-footer .uf-grid {
+  align-items: start;
+}
+
+.vi-footer .uf-brand,
+.vi-footer .uf-links {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.vi-footer .uf-bottom {
+  align-items: flex-start;
+}
