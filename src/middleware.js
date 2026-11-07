@@ -19,7 +19,7 @@ export async function middleware(request) {
       { status: 503, headers: { 'Cache-Control': 'no-store' } }
     )
   }
-  // Staging experience previews are intentionally unauthenticated and must never query production or placeholder Supabase.
+  // Read-only previews bypass Supabase. When staging APIs are explicitly enabled, auth runs against the configured isolated staging project.
   if (isReadOnlyPreview) return NextResponse.next()
 
   if (pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname === '/favicon.ico' || pathname.match(/\.(png|jpg|jpeg|svg|ico|webp|woff|woff2|ttf)$/)) return NextResponse.next()
