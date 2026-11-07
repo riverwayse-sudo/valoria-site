@@ -38,6 +38,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
   const [industry,setIndustry] = useState('')
   const [cluster,setCluster] = useState('')
   const [skill,setSkill] = useState('')
+  const [declaredRole,setDeclaredRole] = useState('')
   const industries = useMemo(() => [...new Set(rows.map(r=>displayText(r.industry)).filter(Boolean))].sort(), [rows])
   const skills = useMemo(() => [...new Set(rows.flatMap(r=>labelValues(r.skills)))].sort(), [rows])
 
@@ -50,10 +51,11 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       if(industry && displayText(p.industry) !== industry) return false
       if(cluster && getLeadingCluster(p) !== cluster) return false
       if(skill && !labelValues(p.skills).includes(skill)) return false
+      if(declaredRole && !getSelectedCapabilities(p).includes(declaredRole)) return false
       if(!q) return true
       return [p.atb_id,p.headline,p.current_job_title,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
     })
-  },[rows,activeTrack,query,industry,cluster,skill])
+  },[rows,activeTrack,query,industry,cluster,skill,declaredRole])
 
   const itemListSchema = useMemo(() => ({
     '@context': 'https://schema.org',
@@ -103,7 +105,13 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
           <option value="">All sectors</option>
           {industries.map(value=><option key={value} value={value}>{value}</option>)}
         </select>
-        {(query || industry || cluster || skill) && <button type="button" onClick={()=>{setQuery('');setIndustry('');setCluster('');setSkill('')}}>CLEAR</button>}
+        <select value={declaredRole} onChange={e=>setDeclaredRole(e.target.value)} aria-label="Filter by declared role">
+          <option value="">All declared roles</option>
+          <option value="candidate">Candidate / Talent</option>
+          <option value="speaker">Speaker</option>
+          <option value="facilitator">Facilitator</option>
+        </select>
+        {(query || industry || cluster || skill || declaredRole) && <button type="button" onClick={()=>{setQuery('');setIndustry('');setCluster('');setSkill('');setDeclaredRole('')}}>CLEAR</button>}
       </div>
     </section>
     <section className={styles.directory}>
@@ -121,6 +129,13 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     </main>
     <Footer />
   </div>
+}
+
+function getSelectedCapabilities(profile) {
+  return [...new Set([
+    ...(Array.isArray(profile.selectedCapabilities) ? profile.selectedCapabilities : []),
+    ...(Array.isArray(profile.selected_capabilities) ? profile.selected_capabilities : []),
+  ].map(normalize).filter(Boolean))]
 }
 
 function getLeadingCluster(profile) {
@@ -148,8 +163,7 @@ function Profile({p}) {
   // that have passed the separate listing-eligibility gate. Category pages
   // continue to filter against the eligible `capabilities` field above.
   const selectedCaps = new Set([
-    ...(Array.isArray(p.selectedCapabilities) ? p.selectedCapabilities : []),
-    ...(Array.isArray(p.selected_capabilities) ? p.selected_capabilities : []),
+    ...getSelectedCapabilities(p),
     ...(Array.isArray(p.capabilities) ? p.capabilities : []),
     ...(Array.isArray(p.tracks) ? p.tracks : []),
     p.track,
