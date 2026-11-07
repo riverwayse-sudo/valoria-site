@@ -51,12 +51,15 @@ export async function POST(request) {
 
   const { data: profile, error: profileError } = await admin
     .from('professional_profiles')
-    .select('profile_complete,visibility')
+    .select('profile_complete,visibility,display_name,headline,current_job_title,is_test,revoked_at,listing_status')
     .eq('id', user.id)
     .maybeSingle()
 
-  if (profileError || !profile?.profile_complete) {
-    return NextResponse.json({ error: 'Complete the required professional profile details before submitting.' }, { status: 409 })
+  if (profileError || !profile) {
+    return NextResponse.json({ error: 'Your professional profile could not be verified.' }, { status: 409 })
+  }
+  if (profile.is_test === true || profile.revoked_at) {
+    return NextResponse.json({ error: 'This profile is not eligible for public submission.' }, { status: 403 })
   }
 
   const visibility = body.visibility
@@ -64,8 +67,60 @@ export async function POST(request) {
   const acknowledgementVersion = visibility === 'public' ? PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION : REGISTERED_PROFILE_ACKNOWLEDGEMENT_VERSION
   const acknowledgementText = visibility === 'public' ? PUBLIC_PROFILE_CONSENT_TEXT : REGISTERED_PROFILE_CONSENT_TEXT
 
-  // For public visibility, record consent before changing the profile to public.
-  // For registered-only visibility, apply the restrictive setting before recording.
+  if (visibility === 'public') {
+    // Refresh the canonical Basic/Full tier before checking whether this profile
+    // can be published. The refresh function keeps unconsented profiles private.
+    const { error: readinessError } = await admin.rpc('sync_professional_listing_status', {
+      p_professional_id: user.id,
+    })
+    if (readinessError) {
+      console.error('Profile listing readiness refresh failed:', readinessError)
+      return NextResponse.json({ error: 'Your listing eligibility could not be verified. Please try again.' }, { status: 502 })
+    }
+
+    const [{ data: currentProfile, error: currentProfileError }, { data: roster, error: rosterError }, { data: taster, error: tasterError }] = await Promise.all([
+      admin.from('professional_profiles')
+        .select('profile_complete,display_name,headline,current_job_title,listing_status,revoked_at,is_test')
+        .eq('id', user.id)
+        .maybeSingle(),
+      admin.from('marketplace_public_roster')
+        .select('assessment_access,full_name,headline,current_job_title')
+        .eq('professional_id', user.id)
+        .maybeSingle(),
+      admin.from('taster_sessions')
+        .select('id')
+        .eq('user_id', user.id)
+        .not('completed_at', 'is', null)
+        .limit(1)
+        .maybeSingle(),
+    ])
+
+    if (currentProfileError || rosterError || tasterError) {
+      return NextResponse.json({ error: 'Your Basic or Full listing status could not be verified.' }, { status: 502 })
+    }
+
+    const basicEligible = roster?.assessment_access === 'basic' && Boolean(taster)
+    const fullEligible = roster?.assessment_access === 'full' && currentProfile?.profile_complete === true
+    const displayName = currentProfile?.display_name?.trim() || roster?.full_name?.trim()
+    const headline = currentProfile?.headline?.trim()
+      || currentProfile?.current_job_title?.trim()
+      || roster?.headline?.trim()
+      || roster?.current_job_title?.trim()
+    const identityReady = Boolean(displayName && headline)
+    const listingReady = currentProfile?.listing_status === 'listed'
+      && currentProfile?.is_test === false
+      && !currentProfile?.revoked_at
+
+    if (!(listingReady && identityReady && (basicEligible || fullEligible))) {
+      return NextResponse.json({
+        error: 'Your profile is not yet ready for public listing. Basic listing requires a linked completed taster and a verified professional identity; Full listing requires a complete Full VALU profile.',
+      }, { status: 409 })
+    }
+  }
+
+  // Registered-only is applied before recording the preference. Public consent
+  // is recorded first; the canonical readiness function then applies public
+  // visibility only if this is the latest consent preference.
   if (visibility === 'registered_only') {
     const { error: visibilityError } = await admin
       .from('professional_profiles')
@@ -93,15 +148,12 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Your consent could not be recorded. Your profile has not been submitted.' }, { status: 502 })
   }
 
-  if (visibility === 'public') {
-    const { error: visibilityError } = await admin
-      .from('professional_profiles')
-      .update({ visibility, updated_at: new Date().toISOString() })
-      .eq('id', user.id)
-    if (visibilityError) {
-      console.error('Public profile visibility update failed after consent was recorded:', visibilityError)
-      return NextResponse.json({ error: 'Your consent was recorded, but public visibility could not be applied. Please retry submission.' }, { status: 502 })
-    }
+  const { data: readiness, error: readinessError } = await admin.rpc('sync_professional_listing_status', {
+    p_professional_id: user.id,
+  })
+  if (readinessError || readiness?.ok !== true) {
+    console.error('Profile visibility/readiness reconciliation failed:', readinessError)
+    return NextResponse.json({ error: 'Your preference was recorded, but listing visibility could not be refreshed. Please retry submission.' }, { status: 502 })
   }
 
   return NextResponse.json({
