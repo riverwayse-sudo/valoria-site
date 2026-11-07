@@ -28,15 +28,15 @@ const frameworkStages = [
     number: '02',
     title: 'Develop with intention',
     body: 'The PRIME framework gives professionals a shared language for strengthening Presence, Relationships, Intelligence, Mastery and Enterprise.',
-    href: '/programmes',
-    cta: 'EXPLORE PROGRAMMES',
+    href: '/develop',
+    cta: 'EXPLORE VALORIA DEVELOP',
   },
   {
     number: '03',
     title: 'Connect to opportunity',
     body: 'The Valoria Talent Marketplace helps organisations discover professionals through capability-led profiles and pathways.',
     href: '/marketplace',
-    cta: 'EXPLORE THE BUREAU',
+    cta: 'EXPLORE THE MARKETPLACE',
   },
 ]
 
@@ -46,7 +46,7 @@ const pathwayCards = [
     title: 'Make your capability visible.',
     body: 'Understand where you stand, build a stronger professional record and become discoverable for relevant opportunities.',
     href: '/valu',
-    cta: 'START WITH VALU INDEX',
+    cta: 'START WITH THE TASTER',
   },
   {
     label: 'FOR EMPLOYERS',
@@ -103,7 +103,7 @@ export default function HomePage() {
               </div>
               <div className="home-dual-actions">
                 <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">
-                  DISCOVER YOUR VALU INDEX <span aria-hidden="true">→</span>
+                  START THE 9-QUESTION TASTER <span aria-hidden="true">→</span>
                 </AssessmentStartLink>
                 <a href="/valu" className="text-link">
                   UNDERSTAND THE VALU INDEX <span aria-hidden="true">→</span>
