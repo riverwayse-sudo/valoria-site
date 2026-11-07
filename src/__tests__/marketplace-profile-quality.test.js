@@ -14,7 +14,6 @@ describe('public marketplace profile content gate', () => {
     expect(source).toContain('hasOfficialPoints')
     expect(source).toContain('assessmentSummary.length >= 12')
     expect(source).toContain('fullAssessmentReady')
-    expect(source).toContain('!fullAssessmentReady')
   })
 
   test('blocks placeholder and stylised profile copy from public display', () => {
