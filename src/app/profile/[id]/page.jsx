@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import ProfileClient from './ProfileClient'
 import { toPublicProfile, PUBLIC_PROFILE_SELECT } from '@/lib/public-profile'
+import { isPublicProfileContentReady } from '@/lib/marketplace-data'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -35,7 +36,7 @@ export default async function ProfilePage({ params, searchParams }) {
 
   if (error) console.error('public Marketplace profile fetch failed:', error)
 
-  const publicProfile = toPublicProfile(row)
+  const publicProfile = isPublicProfileContentReady(row) ? toPublicProfile(row) : null
   const profileUrl = publicProfile?.id ? `https://valoriainstitute.com/profile/${publicProfile.id}` : null
   const profileSchema = publicProfile ? {
     '@context': 'https://schema.org',
