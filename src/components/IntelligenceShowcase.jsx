@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import styles from './IntelligenceShowcase.module.css'
+import CapabilitySearchLab from './CapabilitySearchLab'
 
 const journeys = [
   {
@@ -137,6 +138,8 @@ export default function IntelligenceShowcase() {
           <p className={styles.demoNote}>This is a product concept demonstration using illustrative scenarios, not live participant data, automated matching results or institutional performance statistics.</p>
         </div>
       </section>
+
+      <CapabilitySearchLab />
 
       <section className={styles.method}>
         <div className={styles.sectionHeading}>
