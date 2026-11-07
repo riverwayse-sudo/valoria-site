@@ -1,27 +1,166 @@
 'use client'
-import {useEffect,useState} from 'react'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import {supabase} from '@/lib/supabase'
-const GOLD='#C9A84C',DARK='#1A1A2E',PARCH='#F7F4EE'
-export default function OpportunityDetail({params}){
- const [o,setO]=useState(null),[loading,setLoading]=useState(true),[error,setError]=useState(''),[session,setSession]=useState(null),[coverNote,setCoverNote]=useState(''),[applied,setApplied]=useState(false),[applying,setApplying]=useState(false),[applyError,setApplyError]=useState('')
- useEffect(()=>{
-  let active=true
-  async function load(){
-   try{
-    const [opportunitiesResponse,sessionResult]=await Promise.all([fetch('/api/opportunities'),supabase.auth.getSession()])
-    const payload=await opportunitiesResponse.json().catch(()=>({}))
-    if(!opportunitiesResponse.ok) throw new Error(payload.error||'Opportunities could not be loaded.')
-    if(active){setO((payload.opportunities||[]).find(v=>v.slug===params.slug)||null);setSession(sessionResult.data?.session||null)}
-   }catch(e){if(active)setError(e.message||'Opportunity could not be loaded.')}
-   finally{if(active)setLoading(false)}
+import Nav from '@/components/Nav'
+import Footer from '@/components/Footer'
+import { supabase } from '@/lib/supabase'
+import './detail.css'
+
+function formatDate(value) {
+  if (!value) return null
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return null
+  return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(date)
+}
+
+function DetailItem({ label, value }) {
+  if (!value) return null
+  return <div className="op-detail-item"><span>{label}</span><strong>{value}</strong></div>
+}
+
+export default function OpportunityDetail({ params }) {
+  const [opportunity, setOpportunity] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [session, setSession] = useState(null)
+  const [coverNote, setCoverNote] = useState('')
+  const [applied, setApplied] = useState(false)
+  const [applying, setApplying] = useState(false)
+  const [applyError, setApplyError] = useState('')
+
+  useEffect(() => {
+    let active = true
+    async function load() {
+      try {
+        const [response, sessionResult] = await Promise.all([
+          fetch('/api/opportunities', { headers: { Accept: 'application/json' } }),
+          supabase.auth.getSession(),
+        ])
+        const payload = await response.json().catch(() => ({}))
+        if (!response.ok) throw new Error(payload.error || 'Opportunities could not be loaded.')
+        if (active) {
+          const item = (payload.opportunities || []).find(item => item.slug === params.slug) || null
+          setOpportunity(item)
+          setSession(sessionResult.data?.session || null)
+          if (item) window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'opportunity_view', params: { opportunity_type: item.opportunity_type || 'unspecified', work_mode: item.work_mode || 'unspecified' } } }))
+        }
+      } catch (err) {
+        if (active) setError(err.message || 'Opportunity could not be loaded.')
+      } finally {
+        if (active) setLoading(false)
+      }
+    }
+    load()
+    return () => { active = false }
+  }, [params.slug])
+
+  async function apply() {
+    setApplyError('')
+    if (!session) {
+      window.location.href = '/login?returnTo=' + encodeURIComponent(window.location.pathname)
+      return
+    }
+    setApplying(true)
+    try {
+      const response = await fetch('/api/opportunities/applications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session.access_token },
+        body: JSON.stringify({ opportunity_id: opportunity.id, cover_note: coverNote }),
+      })
+      const payload = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(payload.error || 'Application could not be submitted.')
+      setApplied(true)
+      window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'opportunity_application_submitted', params: { opportunity_type: opportunity.opportunity_type || 'unspecified' } } }))
+    } catch (err) {
+      setApplyError(err.message || 'Application could not be submitted.')
+    } finally {
+      setApplying(false)
+    }
   }
-  load()
-  return ()=>{active=false}
- },[params.slug])
- if(loading)return <main style={{minHeight:'100vh',background:PARCH,padding:80}}>Loading…</main>
- if(error)return <main style={{minHeight:'100vh',background:PARCH,color:DARK,padding:80,fontFamily:'Raleway,sans-serif'}}><h1>We could not load this opportunity.</h1><p>{error}</p><Link href="/opportunities">Back to opportunities</Link></main>
- if(!o)return <main style={{minHeight:'100vh',background:PARCH,padding:80}}><h1>Opportunity not found.</h1><Link href="/opportunities">Back to opportunities</Link></main>
- async function apply(){setApplyError('');if(!session){window.location.href='/login?returnTo='+encodeURIComponent(window.location.pathname);return}setApplying(true);try{const r=await fetch('/api/opportunities/applications',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.access_token},body:JSON.stringify({opportunity_id:o.id,cover_note:coverNote})});const x=await r.json().catch(()=>({}));if(!r.ok)throw new Error(x.error||'Application could not be submitted.');setApplied(true)}catch(e){setApplyError(e.message||'Application could not be submitted.')}finally{setApplying(false)}}
- return <main style={{minHeight:'100vh',background:PARCH,color:DARK,fontFamily:'Raleway,sans-serif'}}><section style={{background:DARK,color:PARCH,padding:'90px 7vw'}}><div style={{maxWidth:900,margin:'auto'}}><div style={{color:GOLD,fontSize:11,fontWeight:800,letterSpacing:'.15em'}}>{(o.opportunity_type||'job').toUpperCase()}</div><h1 style={{fontSize:'clamp(40px,6vw,72px)',lineHeight:1}}>{o.title}</h1><p style={{fontSize:20,opacity:.75}}>{o.organisation_name} · {o.location||'Location flexible'} · {o.work_mode||'Flexible'}</p></div></section><article style={{maxWidth:900,margin:'auto',padding:'60px 7vw 100px'}}><div style={{whiteSpace:'pre-wrap',lineHeight:1.8,fontSize:17}}>{o.description}</div>{o.application_url&&<a href={o.application_url} target="_blank" rel="noreferrer" style={{display:'inline-block',marginTop:30,padding:'15px 24px',background:GOLD,color:DARK,textDecoration:'none',fontWeight:800,borderRadius:22}}>APPLY EXTERNALLY →</a>}<section style={{marginTop:30,padding:24,border:'1px solid #D4C9A8',borderRadius:22,background:'#FAFAF7'}}><div style={{fontSize:10,letterSpacing:'.15em',fontWeight:800,color:'#8B7335'}}>VALORIA APPLICATION</div>{applied?<><h2 style={{margin:'10px 0 6px'}}>Application received.</h2><p style={{opacity:.7}}>Your application is saved. You can follow its status from your applications area.</p><Link href="/profile/applications" style={{color:DARK,fontWeight:800}}>OPEN MY APPLICATIONS →</Link></>:<><p style={{opacity:.7,lineHeight:1.6}}>Apply through your Valoria professional record. You must be listed to apply.</p><textarea value={coverNote} onChange={e=>setCoverNote(e.target.value)} maxLength={5000} placeholder="Optional cover note" style={{width:'100%',boxSizing:'border-box',minHeight:130,padding:14,border:'1px solid #D4C9A8',borderRadius:22,fontFamily:'Raleway,sans-serif',marginBottom:12}} />{applyError&&<p style={{color:'#9B3B24'}}>{applyError}</p>}<button onClick={apply} disabled={applying} style={{padding:'14px 22px',background:GOLD,color:DARK,border:0,borderRadius:22,fontWeight:800,cursor:'pointer'}}>{applying?'SUBMITTING…':'APPLY THROUGH VALORIA →'}</button></>}</section><div style={{marginTop:45}}><Link href="/opportunities">← ALL OPPORTUNITIES</Link></div></article></main>
+
+  return (
+    <>
+      <Nav />
+      <main className="op-detail-page">
+        {loading ? (
+          <section className="op-detail-state" role="status">Loading opportunity…</section>
+        ) : error ? (
+          <section className="op-detail-state"><h1>We could not load this opportunity.</h1><p>{error}</p><Link href="/opportunities">Back to opportunities</Link></section>
+        ) : !opportunity ? (
+          <section className="op-detail-state"><h1>Opportunity not found.</h1><p>This listing may have closed or may no longer be public.</p><Link href="/opportunities">Back to opportunities</Link></section>
+        ) : (
+          <>
+            <section className="op-detail-hero">
+              <div className="op-detail-shell">
+                <div className="op-detail-kicker">{String(opportunity.opportunity_type || 'opportunity').replace(/[_-]+/g, ' ').toUpperCase()}</div>
+                <h1>{opportunity.title}</h1>
+                <p className="op-detail-org">{opportunity.organisation_name}</p>
+                <div className="op-detail-meta">
+                  {[opportunity.location, opportunity.work_mode, opportunity.employment_type, opportunity.experience_level].filter(Boolean).map(value => <span key={value}>{value}</span>)}
+                </div>
+              </div>
+            </section>
+
+            <section className="op-detail-content">
+              <div className="op-detail-main">
+                <div className="op-detail-section">
+                  <div className="op-detail-label">OPPORTUNITY DETAILS</div>
+                  <div className="op-detail-description">{opportunity.description || opportunity.summary}</div>
+                </div>
+                {(opportunity.capabilities?.length > 0 || opportunity.skills?.length > 0) && (
+                  <div className="op-detail-section">
+                    <div className="op-detail-label">REQUIRED EXPERTISE</div>
+                    <div className="op-detail-tags">{[...(opportunity.capabilities || []), ...(opportunity.skills || [])].filter(Boolean).map(value => <span key={value}>{value}</span>)}</div>
+                  </div>
+                )}
+                {opportunity.application_method === 'external' && opportunity.application_url && (
+                  <div className="op-detail-apply-card">
+                    <h2>Apply with the organisation.</h2>
+                    <p>This opportunity uses an external application route. Your application will be handled by the organisation listed above.</p>
+                    <a className="op-detail-primary" href={opportunity.application_url}>CONTINUE TO APPLICATION →</a>
+                  </div>
+                )}
+                {opportunity.application_method !== 'external' && (
+                  <div className="op-detail-apply-card">
+                    {applied ? (
+                      <>
+                        <h2>Application received.</h2>
+                        <p>Your application is saved. You can follow its status from your applications area.</p>
+                        <Link href="/profile/applications" className="op-detail-primary">OPEN MY APPLICATIONS →</Link>
+                      </>
+                    ) : (
+                      <>
+                        <div className="op-detail-label">VALORIA APPLICATION</div>
+                        <h2>Express your interest.</h2>
+                        <p>Apply through your Valoria professional record. You must meet the platform’s listing requirements to apply.</p>
+                        <label className="op-detail-note-label" htmlFor="opportunity-cover-note">Cover note (optional)</label>
+                        <textarea id="opportunity-cover-note" value={coverNote} onChange={event => setCoverNote(event.target.value)} maxLength={5000} placeholder="Briefly explain your interest and relevant experience." />
+                        {applyError && <p className="op-detail-error" role="alert">{applyError}</p>}
+                        <button className="op-detail-primary" onClick={apply} disabled={applying}>{applying ? 'SUBMITTING…' : 'APPLY THROUGH VALORIA →'}</button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <aside className="op-detail-sidebar">
+                <div className="op-detail-label">AT A GLANCE</div>
+                <DetailItem label="Organisation" value={opportunity.organisation_name} />
+                <DetailItem label="Location" value={opportunity.location} />
+                <DetailItem label="Work arrangement" value={opportunity.work_mode} />
+                <DetailItem label="Engagement" value={opportunity.employment_type} />
+                <DetailItem label="Experience" value={opportunity.experience_level} />
+                <DetailItem label="Industry" value={opportunity.industry} />
+                <DetailItem label="Compensation" value={opportunity.compensation} />
+                <DetailItem label="Application deadline" value={formatDate(opportunity.closing_at)} />
+                <Link href="/opportunities" className="op-detail-back">← ALL OPPORTUNITIES</Link>
+              </aside>
+            </section>
+          </>
+        )}
+      </main>
+      <Footer />
+    </>
+  )
 }

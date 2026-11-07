@@ -52,9 +52,8 @@ if (fs.existsSync(profileRoutePath)) {
   if (!/const\s+resolvedSearchParams\s*=\s*await\s+searchParams\b/.test(route)) {
     violations.push('public profile route must await Next.js 15 async searchParams');
   }
-  if (!/\.eq\(\s*['"]visibility['"]\s*,\s*['"]public['"]\s*\)/.test(route) ||
-      !/\.eq\(\s*['"]listing_status['"]\s*,\s*['"]listed['"]\s*\)/.test(route)) {
-    violations.push('public profile route must enforce public visibility and listed status');
+  if (!route.includes('getConsentVerifiedPublicProfile')) {
+    violations.push('public profile route must use the consent-verified server projection');
   }
   if (/\.eq\(\s*['"]profile_complete['"]/.test(route)) {
     violations.push('public profile route must not confuse profile completion with public listing eligibility');
@@ -79,6 +78,58 @@ if (fs.existsSync(profileClientPath)) {
   }
 }
 
+// Public profile privacy is a release-critical invariant: only consent-verified
+// public profiles may be rendered or indexed, and private fields stay server-side.
+const publicProfilePath = path.join(root, 'src/lib/public-profile.js');
+if (!fs.existsSync(publicProfilePath)) {
+  violations.push('consent-verified public profile access helper missing');
+} else {
+  const publicProfile = fs.readFileSync(publicProfilePath, 'utf8');
+  for (const required of [
+    'professional_profile_acknowledgements',
+    'PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION',
+    "acknowledgement_type', 'profile_submission'",
+    "acknowledgement?.acknowledgement_version !== PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION",
+    ".order('acknowledged_at', { ascending: false })",
+    "visibility', 'public'",
+    "listing_status', 'listed'",
+    "is_test', false",
+    ".is('revoked_at', null)",
+  ]) {
+    if (!publicProfile.includes(required)) violations.push('public profile helper missing consent/visibility invariant: ' + required);
+  }
+  const publicFields = publicProfile.match(/const PUBLIC_PROFILE_FIELDS = \[([\s\S]*?)\]\.join/);
+  if (publicFields && /'phone'|'username'|'cv_url'|'cv_summary'|'salary_expectation'|'fee_range'/.test(publicFields[1])) {
+    violations.push('public profile projection includes a private contact, CV or compensation field');
+  }
+}
+if (fs.existsSync(profileRoutePath)) {
+  const route = fs.readFileSync(profileRoutePath, 'utf8');
+  if (!route.includes('getConsentVerifiedPublicProfile')) {
+    violations.push('public profile route must use the consent-verifying server helper');
+  }
+}
+const profileLayoutPath = path.join(root, 'src/app/profile/[id]/layout.jsx');
+if (fs.existsSync(profileLayoutPath)) {
+  const layout = fs.readFileSync(profileLayoutPath, 'utf8');
+  if (!layout.includes('getConsentVerifiedPublicProfile')) {
+    violations.push('public profile metadata must use the consent-verifying server helper');
+  }
+}
+const sitemapPath = path.join(root, 'src/app/sitemap.js');
+if (fs.existsSync(sitemapPath)) {
+  const sitemap = fs.readFileSync(sitemapPath, 'utf8');
+  if (!sitemap.includes('getConsentVerifiedPublicProfileSitemapRows')) {
+    violations.push('sitemap must include only consent-verified public profiles');
+  }
+}
+if (fs.existsSync(profileClientPath)) {
+  const client = fs.readFileSync(profileClientPath, 'utf8');
+  if (!client.includes('if (!user || user.id !== id)')) {
+    violations.push('public profile client must not fall back to broad anonymous profile reads');
+  }
+}
+
 // Product-level regression guards for the VALU Index journey and looping registry.
 const nudgePath = path.join(root, 'src/components/ValuCompletionNudge.jsx');
 if (fs.existsSync(nudgePath)) {
@@ -96,9 +147,9 @@ if (fs.existsSync(nudgePath)) {
 const registryPath = path.join(root, 'src/components/LiveProfilesScroll.jsx');
 if (fs.existsSync(registryPath)) {
   const registry = fs.readFileSync(registryPath, 'utf8');
-  if (!registry.includes('aria-hidden={index >= unique.length ? true : undefined}') ||
-      !registry.includes('tabIndex={index >= unique.length ? -1 : undefined}')) {
-    violations.push('LiveProfilesScroll: decorative marquee duplicates must be hidden from assistive navigation');
+  if (!registry.includes('vi-scroll-track-static') ||
+      !registry.includes('getMarketplaceDirectoryData')) {
+    violations.push('LiveProfilesScroll: public profiles must render from the verified, deduplicated server roster');
   }
 }
 const navPath = path.join(root, 'src/components/Nav.jsx');
@@ -108,6 +159,85 @@ if (fs.existsSync(navPath)) {
     violations.push('Nav: use the canonical VALU Index name, not standalone VALU naming');
   }
 }
+// Public content must explain the VALU journey without exposing internal assessment mechanics.
+const valuStartPath = path.join(root, 'src/app/valu/start/page.jsx');
+const signupPath = path.join(root, 'src/app/signup/page.jsx');
+const aboutPath = path.join(root, 'src/app/about/page.jsx');
+const programmesPath = path.join(root, 'src/app/programmes/page.jsx');
+if (fs.existsSync(valuStartPath)) {
+  const valuStart = fs.readFileSync(valuStartPath, 'utf8');
+  if (!valuStart.includes('The taster gives you an initial directional read.') || !valuStart.includes('VALU Index')) {
+    violations.push('VALU entry page must explain the taster value and the official VALU Index');
+  }
+  if (/The 9-question taster is separate from the 58-question full VALU assessment|Valoria has two separate assessment stages|Two separate assessments/i.test(valuStart)) {
+    violations.push('VALU entry page must not expose internal assessment separation mechanics');
+  }
+  if (/Question\s+\d+\s+of\s+\d+/i.test(valuStart)) {
+    violations.push('VALU entry page must not display question-count progress labels');
+  }
+  if (!valuStart.includes('TAKE THE VALU TASTER') || !valuStart.includes('POINTS')) {
+    violations.push('VALU entry page must label the taster CTA and show VALU results in points');
+  }
+}
+if (fs.existsSync(signupPath)) {
+  const signup = fs.readFileSync(signupPath, 'utf8');
+  if (/Question 10|remaining 49|9 of 58/i.test(signup)) {
+    violations.push('Signup page contains the retired combined-assessment journey');
+  }
+}
+if (fs.existsSync(aboutPath)) {
+  const about = fs.readFileSync(aboutPath, 'utf8');
+  for (const statement of ['Vision', 'Mission', 'Purpose', 'An Africa where professional merit always finds its platform.', 'To bridge the gap between latent brilliance and institutional scale.']) {
+    if (!about.includes(statement)) violations.push('About page is missing approved institutional foundation: ' + statement);
+  }
+}
+if (fs.existsSync(programmesPath)) {
+  const programmes = fs.readFileSync(programmesPath, 'utf8');
+  if (!programmes.includes('PRIME Certified Professional') || !programmes.includes('IN DEVELOPMENT') ||
+      !programmes.includes('participation in this pathway does not currently confer a Valoria certification')) {
+    violations.push('Valoria Develop must mark the certification pathway as in development and not conferring certification');
+  }
+  if (/certified facilitators|90-day re-measurement|90-day remeasurement/i.test(programmes)) {
+    violations.push('Valoria Develop contains an unconfirmed facilitator certification or remeasurement claim');
+  }
+}
+
+// Retired or unsupported public claims must not reappear in primary site copy.
+const publicCopyPaths = [
+  'src/app/page.jsx',
+  'src/app/about/page.jsx',
+  'src/app/prime/page.jsx',
+  'src/app/valu/page.jsx',
+  'src/app/valu/start/page.jsx',
+  'src/app/programmes/page.jsx',
+  'src/app/marketplace/page.jsx',
+  'src/app/dashboard/page.jsx',
+  'src/app/professional-signup/page.jsx',
+  'src/app/profile/setup/page.jsx',
+  'src/app/test/assessment/page.jsx',
+  'src/components/VALUJourneyProgress.jsx',
+  'src/components/HeroSlider.jsx',
+  'src/components/MarketplaceDirectory.jsx',
+];
+const retiredPublicClaims = [
+  [/Africa's human capital institution|human capital institution/i, 'retired institutional positioning'],
+  [/Explore the Bureau/i, 'retired Bureau navigation'],
+  [/21 professionals/i, 'unverified marketplace headcount'],
+  [/certified facilitators/i, 'unverified facilitator certification'],
+  [/Question 10|remaining 49|Questions 10–58/i, 'retired combined-assessment journey'],
+  [/Question\s+\d+\s+of\s+\d+/i, 'question-count progress label must not appear in public copy'],
+  [/The 9-question taster is separate from the 58-question full VALU assessment|Valoria has two separate assessment stages|Two separate assessments/i, 'internal assessment separation mechanics must not appear in public copy'],
+  [/\bElite\b|\bDistinguished\b|\bProficient\b/, 'retired merit designation'],
+];
+for (const relativePath of publicCopyPaths) {
+  const absolutePath = path.join(root, relativePath);
+  if (!fs.existsSync(absolutePath)) continue;
+  const text = fs.readFileSync(absolutePath, 'utf8');
+  for (const [pattern, label] of retiredPublicClaims) {
+    if (pattern.test(text)) violations.push(relativePath + ': ' + label + ' must not appear in public copy');
+  }
+}
+
 const pkg = JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
 if (!pkg.scripts?.['design:check']) violations.push('package.json: design:check gate missing');
 if (!fs.existsSync(path.join(root, 'src/lib/password-policy.js'))) violations.push('authentication control missing: src/lib/password-policy.js');

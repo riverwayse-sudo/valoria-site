@@ -144,3 +144,35 @@
 .capabilityUnselected small{color:#8A8578!important}
 
 .capabilities .capabilityLabel{grid-column:1/-1}
+
+/* Content-overhaul discovery filters and complete professional cards. */
+.containerControl{grid-template-columns:minmax(200px,1.5fr) repeat(4,minmax(150px,1fr)) auto}
+.filterNote{max-width:1320px;margin:0 auto;padding:0 24px 14px;color:#6F6A60;font-size:10px;line-height:1.5}
+.profileName{font-size:13px!important;line-height:1.35!important;letter-spacing:0!important}
+.developmentFocus{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding:9px 10px;background:#EDE8DC;border:1px solid #D4C9A8;border-radius:5px}
+.developmentFocus small{font-family:var(--font);font-size:7px;font-weight:800;letter-spacing:.1em;color:#6F6A60}
+.developmentFocus strong{font-family:var(--font);font-size:10px;color:#1A1A2E;text-align:right}
+.capabilityLabel{display:block;width:100%;font-family:var(--font);font-size:7px;font-weight:800;letter-spacing:.1em;color:#6F6A60}
+.grid{grid-auto-rows:minmax(500px,auto)}
+.card{height:100%;min-height:500px;max-height:none;gap:0}
+.identity{height:auto;min-height:66px;max-height:none}
+@media(max-width:900px){
+  .containerControl{grid-template-columns:1fr}
+  .filterNote{padding-left:16px;padding-right:16px}
+  .card{height:auto;min-height:500px;max-height:none}
+}
+
+.profileDetails{display:flex;flex-wrap:wrap;gap:6px 12px;margin:0 0 10px;color:#777064;font-size:9px;line-height:1.5}
+.profileCompensation{display:flex;flex-wrap:wrap;gap:8px 16px;margin:0 0 10px;padding:9px 10px;background:#FAFAF7;border:1px solid #EDE8DC;border-radius:5px}
+.profileCompensation span{display:flex;flex-direction:column;gap:4px;color:#2E2E4A;font-size:10px;font-weight:700}
+.profileCompensation small{color:#777064;font-size:7px;letter-spacing:.1em}
+.profileSkills{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.profileSkills span{padding:5px 8px;background:#F7F4EE;border:1px solid #EDE8DC;border-radius:4px;color:#5D584F;font-size:8px}
+.empty button{border:0;background:transparent;cursor:pointer}
+
+/* Keep the VALU points visible beside the profile identity and ATB ID. */
+.identity{position:relative;padding-right:62px!important}
+.valu{position:absolute;top:2px;right:0;width:54px;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.valu small{font-size:6px;line-height:1.2;letter-spacing:.12em;font-weight:800;color:#6F6A60}
+.valu b{font-size:20px;line-height:1;font-weight:900;color:#1A1A2E}
+.valu span{font-size:6px;line-height:1.2;letter-spacing:.1em;font-weight:800;color:#6F6A60}

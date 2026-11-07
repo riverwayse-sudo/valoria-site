@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { supabase } from '@/lib/supabase'
 import styles from './PremiumInteractions.module.css'
 
 const GOLD  = '#C9A84C'
@@ -33,9 +34,14 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
     setSending(true)
     setError('')
     try {
+      const { data: sessionData } = await supabase.auth.getSession()
+      const accessToken = sessionData?.session?.access_token
       const res = await fetch('/api/enquiries', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
         body: JSON.stringify({
           professional_profile_id: professionalProfileId,
           atb_id: atbId,
@@ -44,7 +50,6 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
           buyer_email: form.buyer_email,
           buyer_company: form.buyer_company,
           message: form.message,
-          buyer_user_id: currentUser?.id || null,
         }),
       })
       const data = await res.json().catch(() => ({}))
@@ -53,6 +58,7 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
         setSending(false)
         return
       }
+      window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'buyer_enquiry_submitted', params: { enquiry_type: enquiryType } } }))
       setSent(true)
       setSending(false)
     } catch {

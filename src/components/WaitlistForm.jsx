@@ -192,7 +192,7 @@ export default function WaitlistForm() {
                 {[
                   { color:'#378ADD', label:'ATB CONNECT',   desc:'For employers and recruiters — search pre-assessed candidates by score, strength, and sector.' },
                   { color:'#C9A84C', label:'ATB SPOTLIGHT', desc:'For event planners — discover and book speakers whose capability you can actually verify.' },
-                  { color:'#1D9E75', label:'ATB DEVELOP',   desc:'For L&D leaders — commission PRIME-certified facilitators with an assessed track record.' },
+                  { color:'#1D9E75', label:'ATB DEVELOP',   desc:'For L&D leaders — discuss PRIME-based development programmes and facilitator requirements.' },
                 ].map((t,i) => (
                   <div key={i} className="wl-done-track">
                     <div className="wl-track-bar" style={{ background: t.color }} />

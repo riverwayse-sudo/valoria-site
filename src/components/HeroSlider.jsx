@@ -2,13 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { BRAND } from '@/lib/brand'
-import MarketplaceCTA from './MarketplaceCTA'
 import EventRegistrationModal, { SessionTimer } from './EventRegistrationModal'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
 
 export default function HeroSlider() {
-  const bars = [88, 90, 82, 80, 75]
-  const scores = [['P', 88], ['R', 90], ['I', 82], ['M', 80], ['E', 75]]
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
   const [selectedSession, setSelectedSession] = useState(null)
@@ -37,16 +34,18 @@ export default function HeroSlider() {
         <div className={`hero-slide ${active === 0 ? 'is-active' : ''}`} aria-hidden={active !== 0}>
           <div className="container hero-inner">
             <div>
-              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">AFRICA'S HUMAN CAPITAL INSTITUTION</span></div>
-              <h1 className="hero-title au d2">Talent is not<br />the problem.<br /><em>Infrastructure is.</em></h1>
-              <p className="hero-sub au d3">Valoria Institute builds the infrastructure through which African professional merit is developed, surfaced and connected to opportunity with precision.</p>
-              <div className="hero-actions au d4"><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START THE VALU INDEX</a><MarketplaceCTA className="btn-outline">EXPLORE THE BUREAU</MarketplaceCTA></div>
-              <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">84 <small style={{fontSize:10,letterSpacing:'.08em'}}>POINTS</small></div><div className="hmc-right"><div className="hmc-desig">FORCE TO ALIGN WITH · ✦✦</div><div className="hmc-bars">{bars.map((w, i) => <div key={i} className={`hmc-bar score-${w}`} />)}</div></div></div></div>
+              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">AFRICA'S TALENT MARKETPLACE FOR PROFESSIONALS</span></div>
+              <h1 className="hero-title au d2">Capability should decide<br />who gets seen.<br /><em>Valoria is the room.</em></h1>
+              <p className="hero-sub au d3">Valoria assesses African professionals on one standard, develops them where they fall short, and connects them to employers, event organisers and training buyers.</p>
+              <div className="hero-actions au d4"><a href={BRAND.assessmentUrl} className="btn-gold">TAKE THE VALU TASTER</a><a href="/valu#how-it-works" className="btn-outline">SEE HOW IT WORKS</a></div>
+              <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">VALU <small style={{fontSize:10,letterSpacing:'.08em'}}>INDEX</small></div><div className="hmc-right"><div className="hmc-desig">POINTS-BASED CAPABILITY PROFILE</div><div className="hmc-bars"><span>PRIME</span><span>VALU</span></div></div></div></div>
             </div>
-            <div className="valu-card au d4" aria-label="Illustrative VALU profile">
-              <div className="vc-label">VALU INDEX · ILLUSTRATIVE PROFILE</div><div className="vc-score"><span className="vc-num">84</span><span className="vc-denom">POINTS</span></div><div className="vc-desig">FORCE TO ALIGN WITH · ✦✦</div>
-              <div className="vc-modalities"><span className="mod-pill" >CANDIDATE</span><span className="mod-pill" >SPEAKER</span></div>
-              <div className="vc-bars">{scores.map(([l, s]) => <div className="vb" key={l}><span className="vb-l">{l}</span><div className="vb-bg"><div className={`vb-fill score-${s}`} /></div><span className="vb-s">{s}</span></div>)}</div><div className="vc-foot">illustrative profile · merit made visible</div>
+            <div className="valu-card au d4" aria-label="The VALU Index assessment structure">
+              <div className="vc-label">THE VALU INDEX</div>
+              <div className="vc-score"><span className="vc-num">VALU</span><span className="vc-denom">INDEX</span></div>
+              <div className="vc-desig">POINTS-BASED CAPABILITY PROFILE</div>
+              <div className="vc-cluster-list"><span>Presence</span><span>Relationships</span><span>Intelligence</span><span>Mastery</span><span>Enterprise</span></div>
+              <div className="vc-foot">PRIME framework · results expressed in points</div>
             </div>
           </div>
         </div>
