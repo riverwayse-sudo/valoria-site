@@ -21,14 +21,14 @@ describe('staging preview safety boundary', () => {
 
   test('read-only preview never queries the live public roster or lists member profile URLs', () => {
     const marketplace = read('src/lib/marketplace-data.js')
-    expect(marketplace).toContain("const IS_READ_ONLY_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'")
+    expect(marketplace).toContain("const IS_READ_ONLY_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'")
     expect(marketplace).toContain('if (IS_READ_ONLY_PREVIEW) return []')
     expect(marketplace).toContain('if (IS_READ_ONLY_PREVIEW) return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }')
     expect(marketplace.indexOf('if (IS_READ_ONLY_PREVIEW) return []')).toBeLessThan(marketplace.indexOf('createClient(url, key'))
 
     const sitemap = read('src/app/sitemap.js')
     expect(sitemap).toContain('if (IS_PREVIEW) return staticEntries')
-    expect(sitemap.indexOf("if (process.env.VALU_PREVIEW === '1') return staticEntries")).toBeLessThan(sitemap.indexOf("await import('@supabase/supabase-js')"))
+    expect(sitemap.indexOf('if (IS_PREVIEW) return staticEntries')).toBeLessThan(sitemap.indexOf("await import('@supabase/supabase-js')"))
   })
 
   test('the OpenNext Worker handles dynamic routes before static asset fallback', () => {
