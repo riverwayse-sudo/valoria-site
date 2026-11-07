@@ -33,9 +33,9 @@ describe('Valoria public content and legal-copy controls', () => {
 
   test('terms draft separates the taster from the full assessment and avoids unapproved eligibility claims', () => {
     const terms = read('src/app/terms-of-use/page.jsx')
-    expect(terms).toContain('9-question taster is a separate')
-    expect(terms).toContain('58-question assessment')
-    expect(terms).toContain('54 scored questions and 4 validity anchors')
+    expect(terms).toContain('VALU taster is a separate, directional starting point')
+    expect(terms).toContain('formal assessment provides a comprehensive view')
+    expect(terms).not.toMatch(/(?:9|58)[- ]questions?|54 scored questions|validity anchors/i)
     expect(terms).toContain('LEGAL REVIEW REQUIRED')
     expect(terms).not.toMatch(/African Talent Bureau Ltd|35 or above|anonymised score profile|score penalty/)
   })
