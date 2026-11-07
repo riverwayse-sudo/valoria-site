@@ -142,6 +142,8 @@ if (!opportunityDetail.includes('safeApplicationUrl') || !opportunityDetail.incl
 const negativeMargin = existing.filter(({ file, text }) => homepageFiles.includes(file) && /margin(?:-(?:top|right|bottom|left))?\s*:\s*-\\d/.test(text));
 for (const { file } of negativeMargin) add(`${file}: negative margin detected; justify or remove before production`);
 
+const layoutSource = existing.find((x) => x.file === 'src/app/layout.jsx')?.text || '';
+
 // Parallax is a bounded visual layer, not a second animation system.
 const parallaxController = existing.find((x) => x.file === 'src/components/ParallaxController.jsx')?.text || '';
 if (!layoutSource.includes('ParallaxController')) add('src/app/layout.jsx: parallax controller must be mounted once at the site root');
