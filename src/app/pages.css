@@ -13,7 +13,7 @@
 
 
 /* PUBLIC PAGE STANDARD — shared public-page foundation */
-.page-kicker{font-size:10px;font-weight:800;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}
+.page-kicker{font-size:10px;font-weight:800;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}\n.events-page .page-section .page-kicker{color:#735B20}\n.events-page .event-editorial-copy>span{color:#735B20}
 .insights-page,.events-page{background:var(--valoria-parchment);color:var(--valoria-midnight)}
 .insights-hero,.events-hero{background:var(--valoria-void);color:var(--valoria-parchment)}
 .insights-list{background:var(--valoria-parchment)}
