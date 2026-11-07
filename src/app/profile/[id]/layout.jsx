@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { PUBLIC_PROFILE_SELECT } from '@/lib/public-profile'
+import { isPublicProfileContentReady } from '@/lib/marketplace-data'
 
 const SITE_URL = 'https://valoriainstitute.com'
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
@@ -30,7 +31,7 @@ export async function generateMetadata({ params }) {
       .maybeSingle()
 
     // Only records in the consented, eligible public roster can be indexed.
-    if (error || !profile) {
+    if (error || !profile || !isPublicProfileContentReady(profile)) {
       return {
         title: 'Professional Profile | Valoria Institute',
         robots: { index: false, follow: true },
