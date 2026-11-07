@@ -31,6 +31,20 @@ describe('participant-facing assessment clarity', () => {
     expect(valu).toContain('official VALU Index')
   })
 
+  test('staging preview blocks writes until an isolated database is explicitly enabled', () => {
+    const middleware = read('src/middleware.js')
+    const opportunities = read('src/app/api/opportunities/route.js')
+    const eventRegistration = read('src/app/api/session-registration/route.js')
+    const eventTrigger = read('src/components/EventRegistrationTrigger.jsx')
+
+    expect(middleware).toContain("process.env.VALU_STAGING_API_ENABLED === '1'")
+    expect(middleware).toContain('const isReadOnlyPreview = isPreview && !stagingApiEnabled')
+    expect(middleware).toContain("if (isReadOnlyPreview && pathname.startsWith('/api/'))")
+    expect(opportunities).toContain('IS_READ_ONLY_PREVIEW')
+    expect(eventRegistration).toContain('Event registration is disabled in staging preview')
+    expect(eventTrigger).toContain('REGISTRATION DISABLED IN PREVIEW')
+  })
+
   test('the isolated dashboard preview launches the interactive taster', () => {
     const preview = read('src/app/dashboard/ExperiencePreview.jsx')
     expect(preview).toContain('AssessmentStartLink href="/valu/assessment/"')
