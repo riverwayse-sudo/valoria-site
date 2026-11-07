@@ -13,13 +13,12 @@ describe('public sitemap privacy and route contract', () => {
   })
 
   test('sitemap includes the current public pathways and excludes retired/auth routes', () => {
-    for (const route of ['/valu', '/knowledge', '/knowledge/valu-index', '/knowledge/prime-framework', '/knowledge/professional-capability', '/opportunities', '/atb-connect', '/atb-spotlight', '/events', '/insights', '/develop']) {
+    for (const route of ['/valu', '/knowledge', '/knowledge/valu-index', '/knowledge/prime-framework', '/knowledge/professional-capability', '/jobs', '/opportunities', '/atb-connect', '/atb-spotlight', '/events', '/insights', '/develop']) {
       expect(sitemap).toContain(`path: '${route}'`)
     }
     for (const route of ["path: '/facilitators'", "path: '/programmes'", "path: '/signup'", "path: '/login'"]) {
       expect(sitemap).not.toContain(route)
     }
-    expect(sitemap).not.toContain("path: '/jobs'")
   })
 
   test('staging sitemap uses the staging host', () => {
