@@ -66,6 +66,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(categoryFilter).not.toContain('selectedCapabilities')
   })
 
+  test('public profile metadata resolves both UUID and canonical ATB profile IDs', () => {
+    const layout = read('src/app/profile/[id]/layout.jsx')
+    const page = read('src/app/profile/[id]/page.jsx')
+    expect(layout).toContain('const { id } = await params')
+    expect(layout).toContain(".eq(isUuid ? 'id' : 'atb_id', id)")
+    expect(layout).toContain('const isAtbId =')
+    expect(page).toContain(".eq(isUuid ? 'id' : 'atb_id', id)")
+  })
+
   test('open marketplace directories refresh server-rendered counts automatically', () => {
     const source = read('src/components/MarketplaceDirectory.jsx')
     expect(source).toContain('useRouter')
