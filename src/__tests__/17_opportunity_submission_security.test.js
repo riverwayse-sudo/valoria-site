@@ -61,8 +61,8 @@ describe("opportunity submission validation and persistence", () => {
   });
 
   test("both publishing paths use atomic idempotent RPCs rather than separate inserts", () => {
-    const employerApi = fs.readFileSync(path.join(__dirname, "../../app/api/opportunities/route.js"), "utf8");
-    const adminApi = fs.readFileSync(path.join(__dirname, "../../app/api/admin/opportunities/create/route.js"), "utf8");
+    const employerApi = fs.readFileSync(path.join(__dirname, "../app/api/opportunities/route.js"), "utf8");
+    const adminApi = fs.readFileSync(path.join(__dirname, "../app/api/admin/opportunities/create/route.js"), "utf8");
     expect(employerApi).toContain("create_employer_opportunity_submission");
     expect(employerApi).toContain("p_submission_key");
     expect(employerApi).not.toContain(".from('opportunities').insert");
@@ -72,8 +72,8 @@ describe("opportunity submission validation and persistence", () => {
   });
 
   test("publishing migrations enforce unique submission keys and service-role-only RPC access", () => {
-    const migration = fs.readFileSync(path.join(__dirname, "../../../supabase/migrations/20261107132337_add_idempotency_to_opportunity_publishing.sql"), "utf8");
-    const correction = fs.readFileSync(path.join(__dirname, "../../../supabase/migrations/20261107132404_fix_employer_opportunity_email_validation.sql"), "utf8");
+    const migration = fs.readFileSync(path.join(__dirname, "../../supabase/migrations/20261107132337_add_idempotency_to_opportunity_publishing.sql"), "utf8");
+    const correction = fs.readFileSync(path.join(__dirname, "../../supabase/migrations/20261107132404_fix_employer_opportunity_email_validation.sql"), "utf8");
     expect(migration).toContain("opportunity_submissions_submission_key_uidx");
     expect(migration).toContain("pg_advisory_xact_lock");
     expect(migration).toContain("revoke all on function public.create_admin_opportunity");
@@ -82,7 +82,7 @@ describe("opportunity submission validation and persistence", () => {
   });
 
   test("opportunity detail pages only render safe external destinations", () => {
-    const detail = fs.readFileSync(path.join(__dirname, "../../app/opportunities/[slug]/page.jsx"), "utf8");
+    const detail = fs.readFileSync(path.join(__dirname, "../app/opportunities/[slug]/page.jsx"), "utf8");
     expect(detail).toContain("safeApplicationUrl");
     expect(detail).toContain("['http:', 'https:']");
     expect(detail).toContain("rel=\"noopener noreferrer\"");
