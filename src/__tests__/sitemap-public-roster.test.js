@@ -7,7 +7,7 @@ describe('public sitemap privacy and route contract', () => {
 
   test('dynamic profile URLs come only from the public Marketplace projection', () => {
     expect(sitemap).toContain(".from('marketplace_public_roster')")
-    expect(sitemap).toContain("select('professional_id,projection_refreshed_at,full_name,atb_id,headline,current_job_title')")
+    expect(sitemap).toContain("select('professional_id,projection_refreshed_at,full_name,atb_id,headline,current_job_title,assessment_access,valu_index,assessment_summary')")
     expect(sitemap).toContain('filter(isPublicProfileContentReady)')
     expect(sitemap).not.toContain(".from('professional_profiles')")
   })
