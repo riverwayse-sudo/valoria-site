@@ -67,10 +67,11 @@ describe('Valoria SEO and discovery foundation', () => {
     expect(events).toContain("'@type': 'VirtualLocation'")
   })
 
-  test('navigation and footer no longer point to the nonexistent jobs route', () => {
-    expect(read('src/config/navigation.js')).not.toContain("href: '/jobs'")
-    expect(read('src/components/Footer.jsx')).not.toContain('href="/jobs"')
-    expect(read('src/app/sitemap.js')).not.toContain("path: '/jobs'")
-    expect(read('next.config.js')).toContain("source: '/jobs', destination: '/opportunities', permanent: true")
+  test('dedicated Jobs discovery route is linked and not redirected away', () => {
+    expect(read('src/app/jobs/page.jsx')).toContain('export default')
+    expect(read('src/config/navigation.js')).toContain("href: '/jobs'")
+    expect(read('src/components/Footer.jsx')).toContain('href="/jobs"')
+    expect(read('src/app/sitemap.js')).toContain("path: '/jobs'")
+    expect(read('next.config.js')).not.toContain("source: '/jobs'")
   })
 })
