@@ -24,13 +24,8 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Server misconfigured.' }, { status: 503 })
   }
 
-  let body
-  try { body = await request.json() } catch {
-    return NextResponse.json({ error: 'Invalid request.' }, { status: 400 })
-  }
-  const { taster_id: tasterId, name, role } = body || {}
-  if (!tasterId) return NextResponse.json({ error: 'taster_id is required.' }, { status: 400 })
-
+  // Authenticate before parsing or validating request data so unauthenticated
+  // callers cannot use input validation responses to probe this linking endpoint.
   const authorization = request.headers.get('authorization') || ''
   if (!authorization.toLowerCase().startsWith('bearer ')) {
     return NextResponse.json({ error: 'Sign in is required before linking your VALU result.' }, { status: 401 })
@@ -44,6 +39,13 @@ export async function POST(request) {
   if (authError || !authData?.user) {
     return NextResponse.json({ error: 'Your session could not be verified.' }, { status: 401 })
   }
+
+  let body
+  try { body = await request.json() } catch {
+    return NextResponse.json({ error: 'Invalid request.' }, { status: 400 })
+  }
+  const { taster_id: tasterId, name, role } = body || {}
+  if (!tasterId) return NextResponse.json({ error: 'taster_id is required.' }, { status: 400 })
 
   const user = authData.user
   const { data: taster, error: tasterError } = await admin
