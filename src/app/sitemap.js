@@ -14,6 +14,7 @@ export default async function sitemap() {
     { path: '/marketplace/speakers', priority: 0.9, changeFrequency: 'daily' },
     { path: '/marketplace/facilitators', priority: 0.9, changeFrequency: 'daily' },
     { path: '/opportunities', priority: 0.9, changeFrequency: 'daily' },
+    { path: '/jobs', priority: 0.95, changeFrequency: 'daily' },
     { path: '/atb-connect', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/atb-spotlight', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/events', priority: 0.7, changeFrequency: 'weekly' },
