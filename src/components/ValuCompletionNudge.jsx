@@ -39,7 +39,7 @@ export default function ValuCompletionNudge() {
       const [{ data: profile }, { data: assessment }, { data: taster }] = await Promise.all([
         supabase.from('professional_profiles').select('profile_complete,is_test').eq('id', user.id).maybeSingle(),
         supabase.from('valu_assessments').select('id,total_score,completed_at').eq('user_id', user.id).not('completed_at', 'is', null).order('completed_at', { ascending: false }).limit(1).maybeSingle(),
-        supabase.from('taster_sessions').select('id,completed_at,updated_at').eq('user_id', user.id).order('updated_at', { ascending: false }).limit(1).maybeSingle(),
+        supabase.from('taster_sessions').select('id,completed_at,created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).maybeSingle(),
       ])
 
       if (!active || !profile || profile.profile_complete || profile.is_test) return
