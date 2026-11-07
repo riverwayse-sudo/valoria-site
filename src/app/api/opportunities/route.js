@@ -1,7 +1,8 @@
 import { createHash } from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
 
-const IS_READ_ONLY_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' && process.env.VALU_STAGING_API_ENABLED !== '1'
+const IS_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1'
+const IS_READ_ONLY_PREVIEW = IS_PREVIEW && process.env.VALU_STAGING_API_ENABLED !== '1'
 
 function db(){
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}})
