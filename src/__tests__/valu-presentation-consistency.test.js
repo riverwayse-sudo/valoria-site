@@ -50,6 +50,13 @@ describe('VALU presentation consistency', () => {
     expect(registry).toContain('/privacypolicy')
   })
 
+  test('marketplace explains snapshot and full assessment without exposing internal question counts', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    expect(directory).toContain('A completed VALU snapshot may support a Basic listing')
+    expect(directory).toContain('Completing the full assessment establishes your official VALU Index in points')
+    expect(directory).not.toMatch(/(?:9|58)[- ]questions?/i)
+  })
+
   test('public registry and professional-facing score cards use points', () => {
     expect(read('src/components/LiveProfilesScroll.jsx')).toContain('vi-scroll-score-max">points')
     expect(read('src/app/profile/[id]/ProfileClient.jsx')).toContain('> points</span>')
