@@ -51,8 +51,32 @@ export default function EventsPage() {
     return getSessionState(session) === 'coming-soon'
   })
 
+  // Only owner-approved sessions receive Event structured data. Provisional
+  // dates remain excluded until the event catalogue marks them approved.
+  const approvedEvents = PROFESSIONAL_STANDARD_SERIES.filter(session => session.dateApproved)
+  const eventSchema = {
+    '@context': 'https://schema.org',
+    '@graph': approvedEvents.map(session => ({
+      '@type': 'Event',
+      name: session.title,
+      description: session.description,
+      startDate: session.start,
+      endDate: session.end || undefined,
+      url: 'https://valoriainstitute.com/events#event-' + session.id,
+      eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
+      eventStatus: new Date(session.start) > new Date() ? 'https://schema.org/EventScheduled' : undefined,
+      location: { '@type': 'VirtualLocation', url: 'https://valoriainstitute.com/events' },
+      organizer: { '@type': 'Organization', name: 'Valoria Institute', url: 'https://valoriainstitute.com' },
+      performer: session.speaker ? { '@type': 'Person', name: session.speaker } : undefined,
+    })),
+  }
+  const eventSchemaJson = approvedEvents.length
+    ? JSON.stringify(eventSchema).replace(/</g, '\\u003c')
+    : null
+
   return (
     <>
+      {eventSchemaJson && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: eventSchemaJson }} />}
       <Nav />
       <main className="events-page">
         <section className="page-hero events-hero">
