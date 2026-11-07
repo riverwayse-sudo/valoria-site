@@ -25,14 +25,17 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(facilitators).toContain("getMarketplaceDirectoryData('facilitator')")
   })
 
-  test('public marketplace requires the separate full VALU assessment', () => {
+  test('public marketplace supports consented Basic taster listings and Full VALU listings', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
     const data = read('src/lib/marketplace-data.js')
     expect(data).toContain('assessment_access')
+    expect(data).toContain("row.assessment_access === 'basic'")
     expect(data).toContain("row.assessment_access === 'full'")
-    expect(data).toContain("row.assessment_access === 'full'")
+    expect(data).toContain("from('taster_sessions')")
+    expect(data).toContain("public-profile-visibility-v2-2026-11-06")
+    expect(data).toContain('assessment_summary: null')
     expect(directory).toContain('FULL VALU ASSESSED')
-    expect(directory).not.toContain('BASIC · SNAPSHOT')
+    expect(directory).toContain('BASIC LISTING')
   })
 
   test('About preserves the approved Vision and Purpose while retiring outdated institutional language', () => {
@@ -405,13 +408,14 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
 
-  test('public marketplace rendering excludes Basic taster-only records', () => {
+  test('public Basic listings require a linked completed taster and explicit consent', () => {
     const data = read('src/lib/marketplace-data.js')
+    expect(data).toContain("row.assessment_access === 'basic'")
     expect(data).toContain("row.assessment_access === 'full'")
-    expect(data).toContain("assessment_access")
-    expect(data).toContain("profile.visibility === 'public'")
-    expect(data).toContain("profile.listing_status === 'listed'")
-    expect(data).toContain("consentedIds.has(profile.id)")
+    expect(data).toContain(".not('completed_at', 'is', null)")
+    expect(data).toContain("profile.visibility !== 'public'")
+    expect(data).toContain("profile.listing_status !== 'listed'")
+    expect(data).toContain('consentedIds.has(profile.id)')
   })
 
   test('existing capability eligibility is reconciled after historical evidence is marked pending', () => {
