@@ -72,10 +72,10 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             {activeTrack === 'facilitator' && <>Find a facilitator<br/><i>for the work ahead.</i></>}
           </h1>
           <p className={styles.lede}>
-            {activeTrack === 'all' && 'Explore public professional profiles that meet Valoria’s full-assessment and listing requirements. Each profile presents declared roles, VALU points and assessment-derived capability insight.'}
-            {activeTrack === 'candidate' && 'ATB Connect helps employers explore public professional profiles by declared capability, VALU points and sector. Talent listings appear only when the relevant profile and listing requirements are met.'}
-            {activeTrack === 'speaker' && 'ATB Spotlight helps event organisers discover public speakers by declared expertise and PRIME capability. Profiles show assessment-derived insight and the professional information available for each person.'}
-            {activeTrack === 'facilitator' && 'ATB Spotlight helps training buyers discover public facilitators by declared expertise and PRIME capability. For a structured team development programme, explore Valoria Develop.'}
+            {activeTrack === 'all' && 'Explore public professional profiles at Basic and Full levels. Basic listings present verified professional identity and declared capabilities; Full listings also present VALU points and assessment-derived capability insight.'}
+            {activeTrack === 'candidate' && 'ATB Connect helps employers explore public professional profiles by declared capability and sector. Full listings also include VALU points and assessment-derived capability insight.'}
+            {activeTrack === 'speaker' && 'ATB Spotlight helps event organisers discover public speakers by declared expertise and PRIME capability. Full listings include assessment-derived insight; Basic listings show verified professional information.'}
+            {activeTrack === 'facilitator' && 'ATB Spotlight helps training buyers discover public facilitators by declared expertise and PRIME capability. Full listings include assessment-derived insight; Basic listings show verified professional information. For a structured team development programme, explore Valoria Develop.'}
           </p>
           {activeTrack === 'facilitator' && <Link className={styles.view} href="/programmes">EXPLORE VALORIA DEVELOP</Link>}
           <nav className={styles.tabs} aria-label="Filter by declared role">{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
@@ -157,6 +157,7 @@ function Profile({p}) {
     { key:'speaker', title:'SPEAKER', selected:selectedCaps.has('speaker') },
     { key:'facilitator', title:'FACILITATOR', selected:selectedCaps.has('facilitator') },
   ]
+  const isBasic = p.assessment_access === 'basic'
   const designation = displayText(p.designation)
   const designationClass = {
     'Force to Align With': styles.forceToAlignWith,
@@ -178,13 +179,13 @@ function Profile({p}) {
       <div className={styles.identityCopy}>
         <strong className={styles.profileName}>{displayText(p.full_name)}</strong>
         <small>{profileId}</small>
-        <span className={styles.assessedStatus}>✓ FULL VALU ASSESSED</span>
+        <span className={styles.assessedStatus}>{isBasic ? 'BASIC LISTING' : '✓ FULL VALU ASSESSED'}</span>
       </div>
-      <div className={styles.valu} aria-label={`VALU Index ${p.valu_index} points`}>
+      {!isBasic && <div className={styles.valu} aria-label={`VALU Index ${p.valu_index} points`}>
         <small>VALU INDEX</small>
         <b>{p.valu_index}</b>
         <span>POINTS</span>
-      </div>
+      </div>}
     </div>
     <p className={styles.career}>{displayText(p.headline)}</p>
     <p className={styles.specialisation}>{displayText(p.current_job_title)}{p.industry ? ` · ${displayText(p.industry)}` : ''}</p>
@@ -192,17 +193,17 @@ function Profile({p}) {
 
     {skills.length > 0 && <div className={styles.profileSkills}>{skills.map(value=><span key={value}>{value}</span>)}</div>}
     <div className={styles.signalRow}>
-      <span className={`${styles.tierBadge} ${designationClass}`}>{designation}</span>
+      <span className={`${styles.tierBadge} ${designationClass}`}>{isBasic ? 'BASIC MEMBER' : designation}</span>
     </div>
-    <div className={styles.developmentFocus}><small>TOP DEVELOPMENT AREA</small><strong>{developmentFocus}</strong></div>
+    {!isBasic && <div className={styles.developmentFocus}><small>TOP DEVELOPMENT AREA</small><strong>{developmentFocus}</strong></div>}
     <div className={styles.capabilities} aria-label={`Declared roles: ${capabilityBadges.filter(b=>b.selected).map(b=>b.title).join(', ') || 'none selected'}`}>
       <small className={styles.capabilityLabel}>DECLARED ROLES</small>
       {capabilityBadges.map(badge=><span className={`${styles.capabilityBadge} ${badge.selected ? styles.capabilitySelected : styles.capabilityUnselected}`} key={badge.key}><strong>{badge.title}</strong><small>{badge.selected ? 'SELECTED' : 'NOT SELECTED'}</small></span>)}
     </div>
-    <div className={styles.assessmentInsight}>
+    {!isBasic && <div className={styles.assessmentInsight}>
       <small>VALU INDEX ASSESSMENT INSIGHT</small>
       <p className={styles.assessmentSummary}>{displayText(p.assessment_summary)}</p>
-    </div>
+    </div>}
     <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE</Link>
   </article>
 }
