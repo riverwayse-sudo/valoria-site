@@ -18,7 +18,7 @@ function isPublicProfileContentReady(row) {
     row.atb_id &&
     headline.length >= 8 &&
     !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
-    !/[\\u{1D400}-\\u{1D7FF}]/u.test(headline)
+    !/[\u{1D400}-\u{1D7FF}]/u.test(headline)
   )
 }
 
