@@ -300,9 +300,12 @@ export default function LoginPage() {
             Employer or organiser?{' '}
             <Link href="/signup" style={{ color: GOLD }}>Create account</Link>
           </p>
-          <p style={{ margin: 0 }}>
+          <p style={{ margin: '0 0 8px' }}>
             Talent or speaker?{' '}
             <a href="/valu/assessment/" style={{ color: GOLD }}>Take the VALU taster</a>
+          </p>
+          <p style={{ margin: 0, fontSize: '11px', color: 'rgba(247,244,238,.32)' }}>
+            Already completed a taster? Sign in with the same confirmed email address to reconnect your saved progress.
           </p>
         </div>
       </div>
