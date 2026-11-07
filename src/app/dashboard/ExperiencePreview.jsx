@@ -11,7 +11,7 @@ export default function DashboardExperiencePreview() {
         <Link href="/" className={styles.wordmark}>VALORIA <span>INSTITUTE</span></Link>
         <nav className={styles.nav} aria-label="Preview navigation">
           <Link href="/valu">VALU INDEX</Link>
-          <Link href="/marketplace">REGISTRY</Link>
+          <Link href="/marketplace">MARKETPLACE</Link>
           <Link href="/programmes">PROGRAMMES</Link>
         </nav>
         <span className={styles.memberLabel}>MEMBER WORKSPACE</span>
@@ -74,13 +74,13 @@ export default function DashboardExperiencePreview() {
 
           <article className={styles.panel}>
             <div className={styles.panelHead}><div><p className={styles.eyebrow}>OPPORTUNITY DISCOVERY</p><h2>Move from profile to possibility.</h2></div></div>
-            <p className={styles.panelIntro}>Explore the Registry and understand how professional capability is presented to employers, organisers and collaborators.</p>
+            <p className={styles.panelIntro}>Explore the Marketplace and understand how professional capability is presented to employers, organisers and collaborators.</p>
             <div className={styles.emptyState}>
               <span className={styles.emptyMark}>↗</span>
               <strong>Your opportunity feed will appear here.</strong>
               <small>Listings and recommendations require the relevant live platform data.</small>
             </div>
-            <Link href="/marketplace" className={styles.textAction}>EXPLORE THE REGISTRY <span>→</span></Link>
+            <Link href="/marketplace" className={styles.textAction}>EXPLORE THE MARKETPLACE <span>→</span></Link>
           </article>
         </section>
 
@@ -95,7 +95,7 @@ export default function DashboardExperiencePreview() {
             <p className={styles.eyebrow}>YOUR PROFESSIONAL RECORD</p>
             <h2>Make your experience visible.</h2>
             <p>Your profile will bring together your professional identity, selected capabilities and assessment-backed insight.</p>
-            <Link href="/marketplace" className={styles.textAction}>VIEW THE REGISTRY <span>→</span></Link>
+            <Link href="/marketplace" className={styles.textAction}>VIEW THE MARKETPLACE <span>→</span></Link>
           </article>
         </section>
 
