@@ -167,3 +167,24 @@ jobs:
           grep -Fq '.vi-nav .nav-dropdown' /tmp/valoria-css-bundle.css
           grep -Fq '.nav-mobile .nav-dropdown' /tmp/valoria-css-bundle.css
           grep -Fq 'text-align:left!important' /tmp/valoria-css-bundle.css
+
+          # The two identity/handoff APIs must pass the preview middleware and
+          # reject unauthenticated calls themselves; all other site APIs stay disabled.
+          status="$(curl -sS -o /tmp/valu-handoff-noauth -w '%{http_code}' "$base/api/valu-handoff")"
+          if [[ "$status" != "401" ]]; then
+            echo "Unauthenticated VALU handoff returned HTTP $status (expected 401)"
+            cat /tmp/valu-handoff-noauth || true
+            exit 1
+          fi
+          status="$(curl -sS -o /tmp/valu-link-taster-noauth -w '%{http_code}' -X POST "$base/api/link-taster" -H 'Content-Type: application/json' -d '{}')"
+          if [[ "$status" != "401" ]]; then
+            echo "Unauthenticated taster link returned HTTP $status (expected 401)"
+            cat /tmp/valu-link-taster-noauth || true
+            exit 1
+          fi
+          status="$(curl -sS -o /tmp/valu-opportunities-disabled -w '%{http_code}' "$base/api/opportunities")"
+          if [[ "$status" != "503" ]]; then
+            echo "Read-only staging opportunity API returned HTTP $status (expected 503)"
+            cat /tmp/valu-opportunities-disabled || true
+            exit 1
+          fi
