@@ -146,6 +146,9 @@ for (const { file } of negativeMargin) add(`${file}: negative margin detected; j
 // Parallax is a bounded visual layer, not a second animation system.
 const parallaxController = existing.find((x) => x.file === 'src/components/ParallaxController.jsx')?.text || '';
 const layout = existing.find((x) => x.file === 'src/app/layout.jsx')?.text || '';
+if (!layout.includes("left-alignment.css")) {
+  add('src/app/layout.jsx: site-wide left-alignment stylesheet must load after the legacy styles');
+}
 if (!layout.includes('ParallaxController') || !layout.includes('rootSelector="body"')) {
   add('src/app/layout.jsx: the shared parallax controller must be mounted once at the public-site root');
 }
