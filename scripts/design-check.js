@@ -121,16 +121,21 @@ for (const { file } of negativeMargin) add(`${file}: negative margin detected; j
 
 // Parallax is a bounded visual layer, not a second animation system.
 const parallaxController = existing.find((x) => x.file === 'src/components/ParallaxController.jsx')?.text || '';
-if (!page.includes('ParallaxController')) add('Homepage: parallax controller must be mounted on the public experience');
+const layout = existing.find((x) => x.file === 'src/app/layout.jsx')?.text || '';
+if (!layout.includes('ParallaxController') || !layout.includes('rootSelector="body"')) {
+  add('src/app/layout.jsx: the shared parallax controller must be mounted once at the public-site root');
+}
 if (!parallaxController.includes("prefers-reduced-motion: reduce") ||
     !parallaxController.includes('requestAnimationFrame') ||
     !parallaxController.includes('IntersectionObserver') ||
     !parallaxController.includes('MAX_PARALLAX_OFFSET') ||
-    !parallaxController.includes('previousOffset')) {
-  add('ParallaxController must respect reduced motion, schedule scroll work, observe visible layers and cap displacement');
+    !parallaxController.includes('previousOffset') ||
+    !parallaxController.includes('PAGE_ATMOSPHERE_SELECTOR')) {
+  add('ParallaxController must respect reduced motion, schedule scroll work, observe visible layers, support public-page atmospheres and cap displacement');
 }
-if (!motion.includes('[data-parallax-speed]') || !motion.includes('prefers-reduced-motion: reduce')) {
-  add('src/styles/motion.css: canonical parallax styles and reduced-motion fallback are required');
+if (!motion.includes('[data-parallax-speed]') || !motion.includes('prefers-reduced-motion: reduce') ||
+    !motion.includes('.page-hero::before') || !motion.includes('.valu-hero::before')) {
+  add('src/styles/motion.css: canonical parallax layers, public-page atmosphere and reduced-motion fallback are required');
 }
 const parallaxSources = existing.filter(({ file }) => ['src/app/page.jsx','src/components/HeroSlider.jsx'].includes(file));
 for (const { file, text } of parallaxSources) {
