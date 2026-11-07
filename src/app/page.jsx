@@ -73,6 +73,14 @@ const decisionPathways = [
     href: '/develop',
     cta: 'EXPLORE VALORIA DEVELOP',
   },
+  {
+    number: '04',
+    label: 'FOR FACILITATORS & EXPERTS',
+    title: 'Put your expertise to work.',
+    body: 'Make your facilitation and specialist expertise visible to organisations seeking people who can lead learning, dialogue and meaningful change.',
+    href: '/marketplace/facilitators',
+    cta: 'EXPLORE FACILITATOR PATHWAYS',
+  },
 ]
 
 export default function HomePage() {
@@ -138,7 +146,7 @@ export default function HomePage() {
           <div className="container">
             <Reveal className="home-section-heading">
               <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">BUILT AROUND YOUR DECISIONS</span></div>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FIVE WAYS TO ENGAGE.</span></div>
                 <h2 id="decision-pathways-title">Start with the outcome your organisation <em>needs.</em></h2>
               </div>
               <p>Whether you are sourcing talent, curating an event or building workforce capability, Valoria provides a clear route into the relevant part of the institution.</p>
@@ -172,7 +180,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="home-professional-entry" aria-labelledby="professional-entry-title">
+        <section className="home-professional-entry valu-section valu-conversion" aria-labelledby="professional-entry-title">
           <div className="container">
             <Reveal className="home-professional-entry-content">
               <div>
