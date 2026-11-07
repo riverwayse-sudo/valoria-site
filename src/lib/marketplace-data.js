@@ -11,7 +11,11 @@ const PLACEHOLDER_HEADLINES = new Set([
   'valoria professional',
 ])
 
-export function isPublicProfileContentReady(row) {
+export function isValidAtbId(value) {
+  return /^ATB-[A-Z0-9-]{4,40}$/i.test(String(value || '').trim())
+}
+
+function isPublicProfileContentReady(row) {
   const headline = String(row.headline || row.current_job_title || '').trim()
   const assessmentAccess = row.assessment_access
   const isValidAssessmentAccess = assessmentAccess === 'basic' || assessmentAccess === 'full'
@@ -20,7 +24,7 @@ export function isPublicProfileContentReady(row) {
   const fullAssessmentReady = assessmentAccess !== 'full' || (hasOfficialPoints && assessmentSummary.length >= 12)
   return Boolean(
     row.full_name &&
-    row.atb_id &&
+    isValidAtbId(row.atb_id) &&
     headline.length >= 8 &&
     !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
     !/[\u{1D400}-\u{1D7FF}]/u.test(headline) &&
