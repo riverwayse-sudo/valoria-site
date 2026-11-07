@@ -95,7 +95,9 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
     .select('id')
     .eq('professional_id', professionalId)
     .eq('acknowledgement_type', 'profile_submission')
-    .eq('acknowledgement_version', PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION)
+    .order('acknowledged_at', { ascending: false })
+    .order('created_at', { ascending: false })
+    .order('id', { ascending: false })
     .limit(1)
     .maybeSingle()
 
@@ -103,7 +105,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
     console.error('Public profile consent verification failed:', acknowledgementError)
     throw new Error('Public profile consent could not be verified.')
   }
-  if (!acknowledgement) return null
+  if (acknowledgement?.acknowledgement_version !== PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION) return null
 
   const { data: profile, error: profileError } = await admin
     .from('professional_profiles')
@@ -200,14 +202,24 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
     .select('professional_id')
     .in('professional_id', profiles.map(profile => profile.id))
     .eq('acknowledgement_type', 'profile_submission')
-    .eq('acknowledgement_version', PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION)
+    .order('acknowledged_at', { ascending: false })
+    .order('created_at', { ascending: false })
+    .order('id', { ascending: false })
 
   if (acknowledgementError) {
     console.error('Public profile sitemap consent query failed:', acknowledgementError)
     throw new Error('Public profile consent could not be verified.')
   }
 
-  const consented = new Set((acknowledgements || []).map(row => row.professional_id))
+  const latestAcknowledgements = new Map()
+  for (const acknowledgement of acknowledgements || []) {
+    if (!latestAcknowledgements.has(acknowledgement.professional_id)) {
+      latestAcknowledgements.set(acknowledgement.professional_id, acknowledgement.acknowledgement_version)
+    }
+  }
+  const consented = new Set([...latestAcknowledgements.entries()]
+    .filter(([, version]) => version === PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION)
+    .map(([professionalId]) => professionalId))
   return profiles.filter(profile => {
     const access = rosterById.get(profile.id)?.assessment_access
     const ready = access === 'full'
