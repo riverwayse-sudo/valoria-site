@@ -1,5 +1,5 @@
 name: Deploy Valoria site to isolated Cloudflare staging
-# Final roster integrity validation: verify duplicate-name review flags, premium profile preview and consent-gated listing.
+# Final roster integrity validation: verify duplicate-name review flags, premium profile preview and consent-gated listing. Queue deployments rather than interrupting an active staging rollout.
 
 on:
   pull_request:
@@ -30,7 +30,7 @@ permissions:
 
 concurrency:
   group: valoria-site-cloudflare-staging
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy-staging:
