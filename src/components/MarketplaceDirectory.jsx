@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { PRIME_CLUSTERS } from '@/lib/brand'
+import { PRIME_CLUSTERS, TIER_DESIGNATIONS } from '@/lib/brand'
 
 const TRACKS = [
   ['all','All', '/marketplace'],
@@ -16,6 +16,7 @@ const TRACKS = [
   ['facilitator','Facilitators','/marketplace/facilitators'],
 ]
 const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Mastery', E:'Enterprise' }
+const SCORE_BANDS = TIER_DESIGNATIONS.filter(tier => tier.min >= 35).map(tier => ({ name:tier.name, min:tier.min, max:tier.max }))
 
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
@@ -28,6 +29,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
   const [sector,setSector] = useState('')
   const [cluster,setCluster] = useState('')
   const [skill,setSkill] = useState('')
+  const [scoreBand,setScoreBand] = useState('')
 
   useEffect(() => {
     const refreshWhenVisible = () => {
@@ -52,12 +54,17 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       if(sector && displayText(p.industry) !== sector) return false
       if(cluster && !Number.isFinite(Number(p.cluster_scores?.[cluster]))) return false
       if(skill && !labelValues(p.skills).some(v=>v.toLowerCase()===skill.toLowerCase())) return false
+      if(scoreBand) {
+        const band = SCORE_BANDS.find(item => item.name === scoreBand)
+        const points = Number(p.valu_index)
+        if (!band || p.assessment_access !== 'full' || !Number.isFinite(points) || points < band.min || points > band.max) return false
+      }
       if(!q) return true
       return [p.full_name,p.headline,p.current_job_title,p.atb_id,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
     })
-  },[rows,activeTrack,query,sector,cluster,skill])
+  },[rows,activeTrack,query,sector,cluster,skill,scoreBand])
 
-  const clearFilters = () => { setQuery(''); setSector(''); setCluster(''); setSkill('') }
+  const clearFilters = () => { setQuery(''); setSector(''); setCluster(''); setSkill(''); setScoreBand('') }
 
   return <div className={styles.page}>
     <Nav />
@@ -92,13 +99,17 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             <option value="">All declared skills</option>
             {skills.map(value=><option key={value} value={value}>{value}</option>)}
           </select>
+          <select value={scoreBand} onChange={e=>setScoreBand(e.target.value)} aria-label="Filter by VALU points band">
+            <option value="">All VALU points</option>
+            {SCORE_BANDS.map(value=><option key={value.name} value={value.name}>{value.name} · {value.min}–{value.max} points</option>)}
+          </select>
           <select value={sector} onChange={e=>setSector(e.target.value)} aria-label="Filter by sector">
             <option value="">All sectors</option>
             {sectors.map(value=><option key={value} value={value}>{value}</option>)}
           </select>
-          {(query || sector || cluster || skill) && <button onClick={clearFilters}>CLEAR</button>}
+          {(query || sector || cluster || skill || scoreBand) && <button onClick={clearFilters}>CLEAR</button>}
         </div>
-        <p className={styles.filterNote}>Filter by declared role, PRIME cluster, declared skill and sector. Seniority is not currently included in the public roster; private work-history data is not inferred or exposed as a filter.</p>
+        <p className={styles.filterNote}>Filter by declared role, PRIME cluster, declared skill, sector and VALU points band. Seniority is not currently included because no approved public seniority field exists; private work-history data is not inferred or exposed as a filter.</p>
       </section>
       <section className={styles.directory}>
         <div className={styles.container}>
