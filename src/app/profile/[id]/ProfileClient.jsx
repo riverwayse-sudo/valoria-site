@@ -228,7 +228,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
     })
 
     return () => { cancelled = true }
-  }, [id, initialProfile, previewUnavailable, profileContentNotReady]
+  }, [id, initialProfile, previewUnavailable, profileContentNotReady])
 
   function copyLink() {
     if (typeof window === 'undefined') return
