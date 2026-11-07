@@ -74,7 +74,7 @@ export async function getMarketplaceRows(track = 'all') {
       row.atb_id &&
       headline.length >= 8 &&
       !placeholderHeadlines.has(normalizedHeadline) &&
-      !/[\\u{1D400}-\\u{1D7FF}]/u.test(headline)
+      !/[\u{1D400}-\u{1D7FF}]/u.test(headline)
     )
   })
   return publicReadyRows.filter(row => track === 'all' || row.capabilities.includes(normalizeTrack(track)))
