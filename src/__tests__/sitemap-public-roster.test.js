@@ -32,6 +32,6 @@ describe('staging crawler isolation', () => {
     const robots = read('src/app/robots.js')
     expect(robots).toContain("process.env.VALU_PREVIEW === '1'")
     expect(robots).toContain("disallow: '/'")
-    expect(robots).toContain("https://valoriainstitute.com/sitemap.xml")
+    expect(robots).toContain('sitemap: `${SITE_URL}/sitemap.xml`')
   })
 })
