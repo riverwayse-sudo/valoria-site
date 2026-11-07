@@ -116,7 +116,7 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
                   <textarea required value={form.message} onChange={e => set('message', e.target.value)} placeholder="What would you like to discuss?" rows={3} style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }} />
                   <label style={{ display:'flex', alignItems:'flex-start', gap:'9px', color:DIM, fontSize:'11px', lineHeight:1.6, marginTop:'2px' }}>
                     <input type="checkbox" required checked={form.privacy_consent} onChange={e => set('privacy_consent', e.target.checked)} style={{ marginTop:'2px', accentColor:GOLD, flexShrink:0 }} />
-                    <span>I have read the <Link href="/privacypolicy" target="_blank" style={{color:GOLD,textDecoration:'underline'}}>Privacy Notice</Link> and agree that Valoria Institute may use these details to review and respond to this enquiry.</span>
+                    <span>I have read the <Link href="/privacypolicy" style={{color:GOLD,textDecoration:'underline'}}>Privacy Notice</Link> and agree that Valoria Institute may use these details to review and respond to this enquiry.</span>
                   </label>
                   {error && <div style={{ fontSize: '12px', color: '#D85A30' }}>{error}</div>}
                   <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
