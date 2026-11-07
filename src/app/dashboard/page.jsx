@@ -273,7 +273,7 @@ export default function DashboardPage() {
     { label:'Industry',   value: p.industry || '—' },
     { label:'Experience', value: p.years_experience || p.experience_years ? `${p.years_experience || p.experience_years} yrs` : '—' },
     { label: compLabel,   value: compensation || '—' },
-    { label:'VALU Index', value: p.valu_index != null ? `${p.valu_index} / 100` : 'Not assessed', href: p.valu_index != null ? '#valu-card' : null },
+    { label:'VALU Index', value: p.valu_index != null ? `${p.valu_index} points` : 'Not assessed', href: p.valu_index != null ? '#valu-card' : null },
     { label:'Profile Views', value: profileViewCount != null ? String(profileViewCount) : '—' },
   ] : []
 
