@@ -21,7 +21,7 @@ export default function HeroSlider() {
                 who gets <em>seen.</em>
               </h1>
               <p className="hero-sub">
-                Valoria helps professionals understand their capabilities, build a stronger professional presence and connect with opportunities where their expertise can make a difference.
+                PRIME provides the standard. VALU expresses capability in points. Valoria builds the room where African professional expertise can be understood by employers, event organisers and training buyers.
               </p>
               <div className="hero-actions">
                 <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">
