@@ -9,7 +9,7 @@ describe('VALU presentation consistency', () => {
   test('homepage introduces the VALU taster without exposing internal question counts', () => {
     const home = read('src/app/page.jsx')
     expect(home).toContain('TAKE THE VALU TASTER')
-    expect(home).not.toMatch(/\\b(?:9|58)\\s+(?:QUESTION|QUESTIONS)/i)
+    expect(home).not.toMatch(/\b(?:9|58)\s+(?:QUESTION|QUESTIONS)/i)
     expect(home).not.toContain('54 scored questions')
   })
 
