@@ -17,6 +17,7 @@ export default function PublicMarketplaceVisibility() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
+  const [hidden, setHidden] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -29,6 +30,7 @@ export default function PublicMarketplaceVisibility() {
           cache: 'no-store',
         })
         const data = await response.json().catch(() => ({}))
+        if (response.status === 403) { if (active) setHidden(true); return }
         if (!response.ok) throw new Error(data.error || 'Could not load your visibility preference.')
         if (!active) return
         setSelected(data.consented === true)
@@ -70,6 +72,8 @@ export default function PublicMarketplaceVisibility() {
     }
   }
 
+  if (hidden) return null
+
   const changed = selected !== saved
   const statusText = saved
     ? listingStatus === 'listed' && eligible
@@ -78,7 +82,7 @@ export default function PublicMarketplaceVisibility() {
     : 'Your profile is not approved for public marketplace display. Registered-only access remains in place.'
 
   return (
-    <section style={{ background:DARK, border:'1px solid rgba(201,168,76,.24)', padding:'22px 22px 20px', marginBottom:22 }}>
+    <section id="marketplace-visibility" style={{ background:DARK, border:'1px solid rgba(201,168,76,.24)', padding:'22px 22px 20px', marginBottom:22 }}>
       <div style={{ display:'flex', alignItems:'center', gap:9, marginBottom:10 }}>
         <span aria-hidden="true" style={{ width:7, height:7, borderRadius:'50%', background:GOLD, boxShadow:'0 0 0 4px rgba(201,168,76,.12)' }}/>
         <span style={{ color:GOLD, fontSize:9, fontWeight:800, letterSpacing:'.17em' }}>MARKETPLACE VISIBILITY</span>
