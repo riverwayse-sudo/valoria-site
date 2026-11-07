@@ -86,5 +86,5 @@ Public website copy deliberately avoids assessment question counts and validity-
 - Latest completed site unit tests, static checks, validation and secret scan passed.
 - Latest completed platform unit tests, production build, secret scan, environment parity and Cloudflare checks passed.
 - The newest site build and Cloudflare Worker checks must be green before the branch is described as fully validated.
-- Both PRs remain open. No merge or production deployment is claimed.
+- Both PRs remain open. No merge or production deployment is claimed.\n- A fresh Vercel preview for the latest code commit could not be created: the Vercel Hobby team's free deployment quota is exhausted for 24 hours. The newest existing READY preview is behind the latest code and should not be used for final approval. Preview deployments are also SSO-protected on the current project settings.
 - Do not release until methodology/copy/legal approvals are obtained, the consent-aware RLS migration is coordinated, and the full assessment-to-dashboard-to-profile journey is tested.
