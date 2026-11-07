@@ -587,7 +587,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     const terms = read('src/app/terms-of-use/page.jsx')
     const privacy = read('src/app/privacypolicy/page.jsx')
     expect(terms).toContain('a professional who has completed and linked a VALU taster may be represented in the Basic tier')
-    expect(terms).toContain('Tier assignment is not, by itself, public visibility')
+    expect(terms).toContain('A tier assignment is not, by itself, public visibility')
     expect(terms).toContain('Full VALU Index assessment')
     expect(terms).not.toContain('professionals who score 35 or above')
     expect(privacy).toContain('Google Analytics')
