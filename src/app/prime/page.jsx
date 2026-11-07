@@ -87,7 +87,7 @@ export default function PrimePage() {
         </section>
         <section className="page-section alt cta-banner">
           <Reveal>
-            <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">WORTH. BUILT.</span><div className="eyebrow-line" /></div>
+            <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">WORTH, BUILT.</span><div className="eyebrow-line" /></div>
             <h2 className="section-title">Take the taster.<br /><em>See your first signal.</em></h2>
             <div className="page-hero-actions eyebrow-center">
               <a href="/valu/assessment/" className="btn-gold">TAKE THE VALU TASTER</a>
