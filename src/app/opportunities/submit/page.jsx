@@ -65,6 +65,7 @@ export default function SubmitOpportunity() {
       const result = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(result.error || 'Could not submit the opportunity.')
       setSent(true)
+      window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'buyer_opportunity_submission', params: { opportunity_type: form.opportunity_type || 'unspecified', capability_count: form.capabilities.length } } }))
     } catch (err) {
       setError(err.message || 'Could not submit the opportunity.')
     } finally {
