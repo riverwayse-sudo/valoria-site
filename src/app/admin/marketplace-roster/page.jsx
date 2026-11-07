@@ -48,6 +48,7 @@ export default function AdminMarketplaceRosterPage() {
   const basicCount = candidates.filter(p => p.assessment_access === 'basic').length
   const publicReadyCount = candidates.filter(p => p.public_ready).length
   const identityReviewCount = candidates.filter(p => p.identity_review_required).length
+  const atbIdReviewCount = candidates.filter(p => p.atb_id_review_required).length
 
   return (
     <main style={{ minHeight:'100vh', background:'#F7F4EE', color:DARK, padding:'30px clamp(18px,4vw,48px) 70px', fontFamily:'Raleway,Arial,sans-serif' }}>
@@ -69,6 +70,7 @@ export default function AdminMarketplaceRosterPage() {
             ['BASIC · TASTER', basicCount],
             ['PUBLICLY READY', publicReadyCount],
             ['IDENTITY REVIEW', identityReviewCount],
+            ['ATB ID REVIEW', atbIdReviewCount],
           ].map(([label,value])=><div key={label} style={{ padding:'18px 20px', border:'1px solid rgba(26,26,46,.12)', background:'#FFFEFC' }}>
             <div style={{ color:'#8B702B', fontSize:8, fontWeight:800, letterSpacing:'.16em' }}>{label}</div>
             <div style={{ marginTop:8, color:DARK, fontSize:30, fontWeight:600, fontVariantNumeric:'tabular-nums' }}>{value}</div>
@@ -93,7 +95,7 @@ export default function AdminMarketplaceRosterPage() {
           {filtered.map(profile => {
             const full = profile.assessment_access === 'full'
             const tier = full ? getValuTier(Number(profile.valu_points), 'full') : null
-            const state = profile.identity_review_required ? 'IDENTITY REVIEW REQUIRED' : profile.public_ready ? 'PUBLICLY READY' : !profile.public_consent ? 'CONSENT NOT RECORDED' : profile.visibility !== 'public' ? 'REGISTERED-ONLY' : 'LISTING CHECKS PENDING'
+            const state = profile.identity_review_required ? 'IDENTITY REVIEW REQUIRED' : profile.atb_id_review_required ? 'ATB ID REVIEW REQUIRED' : profile.public_ready ? 'PUBLICLY READY' : !profile.public_consent ? 'CONSENT NOT RECORDED' : profile.visibility !== 'public' ? 'REGISTERED-ONLY' : 'LISTING CHECKS PENDING'
             return <article key={profile.id} style={{ display:'grid', gridTemplateColumns:'minmax(0,1fr) minmax(230px,.58fr)', gap:20, padding:'22px 24px', border:'1px solid rgba(26,26,46,.12)', background:'#FFFEFC' }}>
               <div>
                 <div style={{ display:'flex', alignItems:'baseline', gap:10, flexWrap:'wrap' }}>
@@ -110,6 +112,7 @@ export default function AdminMarketplaceRosterPage() {
                   {(profile.capability_labels||[]).map(label=><span key={label} style={tagStyle}>{label}</span>)}
                 </div>
                 {profile.identity_review_required && <div role="note" style={{ marginTop:12, padding:10, borderLeft:'3px solid #9A6A32', background:'rgba(154,106,50,.08)', color:'#805823', fontSize:10, lineHeight:1.65 }}>{profile.identity_review_reason || 'Confirm whether another account with this name is a separate person before publication.'}</div>}
+                {profile.atb_id_review_required && <div role="note" style={{ marginTop:12, padding:10, borderLeft:'3px solid #B34F3C', background:'rgba(179,79,60,.07)', color:'#913D30', fontSize:10, lineHeight:1.65 }}>{profile.atb_id_review_reason || 'Correct the ATB ID before public publication.'}</div>}
                 {full && (profile.capability_issues||[]).length>0 && <div style={{ marginTop:12, color:'#9A6A32', fontSize:10, lineHeight:1.65 }}>
                   <strong style={{ letterSpacing:'.08em' }}>FULL CAPABILITY CHECKS PENDING:</strong> {profile.capability_issues.join(' · ')}
                 </div>}
