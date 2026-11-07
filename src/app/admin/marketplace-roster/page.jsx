@@ -23,7 +23,7 @@ export default function AdminMarketplaceRosterPage() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) throw new Error('Please sign in with an administrator account.')
       const response = await fetch('/api/admin/marketplace-roster', {
-        headers: { Authorization: \`Bearer \${session.access_token}\` },
+        headers: { Authorization: `Bearer ${session.access_token}` },
         cache: 'no-store',
       })
       const data = await response.json().catch(() => ({}))
@@ -41,7 +41,7 @@ export default function AdminMarketplaceRosterPage() {
   const filtered = useMemo(() => {
     const q = search.trim().toLocaleLowerCase('en')
     if (!q) return candidates
-    return candidates.filter(p => \`\${p.display_name || ''} \${p.account_name || ''} \${p.atb_id || ''}\`.toLocaleLowerCase('en').includes(q))
+    return candidates.filter(p => `${p.display_name || ''} ${p.account_name || ''} ${p.atb_id || ''}`.toLocaleLowerCase('en').includes(q))
   }, [candidates, search])
 
   const fullCount = candidates.filter(p => p.assessment_access === 'full').length
@@ -115,7 +115,7 @@ export default function AdminMarketplaceRosterPage() {
                 <span style={{...tagStyle,color:profile.public_ready?'#527A61':'#9A6A32'}}>{state}</span>
                 <span style={{ color:MUTED, fontSize:10 }}>Listing: {profile.listing_status} · Visibility: {profile.visibility}</span>
                 <span style={{ color:MUTED, fontSize:10 }}>Public permission: {profile.public_consent?'Recorded':'Not recorded'}</span>
-                <Link href={\`/profile/\${profile.id}\`} style={{ marginTop:4, color:'#8B702B', fontSize:9, fontWeight:800, letterSpacing:'.12em', textDecoration:'none' }}>REVIEW PROFILE ↗</Link>
+                <Link href={`/profile/${profile.id}`} style={{ marginTop:4, color:'#8B702B', fontSize:9, fontWeight:800, letterSpacing:'.12em', textDecoration:'none' }}>REVIEW PROFILE ↗</Link>
               </div>
             </article>
           })}
