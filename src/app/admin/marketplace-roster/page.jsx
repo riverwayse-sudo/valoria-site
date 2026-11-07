@@ -47,6 +47,7 @@ export default function AdminMarketplaceRosterPage() {
   const fullCount = candidates.filter(p => p.assessment_access === 'full').length
   const basicCount = candidates.filter(p => p.assessment_access === 'basic').length
   const publicReadyCount = candidates.filter(p => p.public_ready).length
+  const identityReviewCount = candidates.filter(p => p.identity_review_required).length
 
   return (
     <main style={{ minHeight:'100vh', background:'#F7F4EE', color:DARK, padding:'30px clamp(18px,4vw,48px) 70px', fontFamily:'Raleway,Arial,sans-serif' }}>
@@ -56,7 +57,7 @@ export default function AdminMarketplaceRosterPage() {
             <Link href="/admin" style={{ color:'#8B702B', fontSize:10, fontWeight:800, letterSpacing:'.14em', textDecoration:'none' }}>← ADMINISTRATION</Link>
             <p style={{ margin:'18px 0 8px', color:'#8B702B', fontSize:9, fontWeight:800, letterSpacing:'.2em' }}>INTERNAL CONTROL · NOT PUBLIC</p>
             <h1 style={{ margin:0, fontSize:'clamp(28px,4vw,42px)', fontWeight:700, letterSpacing:'-.04em' }}>Marketplace roster readiness</h1>
-            <p style={{ maxWidth:720, margin:'12px 0 0', color:'#686879', fontSize:13, lineHeight:1.75 }}>Assessment-linked, non-test professional accounts with aligned account and profile names. This page is an internal review tool; it does not publish profiles or bypass consent and eligibility controls.</p>
+            <p style={{ maxWidth:720, margin:'12px 0 0', color:'#686879', fontSize:13, lineHeight:1.75 }}>Assessment-linked, non-test professional accounts with verified account ownership. Same-name records are flagged for manual identity review. This page does not publish profiles or bypass consent and eligibility controls.</p>
           </div>
           <button type="button" onClick={load} disabled={loading} style={{ minHeight:42, padding:'0 18px', border:'1px solid '+DARK, background:DARK, color:PARCHMENT, fontSize:9, fontWeight:800, letterSpacing:'.13em', cursor:loading?'wait':'pointer' }}>{loading?'REFRESHING…':'REFRESH ROSTER'}</button>
         </div>
@@ -67,6 +68,7 @@ export default function AdminMarketplaceRosterPage() {
             ['FULL ASSESSMENT', fullCount],
             ['BASIC · TASTER', basicCount],
             ['PUBLICLY READY', publicReadyCount],
+            ['IDENTITY REVIEW', identityReviewCount],
           ].map(([label,value])=><div key={label} style={{ padding:'18px 20px', border:'1px solid rgba(26,26,46,.12)', background:'#FFFEFC' }}>
             <div style={{ color:'#8B702B', fontSize:8, fontWeight:800, letterSpacing:'.16em' }}>{label}</div>
             <div style={{ marginTop:8, color:DARK, fontSize:30, fontWeight:600, fontVariantNumeric:'tabular-nums' }}>{value}</div>
@@ -91,7 +93,7 @@ export default function AdminMarketplaceRosterPage() {
           {filtered.map(profile => {
             const full = profile.assessment_access === 'full'
             const tier = full ? getValuTier(Number(profile.valu_points), 'full') : null
-            const state = profile.public_ready ? 'PUBLICLY READY' : !profile.public_consent ? 'CONSENT NOT RECORDED' : profile.visibility !== 'public' ? 'REGISTERED-ONLY' : 'LISTING CHECKS PENDING'
+            const state = profile.identity_review_required ? 'IDENTITY REVIEW REQUIRED' : profile.public_ready ? 'PUBLICLY READY' : !profile.public_consent ? 'CONSENT NOT RECORDED' : profile.visibility !== 'public' ? 'REGISTERED-ONLY' : 'LISTING CHECKS PENDING'
             return <article key={profile.id} style={{ display:'grid', gridTemplateColumns:'minmax(0,1fr) minmax(230px,.58fr)', gap:20, padding:'22px 24px', border:'1px solid rgba(26,26,46,.12)', background:'#FFFEFC' }}>
               <div>
                 <div style={{ display:'flex', alignItems:'baseline', gap:10, flexWrap:'wrap' }}>
@@ -107,6 +109,7 @@ export default function AdminMarketplaceRosterPage() {
                   <span style={tagStyle}>{profile.profile_complete?'PROFILE COMPLETE':'PROFILE INCOMPLETE'}</span>
                   {(profile.capability_labels||[]).map(label=><span key={label} style={tagStyle}>{label}</span>)}
                 </div>
+                {profile.identity_review_required && <div role="note" style={{ marginTop:12, padding:10, borderLeft:'3px solid #9A6A32', background:'rgba(154,106,50,.08)', color:'#805823', fontSize:10, lineHeight:1.65 }}>{profile.identity_review_reason || 'Confirm whether another account with this name is a separate person before publication.'}</div>}
                 {full && (profile.capability_issues||[]).length>0 && <div style={{ marginTop:12, color:'#9A6A32', fontSize:10, lineHeight:1.65 }}>
                   <strong style={{ letterSpacing:'.08em' }}>FULL CAPABILITY CHECKS PENDING:</strong> {profile.capability_issues.join(' · ')}
                 </div>}
