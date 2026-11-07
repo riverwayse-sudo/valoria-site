@@ -47,6 +47,7 @@ as $$
         (
           roster.assessment_access = 'full'
           and cardinality(coalesce(roster.capabilities, '{}'::text[])) > 0
+          and profile.valu_index >= 35
           and roster.assessment_summary is not null
           and length(btrim(roster.assessment_summary)) >= 12
           and profile.profile_complete is true
