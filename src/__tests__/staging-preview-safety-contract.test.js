@@ -40,7 +40,7 @@ describe('staging preview safety boundary', () => {
   test('preview navigation, journey cards, and reminders do not query account data', () => {
     expect(read('src/components/Nav.jsx')).toContain("if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') { setUser(null); setAuthChecked(true); return }")
     expect(read('src/components/ValoriaJourneyCards.jsx')).toContain("if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') { setLoading(false); return }")
-    expect(read('src/components/ValuCompletionNudge.jsx')).toContain("if(process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') return")
+    expect(read('src/components/ValuCompletionNudge.jsx')).toContain("if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') return")
   })
 
   test('read-only preview never queries the live public roster or lists member profile URLs', () => {

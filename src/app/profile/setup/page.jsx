@@ -3,6 +3,8 @@ import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { AssessmentStartLink } from '@/components/Nav'
+import PublicMarketplaceVisibility from '@/components/PublicMarketplaceVisibility'
 import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
 
 import {
@@ -60,7 +62,7 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   // since a bare "which industry do you know best" reads as ambiguous next
   // to the preferred-industry question right after it.
   s.push({ key:'industry', kind:'industry-pair', section:'Profile', title:'Which industry are you in?', options:INDUSTRIES, required:true })
-  s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your name stays private — it\u2019s only shared once Valoria facilitates an introduction.', placeholder:'Your full professional name', required:true })
+  s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your professional name is displayed according to your marketplace visibility choice. Your contact details remain private and are shared only through Valoria-facilitated introductions.', placeholder:'Your full professional name', required:true })
   s.push({ key:'username', kind:'text', section:'Profile', title:'Choose a username.', sub:'This is how you\u2019ll be identified on Valoria. Letters, numbers, dots, underscores or hyphens — no spaces.', placeholder:'e.g. chioma_adeyemi', required:true, validator:'username' })
   s.push({ key:'phone', kind:'text', section:'Profile', inputType:'tel', title:'What\u2019s your phone number?', sub:'Kept private — only shared once Valoria facilitates an introduction.', placeholder:'+234 801 234 5678', required:true, validator:'phone' })
   s.push({ key:'current_job_title', kind:'text', section:'Profile', title:'What\u2019s your current job title?', sub:'Your actual title — this stays factual and separate from your headline below.', placeholder:'e.g. Senior Product Manager', required:true })
@@ -149,6 +151,8 @@ function ProfileSetupForm() {
   const [cvError, setCvError] = useState('')
   const [editingTracks, setEditingTracks] = useState(false)
   const [submittedInfo, setSubmittedInfo] = useState(null)
+  const [tasterCompleted, setTasterCompleted] = useState(false)
+  const [tasterStarted, setTasterStarted] = useState(false)
   const [autoSaveStatus, setAutoSaveStatus] = useState('saved')
   const hydratedRef = useRef(false)
   const autoSaveTimerRef = useRef(null)
@@ -198,11 +202,12 @@ function ProfileSetupForm() {
       // Prefill from an existing row so this page also serves as "edit" —
       // previously it only ever started blank, even for someone who'd
       // already completed setup and just wanted to change one field.
-      const { data: existing } = await supabase
-        .from('professional_profiles')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle()
+      const [{ data: existing }, { data: latestTaster }] = await Promise.all([
+        supabase.from('professional_profiles').select('*').eq('id', user.id).maybeSingle(),
+        supabase.from('taster_sessions').select('id,completed_at,created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).maybeSingle(),
+      ])
+      setTasterCompleted(!!latestTaster?.completed_at)
+      setTasterStarted(!!latestTaster?.id && !latestTaster?.completed_at)
 
       if (existing) {
         hadExistingTracksRef.current = (existing.active_tracks || []).length > 0
@@ -484,7 +489,7 @@ function ProfileSetupForm() {
     // redirected silently with no confirmation of any kind.
     const { data: row } = await supabase
       .from('professional_profiles')
-      .select('atb_id, listing_status, profile_complete')
+      .select('atb_id, listing_status, visibility, profile_complete')
       .eq('id', user.id)
       .maybeSingle()
     if (!row?.profile_complete) {
@@ -493,7 +498,7 @@ function ProfileSetupForm() {
       return
     }
     setSaving(false)
-    setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: row?.listing_status || 'pending' })
+    setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: row?.listing_status || 'pending', visibility: row?.visibility || 'registered_only' })
   }
 
   async function handleSaveExit() {
@@ -528,7 +533,7 @@ function ProfileSetupForm() {
           <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'28px', textAlign:'left' }}>
             <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>WHAT HAPPENS NEXT</div>
             <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.8, margin:0 }}>
-              Status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? 'Listed' : 'Not yet listed'}</strong>. Complete the full VALU assessment, keep your professional profile complete and meet the relevant capability gates. A current VALU Index score of 35 points or above is required for marketplace eligibility.
+              Status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? (submittedInfo.visibility === 'public' ? 'Public listing' : 'Registered-only listing') : 'Not yet listed'}</strong>. Basic marketplace access can follow a completed VALU taster. Full marketplace access requires a current Full VALU Index score of at least 35 points, a complete profile and the relevant capability checks. Public display also requires your explicit permission.
             </p>
           </div>
 
@@ -1037,7 +1042,7 @@ function ScreenBody(props) {
     }
 
     case 'review': {
-      return <ReviewScreen {...props} tags={tags} videoLinks={videoLinks} handleFinish={handleFinish} onChangeTracks={onChangeTracks} />
+      return <ReviewScreen {...props} tags={tags} videoLinks={videoLinks} handleFinish={handleFinish} onChangeTracks={onChangeTracks} tasterCompleted={tasterCompleted} tasterStarted={tasterStarted} />
     }
 
     default:
@@ -1045,7 +1050,7 @@ function ScreenBody(props) {
   }
 }
 
-function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, videoLinks, handleFinish, saving, saveError, set, onChangeTracks }) {
+function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, videoLinks, handleFinish, saving, saveError, set, onChangeTracks, tasterCompleted, tasterStarted }) {
   return (
     <div>
       <Title>Review &amp;<br/><Em>submit.</Em></Title>
@@ -1109,26 +1114,32 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
           </p>
           <p style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.6, margin:0 }}>
             {Number(form.valu_index) >= 35
-              ? 'You\u2019re eligible for marketplace listing once this profile is reviewed.'
-              : 'Your completed VALU assessment keeps your marketplace listing active. Build out your profile to unlock more of what Valoria can make available to you.'}
+              ? 'Your Full VALU Index score meets the 35-point threshold for Full marketplace eligibility, subject to profile and capability checks.'
+              : 'This Full VALU Index score is below the 35-point threshold for Full marketplace eligibility. Basic marketplace access is a separate pathway based on the completed VALU taster.'}
           </p>
         </div>
       ) : (
         <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
-          <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — VALU INDEX ASSESSMENT</div>
+          <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — YOUR VALU PATHWAY</div>
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
-            Your profile is not yet listed because the full VALU assessment is not complete. Complete VALU and you will be listed first; completing your professional profile then unlocks additional visibility and opportunities.
+            {tasterCompleted
+              ? 'Your completed VALU taster can qualify you for Basic marketplace access. The Full VALU Index is a separate assessment for official points and a merit tier; it is not required for the Basic pathway.'
+              : tasterStarted
+                ? 'Your VALU taster is in progress. Continue it to complete the Basic marketplace entry pathway. The Full VALU Index is a separate assessment for official points and a merit tier.'
+                : 'Start with the VALU taster. Completing it can qualify you for Basic marketplace access. The Full VALU Index is a separate assessment for official points and a merit tier.'}
           </p>
-          <a href="https://valoriainstitute.com/valu/assessment/" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
-            COMPLETE THE FULL VALU ASSESSMENT →
-          </a>
+          {!tasterCompleted && <AssessmentStartLink href="/valu/assessment/" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
+            {tasterStarted ? 'CONTINUE THE VALU TASTER →' : 'START THE VALU TASTER →'}
+          </AssessmentStartLink>}
         </div>
       )}
+
+      <PublicMarketplaceVisibility />
 
       <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'28px' }}>
         <input type="checkbox" checked={form.consent} onChange={e => set('consent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
         <span style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7 }}>
-          I confirm all information provided is accurate. I understand that completing VALU establishes my marketplace listing, while completing my professional profile unlocks additional visibility and opportunities.
+          I confirm all information provided is accurate. I understand that marketplace access depends on the relevant assessment, profile and capability requirements, and that public display requires the separate visibility permission above.
         </span>
       </label>
 

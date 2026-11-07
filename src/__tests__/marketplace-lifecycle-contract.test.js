@@ -119,7 +119,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).not.toContain(".from('professional_capabilities')")
     expect(source).toContain('if (saved) router.push(\'/dashboard\')')
     const capabilitySync = source.indexOf("fetch('/api/profile/capabilities'")
-    const completionRead = source.indexOf(".select('atb_id, listing_status, profile_complete')")
+    const completionRead = source.indexOf(".select('atb_id, listing_status, visibility, profile_complete')")
     expect(capabilitySync).toBeGreaterThan(-1)
     expect(completionRead).toBeGreaterThan(capabilitySync)
     expect(source).not.toContain("update({ profile_complete: true")
@@ -130,7 +130,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain("key:'photo_url', kind:'photo'")
     expect(source).toContain('sub:\'Optional. Valoria uses a professional default avatar')
     expect(source).toContain('required:false })')
-    expect(source).toContain(".select('atb_id, listing_status, profile_complete')")
+    expect(source).toContain(".select('atb_id, listing_status, visibility, profile_complete')")
     expect(source).toContain('if (!row?.profile_complete)')
   })
 
@@ -270,17 +270,17 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(reminders).not.toContain('CONTINUE TO QUESTION 10')
   })
 
-  test('Marketplace cards show VALU points beside the profile identity and all five designations', () => {
+  test('Marketplace cards show VALU points beside the profile identity and all four merit tiers', () => {
     const brand = read('src/lib/brand.js')
     const directory = read('src/components/MarketplaceDirectory.jsx')
     const styles = read('src/components/MarketplaceDirectory.module.css')
-    expect(brand).toContain("name: 'At the Starting Point'")
-    expect(brand).toContain('min: 0, max: 34')
+    expect(brand).toContain("name: 'Standard'")
+    expect(brand).toContain('min: 35, max: 54')
     expect(directory).toContain('className={styles.valu}')
     expect(directory).toContain('FULL ASSESSMENT COMPLETE')
     expect(directory).toContain('CAPABILITY SELECTION')
     expect(directory).not.toContain('tier.stars')
-    expect(styles).toContain('.atStartingPoint')
+    expect(styles).toContain('.standard')
   })
 
   test('marketplace queries exclude registered-only and test profiles', () => {

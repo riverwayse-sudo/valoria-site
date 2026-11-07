@@ -486,7 +486,7 @@ describe('journey integrity contract', () => {
     expect(cards).toContain('Authorization: `Bearer ${session.access_token}`')
     expect(dashboard).toContain('START / CONTINUE YOUR FULL ASSESSMENT')
     expect(dashboard).toContain('dashboardOnly')
-    expect(nudge).toContain('START / CONTINUE VALU JOURNEY')
+    expect(nudge).toContain('START THE VALU TASTER')
     expect(nudge).toContain('AssessmentStartLink')
     expect(nudge).not.toContain('dashboardOnly')
   })
