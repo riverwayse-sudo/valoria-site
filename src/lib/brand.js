@@ -33,7 +33,7 @@ export const PRIME_CLUSTERS = [
 export const VALU_SCORE = {
   unit: 'points',
   maximum: 100,
-  displaySuffix: '/100',
+  displaySuffix: 'points',
 }
 
 export const MARKETPLACE_ACCESS_LEVELS = {
