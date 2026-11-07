@@ -90,4 +90,22 @@ describe('Valoria SEO and discovery foundation', () => {
     expect(read('src/app/sitemap.js')).toContain("path: '/jobs'")
     expect(read('next.config.js')).not.toContain("source: '/jobs'")
   })
+  test('profile onboarding separates accuracy confirmation from optional public listing consent', () => {
+    const setup = read('src/app/profile/setup/page.jsx')
+    expect(setup).toContain('accuracyConfirmed')
+    expect(setup).toContain('marketplacePublicConsent')
+    expect(setup).toContain("supabase.rpc('set_marketplace_public_listing_consent'")
+    expect(setup).toContain('Public listing is optional.')
+    expect(setup).not.toContain('completing VALU establishes my marketplace listing')
+    expect(read('src/lib/marketplace-consent.js')).toContain('I agree to make my professional profile visible')
+  })
+
+  test('members can withdraw public Marketplace visibility from Edit Profile', () => {
+    const edit = read('src/app/profile/edit/page.jsx')
+    expect(edit).toContain("supabase.rpc('set_marketplace_public_listing_consent'")
+    expect(edit).toContain('Make profile private')
+    expect(edit).toContain('Make profile public')
+    expect(edit).toContain('MARKETPLACE_CONSENT_TEXT')
+  })
+
 })
