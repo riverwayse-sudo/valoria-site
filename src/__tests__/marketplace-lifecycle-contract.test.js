@@ -243,14 +243,16 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(start).not.toContain("'Motivation & Stamina'")
   })
 
-  test('public copy describes the two-session VALU assessment, not the retired fifteen-question snapshot', () => {
+  test('public copy distinguishes the separate nine-question taster and 58-question full assessment', () => {
     const prime = read('src/app/prime/page.jsx')
     const reminders = read('src/app/api/cron/valu-reminders/route.js')
     for (const source of [prime, reminders]) {
       expect(source).not.toContain('15-question')
       expect(source).not.toContain('15 question')
     }
-    expect(prime).toContain('completed in two sessions')
+    expect(prime).toContain('9-question taster is a separate, no-account starting point')
+    expect(prime).toContain('separate 58-question assessment: 54 scored questions and 4 validity anchors')
+    expect(prime).toContain('15–20 minutes')
     expect(reminders).toContain('RETURN TO YOUR DASHBOARD')
     expect(reminders).not.toContain('CONTINUE TO QUESTION 10')
   })
