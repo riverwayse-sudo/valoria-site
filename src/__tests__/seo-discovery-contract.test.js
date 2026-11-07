@@ -59,6 +59,14 @@ describe('Valoria SEO and discovery foundation', () => {
     expect(llms).not.toContain('Systems Building')
   })
 
+  test('event structured data excludes provisional event dates', () => {
+    const events = read('src/app/events/page.jsx')
+    expect(events).toContain("'@type': 'Event'")
+    expect(events).toContain('filter(session => session.dateApproved)')
+    expect(events).toContain('EventScheduled')
+    expect(events).toContain("'@type': 'VirtualLocation'")
+  })
+
   test('navigation and footer no longer point to the nonexistent jobs route', () => {
     expect(read('src/config/navigation.js')).not.toContain("href: '/jobs'")
     expect(read('src/components/Footer.jsx')).not.toContain('href="/jobs"')
