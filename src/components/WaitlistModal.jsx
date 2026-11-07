@@ -91,7 +91,7 @@ export default function WaitlistModal({ open, onClose, source = 'site_gate', aut
             <div className="vi-next-label">MAKE YOUR REGISTRATION WORK HARDER FOR YOU</div>
             <div className="vi-assessment-card">
               <div className="vi-assessment-content">
-                <div className="vi-assessment-kicker">THE VALU INDEX · 9 QUESTIONS</div>
+                <div className="vi-assessment-kicker">THE VALU TASTER</div>
                 <h3 className="vi-assessment-title">Know exactly where you stand.</h3>
                 <p className="vi-assessment-copy">Get a directional view of your capability across the five PRIME clusters — then use the result as your starting point with Valoria.</p>
                 <div className="vi-assessment-clusters" aria-label="VALU PRIME clusters">
@@ -99,7 +99,7 @@ export default function WaitlistModal({ open, onClose, source = 'site_gate', aut
                 </div>
                 <a className="vi-assessment-btn" href="/valu">TAKE THE VALU TASTER <span aria-hidden="true">→</span></a>
               </div>
-              <div className="vi-assessment-side" aria-hidden="true"><span className="vi-assessment-number">9</span><span className="vi-assessment-small">questions</span></div>
+              <div className="vi-assessment-side" aria-hidden="true"><span className="vi-assessment-number">PRIME</span><span className="vi-assessment-small">capability clusters</span></div>
             </div>
             <div className="vi-done-footer">
               <p className="vi-gate-done-note">Confirmation closes automatically in <strong>1 minute</strong>.</p>
