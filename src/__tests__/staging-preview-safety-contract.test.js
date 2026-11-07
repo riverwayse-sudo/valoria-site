@@ -69,6 +69,15 @@ describe('staging preview safety boundary', () => {
     expect(nextConfig).not.toContain("source: '/valu/assessment'")
   })
 
+  test('staging deployment is opt-in for same-repository deploy branches', () => {
+    const workflow = read('.github/workflows/cloudflare-staging-deploy.yml')
+    expect(workflow).toContain('pull_request:')
+    expect(workflow).toContain("startsWith(github.event.pull_request.head.ref, 'deploy/staging-')")
+    expect(workflow).toContain('github.event.pull_request.head.repo.full_name == github.repository')
+    expect(workflow).toContain('environment: staging')
+    expect(workflow).toContain('npx wrangler deploy')
+  })
+
   test('preview metadata is not indexable and production analytics are disabled', () => {
     const layout = read('src/app/layout.jsx')
     expect(layout).toMatch(/index:\s*false/)
