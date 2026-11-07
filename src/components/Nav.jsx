@@ -69,9 +69,9 @@ export default function Nav() {
 
   const close = () => setMenuOpen(false)
   // Keep the primary CTA stable during auth hydration. Previously it changed
-  // from START VALU to MY PROFILE/DASHBOARD after getUser(), causing a visible
+  // between the anonymous taster CTA and the signed-in full-assessment continuation after getSession(), causing a visible
   // header layout shift on every page for signed-in users.
-  const cta = { label: 'START VALU INDEX', href: NAVIGATION.assessmentUrl, external: true }
+  const cta = { label: 'TAKE THE VALU TASTER', href: NAVIGATION.assessmentUrl, external: true }
 
   const renderItem = (item, className = 'nav-dropdown-link') => {
     const active = isPathActive(pathname, item.href)
@@ -144,6 +144,15 @@ export default function Nav() {
 export function AssessmentStartLink({ href = '/valu/assessment/', className, style, children, onClick, dashboardOnly = false, ...props }) {
   const [opening, setOpening] = useState(false)
   const [error, setError] = useState('')
+  const [signedIn, setSignedIn] = useState(false)
+
+  useEffect(() => {
+    let active = true
+    supabase.auth.getSession().then(({ data }) => {
+      if (active) setSignedIn(Boolean(data.session?.access_token))
+    }).catch(() => { if (active) setSignedIn(false) })
+    return () => { active = false }
+  }, [])
 
   async function handleClick(event) {
     if (onClick) onClick(event)
@@ -194,7 +203,7 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
 
   return <>
     <a href={linkHref} className={className} style={style} onClick={handleClick} aria-busy={opening} {...props}>
-      {opening ? 'Opening VALU…' : children}
+      {opening ? 'Opening VALU…' : signedIn && !dashboardOnly ? 'CONTINUE FULL ASSESSMENT' : children}
     </a>
     {error && <span role="alert" style={{ display: 'block', color: '#F09595', fontSize: '12px', marginTop: '6px' }}>{error}</span>}
   </>

@@ -31,6 +31,30 @@ const existing = sourceRoots.flatMap((dir) => {
 const violations = [];
 const add = (message) => violations.push(message);
 
+// Typography is a site-wide contract: load the approved family once, centrally.
+const fontImports = existing.filter(({ file, text }) =>
+  file.endsWith('.css') && /fonts\.googleapis\.com/.test(text)
+);
+if (fontImports.length !== 1 || fontImports[0]?.file !== 'src/styles/globals.css') {
+  add('Typography: Google Fonts must be loaded exactly once from src/styles/globals.css');
+}
+const typographyGlobals = existing.find((x) => x.file === 'src/styles/globals.css')?.text || '';
+for (const token of [
+  '--vi-font-family',
+  '--vi-weight-light',
+  '--vi-weight-regular',
+  '--vi-weight-medium',
+  '--vi-weight-semibold',
+  '--vi-weight-bold',
+  '--vi-weight-extrabold',
+  '--vi-weight-black',
+  '--vi-leading-tight',
+  '--vi-leading-heading',
+  '--vi-leading-body',
+]) {
+  if (!typographyGlobals.includes(token)) add(`src/styles/globals.css: missing typography contract token ${token}`);
+}
+
 const legacyColors = ['#008', '#00f', '#6c63ff', '#7c3aed', '#f59e0b', '#ff6b6b', '#14b8a6'];
 for (const { file, text } of existing.filter(({ file }) => homepageFiles.includes(file))) {
   for (const color of legacyColors) {

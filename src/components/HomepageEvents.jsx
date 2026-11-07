@@ -54,7 +54,7 @@ export default function HomepageEvents() {
               <span>{replay.speaker || 'VALORIA INSTITUTE'}</span>
             </div>
             <div className="home-events-watch-actions">
-              <a className="home-events-watch-link" href={youtubeUrl} target="_blank" rel="noopener noreferrer">
+              <a className="home-events-watch-link" href={youtubeUrl}>
                 WATCH THE FULL REPLAY <span aria-hidden="true">↗</span>
               </a>
               <a className="home-events-secondary-link" href="/events#webinar">
@@ -66,7 +66,7 @@ export default function HomepageEvents() {
 
         <div className="home-events-footer">
           <span>PROFESSIONAL THINKING · CAPABILITY · PRACTICAL ACTION</span>
-          <a href={youtubeUrl} target="_blank" rel="noopener noreferrer">WATCH ON YOUTUBE <span aria-hidden="true">↗</span></a>
+          <a href={youtubeUrl}>WATCH ON YOUTUBE <span aria-hidden="true">↗</span></a>
           <a href="/events">VIEW ALL EVENTS <span aria-hidden="true">→</span></a>
         </div>
       </div>

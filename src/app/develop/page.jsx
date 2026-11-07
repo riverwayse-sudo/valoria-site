@@ -1,11 +1,9 @@
 import { redirect } from 'next/navigation'
 
-// ATB Develop is Valoria Institute's own training programmes (PRIME-mapped
-// programmes delivered by certified facilitators), not a marketplace for
-// commissioning individual facilitators — that distinction was clarified
-// 2 Aug 2026. This previously redirected into /marketplace/facilitators,
-// which was the wrong destination; /programmes already has the real content
-// for this (built earlier, just never linked from here).
+// Legacy route alias. Valoria Develop is the institute's development pathway,
+// distinct from ATB Spotlight's facilitator discovery. Canonical content lives
+// at /programmes; this route redirects there without asserting that a specific
+// programme or facilitator is currently available.
 export default function DevelopRedirect() {
   redirect('/programmes')
 }

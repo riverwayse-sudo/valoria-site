@@ -17,12 +17,15 @@ export default function LoginPage() {
   const [resetting, setResetting] = useState(false)
   const [redirecting, setRedirecting] = useState(false)
   const [returnTo, setReturnTo] = useState('')
+  const [claimName, setClaimName] = useState('')
 
   // Check for identity_hash in URL (from email confirmation redirect)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const identityHash = params.get('identity_hash')
     const requestedReturnTo = params.get('returnTo') || ''
+    const requestedClaimName = params.get('claim_name') || ''
+    if (requestedClaimName) setClaimName(requestedClaimName)
     try {
       const requestedTarget = new URL(requestedReturnTo, window.location.origin)
       if (requestedTarget.origin === window.location.origin) {
@@ -165,7 +168,7 @@ export default function LoginPage() {
           const recoveryRes = await fetch('/api/claim-taster', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
-            body: JSON.stringify({}),
+            body: JSON.stringify(claimName ? { claimed_name: claimName } : {}),
           })
           const recovery = await recoveryRes.json().catch(() => ({}))
           if (recoveryRes.ok && recovery.linked > 0) {
@@ -300,9 +303,15 @@ export default function LoginPage() {
             Employer or organiser?{' '}
             <Link href="/signup" style={{ color: GOLD }}>Create account</Link>
           </p>
-          <p style={{ margin: 0 }}>
+          <p style={{ margin: '0 0 8px' }}>
             Talent or speaker?{' '}
-            <a href="https://valoriainstitute.com/valu/assessment/" target="_blank" rel="noopener noreferrer" style={{ color: GOLD }}>Take the VALU Index</a>
+            <a href="/valu/assessment/" style={{ color: GOLD }}>Take the VALU taster</a>
+          </p>
+          <p style={{ margin: '0 0 8px', fontSize: '11px', color: 'rgba(247,244,238,.48)' }}>
+            Already completed a taster? Sign in with the same confirmed email address to reconnect your saved progress.
+          </p>
+          <p style={{ margin: 0, fontSize: '11px', color: 'rgba(247,244,238,.32)' }}>
+            Need an account? <a href="/professional-signup/recover" style={{ color: GOLD }}>Recover your saved taster</a>.
           </p>
         </div>
       </div>
