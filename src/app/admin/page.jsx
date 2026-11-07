@@ -204,7 +204,7 @@ export default function AdminPage() {
                     <span style={styles.tag}>{p.profile_complete?'PROFILE COMPLETE':'PROFILE INCOMPLETE'}</span>
                     <span style={styles.tag}>{p.publicConsent?'PUBLIC CONSENT RECORDED':'PUBLIC CONSENT NOT RECORDED'}</span>
                     {(p.capabilityLabels||[]).map(label=><span key={label} style={styles.tag}>{label}</span>)}
-                    {(p.capabilityIssues||[]).map(issue=><span key={issue} style={{...styles.tag,color:'#D6A05C',borderColor:'rgba(214,160,92,.28)'}}>PENDING: {issue}</span>)}
+                    {full && (p.capabilityIssues||[]).map(issue=><span key={issue} style={{...styles.tag,color:'#D6A05C',borderColor:'rgba(214,160,92,.28)'}}>PENDING: {issue}</span>)}
                   </div>
                 </div>
                 <div style={{...styles.actions,flexWrap:'wrap',justifyContent:'flex-end'}}>
