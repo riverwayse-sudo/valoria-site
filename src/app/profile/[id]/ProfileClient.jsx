@@ -253,7 +253,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
       <div style={{ minHeight:'100vh', background: DARK, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'16px', fontFamily:'var(--font,Raleway,sans-serif)', color: PARCH }}>
         <div style={{ fontSize:'32px', color: GOLD }}>◈</div>
         <p style={{ fontSize:'14px', fontWeight:300, color: DIM }}>Profile not found</p>
-        <Link href="/marketplace/talent" style={{ fontSize:'12px', color: GOLD, textDecoration:'none', letterSpacing:'.08em' }}>← Back to marketplace</Link>
+        <Link href="/marketplace" style={{ fontSize:'12px', color: GOLD, textDecoration:'none', letterSpacing:'.08em' }}>← Back to marketplace</Link>
       </div>
       <Footer />
     </>
@@ -263,7 +263,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
   const tracks        = p.active_tracks || (p.user_type ? [p.user_type] : [])
   const isSpeaker     = tracks.includes('speaker')
   const isFacilitator = tracks.includes('facilitator')
-  const isCandidate   = tracks.includes('candidate') || tracks.length === 0
+  const isCandidate   = tracks.includes('candidate')
   const initials    = getInitials(p.display_name)
   const avatarLetters = getAvatarLetters(p.display_name)
   const atbId       = p.atb_id || '—'
@@ -281,6 +281,9 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
   const displayTrack = (requestedTrack && tracks.includes(requestedTrack))
     ? requestedTrack
     : (isFacilitator ? 'facilitator' : isSpeaker ? 'speaker' : 'candidate')
+  const canRequest = tracks.includes(displayTrack)
+  const browseHref = !canRequest ? '/marketplace' : displayTrack === 'facilitator' ? '/marketplace/facilitators' : displayTrack === 'speaker' ? '/marketplace/speakers' : '/marketplace/talent'
+  const browseLabel = !canRequest ? 'BACK TO MARKETPLACE' : displayTrack === 'facilitator' ? 'MORE FACILITATORS' : displayTrack === 'speaker' ? 'MORE SPEAKERS' : 'MORE TALENT'
   const tags        = displayTrack === 'facilitator' ? (p.programme_types || []) : displayTrack === 'speaker' ? (p.topics || []) : (p.skills || [])
   const isOwnProfile = !!(currentUser && currentUser.id === p.id)
   const displayDesignation = p.valu_score != null ? (getValuTier(p.valu_score, 'full')?.name || p.designation) : null
