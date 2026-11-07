@@ -10,7 +10,9 @@ const TRACK_META = {
 
 async function getHomepageProfiles() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  // This is a public homepage projection: use the anon key so roster RLS enforces visibility.
+  // Never use a service-role key for public Marketplace discovery reads.
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   if (!url || !key) return { profiles: [], count: null }
   const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }
   try {
