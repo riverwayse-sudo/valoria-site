@@ -36,6 +36,7 @@ describe('participant-facing assessment clarity', () => {
     const opportunities = read('src/app/api/opportunities/route.js')
     const eventRegistration = read('src/app/api/session-registration/route.js')
     const eventTrigger = read('src/components/EventRegistrationTrigger.jsx')
+    const stagingWorkflow = read('.github/workflows/cloudflare-staging-deploy.yml')
 
     expect(middleware).toContain("process.env.VALU_STAGING_API_ENABLED === '1'")
     expect(middleware).toContain('const isReadOnlyPreview = isPreview && !stagingApiEnabled')
@@ -43,6 +44,9 @@ describe('participant-facing assessment clarity', () => {
     expect(opportunities).toContain('IS_READ_ONLY_PREVIEW')
     expect(eventRegistration).toContain('Event registration is disabled in staging preview')
     expect(eventTrigger).toContain('REGISTRATION DISABLED IN PREVIEW')
+    expect(stagingWorkflow).toContain('NEXT_PUBLIC_VALU_PREVIEW=1')
+    expect(stagingWorkflow).toContain('NEXT_PUBLIC_VALU_STAGING_API_ENABLED=0')
+    expect(stagingWorkflow).toContain('VALU_STAGING_API_ENABLED=0')
   })
 
   test('the isolated dashboard preview launches the interactive taster', () => {
