@@ -12,29 +12,29 @@ export const revalidate = 0
 
 export const metadata = {
   title: 'Valoria Institute — Worth. Built.',
-  description: 'Valoria Institute builds the infrastructure through which African professional capability is assessed, developed, recognised and connected to opportunity.',
+  description: 'Valoria helps professionals understand their capabilities, build a stronger professional presence and connect with opportunities where their expertise can make a difference.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
 }
 
 const frameworkStages = [
   {
     number: '01',
-    title: 'Assess capability',
-    body: 'The VALU Index provides a structured view of professional capability across the PRIME dimensions.',
+    title: 'Develop your capability',
+    body: 'Begin with the VALU taster, then use your full assessment and the PRIME framework to understand your strengths and where to focus next.',
     href: '/valu',
-    cta: 'EXPLORE THE VALU INDEX',
+    cta: 'EXPLORE VALU',
   },
   {
     number: '02',
-    title: 'Develop with intention',
-    body: 'The PRIME framework gives professionals a shared language for strengthening Presence, Relationships, Intelligence, Mastery and Enterprise.',
-    href: '/develop',
-    cta: 'EXPLORE VALORIA DEVELOP',
+    title: 'Surface your capability',
+    body: 'Your professional profile brings VALU results, selected capabilities and experience into a clearer professional presence. Public visibility follows eligibility and consent.',
+    href: '/marketplace',
+    cta: 'EXPLORE PROFILES',
   },
   {
     number: '03',
     title: 'Connect to opportunity',
-    body: 'The Valoria Talent Marketplace helps organisations discover professionals through capability-led profiles and pathways.',
+    body: 'The Valoria Marketplace helps employers, event organisers and training buyers discover professionals through capability-led profiles and pathways.',
     href: '/marketplace',
     cta: 'EXPLORE THE MARKETPLACE',
   },
