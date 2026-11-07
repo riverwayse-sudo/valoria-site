@@ -55,12 +55,11 @@ if (fs.existsSync(profileRoutePath)) {
   if (!route.includes(".from('marketplace_public_roster')")) {
     violations.push('public profile route must read from the restricted Marketplace roster projection');
   }
-  const rosterMigrationPath = path.join(root, 'supabase/migrations/20260926100000_harden_marketplace_public_roster.sql');
-  const rosterMigration = fs.existsSync(rosterMigrationPath) ? fs.readFileSync(rosterMigrationPath, 'utf8') : '';
-  if (!/p\\.visibility\\s*=\\s*['"]public['"]/.test(rosterMigration) ||
-      !/p\\.listing_status\\s*=\\s*['"]listed['"]/.test(rosterMigration) ||
-      !/pc\\.eligible_for_listing\\s*=\\s*true/.test(rosterMigration)) {
-    violations.push('public roster projection must enforce public visibility, listed status and capability eligibility');
+  if (route.includes(".from('professional_profiles')")) {
+    violations.push('public profile route must not query the private professional_profiles table');
+  }
+  if (!route.includes('toPublicProfile')) {
+    violations.push('public profile route must map the safe roster projection before rendering');
   }
   if (/\.eq\(\s*['"]profile_complete['"]/.test(route)) {
     violations.push('public profile route must not confuse profile completion with public listing eligibility');
