@@ -62,7 +62,7 @@ export default function EventsPage() {
       description: session.description,
       startDate: session.start,
       endDate: session.end || undefined,
-      url: 'https://valoriainstitute.com/events#event-' + session.id,
+      url: 'https://valoriainstitute.com/events' + (session.replay ? '#replay' : '#event-' + session.id),
       eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
       eventStatus: new Date(session.start) > new Date() ? 'https://schema.org/EventScheduled' : undefined,
       location: { '@type': 'VirtualLocation', url: 'https://valoriainstitute.com/events' },
