@@ -92,7 +92,7 @@ function computeCompleteness(profile, tracks) {
     const v = profile[f]
     return Array.isArray(v) ? v.length > 0 : !!v
   }).length
-  return Math.round((filled / fields.length) * 100)
+  return { filled, total: fields.length, ratio: fields.length ? filled / fields.length : 0 }
 }
 function memberSince(dateStr) {
   if (!dateStr) return '—'
@@ -352,7 +352,7 @@ export default function DashboardPage() {
   // With multiple tracks, prefer whichever the profile has actually filled in.
   const compensation = (isSpeaker || isFacilitator) ? (p.fee_range || p.salary_expectation || null) : (p.salary_expectation || p.fee_range || null)
   const compLabel    = (isSpeaker || isFacilitator) ? 'Fee Range' : 'Salary Range'
-  const completenessPct = isSupply ? computeCompleteness(p, tracks) : null
+  const profileCompletion = isSupply ? computeCompleteness(p, tracks) : null
   const videos = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
   const trackLabels = { candidate: 'Candidate', speaker: 'Speaker', facilitator: 'Facilitator' }
 
@@ -391,7 +391,7 @@ export default function DashboardPage() {
             firstName={firstName}
             isSupply={isSupply}
             isOrganiser={isOrganiser}
-            pct={completenessPct}
+            completion={profileCompletion}
             onClose={dismissWelcome}
           />
         )}
@@ -619,16 +619,16 @@ export default function DashboardPage() {
 
               {/* Profile completeness */}
               <details className="dv-detail">
-                <summary>Profile completion <span>{completenessPct}%</span></summary>
+                <summary>Profile completion <span>{profileCompletion.filled} of {profileCompletion.total}</span></summary>
               <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px' }}>
                   <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)' }}>Required Profile Details</div>
-                  <span style={{ fontSize:'16px', fontWeight:700, color: completenessPct === 100 ? '#1D9E75' : GOLD }}>{completenessPct}%</span>
+                  <span style={{ fontSize:'13px', fontWeight:700, color: profileCompletion.filled === profileCompletion.total ? '#1D9E75' : GOLD }}>{profileCompletion.filled} of {profileCompletion.total}</span>
                 </div>
                 <div style={{ height:'4px', background: FAINT, borderRadius:'2px' }}>
-                  <div style={{ height:'100%', width:`${completenessPct}%`, background: completenessPct === 100 ? '#1D9E75' : GOLD, borderRadius:'2px', transition:'width .4s' }} />
+                  <div style={{ height:'100%', width:`${profileCompletion.ratio * 100}%`, background: profileCompletion.filled === profileCompletion.total ? '#1D9E75' : GOLD, borderRadius:'2px', transition:'width .4s' }} />
                 </div>
-                {completenessPct < 100 && (
+                {profileCompletion.filled < profileCompletion.total && (
                   <>
                     <div style={{ fontSize:'11px', color: DIM, marginTop:'12px', lineHeight:1.6 }}>
                       Still missing: {missingFields(p, tracks).map(f => COMPLETENESS_LABELS[f] || f).join(', ')}
@@ -1057,19 +1057,19 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
   )
 }
 
-function WelcomeModal({ firstName, isSupply, isOrganiser, pct, onClose }) {
+function WelcomeModal({ firstName, isSupply, isOrganiser, completion, onClose }) {
   const [step, setStep] = useState(0)
   const [visible, setVisible] = useState(false)
   const timerRef = useRef(null)
 
   const beats = isSupply ? [
-    { eyebrow:'PROFILE DETAILS', title:`Your profile is taking shape, ${firstName}.`, body:`${pct}% of your required profile details are complete. This is separate from your VALU assessment and marketplace eligibility.`, icon:'✓' },
+    { eyebrow:'PROFILE DETAILS', title:`Your profile is taking shape, ${firstName}.`, body:`${completion.filled} of ${completion.total} required profile details are complete. This is separate from your VALU assessment and marketplace eligibility.`, icon:'✓' },
     { eyebrow:"YOU'RE IN GOOD COMPANY", title:'Welcome to Valoria.', body:"Your VALU Index helps make your professional capabilities clearer. Build your profile and choose how you want to be discovered.", icon:'◈' },
     { eyebrow:'WHAT HAPPENS NEXT', title:'Your next opportunity could start today.', body:'Stay visible to the right people. We’ll let you know when someone expresses interest in connecting with you.', icon:'→' },
   ] : [
     { eyebrow:"YOU'RE IN", title:`Welcome, ${firstName}.`, body:'Your account is set up and ready to go.', icon:'✓' },
-    { eyebrow:'WHAT YOU HAVE ACCESS TO', title:'Welcome to Valoria.', body:`You now have access to Africa's independently verified ${isOrganiser ? 'speaker' : 'professional'} network.`, icon:'◈' },
-    { eyebrow:'READY WHEN YOU ARE', title:'Find your first match.', body:`Search the marketplace and send your first enquiry — most ${isOrganiser ? 'speakers' : 'professionals'} respond within days.`, icon:'→' },
+    { eyebrow:'WHAT YOU HAVE ACCESS TO', title:'Welcome to Valoria.', body:`You now have access to Valoria's ${isOrganiser ? 'speaker' : 'professional'} network.`, icon:'◈' },
+    { eyebrow:'READY WHEN YOU ARE', title:'Find your first match.', body:`Explore profiles and send an enquiry. Response times vary by professional.`, icon:'→' },
   ]
 
   const isLast = step === beats.length - 1
