@@ -8,7 +8,7 @@ export const metadata = {
   alternates: { canonical: 'https://valoriainstitute.com/valu' },
 }
 
-const dimensions = PRIME_CLUSTERS.map(({ letter, name, description }) => [letter, name, description])
+const dimensions = PRIME_CLUSTERS.map(({ letter, name, description, skills }) => [letter, name, description, skills])
 
 export default function ValuPage() {
   return <>
@@ -50,7 +50,8 @@ export default function ValuPage() {
       <section className="valu-prime">
         <div className="valu-wrap">
           <div className="valu-prime-head"><div><div className="valu-kicker"><span /> THE PRIME FRAMEWORK</div><h2>Five dimensions.<br /><em>One professional picture.</em></h2></div><p>PRIME provides the framework through which Valoria interprets professional readiness and development.</p></div>
-          <div className="valu-dimensions">{dimensions.map(([letter,title,text]) => <article key={letter}><div className="valu-letter">{letter}</div><h3>{title}</h3><p>{text}</p></article>)}</div>
+          <div className="valu-dimensions">{dimensions.map(([letter,title,text,skills]) => <article key={letter}><div className="valu-letter">{letter}</div><h3>{title}</h3><p>{text}</p><ul className="valu-skill-list">{skills.map(skill => <li key={skill}>{skill}{['AI Fluency','Human-AI Collaboration'].includes(skill) && <sup aria-label="Future-Ready skill"> ★</sup>}</li>)}</ul></article>)}</div>
+          <p className="valu-future-ready-note">★ Future-Ready skill — critical for the professional talent market of 2025 to 2035.</p>
         </div>
       </section>
 
