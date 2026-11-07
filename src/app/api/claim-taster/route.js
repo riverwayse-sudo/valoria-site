@@ -4,6 +4,9 @@ import { createClient } from '@supabase/supabase-js'
 const norm = value => String(value || '').trim().toLowerCase().replace(/\s+/g, ' ')
 
 export async function POST(request) {
+  let requestBody = {}
+  try { requestBody = await request.json() } catch { /* Optional recovery name; session identity remains authoritative. */ }
+  const claimedName = String(requestBody?.claimed_name || '').trim()
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   const service = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -31,7 +34,7 @@ export async function POST(request) {
     .eq('id', user.id)
     .maybeSingle()
   if (profileLookupError) return NextResponse.json({ error: 'Could not verify the account profile.' }, { status: 502 })
-  const accountName = user.user_metadata?.display_name || user.user_metadata?.full_name || existingProfile?.display_name || ''
+  const accountName = claimedName || user.user_metadata?.display_name || user.user_metadata?.full_name || existingProfile?.display_name || ''
 
   const linked = []
   const processed = []
