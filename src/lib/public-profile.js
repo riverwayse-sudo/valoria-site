@@ -156,7 +156,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
   }
 
   const rosterById = new Map((roster || [])
-    .filter(row => Array.isArray(row.capabilities) && row.capabilities.length > 0)
+    .filter(row => row.assessment_access !== 'full' || (Array.isArray(row.capabilities) && row.capabilities.length > 0))
     .filter(row => row.assessment_access !== 'full'
       || (row.assessment_summary && row.assessment_summary.trim().length >= 12))
     .map(row => [row.professional_id, row]))
