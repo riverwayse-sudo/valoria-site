@@ -54,3 +54,52 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Smoke-test staging routes and SEO endpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://valoria-staging-site.riverwayse.workers.dev"
+          routes=(
+            /
+            /valu
+            /prime
+            /about-us
+            /marketplace
+            /marketplace/talent
+            /marketplace/speakers
+            /marketplace/facilitators
+            /jobs
+            /opportunities
+            /events
+            /knowledge
+            /knowledge/valu-index
+            /knowledge/prime-framework
+            /knowledge/professional-capability
+            /robots.txt
+            /sitemap.xml
+            /llms.txt
+          )
+          for route in "${routes[@]}"; do
+            status="$(curl -sS -o /tmp/valoria-route-response -w '%{http_code}' "$base$route")"
+            if [[ "$status" != "200" ]]; then
+              echo "Route $route returned HTTP $status"
+              cat /tmp/valoria-route-response
+              exit 1
+            fi
+          done
+
+          curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
+          grep -qi 'Disallow: /' /tmp/valoria-robots.txt
+
+          curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
+          grep -q 'staging.valoriainstitute.com' /tmp/valoria-sitemap.xml
+          grep -q '/knowledge/prime-framework' /tmp/valoria-sitemap.xml
+          grep -q '/jobs' /tmp/valoria-sitemap.xml
+
+          curl -fsS "$base/llms.txt" -o /tmp/valoria-llms.txt
+          grep -q 'Human-AI Collaboration' /tmp/valoria-llms.txt
+          grep -q 'Basic is a marketplace access state, not a merit tier' /tmp/valoria-llms.txt
+
+          curl -fsS "$base/" -o /tmp/valoria-home.html
+          grep -q 'THE PROFESSIONAL CAPABILITY MARKETPLACE' /tmp/valoria-home.html
+          grep -q 'FOUR WAYS TO ENGAGE' /tmp/valoria-home.html
