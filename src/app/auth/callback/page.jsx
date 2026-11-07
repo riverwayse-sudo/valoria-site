@@ -36,6 +36,7 @@ function AuthCallbackFlow() {
 
         const { data: { user }, error: userError } = await supabase.auth.getUser()
         if (userError || !user) throw userError || new Error('Your account session could not be verified.')
+        window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'account_confirmed', params: { account_type: user.user_metadata?.user_type || 'unknown' } } }))
 
         const identityHash = params.get('identity_hash') || sessionStorage.getItem('pending_identity_hash')
         const pendingTasterId = params.get('pending_taster_id') || localStorage.getItem('pending_taster_id')
@@ -50,6 +51,7 @@ function AuthCallbackFlow() {
           const data = await linkRes.json().catch(() => ({}))
           if (!linkRes.ok) throw new Error(data.error || 'Your assessment could not be linked yet.')
           sessionStorage.removeItem('pending_identity_hash')
+          window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'full_assessment_account_linked' } }))
           setMessage('Email confirmed. You’re signed in and your VALU assessment is connected.')
           await new Promise(resolve => setTimeout(resolve, 900))
           if (!cancelled) router.replace('/dashboard?welcome=profile')
@@ -71,6 +73,7 @@ function AuthCallbackFlow() {
           localStorage.removeItem('pending_taster_id')
           localStorage.removeItem('pending_taster_name')
           localStorage.removeItem('pending_taster_role')
+          window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'taster_account_linked' } }))
           setMessage('Email confirmed. You’re signed in and your VALU taster is connected. Taking you to your dashboard…')
           await new Promise(resolve => setTimeout(resolve, 1400))
           if (!cancelled) router.replace('/dashboard?welcome=profile')
@@ -86,8 +89,10 @@ function AuthCallbackFlow() {
           const claimData = await claimRes.json().catch(() => ({}))
           if (!claimRes.ok) throw new Error(claimData.error || 'Your saved taster could not be checked yet.')
           if (claimData.reconciled > 0) {
+            window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'taster_recovery_completed', params: { reconciled_count: claimData.reconciled } } }))
             setMessage('Your saved VALU taster is connected. Complete profile setup and choose your visibility preference to publish your Basic listing.')
           } else if (claimData.conflicts > 0) {
+            window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'taster_recovery_manual_review', params: { conflict_count: claimData.conflicts } } }))
             setMessage('Your account is confirmed, but the saved taster needs a manual identity review. The original record has been preserved; continue to your dashboard.')
           } else {
             setMessage('Your account is confirmed. We could not find a saved taster matching these details, but you can start the VALU taster from your dashboard.')
@@ -117,7 +122,7 @@ function AuthCallbackFlow() {
       <section style={{ width: '100%', maxWidth: 520, padding: 'clamp(28px, 5vw, 52px)', border: '1px solid rgba(201,168,76,.25)', borderRadius: 16, background: '#1A1A2E', textAlign: 'center' }}>
         <div style={{ margin: '0 auto 30px', textAlign: 'center' }} aria-label="Valoria Institute">
           <div style={{ color: GOLD, fontSize: 12, letterSpacing: '.24em', fontWeight: 800 }}>VALORIA INSTITUTE</div>
-          <div style={{ color: PARCHMENT, fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 15, marginTop: 7 }}>Worth. Built.</div>
+          <div style={{ color: PARCHMENT, fontFamily: "'Raleway', Arial, sans-serif", fontSize: 15, marginTop: 7 }}>Worth. Built.</div>
         </div>
         <div aria-live="polite" role={failed ? 'alert' : 'status'}>
           <div style={{ color: GOLD, fontSize: 11, letterSpacing: '.18em', fontWeight: 700, marginBottom: 14 }}>{failed ? 'CONFIRMATION NEEDS ATTENTION' : 'VALORIA ACCOUNT'}</div>
