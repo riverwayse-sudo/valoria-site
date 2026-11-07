@@ -187,3 +187,15 @@ create policy certificates_public_verified_read
     revoked_at is null
     and private.can_read_public_professional_certificate(professional_id)
   );
+
+
+-- The old public homepage RPCs are invoker functions over the roster table.
+-- The site now builds its homepage directory through the consent-verified
+-- server-side projection above. Disable the legacy anonymous RPC surface so
+-- callers cannot bypass the consent gate or rely on the revoked table grant.
+revoke execute on function public.get_homepage_professional_previews() from public, anon, authenticated;
+revoke execute on function public.get_homepage_professional_previews_v2() from public, anon, authenticated;
+revoke execute on function public.get_homepage_professional_count() from public, anon, authenticated;
+grant execute on function public.get_homepage_professional_previews() to service_role;
+grant execute on function public.get_homepage_professional_previews_v2() to service_role;
+grant execute on function public.get_homepage_professional_count() to service_role;
