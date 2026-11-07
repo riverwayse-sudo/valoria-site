@@ -6,7 +6,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import EnquiryForm from '@/components/EnquiryForm'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { getValuTier } from '@/lib/brand'
+import { toPublicProfile, PUBLIC_PROFILE_SELECT } from '@/lib/public-profile'
 
 // ─── helpers ─────────────────────────────────────────────
 function getInitials(name) {
@@ -30,13 +30,6 @@ const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Ma
 // Short, positive-framed line per PRIME cluster — used by the "Key
 // Strengths" card to turn a raw cluster score into something a buyer can
 // actually read as a strength, rather than just a number on the radar chart.
-const CLUSTER_STRENGTH_COPY = {
-  P: 'Comes across with real executive presence and a strong personal brand. People remember them and are quick to refer them.',
-  R: 'Builds trust quickly and handles relationships with genuine skill. A natural collaborator that people enjoy working with.',
-  I: 'Thinks clearly under pressure and brings sound judgement to complex, uncertain situations.',
-  M: 'Has a strong command of their craft, with consistent follow through on high standards.',
-  E: 'Shows real ownership and initiative. Spots opportunities and acts on them instead of waiting to be asked.',
-}
 
 // ─── brand tokens ─────────────────────────────────────────────
 const GOLD    = '#C9A84C'
@@ -68,7 +61,6 @@ function rankedClusterStrengths(clusterScores) {
       letter, score,
       name: CLUSTER_NAMES[letter] || letter,
       color: PRIME.find(c => c.letter === letter)?.color || GOLD,
-      blurb: CLUSTER_STRENGTH_COPY[letter] || '',
     }))
 }
 
@@ -125,7 +117,7 @@ function PrimeRadarChart({ scores, size = 260 }) {
 }
 
 // ─── component ─────────────────────────────────────────────
-export default function ProfileClient({ id, searchParams, initialProfile = null }) {
+export default function ProfileClient({ id, searchParams, initialProfile = null, previewUnavailable = false }) {
   const [profile, setProfile]     = useState(initialProfile)
   const [loading, setLoading]     = useState(!initialProfile)
   const [notFound, setNotFound]   = useState(false)
@@ -135,102 +127,98 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
   const [certificates, setCertificates] = useState([])
 
   useEffect(() => {
+    let cancelled = false
+
+    async function recordView(professionalId, user) {
+      const dedupeKey = `viewed_${professionalId}`
+      try {
+        if (sessionStorage.getItem(dedupeKey)) return
+        sessionStorage.setItem(dedupeKey, '1')
+        const { error } = await supabase.from('profile_views').insert({
+          professional_profile_id: professionalId,
+          viewer_id: user?.id || null,
+        })
+        if (error) console.error('profile_views insert failed:', error)
+      } catch (error) {
+        console.warn('profile view could not be recorded:', error)
+      }
+    }
+
+    async function loadCertificates(professionalId) {
+      const { data, error } = await supabase
+        .from('professional_certificates')
+        .select('id,certificate_number,title,event_title,event_date,issuer,issued_at,verification_token')
+        .eq('professional_id', professionalId)
+        .is('revoked_at', null)
+        .order('issued_at', { ascending: false })
+      if (error) console.error('professional certificates fetch failed:', error)
+      if (!cancelled) setCertificates(data || [])
+    }
+
     async function load() {
-      // Check if user is logged in (for own profile detection)
-      const { data: { user } } = await supabase.auth.getUser()
+      if (previewUnavailable) {
+        setLoading(false)
+        return
+      }
+
+      let user = null
+      try {
+        const { data, error } = await supabase.auth.getUser()
+        if (error) console.warn('profile viewer auth state unavailable:', error.message)
+        user = data?.user || null
+      } catch (error) {
+        console.warn('profile viewer auth state unavailable:', error)
+      }
+      if (cancelled) return
       setCurrentUser(user)
 
       if (initialProfile) {
-        const { data: certificateRows, error: certificateError } = await supabase
-          .from('professional_certificates')
-          .select('id,certificate_number,title,event_title,event_date,issuer,issued_at,verification_token')
-          .eq('professional_id', initialProfile.id)
-          .is('revoked_at', null)
-          .order('issued_at', { ascending: false })
-        if (certificateError) console.error('professional certificates fetch failed:', certificateError)
-        setCertificates(certificateRows || [])
-
-        if (!user || user.id !== initialProfile.id) {
-          const dedupeKey = `viewed_${initialProfile.id}`
-          if (!sessionStorage.getItem(dedupeKey)) {
-            sessionStorage.setItem(dedupeKey, '1')
-            supabase.from('profile_views').insert({
-              professional_profile_id: initialProfile.id,
-              viewer_id: user?.id || null,
-            }).then(({ error }) => { if (error) console.error('profile_views insert failed:', error) })
-          }
-        }
-        setLoading(false)
+        await loadCertificates(initialProfile.id)
+        if (!user || user.id !== initialProfile.id) await recordView(initialProfile.id, user)
+        if (!cancelled) setLoading(false)
         return
       }
 
-      const { data: real, error: realError } = await supabase
-        .from('professional_profiles')
-        .select('id, display_name, headline, current_job_title, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, cv_summary, programme_types')
-        .eq('id', id)
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)
+      const { data: row, error } = await supabase
+        .from('marketplace_public_roster')
+        .select(PUBLIC_PROFILE_SELECT)
+        .eq(isUuid ? 'professional_id' : 'atb_id', id)
         .maybeSingle()
 
-      // This used to fail silently on a bad column name — the query errored,
-      // `real` was always null, and every real profile fell through to the
-      // dummy marketplace_profiles lookup below without a trace. Logging it
-      // now so a future schema drift shows up immediately instead of
-      // masquerading as "profile not found."
-      if (realError) console.error('professional_profiles fetch failed:', realError)
+      if (error) console.error('public Marketplace profile fetch failed:', error)
+      const real = toPublicProfile(row)
 
       if (real) {
-        const { data: certificateRows, error: certificateError } = await supabase
-          .from('professional_certificates')
-          .select('id,certificate_number,title,event_title,event_date,issuer,issued_at,verification_token')
-          .eq('professional_id', real.id)
-          .is('revoked_at', null)
-          .order('issued_at', { ascending: false })
-        if (certificateError) console.error('professional certificates fetch failed:', certificateError)
-        setCertificates(certificateRows || [])
-
-        setProfile({
-          ...real,
-          // Keep the form-facing name the rest of this component already
-          // expects, while the query itself uses the real column name.
-          years_experience: real.experience_years,
-          // Real column is a text[]; the rest of this page treats
-          // availability as a single string.
-          availability: Array.isArray(real.availability) ? (real.availability[0] || null) : real.availability,
-          valu_score: real.valu_index,
-          active_tracks: real.active_tracks || [],
-          _source: 'real',
-        })
-        setLoading(false)
-        // Fire-and-forget, never blocks rendering. Skip the profile owner
-        // viewing their own page — that's not a real "someone looked at
-        // me" signal. sessionStorage dedupe means refreshing or navigating
-        // back within the same tab doesn't inflate the count; a genuinely
-        // new visit (new tab, new session) does count again, which is the
-        // right granularity for "views" rather than "unique visitors."
-        if (!user || user.id !== real.id) {
-          const dedupeKey = `viewed_${real.id}`
-          if (!sessionStorage.getItem(dedupeKey)) {
-            sessionStorage.setItem(dedupeKey, '1')
-            supabase.from('profile_views').insert({
-              professional_profile_id: real.id,
-              viewer_id: user?.id || null,
-            }).then(({ error }) => { if (error) console.error('profile_views insert failed:', error) })
-          }
-        }
+        if (cancelled) return
+        setProfile(real)
+        await loadCertificates(real.id)
+        if (!user || user.id !== real.id) await recordView(real.id, user)
+        if (!cancelled) setLoading(false)
         return
       }
 
-      // If viewing own profile but no professional_profiles entry exists,
-      // redirect to profile setup (fresh from email confirmation flow)
       if (user && user.id === id) {
         window.location.href = '/profile/setup'
         return
       }
 
-      setNotFound(true)
-      setLoading(false)
+      if (!cancelled) {
+        setNotFound(true)
+        setLoading(false)
+      }
     }
-    load()
-  }, [id])
+
+    load().catch(error => {
+      console.error('public Marketplace profile could not be loaded:', error)
+      if (!cancelled) {
+        setNotFound(true)
+        setLoading(false)
+      }
+    })
+
+    return () => { cancelled = true }
+  }, [id, initialProfile, previewUnavailable])
 
   function copyLink() {
     if (typeof window === 'undefined') return
@@ -239,6 +227,21 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
       setTimeout(() => setCopied(false), 2000)
     }).catch(() => {})
   }
+
+  if (previewUnavailable) return (
+    <>
+      <Nav />
+      <main style={{minHeight:'70vh',background:DARK,color:PARCH,display:'grid',placeItems:'center',padding:'60px 24px',textAlign:'center'}}>
+        <div style={{maxWidth:620}}>
+          <div style={{fontSize:'10px',fontWeight:700,letterSpacing:'.16em',color:GOLD,marginBottom:18}}>STAGING PREVIEW</div>
+          <h1 style={{fontSize:'clamp(26px,4vw,40px)',lineHeight:1.2}}>Public profile data is not connected yet.</h1>
+          <p style={{color:DIM,lineHeight:1.8}}>This preview does not use production member records. Public profiles will appear here after the isolated staging database and synthetic test profiles are configured.</p>
+          <Link href="/marketplace" style={{display:'inline-block',marginTop:18,color:GOLD,textDecoration:'none'}}>← BACK TO THE MARKETPLACE</Link>
+        </div>
+      </main>
+      <Footer />
+    </>
+  )
 
   if (loading) return (
     <div style={{ minHeight:'100vh', background: DARK, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font,Raleway,sans-serif)', color: DIM, fontSize:'13px', letterSpacing:'.08em' }}>
@@ -342,19 +345,29 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
 
             {/* ID block */}
             <div style={{ paddingBottom:'16px', flex:1, minWidth:'200px' }}>
-              <div style={{ fontSize:'clamp(22px,3.5vw,32px)', fontWeight:700, letterSpacing:'.04em', lineHeight:1.1, marginBottom:'10px', color: PARCH, fontVariantNumeric:'tabular-nums' }}>
-                {atbId}
+              <div style={{ fontSize:'clamp(22px,3.5vw,32px)', fontWeight:700, letterSpacing:'.02em', lineHeight:1.1, marginBottom:'7px', color: PARCH }}>
+                {p.display_name}
               </div>
-              <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
+              <div style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.12em', color: DIM, marginBottom:'10px', fontVariantNumeric:'tabular-nums' }}>
+                ATB PROFILE ID · {atbId}
+              </div>
+              <div style={{ display:'flex', alignItems:'center', gap:'8px', flexWrap:'wrap' }}>
                 <span style={{ fontSize:'14px', fontWeight:400, color: GOLD, letterSpacing:'.04em' }}>
                   {p.headline || (displayTrack === 'facilitator' ? 'Valoria Facilitator' : displayTrack === 'speaker' ? 'Valoria Speaker' : 'Valoria Professional')}
                 </span>
-                <span style={{ fontSize:'11px', letterSpacing:'.06em', background: MID, border:`1px solid ${GLINE2}`, padding:'4px 10px', borderRadius:'4px', color: DIM }}>
-                  {initials} · Verified {displayTrack === 'facilitator' ? 'Facilitator' : displayTrack === 'speaker' ? 'Speaker' : 'Professional'}
+                <span style={{ fontSize:'10px', letterSpacing:'.06em', background: MID, border:`1px solid ${GLINE2}`, padding:'4px 9px', borderRadius:'4px', color: DIM }}>
+                  MARKETPLACE PROFILE
                 </span>
+                {p.valu_score != null && <span style={{ fontSize:'10px', letterSpacing:'.06em', background:'rgba(201,168,76,.12)', border:`1px solid ${GLINE2}`, padding:'4px 9px', borderRadius:'4px', color: GOLD, fontWeight:700 }}>{p.valu_score} VALU POINTS</span>}
+                {p.designation && <span style={{ fontSize:'10px', letterSpacing:'.06em', color: GOLD }}>{p.designation}</span>}
               </div>
+              {tracks.length > 0 && (
+                <div style={{ display:'flex', gap:'7px', flexWrap:'wrap', marginTop:'10px' }}>
+                  {tracks.map(track => <span key={track} style={{fontSize:'9px',fontWeight:700,letterSpacing:'.1em',padding:'5px 8px',border:`1px solid ${GLINE}`,color:DIM,textTransform:'uppercase'}}>{track === 'candidate' ? 'Talent' : track === 'speaker' ? 'Speaker' : 'Facilitator'}</span>)}
+                </div>
+              )}
               {p.current_job_title && (
-                <div style={{ fontSize:'12px', fontWeight:300, color: DIM, marginTop:'4px' }}>{p.current_job_title}</div>
+                <div style={{ fontSize:'12px', fontWeight:300, color: DIM, marginTop:'7px' }}>{p.current_job_title}</div>
               )}
             </div>
 
@@ -376,7 +389,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                 </Link>
               ) : (
                 <>
-                  <Link href={displayTrack === 'facilitator' ? '/valoria-develop' : displayTrack === 'speaker' ? '/marketplace/speakers' : '/marketplace/talent'}
+                  <Link href={displayTrack === 'facilitator' ? '/marketplace/facilitators' : displayTrack === 'speaker' ? '/marketplace/speakers' : '/marketplace/talent'}
                     style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
                     MORE {displayTrack === 'facilitator' ? 'FACILITATORS' : displayTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}
                   </Link>
@@ -464,7 +477,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               {p.valu_score != null ? (
                 <>
                   <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_score}<span style={{ fontSize:'16px', color: DIM, fontWeight:400 }}> points</span></div>
-                  {getValuTier(p.valu_score, 'full') && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{getValuTier(p.valu_score, 'full').name} · {getValuTier(p.valu_score, 'full').stars}</div>}
+                  {p.designation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.08em', textTransform:'uppercase' }}>{p.designation}</div>}
                   {p.cluster_scores && (
                     <div style={{ marginTop:'8px' }}>
                       <PrimeRadarChart scores={p.cluster_scores} />
@@ -474,9 +487,9 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               ) : (
                 <>
                   <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
-                    This professional has not yet completed their VALU Index assessment.
+                    This is a Basic snapshot listing. The separate full VALU assessment establishes official points and the assessment-based capability summary.
                   </p>
-                  <a href="https://valoriainstitute.com/valu/assessment/"
+                  <a href="/valu"
                     style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
                     ABOUT THE VALU INDEX
                   </a>
@@ -488,7 +501,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
             <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
               <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'12px' }}>Profile ID</div>
               <div style={{ fontSize:'13px', fontWeight:700, color: PARCH, letterSpacing:'.06em', marginBottom:'8px', fontVariantNumeric:'tabular-nums' }}>{atbId}</div>
-              <div style={{ fontSize:'11px', fontWeight:300, color: DIM, lineHeight:1.6 }}>Registered with African Talent Bureau Ltd.</div>
+              <div style={{ fontSize:'11px', fontWeight:300, color: DIM, lineHeight:1.6 }}>Listed on the Valoria Marketplace.</div>
             </div>
 
             {/* Links — gated */}
@@ -548,12 +561,12 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                 The VALU Index summary used to live here, but that's now
                 covered by the Key Strengths card below, so this section
                 is free to just be the bio. */}
-            <Section label="About">
-              {p.bio
-                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
-                : p.cv_summary
-                  ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.cv_summary}</p>
-                  : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No bio added yet.</p>}
+            <Section label={p.assessment_summary ? 'VALU Capability Summary' : 'Professional Overview'}>
+              {p.assessment_summary
+                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
+                : p.bio
+                  ? <><p style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.12em', color:'rgba(201,168,76,.6)', marginBottom:'10px' }}>SELF-REPORTED OVERVIEW</p><p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p></>
+                  : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.45)', lineHeight:1.7 }}>This Basic snapshot profile does not include an official VALU capability summary. That summary is established after the separate full assessment.</p>}
             </Section>
 
             {/* Key Strengths — rectangular card, gold background per brand,
@@ -563,19 +576,12 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                 the VALU Index has been completed. */}
             {p.cluster_scores && (
               <div style={{ background: GOLD, padding:'22px', marginBottom:'32px' }}>
-                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(15,15,26,.55)', marginBottom:'16px' }}>Key Strengths</div>
-                <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
-                  {rankedClusterStrengths(p.cluster_scores).map(({ letter, name, score, blurb }) => (
-                    <div key={letter} style={{ display:'flex', gap:'14px', alignItems:'flex-start' }}>
-                      <div style={{ width:'32px', height:'32px', borderRadius:'50%', border:`1.5px solid ${DARK}`, color: DARK, fontSize:'12px', fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                        {letter}
-                      </div>
-                      <div>
-                        <div style={{ fontSize:'13px', fontWeight:600, color: DARK, marginBottom:'4px' }}>
-                          {name} <span style={{ color:'rgba(15,15,26,.6)', fontWeight:400 }}>· {score} points</span>
-                        </div>
-                        <p style={{ fontSize:'13px', fontWeight:400, color:'rgba(15,15,26,.75)', lineHeight:1.7, margin:0 }}>{blurb}</p>
-                      </div>
+                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(15,15,26,.55)', marginBottom:'16px' }}>Highest-Scoring PRIME Clusters</div>
+                <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
+                  {rankedClusterStrengths(p.cluster_scores).map(({ letter, name, score }) => (
+                    <div key={letter} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', borderBottom:'1px solid rgba(15,15,26,.14)', paddingBottom:'10px' }}>
+                      <div style={{ fontSize:'13px', fontWeight:600, color: DARK }}>{letter} · {name}</div>
+                      <div style={{ fontSize:'13px', fontWeight:700, color: DARK, fontVariantNumeric:'tabular-nums' }}>{score} points</div>
                     </div>
                   ))}
                 </div>
@@ -658,7 +664,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                     : displayTrack === 'facilitator'
                     ? `Interested in commissioning ${initials} for a programme? Valoria Institute facilitates all introductions.`
                     : displayTrack === 'speaker'
-                    ? `Interested in booking ${initials} for your event? Valoria Institute facilitates all introductions.`
+                    ? `Interested in engaging ${p.display_name} for your event? Send an enquiry through Valoria.`
                     : `Want to connect with ${initials}? All introductions go through Valoria Institute — your details stay protected.`}
                 </p>
               </div>
@@ -676,7 +682,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                   professionalProfileId={p.id}
                   atbId={atbId}
                   enquiryType={displayTrack === 'facilitator' ? 'facilitator_commission' : displayTrack === 'speaker' ? 'speaker_booking' : 'candidate'}
-                  ctaLabel={displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'SEND INTRODUCTION'}
+                  ctaLabel={displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'REQUEST SPEAKER' : 'SEND INTRODUCTION'}
                   currentUser={currentUser}
                 />
               )}
