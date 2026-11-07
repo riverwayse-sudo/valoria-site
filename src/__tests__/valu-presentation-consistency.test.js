@@ -10,7 +10,7 @@ describe('VALU presentation consistency', () => {
     const home = read('src/app/page.jsx')
     expect(home).toContain('START THE VALU TASTER')
     expect(home).toContain('five PRIME dimensions')
-    expect(home).not.toMatch(/(?:9|58)[- ]questions?|<b>9<\\/b> QUESTIONS/i)
+    expect(home).not.toMatch(/(?:9|58)[- ]questions?|<b>9<\/b> QUESTIONS/i)
   })
 
   test('homepage hero leads with institutional positioning and decision-maker action', () => {
@@ -38,7 +38,7 @@ describe('VALU presentation consistency', () => {
     expect(home).toContain('FOR EVENT ORGANISERS')
     expect(home).toContain('FOR FACILITATORS & EXPERTS')
     expect(home).toContain('FOR INSTITUTIONS & PARTNERS')
-    expect(home).toContain('DISCUSS AN INSTITUTIONAL PARTNERSHIP')
+    expect(home).toContain('START A CONVERSATION')
   })
 
   test('homepage registry explains VALU points and privacy context', () => {
