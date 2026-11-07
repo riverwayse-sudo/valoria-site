@@ -89,10 +89,10 @@ Brand punctuation is resolved: the user accepted the 9 October 2026 Website Cont
 
 ## 7. Validation and release boundary
 
-- Latest completed site unit tests, static checks, validation and secret scan passed.
-- Latest completed platform unit tests, production build, secret scan, environment parity and Cloudflare checks passed.
-- The newest site build and Cloudflare Worker checks must be green before the branch is described as fully validated.
+- Main-site code head `cf424b5`: **15 test suites, 273 tests passed**; design check, production excellence gate, Next.js 15.5.29 build, OpenNext bundle and Cloudflare Wrangler Preview deployment all passed. The later site head `8876744` changes the closeout documentation only.
+- Platform head `b758053`: **30 test suites, 313 tests passed**; production build, secret scan, environment parity, Cloudflare Worker validation, Cloudflare Pages preview and Worker branch preview all passed.
 - Both PRs remain open. No merge or production deployment is claimed.
 - Cloudflare Workers Builds is the release validation path. Vercel is not the release target; its Hobby build quota is exhausted, so no Vercel preview is being used for approval.
-- The Cloudflare site preview intentionally has disabled Supabase/upstream values and a missing preview-only worker binding. It validates build and static UI only; it cannot prove the integrated registration, account, consent or assessment journey.
-- Do not release until methodology/copy/legal approvals are obtained, the consent-aware RLS migration is coordinated, and the full assessment-to-dashboard-to-profile journey is tested.
+- Both Cloudflare previews intentionally use disabled Supabase/upstream values; the site preview also lacks the preview-only `CF_WORKERS` binding. They validate static UI/build only, not database-backed registration, consent, authentication or assessment integration.
+- Staging E2E remains blocked until the matching site code is deployed to the isolated staging Worker. The staging database currently has no professional-profile rows and still uses the legacy consent RPC; do not apply the consent migration until the matching site code is deployed.
+- Release gates still include the full registration → taster → account confirmation → dashboard → Full assessment → VALU report journey; desktop/mobile and accessibility review; GA4 receipt; post-release performance/indexability checks; and outstanding legal, editorial, commercial and 17-vs-18 methodology approvals.
