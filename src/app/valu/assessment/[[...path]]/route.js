@@ -62,7 +62,6 @@ async function proxyAssessment(request) {
   }
 }
 
-export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
 export async function GET(request) {
