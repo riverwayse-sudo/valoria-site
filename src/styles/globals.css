@@ -138,3 +138,29 @@ body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-i
 
 /* Responsive connected grids. */
 @media (max-width: 900px) { .vi-card-grid-2,.vi-card-grid-3,.vi-card-grid-4 { grid-template-columns: 1fr; } .vi-card-grid > .vi-card { border-right: 0; border-bottom: 1px solid rgba(201,168,76,.12); } .vi-card-grid > .vi-card:last-child { border-bottom: 0; } }
+
+/* MAIN WEBSITE ALIGNMENT CONTRACT — all page and navigation copy starts from the left edge. */
+/* Keep text alignment consistent across page content, cards, forms and nested navigation. */
+html body,
+html body * {
+  text-align: left !important;
+}
+
+/* Directional controls retain their own layout; only their text alignment is normalised. */
+.vi-nav-dropdown,
+.vi-nav-dropdown-grid,
+.vi-nav-dropdown-link,
+.vi-nav-dropdown-description {
+  text-align: left !important;
+}
+
+/* Prevent browser/user-agent centring from reappearing in semantic content regions. */
+main,
+main section,
+main article,
+main aside,
+main header,
+main footer,
+[role="main"] {
+  text-align: left !important;
+}
