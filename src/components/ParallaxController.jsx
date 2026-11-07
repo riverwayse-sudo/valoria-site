@@ -36,7 +36,10 @@ export default function ParallaxController({ rootSelector = '#main-content' }) {
         }
 
         const rect = layer.getBoundingClientRect()
-        const elementCenter = rect.top + rect.height / 2
+        // getBoundingClientRect includes the previous transform. Remove it before
+        // calculating the next frame to prevent cumulative parallax feedback.
+        const previousOffset = Number.parseFloat(layer.style.getPropertyValue('--vi-parallax-y')) || 0
+        const elementCenter = rect.top + rect.height / 2 - previousOffset
         const distanceFromViewportCenter = viewportHeight / 2 - elementCenter
         const offset = Math.max(
           -MAX_PARALLAX_OFFSET,
