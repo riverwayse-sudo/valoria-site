@@ -16,10 +16,10 @@ const CLUSTERS = [
 ];
 
 const DESIGNATIONS = [
-  { min: 80, name: "Force to Align With", stars: "✦✦", color: "#C9A84C", bg: "#1A1A2E" },
-  { min: 65, name: "Emerging Force", stars: "", color: "#C9A84C", bg: "#2E2E4A" },
-  { min: 50, name: "Developing Professional", stars: "", color: "#C9A84C", bg: "#2E2E4A" },
-  { min: 35, name: "Building Foundations", stars: "", color: "#C9A84C", bg: "#2E2E4A" },
+  { min: 90, name: "Elite", stars: "✦✦✦", color: "#1A1A2E", bg: "#C9A84C" },
+  { min: 75, name: "Distinguished", stars: "✦✦", color: "#C9A84C", bg: "#1A1A2E" },
+  { min: 55, name: "Proficient", stars: "✦", color: "#2E2E4A", bg: "#EDE8DC" },
+  { min: 35, name: "Standard", stars: "", color: "#2E2E4A", bg: "#F7F4EE" },
 ];
 
 const SKILL_MAX_RAW = 12;
@@ -122,7 +122,7 @@ function computeResults(answers, timings, shuffleMap, questions) {
   );
   const uniformityFlag = valuIndex >= 65 && globalSD < 0.5;
 
-  const desig = DESIGNATIONS.find(d => valuIndex >= d.min) || DESIGNATIONS[DESIGNATIONS.length - 1];
+  const desig = getDesignation(valuIndex);
 
   const frQuestions = questions.filter(q => q.futureReady);
   const frRaw = frQuestions.reduce((sum, q) => {
