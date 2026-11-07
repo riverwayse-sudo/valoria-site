@@ -460,13 +460,14 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(page).toContain('Upload or update your CV in profile settings')
   })
 
-  test('admin roster identity reconciliation requires exact normalized name equality', () => {
+  test('admin roster reconciliation excludes revoked and test accounts and only accepts exact or first-name alignment', () => {
     const route = read('src/app/api/admin/marketplace-roster/route.js')
     expect(route).toContain('profile === account')
+    expect(route).toContain('profile === accountFirstName')
     expect(route).not.toContain('profile.startsWith(account)')
     expect(route).not.toContain('account.startsWith(profile)')
     expect(route).toContain("account?.user_type !== 'professional'")
-    expect(route).toContain('profile.is_test')
+    expect(route).toContain('profile.is_test || profile.revoked_at')
   })
 
 })
