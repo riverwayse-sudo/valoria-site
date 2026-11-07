@@ -39,7 +39,7 @@ export default function ValuPage() {
           <div className="valu-kicker"><span /> THE JOURNEY</div>
           <h2>Four steps from<br /><em>assessment to opportunity.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Take the taster</h3><p>Complete nine questions with no account required. The taster gives a first read on professional capability.</p></article>
+            <article><b>01</b><h3>Take the taster</h3><p>Complete the VALU taster with no account required. It gives a first read on professional capability.</p></article>
             <article><b>02</b><h3>Create your account</h3><p>Choose to continue, create your Valoria account and confirm your email. Your responses are saved as you go.</p></article>
             <article><b>03</b><h3>Complete the full assessment</h3><p>Complete the VALU Index. It takes about 15 to 20 minutes, and your progress is saved.</p></article>
             <article><b>04</b><h3>Build your profile and get found</h3><p>Complete your professional profile and choose public visibility. Discoverability follows consent, verification and the applicable listing rules.</p></article>
