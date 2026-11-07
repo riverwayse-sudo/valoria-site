@@ -59,29 +59,29 @@ export default function ContactForm() {
     <form onSubmit={handleSubmit} style={styles.form}>
       <div style={styles.row}>
         <div style={styles.field}>
-          <label style={styles.label}>Name</label>
-          <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} style={styles.input} placeholder="Your full name" />
+          <label htmlFor="contact-name" style={styles.label}>Name</label>
+          <input id="contact-name" name="name" autoComplete="name" type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} style={styles.input} placeholder="Your full name" />
         </div>
         <div style={styles.field}>
-          <label style={styles.label}>Email</label>
-          <input type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} style={styles.input} placeholder="you@example.com" />
+          <label htmlFor="contact-email" style={styles.label}>Email</label>
+          <input id="contact-email" name="email" autoComplete="email" type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} style={styles.input} placeholder="you@example.com" />
         </div>
       </div>
       <div style={styles.row}>
         <div style={styles.field}>
-          <label style={styles.label}>Organisation</label>
-          <input type="text" value={form.organisation} onChange={e => setForm({ ...form, organisation: e.target.value })} style={styles.input} placeholder="Company or event name" />
+          <label htmlFor="contact-organisation" style={styles.label}>Organisation</label>
+          <input id="contact-organisation" name="organisation" autoComplete="organization" type="text" value={form.organisation} onChange={e => setForm({ ...form, organisation: e.target.value })} style={styles.input} placeholder="Company or event name" />
         </div>
         <div style={styles.field}>
-          <label style={styles.label}>What&apos;s this about</label>
-          <select value={form.inquiryType} onChange={e => setForm({ ...form, inquiryType: e.target.value })} style={styles.input}>
+          <label htmlFor="contact-inquiry-type" style={styles.label}>What&apos;s this about</label>
+          <select id="contact-inquiry-type" name="inquiryType" value={form.inquiryType} onChange={e => setForm({ ...form, inquiryType: e.target.value })} style={styles.input}>
             {INQUIRY_TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
           </select>
         </div>
       </div>
       <div style={styles.field}>
-        <label style={styles.label}>Message</label>
-        <textarea required rows={5} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} style={{ ...styles.input, resize: 'vertical', fontFamily: "'Raleway', sans-serif" }} placeholder="Tell us what you need." />
+        <label htmlFor="contact-message" style={styles.label}>Message</label>
+        <textarea id="contact-message" name="message" required rows={5} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} style={{ ...styles.input, resize: 'vertical', fontFamily: "'Raleway', sans-serif" }} placeholder="Tell us what you need." />
       </div>
 
       {formError && <div style={styles.errorBox}>{formError}</div>}
