@@ -18,7 +18,7 @@ export const metadata = {
 }
 
 const pathwayCards = [
-  { label: 'FOR PROFESSIONALS', title: 'Understand your capability.', body: 'Start with the taster, complete the full VALU Index and build a professional profile that makes your experience easier to understand.', href: BRAND.assessmentUrl, cta: 'TAKE THE 9-QUESTION TASTER' },
+  { label: 'FOR PROFESSIONALS', title: 'Understand your capability.', body: 'Start with the taster, complete the full VALU Index and build a professional profile that makes your experience easier to understand.', href: BRAND.assessmentUrl, cta: 'TAKE THE VALU TASTER' },
   { label: 'FOR EMPLOYERS', title: 'Find talent by capability.', body: 'Explore public professional profiles by declared role, sector, skill and VALU evidence. If a suitable talent profile is not currently listed, request an ATB Connect sourcing conversation.', href: '/marketplace/talent', cta: 'OPEN ATB CONNECT' },
   { label: 'FOR EVENT ORGANISERS & TRAINING BUYERS', title: 'Find the right people for the room.', body: 'Check public speaker and facilitator listings through ATB Spotlight. For team development, commission a PRIME-based programme through Valoria Develop.', href: '/marketplace/speakers', cta: 'EXPLORE ATB SPOTLIGHT' },
 ]
@@ -66,26 +66,26 @@ export default function HomePage() {
           <Reveal className="valu-conversion-intro">
             <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">START WITH THE VALU JOURNEY</span></div>
             <h2 id="home-valu-title" className="valu-title">Before your next move, <em>know where you stand.</em></h2>
-            <p className="valu-desc">Begin with a separate 9-question taster. If you choose to continue, create your account and complete the full 58-question VALU Index: 54 scored questions and four validity checks. Your official result is expressed in points across the five PRIME clusters.</p>
+            <p className="valu-desc">Begin with the VALU taster. If you choose to continue, create your account and complete the VALU Index. Your official result is expressed in points across the five PRIME clusters.</p>
             <div className="valu-conversion-proof" aria-label="Assessment details">
-              <span><b>9</b> QUESTION TASTER</span><i>·</i><span><b>58</b> FULL QUESTIONS</span><i>·</i><span><b>POINTS</b> NOT PERCENTAGES</span>
+              <span>VALU TASTER</span><i>·</i><span>FULL VALU INDEX</span><i>·</i><span>POINTS, NOT PERCENTAGES</span>
             </div>
             <div className="home-dual-actions">
-              <a href={BRAND.assessmentUrl} className="btn-gold">TAKE THE 9-QUESTION TASTER <span aria-hidden="true">→</span></a>
+              <a href={BRAND.assessmentUrl} className="btn-gold">TAKE THE VALU TASTER <span aria-hidden="true">→</span></a>
               <a href="/valu" className="text-link">SEE HOW THE VALU INDEX WORKS <span aria-hidden="true">→</span></a>
             </div>
             <p className="valu-conversion-note">The taster is a first step, not your official VALU Index. The full assessment establishes your points score and designation.</p>
           </Reveal>
 
           <Reveal className="valu-conversion-card">
-            <div className="vcc-top"><span>THE FULL VALU INDEX</span><strong>58 QUESTIONS</strong></div>
+            <div className="vcc-top"><span>THE FULL VALU INDEX</span><strong>POINTS-BASED PROFILE</strong></div>
             <div className="vcc-framework-list">
-              <div><strong>54</strong><span>Scored questions</span></div>
+              <div><strong>PRIME</strong><span>Five capability dimensions</span></div>
               <div><strong>04</strong><span>Validity checks</span></div>
             </div>
             <div className="vcc-steps">
-              <div className="vcc-step is-active"><span>01</span><div><b>Take the taster</b><small>9 separate questions. No account needed.</small></div></div>
-              <div className="vcc-step"><span>02</span><div><b>Complete the full assessment</b><small>58 questions. Create and confirm your account first.</small></div></div>
+              <div className="vcc-step is-active"><span>01</span><div><b>Take the taster</b><small>No account needed to begin.</small></div></div>
+              <div className="vcc-step"><span>02</span><div><b>Complete the full assessment</b><small>Create and confirm your account to continue.</small></div></div>
               <div className="vcc-step"><span>03</span><div><b>Build your professional profile</b><small>Complete your record and declare your capabilities.</small></div></div>
               <div className="vcc-step"><span>04</span><div><b>Become discoverable</b><small>When listing requirements and public visibility are in place.</small></div></div>
             </div>
@@ -126,7 +126,7 @@ export default function HomePage() {
           <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">WORTH. BUILT.</span></div>
           <h2>Capability deserves<br/><em>to be seen.</em></h2>
           <p>Start with the taster. Build your professional profile. Become discoverable when your profile meets the listing standard.</p>
-          <a href={BRAND.assessmentUrl} className="btn-gold">TAKE THE 9-QUESTION TASTER <span aria-hidden="true">→</span></a>
+          <a href={BRAND.assessmentUrl} className="btn-gold">TAKE THE VALU TASTER <span aria-hidden="true">→</span></a>
         </div>
       </section>
     </main>
