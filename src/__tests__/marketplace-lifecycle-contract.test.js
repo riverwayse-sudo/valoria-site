@@ -558,6 +558,21 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(endpoint).toContain(".not('completed_at', 'is', null)")
   })
 
+  test('legal pages describe Basic taster tier, consent gates and current data practices', () => {
+    const terms = read('src/app/terms-of-use/page.jsx')
+    const privacy = read('src/app/privacypolicy/page.jsx')
+    expect(terms).toContain('a professional who has completed and linked a VALU taster may be represented in the Basic tier')
+    expect(terms).toContain('Tier assignment is not, by itself, public visibility')
+    expect(terms).toContain('Full VALU Index assessment')
+    expect(terms).not.toContain('professionals who score 35 or above')
+    expect(privacy).toContain('Google Analytics')
+    expect(privacy).toContain('Meta Pixel')
+    expect(privacy).toContain('Brevo')
+    expect(privacy).not.toContain('We do not use advertising cookies, third-party tracking, or analytics cookies')
+    expect(privacy).not.toContain('each user can only access their own records')
+    expect(privacy).not.toContain('retained for 36 months after the enquiry is closed')
+  })
+
   test('guest programme and buyer enquiries enter the admin enquiry workflow', () => {
     const contact = read('src/app/contact-us/ContactForm.jsx')
     const api = read('src/app/api/enquiries/route.js')
