@@ -41,13 +41,14 @@ export default async function LiveProfilesScroll() {
     const headline = String(profile.headline || '').trim()
     const profileId = String(profile.atb_id || '').trim()
     const points = Number(profile.valu_index)
-    const placeholderHeadlines = new Set(['model', 'valoria professional', 'growth dev'])
+    const placeholderHeadlines = new Set(['model', 'valoria professional', 'growth dev', 'help people find meaning in their life and career'])
     const isQualityReady = Boolean(
       profile.id &&
       profileId &&
       summary.length >= 24 &&
       headline.length >= 8 &&
       !placeholderHeadlines.has(headline.toLowerCase()) &&
+      !/[\u{1D400}-\u{1D7FF}]/u.test(headline) &&
       !/descriptor unavailable/i.test(summary) &&
       Number.isInteger(points) &&
       points >= 0 &&
