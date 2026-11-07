@@ -81,7 +81,7 @@ export default function HomePage() {
             <div className="vcc-top"><span>THE FULL VALU INDEX</span><strong>POINTS-BASED PROFILE</strong></div>
             <div className="vcc-framework-list">
               <div><strong>PRIME</strong><span>Five capability dimensions</span></div>
-              <div><strong>04</strong><span>Validity checks</span></div>
+              <div><strong>INSIGHT</strong><span>Capability and development guidance</span></div>
             </div>
             <div className="vcc-steps">
               <div className="vcc-step is-active"><span>01</span><div><b>Take the taster</b><small>No account needed to begin.</small></div></div>
