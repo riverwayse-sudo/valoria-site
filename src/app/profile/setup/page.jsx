@@ -486,9 +486,9 @@ function ProfileSetupForm() {
       .select('atb_id, listing_status, profile_complete')
       .eq('id', user.id)
       .maybeSingle()
-    if (!row?.profile_complete) {
+    if (!row) {
       setSaving(false)
-      setSaveError('Your details and capabilities were saved, but Valoria has not confirmed profile completion. Review the required profile details and try again.')
+      setSaveError('Your profile was saved, but Valoria could not verify the profile record. Please try again.')
       return
     }
     let acknowledgementResponse
@@ -515,7 +515,7 @@ function ProfileSetupForm() {
     }
 
     setSaving(false)
-    setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: row?.listing_status || 'pending' })
+    setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: acknowledgementResult.listing_status || row?.listing_status || 'pending', visibility: acknowledgementResult.visibility || form.visibility, assessment_access: acknowledgementResult.assessment_access || null })
   }
 
   async function handleSaveExit() {
@@ -535,7 +535,7 @@ function ProfileSetupForm() {
           </div>
           <Title>You&apos;re in,<br/><Em>{form.display_name?.split(' ')[0] || 'welcome'}.</Em></Title>
           <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.75, marginBottom:'28px' }}>
-            Your professional profile has been saved and submitted for Valoria review.
+            Your professional profile and visibility preference have been saved.
           </p>
 
           <div style={{ background:MID, border:`1px solid ${GLINE}`, padding:'24px', marginBottom:'24px' }}>
@@ -550,7 +550,7 @@ function ProfileSetupForm() {
           <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'28px', textAlign:'left' }}>
             <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>WHAT HAPPENS NEXT</div>
             <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.8, margin:0 }}>
-              Status: <strong style={{ color:PARCH }}>{submittedInfo.listing_status === 'listed' ? 'Listed' : 'Not yet listed'}</strong>. Complete the full VALU assessment, keep your professional profile complete and meet the relevant capability gates. Marketplace eligibility depends on a current full VALU Index and the applicable capability and listing rules. Completing the assessment does not automatically publish a profile.
+              Status: <strong style={{ color:PARCH }}>{submittedInfo.visibility === 'public' && submittedInfo.listing_status === 'listed' ? `Public ${submittedInfo.assessment_access === 'basic' ? 'Basic' : 'Full'} listing` : submittedInfo.assessment_access ? `${submittedInfo.assessment_access === 'basic' ? 'Basic' : 'Full'} tier · Registered only` : 'Not yet listed'}</strong>. A completed taster can support a Basic listing. The Full VALU Index adds points, PRIME insight and Full-tier benefits. Public display follows your explicit visibility choice and the applicable identity, eligibility and listing checks.
             </p>
           </div>
 
@@ -1130,14 +1130,14 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
             {form.designation ? <> — <strong style={{ color:'GOLD' }}>{form.designation}</strong></> : null}.
           </p>
           <p style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.6, margin:0 }}>
-            Your public listing status depends on the current VALU result, profile completeness, capability requirements, review and the visibility preference you selected. Completing the assessment does not guarantee public listing.
+            A completed taster can support a Basic listing. Full VALU insight and Full-tier benefits require a current full assessment. Public visibility depends on your consent and the applicable identity, eligibility and listing checks.
           </p>
         </div>
       ) : (
         <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
           <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — VALU INDEX ASSESSMENT</div>
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
-            Your profile is not yet listed because the full VALU assessment is not complete. Complete the VALU Index to receive your official result. Your profile must also meet the applicable completeness, eligibility and visibility requirements before it becomes public.
+            A completed taster linked to your account can support a Basic listing. Continue with the Full VALU Index to receive your official points, PRIME insight and Full-tier benefits. Public display still requires your explicit consent and the applicable identity and listing checks.
           </p>
           <a href="https://valoriainstitute.com/valu/assessment/" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
             COMPLETE THE FULL VALU ASSESSMENT →
