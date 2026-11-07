@@ -28,8 +28,8 @@ export default async function sitemap() {
     { path: '/about-us', priority: 0.6, changeFrequency: 'monthly' },
     { path: '/contact-us', priority: 0.5, changeFrequency: 'yearly' },
     { path: '/careers', priority: 0.6, changeFrequency: 'weekly' },
-    { path: '/privacypolicy', priority: 0.3, changeFrequency: 'yearly' },
-    { path: '/terms-of-use', priority: 0.3, changeFrequency: 'yearly' },
+    { path: '/privacy', priority: 0.3, changeFrequency: 'yearly' },
+    { path: '/terms', priority: 0.3, changeFrequency: 'yearly' },
   ]
   const staticEntries = pages.map(p => ({
     url: `${SITE_URL}${p.path}`,
