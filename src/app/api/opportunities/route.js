@@ -9,7 +9,7 @@ function db(){
 }
 function slugify(s){return s.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,90)}
 function clientKey(request,email){
-  const forwarded=request.headers.get('x-vercel-forwarded-for')||request.headers.get('x-forwarded-for')||'unknown'
+  const forwarded=request.headers.get('cf-connecting-ip')||request.headers.get('x-vercel-forwarded-for')||request.headers.get('x-forwarded-for')||'unknown'
   const ip=forwarded.split(',')[0].trim()
   return createHash('sha256').update(`${ip}:${email.toLowerCase().trim()}`).digest('hex')
 }
