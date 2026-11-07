@@ -25,7 +25,7 @@ export const NAVIGATION = {
     },
     { label: 'Marketplace', href: '/marketplace' },
     { label: 'Jobs', href: '/jobs' },
-    { label: 'Capability Intelligence', href: '/intelligence' }
+    { label: 'Capability Intelligence', href: '/intelligence' },
     { label: 'VALU Index', href: '/valu' },
     { label: 'About Valoria', href: '/about-us' },
   ],
