@@ -41,6 +41,11 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY=placeholder-service-role-key
           ANTHROPIC_API_KEY=placeholder-anthropic-key
           VALU_UPSTREAM_ORIGIN=https://assessment-preview.invalid
+          CF_WORKERS_PREVIEW=1
+          VALU_PREVIEW=1
+          NEXT_PUBLIC_VALU_PREVIEW=1
+          VALU_STAGING_API_ENABLED=0
+          NEXT_PUBLIC_VALU_STAGING_API_ENABLED=0
           EOF
       - name: Install pinned Cloudflare build tools
         run: npm install --no-save @opennextjs/cloudflare@1.20.15 wrangler@4.156.1
