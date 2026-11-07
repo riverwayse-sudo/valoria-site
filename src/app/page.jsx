@@ -19,8 +19,8 @@ export const metadata = {
 const frameworkStages = [
   {
     number: '01',
-    title: 'Develop your capability',
-    body: 'Begin with the VALU taster, then use your full assessment and the PRIME framework to understand your strengths and where to focus next.',
+    title: 'Understand and develop capability',
+    body: 'Begin with the VALU taster and full assessment to understand your strengths. PRIME provides a structured path for the development that follows.',
     href: '/valu',
     cta: 'EXPLORE VALU',
   },
