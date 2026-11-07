@@ -9,7 +9,7 @@ export default function ValuCompletionNudge() {
   const [fullAssessmentComplete, setFullAssessmentComplete] = useState(false)
   const [tasterComplete, setTasterComplete] = useState(false)
   const [tasterStarted, setTasterStarted] = useState(false)
-  const closeRef = useRef(null)
+  const closeButtonRef = useRef(null)
   const previewRef = useRef(false)
 
   useEffect(() => {
@@ -44,7 +44,8 @@ export default function ValuCompletionNudge() {
 
       if (!active || !profile || profile.profile_complete || profile.is_test) return
 
-      setFullAssessmentComplete(!!assessment?.completed_at)
+      const fullAssessmentComplete = !!assessment?.completed_at
+      setFullAssessmentComplete(fullAssessmentComplete)
       setTasterComplete(!!taster?.completed_at)
       setTasterStarted(!!taster?.id && !taster?.completed_at)
       setShow(true)
@@ -66,7 +67,7 @@ export default function ValuCompletionNudge() {
     const previousOverflow = document.body.style.overflow
     const previousFocus = document.activeElement
     document.body.style.overflow = 'hidden'
-    closeRef.current?.focus()
+    closeButtonRef.current?.focus()
 
     function onKeyDown(event) {
       if (event.key === 'Escape') dismiss()
@@ -116,8 +117,8 @@ export default function ValuCompletionNudge() {
 
   return (
     <div className="vi-nudge-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) dismiss() }}>
-      <section className="vi-nudge-dialog" role="dialog" aria-modal="true" aria-labelledby="vi-nudge-title" aria-describedby="vi-nudge-copy" data-state={state}>
-        <button ref={closeRef} className="vi-nudge-close" type="button" onClick={dismiss} aria-label="Close reminder">×</button>
+      <section className="vi-nudge-dialog" role="dialog" aria-modal="true" aria-labelledby="valu-nudge-title" aria-describedby="vi-nudge-copy" data-state={state}>
+        <button ref={closeButtonRef} className="vi-nudge-close" type="button" onClick={dismiss} aria-label="Close reminder">×</button>
 
         <aside className="vi-nudge-editorial">
           <div className="vi-nudge-brand"><span className="vi-nudge-brand-mark">V</span><span>VALORIA<br/>INSTITUTE</span></div>
@@ -133,7 +134,7 @@ export default function ValuCompletionNudge() {
 
         <div className="vi-nudge-content">
           <div className="vi-nudge-status"><span className="vi-nudge-status-dot"/>{eyebrow}</div>
-          <h2 id="vi-nudge-title">{title}</h2>
+          <h2 id="valu-nudge-title">{title}</h2>
           <p id="vi-nudge-copy" className="vi-nudge-copy">{copy}</p>
 
           <div className="vi-nudge-steps" aria-label="Your Valoria journey">
