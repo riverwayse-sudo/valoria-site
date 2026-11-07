@@ -18,7 +18,7 @@ const TRACKS = [
 
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
-const IS_READ_ONLY_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' && process.env.NEXT_PUBLIC_VALU_STAGING_API_ENABLED !== '1'
+const IS_STAGING_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'
 
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
   const router = useRouter()
@@ -123,8 +123,8 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
           <span>VALU INDEX × PRIME</span>
         </div>
         {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p} onSelect={() => setSelectedProfile(p)}/>)}</div> :
-          IS_READ_ONLY_PREVIEW
-            ? <div className={styles.previewUnavailable} role="status"><strong>Marketplace data is intentionally disconnected in this staging preview.</strong><p>Profile cards, counts and eligibility states will be reviewed against a separately approved staging dataset. No live member records are exposed here.</p></div>
+          IS_STAGING_PREVIEW
+            ? <div className={styles.previewUnavailable} role="status"><strong>No approved professional profiles are connected to this staging preview.</strong><p>Production participant records remain isolated. Only genuine professionals with explicit public-visibility consent may appear here; generated demonstration profiles are not used.</p></div>
             : <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
       </div>
     </section>
