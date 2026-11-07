@@ -11,6 +11,8 @@ describe('staging preview safety boundary', () => {
     expect(middleware).toContain("(pathname === '/api/link-assessment' && request.method === 'POST')")
     expect(middleware).toContain("(pathname === '/api/valu-handoff' && ['GET', 'POST'].includes(request.method))")
     expect(middleware).toContain("if (isReadOnlyPreview && pathname.startsWith('/api/') && !isPreviewApiAllowed)")
+    expect(middleware).not.toContain("pathname === '/api/opportunities'")
+    expect(middleware).not.toContain("pathname === '/api/admin/opportunities'")
     expect(middleware).toContain("if (isReadOnlyPreview && !isPreviewApiAllowed) return NextResponse.next()")
     expect(middleware).toContain("status: 503")
     expect(middleware).toContain('Staging preview is simulation-only; API access is disabled.')
