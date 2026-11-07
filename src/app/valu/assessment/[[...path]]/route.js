@@ -1,3 +1,5 @@
+import { getCloudflareContext } from '@opennextjs/cloudflare'
+
 const ALLOWED_ASSESSMENT_HOSTS = new Set([
   'assessment.valoriainstitute.com',
   'valoria-platform.riverwayse.workers.dev',
@@ -41,11 +43,20 @@ async function proxyAssessment(request) {
   }
 
   try {
-    const upstream = await fetch(target, {
+    const init = {
       method: request.method === 'HEAD' ? 'HEAD' : 'GET',
       headers,
       redirect: 'follow',
-    })
+    }
+    let service
+    try {
+      service = getCloudflareContext().env.VALU_ASSESSMENT
+    } catch {
+      service = null
+    }
+    const upstream = service
+      ? await service.fetch(new Request(target, init))
+      : await fetch(target, init)
     const responseHeaders = new Headers(upstream.headers)
     responseHeaders.set('cache-control', responseHeaders.get('cache-control') || 'public, max-age=60')
     responseHeaders.set('x-content-type-options', 'nosniff')
