@@ -21,7 +21,7 @@ export default function DevelopPage() {
   return (
     <>
       <Nav />
-      <main id="main-content">
+      <main id="main-content" className="decision-page">
         <section className="page-hero">
           <div className="page-hero-inner">
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">VALORIA DEVELOP</span></div>
@@ -97,12 +97,12 @@ export default function DevelopPage() {
           </div>
         </section>
 
-        <section className="page-section alt cta-banner">
+        <section className="page-section alt">
           <Reveal>
-            <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">START A CONVERSATION</span><div className="eyebrow-line" /></div>
+            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">START A CONVERSATION</span><div className="eyebrow-line" /></div>
             <h2 className="section-title">Tell us what needs<br /><em>to move.</em></h2>
             <p className="page-sub">Share your team, the PRIME cluster or skill you want to strengthen, and your intended timeline. Programme availability, delivery arrangements and commercial terms are confirmed during the enquiry process.</p>
-            <div className="page-hero-actions eyebrow-center">
+            <div className="page-hero-actions">
               <a href="/contact-us?topic=Valoria%20Develop" className="btn-gold">ENQUIRE ABOUT DEVELOPMENT</a>
             </div>
           </Reveal>
