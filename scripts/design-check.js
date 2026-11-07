@@ -127,7 +127,7 @@ if (!layoutSource.includes("import '../styles/left-alignment.css'")) {
 for (const selector of ['.nav-dropdown-grid', '.nav-dropdown-entry', '.nav-dropdown-description', '.nav-mobile .nav-mobile-link']) {
   if (!alignment.includes(selector)) add(`src/styles/left-alignment.css: missing left-alignment coverage for ${selector}`);
 }
-if (!/main :where\\(h1, h2, h3, h4, h5, h6, p, li, label, blockquote, figcaption\\)[^{]*\\{[^}]*text-align:\\s*left\\s*!important/s.test(alignment)) {
+if (!/main :where\\(h1, h2, h3, h4, h5, h6, p, li, label, blockquote, figcaption, span, strong, a\\)[^{]*\\{[^}]*text-align:\\s*left\\s*!important/s.test(alignment)) {
   add('src/styles/left-alignment.css: public page editorial copy must be left-aligned');
 }
 
