@@ -13,7 +13,7 @@ export default function ATBSpotlightPage() {
   return (
     <>
       <Nav />
-      <main id="main-content">
+      <main id="main-content" className="decision-page">
         <section className="page-hero">
           <div className="page-hero-inner">
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">ATB SPOTLIGHT · FOR EVENT ORGANISERS & TRAINING BUYERS</span></div>
@@ -40,11 +40,11 @@ export default function ATBSpotlightPage() {
             </Reveal>
           </div>
         </section>
-        <section className="page-section alt cta-banner">
+        <section className="page-section alt">
           <Reveal>
             <h2 className="section-title">Have a specific<br /><em>brief in mind?</em></h2>
             <p className="page-sub">Share your event, audience, subject area or development requirement and the team can discuss the available options.</p>
-            <div className="page-hero-actions eyebrow-center"><a href="/contact-us?topic=ATB%20Spotlight" className="btn-gold">DISCUSS A REQUIREMENT</a></div>
+            <div className="page-hero-actions"><a href="/contact-us?topic=ATB%20Spotlight" className="btn-gold">DISCUSS A REQUIREMENT</a></div>
           </Reveal>
         </section>
       </main>
