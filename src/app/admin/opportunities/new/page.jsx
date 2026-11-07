@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
-const initial = { title: '', organisation_name: '', opportunity_type: 'job', summary: '', description: '', location: '', work_mode: 'hybrid', employment_type: 'full-time', experience_level: '', industry: '', compensation: '', application_url: '', closing_at: '' }
+const initial = { title: '', organisation_name: '', summary: '', description: '', location: '', work_mode: 'hybrid', employment_type: 'full-time', experience_level: '', industry: '', compensation: '', application_url: '', closing_at: '' }
 
 export default function AdminCreateOpportunity() {
   const [form, setForm] = useState(initial)
@@ -58,7 +58,6 @@ export default function AdminCreateOpportunity() {
         <div className="vi-job-admin-grid">
           {field('title', 'JOB TITLE', true)}
           {field('organisation_name', 'ORGANISATION', true)}
-          <label className="vi-job-field">OPPORTUNITY TYPE<select value={form.opportunity_type} onChange={event => set('opportunity_type', event.target.value)}>{['job','contract','consulting','project','internship'].map(x => <option key={x} value={x}>{x.replaceAll('_',' ')}</option>)}</select></label>
           <label className="vi-job-field">EMPLOYMENT TYPE<select value={form.employment_type} onChange={event => set('employment_type', event.target.value)}>{['full-time','part-time','contract','temporary','internship'].map(x => <option key={x}>{x}</option>)}</select></label>
           {field('location', 'LOCATION')}
           <label className="vi-job-field">WORK MODE<select value={form.work_mode} onChange={event => set('work_mode', event.target.value)}>{['onsite','hybrid','remote','flexible'].map(x => <option key={x}>{x}</option>)}</select></label>
