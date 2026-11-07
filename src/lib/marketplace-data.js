@@ -36,7 +36,11 @@ function normalizeTrack(value) {
   return v === 'talent' ? 'candidate' : v
 }
 
-function normalizePublicDisplayText(value) {\n  return typeof value === 'string' ? value.normalize('NFKC').replace(/\\s+/g, ' ').trim() : value\n}\n\nfunction dedupeProfessionals(rows) {
+function normalizePublicDisplayText(value) {
+  return typeof value === 'string' ? value.normalize('NFKC').replace(/\s+/g, ' ').trim() : value
+}
+
+function dedupeProfessionals(rows) {
   const map = new Map()
   for (const row of rows || []) {
     if (!row.professional_id) continue
