@@ -1,8 +1,7 @@
 import { isPublicProfileContentReady } from '@/lib/marketplace-data'
 
-const SITE_URL = process.env.VALU_PREVIEW === '1'
-  ? 'https://staging.valoriainstitute.com'
-  : 'https://valoriainstitute.com'
+const IS_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'
+const SITE_URL = IS_PREVIEW ? 'https://staging.valoriainstitute.com' : 'https://valoriainstitute.com'
 
 export default async function sitemap() {
   const now = new Date()
@@ -38,7 +37,7 @@ export default async function sitemap() {
   }))
 
   // A staging preview must never enumerate live member profiles.
-  if (process.env.VALU_PREVIEW === '1') return staticEntries
+  if (IS_PREVIEW) return staticEntries
 
   // Only enumerate the consented public projection. The underlying
   // professional_profiles table is intentionally not readable by anon.
