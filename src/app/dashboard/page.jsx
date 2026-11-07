@@ -1064,7 +1064,7 @@ function WelcomeModal({ firstName, isSupply, isOrganiser, pct, onClose }) {
 
   const beats = isSupply ? [
     { eyebrow:'PROFILE DETAILS', title:`Your profile is taking shape, ${firstName}.`, body:`${pct}% of your required profile details are complete. This is separate from your VALU assessment and marketplace eligibility.`, icon:'✓' },
-    { eyebrow:"YOU'RE IN GOOD COMPANY", title:'Welcome to Valoria.', body:"Every professional here is independently assessed. You're not just listed — you're verified.", icon:'◈' },
+    { eyebrow:"YOU'RE IN GOOD COMPANY", title:'Welcome to Valoria.', body:"Your VALU Index helps make your professional capabilities clearer. Build your profile and choose how you want to be discovered.", icon:'◈' },
     { eyebrow:'WHAT HAPPENS NEXT', title:'Your next opportunity could start today.', body:'Stay visible to the right people. We’ll let you know when someone expresses interest in connecting with you.', icon:'→' },
   ] : [
     { eyebrow:"YOU'RE IN", title:`Welcome, ${firstName}.`, body:'Your account is set up and ready to go.', icon:'✓' },
