@@ -180,7 +180,7 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
       || profile.listing_status !== 'listed' || profile.revoked_at != null
       || !consentedIds.has(profile.id)) return false
 
-    if (row.assessment_access === 'full') return profile.profile_complete === true && Number(row.valu_index) >= 35 && fullReadyIds.has(profile.id)
+    if (row.assessment_access === 'full') return profile.profile_complete === true && Number(row.valu_index) >= 35 && Number(row.valu_index) === Number(profile.valu_index) && fullReadyIds.has(profile.id)
     return row.assessment_access === 'basic'
       && linkedTasterIds.has(profile.id)
       && Boolean(profile.display_name?.trim() || row.full_name?.trim())
