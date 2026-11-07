@@ -15,9 +15,9 @@ export const metadata = {
 const DESIGNATIONS = [
   { name: 'Force to Align With', range: '80–100 points', meaning: 'Operating at the highest expression of professional capability.' },
   { name: 'Emerging Force', range: '65–79 points', meaning: 'Strong assessed capability with clear cluster strengths.' },
-  { name: 'Developing Professional', range: '50–64 points', meaning: 'Solid assessed baseline. Eligible for marketplace listing.' },
-  { name: 'Building Foundations', range: '35–49 points', meaning: 'Early-stage capability. Development pathway recommended.' },
-  { name: 'At the Starting Point', range: 'Below 35 points', meaning: 'Not yet listed. Development is the first step.' },
+  { name: 'Developing Professional', range: '50–64 points', meaning: 'A developing professional capability baseline with areas ready for further strengthening.' },
+  { name: 'Building Foundations', range: '35–49 points', meaning: 'An emerging capability baseline with clear opportunities for structured development.' },
+  { name: 'At the Starting Point', range: 'Below 35 points', meaning: 'An early capability baseline. A structured development pathway can help establish the next steps.' },
 ]
 
 export default function PrimePage() {
@@ -82,7 +82,7 @@ export default function PrimePage() {
                 </article>
               ))}
             </div>
-            <p className="prime-copy">Designations are score-based. They cannot be purchased, upgraded by subscription, or transferred. A lower score points to a development pathway; it does not block access to the platform.</p>
+            <p className="prime-copy">Designations are score-based. They cannot be purchased, upgraded by subscription, or transferred. A designation is not, by itself, a public-listing decision. Listing also depends on the applicable profile, capability evidence, consent and governance requirements. A lower score points to a development pathway; it does not block access to the platform.</p>
           </div>
         </section>
         <section className="page-section alt cta-banner">
