@@ -137,6 +137,10 @@ export async function GET(request) {
       headline: profile.headline,
       active_tracks: profile.active_tracks || [],
       capability_labels: activeCapabilities.map(capability => capability.capability),
+      capability_issues: activeCapabilities.flatMap(capability =>
+        (Array.isArray(capability.missing_requirements) ? capability.missing_requirements : [])
+          .map(requirement => `${capability.capability}: ${requirement}`)
+      ),
       assessment_access: assessmentAccess,
       valu_points: assessmentAccess === 'full' ? Number(fullAssessment.total_score) : null,
       completed_taster_count: completedTasters,
