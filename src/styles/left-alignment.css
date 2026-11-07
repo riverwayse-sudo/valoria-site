@@ -10,6 +10,18 @@ body * {
   text-align: left !important;
 }
 
+/* Navigation dropdowns are left-anchored in both desktop and mobile shells. */
+.vi-nav .nav-dropdown,
+.nav-mobile .nav-dropdown {
+  text-align: left !important;
+  align-items: flex-start !important;
+}
+
+.vi-nav .nav-dropdown *,
+.nav-mobile .nav-dropdown * {
+  text-align: left !important;
+}
+
 /* Keep menus aligned even when a component library portals them to body. */
 body [role="menu"],
 body [role="listbox"],
