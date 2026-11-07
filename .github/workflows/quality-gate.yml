@@ -2,7 +2,7 @@ name: Valoria Quality Gate
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'experience/staging-redesign-20261106']
   pull_request:
     branches: [main]
 
@@ -19,6 +19,7 @@ jobs:
       - name: Install pinned OpenNext Cloudflare bindings package
         run: npm install --no-save --package-lock=false @opennextjs/cloudflare@1.20.15
       - run: npm test -- --runInBand
+      - run: npm run test:opportunity-validation
       - run: npm run excellence:check
       - run: npm run build
 
