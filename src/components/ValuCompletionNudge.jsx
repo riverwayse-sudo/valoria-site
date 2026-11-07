@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
 export default function ValuCompletionNudge() {
@@ -48,6 +48,13 @@ export default function ValuCompletionNudge() {
     return () => { active = false }
   }, [])
 
+  const dismiss = useCallback(() => {
+    if (!previewRef.current) {
+      try { sessionStorage.setItem('valu_nudge_dismissed_today', new Date().toISOString().slice(0, 10)) } catch {}
+    }
+    setShow(false)
+  }, [])
+
   useEffect(() => {
     if (!show) return
     const previousOverflow = document.body.style.overflow
@@ -78,16 +85,9 @@ export default function ValuCompletionNudge() {
       document.removeEventListener('keydown', onKeyDown)
       previousFocus?.focus?.()
     }
-  }, [show])
+  }, [show, dismiss])
 
   if (!show) return null
-
-  function dismiss() {
-    if (!previewRef.current) {
-      try { sessionStorage.setItem('valu_nudge_dismissed_today', new Date().toISOString().slice(0, 10)) } catch {}
-    }
-    setShow(false)
-  }
 
   const eyebrow = assessed ? 'ASSESSMENT COMPLETE' : assessmentStarted ? 'YOUR VALU JOURNEY' : 'A CLEARER PROFESSIONAL SIGNAL'
   const title = assessed
