@@ -35,6 +35,22 @@ export default function MarketingInstrumentation() {
 
       if (url.pathname.startsWith(ASSESSMENT_PATH)) {
         track('valu_start_click', { cta_label: label, destination: url.pathname, ...utm })
+      } else if (url.pathname === '/opportunities/submit') {
+        track('buyer_opportunity_submission_start', { cta_label: label, destination: url.pathname, ...utm })
+      } else if (url.pathname === '/opportunities') {
+        track('opportunity_discovery_click', { cta_label: label, destination: url.pathname, ...utm })
+      } else if (url.pathname.startsWith('/opportunities/')) {
+        track('opportunity_detail_click', { cta_label: label, destination: url.pathname, ...utm })
+      } else if (url.pathname === '/marketplace/talent') {
+        track('atb_connect_entry', { cta_label: label, destination: url.pathname, ...utm })
+      } else if (url.pathname === '/marketplace/speakers' || url.pathname === '/marketplace/facilitators') {
+        track('atb_spotlight_entry', { cta_label: label, destination: url.pathname, ...utm })
+      } else if (url.pathname === '/programmes') {
+        track('develop_enquiry_click', { cta_label: label, destination: url.pathname, ...utm })
+      } else if (url.pathname === '/contact-us') {
+        track('buyer_contact_entry', { cta_label: label, enquiry_type: url.searchParams.get('type') || 'general', ...utm })
+      } else if (url.pathname === '/profile/setup' || url.pathname === '/profile/edit') {
+        track('profile_completion_start', { cta_label: label, destination: url.pathname, ...utm })
       } else if (url.pathname.startsWith('/marketplace')) {
         track('marketplace_click', { cta_label: label, destination: url.pathname, ...utm })
       } else if (url.hostname === 'www.youtube.com' && url.searchParams.get('v') === 'm2ElTyJy6dg') {
@@ -44,7 +60,14 @@ export default function MarketingInstrumentation() {
       }
     }
 
+    const onValoriaAnalytics = (event) => {
+      const detail = event.detail || {}
+      if (typeof detail.name !== 'string' || !detail.name.trim()) return
+      track(detail.name, { ...(detail.params || {}), ...utm })
+    }
+
     document.addEventListener('click', onClick, true)
+    window.addEventListener('valoria:analytics', onValoriaAnalytics)
 
     let sectionObserver
     const replaySection = document.getElementById('events')
@@ -60,6 +83,7 @@ export default function MarketingInstrumentation() {
 
     return () => {
       document.removeEventListener('click', onClick, true)
+      window.removeEventListener('valoria:analytics', onValoriaAnalytics)
       sectionObserver?.disconnect()
     }
   }, [])

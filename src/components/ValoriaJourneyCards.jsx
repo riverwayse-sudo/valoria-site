@@ -12,7 +12,7 @@ const MILESTONES = [
   { key:'profile', title:'Complete your profile', short:'PROFILE', description:'Add your professional details and unlock enhanced marketplace access.', href:'/profile/setup', icon:'04' },
   { key:'capability', title:'Choose your capability', short:'CAPABILITY', description:'Tell Valoria what you want to be discovered for.', href:'/profile/setup', icon:'05' },
   { key:'eligibility', title:'Finish your capability setup', short:'READY', description:'Complete the remaining requirements for your capability.', href:'/profile/passport', icon:'06' },
-  { key:'listed', title:'You are discoverable', short:'REGISTRY', description:'Your professional presence is available in the marketplace.', href:'/marketplace', icon:'07' },
+  { key:'listed', title:'You are discoverable', short:'MARKETPLACE', description:'Your professional presence is available in the marketplace.', href:'/marketplace', icon:'07' },
   { key:'opportunity', title:'Find opportunities', short:'OPPORTUNITY', description:'See opportunities that fit what you do.', href:'/opportunities', icon:'08' },
 ]
 

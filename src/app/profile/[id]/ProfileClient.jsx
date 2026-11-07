@@ -164,9 +164,18 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
         return
       }
 
+      // A missing consent-verified public profile must never fall through to a
+      // broad anonymous profile lookup. Only the authenticated owner may load
+      // their own private profile preview.
+      if (!user || user.id !== id) {
+        setNotFound(true)
+        setLoading(false)
+        return
+      }
+
       const { data: real, error: realError } = await supabase
         .from('professional_profiles')
-        .select('id, display_name, headline, current_job_title, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, cv_summary, programme_types')
+        .select('id, display_name, headline, current_job_title, location, industry, experience_years, skills, topics, facilitation_topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, programme_types, format_capabilities, audience_sizes, past_events, past_clients, languages')
         .eq('id', id)
         .maybeSingle()
 
@@ -287,7 +296,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
     { label:'Location',   value: p.location || '—' },
     { label:'Industry',   value: p.industry || '—' },
     { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
-    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Basic · Snapshot', href: p.valu_score != null ? '#valu-card' : null },
+    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Basic listing', href: p.valu_score != null ? '#valu-card' : null },
   ]
 
   return (
@@ -474,9 +483,9 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               ) : (
                 <>
                   <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
-                    This professional has not yet completed their VALU Index assessment.
+                    {p.assessment_access === 'basic' ? 'This professional is listed at the Basic tier. VALU points and assessment-derived insight are not displayed on this profile.' : 'This professional has not yet completed their VALU Index assessment.'}
                   </p>
-                  <a href="https://valoriainstitute.com/valu/assessment/" target="_blank" rel="noopener noreferrer"
+                  <a href="https://valoriainstitute.com/valu/assessment/"
                     style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
                     ABOUT THE VALU INDEX
                   </a>
@@ -544,16 +553,11 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               ) : null
             })()}
 
-            {/* About — a brief introduction in the professional's own words.
-                The VALU Index summary used to live here, but that's now
-                covered by the Key Strengths card below, so this section
-                is free to just be the bio. */}
-            <Section label="About">
-              {p.bio
-                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
-                : p.cv_summary
-                  ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.cv_summary}</p>
-                  : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No bio added yet.</p>}
+            {/* The public profile summary is generated from the VALU report, not a self-written bio or CV summary. */}
+            <Section label="VALU Index Summary">
+              {p.assessment_summary
+                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
+                : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>{p.assessment_access === 'basic' ? 'A Basic listing presents professional identity and capability information. VALU assessment insight is not displayed at this tier.' : 'Your VALU Index summary will appear here when your assessment and listing requirements are complete.'}</p>}
             </Section>
 
             {/* Key Strengths — rectangular card, gold background per brand,
@@ -595,6 +599,32 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               </Section>
             )}
 
+            {displayTrack === 'speaker' && p.past_events?.length > 0 && (
+              <Section label="Speaking Engagements">
+                <div style={{ display:'grid', gap:'10px' }}>
+                  {p.past_events.filter(event => event?.name).map((event, index) => (
+                    <article key={`${event.name}-${index}`} style={{ background:MID, border:`1px solid ${GLINE}`, padding:'16px 18px' }}>
+                      <h3 style={{ fontSize:'14px', fontWeight:600, color:PARCH, margin:0 }}>{event.name}</h3>
+                      {event.role && <p style={{ fontSize:'11px', color:DIM, margin:'6px 0 0' }}>{event.role}</p>}
+                    </article>
+                  ))}
+                </div>
+              </Section>
+            )}
+
+            {displayTrack === 'facilitator' && p.past_clients?.length > 0 && (
+              <Section label="Clients & Programmes">
+                <div style={{ display:'grid', gap:'10px' }}>
+                  {p.past_clients.filter(client => client?.name).map((client, index) => (
+                    <article key={`${client.name}-${index}`} style={{ background:MID, border:`1px solid ${GLINE}`, padding:'16px 18px' }}>
+                      <h3 style={{ fontSize:'14px', fontWeight:600, color:PARCH, margin:0 }}>{client.name}</h3>
+                      {client.programme && <p style={{ fontSize:'11px', color:DIM, margin:'6px 0 0' }}>{client.programme}</p>}
+                    </article>
+                  ))}
+                </div>
+              </Section>
+            )}
+
             {/* Verified participation — certificates are issued only from verified attendance.
                 They are intentionally part of the professional record, not a temporary event page. */}
             {certificates.length > 0 && (
@@ -612,7 +642,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                         <div style={{ fontSize:'11px', color:DIM, lineHeight:1.7 }}>{eventDate} · {cert.issuer}</div>
                         <div style={{ marginTop:'16px', paddingTop:'12px', borderTop:`1px solid ${GLINE}`, display:'flex', justifyContent:'space-between', alignItems:'center', gap:'12px' }}>
                           <span style={{ fontSize:'9px', color:'rgba(247,244,238,.38)', letterSpacing:'.06em', fontVariantNumeric:'tabular-nums' }}>{cert.certificate_number}</span>
-                          <Link href={`/certificate/${cert.verification_token}`} target="_blank" style={{ color:GOLD, fontSize:'9px', fontWeight:700, letterSpacing:'.1em', textDecoration:'none', whiteSpace:'nowrap' }}>VERIFY →</Link>
+                          <Link href={`/certificate/${cert.verification_token}`} style={{ color:GOLD, fontSize:'9px', fontWeight:700, letterSpacing:'.1em', textDecoration:'none', whiteSpace:'nowrap' }}>VERIFY →</Link>
                         </div>
                       </article>
                     )

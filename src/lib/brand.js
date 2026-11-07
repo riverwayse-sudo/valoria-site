@@ -7,9 +7,7 @@ export const BRAND = {
   belief: 'Talent is not the problem. Infrastructure is.',
   promise: ['Develop', 'Surface', 'Connect'],
   email: 'info@valoriainstitute.com',
-  copyrightEntity: 'African Talent Bureau Ltd',
   location: 'Lagos, Nigeria',
-  compliance: 'NDPA 2023 Compliant',
   assessmentUrl: '/valu/assessment/',
   logo: '/logo.png',
 }
@@ -20,11 +18,11 @@ export const COLORS = {
 }
 
 export const PRIME_CLUSTERS = [
-  { letter: 'P', name: 'Presence', color: COLORS.gold, subtitle: 'How you show up', skills: ['Communication', 'Executive Presence', 'Composure Under Scrutiny'] },
-  { letter: 'R', name: 'Relationships', color: COLORS.gold, subtitle: 'How you connect', skills: ['Trust-Building', 'Collaborative Intelligence', 'Network Quality'] },
-  { letter: 'I', name: 'Intelligence', color: COLORS.gold, subtitle: 'How you think', skills: ['Critical Thinking', 'Analytical Depth', 'Decision-Making', 'Cognitive Agility'] },
-  { letter: 'M', name: 'Mastery', color: COLORS.gold, subtitle: 'How you deliver', skills: ['Execution Discipline', 'Accountability', 'Resilience', 'Adaptability'] },
-  { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you build', skills: ['Commercial Thinking', 'Systems Building', 'Venture Mindset'] },
+  { letter: 'P', name: 'Presence', color: COLORS.gold, subtitle: 'How you show up', description: 'Presence covers how you communicate, negotiate and establish a clear professional identity.', skills: ['Communication', 'Negotiation', 'Personal Brand & Executive Presence'] },
+  { letter: 'R', name: 'Relationships', color: COLORS.gold, subtitle: 'How you connect', description: 'Relationships covers how you understand people, resolve conflict, develop others and manage stakeholders.', skills: ['Emotional Intelligence', 'Conflict Resolution', 'People Development', 'Stakeholder Management'] },
+  { letter: 'I', name: 'Intelligence', color: COLORS.gold, subtitle: 'How you think', description: 'Intelligence covers how you reason, think strategically, apply business judgement and work fluently with AI.', skills: ['Critical Thinking', 'Strategic Thinking', 'Business Acumen', 'AI Fluency'] },
+  { letter: 'M', name: 'Mastery', color: COLORS.gold, subtitle: 'How you deliver', description: 'Mastery covers accountable execution, resilient self-leadership and the ability to adapt as conditions change.', skills: ['Execution & Accountability', 'Resilience & Self-Leadership', 'Adaptability'] },
+  { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you create', description: 'Enterprise covers how you create commercial value, influence beyond formal authority and combine human judgement with AI.', skills: ['Commercial Creativity', 'Influence Without Authority', 'Human-AI Collaboration'] },
 ]
 
 // VALU Index values are points out of 100, not percentages.
@@ -64,7 +62,9 @@ export const TIER_DESIGNATIONS = [
   { level: 4, min: 80, max: 100, name: 'Force to Align With', stars: '✦✦', badgeClass: 'forceToAlignWith' },
   { level: 3, min: 65, max: 79, name: 'Emerging Force', stars: '', badgeClass: 'emergingForce' },
   { level: 2, min: 50, max: 64, name: 'Developing Professional', stars: '', badgeClass: 'developingProfessional' },
-  { level: 1, min: 35, max: 49, name: 'Building Foundations', stars: '', badgeClass: 'buildingFoundations' },
+  { level: 1, min: 35, max: 49, name: 'Building Foundations', stars: '', badgeClass: 'buildingFoundations', listable: true },
+  // Explanatory designation only; scores below 35 do not receive a public marketplace card.
+  { level: 0, min: 0, max: 34, name: 'At the Starting Point', stars: '', badgeClass: 'atTheStartingPoint', listable: false },
 ]
 
 export function getValuTier(points, assessmentLevel = 'full') {

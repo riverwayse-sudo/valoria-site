@@ -6,16 +6,43 @@ function read(relative) {
 }
 
 describe('VALU presentation consistency', () => {
-  test('homepage communicates the approved nine-question entry assessment', () => {
+  test('homepage introduces the VALU taster without exposing internal question counts', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('<b>9</b> QUESTIONS')
-    expect(home).not.toContain('<b>15</b> QUESTIONS')
+    expect(home).toContain('TAKE THE VALU TASTER')
+    expect(home).not.toMatch(/\b(?:9|58)\s+(?:QUESTION|QUESTIONS)/i)
+    expect(home).not.toContain('54 scored questions')
   })
 
-  test('homepage illustrative VALU card uses points and the current merit designation', () => {
+  test('global navigation, footer and public VALU pages do not expose internal assessment question counts', () => {
+    const publicCopy = [
+      read('src/components/Nav.jsx'),
+      read('src/config/navigation.js'),
+      read('src/components/Footer.jsx'),
+      read('src/app/valu/page.jsx'),
+      read('src/app/valu/start/page.jsx'),
+      read('src/app/about/page.jsx'),
+    ].join(' ')
+    expect(publicCopy).not.toMatch(/\\b(?:9|58)\\s*[- ]?questions?\\b/i)
+    expect(publicCopy).not.toMatch(/opening nine|first nine|separate taster/i)
+  })
+
+  test('public institutional and buyer copy does not claim uncompleted facilitator certification or independent validation', () => {
+    const publicCopy = [
+      read('src/app/layout.jsx'),
+      read('src/components/WaitlistForm.jsx'),
+      read('src/app/about/page.jsx'),
+      read('src/app/dashboard/page.jsx'),
+    ].join(' ')
+    expect(publicCopy).not.toMatch(/PRIME-certified facilitators|certified facilitators/i)
+    expect(publicCopy).not.toMatch(/independently assessed/i)
+  })
+
+  test('homepage VALU card communicates points-based capability without exposing assessment mechanics', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('vc-denom">POINTS')
-    expect(hero).toContain('FORCE TO ALIGN WITH')
+    expect(hero).toContain('vc-num">VALU')
+    expect(hero).toContain('vc-denom">INDEX')
+    expect(hero).toContain('POINTS-BASED CAPABILITY PROFILE')
+    for (const cluster of ['Presence', 'Relationships', 'Intelligence', 'Mastery', 'Enterprise']) expect(hero).toContain(cluster)
     expect(hero).not.toContain('DISTINGUISHED')
     expect(hero).not.toContain('vc-denom">/ 100')
   })
@@ -48,7 +75,10 @@ describe('VALU presentation consistency', () => {
     const prototype = read('src/app/test/assessment/page.jsx')
     expect(prototype).toContain('const teaser = [')
     expect(prototype).toContain('].slice(0, 9)')
-    expect(prototype).toContain('9 opening questions followed by the remaining 49 questions (58 in total)')
+    expect(prototype).not.toContain('a separate 9-question taster and a separate 58-question full assessment')
+    expect(prototype).not.toContain('The taster does not count toward the full assessment')
     expect(prototype).not.toContain('15 thoughtful questions')
+    expect(prototype).not.toMatch(/Question\s+\{[^}]+\}\s+of\s+\{[^}]+\}/i)
+    expect(prototype).toContain('ASSESSMENT IN PROGRESS')
   })
 })

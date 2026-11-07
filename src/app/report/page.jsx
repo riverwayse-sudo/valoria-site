@@ -38,7 +38,7 @@ export default async function ReportPage(){
       <span style={{fontSize:9,fontWeight:800,letterSpacing:'.18em',color:'#C9A84C'}}>VALU COMPLETE · YOUR NEXT CHAPTER</span>
     </div>
     <h2 style={{fontSize:'clamp(23px,3.5vw,34px)',fontWeight:400,lineHeight:1.2,margin:'0 0 12px',color:'#F7F4EE'}}>Turn your insight into a professional presence.</h2>
-    <p style={{fontSize:14,lineHeight:1.8,color:'rgba(247,244,238,.68)',maxWidth:650,margin:'0 0 20px'}}>Your VALU Index gives you a clearer picture of your professional strengths. The next step is to build your Valoria profile: add your experience, define the capabilities you want to be known for, and prepare your presence for the Registry’s readiness checks.</p>
+    <p style={{fontSize:14,lineHeight:1.8,color:'rgba(247,244,238,.68)',maxWidth:650,margin:'0 0 20px'}}>Your VALU Index gives you a clearer picture of your professional strengths. The next step is to build your Valoria profile: add your experience, define the capabilities you want to be known for, and prepare your presence for the marketplace’s readiness checks.</p>
     <div style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
       <a href="/profile/setup" style={{display:'inline-flex',alignItems:'center',gap:12,padding:'14px 22px',background:'#C9A84C',color:'#1A1A2E',textDecoration:'none',fontWeight:800,fontSize:10,letterSpacing:'.12em',borderRadius:999}}>BUILD MY PROFESSIONAL PROFILE <span aria-hidden="true">→</span></a>
       <span style={{fontSize:11,color:'rgba(247,244,238,.45)'}}>Next: capability selection and marketplace readiness.</span>
@@ -47,7 +47,7 @@ export default async function ReportPage(){
       {[
         ['01','Build your profile','Present your experience and professional story.'],
         ['02','Choose capabilities','Show whether you are here as Talent, Speaker or Facilitator.'],
-        ['03','Prepare for the Registry','Complete the relevant checks before becoming discoverable.'],
+        ['03','Prepare for the Marketplace','Complete the relevant checks before becoming discoverable.'],
       ].map(([n,title,detail])=><div key={n} style={{borderTop:'2px solid rgba(201,168,76,.45)',paddingTop:11}}>
         <div style={{fontSize:9,fontWeight:800,color:'#C9A84C',letterSpacing:'.12em'}}>{n}</div>
         <div style={{fontSize:13,fontWeight:700,color:'#F7F4EE',marginTop:6}}>{title}</div>

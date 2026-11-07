@@ -6,21 +6,26 @@ const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
 
 const INQUIRY_TYPES = [
-  { id: 'hiring', label: 'Hiring Enquiry — ATB Connect' },
-  { id: 'speaker', label: 'Speaker Booking — ATB Spotlight' },
+  { id: 'candidate', label: 'Hiring Enquiry — ATB Connect' },
+  { id: 'speaker_booking', label: 'Speaker Booking — ATB Spotlight' },
+  { id: 'facilitator_commission', label: 'Facilitator Commission — ATB Spotlight' },
   { id: 'training', label: 'Training Enquiry — Valoria Develop' },
   { id: 'general', label: 'General Question' },
 ]
 
-export default function ContactForm() {
+export default function ContactForm({ initialInquiryType = 'general' }) {
   const [currentUser, setCurrentUser] = useState(null)
-  const [form, setForm] = useState({ name: '', email: '', organisation: '', inquiryType: 'general', message: '' })
+  const [form, setForm] = useState({ name: '', email: '', organisation: '', inquiryType: initialInquiryType, team: '', cluster: '', timeline: '', message: '' })
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [formError, setFormError] = useState('')
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => setCurrentUser(user))
+    const requestedType = new URLSearchParams(window.location.search).get('type')
+    if (INQUIRY_TYPES.some(type => type.id === requestedType)) {
+      setForm(current => ({ ...current, inquiryType: requestedType }))
+    }
   }, [])
 
   async function handleSubmit(e) {
@@ -29,13 +34,29 @@ export default function ContactForm() {
     setFormError('')
     try {
       const typeLabel = INQUIRY_TYPES.find(t => t.id === form.inquiryType)?.label || 'General Question'
-      const { error } = await supabase.from('messages').insert({
-        sender_id: currentUser?.id || null,
-        recipient_profile_id: null,
-        subject: `${typeLabel} — ${form.name}${form.organisation ? ` (${form.organisation})` : ''}`,
-        body: `From: ${form.name} (${form.email})\nOrganisation: ${form.organisation || '—'}\nType: ${typeLabel}\n\n${form.message}`,
+      const trainingDetails = form.inquiryType === 'training'
+        ? `\n\nTeam / audience: ${form.team}\nPRIME cluster(s): ${form.cluster}\nTimeline: ${form.timeline}`
+        : ''
+      const { data: sessionData } = await supabase.auth.getSession()
+      const accessToken = sessionData?.session?.access_token
+      const response = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+        body: JSON.stringify({
+          enquiry_type: form.inquiryType,
+          buyer_name: form.name.trim(),
+          buyer_email: form.email.trim(),
+          buyer_company: form.organisation.trim(),
+          subject: typeLabel,
+          message: `${form.message.trim()}${trainingDetails}`,
+        }),
       })
-      if (error) throw error
+      const payload = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(payload.error || 'Your enquiry could not be sent. Please try again.')
+      window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'buyer_enquiry_submitted', params: { enquiry_type: form.inquiryType } } }))
       setSent(true)
     } catch (err) {
       setFormError(err.message || 'Something went wrong. Please try again, or email us directly below.')
@@ -78,6 +99,25 @@ export default function ContactForm() {
           </select>
         </div>
       </div>
+      {form.inquiryType === 'training' && (
+        <div style={styles.trainingGrid}>
+          <div style={styles.field}>
+            <label style={styles.label}>Team / audience</label>
+            <input required value={form.team} onChange={e => setForm({ ...form, team: e.target.value })} style={styles.input} placeholder="Team size, roles and audience" />
+          </div>
+          <div style={styles.field}>
+            <label style={styles.label}>PRIME cluster(s)</label>
+            <select required value={form.cluster} onChange={e => setForm({ ...form, cluster: e.target.value })} style={styles.input}>
+              <option value="">Select a cluster</option>
+              <option>Presence</option><option>Relationships</option><option>Intelligence</option><option>Mastery</option><option>Enterprise</option><option>Multiple clusters</option><option>Not sure yet</option>
+            </select>
+          </div>
+          <div style={styles.field}>
+            <label style={styles.label}>Timeline</label>
+            <input required value={form.timeline} onChange={e => setForm({ ...form, timeline: e.target.value })} style={styles.input} placeholder="When do you need to begin?" />
+          </div>
+        </div>
+      )}
       <div style={styles.field}>
         <label style={styles.label}>Message</label>
         <textarea required rows={5} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} style={{ ...styles.input, resize: 'vertical', fontFamily: "'Raleway', sans-serif" }} placeholder="Tell us what you need." />
@@ -94,7 +134,8 @@ export default function ContactForm() {
 
 const styles = {
   form: { display: 'flex', flexDirection: 'column', gap: '16px', fontFamily: "'Raleway', sans-serif" },
-  row: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' },
+  row: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: '16px' },
+  trainingGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: '16px' },
   field: { display: 'flex', flexDirection: 'column', gap: '6px' },
   label: { fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(247,244,238,.5)', textTransform: 'uppercase' },
   input: { padding: '12px 14px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.2)', borderRadius: '6px', color: '#F7F4EE', fontSize: '14px', fontFamily: "'Raleway', sans-serif", outline: 'none', width: '100%', boxSizing: 'border-box' },

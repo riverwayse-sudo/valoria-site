@@ -4,6 +4,9 @@ import { createClient } from '@supabase/supabase-js'
 const norm = value => String(value || '').trim().toLowerCase().replace(/\s+/g, ' ')
 
 export async function POST(request) {
+  let requestBody = {}
+  try { requestBody = await request.json() } catch { /* Optional recovery name; session identity remains authoritative. */ }
+  const claimedName = String(requestBody?.claimed_name || '').trim()
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   const service = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -20,11 +23,18 @@ export async function POST(request) {
   const admin = createClient(url, service, { auth: { persistSession: false, autoRefreshToken: false } })
   const email = user.email.trim().toLowerCase()
   const { data: candidates, error: lookupError } = await admin.from('taster_identity_candidates')
-    .select('taster_id,candidate_name,candidate_role,identity_status,linked_user_id')
+    .select('taster_id,candidate_name,candidate_role,evidence_source_count,identity_status,linked_user_id')
     .eq('candidate_email', email)
-    .in('identity_status', ['contact_candidate', 'unresolved', 'account_linked'])
+    .in('identity_status', ['contact_candidate', 'account_linked'])
     .limit(50)
   if (lookupError) return NextResponse.json({ error: 'Could not retrieve snapshot recovery records.' }, { status: 502 })
+
+  const { data: existingProfile, error: profileLookupError } = await admin.from('professional_profiles')
+    .select('display_name')
+    .eq('id', user.id)
+    .maybeSingle()
+  if (profileLookupError) return NextResponse.json({ error: 'Could not verify the account profile.' }, { status: 502 })
+  const accountName = claimedName || user.user_metadata?.display_name || user.user_metadata?.full_name || existingProfile?.display_name || ''
 
   const linked = []
   const processed = []
@@ -45,6 +55,9 @@ export async function POST(request) {
     if (!taster) continue
 
     if ((taster.user_id && taster.user_id !== user.id)
+      || candidate.identity_status !== 'account_linked' && Number(candidate.evidence_source_count) < 2
+      || !accountName
+      || norm(accountName) !== norm(taster.name)
       || norm(taster.name) !== norm(candidate.candidate_name)
       || norm(taster.role) !== norm(candidate.candidate_role)) {
       conflicts.push(taster.id)

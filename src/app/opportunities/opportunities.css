@@ -1,0 +1,52 @@
+.opportunities-page{min-height:70vh;background:var(--valoria-void,#1A1A2E);color:var(--parchment,#F7F4EE);font-family:var(--vi-font-family,'Raleway',sans-serif)}
+.opportunities-hero{padding:clamp(64px,8vw,112px) 0 54px;border-bottom:1px solid rgba(201,168,76,.18)}
+.opportunities-shell,.opportunities-content{width:min(1180px,calc(100% - 48px));margin:0 auto}
+.opportunities-kicker,.opportunities-match-kicker{color:var(--gold,#C9A84C);font-size:10px;font-weight:800;letter-spacing:.15em}
+.opportunities-title{margin:18px 0;font-size:clamp(40px,6vw,72px);line-height:1.02;letter-spacing:-.035em;font-weight:800}
+.opportunities-lede{max-width:680px;color:rgba(247,244,238,.68);font-size:15px;line-height:1.8}
+.opportunities-submit{display:inline-flex;align-items:center;justify-content:center;margin-top:18px;padding:14px 20px;border-radius:999px;background:var(--gold,#C9A84C);color:var(--valoria-void,#1A1A2E);font-size:10px;font-weight:800;letter-spacing:.1em;text-decoration:none}
+.opportunities-content{padding-top:42px;padding-bottom:84px}
+.opportunities-matches{margin-bottom:42px}
+.opportunities-match-title{margin:10px 0;color:var(--parchment,#F7F4EE);font-size:clamp(24px,3vw,36px)}
+.opportunities-match-intro,.opportunities-match-note{max-width:760px;color:rgba(247,244,238,.62);font-size:12px;line-height:1.7}
+.opportunities-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:22px}
+.op-listing-card,.opportunity-card{display:flex;flex-direction:column;min-width:0;padding:22px;border:1px solid rgba(212,201,168,.2);border-radius:8px;background:rgba(46,46,74,.32);color:var(--parchment,#F7F4EE);text-decoration:none}
+.op-listing-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-bottom:16px;color:var(--gold,#C9A84C);font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.op-listing-card h2{margin:0 0 8px;font-size:21px;line-height:1.25}
+.op-listing-card h2 a{color:inherit;text-decoration:none}
+.op-listing-card h2 a:hover{color:var(--gold,#C9A84C)}
+.op-listing-org,.opportunity-card-org{margin:0 0 12px;color:rgba(247,244,238,.62);font-size:12px}
+.op-listing-summary,.opportunity-card-copy{margin:0 0 16px;color:rgba(247,244,238,.72);font-size:12px;line-height:1.7}
+.op-listing-details{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:14px;color:rgba(247,244,238,.55);font-size:10px}
+.op-listing-expertise{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.op-listing-expertise span{padding:5px 8px;border:1px solid rgba(201,168,76,.24);border-radius:4px;color:rgba(247,244,238,.72);font-size:9px}
+.op-listing-action{margin-top:auto;padding-top:14px;border-top:1px solid rgba(212,201,168,.16);color:var(--gold,#C9A84C);font-size:10px;font-weight:800;letter-spacing:.1em;text-decoration:none}
+.opportunities-list-head{display:flex;justify-content:space-between;align-items:center;gap:18px;margin:16px 0}
+.opportunities-list-head h2{margin:0;color:var(--parchment,#F7F4EE);font-size:24px}
+.opportunities-list-head span{color:var(--gold,#C9A84C);font-size:9px;font-weight:800;letter-spacing:.12em}
+.opportunities-state,.opportunities-empty{padding:28px;border:1px solid rgba(212,201,168,.2);border-radius:8px;color:rgba(247,244,238,.72);font-size:13px;line-height:1.7}
+.opportunities-empty h2{margin:0 0 8px;color:var(--parchment,#F7F4EE);font-size:24px}
+.opportunities-empty p{max-width:680px}
+.opportunities-empty button{padding:12px 18px;border:0;border-radius:999px;background:var(--gold,#C9A84C);color:var(--valoria-void,#1A1A2E);font-size:10px;font-weight:800;cursor:pointer}
+.opportunities-match-note{margin:12px 0 28px}
+@media(max-width:760px){.opportunities-shell,.opportunities-content{width:min(100% - 32px,1180px)}.opportunities-grid{grid-template-columns:1fr}.opportunities-list-head{align-items:flex-start;flex-direction:column}.opportunities-hero{padding-top:54px}}
+@media(max-width:480px){.opportunities-content{padding-top:28px;padding-bottom:56px}.op-listing-card,.opportunity-card{padding:18px}.opportunities-submit{width:100%;box-sizing:border-box}}
+
+.op-submit-form{max-width:900px;margin:0 auto;padding:28px;border:1px solid rgba(212,201,168,.2);border-radius:8px;background:rgba(46,46,74,.24)}
+.op-submit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.op-submit-grid>label{display:flex;flex-direction:column;gap:8px;color:rgba(247,244,238,.78);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.op-submit-grid input,.op-submit-grid select,.op-submit-grid textarea{width:100%;box-sizing:border-box;min-height:44px;padding:12px 13px;border:1px solid rgba(212,201,168,.3);border-radius:5px;background:rgba(26,26,46,.8);color:var(--parchment,#F7F4EE);font:inherit;font-size:12px;letter-spacing:normal;text-transform:none;outline:none}
+.op-submit-grid input:focus,.op-submit-grid select:focus,.op-submit-grid textarea:focus{border-color:var(--gold,#C9A84C);box-shadow:0 0 0 2px rgba(201,168,76,.12)}
+.op-submit-grid textarea{resize:vertical;line-height:1.6}
+.op-submit-full{grid-column:1/-1}
+.op-submit-full small{color:rgba(247,244,238,.5);font-size:10px;line-height:1.5;font-weight:400;letter-spacing:normal;text-transform:none}
+.op-submit-grid fieldset{margin:0;padding:14px;border:1px solid rgba(212,201,168,.24);border-radius:5px}
+.op-submit-grid legend{padding:0 6px;color:rgba(247,244,238,.78);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.op-submit-checks{display:flex;flex-wrap:wrap;gap:12px 20px}
+.op-submit-checks label{display:flex;align-items:center;gap:8px;color:rgba(247,244,238,.72);font-size:12px}
+.op-submit-checks input{width:15px;min-height:15px;accent-color:var(--gold,#C9A84C)}
+.op-submit-honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+.op-submit-error{margin:18px 0;color:#F2A09A;font-size:12px}
+.op-submit-form>.opportunities-submit{border:0;cursor:pointer}
+.op-submit-form>.opportunities-submit:disabled{opacity:.65;cursor:not-allowed}
+@media(max-width:640px){.op-submit-form{padding:18px}.op-submit-grid{grid-template-columns:1fr}.op-submit-full{grid-column:auto}}
