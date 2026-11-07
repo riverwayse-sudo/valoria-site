@@ -15,6 +15,10 @@ function normaliseName(value) {
   return String(value || '').normalize('NFKC').trim().toLocaleLowerCase('en')
 }
 
+function isValidAtbId(value) {
+  return /^ATB-[A-Z0-9-]{4,40}$/i.test(String(value || '').trim())
+}
+
 function namesAlign(profileName, accountName) {
   const profile = normaliseName(profileName)
   const account = normaliseName(accountName)
@@ -122,7 +126,8 @@ export async function GET(request) {
       Number(profile.valu_index || 0) >= 35 &&
       capabilitiesReady
 
-    const publicReady = publicConsent &&
+    const atbIdValid = isValidAtbId(profile.atb_id)
+    const publicReady = atbIdValid && publicConsent &&
       profile.listing_status === 'listed' &&
       profile.visibility === 'public' &&
       profile.eligible_for_listing === true &&
@@ -150,6 +155,8 @@ export async function GET(request) {
       visibility: profile.visibility || 'registered_only',
       eligible_for_listing: profile.eligible_for_listing === true,
       public_consent: publicConsent,
+      atb_id_review_required: !atbIdValid,
+      atb_id_review_reason: atbIdValid ? null : 'This identifier does not match the canonical ATB-ID format. Review it before public publication.',
       public_ready: publicReady,
     }]
   })
