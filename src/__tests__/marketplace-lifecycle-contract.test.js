@@ -417,6 +417,14 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
 
+  test('legacy anonymous homepage RPCs are disabled when the roster becomes server-only', () => {
+    const migration = read('supabase/migrations/20261105150000_require_consent_verified_server_side_public_profile_reads.sql')
+    expect(migration).toContain('revoke execute on function public.get_homepage_professional_previews() from public, anon, authenticated')
+    expect(migration).toContain('revoke execute on function public.get_homepage_professional_previews_v2() from public, anon, authenticated')
+    expect(migration).toContain('revoke execute on function public.get_homepage_professional_count() from public, anon, authenticated')
+    expect(read('src/components/LiveProfilesScroll.jsx')).toContain('getMarketplaceDirectoryData')
+  })
+
   test('public Basic listings require a linked completed taster and explicit consent', () => {
     const data = read('src/lib/marketplace-data.js')
     expect(data).toContain("row.assessment_access === 'basic'")
