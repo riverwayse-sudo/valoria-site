@@ -2,7 +2,7 @@ name: Cloudflare site Worker validation
 
 on:
   pull_request:
-    branches: [main, "experience/staging-redesign-20261106"]
+    branches: [main, "experience/staging-redesign-20261106", "feat/valoria-jobs-and-dual-publishing-20261107"]
     paths:
       - "src/**"
       - "next.config.js"
@@ -12,7 +12,7 @@ on:
       - "package-lock.json"
       - ".github/workflows/cloudflare-site-worker.yml"
   push:
-    branches: [main, "fix/assessment-proxy-prefix-and-api", "feat/valoria-jobs-and-dual-publishing-20261107"]
+    branches: [main, "fix/assessment-proxy-prefix-and-api"]
     paths:
       - "src/**"
       - "next.config.js"
