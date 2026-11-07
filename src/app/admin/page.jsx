@@ -21,6 +21,8 @@ export default function AdminPage() {
   const [user, setUser] = useState(null)
   const [messages, setMessages] = useState([])
   const [profiles, setProfiles] = useState([])
+  const [rosterCandidates, setRosterCandidates] = useState([])
+  const [rosterSearch, setRosterSearch] = useState('')
   const [capabilities, setCapabilities] = useState([])
   const [buyers, setBuyers] = useState([])
   const [analytics, setAnalytics] = useState(null)
@@ -41,16 +43,62 @@ export default function AdminPage() {
     if (!currentUser) { window.location.href = '/admin/login'; return }
     setUser(currentUser)
 
-    const [msg, prof, buyer, capabilityRows] = await Promise.all([
+    const [msg, prof, buyer, capabilityRows, accountRows, assessmentRows, tasterRows, acknowledgementRows] = await Promise.all([
       supabase.from('enquiries').select('*, recipient:professional_profile_id(id,display_name,headline,active_tracks,photo_url)').order('created_at', { ascending: false }),
-      supabase.from('professional_profiles').select('id,display_name,headline,active_tracks,listing_status,industry,availability,created_at,profile_complete,valu_index').order('created_at', { ascending: false }),
+      supabase.from('professional_profiles').select('id,display_name,atb_id,headline,active_tracks,listing_status,visibility,eligible_for_listing,is_test,industry,availability,created_at,profile_complete,valu_index').order('created_at', { ascending: false }),
       supabase.from('profiles').select('id,user_type'),
       supabase.from('professional_capabilities').select('professional_id,capability,is_active,eligibility_status,eligible_for_listing'),
+      supabase.from('users').select('id,full_name,user_type'),
+      supabase.from('valu_assessments').select('user_id,total_score,completed_at').not('completed_at', 'is', null).order('completed_at', { ascending: false }),
+      supabase.from('taster_sessions').select('user_id,completed_at').not('completed_at', 'is', null),
+      supabase.from('professional_profile_acknowledgements').select('professional_id,acknowledgement_type,acknowledgement_version,acknowledged_at,created_at').eq('acknowledgement_type', 'profile_submission').order('acknowledged_at', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false }),
     ])
     setMessages((msg.data || []).map(x => ({ ...x, recipient_profile_id: x.professional_profile_id })))
     setProfiles(prof.data || [])
     setBuyers(buyer.data || [])
     setCapabilities(capabilityRows.data || [])
+
+    const accountById = new Map((accountRows.data || []).map(row => [row.id, row]))
+    const latestFullById = new Map()
+    for (const row of assessmentRows.data || []) {
+      if (row.user_id && !latestFullById.has(row.user_id)) latestFullById.set(row.user_id, row)
+    }
+    const tasterCountById = new Map()
+    for (const row of tasterRows.data || []) {
+      if (row.user_id) tasterCountById.set(row.user_id, (tasterCountById.get(row.user_id) || 0) + 1)
+    }
+    const latestAcknowledgementById = new Map()
+    for (const row of acknowledgementRows.data || []) {
+      if (row.professional_id && !latestAcknowledgementById.has(row.professional_id)) latestAcknowledgementById.set(row.professional_id, row)
+    }
+    const normaliseName = value => String(value || '').normalize('NFKC').trim().toLocaleLowerCase('en')
+    const candidates = (prof.data || []).flatMap(profile => {
+      const account = accountById.get(profile.id)
+      if (profile.is_test || account?.user_type !== 'professional') return []
+      const profileName = normaliseName(profile.display_name)
+      const accountName = normaliseName(account.full_name)
+      const namesAlign = !!profileName && !!accountName && (
+        profileName === accountName || profileName.startsWith(accountName) || accountName.startsWith(profileName)
+      )
+      if (!namesAlign) return []
+      const fullAssessment = latestFullById.get(profile.id)
+      const completedTasters = tasterCountById.get(profile.id) || 0
+      const assessmentAccess = fullAssessment ? 'full' : completedTasters > 0 ? 'basic' : null
+      if (!assessmentAccess) return []
+      const acknowledgement = latestAcknowledgementById.get(profile.id)
+      const publicConsent = acknowledgement?.acknowledgement_version === 'public-profile-visibility-v3-2026-11-07'
+      const capabilityRowsForProfile = (capabilityRows.data || []).filter(row => row.professional_id === profile.id && row.is_active)
+      return [{
+        ...profile,
+        accountName: account.full_name,
+        assessmentAccess,
+        fullScore: fullAssessment ? Number(fullAssessment.total_score) : null,
+        completedTasters,
+        publicConsent,
+        capabilityLabels: [...new Set(capabilityRowsForProfile.map(row => row.capability))],
+      }]
+    }).sort((a, b) => String(a.display_name || '').localeCompare(String(b.display_name || '')))
+    setRosterCandidates(candidates)
 
     try {
       const t = await token()
@@ -152,7 +200,7 @@ export default function AdminPage() {
 
         <div className="vi-admin-grid" style={styles.statsGrid}>{[['Enquiries',stats.enquiries],['Pending',stats.pending],['Introduced',stats.introduced],['Listed',stats.listed],['Complete profiles',stats.complete],['Talent',stats.talent],['Speakers',stats.speakers],['Facilitators',stats.facilitators]].map(([label,value]) => <div className="vi-admin-card" key={label} style={styles.card}><div style={styles.cardLabel}>{label}</div><div style={styles.cardValue}>{value}</div></div>)}</div>
 
-        <nav className="vi-admin-nav" style={styles.tabs}>{[['queue','Enquiry Queue'],['profiles','Profiles'],['reports','Reports'],['admins','Administrators']].map(([id,label]) => <button className="vi-admin-tab vi-admin-control" key={id} onClick={() => setTab(id)} style={{...styles.tab, ...(tab===id?styles.activeTab:{})}}>{label}</button>)}</nav>
+        <nav className="vi-admin-nav" style={styles.tabs}>{[['queue','Enquiry Queue'],['profiles','Profiles'],['roster','Roster readiness'],['reports','Reports'],['admins','Administrators']].map(([id,label]) => <button className="vi-admin-tab vi-admin-control" key={id} onClick={() => setTab(id)} style={{...styles.tab, ...(tab===id?styles.activeTab:{})}}>{label}</button>)}</nav>
 
         {error && <div style={styles.error}>{error}</div>}
 
@@ -163,6 +211,41 @@ export default function AdminPage() {
         </section>}
 
         {tab==='profiles' && <section style={styles.list}>{profiles.map(p=><article className="vi-admin-card vi-admin-row" key={p.id} style={styles.row}><div><div style={styles.rowTitle}>{p.display_name || 'Unnamed professional'}</div><div style={styles.muted}>{p.headline || 'No headline'} · {p.industry || 'Industry not specified'}</div><div style={styles.tags}>{(p.active_tracks||[]).map(t=><span key={t} style={styles.tag}>{t}</span>)}<span style={styles.tag}>{p.profile_complete?'Complete':'Incomplete'}</span></div></div><div style={styles.actions}><span style={{...styles.status,color:p.listing_status==='listed'?'#1D9E75':'#888'}}>{p.listing_status || 'unlisted'}</span><button className="vi-admin-control" style={styles.goldBtn} disabled={busy===p.id} onClick={()=>toggleListing(p)}>{p.listing_status==='listed'?'Unlist':'List'}</button><Link className="vi-admin-control" style={styles.outlineBtn} href={`/profile/${p.id}`}>View</Link></div></article>)}</section>}
+
+        {tab==='roster' && <section>
+          <div style={{...styles.panel,marginBottom:14}}>
+            <div style={{display:'flex',justifyContent:'space-between',gap:18,alignItems:'center',flexWrap:'wrap'}}>
+              <div><div style={styles.eyebrow}>INTERNAL REVIEW · NOT PUBLIC</div><h2 style={{...styles.panelTitle,margin:'8px 0'}}>Professional roster readiness</h2><p style={styles.muted}>Assessment-linked, non-test professional accounts with aligned profile and account names. Public visibility still requires the current acknowledgement and listing controls.</p></div>
+              <div style={{fontSize:30,color:GOLD,fontWeight:600}}>{rosterCandidates.length}<small style={{display:'block',fontSize:9,color:DIM,letterSpacing:'.14em',textTransform:'uppercase'}}>candidate records</small></div>
+            </div>
+            <input className="vi-admin-control" style={{...styles.input,width:'min(100%,360px)',marginTop:18}} placeholder="Search name or ATB ID…" value={rosterSearch} onChange={e=>setRosterSearch(e.target.value)}/>
+          </div>
+          <div style={styles.list}>
+            {rosterCandidates.filter(p=>!rosterSearch || `${p.display_name||''} ${p.atb_id||''}`.toLowerCase().includes(rosterSearch.toLowerCase())).map(p=>{
+              const full=p.assessmentAccess==='full'
+              const publiclyReady=p.publicConsent && p.listing_status==='listed' && p.visibility==='public' && p.eligible_for_listing
+              return <article className="vi-admin-card vi-admin-row" key={p.id} style={styles.row}>
+                <div>
+                  <div style={styles.rowTitle}>{p.display_name || 'Unnamed professional'}</div>
+                  <div style={styles.muted}>{p.atb_id || 'ATB ID pending'} · Account: {p.accountName}</div>
+                  <div style={{display:'flex',gap:7,flexWrap:'wrap',marginTop:10}}>
+                    <span style={styles.tag}>{full?'FULL ASSESSMENT':'BASIC · TASTER'}</span>
+                    {full && <span style={styles.tag}>VALU {p.fullScore ?? '—'} POINTS</span>}
+                    <span style={styles.tag}>{p.profile_complete?'PROFILE COMPLETE':'PROFILE INCOMPLETE'}</span>
+                    {(p.capabilityLabels||[]).map(label=><span key={label} style={styles.tag}>{label}</span>)}
+                  </div>
+                </div>
+                <div style={{...styles.actions,flexWrap:'wrap',justifyContent:'flex-end'}}>
+                  <span style={{...styles.status,color:p.listing_status==='listed'?'#C9A84C':'#888'}}>{p.listing_status || 'unlisted'}</span>
+                  <span style={{...styles.status,color:publiclyReady?'#74B58B':'#D6A05C'}}>{publiclyReady?'PUBLICLY READY':'PRIVATE / CONSENT PENDING'}</span>
+                  <span style={styles.muted}>{p.visibility || 'visibility unset'}</span>
+                  <Link className="vi-admin-control" style={styles.outlineBtn} href={`/profile/${p.id}`}>Review profile</Link>
+                </div>
+              </article>
+            })}
+            {rosterCandidates.length===0 && <div style={styles.empty}>No assessment-linked, identity-aligned professional records are available in this environment.</div>}
+          </div>
+        </section>}
 
         {tab==='reports' && <section style={styles.reportGrid}><div style={styles.panel}><h2 style={styles.panelTitle}>Marketplace funnel</h2>{[['Waitlist signups',analytics?.waitlistSignups ?? '—'],['Assessments completed',analytics?.totalAssessments ?? '—'],['Profiles complete',stats.complete],['Listed on marketplace',stats.listed]].map(([l,v])=><div key={l} style={styles.metric}><span>{l}</span><strong>{v}</strong></div>)}</div><div style={styles.panel}><h2 style={styles.panelTitle}>Training priorities</h2>{(analytics?.trainingPriorities||[]).map(x=><div key={x.cluster} style={styles.metric}><span>{x.label}</span><strong>{x.average}</strong></div>)}{!analytics?.trainingPriorities?.length&&<div style={styles.empty}>Analytics will appear once assessment data is available.</div>}</div><div style={styles.panel}><h2 style={styles.panelTitle}>Score distribution</h2>{(analytics?.scoreDistribution||[]).map(x=><div key={x.label} style={styles.metric}><span>{x.label}</span><strong>{x.count}</strong></div>)}</div></section>}
 
