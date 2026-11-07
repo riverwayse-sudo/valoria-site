@@ -37,6 +37,16 @@ describe("opportunity submission security contracts", () => {
     expect(correction).toContain("[.][^[:space:]@]+$");
   });
 
+  test("employer rate limiting is callable only by the service role with a pinned search path", () => {
+    const rateLimiter = fs.readFileSync(path.join(__dirname, "../../supabase/migrations/20261107150001_harden_opportunity_submission_rate_limiter.sql"), "utf8");
+    expect(rateLimiter).toContain("SECURITY DEFINER");
+    expect(rateLimiter).toContain("SET search_path = ''");
+    expect(rateLimiter).toContain("REVOKE ALL ON FUNCTION public.consume_opportunity_submission_rate_limit");
+    expect(rateLimiter).toContain("GRANT EXECUTE ON FUNCTION public.consume_opportunity_submission_rate_limit");
+    expect(rateLimiter).toContain("TO service_role");
+    expect(rateLimiter).not.toContain("SET search_path TO 'public', 'pg_temp'");
+  });
+
   test("opportunity detail pages only render safe external destinations", () => {
     const detail = read("src/app/opportunities/[slug]/page.jsx");
     expect(detail).toContain("safeApplicationUrl");
