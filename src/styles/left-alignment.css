@@ -10,6 +10,31 @@ body * {
   text-align: left !important;
 }
 
+/* Editorial copy has one alignment contract across every public page. */
+main :where(h1, h2, h3, h4, h5, h6, p, li, label, blockquote, figcaption, span, strong, a) {
+  text-align: left !important;
+}
+
+/* Desktop mega-menu columns and mobile navigation rows share the same left edge. */
+.nav-dropdown-grid {
+  justify-items: start !important;
+  text-align: left !important;
+}
+
+.nav-dropdown-entry {
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+
+.nav-dropdown-description {
+  text-align: left !important;
+}
+
+.nav-mobile .nav-mobile-link {
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+
 /* Navigation dropdowns are left-anchored in both desktop and mobile shells. */
 .vi-nav .nav-dropdown,
 .nav-mobile .nav-dropdown {
