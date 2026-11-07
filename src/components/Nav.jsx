@@ -72,7 +72,7 @@ export default function Nav() {
   // Keep the primary CTA stable during auth hydration. Previously it changed
   // from START VALU to MY PROFILE/DASHBOARD after getUser(), causing a visible
   // header layout shift on every page for signed-in users.
-  const cta = { label: 'DISCOVER YOUR VALU INDEX', href: NAVIGATION.assessmentUrl, external: true }
+  const cta = { label: 'TALK TO VALORIA', href: '/contact-us' }
 
   const renderItem = (item, className = 'nav-dropdown-link') => {
     const active = isPathActive(pathname, item.href)
@@ -116,7 +116,7 @@ export default function Nav() {
 
         {authChecked && user && <li className="nav-account"><Link href="/dashboard" className={`nav-link${isPathActive(pathname, '/dashboard') ? ' active' : ''}`}>Dashboard</Link><NotificationBell userId={user.id} /><button onClick={signOut} className="nav-link nav-signout">Sign Out</button></li>}
         {process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? <li><Link href="/dashboard" className={`nav-link${isPathActive(pathname, '/dashboard') ? ' active' : ''}`}>Dashboard Preview</Link></li> : authChecked && !user && <li><Link href="/login" className={`nav-link${isPathActive(pathname, '/login') ? ' active' : ''}`}>Sign In</Link></li>}
-        <li><AssessmentStartLink href={cta.href} className="nav-cta">{cta.label}</AssessmentStartLink></li>
+        <li><Link href={cta.href} className="nav-cta">{cta.label}</Link></li>
       </ul>
 
       <button className={`nav-burger${menuOpen ? ' open' : ''}`} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span/><span/><span/></button>
@@ -135,7 +135,7 @@ export default function Nav() {
         <div>{renderItem({ label: 'My Profile', href: `/profile/${user.id}` }, 'nav-mobile-link')}</div>
         <button className="nav-signout" onClick={() => { close(); signOut() }}>Sign Out</button>
       </> : <div>{renderItem({ label: 'Sign In', href: '/login' }, 'nav-mobile-link')}</div>}
-      <AssessmentStartLink href={cta.href} className="m-cta" onClick={close}>{cta.label}</AssessmentStartLink>
+      <Link href={cta.href} className="m-cta" onClick={close}>{cta.label}</Link>
     </nav>
   </>
 }
