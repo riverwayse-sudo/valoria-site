@@ -96,8 +96,8 @@ Brand punctuation is resolved: the user accepted the 9 October 2026 Website Cont
 
 ## 7. Validation and release boundary
 
-- Main-site code head `cf424b5`: **15 test suites, 273 tests passed**; design check, production excellence gate, Next.js 15.5.29 build, OpenNext bundle and Cloudflare Wrangler Preview deployment all passed. Subsequent site-branch commits only update the closeout documentation; runtime code remains at the validated `cf424b5`.
-- Platform head `b758053`: **30 test suites, 313 tests passed**; production build, secret scan, environment parity, Cloudflare Worker validation, Cloudflare Pages preview and Worker branch preview all passed.
+- Main-site code head `58bdc30`: **15 test suites, 273 tests passed**; design check, production excellence gate, Next.js 15.5.29 build, OpenNext bundle and Cloudflare Worker validation/dry-run all passed. The Cloudflare Workers Build preview for this head remains queued; the last successful preview is on the earlier code head `cf424b5` and does not include the latest skip-link/reduced-motion changes.
+- Platform head `1ac040a`: **30 test suites, 315 tests passed**; production build, secret scan, environment parity, Cloudflare Worker validation, Cloudflare Pages preview and Worker branch preview all passed.
 - Both PRs remain open. No merge or production deployment is claimed.
 - The production Cloudflare deploy workflow exists, but GitHub Actions receives Cloudflare error **9106** on the production Worker deployment request. The repository secret `CLOUDFLARE_API_TOKEN` must be replaced with a valid token that has `Workers Scripts:Edit` for this Cloudflare account and the `valoria-institute-site` Worker. Do not paste the token into chat; update it directly in the repository Actions secrets.
 - Cloudflare Workers Builds is the release validation path. Vercel is not the release target; its Hobby build quota is exhausted, so no Vercel preview is being used for approval.
