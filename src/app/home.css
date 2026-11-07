@@ -2963,3 +2963,9 @@
 .vi-scroll-track{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;animation:none;transform:none}
 @media(max-width:1000px){.vi-scroll-track{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.vi-scroll-track{grid-template-columns:minmax(0,1fr)}}
+
+
+/* Four clear stages from first signal to opportunity. */
+.home-framework-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:1000px){.home-framework-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.home-framework-grid{grid-template-columns:minmax(0,1fr)}}
