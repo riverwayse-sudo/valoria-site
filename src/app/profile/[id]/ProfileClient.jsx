@@ -27,9 +27,7 @@ function getYouTubeId(url) {
   return m ? m[1] : null
 }
 const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Mastery', E:'Enterprise' }
-// Short, positive-framed line per PRIME cluster — used by the "Key
-// Strengths" card to turn a raw cluster score into something a buyer can
-// actually read as a strength, rather than just a number on the radar chart.
+// Canonical PRIME cluster labels used to present report-backed point scores.
 
 // ─── brand tokens ─────────────────────────────────────────────
 const GOLD    = '#C9A84C'
@@ -48,9 +46,7 @@ const PRIME   = [
   { letter: 'E', color: '#C9A84C', label: 'Enterprise' },
 ]
 
-// Returns the top-scoring PRIME clusters (highest first), capped at 3, for
-// the "Key Strengths" card under About. Capped so the card only ever shows
-// genuine standouts, not a padded list of all five.
+// Returns the three highest-scoring PRIME clusters, ordered by points.
 function rankedClusterStrengths(clusterScores) {
   if (!clusterScores) return []
   return Object.entries(clusterScores)
@@ -557,10 +553,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
               ) : null
             })()}
 
-            {/* About — a brief introduction in the professional's own words.
-                The VALU Index summary used to live here, but that's now
-                covered by the Key Strengths card below, so this section
-                is free to just be the bio. */}
+            {/* Report-backed capability summary takes precedence; a self-reported overview is only a fallback. */}
             <Section label={p.assessment_summary ? 'VALU Capability Summary' : 'Professional Overview'}>
               {p.assessment_summary
                 ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
@@ -569,11 +562,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                   : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.45)', lineHeight:1.7 }}>This Basic snapshot profile does not include an official VALU capability summary. That summary is established after the separate full assessment.</p>}
             </Section>
 
-            {/* Key Strengths — rectangular card, gold background per brand,
-                surfacing the top-scoring PRIME clusters as concrete points
-                rather than making a buyer read the radar chart to figure out
-                what the assessment actually found strong. Only shows once
-                the VALU Index has been completed. */}
+            {/* Highest-scoring PRIME clusters are shown as report-backed points, without inferred personality claims. */}
             {p.cluster_scores && (
               <div style={{ background: GOLD, padding:'22px', marginBottom:'32px' }}>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(15,15,26,.55)', marginBottom:'16px' }}>Highest-Scoring PRIME Clusters</div>
@@ -646,7 +635,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
             )}
 
             {/* Introduction CTA — anchor target for the REQUEST INTRO / BOOK SPEAKER
-                links on /marketplace/talent and /marketplace/speakers, which already point to
+                links on /marketplace/talent and /marketplace/speakers, which point to
                 this page as #contact. scrollMarginTop accounts for the fixed nav. */}
             {p.is_dummy && (
               <div style={{ padding:'14px 18px', background:'rgba(154,106,0,.1)', border:'1px solid rgba(154,106,0,.35)', borderRadius:'6px', fontSize:'12px', fontWeight:600, color:'#D9A441', marginBottom:'12px', letterSpacing:'.02em' }}>
@@ -656,16 +645,16 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
             <div id="contact" className="vi-cta-intro" style={{ background:`linear-gradient(135deg, rgba(201,168,76,.06), rgba(26,26,46,.3))`, border:`1px solid ${GLINE2}`, padding:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', flexWrap:'wrap', marginTop:'8px', scrollMarginTop:'96px' }}>
               <div>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'8px' }}>
-                  {isOwnProfile ? 'This Is Your Profile' : displayTrack === 'facilitator' ? 'Commission This Facilitator' : displayTrack === 'speaker' ? 'Book This Speaker' : 'Get in Touch'}
+                  {isOwnProfile ? 'This Is Your Profile' : displayTrack === 'facilitator' ? 'Commission This Facilitator' : displayTrack === 'speaker' ? 'Request This Speaker' : 'Get in Touch'}
                 </div>
                 <p style={{ fontSize:'13px', fontWeight:300, color: DIM, maxWidth:'380px', lineHeight:1.7 }}>
                   {isOwnProfile
                     ? 'This is what others see when they view your profile. Keep it up to date so the right people can reach you.'
                     : displayTrack === 'facilitator'
-                    ? `Interested in commissioning ${initials} for a programme? Valoria Institute facilitates all introductions.`
+                    ? `Interested in commissioning ${p.display_name} for a programme? Send an enquiry through Valoria.`
                     : displayTrack === 'speaker'
                     ? `Interested in engaging ${p.display_name} for your event? Send an enquiry through Valoria.`
-                    : `Want to connect with ${initials}? All introductions go through Valoria Institute — your details stay protected.`}
+                    : `Want to connect with ${p.display_name}? Send an enquiry through Valoria; private contact details are not displayed on this profile.`}
                 </p>
               </div>
               {p.is_dummy ? (
