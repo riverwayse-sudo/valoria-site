@@ -1,5 +1,5 @@
-import fs from 'node:fs'
-import path from 'node:path'
+const fs = require('fs')
+const path = require('path')
 
 const read = (relativePath) => fs.readFileSync(path.join(__dirname, relativePath), 'utf8')
 
