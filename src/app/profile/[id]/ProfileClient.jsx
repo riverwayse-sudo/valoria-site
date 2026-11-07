@@ -6,7 +6,6 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import EnquiryForm from '@/components/EnquiryForm'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { toPublicProfile, PUBLIC_PROFILE_SELECT } from '@/lib/public-profile'
 import { getValuTier } from '@/lib/brand'
 
 // ─── helpers ─────────────────────────────────────────────
@@ -185,25 +184,6 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
         await loadCertificates(initialProfile.id)
         if (cancelled) return
         if (!user || user.id !== initialProfile.id) await recordView(initialProfile.id, user)
-        if (!cancelled) setLoading(false)
-        return
-      }
-
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)
-      const { data: row, error } = await supabase
-        .from('marketplace_public_roster')
-        .select(PUBLIC_PROFILE_SELECT)
-        .eq(isUuid ? 'professional_id' : 'atb_id', id)
-        .maybeSingle()
-
-      if (error) console.error('public Marketplace profile fetch failed:', error)
-      const real = toPublicProfile(row)
-
-      if (real) {
-        if (cancelled) return
-        setProfile(real)
-        await loadCertificates(real.id)
-        if (!user || user.id !== real.id) await recordView(real.id, user)
         if (!cancelled) setLoading(false)
         return
       }
