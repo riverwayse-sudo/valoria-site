@@ -304,8 +304,11 @@ export default function LoginPage() {
             Talent or speaker?{' '}
             <a href="/valu/assessment/" style={{ color: GOLD }}>Take the VALU taster</a>
           </p>
-          <p style={{ margin: 0, fontSize: '11px', color: 'rgba(247,244,238,.32)' }}>
+          <p style={{ margin: '0 0 8px', fontSize: '11px', color: 'rgba(247,244,238,.48)' }}>
             Already completed a taster? Sign in with the same confirmed email address to reconnect your saved progress.
+          </p>
+          <p style={{ margin: 0, fontSize: '11px', color: 'rgba(247,244,238,.32)' }}>
+            Need an account? <a href="/professional-signup/recover" style={{ color: GOLD }}>Recover your saved taster</a>.
           </p>
         </div>
       </div>
