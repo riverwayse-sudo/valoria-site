@@ -67,7 +67,7 @@ const decisionPathways = [
   },
   {
     number: '03',
-    label: 'FOR INSTITUTIONS & PROGRAMME LEADERS',
+    label: 'FOR INSTITUTIONS & PARTNERS',
     title: 'Build capability at scale.',
     body: 'Explore development programmes and institutional partnerships that connect professional growth to organisational and sector priorities.',
     href: '/develop',
