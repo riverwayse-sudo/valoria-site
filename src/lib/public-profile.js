@@ -1,3 +1,12 @@
+export const PUBLIC_PROFILE_SELECT = [
+  'professional_id', 'full_name', 'bio', 'location', 'languages', 'headline',
+  'current_job_title', 'capability', 'track', 'capabilities', 'selected_capabilities',
+  'atb_id', 'display_initials', 'photo_url', 'industry', 'skills', 'topics',
+  'programme_types', 'availability', 'valu_index', 'cluster_scores', 'designation',
+  'fee_range', 'salary_expectation', 'availability_status', 'assessment_access',
+  'assessment_summary',
+].join(',')
+
 const VALID_TRACKS = new Set(['candidate', 'speaker', 'facilitator'])
 
 function normaliseTrack(track) {
