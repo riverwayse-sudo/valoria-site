@@ -237,7 +237,6 @@ const S = {
   save: { background:T.gold, color:T.dark, border:0, padding:'13px 20px', fontSize:10, fontWeight:800, letterSpacing:'.13em', cursor:'pointer', fontFamily:'inherit' },
   note: { color:T.faint, fontSize:11, lineHeight:1.5 },
   requirements: { display:'grid', gridTemplateColumns:'repeat(3,minmax(0,1fr))', gap:12, marginTop:20 },
-  requirements: { display:'grid', gridTemplateColumns:'repeat(3,minmax(0,1fr))', gap:12, marginTop:20 },
   footerCard: { display:'flex', justifyContent:'space-between', alignItems:'center', gap:24, padding:'24px 28px', border:`1px solid ${T.line}`, background:'rgba(201,168,76,.04)' },
   secondary: { color:T.gold, textDecoration:'none', fontSize:10, fontWeight:700, letterSpacing:'.14em', whiteSpace:'nowrap' },
   loading: { minHeight:'100vh', display:'grid', placeItems:'center', color:T.muted, fontSize:13 },
