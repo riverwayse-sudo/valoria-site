@@ -18,7 +18,7 @@ const dimensions = [
 
 const faqs = [
   ['How does it work?', 'Start with a directional taster, then complete your full assessment. Your official VALU Index and PRIME points are generated from the completed full assessment.'],
-  ['Do I need an account first?', 'No. Begin with the taster. Create or confirm your account before continuing to your full assessment.'],
+  ['Do I need an account first?', 'Register your contact and professional details before the snapshot so your progress has a persistent record. This is not your Valoria account. You create or connect your secure account after the snapshot, before continuing to the full assessment.'],
   ['Who is it for?', 'It is designed for professionals across industries and markets—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight, visibility and access to opportunity.'],
   ['Is it free?', 'Yes. The taster and full assessment are free to take. The wider Valoria ecosystem connects insight to development, visibility and opportunity.'],
   ['Does the result define me?', 'No. The taster is directional, not an official score or permanent label. Your official VALU Index is produced after completing your full assessment.'],
@@ -83,8 +83,10 @@ export default function ValuStartPage() {
           <div className="vs-kicker dark"><span /> HOW IT WORKS</div>
           <h2>Start. Continue. Understand.<br /><em>Then become discoverable.</em></h2>
           <div className="vs-journey-grid">
-            <article><span>01</span><h3>Start</h3><p>Begin with a short taster for a directional starting point. No account needed.</p></article>
-            <article><span>02</span><h3>Continue</h3><p>Create or confirm your account, then continue to your full assessment.</p></article>
+            <article><span>01</span><h3>Register</h3><p>Share your contact and professional details so your journey has a persistent identity. This is not your platform account.</p></article>
+            <article><span>02</span><h3>Take your snapshot</h3><p>Complete the guided taster. Your responses are saved against your registration.</p></article>
+            <article><span>03</span><h3>Create your account</h3><p>Secure your Valoria account and confirm your email when you are ready to continue.</p></article>
+            <article><span>04</span><h3>Complete your assessment</h3><p>Continue from your dashboard to establish your official VALU Index.</p></article>
             <article><span>03</span><h3>Understand</h3><p>Complete your formal assessment to receive your official VALU Index in points and your PRIME capability profile.</p></article>
             <article><span>04</span><h3>Discover</h3><p>Subject to governance checks, become discoverable through the marketplace.</p></article>
           </div>
