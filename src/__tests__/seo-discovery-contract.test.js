@@ -51,6 +51,7 @@ describe('Valoria SEO and discovery foundation', () => {
   test('machine-readable reference uses current PRIME and VALU decisions', () => {
     const llms = read('public/llms.txt')
     expect(llms).toContain('17 skills')
+    expect(llms).toContain('https://valoriainstitute.com/jobs')
     expect(llms).toContain('AI Fluency')
     expect(llms).toContain('Human-AI Collaboration')
     expect(llms).toContain('points, not percentages')
@@ -69,6 +70,7 @@ describe('Valoria SEO and discovery foundation', () => {
 
   test('dedicated Jobs discovery route is linked and not redirected away', () => {
     expect(read('src/app/jobs/page.jsx')).toContain('export default')
+    expect(read('src/app/jobs/layout.jsx')).toContain("canonical: 'https://valoriainstitute.com/jobs'")
     expect(read('src/config/navigation.js')).toContain("href: '/jobs'")
     expect(read('src/components/Footer.jsx')).toContain('href="/jobs"')
     expect(read('src/app/sitemap.js')).toContain("path: '/jobs'")
