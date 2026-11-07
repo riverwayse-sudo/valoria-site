@@ -388,24 +388,26 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                 </Link>
               ) : (
                 <>
-                  <Link href={displayTrack === 'facilitator' ? '/marketplace/facilitators' : displayTrack === 'speaker' ? '/marketplace/speakers' : '/marketplace/talent'}
+                  <Link href={browseHref}
                     style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
-                    MORE {displayTrack === 'facilitator' ? 'FACILITATORS' : displayTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}
+                    {browseLabel}
                   </Link>
                   {p.is_dummy ? (
                     <button type="button" disabled
                       style={{ padding:'12px 22px', background:'rgba(255,255,255,.06)', color:'rgba(247,244,238,.3)', fontSize:'11px', fontWeight:700, letterSpacing:'.12em', border:'none', cursor:'not-allowed' }}>
                       SAMPLE — NOT AVAILABLE
                     </button>
-                  ) : (
+                  ) : canRequest ? (
                     <EnquiryForm
                       professionalProfileId={p.id}
                       atbId={atbId}
                       enquiryType={displayTrack === 'facilitator' ? 'facilitator_commission' : displayTrack === 'speaker' ? 'speaker_booking' : 'candidate'}
-                      ctaLabel={displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
+                      ctaLabel={displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'REQUEST SPEAKER' : 'REQUEST INTRO'}
                       currentUser={currentUser}
                       triggerStyle={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', border:'none', textDecoration:'none' }}
                     />
+                  ) : (
+                    <span style={{fontSize:'10px',letterSpacing:'.1em',color:DIM}}>NO ACTIVE BUYER PATHWAY</span>
                   )}
                 </>
               )}
@@ -648,11 +650,13 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
             <div id="contact" className="vi-cta-intro" style={{ background:`linear-gradient(135deg, rgba(201,168,76,.06), rgba(26,26,46,.3))`, border:`1px solid ${GLINE2}`, padding:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', flexWrap:'wrap', marginTop:'8px', scrollMarginTop:'96px' }}>
               <div>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'8px' }}>
-                  {isOwnProfile ? 'This Is Your Profile' : displayTrack === 'facilitator' ? 'Commission This Facilitator' : displayTrack === 'speaker' ? 'Request This Speaker' : 'Get in Touch'}
+                  {isOwnProfile ? 'This Is Your Profile' : !canRequest ? 'No Active Buyer Pathway' : displayTrack === 'facilitator' ? 'Commission This Facilitator' : displayTrack === 'speaker' ? 'Request This Speaker' : 'Get in Touch'}
                 </div>
                 <p style={{ fontSize:'13px', fontWeight:300, color: DIM, maxWidth:'380px', lineHeight:1.7 }}>
                   {isOwnProfile
                     ? 'This is what others see when they view your profile. Keep it up to date so the right people can reach you.'
+                    : !canRequest
+                    ? 'This profile is visible in the Marketplace, but no capability is currently open for enquiries.'
                     : displayTrack === 'facilitator'
                     ? `Interested in commissioning ${p.display_name} for a programme? Send an enquiry through Valoria.`
                     : displayTrack === 'speaker'
@@ -669,7 +673,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                 <Link href="/profile/edit" style={{ padding:'14px 28px', background:GOLD, color:DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.14em', textDecoration:'none', flexShrink:0, whiteSpace:'nowrap' }}>
                   EDIT YOUR PROFILE
                 </Link>
-              ) : (
+              ) : canRequest ? (
                 <EnquiryForm
                   professionalProfileId={p.id}
                   atbId={atbId}
@@ -677,6 +681,8 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                   ctaLabel={displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'REQUEST SPEAKER' : 'SEND INTRODUCTION'}
                   currentUser={currentUser}
                 />
+              ) : (
+                <span style={{fontSize:'10px',letterSpacing:'.1em',color:DIM}}>NO ACTIVE BUYER PATHWAY</span>
               )}
             </div>
           </div>
