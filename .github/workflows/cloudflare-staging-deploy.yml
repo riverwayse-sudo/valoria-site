@@ -144,6 +144,13 @@ jobs:
             exit 1
           fi
           grep -qi 'Method not allowed' /tmp/valu-assessment-api-response
+          assessment_options_status="$(curl -sS --max-time 25 -X OPTIONS -H "Origin: $base" -H 'Access-Control-Request-Method: POST' -H 'Access-Control-Request-Headers: content-type' -o /tmp/valu-assessment-options-response -w '%{http_code}' "$base/valu/assessment/api/taster-progress")"
+          if [[ "$assessment_options_status" != "204" ]]; then
+            echo "Assessment API OPTIONS proxy returned HTTP $assessment_options_status; expected 204."
+            cat /tmp/valu-assessment-options-response || true
+            exit 1
+          fi
+
 
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
           grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
