@@ -30,7 +30,7 @@ export default async function ProfilePage({ params, searchParams }) {
   // Public profile pages read only the deliberately limited public roster
   // projection. The underlying professional_profiles table remains private.
   const { data: row, error } = await supabase
-    .rpc('get_consent_verified_marketplace_roster')
+    .from('marketplace_public_roster')
     .select(PUBLIC_PROFILE_SELECT)
     .eq(isUuid ? 'professional_id' : 'atb_id', id)
     .maybeSingle()
