@@ -3,7 +3,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const read = relative => fs.readFileSync(path.join(__dirname, "..", relative), "utf8");
+const read = relative => fs.readFileSync(path.join(__dirname, "../..", relative), "utf8");
 
 describe("opportunity submission security contracts", () => {
   test("validation helper enforces HTTP(S), bounded lists, and UUID idempotency keys", () => {
