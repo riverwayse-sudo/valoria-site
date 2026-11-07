@@ -64,10 +64,16 @@ jobs:
             fi
             sleep 3
           done
+          echo "Assessment app shell title:"
+          grep -io '<title>[^<]*</title>' /tmp/assessment.html || true
           grep -qi '<title>Valoria Institute</title>' /tmp/assessment.html
+          grep -qi 'id="root"' /tmp/assessment.html
+          grep -qi '/assets/index-' /tmp/assessment.html
           status=$(curl -sS -o /tmp/assessment-api.json -w '%{http_code}' \
             -X POST "$origin/api/taster-progress" \
             -H 'Content-Type: application/json' \
             --data '{"action":"register"}')
+          echo "Assessment API gate HTTP status: $status"
+          cat /tmp/assessment-api.json
           test "$status" = "503"
           grep -qi 'read-only' /tmp/assessment-api.json
