@@ -89,7 +89,8 @@ if (!fs.existsSync(publicProfilePath)) {
     'professional_profile_acknowledgements',
     'PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION',
     "acknowledgement_type', 'profile_submission'",
-    "acknowledgement_version', PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION",
+    "acknowledgement?.acknowledgement_version !== PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION",
+    ".order('acknowledged_at', { ascending: false })",
     "visibility', 'public'",
     "listing_status', 'listed'",
     "is_test', false",
@@ -174,7 +175,7 @@ if (fs.existsSync(valuStartPath)) {
   if (/Question\s+\d+\s+of\s+\d+/i.test(valuStart)) {
     violations.push('VALU entry page must not display question-count progress labels');
   }
-  if (!valuStart.includes('TAKE THE 9-QUESTION TASTER') || !valuStart.includes('POINTS')) {
+  if (!valuStart.includes('TAKE THE VALU TASTER') || !valuStart.includes('POINTS')) {
     violations.push('VALU entry page must label the taster CTA and show VALU results in points');
   }
 }
