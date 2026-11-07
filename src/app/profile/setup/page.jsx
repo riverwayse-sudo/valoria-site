@@ -545,6 +545,11 @@ function ProfileSetupForm() {
             </p>
           </div>
 
+          {!form.valu_index && (
+            <Link href={BRAND.assessmentUrl} style={{ display:'block', width:'100%', padding:'15px', marginBottom:'10px', textAlign:'center', border:`1px solid ${GOLD}`, color:GOLD, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
+              CONTINUE TO VALU ASSESSMENT →
+            </Link>
+          )}
           <button onClick={() => router.push('/dashboard')} style={{ display:'block', width:'100%', padding:'16px', background:GOLD, color:DARK, fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor:'pointer', fontFamily:'inherit' }}>
             GO TO DASHBOARD →
           </button>
