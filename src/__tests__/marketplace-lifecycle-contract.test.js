@@ -731,4 +731,20 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(modal).not.toContain('profile.bio')
   })
 
+
+  test('admin marketplace roster is authenticated, consent-aware and flags same-name records', () => {
+    const route = read('src/app/api/admin/marketplace-roster/route.js')
+    const page = read('src/app/admin/marketplace-roster/page.jsx')
+    const admin = read('src/app/admin/page.jsx')
+    expect(route).toContain(".from('admin_users')")
+    expect(route).toContain("acknowledgement_version === 'public-profile-visibility-v3-2026-11-07'")
+    expect(route).toContain('profile.is_test || profile.revoked_at')
+    expect(route).toContain('identity_review_required')
+    expect(route).toContain('public_ready: candidate.public_ready && !identityReviewRequired')
+    expect(page).toContain('IDENTITY REVIEW REQUIRED')
+    expect(page).toContain('PUBLICLY READY')
+    expect(page).toContain('CONSENT NOT RECORDED')
+    expect(admin).toContain('/admin/marketplace-roster')
+  })
+
 })
