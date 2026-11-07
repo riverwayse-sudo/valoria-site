@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 
 const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,fee_range,salary_expectation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
+const IS_READ_ONLY_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'
 
 function normalizeTrack(value) {
   const v = String(value || '').toLowerCase()
@@ -37,6 +38,8 @@ function dedupeProfessionals(rows) {
 }
 
 export async function getMarketplaceRows(track = 'all') {
+  if (IS_READ_ONLY_PREVIEW) return []
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   if (!url || !key) return []
@@ -58,6 +61,8 @@ export async function getMarketplaceRows(track = 'all') {
 }
 
 export async function getMarketplaceCounts() {
+  if (IS_READ_ONLY_PREVIEW) return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   if (!url || !key) return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
