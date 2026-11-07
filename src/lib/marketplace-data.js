@@ -97,7 +97,7 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
 
   const { data: acknowledgements, error: acknowledgementError } = await admin
     .from('professional_profile_acknowledgements')
-    .select('professional_id')
+    .select('professional_id,acknowledgement_version')
     .eq('acknowledgement_type', 'profile_submission')
     .in('professional_id', ids)
     .order('acknowledged_at', { ascending: false })
