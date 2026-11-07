@@ -313,3 +313,100 @@
   .events-page .poster-bottom{grid-template-columns:1fr;gap:16px}
   .events-page .poster-details{border-left:0;border-top:1px solid rgba(247,244,238,.2);padding:16px 0 0}
 }
+
+
+/* Homepage event announcement — reuses the approved event poster and registration flow. */
+.homepage-event-popup-backdrop{
+  position:fixed;inset:0;z-index:1200;
+  display:grid;place-items:center;
+  padding:24px;
+  background:rgba(8,9,20,.78);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  animation:homeEventFadeIn .22s ease-out both;
+}
+.homepage-event-popup{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,.92fr);
+  width:min(900px,100%);
+  max-height:min(88svh,820px);
+  overflow:auto;
+  background:#F7F4EE;
+  color:#1A1A2E;
+  border:1px solid rgba(201,168,76,.52);
+  box-shadow:0 28px 100px rgba(0,0,0,.42);
+  border-radius:4px;
+  animation:homeEventRiseIn .3s cubic-bezier(.2,.75,.25,1) both;
+}
+.homepage-event-popup-close{
+  position:absolute;top:12px;right:12px;z-index:5;
+  display:grid;place-items:center;
+  width:40px;height:40px;border-radius:50%;
+  border:1px solid rgba(247,244,238,.28);
+  background:#1A1A2E;color:#F7F4EE;
+  font-size:27px;line-height:1;cursor:pointer;
+}
+.homepage-event-popup .event-poster{
+  min-height:100%;height:100%;padding:28px 24px;
+}
+.homepage-event-popup .poster-top{font-size:8px;gap:12px}
+.homepage-event-popup .poster-brand{font-size:16px}
+.homepage-event-popup .poster-rule{left:24px;right:24px;top:82px}
+.homepage-event-popup .poster-session{margin-top:24px;font-size:9px}
+.homepage-event-popup .poster-main{gap:10px;margin-block:24px}
+.homepage-event-popup .poster-title{max-width:100%}
+.homepage-event-popup .poster-title h3{font-size:clamp(34px,4vw,48px);line-height:.98}
+.homepage-event-popup .poster-title p{font-size:clamp(24px,2.7vw,32px);line-height:1.05}
+.homepage-event-popup .poster-mark{width:120px;height:120px;right:-24px;bottom:-24px}
+.homepage-event-popup .poster-bottom{gap:16px}
+.homepage-event-popup .poster-outcomes{font-size:10px}
+.homepage-event-popup .poster-outcomes>div{gap:8px;font-size:10px}
+.homepage-event-popup .poster-details{font-size:8px;padding-left:12px}
+.homepage-event-popup .poster-details b{font-size:12px}
+.homepage-event-popup-copy{
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  padding:clamp(28px,4vw,48px);
+}
+.homepage-event-popup-eyebrow{
+  margin:0 0 18px;color:#8D6E24;font-size:10px;font-weight:800;letter-spacing:.16em;
+}
+.homepage-event-popup-copy h2{
+  margin:0;color:#1A1A2E;font-size:clamp(27px,3vw,39px);font-weight:500;
+  line-height:1.12;letter-spacing:-.035em;text-wrap:balance;
+}
+.homepage-event-popup-copy>p:not(.homepage-event-popup-eyebrow){
+  margin:18px 0 0;color:#555565;font-size:15px;line-height:1.7;
+}
+.homepage-event-popup-actions{
+  display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin-top:28px;width:100%;
+}
+.homepage-event-popup-actions .event-register-button{
+  min-height:50px;padding:14px 18px;width:100%;justify-content:center;
+}
+.homepage-event-popup-dismiss{
+  border:0;background:transparent;color:#555565;text-decoration:underline;text-underline-offset:4px;
+  padding:8px 0;cursor:pointer;font:inherit;font-size:13px;
+}
+.homepage-event-popup button:focus-visible{outline:3px solid #C9A84C;outline-offset:3px}
+@keyframes homeEventFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes homeEventRiseIn{from{opacity:0;transform:translateY(12px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:700px){
+  .homepage-event-popup-backdrop{padding:12px;align-items:center}
+  .homepage-event-popup{grid-template-columns:1fr;max-width:480px;max-height:92svh}
+  .homepage-event-popup .event-poster{min-height:390px;padding:24px 22px}
+  .homepage-event-popup .poster-rule{left:22px;right:22px;top:76px}
+  .homepage-event-popup .poster-session{margin-top:20px}
+  .homepage-event-popup .poster-main{margin-block:18px}
+  .homepage-event-popup .poster-title h3{font-size:clamp(34px,9vw,43px)}
+  .homepage-event-popup .poster-title p{font-size:clamp(24px,6vw,29px)}
+  .homepage-event-popup .poster-mark{width:100px;height:100px}
+  .homepage-event-popup-copy{padding:24px}
+  .homepage-event-popup-copy h2{font-size:28px;max-width:20ch}
+  .homepage-event-popup-copy>p:not(.homepage-event-popup-eyebrow){font-size:14px;margin-top:12px}
+  .homepage-event-popup-eyebrow{margin-bottom:12px}
+  .homepage-event-popup-actions{margin-top:18px}
+}
+@media(prefers-reduced-motion:reduce){
+  .homepage-event-popup-backdrop,.homepage-event-popup{animation:none}
+}
