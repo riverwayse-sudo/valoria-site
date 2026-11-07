@@ -4,17 +4,20 @@ import { useEffect } from 'react'
 
 const MAX_PARALLAX_OFFSET = 42
 const MAX_PARALLAX_SPEED = 0.16
+const PAGE_ATMOSPHERE_SELECTOR = '.page-hero, .valu-hero, .vs-hero, .events-hero, .insights-hero'
 
 /**
- * Applies restrained, transform-only parallax to explicitly marked decorative
- * layers inside one page region. Native scrolling remains untouched.
+ * Applies restrained, transform-only parallax to decorative layers and page
+ * atmosphere layers. Page content and layout geometry are never transformed.
  */
-export default function ParallaxController({ rootSelector = '#main-content' }) {
+export default function ParallaxController({ rootSelector = 'body' }) {
   useEffect(() => {
     const root = document.querySelector(rootSelector)
     if (!root) return
 
-    const layers = Array.from(root.querySelectorAll('[data-parallax-speed]'))
+    const markedLayers = Array.from(root.querySelectorAll('[data-parallax-speed]'))
+    const pageAtmospheres = Array.from(root.querySelectorAll(PAGE_ATMOSPHERE_SELECTOR))
+    const layers = Array.from(new Set([...markedLayers, ...pageAtmospheres]))
     if (!layers.length) return
 
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')
@@ -29,16 +32,20 @@ export default function ParallaxController({ rootSelector = '#main-content' }) {
       const viewportHeight = window.innerHeight || 0
 
       activeLayers.forEach((layer) => {
-        const speed = Number(layer.getAttribute('data-parallax-speed'))
+        const isPageAtmosphere = layer.matches(PAGE_ATMOSPHERE_SELECTOR)
+        const configuredSpeed = layer.getAttribute('data-parallax-speed')
+        const speed = Number(configuredSpeed ?? (isPageAtmosphere ? '0.035' : 'NaN'))
         if (!Number.isFinite(speed) || Math.abs(speed) > MAX_PARALLAX_SPEED) {
           layer.style.setProperty('--vi-parallax-y', '0px')
           return
         }
 
         const rect = layer.getBoundingClientRect()
-        // getBoundingClientRect includes the previous transform. Remove it before
-        // calculating the next frame to prevent cumulative parallax feedback.
-        const previousOffset = Number.parseFloat(layer.style.getPropertyValue('--vi-parallax-y')) || 0
+        // Marked decorative layers move directly; page atmosphere moves via
+        // ::before, so its section's own bounding box remains untransformed.
+        const previousOffset = isPageAtmosphere
+          ? 0
+          : Number.parseFloat(layer.style.getPropertyValue('--vi-parallax-y')) || 0
         const elementCenter = rect.top + rect.height / 2 - previousOffset
         const distanceFromViewportCenter = viewportHeight / 2 - elementCenter
         const offset = Math.max(
