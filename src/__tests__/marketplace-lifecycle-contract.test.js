@@ -761,4 +761,13 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(page).toContain('atbIdReviewCount')
   })
 
+
+  test('public marketplace projection rejects invalid ATB IDs and placeholder headlines', () => {
+    const data = read('src/lib/marketplace-data.js')
+    expect(data).toContain('/^ATB-[A-Z0-9-]{4,40}$/i')
+    expect(data).toContain('validAtbId')
+    expect(data).toContain('PLACEHOLDER_HEADLINES')
+    expect(data).toContain('validHeadline')
+  })
+
 })
