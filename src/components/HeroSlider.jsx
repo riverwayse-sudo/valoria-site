@@ -13,7 +13,7 @@ export default function HeroSlider() {
             <div className="hero-copy">
               <div className="hero-eyebrow">
                 <div className="hero-eyebrow-line" />
-                <span className="hero-eyebrow-text">THE PROFESSIONAL MARKETPLACE</span>
+                <span className="hero-eyebrow-text">THE PROFESSIONAL CAPABILITY MARKETPLACE</span>
               </div>
               <h1 className="hero-title" id="valoria-hero-title">
                 Make your professional<br />
