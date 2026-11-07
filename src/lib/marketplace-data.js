@@ -69,7 +69,7 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
   const ids = rows.map(row => row.professional_id)
   const { data: profiles, error } = await admin
     .from('professional_profiles')
-    .select('id,display_name,headline,current_job_title,profile_complete,is_test,visibility,listing_status,revoked_at')
+    .select('id,display_name,headline,current_job_title,profile_complete,is_test,visibility,listing_status,revoked_at,valu_index,assessment_completed_at,assessment_expires_at')
     .in('id', ids)
 
   if (error) {
@@ -100,6 +100,20 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
     .map(row => row.professional_id)
   let fullReadyIds = new Set()
   if (fullIds.length) {
+    const { data: fullAssessments, error: assessmentError } = await admin
+      .from('valu_assessments')
+      .select('user_id,total_score,completed_at')
+      .in('user_id', fullIds)
+      .not('completed_at', 'is', null)
+      .order('completed_at', { ascending: false })
+    if (assessmentError) {
+      console.error('Full assessment validity verification failed:', assessmentError)
+      throw new Error('Full assessment validity could not be verified.')
+    }
+    const latestAssessmentById = new Map()
+    for (const assessment of fullAssessments || []) {
+      if (!latestAssessmentById.has(assessment.user_id)) latestAssessmentById.set(assessment.user_id, assessment)
+    }
     const { data: capabilities, error: capabilityError } = await admin
       .from('professional_capabilities')
       .select('professional_id,eligible_for_listing,eligibility_status,missing_requirements')
@@ -117,11 +131,22 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
     }
     fullReadyIds = new Set(fullIds.filter(id => {
       const active = capabilitiesById.get(id) || []
-      return active.length > 0 && active.every(capability =>
-        capability.eligible_for_listing === true
-        && capability.eligibility_status === 'listed'
-        && (!Array.isArray(capability.missing_requirements) || capability.missing_requirements.length === 0)
-      )
+      const profile = (profiles || []).find(item => item.id === id)
+      const assessment = latestAssessmentById.get(id)
+      const expiry = Date.parse(profile?.assessment_expires_at || '')
+      const profileCompletedAt = Date.parse(profile?.assessment_completed_at || '')
+      return active.length > 0
+        && active.every(capability =>
+          capability.eligible_for_listing === true
+          && capability.eligibility_status === 'listed'
+          && (!Array.isArray(capability.missing_requirements) || capability.missing_requirements.length === 0)
+        )
+        && profile?.profile_complete === true
+        && Number(profile.valu_index) >= 35
+        && Number.isFinite(expiry) && expiry > Date.now()
+        && assessment
+        && Number(assessment.total_score) === Number(profile.valu_index)
+        && Date.parse(assessment.completed_at || '') === profileCompletedAt
     }))
   }
 
