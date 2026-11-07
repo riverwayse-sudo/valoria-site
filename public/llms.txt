@@ -15,7 +15,8 @@
 - [Talent marketplace](https://valoriainstitute.com/marketplace/talent): Talent discovery for employers.
 - [Speaker marketplace](https://valoriainstitute.com/marketplace/speakers): Speaker discovery for event organisers.
 - [Facilitator marketplace](https://valoriainstitute.com/marketplace/facilitators): Facilitator discovery for programme and learning buyers.
-- [Opportunities](https://valoriainstitute.com/opportunities): Public opportunities when reviewed and published.
+- [Jobs](https://valoriainstitute.com/jobs): Reviewed job openings from organisations seeking professional capability.
+- [Opportunities](https://valoriainstitute.com/opportunities): Broader public opportunities when reviewed and published.
 - [ATB Connect](https://valoriainstitute.com/atb-connect): Employer pathway for capability-led talent discovery.
 - [ATB Spotlight](https://valoriainstitute.com/atb-spotlight): Speaker and facilitator discovery pathway.
 - [Valoria Develop](https://valoriainstitute.com/develop): PRIME-mapped development pathways.
