@@ -441,6 +441,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(callback).toContain("params.get('claim_taster') === 'true'")
     expect(callback).toContain("fetch('/api/claim-taster'")
     expect(login).toContain('/professional-signup/recover')
+    expect(read('src/app/valu/start/page.jsx')).toContain('/professional-signup/recover')
     expect(login).toContain('claimed_name: claimName')
     expect(read('src/app/api/claim-taster/route.js')).toContain('const claimedName = String(requestBody?.claimed_name || \'\').trim()')
   })
