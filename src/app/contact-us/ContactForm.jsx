@@ -22,6 +22,10 @@ export default function ContactForm({ initialInquiryType = 'general' }) {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => setCurrentUser(user))
+    const requestedType = new URLSearchParams(window.location.search).get('type')
+    if (INQUIRY_TYPES.some(type => type.id === requestedType)) {
+      setForm(current => ({ ...current, inquiryType: requestedType }))
+    }
   }, [])
 
   async function handleSubmit(e) {
