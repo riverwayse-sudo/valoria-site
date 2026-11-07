@@ -119,6 +119,28 @@ if (!/\.home-redesign-root\s+\.container\s*\{/.test(homeCss)) add('src/app/home.
 const negativeMargin = existing.filter(({ file, text }) => homepageFiles.includes(file) && /margin(?:-(?:top|right|bottom|left))?\s*:\s*-\\d/.test(text));
 for (const { file } of negativeMargin) add(`${file}: negative margin detected; justify or remove before production`);
 
+// Parallax is a bounded visual layer, not a second animation system.
+const parallaxController = existing.find((x) => x.file === 'src/components/ParallaxController.jsx')?.text || '';
+if (!page.includes('ParallaxController')) add('Homepage: parallax controller must be mounted on the public experience');
+if (!parallaxController.includes("prefers-reduced-motion: reduce") ||
+    !parallaxController.includes('requestAnimationFrame') ||
+    !parallaxController.includes('IntersectionObserver') ||
+    !parallaxController.includes('MAX_PARALLAX_OFFSET')) {
+  add('ParallaxController must respect reduced motion, schedule scroll work, observe visible layers and cap displacement');
+}
+if (!motion.includes('[data-parallax-speed]') || !motion.includes('prefers-reduced-motion: reduce')) {
+  add('src/styles/motion.css: canonical parallax styles and reduced-motion fallback are required');
+}
+const parallaxSources = existing.filter(({ file }) => ['src/app/page.jsx','src/components/HeroSlider.jsx'].includes(file));
+for (const { file, text } of parallaxSources) {
+  for (const match of text.matchAll(/data-parallax-speed=["']([^"']+)["']/g)) {
+    const speed = Number(match[1]);
+    if (!Number.isFinite(speed) || Math.abs(speed) > 0.16) {
+      add(file + ': parallax speed must be numeric and no greater than 0.16 in magnitude');
+    }
+  }
+}
+
 if (violations.length) {
   console.error('\nValoria design check FAILED — production promotion blocked\n');
   for (const violation of [...new Set(violations)]) console.error('• ' + violation);
