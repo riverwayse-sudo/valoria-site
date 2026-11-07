@@ -37,6 +37,7 @@ describe('staging preview safety boundary', () => {
     const assessmentProxy = read('src/app/valu/assessment/[[...path]]/route.js')
     expect(wrangler).toContain('"run_worker_first": true')
     expect(wrangler).toContain('"VALU_PREVIEW_ASSESSMENT_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev"')
+    expect(wrangler).toContain('"binding": "VALU_ASSESSMENT", "service": "valoria-staging-assessment"')
     expect(assessmentProxy).toContain('ALLOWED_ASSESSMENT_HOSTS')
     expect(assessmentProxy).toContain('process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN')
     expect(assessmentProxy).toContain("suffix ? `/valu/assessment/${suffix}` : '/'")
