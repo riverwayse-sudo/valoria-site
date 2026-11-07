@@ -684,4 +684,20 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(profile).toContain('p.youtube_links')
   })
 
+  test('public profile metadata resolves UUID and canonical ATB IDs through consent-gated lookup', () => {
+    const layout = read('src/app/profile/[id]/layout.jsx')
+    expect(layout).toContain('const isUuid =')
+    expect(layout).toContain('const isAtbId =')
+    expect(layout).toContain("getConsentVerifiedPublicProfile(id, isUuid ? 'id' : 'atb_id')")
+  })
+
+  test('profile work history requires complete roles and exposes actionable save diagnostics', () => {
+    const source = read('src/app/profile/setup/page.jsx')
+    expect(source).toContain("screen?.key === 'work_history'")
+    expect(source).toContain("row.title?.trim() && row.org?.trim() && row.duration?.trim()")
+    expect(source).toContain('Add at least one complete role: job title, organisation and duration.')
+    expect(source).toContain("String(error.message || '').replace(/[\\r\\n]+/g, ' ').slice(0, 180)")
+    expect(source).toContain("style={{ background:'#1A1A2E', color:'#F7F4EE' }}")
+  })
+
 })
