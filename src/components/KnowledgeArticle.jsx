@@ -4,7 +4,7 @@ import Footer from '@/components/Footer'
 const SITE_URL = 'https://valoriainstitute.com'
 
 export default function KnowledgeArticle({ title, eyebrow = 'VALORIA KNOWLEDGE', description, path, children }) {
-  const url = \`\${SITE_URL}\${path}\`
+  const url = SITE_URL + path
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -19,7 +19,7 @@ export default function KnowledgeArticle({ title, eyebrow = 'VALORIA KNOWLEDGE',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-      { '@type': 'ListItem', position: 2, name: 'Knowledge Hub', item: \`\${SITE_URL}/knowledge\` },
+      { '@type': 'ListItem', position: 2, name: 'Knowledge Hub', item: SITE_URL + '/knowledge' },
       { '@type': 'ListItem', position: 3, name: title, item: url },
     ],
   }
