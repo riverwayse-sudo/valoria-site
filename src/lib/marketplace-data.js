@@ -17,14 +17,14 @@ function isQualifiedPublicProfile(row) {
     row?.professional_id &&
     typeof row.full_name === 'string' && row.full_name.trim() &&
     typeof row.headline === 'string' && row.headline.trim() &&
-    typeof row.atb_id === 'string' && row.atb_id.trim() &&
-    Array.isArray(row.capabilities) && row.capabilities.length > 0
+    typeof row.atb_id === 'string' && row.atb_id.trim()
   )
   if (!hasIdentity) return false
 
   if (row.assessment_access === 'basic') return true
   return Boolean(
     row.assessment_access === 'full' &&
+    Array.isArray(row.capabilities) && row.capabilities.length > 0 &&
     row.valu_index !== null && row.valu_index !== undefined && Number.isFinite(Number(row.valu_index)) &&
     typeof row.assessment_summary === 'string' && row.assessment_summary.trim().length >= 12 &&
     typeof row.designation === 'string' && row.designation.trim()
