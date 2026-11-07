@@ -55,3 +55,5 @@ jobs:
           NEXT_TELEMETRY_DISABLED: 1
       - name: Bundle Worker without deploying
         run: npx wrangler deploy --dry-run --config wrangler.jsonc --outdir .wrangler-dry-run
+      - name: Validate isolated staging Worker configuration without deploying
+        run: npx wrangler deploy --dry-run --config wrangler.jsonc --env staging --outdir .wrangler-staging-dry-run
