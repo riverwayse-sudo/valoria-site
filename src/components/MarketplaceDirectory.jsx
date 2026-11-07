@@ -127,7 +127,12 @@ function Profile({p}) {
       <div className={styles.identityCopy}>
         <small>ATB PROFILE ID</small>
         <strong>{profileId}</strong>
-        <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : '✓ VALORIA ASSESSED'}</span>
+        <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : 'FULL ASSESSMENT COMPLETE'}</span>
+      </div>
+      <div className={styles.valu}>
+        <small>VALU INDEX</small>
+        <b>{isFullAssessment ? p.valu_index : '—'}</b>
+        <span>{isFullAssessment ? 'POINTS' : 'BASIC'}</span>
       </div>
     </div>
     <p className={styles.specialisation} title={specialisation}>{specialisation || 'Professional capability'}</p>
@@ -140,16 +145,9 @@ function Profile({p}) {
         : <p className={styles.assessmentPending}>Complete the full VALU Index assessment to unlock this insight.</p>}
     </div>
     <div className={styles.signalRow}>
-      <div className={styles.scoreBlock}>
-        <small>VALU INDEX</small>
-        <strong>{isFullAssessment ? <>{p.valu_index}<span> POINTS</span></> : <span className={styles.snapshotScore}>SNAPSHOT</span>}</strong>
-      </div>
       {isFullAssessment && tier
-        ? <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>
-            {tier.stars && <span className={styles.tierStars}>{tier.stars}</span>}
-            <span>{tier.name}</span>
-          </span>
-        : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>FULL ASSESSMENT<br/>PENDING</span>}
+        ? <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>{tier.name}</span>
+        : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>OFFICIAL VALU RESULT<br/>PENDING</span>}
     </div>
     <div className={styles.capabilities} aria-label={`Capability selection: ${capabilityBadges.filter(b=>b.selected).map(b=>b.title).join(', ') || 'none selected'}`} title="Selection status only; category listing eligibility is assessed separately"><small className={styles.capabilityLabel}>CAPABILITY SELECTION</small>{capabilityBadges.map(badge=><span className={`${styles.capabilityBadge} ${badge.selected ? styles.capabilitySelected : styles.capabilityUnselected}`} key={badge.key}><strong>{badge.title}</strong><small>{badge.selected ? 'SELECTED' : 'NOT SELECTED'}</small></span>)}</div>
     <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE</Link>
