@@ -4,6 +4,7 @@ import VALUJourneyProgress from '@/components/VALUJourneyProgress'
 import Link from 'next/link'
 import { AssessmentStartLink } from '@/components/Nav'
 import DashboardExperiencePreview from './ExperiencePreview'
+import PublicMarketplaceVisibility from '@/components/PublicMarketplaceVisibility'
 import { supabase } from '@/lib/supabase'
 import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
@@ -422,6 +423,10 @@ export default function DashboardPage() {
             </button>
           </nav>
         </header>
+
+        {isSupply && <div style={{ maxWidth:1240, margin:'24px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+          <PublicMarketplaceVisibility />
+        </div>}
 
         {/* COVER BANNER */}
         <div style={{ position:'relative', height:'112px', overflow:'hidden', background:`radial-gradient(ellipse 800px 400px at 10% 30%, rgba(201,168,76,.22), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 70%, rgba(201,168,76,.1), transparent 55%), linear-gradient(155deg, ${MID} 0%, ${DARK} 70%)` }}>
