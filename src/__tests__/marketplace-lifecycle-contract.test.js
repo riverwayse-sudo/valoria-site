@@ -543,6 +543,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(copy).toContain('past clients or programmes')
     expect(copy).toContain('professional media links')
     expect(helper).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
+    expect(helper).toContain(".select('id,acknowledgement_version')")
+    expect(helper).toContain(".select('professional_id,acknowledgement_version')")
     expect(endpoint).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
     expect(endpoint).toContain('basicEligible')
     expect(endpoint).toContain('fullEligible')
