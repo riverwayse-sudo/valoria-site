@@ -33,7 +33,7 @@ const add = (message) => violations.push(message);
 
 // Typography is a site-wide contract: load the approved family once, centrally.
 const fontImports = existing.filter(({ file, text }) =>
-  file.endsWith('.css') && /fonts\\.googleapis\\.com/.test(text)
+  file.endsWith('.css') && /fonts\.googleapis\.com/.test(text)
 );
 if (fontImports.length !== 1 || fontImports[0]?.file !== 'src/styles/globals.css') {
   add('Typography: Google Fonts must be loaded exactly once from src/styles/globals.css');
