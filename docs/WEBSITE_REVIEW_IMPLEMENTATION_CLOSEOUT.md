@@ -74,12 +74,12 @@ Brand punctuation is resolved: the user accepted the 9 October 2026 Website Cont
 
 1. Confirm the legal entity name used in the footer, About page, Terms, Privacy and contracts.
 2. Approve the adapted About mission wording.
-4. Confirm the public name and role for the Session 03 replay speaker/host.
-5. Confirm Develop pricing and any certification claims.
-6. Confirm the 17-versus-18 skill interpretation and taster skill coverage.
-7. Approve a public seniority taxonomy before a seniority filter is introduced.
-8. Confirm initial opportunity categories, buyer launch scope, commercial model and opportunity operations.
-9. Confirm evidence and review standards for speakers and facilitators.
+3. Confirm the public name and role for the Session 03 replay speaker/host.
+4. Confirm Develop pricing and any certification claims.
+5. Confirm the 17-versus-18 skill interpretation and taster skill coverage.
+6. Approve a public seniority taxonomy before a seniority filter is introduced.
+7. Confirm initial opportunity categories, buyer launch scope, commercial model and opportunity operations.
+8. Confirm evidence and review standards for speakers and facilitators.
 
 ## 6. Repositories and release references
 
@@ -99,6 +99,7 @@ Brand punctuation is resolved: the user accepted the 9 October 2026 Website Cont
 - Main-site code head `cf424b5`: **15 test suites, 273 tests passed**; design check, production excellence gate, Next.js 15.5.29 build, OpenNext bundle and Cloudflare Wrangler Preview deployment all passed. Subsequent site-branch commits only update the closeout documentation; runtime code remains at the validated `cf424b5`.
 - Platform head `b758053`: **30 test suites, 313 tests passed**; production build, secret scan, environment parity, Cloudflare Worker validation, Cloudflare Pages preview and Worker branch preview all passed.
 - Both PRs remain open. No merge or production deployment is claimed.
+- The production Cloudflare deploy workflow exists, but GitHub Actions receives Cloudflare error **9106** on the production Worker deployment request. The repository secret `CLOUDFLARE_API_TOKEN` must be replaced with a valid token that has `Workers Scripts:Edit` for this Cloudflare account and the `valoria-institute-site` Worker. Do not paste the token into chat; update it directly in the repository Actions secrets.
 - Cloudflare Workers Builds is the release validation path. Vercel is not the release target; its Hobby build quota is exhausted, so no Vercel preview is being used for approval.
 - Both Cloudflare previews intentionally use disabled Supabase/upstream values; the site preview also lacks the preview-only `CF_WORKERS` binding. They validate static UI/build only, not database-backed registration, consent, authentication or assessment integration.
 - Staging E2E remains blocked until the matching site code is deployed to the isolated staging Worker. The staging database currently has no professional-profile rows and still uses the legacy consent RPC; do not apply the consent migration until the matching site code is deployed.
