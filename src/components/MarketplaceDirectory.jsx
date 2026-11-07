@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
@@ -23,6 +23,8 @@ const IS_READ_ONLY_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' && pro
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all' }) {
   const router = useRouter()
   const [query,setQuery] = useState('')
+  const [selectedProfile, setSelectedProfile] = useState(null)
+  const closeProfilePreview = useCallback(() => setSelectedProfile(null), [])
   // Keep an open directory in sync with the database-backed roster without requiring a manual refresh.
   useEffect(() => {
     const refreshWhenVisible = () => {
@@ -120,13 +122,14 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
           <div><p className={styles.eyebrow}>PUBLIC PROFESSIONAL MARKETPLACE</p><h2>{results.length} {results.length===1?'professional':'professionals'}</h2></div>
           <span>VALU INDEX × PRIME</span>
         </div>
-        {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p}/>)}</div> :
+        {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p} onSelect={() => setSelectedProfile(p)}/>)}</div> :
           IS_READ_ONLY_PREVIEW
             ? <div className={styles.previewUnavailable} role="status"><strong>Marketplace data is intentionally disconnected in this staging preview.</strong><p>Profile cards, counts and eligibility states will be reviewed against a separately approved staging dataset. No live member records are exposed here.</p></div>
             : <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
       </div>
     </section>
     </main>
+    <ProfilePreviewModal profile={selectedProfile} onClose={closeProfilePreview} />
     <Footer />
   </div>
 }
@@ -158,16 +161,20 @@ function labelValues(value) {
   }).filter(Boolean))]
 }
 
-function Profile({p}) {
+function getCapabilitySelection(profile) {
+  return new Set([
+    ...getSelectedCapabilities(profile),
+    ...(Array.isArray(profile.capabilities) ? profile.capabilities : []),
+    ...(Array.isArray(profile.tracks) ? profile.tracks : []),
+    profile.track,
+  ].map(normalize).filter(Boolean))
+}
+
+function Profile({p, onSelect}) {
   // Show the professional's selected capabilities, not only capabilities
   // that have passed the separate listing-eligibility gate. Category pages
   // continue to filter against the eligible `capabilities` field above.
-  const selectedCaps = new Set([
-    ...getSelectedCapabilities(p),
-    ...(Array.isArray(p.capabilities) ? p.capabilities : []),
-    ...(Array.isArray(p.tracks) ? p.tracks : []),
-    p.track,
-  ].map(normalize).filter(Boolean))
+  const selectedCaps = getCapabilitySelection(p)
   // Keep all three capability lanes visible on every card. Selection is a
   // profile preference; category listing eligibility remains a separate gate.
   const capabilityBadges = [
@@ -214,6 +221,158 @@ function Profile({p}) {
         : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>OFFICIAL VALU RESULT<br/>PENDING</span>}
     </div>
     <div className={styles.capabilities} aria-label={`Capability selection: ${capabilityBadges.filter(b=>b.selected).map(b=>b.title).join(', ') || 'none selected'}`} title="Selection status only; category listing eligibility is assessed separately"><small className={styles.capabilityLabel}>CAPABILITY SELECTION</small>{capabilityBadges.map(badge=><span className={`${styles.capabilityBadge} ${badge.selected ? styles.capabilitySelected : styles.capabilityUnselected}`} key={badge.key}><strong>{badge.title}</strong><small>{badge.selected ? 'SELECTED' : 'NOT SELECTED'}</small></span>)}</div>
-    <Link href={`/profile/${encodeURIComponent(profileId)}`} className={styles.view}>VIEW PROFILE</Link>
+    <button type="button" onClick={onSelect} className={`${styles.view} ${styles.viewButton}`} aria-haspopup="dialog">VIEW PROFILE</button>
   </article>
+}
+
+
+function ProfilePreviewModal({ profile, onClose }) {
+  const closeButtonRef = useRef(null)
+
+  useEffect(() => {
+    if (!profile) return
+    const previousOverflow = document.body.style.overflow
+    const previousFocus = document.activeElement
+    document.body.style.overflow = 'hidden'
+    closeButtonRef.current?.focus()
+
+    function onKeyDown(event) {
+      if (event.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (event.key !== 'Tab') return
+      const dialog = document.querySelector('[data-profile-preview-dialog]')
+      const focusable = dialog?.querySelectorAll('button:not([disabled]),a[href]')
+      if (!focusable?.length) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      document.removeEventListener('keydown', onKeyDown)
+      previousFocus?.focus?.()
+    }
+  }, [profile, onClose])
+
+  if (!profile) return null
+
+  const isFull = profile.assessment_access === 'full' && profile.valu_index != null
+  const tier = isFull ? getValuTier(profile.valu_index, 'full') : null
+  const capabilities = getCapabilitySelection(profile)
+  const capabilityBadges = [
+    { key: 'candidate', title: 'TALENT' },
+    { key: 'speaker', title: 'SPEAKER' },
+    { key: 'facilitator', title: 'FACILITATOR' },
+  ]
+  const skills = labelValues(profile.skills).slice(0, 8)
+  const topics = labelValues(profile.topics).slice(0, 6)
+  const assessmentSummary = isFull ? displayText(profile.assessment_summary || '') : ''
+  const profileHref = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
+
+  return (
+    <div
+      className={styles.modalBackdrop}
+      role="presentation"
+      onMouseDown={event => { if (event.target === event.currentTarget) onClose() }}
+    >
+      <section
+        className={styles.modalDialog}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="profile-preview-title"
+        aria-describedby="profile-preview-description"
+        data-profile-preview-dialog
+        tabIndex={-1}
+      >
+        <div className={styles.modalTopline}>
+          <span>VALORIA MARKETPLACE <i /> PROFESSIONAL PROFILE</span>
+          <button ref={closeButtonRef} type="button" className={styles.modalClose} onClick={onClose} aria-label="Close profile preview">×</button>
+        </div>
+
+        <div className={styles.modalBody}>
+          <div className={styles.modalIdentity}>
+            <ValoriaAvatar
+              src={profile.photo_url}
+              seed={profile.professional_id || profile.atb_id}
+              size={96}
+              className={styles.modalAvatar}
+            />
+            <div className={styles.modalIdentityCopy}>
+              <p className={styles.modalEyebrow}>ATB PROFILE ID · {displayText(profile.atb_id || 'PENDING')}</p>
+              <h2 id="profile-preview-title">{displayText(profile.full_name)}</h2>
+              <p className={styles.modalHeadline}>{displayText(profile.headline || profile.current_job_title || 'Professional capability')}</p>
+              <div className={styles.modalMeta}>
+                {displayText(profile.industry) && <span>{displayText(profile.industry)}</span>}
+                {displayText(profile.location) && <span>{displayText(profile.location)}</span>}
+                {Array.isArray(profile.languages) && profile.languages.length > 0 && <span>{labelValues(profile.languages).slice(0, 3).join(' · ')}</span>}
+              </div>
+            </div>
+            <div className={styles.modalIndex}>
+              <small>VALU INDEX</small>
+              <strong>{isFull ? profile.valu_index : '—'}</strong>
+              <span>{isFull ? 'POINTS' : 'BASIC ACCESS'}</span>
+              {tier && <b>{tier.name}</b>}
+            </div>
+          </div>
+
+          <div className={styles.modalGrid}>
+            <section className={styles.modalPanel}>
+              <p className={styles.modalSectionLabel}>VALU INDEX · ASSESSMENT INSIGHT</p>
+              <p id="profile-preview-description" className={styles.modalSummary}>
+                {isFull
+                  ? (assessmentSummary || 'The Full VALU assessment is complete. The professional insight is being prepared.')
+                  : 'This professional has completed the VALU taster and has Basic marketplace access. The Full VALU Index is a separate assessment for official points, merit designation and report insight.'}
+              </p>
+              <div className={styles.modalCredential}>
+                <span>{isFull ? 'FULL VALU ASSESSMENT' : 'BASIC · VALU SNAPSHOT'}</span>
+                <strong>{tier ? tier.name : 'OFFICIAL RESULT PENDING'}</strong>
+              </div>
+            </section>
+
+            <section className={styles.modalPanel}>
+              <p className={styles.modalSectionLabel}>CAPABILITY SELECTION</p>
+              <p className={styles.modalSectionCopy}>The three capability lanes are shown consistently. Selection is distinct from capability-specific listing eligibility.</p>
+              <div className={styles.modalCapabilities}>
+                {capabilityBadges.map(item => (
+                  <div key={item.key} className={capabilities.has(item.key) ? styles.modalCapabilitySelected : styles.modalCapability}>
+                    <strong>{item.title}</strong>
+                    <span>{capabilities.has(item.key) ? 'SELECTED' : 'NOT SELECTED'}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+
+          {skills.length > 0 && (
+            <section className={styles.modalListSection}>
+              <p className={styles.modalSectionLabel}>PROFESSIONAL SKILLS</p>
+              <div className={styles.modalChips}>{skills.map(skill => <span key={skill}>{skill}</span>)}</div>
+            </section>
+          )}
+
+          {topics.length > 0 && (
+            <section className={styles.modalListSection}>
+              <p className={styles.modalSectionLabel}>AREAS OF EXPERTISE</p>
+              <div className={styles.modalChips}>{topics.map(topic => <span key={topic}>{topic}</span>)}</div>
+            </section>
+          )}
+
+          <div className={styles.modalFooter}>
+            <p>Contact details and individual assessment answers are not displayed in this public preview.</p>
+            <Link href={profileHref} className={styles.modalPrimary}>OPEN FULL PROFILE <span>↗</span></Link>
+          </div>
+        </div>
+      </section>
+    </div>
+  )
 }
