@@ -4,56 +4,47 @@ export const NAVIGATION = {
   assessmentUrl: BRAND.assessmentUrl,
   primary: [
     {
-      label: 'Explore',
+      label: 'For Organisations',
       groups: [
         {
-          label: '',
+          label: 'TALENT & EXPERTISE',
           items: [
-            { label: 'Opportunities', href: '/opportunities', description: 'Explore published professional opportunities.' },
-            { label: 'Marketplace', href: '/marketplace', description: 'Discover professionals and their capabilities.' },
-            { label: 'ATB Connect', href: '/atb-connect', description: 'Explore capability-led talent discovery.' },
-            { label: 'ATB Spotlight', href: '/atb-spotlight', description: 'Find speakers and facilitators for your brief.' },
-            { label: 'Valoria Develop', href: '/develop', description: 'Explore PRIME-based development pathways.' },
-            { label: 'Events', href: '/events', description: 'Join Valoria conversations and events.' },
-            { label: 'Insights', href: '/insights', description: 'Ideas and perspectives for the modern professional.' },
+            { label: 'Find Talent', href: '/atb-connect', description: 'Capability-led talent discovery for employers.' },
+            { label: 'Find Speakers & Facilitators', href: '/atb-spotlight', description: 'Find expertise for events and programmes.' },
+            { label: 'African Talent Bureau', href: '/marketplace', description: 'Explore the professional capability marketplace.' },
+          ],
+        },
+        {
+          label: 'DEVELOPMENT & PARTNERSHIPS',
+          items: [
+            { label: 'Valoria Develop', href: '/develop', description: 'Build professional and organisational capability.' },
+            { label: 'Institutional Partnerships', href: '/contact-us', description: 'Discuss a programme or strategic collaboration.' },
           ],
         },
       ],
     },
+    { label: 'African Talent Bureau', href: '/marketplace' },
     { label: 'VALU Index', href: '/valu' },
-    {
-      label: 'About',
-      groups: [
-        {
-          label: 'The Institute',
-          items: [
-            { label: 'About Valoria', href: '/about-us', description: 'The institution behind the infrastructure.' },
-            { label: 'PRIME Framework', href: '/prime', description: 'The framework behind professional capability.' },
-            { label: 'Contact', href: '/contact-us', description: 'Get in touch with Valoria.' },
-            { label: 'Careers', href: '/careers', description: 'Explore opportunities to join Valoria.' },
-          ],
-        },
-      ],
-    },
+    { label: 'About Valoria', href: '/about-us' },
   ],
   mobile: {
     explore: [
-      { label: 'Opportunities', href: '/opportunities' },
-      { label: 'Marketplace', href: '/marketplace' },
-      { label: 'ATB Connect', href: '/atb-connect' },
-      { label: 'ATB Spotlight', href: '/atb-spotlight' },
+      { label: 'Find Talent', href: '/atb-connect' },
+      { label: 'Find Speakers & Facilitators', href: '/atb-spotlight' },
+      { label: 'African Talent Bureau', href: '/marketplace' },
       { label: 'Valoria Develop', href: '/develop' },
-      { label: 'Events', href: '/events' },
-      { label: 'Insights', href: '/insights' },
+      { label: 'Institutional Partnerships', href: '/contact-us' },
     ],
     valu: [
       { label: 'Explore the VALU Index', href: '/valu' },
+      { label: 'PRIME Framework', href: '/prime' },
     ],
     about: [
       { label: 'About Valoria', href: '/about-us' },
-      { label: 'PRIME Framework', href: '/prime' },
-      { label: 'Contact', href: '/contact-us' },
+      { label: 'Events', href: '/events' },
+      { label: 'Insights', href: '/insights' },
       { label: 'Careers', href: '/careers' },
+      { label: 'Contact', href: '/contact-us' },
     ],
   },
 }
