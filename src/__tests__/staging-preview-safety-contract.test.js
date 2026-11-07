@@ -9,8 +9,8 @@ describe('staging preview safety boundary', () => {
     expect(middleware).toContain("process.env.VALU_PREVIEW === '1'")
     expect(middleware).toContain("if (isPreview && pathname.startsWith('/api/'))")
     expect(middleware).toContain("status: 503")
-    expect(middleware).toContain('API access is disabled.')
-    expect(middleware.indexOf("if (isPreview && pathname.startsWith('/api/'))")).toBeLessThan(middleware.indexOf('if (isPreview) return NextResponse.next()'))
+    expect(middleware).toContain('Staging preview is simulation-only; API access is disabled.')
+    expect(middleware.indexOf("if (isPreview && pathname.startsWith('/api/'))")).toBeLessThan(middleware.indexOf('if (isReadOnlyPreview) return NextResponse.next()'))
   })
 
   test('preview navigation, journey cards, and reminders do not query account data', () => {
