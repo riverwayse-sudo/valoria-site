@@ -16,6 +16,7 @@ export async function middleware(request) {
   // endpoints required to link a confirmed taster and issue a one-time assessment handoff.
   const isPreviewApiAllowed =
     (pathname === '/api/link-taster' && request.method === 'POST') ||
+    (pathname === '/api/link-assessment' && request.method === 'POST') ||
     (pathname === '/api/valu-handoff' && ['GET', 'POST'].includes(request.method))
   if (isReadOnlyPreview && pathname.startsWith('/api/') && !isPreviewApiAllowed) {
     return NextResponse.json(
