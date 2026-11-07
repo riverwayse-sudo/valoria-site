@@ -211,7 +211,9 @@ html body .btn-outline,
 html body .home-pathway-cta,
 html body .home-events-watch-link,
 html body .valu-conversion .vcc-bottom-cta,
-html body .vs-btn {
+html body .vs-btn,
+html body .session-series-primary,
+html body .session-series-secondary {
   justify-content: flex-start !important;
   text-align: left !important;
 }
