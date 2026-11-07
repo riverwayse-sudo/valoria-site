@@ -11,7 +11,7 @@ export const NAVIGATION = {
           items: [
             { label: 'Find Talent', href: '/atb-connect', description: 'Capability-led talent discovery for employers.' },
             { label: 'Find Speakers & Facilitators', href: '/atb-spotlight', description: 'Find expertise for events and programmes.' },
-            { label: 'African Talent Bureau', href: '/marketplace', description: 'Explore the professional capability marketplace.' },
+            { label: 'Marketplace', href: '/marketplace', description: 'Explore the professional capability marketplace.' },
           ],
         },
         {
@@ -23,7 +23,7 @@ export const NAVIGATION = {
         },
       ],
     },
-    { label: 'African Talent Bureau', href: '/marketplace' },
+    { label: 'Marketplace', href: '/marketplace' },
     { label: 'VALU Index', href: '/valu' },
     { label: 'About Valoria', href: '/about-us' },
   ],
@@ -31,7 +31,7 @@ export const NAVIGATION = {
     explore: [
       { label: 'Find Talent', href: '/atb-connect' },
       { label: 'Find Speakers & Facilitators', href: '/atb-spotlight' },
-      { label: 'African Talent Bureau', href: '/marketplace' },
+      { label: 'Marketplace', href: '/marketplace' },
       { label: 'Valoria Develop', href: '/develop' },
       { label: 'Institutional Partnerships', href: '/contact-us' },
     ],

@@ -119,6 +119,21 @@ if (!/\.home-redesign-root\s+\.container\s*\{/.test(homeCss)) add('src/app/home.
 const negativeMargin = existing.filter(({ file, text }) => homepageFiles.includes(file) && /margin(?:-(?:top|right|bottom|left))?\s*:\s*-\\d/.test(text));
 for (const { file } of negativeMargin) add(`${file}: negative margin detected; justify or remove before production`);
 
+const layoutSource = existing.find((x) => x.file === 'src/app/layout.jsx')?.text || '';
+const alignment = existing.find((x) => x.file === 'src/styles/left-alignment.css')?.text || '';
+if (!layoutSource.includes("import '../styles/left-alignment.css'")) {
+  add('src/app/layout.jsx: site-wide left-alignment standard is not loaded');
+}
+for (const selector of ['.nav-dropdown-grid', '.nav-dropdown-entry', '.nav-dropdown-description', '.nav-mobile .nav-mobile-link']) {
+  if (!alignment.includes(selector)) add(`src/styles/left-alignment.css: missing left-alignment coverage for ${selector}`);
+}
+if (
+  !alignment.includes('main :where(h1, h2, h3, h4, h5, h6, p, li, label, blockquote, figcaption, span, strong, a)') ||
+  !/text-align:\s*left\s*!important/.test(alignment)
+) {
+  add('src/styles/left-alignment.css: public page editorial copy must be left-aligned');
+}
+
 if (violations.length) {
   console.error('\nValoria design check FAILED — production promotion blocked\n');
   for (const violation of [...new Set(violations)]) console.error('• ' + violation);

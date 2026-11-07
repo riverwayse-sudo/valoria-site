@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import { AssessmentStartLink } from '@/components/Nav'
+import { BRAND } from '@/lib/brand'
 
 export default function HeroSlider() {
   return (
@@ -11,29 +13,29 @@ export default function HeroSlider() {
             <div className="hero-copy">
               <div className="hero-eyebrow">
                 <div className="hero-eyebrow-line" />
-                <span className="hero-eyebrow-text">AFRICA'S HUMAN CAPITAL INSTITUTION</span>
+                <span className="hero-eyebrow-text">THE PROFESSIONAL MARKETPLACE</span>
               </div>
               <h1 className="hero-title" id="valoria-hero-title">
-                Talent is not the problem.<br />
-                <em>Infrastructure is.</em>
+                Make your professional<br />
+                <em>capability visible.</em>
               </h1>
               <p className="hero-sub hero-institutional-sub">
-                Valoria builds the infrastructure through which African professional capability is understood, developed, surfaced and connected to opportunity. We bring a shared capability framework, an assessment-led index, structured development and a talent bureau into one institutional system.
+                Understand your capabilities, build a stronger professional presence and discover opportunities aligned with what you can contribute.
               </p>
               <div className="hero-actions">
-                <Link href="/contact-us" className="btn-gold">
-                  DISCUSS AN INSTITUTIONAL PARTNERSHIP <span aria-hidden="true">→</span>
-                </Link>
-                <Link href="/marketplace" className="btn-outline">
-                  EXPLORE THE AFRICAN TALENT BUREAU <span aria-hidden="true">→</span>
+                <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">
+                  START YOUR SNAPSHOT <span aria-hidden="true">→</span>
+                </AssessmentStartLink>
+                <Link href="/opportunities" className="btn-outline">
+                  EXPLORE OPPORTUNITIES <span aria-hidden="true">→</span>
                 </Link>
               </div>
-              <p className="hero-institutional-note">For employers, institutions, programme leaders and event organisers.</p>
+              <p className="hero-institutional-note">For professionals, employers, event organisers and facilitators.</p>
             </div>
 
-            <aside className="hero-institutional-panel" aria-label="Valoria Institute operating architecture">
+            <aside className="hero-institutional-panel" aria-label="Valoria professional marketplace architecture">
               <div className="hero-institutional-panel-head">
-                <span>THE VALORIA SYSTEM</span>
+                <span>THE VALORIA MARKETPLACE</span>
                 <strong>WORTH. BUILT.</strong>
               </div>
               <div className="hero-institutional-pillar">
@@ -55,9 +57,9 @@ export default function HeroSlider() {
               <div className="hero-institutional-pillar">
                 <span className="hero-institutional-index">03</span>
                 <div>
-                  <small>TALENT BUREAU</small>
-                  <strong>African Talent Bureau</strong>
-                  <p>Capability-led pathways to talent, speakers and facilitators.</p>
+                  <small>PROFESSIONAL DISCOVERY</small>
+                  <strong>Valoria Marketplace</strong>
+                  <p>Capability-led pathways to professionals, speakers and facilitators.</p>
                 </div>
               </div>
               <div className="hero-institutional-pillar">

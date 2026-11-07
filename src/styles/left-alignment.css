@@ -1,0 +1,115 @@
+/*
+ * VALORIA SITE-WIDE LEFT ALIGNMENT STANDARD
+ * Applies to public page copy and every navigation menu depth.
+ * Does not change brand tokens, component geometry, imagery or button-label centring.
+ */
+
+/* Public-page editorial copy shares one consistent left reading edge. */
+main :where(h1, h2, h3, h4, h5, h6, p, li, label, blockquote, figcaption, span, strong, a) {
+  text-align: left !important;
+}
+
+/* Shared page headers, intros and CTA bands must not revert to centred copy. */
+main :where(.page-hero, .page-header, .page-intro, .page-heading, .section-heading,
+  .section-intro, .cta-banner, .valu-hero, .opportunities-hero, .coaching-hero) {
+  text-align: left !important;
+}
+
+main :where(.page-hero, .page-header, .page-intro, .page-heading, .section-heading,
+  .section-intro, .cta-banner) > :where(h1, h2, h3, p, .page-sub, .page-copy) {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+main :where(.page-hero, .page-header, .page-intro, .page-heading, .section-heading,
+  .section-intro, .cta-banner) :where(.hero-actions, .page-hero-actions, .cta-actions, .button-group) {
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+}
+
+main :where(.page-hero, .page-header, .page-intro, .page-heading, .section-heading,
+  .section-intro, .cta-banner) :where(.eyebrow, .page-kicker, .valu-kicker) {
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+/* Legacy centred utility classes must not override the public editorial standard. */
+main :where(.section-title-centered, .prime-centered-title, .prime-centered-copy,
+  .about-cta-copy, .page-hero-actions-centered) {
+  text-align: left !important;
+}
+main :where(.page-sub, .prime-centered-copy, .about-cta-copy) {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+main :where(.page-hero-actions-centered) {
+  justify-content: flex-start !important;
+}
+
+/* Desktop dropdowns: group headings, link labels and descriptions align together. */
+.vi-nav .nav-dropdown,
+.vi-nav .nav-dropdown-grid,
+.vi-nav .nav-dropdown-grid > div,
+.vi-nav .nav-dropdown-entry,
+.vi-nav .nav-dropdown-label,
+.vi-nav .nav-dropdown-link,
+.vi-nav .nav-dropdown-description,
+.vi-nav [role="menu"],
+.vi-nav [role="menu"] [role="menu"] {
+  text-align: left !important;
+}
+
+.vi-nav .nav-dropdown-grid > div,
+.vi-nav .nav-dropdown-entry {
+  justify-items: stretch !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+}
+
+.vi-nav .nav-dropdown-link {
+  display: block !important;
+  width: 100%;
+  justify-content: flex-start !important;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.vi-nav .nav-dropdown-description {
+  display: block !important;
+  width: auto;
+  margin-left: 12px !important;
+  margin-right: 12px !important;
+}
+
+/* Mobile navigation and expandable/nested menu content use the same left edge. */
+.nav-mobile,
+.nav-mobile .m-label,
+.nav-mobile .nav-mobile-link,
+.nav-mobile .nav-dropdown,
+.nav-mobile .nav-dropdown-grid,
+.nav-mobile .nav-dropdown-label,
+.nav-mobile .nav-dropdown-link,
+.nav-mobile .nav-dropdown-description,
+.nav-mobile [role="menu"],
+.nav-mobile [role="menu"] [role="menu"] {
+  text-align: left !important;
+}
+
+.nav-mobile :where(.nav-mobile-link, .nav-dropdown-link, .nav-dropdown-entry) {
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+}
+
+.nav-mobile .nav-dropdown-description {
+  margin-left: 12px !important;
+  margin-right: 12px !important;
+}
+
+/* Keep the site logo, chevrons, icon controls and pill-button labels undisturbed. */
+
+/* Pill controls keep their established centred label treatment. */
+main :where(.btn-gold, .btn-primary, .btn-secondary, .btn-tertiary, .btn-outline,
+  .btn-ghost, .nav-cta, .valu-btn, .valu-btn-gold, .valu-btn-ghost,
+  .wl-btn, .event-register-button) {
+  text-align: center !important;
+}

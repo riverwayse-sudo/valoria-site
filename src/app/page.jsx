@@ -12,8 +12,8 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export const metadata = {
-  title: 'Valoria Institute — Africa’s Human Capital Institution',
-  description: 'Valoria Institute builds the infrastructure through which African professional capability is understood, developed, surfaced and connected to opportunity.',
+  title: 'Valoria Institute | Professional Capability Marketplace',
+  description: 'Assess professional capability, build a credible professional profile and discover opportunities through Valoria’s capability-led marketplace.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
 }
 
@@ -35,7 +35,7 @@ const institutionalCapabilities = [
   {
     number: '03',
     label: 'TALENT ACCESS',
-    title: 'African Talent Bureau',
+    title: 'Valoria Marketplace',
     body: 'A capability-led route for employers, event organisers and programme teams to discover professionals, speakers and facilitators.',
     outcome: 'Relevant expertise, easier to find.',
   },
