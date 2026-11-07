@@ -9,7 +9,7 @@ describe('VALU presentation consistency', () => {
   test('homepage communicates the VALU taster without exposing internal assessment mechanics', () => {
     const home = read('src/app/page.jsx')
     expect(home).toContain('SHORT REFLECTION')
-    expect(home).toContain('START WITH A FREE TASTER')
+    expect(home).toContain('Begin with a free taster')
     expect(home).not.toMatch(/(?:9|58)[- ]questions?|<b>9<\/b> QUESTIONS/i)
   })
 
