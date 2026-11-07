@@ -56,11 +56,10 @@ async function hasCompletedTaster(admin, professionalId) {
   return Boolean(data)
 }
 
-function hasBasicPublicIdentity(profile) {
-  return Boolean(
-    profile.display_name?.trim()
-    && (profile.headline?.trim() || profile.current_job_title?.trim())
-  )
+function hasBasicPublicIdentity(profile, roster = {}) {
+  const displayName = profile.display_name || roster.full_name
+  const headline = profile.headline || profile.current_job_title || roster.headline || roster.current_job_title
+  return Boolean(displayName?.trim() && headline?.trim())
 }
 
 export async function getConsentVerifiedPublicProfile(identifier, field = 'id') {
@@ -123,7 +122,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
   if (!profile) return null
 
   if (roster.assessment_access === 'full' && profile.profile_complete !== true) return null
-  if (roster.assessment_access === 'basic' && !hasBasicPublicIdentity(profile)) return null
+  if (roster.assessment_access === 'basic' && !hasBasicPublicIdentity(profile, roster)) return null
 
   const { profile_complete: _profileComplete, ...publicProfile } = profile
   return {
@@ -147,7 +146,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
   const admin = getAdminClient()
   const { data: roster, error: rosterError } = await admin
     .from('marketplace_public_roster')
-    .select('professional_id,assessment_access,assessment_summary,capabilities')
+    .select('professional_id,assessment_access,assessment_summary,capabilities,full_name,headline,current_job_title')
     .in('assessment_access', ['full', 'basic'])
 
   if (rosterError) {
@@ -214,7 +213,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
       ? profile.profile_complete === true
       : access === 'basic'
         && tasterIds.has(profile.id)
-        && hasBasicPublicIdentity(profile)
+        && hasBasicPublicIdentity(profile, rosterById.get(profile.id))
     return ready && consented.has(profile.id)
   })
 }
