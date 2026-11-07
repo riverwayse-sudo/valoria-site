@@ -11,7 +11,7 @@ const PLACEHOLDER_HEADLINES = new Set([
   'valoria professional',
 ])
 
-function isPublicProfileContentReady(row) {
+export function isPublicProfileContentReady(row) {
   const headline = String(row.headline || row.current_job_title || '').trim()
   return Boolean(
     row.full_name &&
