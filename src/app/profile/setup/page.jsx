@@ -1102,7 +1102,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
       <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'28px' }}>
         <input type="checkbox" checked={form.consent} onChange={e => set('consent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
         <span style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7 }}>
-          I confirm all information provided is accurate. I understand that completing VALU establishes my marketplace listing, while completing my professional profile unlocks additional visibility and opportunities.
+          I confirm all information provided is accurate. I understand that marketplace access depends on the relevant assessment, profile and capability requirements, and that public display requires the separate visibility permission above.
         </span>
       </label>
 
