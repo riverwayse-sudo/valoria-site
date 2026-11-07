@@ -72,6 +72,7 @@ export default function AdminPage() {
           fullScore: p.valu_points,
           publicConsent: p.public_consent,
           capabilityLabels: p.capability_labels || [],
+          capabilityIssues: p.capability_issues || [],
         })))
       }
       else setError('The internal roster review could not be loaded. Please refresh or check admin access.')
@@ -199,9 +200,11 @@ export default function AdminPage() {
                   <div style={{display:'flex',gap:7,flexWrap:'wrap',marginTop:10}}>
                     <span style={styles.tag}>{full?'FULL ASSESSMENT':'BASIC · TASTER'}</span>
                     {full && <span style={styles.tag}>VALU {p.fullScore ?? '—'} POINTS</span>}
+                    {!full && <span style={{...styles.tag,color:'#74B58B'}}>BASIC ACCESS VIA TASTER</span>}
                     <span style={styles.tag}>{p.profile_complete?'PROFILE COMPLETE':'PROFILE INCOMPLETE'}</span>
                     <span style={styles.tag}>{p.publicConsent?'PUBLIC CONSENT RECORDED':'PUBLIC CONSENT NOT RECORDED'}</span>
                     {(p.capabilityLabels||[]).map(label=><span key={label} style={styles.tag}>{label}</span>)}
+                    {(p.capabilityIssues||[]).map(issue=><span key={issue} style={{...styles.tag,color:'#D6A05C',borderColor:'rgba(214,160,92,.28)'}}>PENDING: {issue}</span>)}
                   </div>
                 </div>
                 <div style={{...styles.actions,flexWrap:'wrap',justifyContent:'flex-end'}}>
