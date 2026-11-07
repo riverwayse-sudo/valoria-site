@@ -9,7 +9,7 @@ export const metadata = {
   keywords: ['Valoria Institute', 'professional capability', 'PRIME framework', 'VALU Index', 'professional development', 'talent marketplace'],
   openGraph: {
     title: 'About Valoria Institute',
-    description: 'The institution connecting professional capability to development, visibility and opportunity.',
+    description: 'The marketplace connecting professional capability to development, visibility and opportunity.',
     url: 'https://valoriainstitute.com/about-us',
   },
   alternates: { canonical: 'https://valoriainstitute.com/about-us' },
