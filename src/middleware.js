@@ -10,15 +10,17 @@ const SB_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 export async function middleware(request) {
   const { pathname } = request.nextUrl
   const isPreview = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1'
-  // The preview is a no-data simulation. Block every API route before the auth bypass.
-  if (isPreview && pathname.startsWith('/api/')) {
+  const stagingApiEnabled = process.env.VALU_STAGING_API_ENABLED === '1'
+  const isReadOnlyPreview = isPreview && !stagingApiEnabled
+  // The preview is read-only until a separate staging database is configured and explicitly enabled.
+  if (isReadOnlyPreview && pathname.startsWith('/api/')) {
     return NextResponse.json(
       { error: 'Staging preview is simulation-only; API access is disabled.' },
       { status: 503, headers: { 'Cache-Control': 'no-store' } }
     )
   }
   // Staging experience previews are intentionally unauthenticated and must never query production or placeholder Supabase.
-  if (isPreview) return NextResponse.next()
+  if (isReadOnlyPreview) return NextResponse.next()
 
   if (pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname === '/favicon.ico' || pathname.match(/\.(png|jpg|jpeg|svg|ico|webp|woff|woff2|ttf)$/)) return NextResponse.next()
   if (!SB_URL || !SB_ANON_KEY) return NextResponse.next()
