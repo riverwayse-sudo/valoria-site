@@ -483,7 +483,7 @@ describe('journey integrity contract', () => {
   test('public VALU explanation describes the taster value and next step', () => {
     const start = read('src/app/valu/start/page.jsx')
     expect(start).toContain('Start with the VALU taster.')
-    expect(start).not.toMatch(/\\b(?:9|58)\\s+(?:question|questions)/i)
+    expect(start).not.toMatch(/\b(?:9|58)\s+(?:question|questions)/i)
     expect(start).toContain('The taster gives you an initial directional read.')
     expect(start).toContain('One clear journey.<br /><em>A stronger professional picture.</em>')
     expect(start).not.toContain('Two sessions. One result.')
