@@ -21,6 +21,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Install pinned OpenNext Cloudflare bindings package
+        run: npm install --no-save --package-lock=false @opennextjs/cloudflare@1.20.15
       - run: npm test -- --runInBand
       - run: npm run excellence:check
       - run: npm run build
