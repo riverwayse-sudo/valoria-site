@@ -41,6 +41,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
   const results = useMemo(() => {
     const q=query.trim().toLowerCase()
     return rows.filter(p => {
+      if (!displayText(p.full_name)) return false
       const caps=[...(p.capabilities || p.tracks || [p.track])].map(normalize)
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
       if(industry && displayText(p.industry) !== industry) return false
@@ -136,6 +137,8 @@ function Profile({p}) {
         <span>{isFullAssessment ? 'POINTS' : 'BASIC'}</span>
       </div>
     </div>
+    <h3 className={styles.professionalName}>{displayText(p.full_name)}</h3>
+    {displayText(p.headline) && <p className={styles.professionalHeadline}>{displayText(p.headline)}</p>}
     <p className={styles.specialisation} title={specialisation}>{specialisation || 'Professional capability'}</p>
     <div className={styles.assessmentInsight}>
       <small>VALU INDEX ASSESSMENT INSIGHT</small>
