@@ -129,8 +129,7 @@ grant select (
   display_initials,
   headline,
   photo_url,
-  active_tracks,
-  valu_index
+  active_tracks
 ) on public.professional_profiles to anon;
 
 grant select on table public.professional_profiles to authenticated;
