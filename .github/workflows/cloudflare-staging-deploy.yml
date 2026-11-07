@@ -1,5 +1,5 @@
 name: Deploy Valoria site to isolated Cloudflare staging
-# Final roster integrity validation: verify duplicate-name review flags, premium profile preview and consent-gated listing. Queue deployments rather than interrupting an active staging rollout.
+# Final identifier validation: verify canonical ATB IDs, duplicate-name review flags, premium profile preview and consent-gated listing.
 
 on:
   pull_request:
