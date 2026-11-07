@@ -14,7 +14,7 @@ import MarketingInstrumentation from '../components/MarketingInstrumentation'
 const SITE_URL = 'https://valoriainstitute.com'
 const SITE_NAME = 'Valoria Institute'
 const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID
-const IS_STAGING = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1'
+const IS_STAGING = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1'
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-63M4SRXQKM'
 const DESCRIPTION = "Valoria Institute helps professionals understand their capabilities, build a stronger professional presence and connect with opportunity through the VALU Index, PRIME framework and Valoria Marketplace."
 
