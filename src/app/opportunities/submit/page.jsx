@@ -1,7 +1,7 @@
 'use client'
 import {useState} from 'react'
 const GOLD='#C9A84C',DARK='#1A1A2E',PARCH='#F7F4EE'
-const IS_READ_ONLY_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' && process.env.VALU_STAGING_API_ENABLED !== '1'
+const IS_READ_ONLY_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' && process.env.NEXT_PUBLIC_VALU_STAGING_API_ENABLED !== '1'
 export default function SubmitOpportunity(){
  const [form,setForm]=useState({opportunity_type:'job',work_mode:'hybrid'}),[sent,setSent]=useState(false),[error,setError]=useState(''),[saving,setSaving]=useState(false)
  const set=(k,v)=>setForm(f=>({...f,[k]:v}))
