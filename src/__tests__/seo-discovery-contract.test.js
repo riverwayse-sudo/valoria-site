@@ -82,6 +82,11 @@ describe('Valoria SEO and discovery foundation', () => {
     expect(events).toContain("'@type': 'VirtualLocation'")
   })
 
+  test('footer exposes Knowledge Hub once without duplicate navigation entries', () => {
+    const footer = read('src/components/Footer.jsx')
+    expect(footer.split('<Link href="/knowledge">Knowledge Hub</Link>').length - 1).toBe(1)
+  })
+
   test('dedicated Jobs discovery route is linked and not redirected away', () => {
     expect(read('src/app/jobs/page.jsx')).toContain('export default')
     expect(read('src/app/jobs/layout.jsx')).toContain("canonical: 'https://valoriainstitute.com/jobs'")
