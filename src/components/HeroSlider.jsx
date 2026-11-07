@@ -13,7 +13,7 @@ export default function HeroSlider() {
             <div className="hero-copy">
               <div className="hero-eyebrow">
                 <div className="hero-eyebrow-line" />
-                <span className="hero-eyebrow-text">THE PROFESSIONAL MARKETPLACE</span>
+                <span className="hero-eyebrow-text">THE PROFESSIONAL CAPABILITY MARKETPLACE</span>
               </div>
               <h1 className="hero-title" id="valoria-hero-title">
                 Make your professional<br />
@@ -36,7 +36,7 @@ export default function HeroSlider() {
             <aside className="hero-institutional-panel" aria-label="Valoria professional marketplace architecture">
               <div className="hero-institutional-panel-head">
                 <span>THE VALORIA MARKETPLACE</span>
-                <strong>WORTH. BUILT.</strong>
+                <strong>{BRAND.tagline.toUpperCase()}</strong>
               </div>
               <div className="hero-institutional-pillar">
                 <span className="hero-institutional-index">01</span>

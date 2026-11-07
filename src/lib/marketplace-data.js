@@ -4,6 +4,25 @@ const FIELDS = 'professional_id,full_name,location,languages,headline,current_jo
 const SOURCE = 'marketplace_public_roster'
 const IS_READ_ONLY_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'
 
+const PLACEHOLDER_HEADLINES = new Set([
+  'model',
+  'growth dev',
+  'help people find meaning in their life and career',
+  'valoria professional',
+])
+
+function isPublicProfileContentReady(row) {
+  const headline = String(row.headline || row.current_job_title || '').trim()
+  return Boolean(
+    row.full_name &&
+    row.atb_id &&
+    headline.length >= 8 &&
+    !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
+    !/[\u{1D400}-\u{1D7FF}]/u.test(headline)
+  )
+}
+
+
 function normalizeTrack(value) {
   const v = String(value || '').toLowerCase()
   return v === 'talent' ? 'candidate' : v
@@ -57,7 +76,10 @@ export async function getMarketplaceRows(track = 'all') {
   }
 
   const rows = dedupeProfessionals(data)
-  return rows.filter(row => track === 'all' || row.capabilities.includes(normalizeTrack(track)))
+  // Suppress incomplete or placeholder public-facing records until an
+  // administrator can correct them using verified professional information.
+  // The underlying account and professional profile remain intact.
+  return rows.filter(row => isPublicProfileContentReady(row) && (track === 'all' || row.capabilities.includes(normalizeTrack(track))))
 }
 
 export async function getMarketplaceCounts() {
@@ -70,7 +92,7 @@ export async function getMarketplaceCounts() {
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
   const { data, error } = await supabase
     .from(SOURCE)
-    .select('professional_id,capability,track,capabilities')
+    .select('professional_id,full_name,atb_id,headline,current_job_title,capability,track,capabilities')
 
   if (error) {
     console.error('Marketplace count query failed:', error)
@@ -81,7 +103,7 @@ export async function getMarketplaceCounts() {
   const all = new Set()
 
   for (const row of data || []) {
-    if (!row.professional_id) continue
+    if (!row.professional_id || !isPublicProfileContentReady(row)) continue
     all.add(row.professional_id)
     const values = new Set([
       ...(Array.isArray(row.capabilities) ? row.capabilities : []),

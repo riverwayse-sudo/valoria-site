@@ -15,7 +15,7 @@ describe('VALU presentation consistency', () => {
 
   test('homepage hero leads with marketplace value and clear visitor actions', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('THE PROFESSIONAL MARKETPLACE')
+    expect(hero).toContain('THE PROFESSIONAL CAPABILITY MARKETPLACE')
     expect(hero).toContain('Make your professional')
     expect(hero).toContain('capability visible.')
     expect(hero).toContain('Understand your capabilities')
@@ -34,7 +34,8 @@ describe('VALU presentation consistency', () => {
 
   test('homepage presents decision-maker and professional pathways', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('FIVE WAYS TO ENGAGE.')
+    expect(home).toContain('FOUR WAYS TO ENGAGE.')
+    expect(home).not.toContain('FIVE WAYS TO ENGAGE.')
     expect(home).toContain('FOR PROFESSIONALS')
     expect(home).toContain('FOR EMPLOYERS')
     expect(home).toContain('FOR EVENT ORGANISERS')
@@ -64,6 +65,49 @@ describe('VALU presentation consistency', () => {
     expect(read('src/app/profile/passport/page.jsx')).toContain(' points</b>')
     expect(read('src/app/profile/settings/page.jsx')).toContain(' points</strong>')
     expect(read('src/components/ValueActivationCard.jsx')).toContain('points')
+  })
+
+  test('public marketplace suppresses the identified low-quality records until verified corrections exist', () => {
+    const directoryData = read('src/lib/marketplace-data.js')
+    expect(directoryData).toContain('help people find meaning in their life and career')
+    expect(directoryData).toContain('valoria professional')
+    expect(directoryData).toContain('isPublicProfileContentReady(row)')
+    expect(directoryData).toContain('headline,current_job_title')
+    expect(directoryData).toContain('1D400')
+    expect(directoryData).toContain('1D7FF')
+  })
+
+  test('brand line punctuation is consistent in the shared brand source and metadata', () => {
+    expect(read('src/lib/brand.js')).toContain("tagline: 'Worth, Built.'")
+    expect(read('src/app/layout.jsx')).toContain('Valoria Institute — Worth, Built.')
+    expect(read('src/app/layout.jsx')).not.toContain('Worth. Built.')
+  })
+
+  test('left alignment is enforced across route copy and desktop/mobile dropdown content', () => {
+    const alignment = read('src/styles/left-alignment.css')
+    expect(alignment).toContain('text-align: left !important')
+    expect(alignment).toContain('.vi-nav .nav-dropdown')
+    expect(alignment).toContain('.nav-mobile .nav-dropdown')
+    expect(alignment).toContain('align-items: flex-start !important')
+  })
+
+  test('PRIME uses the canonical future-ready skills and all five earned designations', () => {
+    const brand = read('src/lib/brand.js')
+    const prime = read('src/app/prime/page.jsx')
+    expect(brand).toContain("name: 'Presence'")
+    expect(brand).toContain("name: 'Relationships'")
+    expect(brand).toContain("name: 'Intelligence'")
+    expect(brand).toContain("name: 'Mastery'")
+    expect(brand).toContain("name: 'Enterprise'")
+    expect(brand).toContain("'AI Fluency'")
+    expect(brand).toContain("'Human-AI Collaboration'")
+    expect(prime).toContain('Force to Align With')
+    expect(prime).toContain('Emerging Force')
+    expect(prime).toContain('Developing Professional')
+    expect(prime).toContain('Building Foundations')
+    expect(prime).toContain('At the Starting Point')
+    expect(prime).not.toContain('Distinguished')
+    expect(prime).not.toContain('Proficient')
   })
 
   test('legacy stored designation strings cannot override the canonical points-based merit bands', () => {

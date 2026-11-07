@@ -13,7 +13,9 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export const metadata = {
-  title: 'Valoria Institute | Professional Capability Marketplace',
+  title: 'Valoria Institute — Worth, Built.',
+  openGraph: { title: 'Valoria Institute — Worth, Built.', description: 'Assess professional capability, build a credible professional profile and discover opportunities through Valoria’s capability-led marketplace.', url: 'https://valoriainstitute.com/' },
+  twitter: { card: 'summary_large_image', title: 'Valoria Institute — Worth, Built.' },
   description: 'Assess professional capability, build a credible professional profile and discover opportunities through Valoria’s capability-led marketplace.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
 }
@@ -149,7 +151,7 @@ export default function HomePage() {
           <div className="container">
             <Reveal className="home-section-heading">
               <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FIVE WAYS TO ENGAGE.</span></div>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOUR WAYS TO ENGAGE.</span></div>
                 <h2 id="decision-pathways-title">Start with the outcome your organisation <em>needs.</em></h2>
               </div>
               <p>Whether you are sourcing talent, curating an event or building workforce capability, Valoria provides a clear route into the relevant part of the institution.</p>
