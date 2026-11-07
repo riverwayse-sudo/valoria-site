@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "test": "jest",
-    "test:opportunity-validation": "node --test scripts/tests/opportunity-validation.test.mjs",
+    "test:opportunity-validation": "node --test scripts/validation/opportunity-validation.mjs",
     "design:check": "node scripts/design-check.js",
     "excellence:check": "node scripts/excellence-check.js"
   },
