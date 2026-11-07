@@ -877,7 +877,7 @@ export default function DashboardPage() {
 // ── Welcome modal ────────────────────────────────────────────────────────────
 function DashboardAssessmentHandover({ standalone = false }) {
   const content = (
-    <section aria-label="Start or continue your full VALU assessment" style={{ width:'100%', padding:'clamp(20px,3vw,30px)', border:'1px solid rgba(201,168,76,.3)', borderRadius:12, background:'linear-gradient(135deg, rgba(46,46,74,.96), rgba(26,26,46,.98))', color:'#F7F4EE' }}>
+    <section aria-label="Continue your VALU journey" style={{ width:'100%', padding:'clamp(20px,3vw,30px)', border:'1px solid rgba(201,168,76,.3)', borderRadius:12, background:'linear-gradient(135deg, rgba(46,46,74,.96), rgba(26,26,46,.98))', color:'#F7F4EE' }}>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap', marginBottom:12 }}>
         <div style={{ flex:'1 1 420px', minWidth:0 }}>
           <div style={{ color:'#C9A84C', fontSize:10, fontWeight:800, letterSpacing:'.2em' }}>YOUR VALORIA JOURNEY</div>
