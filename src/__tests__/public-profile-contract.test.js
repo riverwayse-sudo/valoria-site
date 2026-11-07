@@ -15,6 +15,12 @@ describe('public professional profile privacy and presentation', () => {
     expect(marketplace).not.toContain('professional_profiles!inner')
   })
 
+  test('homepage public profile reads never bypass roster RLS with service-role credentials', () => {
+    const homepage = read('src/components/LiveProfilesScroll.jsx')
+    expect(homepage).toContain('const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY')
+    expect(homepage).not.toMatch(/SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY/)
+  })
+
   test('public profile mapping excludes private contact and account fields', () => {
     const mapper = read('src/lib/public-profile.js')
     expect(mapper).toContain('phone: null')
