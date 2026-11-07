@@ -13,6 +13,30 @@ describe('VALU presentation consistency', () => {
     expect(home).not.toContain('54 scored questions')
   })
 
+  test('global navigation, footer and public VALU pages do not expose internal assessment question counts', () => {
+    const publicCopy = [
+      read('src/components/Nav.jsx'),
+      read('src/config/navigation.js'),
+      read('src/components/Footer.jsx'),
+      read('src/app/valu/page.jsx'),
+      read('src/app/valu/start/page.jsx'),
+      read('src/app/about/page.jsx'),
+    ].join(' ')
+    expect(publicCopy).not.toMatch(/\\b(?:9|58)\\s*[- ]?questions?\\b/i)
+    expect(publicCopy).not.toMatch(/opening nine|first nine|separate taster/i)
+  })
+
+  test('public institutional and buyer copy does not claim uncompleted facilitator certification or independent validation', () => {
+    const publicCopy = [
+      read('src/app/layout.jsx'),
+      read('src/components/WaitlistForm.jsx'),
+      read('src/app/about/page.jsx'),
+      read('src/app/dashboard/page.jsx'),
+    ].join(' ')
+    expect(publicCopy).not.toMatch(/PRIME-certified facilitators|certified facilitators/i)
+    expect(publicCopy).not.toMatch(/independently assessed/i)
+  })
+
   test('homepage VALU card communicates points-based capability without exposing assessment mechanics', () => {
     const hero = read('src/components/HeroSlider.jsx')
     expect(hero).toContain('vc-num">VALU')
