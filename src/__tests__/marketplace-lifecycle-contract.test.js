@@ -558,6 +558,23 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(endpoint).toContain(".not('completed_at', 'is', null)")
   })
 
+  test('conversion analytics cover discovery, profile visibility and opportunity engagement', () => {
+    const instrumentation = read('src/components/MarketingInstrumentation.jsx')
+    const opportunity = read('src/app/opportunities/[slug]/page.jsx')
+    const submission = read('src/app/opportunities/submit/page.jsx')
+    const setup = read('src/app/profile/setup/page.jsx')
+    const edit = read('src/app/profile/edit/page.jsx')
+    expect(instrumentation).toContain('opportunity_discovery_click')
+    expect(instrumentation).toContain('atb_connect_entry')
+    expect(instrumentation).toContain('profile_completion_start')
+    expect(instrumentation).toContain('valoria:analytics')
+    expect(opportunity).toContain('opportunity_view')
+    expect(opportunity).toContain('opportunity_application_submitted')
+    expect(submission).toContain('buyer_opportunity_submission')
+    expect(setup).toContain('profile_setup_completed')
+    expect(edit).toContain('public_visibility_consent_granted')
+  })
+
   test('marketplace filters use canonical VALU point bands and never infer seniority', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
     expect(directory).toContain('TIER_DESIGNATIONS.filter(tier => tier.min >= 35)')
