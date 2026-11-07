@@ -558,6 +558,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(endpoint).toContain(".not('completed_at', 'is', null)")
   })
 
+  test('marketplace filters use canonical VALU point bands and never infer seniority', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    expect(directory).toContain('TIER_DESIGNATIONS.filter(tier => tier.min >= 35)')
+    expect(directory).toContain('Filter by VALU points band')
+    expect(directory).toContain("p.assessment_access !== 'full'")
+    expect(directory).toContain('no approved public seniority field exists')
+    expect(directory).not.toMatch(/seniority.*current_job_title|current_job_title.*seniority/i)
+  })
+
   test('public profile pages use VALU report summaries and show speaker/facilitator evidence', () => {
     const helper = read('src/lib/public-profile.js')
     const profile = read('src/app/profile/[id]/ProfileClient.jsx')
