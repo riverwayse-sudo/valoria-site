@@ -28,7 +28,7 @@ export default function PublicMarketplaceVisibility() {
         const { data: { session } } = await supabase.auth.getSession()
         if (!session?.access_token) throw new Error('Please sign in again to manage your visibility preference.')
         const response = await fetch('/api/profile/public-visibility', {
-          headers: { Authorization: \`Bearer \${session.access_token}\` },
+          headers: { Authorization: `Bearer ${session.access_token}` },
           cache: 'no-store',
         })
         const data = await response.json().catch(() => ({}))
@@ -58,7 +58,7 @@ export default function PublicMarketplaceVisibility() {
       if (!session?.access_token) throw new Error('Your session has expired. Please sign in again.')
       const response = await fetch('/api/profile/public-visibility', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: \`Bearer \${session.access_token}\` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
         body: JSON.stringify({ consent: selected }),
       })
       const data = await response.json().catch(() => ({}))
