@@ -84,6 +84,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
 
   const professionalId = roster.professional_id
   if (roster.assessment_access === 'full') {
+    if (Number(profile.valu_index) < 35) return null
     if (!Array.isArray(roster.capabilities) || roster.capabilities.length === 0) return null
     if (!roster.assessment_summary || roster.assessment_summary.trim().length < 12) return null
   } else if (!(await hasCompletedTaster(admin, professionalId))) {
@@ -158,7 +159,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
   }
 
   const rosterById = new Map((roster || [])
-    .filter(row => row.assessment_access !== 'full' || (Array.isArray(row.capabilities) && row.capabilities.length > 0))
+    .filter(row => row.assessment_access !== 'full' || (Array.isArray(row.capabilities) && row.capabilities.length > 0 && Number(profileById.get(row.professional_id)?.valu_index) >= 35))
     .filter(row => row.assessment_access !== 'full'
       || (row.assessment_summary && row.assessment_summary.trim().length >= 12))
     .map(row => [row.professional_id, row]))
