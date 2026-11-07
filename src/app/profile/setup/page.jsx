@@ -150,6 +150,8 @@ function ProfileSetupForm() {
   const [cvError, setCvError] = useState('')
   const [editingTracks, setEditingTracks] = useState(false)
   const [submittedInfo, setSubmittedInfo] = useState(null)
+  const [tasterCompleted, setTasterCompleted] = useState(false)
+  const [tasterStarted, setTasterStarted] = useState(false)
   const [autoSaveStatus, setAutoSaveStatus] = useState('saved')
   const hydratedRef = useRef(false)
   const autoSaveTimerRef = useRef(null)
@@ -199,11 +201,12 @@ function ProfileSetupForm() {
       // Prefill from an existing row so this page also serves as "edit" —
       // previously it only ever started blank, even for someone who'd
       // already completed setup and just wanted to change one field.
-      const { data: existing } = await supabase
-        .from('professional_profiles')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle()
+      const [{ data: existing }, { data: latestTaster }] = await Promise.all([
+        supabase.from('professional_profiles').select('*').eq('id', user.id).maybeSingle(),
+        supabase.from('taster_sessions').select('id,completed_at,created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).maybeSingle(),
+      ])
+      setTasterCompleted(!!latestTaster?.completed_at)
+      setTasterStarted(!!latestTaster?.id && !latestTaster?.completed_at)
 
       if (existing) {
         hadExistingTracksRef.current = (existing.active_tracks || []).length > 0
@@ -1038,7 +1041,7 @@ function ScreenBody(props) {
     }
 
     case 'review': {
-      return <ReviewScreen {...props} tags={tags} videoLinks={videoLinks} handleFinish={handleFinish} onChangeTracks={onChangeTracks} />
+      return <ReviewScreen {...props} tags={tags} videoLinks={videoLinks} handleFinish={handleFinish} onChangeTracks={onChangeTracks} tasterCompleted={tasterCompleted} tasterStarted={tasterStarted} />
     }
 
     default:
@@ -1046,7 +1049,7 @@ function ScreenBody(props) {
   }
 }
 
-function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, videoLinks, handleFinish, saving, saveError, set, onChangeTracks }) {
+function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, videoLinks, handleFinish, saving, saveError, set, onChangeTracks, tasterCompleted, tasterStarted }) {
   return (
     <div>
       <Title>Review &amp;<br/><Em>submit.</Em></Title>
@@ -1118,11 +1121,15 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
         <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
           <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — YOUR VALU PATHWAY</div>
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
-            The VALU taster and Full VALU Index are separate assessments. A completed taster can qualify you for Basic marketplace access. Completing the Full VALU Index and meeting the 35-point, profile and capability requirements can qualify you for Full marketplace access.
+            {tasterCompleted
+              ? 'Your completed VALU taster can qualify you for Basic marketplace access. The Full VALU Index is a separate assessment for official points and a merit tier; it is not required for the Basic pathway.'
+              : tasterStarted
+                ? 'Your VALU taster is in progress. Continue it to complete the Basic marketplace entry pathway. The Full VALU Index is a separate assessment for official points and a merit tier.'
+                : 'Start with the VALU taster. Completing it can qualify you for Basic marketplace access. The Full VALU Index is a separate assessment for official points and a merit tier.'}
           </p>
-          <a href="/valu/assessment/" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
-            START / CONTINUE THE VALU TASTER →
-          </a>
+          {!tasterCompleted && <a href="/valu/assessment/" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
+            {tasterStarted ? 'CONTINUE THE VALU TASTER →' : 'START THE VALU TASTER →'}
+          </a>}
         </div>
       )}
 
