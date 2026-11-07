@@ -52,6 +52,7 @@ The current private production roster was verified read-only:
 - **2 Full** — current Full VALU assessment; evidence readiness does not downgrade their tier.
 - **5 registered-only** — all five remain private until their owners explicitly choose public visibility.
 - **0 public-listed** — no current public-visibility acknowledgements.
+- Current read-only production check: **17 non-test profiles**, **5 test-marked profiles retained internally for audit**, **0 test profiles in the public roster**, **5 registered-only roster entries**, and **0 public-visibility acknowledgements**. No test/generated profile is currently exposed in the public roster; the five internal records were not destructively deleted as part of this website release.
 - **45 completed tasters** — 5 linked, 16 corroborated contact candidates available for confirmed-email recovery, and 24 unresolved identities held for manual review.
 
 A taster-linked participant is assigned at least the Basic tier. A current Full VALU assessment keeps the participant at Full. Tier assignment and public visibility are separate: no participant's public consent is inferred or backfilled.
@@ -68,9 +69,11 @@ Public website copy deliberately avoids assessment question counts and validity-
 
 ## 5. Decisions required from Valoria
 
+Brand punctuation is resolved: the user accepted the 9 October 2026 Website Content Brief wording “Worth, Built.” The homepage, About, PRIME, VALU and footer now use that punctuation consistently. The April 2026 master brand PDF contains the earlier full-stop version; the later accepted brief governs current website copy.
+
+
 1. Confirm the legal entity name used in the footer, About page, Terms, Privacy and contracts.
 2. Approve the adapted About mission wording.
-3. Confirm the current registered brand punctuation: the October developer brief says “Worth, Built.” per Brand Guidelines v4, while the April master brand PDF supplied in the library says “Worth. Built.” The later comma version has been applied; the referenced v4 master was not available in the library for direct verification.
 4. Confirm the public name and role for the Session 03 replay speaker/host.
 5. Confirm Develop pricing and any certification claims.
 6. Confirm the 17-versus-18 skill interpretation and taster skill coverage.
@@ -90,5 +93,6 @@ Public website copy deliberately avoids assessment question counts and validity-
 - Latest completed platform unit tests, production build, secret scan, environment parity and Cloudflare checks passed.
 - The newest site build and Cloudflare Worker checks must be green before the branch is described as fully validated.
 - Both PRs remain open. No merge or production deployment is claimed.
-- A fresh Vercel preview for the latest code commit could not be created: the Vercel Hobby team's free deployment quota is exhausted for 24 hours. The newest existing READY preview is behind the latest code and should not be used for final approval. Preview deployments are also SSO-protected on the current project settings.
+- Cloudflare Workers Builds is the release validation path. Vercel is not the release target; its Hobby build quota is exhausted, so no Vercel preview is being used for approval.
+- The Cloudflare site preview intentionally has disabled Supabase/upstream values and a missing preview-only worker binding. It validates build and static UI only; it cannot prove the integrated registration, account, consent or assessment journey.
 - Do not release until methodology/copy/legal approvals are obtained, the consent-aware RLS migration is coordinated, and the full assessment-to-dashboard-to-profile journey is tested.
