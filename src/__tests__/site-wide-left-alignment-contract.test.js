@@ -25,6 +25,17 @@ describe('main website left-alignment contract', () => {
     }
   })
 
+  test('production page style maps do not reintroduce duplicate object keys or JSX props', () => {
+    const settings = read('src/app/profile/settings/page.jsx')
+    const evidence = read('src/app/admin/capability-evidence/page.jsx')
+    const contact = read('src/app/contact-us/page.jsx')
+    expect((settings.match(/^\\s*path:\\s*\\{/gm) || []).length).toBe(1)
+    expect((settings.match(/^\\s*requirements:\\s*\\{/gm) || []).length).toBe(1)
+    expect((evidence.match(/cards:\\s*\\{/g) || []).length).toBe(1)
+    expect(contact).not.toContain('className="info-card" className=')
+    expect(contact).not.toContain('className="page-hero-actions" className=')
+  })
+
   test('the same global rule covers page headings, body copy, cards, forms and calls to action', () => {
     const css = read('src/styles/globals.css')
     expect(css).toContain('MAIN WEBSITE ALIGNMENT CONTRACT')
