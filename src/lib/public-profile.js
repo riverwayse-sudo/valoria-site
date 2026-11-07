@@ -81,10 +81,11 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
     console.error('Public roster eligibility verification failed:', rosterError)
     throw new Error('Public profile eligibility could not be verified.')
   }
-  if (!roster || !Array.isArray(roster.capabilities) || roster.capabilities.length === 0) return null
+  if (!roster) return null
 
   const professionalId = roster.professional_id
   if (roster.assessment_access === 'full') {
+    if (!Array.isArray(roster.capabilities) || roster.capabilities.length === 0) return null
     if (!roster.assessment_summary || roster.assessment_summary.trim().length < 12) return null
   } else if (!(await hasCompletedTaster(admin, professionalId))) {
     return null
