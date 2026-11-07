@@ -13,7 +13,6 @@ export default function RecoverTasterPage() {
   const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' })
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
-  const [existingAccount, setExistingAccount] = useState(false)
   const [error, setError] = useState('')
 
   const valid = form.name.trim().length >= 2
@@ -48,10 +47,6 @@ export default function RecoverTasterPage() {
       })
       if (signupError) throw signupError
 
-      if (Array.isArray(data?.user?.identities) && data.user.identities.length === 0) {
-        setExistingAccount(true)
-        return
-      }
       if (!data?.user?.id) throw new Error('Your account could not be created. Please try again.')
       setSent(true)
     } catch (err) {
@@ -72,19 +67,11 @@ export default function RecoverTasterPage() {
 
         {sent ? (
           <div role="status" style={{ border: '1px solid rgba(201,168,76,.3)', borderRadius: 12, padding: 20 }}>
-            <h2 style={{ color: GOLD, fontSize: 16, margin: '0 0 10px' }}>Check your email</h2>
+            <h2 style={{ color: GOLD, fontSize: 16, margin: '0 0 10px' }}>Continue with your email</h2>
             <p style={{ fontSize: 13, lineHeight: 1.8, margin: '0 0 18px', color: 'rgba(247,244,238,.72)' }}>
-              We sent a confirmation link to <strong>{form.email.trim()}</strong>. Confirm your email to securely reconnect any matching saved taster and open your dashboard.
+              If this is a new account, check your inbox for a confirmation link. If you already have a Valoria account, sign in with the same email and the name used for your taster. After confirmation or sign-in, Valoria will check for a matching saved record.
             </p>
-            <Link href="/login" style={{ color: GOLD, fontSize: 12, fontWeight: 700, letterSpacing: '.08em' }}>ALREADY CONFIRMED? SIGN IN →</Link>
-          </div>
-        ) : existingAccount ? (
-          <div role="status" style={{ border: '1px solid rgba(201,168,76,.3)', borderRadius: 12, padding: 20 }}>
-            <h2 style={{ color: GOLD, fontSize: 16, margin: '0 0 10px' }}>Continue to your account</h2>
-            <p style={{ fontSize: 13, lineHeight: 1.8, margin: '0 0 18px', color: 'rgba(247,244,238,.72)' }}>
-              If you already have a Valoria account, sign in with this email. If you are creating a new account, check your inbox for the confirmation link. Once your email is confirmed, Valoria will check for a saved taster that matches your name and email.
-            </p>
-            <Link href={`/login?claim_name=${encodeURIComponent(form.name.trim())}`} style={{ display: 'inline-block', padding: '12px 20px', borderRadius: 999, background: GOLD, color: '#1A1A2E', fontSize: 11, fontWeight: 800, letterSpacing: '.08em', textDecoration: 'none' }}>SIGN IN TO RECONNECT</Link>
+            <Link href={`/login?claim_name=${encodeURIComponent(form.name.trim())}`} style={{ color: GOLD, fontSize: 12, fontWeight: 700, letterSpacing: '.08em' }}>SIGN IN TO RECONNECT →</Link>
           </div>
         ) : (
           <form onSubmit={submit} style={{ display: 'grid', gap: 14 }}>
