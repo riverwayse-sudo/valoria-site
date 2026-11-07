@@ -13,15 +13,19 @@ const PLACEHOLDER_HEADLINES = new Set([
 
 export function isPublicProfileContentReady(row) {
   const headline = String(row.headline || row.current_job_title || '').trim()
-  const isFullAssessment = row.assessment_access === 'full' && row.valu_index !== null && row.valu_index !== undefined
+  const assessmentAccess = row.assessment_access
+  const isValidAssessmentAccess = assessmentAccess === 'basic' || assessmentAccess === 'full'
+  const hasOfficialPoints = row.valu_index !== null && row.valu_index !== undefined
   const assessmentSummary = String(row.assessment_summary || '').trim()
+  const fullAssessmentReady = assessmentAccess !== 'full' || (hasOfficialPoints && assessmentSummary.length >= 12)
   return Boolean(
     row.full_name &&
     row.atb_id &&
     headline.length >= 8 &&
     !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
     !/[\u{1D400}-\u{1D7FF}]/u.test(headline) &&
-    (!isFullAssessment || assessmentSummary.length >= 12)
+    isValidAssessmentAccess &&
+    fullAssessmentReady
   )
 }
 
