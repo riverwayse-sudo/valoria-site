@@ -921,7 +921,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
     { key:'profile', label:'Professional profile', done:profileComplete },
     { key:'capability', label:'Capabilities', done:capabilityReady },
     { key:'eligibility', label:'Eligibility', done:eligibilityReady },
-    { key:'listed', label:'Registry listing', done:listedReady },
+    { key:'listed', label:'Marketplace listing', done:listedReady },
   ]
   const nextIndex = steps.findIndex(step => !step.done)
   const next = nextIndex >= 0 ? steps[nextIndex] : null
@@ -936,7 +936,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
       : next.key === 'profile' ? 'Complete your professional profile.'
         : next.key === 'capability' ? 'Choose how your expertise is represented.'
           : next.key === 'eligibility' ? 'Complete your readiness requirements.'
-            : 'Publish your Registry presence.'
+            : 'Publish your marketplace profile.'
 
   const explanation = !next ? 'Explore opportunities and keep your professional presence current.'
     : next.key === 'valu' ? (canStartFullAssessment
@@ -1280,7 +1280,7 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
       : !hasCapability
         ? { label:'Show what you can do', text:'Choose the capability you want Valoria to show.', href:'/profile/setup' }
         : !isListed
-          ? { label:'Become discoverable', text:'Finish your readiness steps to enter the Registry.', href:'/profile/passport' }
+          ? { label:'Become discoverable', text:'Finish your readiness steps to become discoverable in the marketplace.', href:'/profile/passport' }
           : { label:'Find opportunities', text:'See opportunities that fit what you do.', href:'/opportunities' }
 
   return (
