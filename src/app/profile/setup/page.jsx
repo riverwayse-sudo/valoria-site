@@ -405,7 +405,7 @@ function ProfileSetupForm() {
       setSaveError(
         error.code === '23505' && /username/i.test(error.message || '')
           ? 'That username is already taken — please choose another.'
-          : \`Your last change didn’t save (\${error.code || 'unknown'}): \${safeMessage || 'Please check your connection and try again.'}\`
+          : `Your last change didn’t save (${error.code || 'unknown'}): ${safeMessage || 'Please check your connection and try again.'}`
       )
       return false
     }
