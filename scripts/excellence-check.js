@@ -64,7 +64,7 @@ if (fs.existsSync(profileRoutePath)) {
   if (/\.eq\(\s*['"]profile_complete['"]/.test(route)) {
     violations.push('public profile route must not confuse profile completion with public listing eligibility');
   }
-  if (!/return\s*<ProfileClient\b/.test(route) || !/initialProfile=\{initialProfile\}/.test(route)) {
+  if (!/return\s*<ProfileClient\b/.test(route) || !/initialProfile=\{toPublicProfile\(row\)\}/.test(route)) {
     violations.push('public profile route must pass its server-fetched profile into ProfileClient');
   }
 }
