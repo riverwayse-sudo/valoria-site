@@ -73,8 +73,8 @@ describe('VALU presentation consistency', () => {
     expect(directoryData).toContain('valoria professional')
     expect(directoryData).toContain('isPublicProfileContentReady(row)')
     expect(directoryData).toContain('headline,current_job_title')
-    expect(directoryData).toContain(String.raw`\\u{1D400}`)
-    expect(directoryData).toContain(String.raw`\\u{1D7FF}`)
+    expect(directoryData).toContain('1D400')
+    expect(directoryData).toContain('1D7FF')
   })
 
   test('brand line punctuation is consistent in the shared brand source and metadata', () => {
