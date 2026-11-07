@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, 'experience/staging-redesign-20261106']
   pull_request:
-    branches: [main]
+    branches: [main, 'experience/staging-redesign-20261106']
 
 jobs:
   unit-and-build:
