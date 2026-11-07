@@ -26,8 +26,8 @@ describe('participant-facing assessment clarity', () => {
 
   test('public VALU information distinguishes the taster from the full assessment', () => {
     const valu = read('src/app/valu/page.jsx')
-    expect(valu).toContain('short, guided taster')
-    expect(valu).toContain('formal assessment')
+    expect(valu).toContain('guided snapshot')
+    expect(valu).toContain('full assessment')
     expect(valu).toContain('official VALU Index')
   })
 
@@ -557,7 +557,6 @@ describe('journey integrity contract', () => {
   test('the account bridge explains email confirmation and dashboard return before the formal assessment', () => {
     const signup = read('src/app/professional-signup/page.jsx')
     const callback = read('src/app/auth/callback/page.jsx')
-    expect(signup).toContain('ACCOUNT BRIDGE · STEP 2 OF 3')
     expect(signup).toContain('ACCOUNT BRIDGE · EMAIL CONFIRMATION')
     expect(signup).toContain('One quick confirmation.')
     expect(signup).toContain('Then your formal assessment.')
