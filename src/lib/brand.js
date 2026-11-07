@@ -18,11 +18,11 @@ export const COLORS = {
 }
 
 export const PRIME_CLUSTERS = [
-  { letter: 'P', name: 'Presence', color: COLORS.gold, subtitle: 'How you show up', description: 'Communication, Executive Presence and Composure Under Scrutiny describe how you show up with clarity, confidence and composure.', skills: ['Communication', 'Executive Presence', 'Composure Under Scrutiny'] },
-  { letter: 'R', name: 'Relationships', color: COLORS.gold, subtitle: 'How you connect', description: 'Trust-Building, Collaborative Intelligence and Network Quality describe how you build and sustain professional relationships.', skills: ['Trust-Building', 'Collaborative Intelligence', 'Network Quality'] },
-  { letter: 'I', name: 'Intelligence', color: COLORS.gold, subtitle: 'How you think', description: 'Critical Thinking, Analytical Depth, Decision-Making and Cognitive Agility describe how you interpret information and make sound decisions.', skills: ['Critical Thinking', 'Analytical Depth', 'Decision-Making', 'Cognitive Agility'] },
-  { letter: 'M', name: 'Mastery', color: COLORS.gold, subtitle: 'How you deliver', description: 'Execution Discipline, Accountability, Resilience and Adaptability describe how you deliver and respond to challenge.', skills: ['Execution Discipline', 'Accountability', 'Resilience', 'Adaptability'] },
-  { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you build', description: 'Commercial Thinking, Systems Building and Venture Mindset describe how you build value and develop ideas into scalable work.', skills: ['Commercial Thinking', 'Systems Building', 'Venture Mindset'] },
+  { letter: 'P', name: 'Presence', color: COLORS.gold, subtitle: 'How you show up', description: 'Presence covers how you communicate, negotiate and establish a clear professional identity.', skills: ['Communication', 'Negotiation', 'Personal Brand & Executive Presence'] },
+  { letter: 'R', name: 'Relationships', color: COLORS.gold, subtitle: 'How you connect', description: 'Relationships covers how you understand people, resolve conflict, develop others and manage stakeholders.', skills: ['Emotional Intelligence', 'Conflict Resolution', 'People Development', 'Stakeholder Management'] },
+  { letter: 'I', name: 'Intelligence', color: COLORS.gold, subtitle: 'How you think', description: 'Intelligence covers how you reason, think strategically, apply business judgement and work fluently with AI.', skills: ['Critical Thinking', 'Strategic Thinking', 'Business Acumen', 'AI Fluency'] },
+  { letter: 'M', name: 'Mastery', color: COLORS.gold, subtitle: 'How you deliver', description: 'Mastery covers accountable execution, resilient self-leadership and the ability to adapt as conditions change.', skills: ['Execution & Accountability', 'Resilience & Self-Leadership', 'Adaptability'] },
+  { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you create', description: 'Enterprise covers how you create commercial value, influence beyond formal authority and combine human judgement with AI.', skills: ['Commercial Creativity', 'Influence Without Authority', 'Human-AI Collaboration'] },
 ]
 
 // VALU Index values are points out of 100, not percentages.
