@@ -1,3 +1,3 @@
 # Production dependency remediation
 
-This file triggers the staging-only dependency remediation workflow. It is not served by the website.
+This staging-only trigger runs the patched dependency lockfile workflow. Revision 2: include both staging Worker dispatches after verification.
