@@ -1,6 +1,17 @@
 name: Deploy Valoria site to isolated Cloudflare staging
 
 on:
+  pull_request:
+    branches: ["experience/staging-redesign-20261106"]
+    types: [opened, synchronize, reopened]
+    paths:
+      - "src/**"
+      - "next.config.js"
+      - "open-next.config.ts"
+      - "wrangler.jsonc"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/cloudflare-staging-deploy.yml"
   push:
     branches: ["experience/staging-redesign-20261106"]
     paths:
@@ -22,6 +33,7 @@ concurrency:
 
 jobs:
   deploy-staging:
+    if: ${{ github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && startsWith(github.event.pull_request.head.ref, 'deploy/staging-')) }}
     name: Build and deploy isolated staging Worker
     runs-on: ubuntu-latest
     environment: staging
