@@ -36,6 +36,8 @@ describe('main website left-alignment contract', () => {
     expect(css).toContain('html body .home-section-heading')
     expect(css).toContain('html body .page-hero-actions-centered')
     expect(css).toContain('html body .btn-gold')
+    expect(css).toContain('html body .session-series-primary')
+    expect(css).toContain('html body .session-series-secondary')
     expect(css).toContain('justify-content: flex-start !important')
   })
 })
