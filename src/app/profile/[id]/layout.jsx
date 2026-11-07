@@ -21,7 +21,7 @@ export async function generateMetadata({ params }) {
       auth: { persistSession: false, autoRefreshToken: false },
     })
     const { data: profile, error } = await supabase
-      .rpc('get_consent_verified_marketplace_roster')
+      .from('marketplace_public_roster')
       .select(PUBLIC_PROFILE_SELECT)
       .eq(UUID_RE.test(id) ? 'professional_id' : 'atb_id', id)
       .maybeSingle()
