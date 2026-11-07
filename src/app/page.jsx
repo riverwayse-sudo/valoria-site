@@ -89,7 +89,6 @@ export default function HomePage() {
   return (
     <>
       <Nav />
-      <ParallaxController rootSelector="#main-content" />
       <main id="main-content" className="home-redesign-root">
         <HeroSlider />
         <section className="home-market-scope" aria-label="Initial market focus">
