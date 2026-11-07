@@ -34,10 +34,13 @@ describe('staging preview safety boundary', () => {
   test('the OpenNext Worker handles dynamic routes before static asset fallback', () => {
     const wrangler = read('wrangler.jsonc')
     const nextConfig = read('next.config.js')
+    const assessmentProxy = read('src/app/valu/assessment/[[...path]]/route.js')
     expect(wrangler).toContain('"run_worker_first": true')
     expect(wrangler).toContain('"VALU_PREVIEW_ASSESSMENT_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev"')
-    expect(nextConfig).toContain("source: '/valu/assessment/:path*'")
-    expect(nextConfig).toContain('VALU_PREVIEW_ASSESSMENT_ORIGIN')
+    expect(assessmentProxy).toContain('ALLOWED_ASSESSMENT_HOSTS')
+    expect(assessmentProxy).toContain('process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN')
+    expect(assessmentProxy).toContain("suffix ? `/valu/assessment/${suffix}` : '/'")
+    expect(nextConfig).not.toContain("source: '/valu/assessment'")
   })
 
   test('preview metadata is not indexable and production analytics are disabled', () => {
