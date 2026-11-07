@@ -101,7 +101,7 @@ function memberSince(dateStr) {
 }
 
 export default function DashboardPage() {
-  if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1') return <DashboardExperiencePreview />
+  const previewMode = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1'
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [isSupply, setIsSupply] = useState(false)
@@ -128,7 +128,10 @@ export default function DashboardPage() {
       setIsRefreshing(!!profile)
       try {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { window.location.href = '/login'; return }
+      if (!user) {
+        if (!previewMode) window.location.href = '/login'
+        return
+      }
       setUser(user)
       const { data: { session } } = await supabase.auth.getSession()
       if (session?.access_token) {
@@ -283,6 +286,10 @@ export default function DashboardPage() {
       </div>
     </main>
   )
+
+  // Keep the illustrative dashboard for anonymous staging visitors, but never
+  // hide a signed-in participant's real assessment handoff behind the preview.
+  if (previewMode && !user) return <DashboardExperiencePreview />
 
   if (!profile && assessmentAccess?.can_continue) return <DashboardAssessmentHandover standalone />
 
