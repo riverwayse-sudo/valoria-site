@@ -35,7 +35,11 @@ const PUBLIC_PROFILE_FIELDS = [
   'website_url',
 ].join(',')
 
-function normalizePublicDisplayText(value) {\n  return typeof value === 'string' ? value.normalize('NFKC').replace(/\\s+/g, ' ').trim() : value\n}\n\nfunction getAdminClient() {
+function normalizePublicDisplayText(value) {
+  return typeof value === 'string' ? value.normalize('NFKC').replace(/\s+/g, ' ').trim() : value
+}
+
+function getAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) throw new Error('Public profile verification is unavailable.')
