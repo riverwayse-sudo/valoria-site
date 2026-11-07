@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import PublicMarketplaceVisibility from '@/components/PublicMarketplaceVisibility'
 
 import {
   GOLD, DARK, MID, PARCH, DIM, GLINE,
@@ -1095,6 +1096,8 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
           </a>
         </div>
       )}
+
+      <PublicMarketplaceVisibility />
 
       <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'28px' }}>
         <input type="checkbox" checked={form.consent} onChange={e => set('consent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
