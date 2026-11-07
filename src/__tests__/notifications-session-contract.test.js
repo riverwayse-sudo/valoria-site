@@ -39,6 +39,6 @@ describe('authenticated VALU continuation entry points', () => {
     )
     expect(nudge).toContain('AssessmentStartLink href="/valu/assessment/"')
     expect(nudge).toContain("href=\"/profile/setup\"")
-    expect(nudge).toContain('START / CONTINUE VALU JOURNEY')
+    expect(nudge).toContain('START THE VALU TASTER')
   })
 })
