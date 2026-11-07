@@ -4,8 +4,8 @@ import '../pages.css'
 
 export const metadata = {
   title: 'Privacy Policy | Valoria Institute',
-  description: 'How Valoria Institute collects, uses, and protects your personal data. NDPA 2023 compliant.',
-  robots: { index: true, follow: true },
+  description: 'Draft privacy information for Valoria Institute. Legal operator, retention and cross-border processing details require confirmation before production publication.',
+  robots: process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? { index: false, follow: false } : { index: true, follow: true },
   alternates: { canonical: 'https://valoriainstitute.com/privacypolicy' },
 }
 
@@ -13,11 +13,12 @@ const GOLD = '#C9A84C'
 const PARCHMENT = '#F7F4EE'
 const DARK = '#0F0F1A'
 const DIM = 'rgba(247,244,238,.55)'
+const IS_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'
 
 const sections = [
   {
     title: '1. Who we are',
-    body: `Valoria Institute is an initiative of African Talent Bureau Ltd, registered in Nigeria. We operate the Valoria Institute professional marketplace at valoriainstitute.com and the VALU Index assessment platform at valoriainstitute.com/valu/assessment.\n\nFor questions about this policy, contact us at: privacy@valoriainstitute.com`,
+    body: `Valoria Institute is the public-facing name of the institution and platform described in this policy. Nigeria is the current operating jurisdiction. The registered legal entity responsible for the service, its registered address and the formal data-controller details are pending confirmation and must be completed before this policy is approved for production.\n\nWe operate the Valoria Institute website, professional Marketplace and VALU Index assessment experience. For privacy questions, contact privacy@valoriainstitute.com.`,
   },
   {
     title: '2. Data we collect',
@@ -26,31 +27,31 @@ const sections = [
   },
   {
     title: '3. Why we collect it',
-    body: `We process your personal data for the following purposes:\n\n• To operate the Valoria Institute marketplace — matching assessed professionals with employers, event organisers, and training buyers.\n• To administer the VALU Index assessment — computing your score, generating your AI report, and maintaining your assessment history.\n• To list your profile in the marketplace — if you are a professional who scores 35 or above and consents to listing.\n• To facilitate introductions between buyers and professionals — all contact is mediated by Valoria; contact details are never shared directly.\n• To send transactional communications — account verification, assessment results, and enquiry notifications.\n• To maintain platform security — detecting unusual activity, integrity flags on assessments, and preventing abuse.`,
+    body: `We process personal data to operate user accounts, administer the separate VALU taster and full assessment journeys, calculate and maintain VALU results, generate assessment reports, manage professional profiles and capability listings, respond to enquiries, facilitate approved introductions, send transactional communications, protect platform security and prevent abuse.\n\nA profile is not made public merely because a person completes an assessment. Marketplace visibility depends on the applicable eligibility, profile-completion, governance and consent requirements.`,
   },
   {
     title: '4. Legal basis for processing',
-    body: `Under the Nigeria Data Protection Act 2023 (NDPA), we process your data on the following bases:\n\n• Contract: processing necessary to provide the services you have requested.\n• Legitimate interest: platform security, fraud prevention, and service improvement.\n• Consent: for any processing not covered above — including marketplace listing and AI report generation. You may withdraw consent at any time by contacting us.`,
+    body: `The intended processing bases include steps necessary to provide services requested by you, legitimate interests such as platform security and fraud prevention, and consent where required — including public profile visibility. The final lawful-basis mapping, consent wording and controller responsibilities must be reviewed and approved against the Nigeria Data Protection Act 2023 before production publication. You may contact privacy@valoriainstitute.com with questions about consent or data use.`,
   },
   {
     title: '5. Who we share data with',
-    body: `We do not sell your personal data. We share data only with:\n\n• Supabase (database and authentication infrastructure) — your data is stored on their servers under data processing agreements.\n• Anthropic (AI report generation) — your anonymised VALU Index score profile is sent to generate your AI report. No personally identifiable information is sent.\n• Resend (transactional email) — your email address is used solely to send verification and notification emails.\n\nWe do not share your contact details, assessment answers, or personal information with employers, organisers, or other platform users. All introductions are facilitated by Valoria Institute staff.`,
+    body: `We do not sell personal data. The current service uses the following providers:\n\n• Supabase — database and authentication infrastructure. The production database is hosted in an EU region.\n• Anthropic — AI report generation. The report-generation request includes your name, professional role, overall VALU score, designation, PRIME cluster scores and skill scores. Raw assessment answers are not included in that request.\n• Resend — transactional email and report delivery. Messages may include your name, email address, assessment score, designation and report content.\n• Cloudflare — website and application hosting, edge delivery and security. Network requests may involve technical data such as IP address, browser and request metadata.\n\nIf you consent to the relevant public visibility, selected professional profile fields and approved capability information may be shown to Marketplace visitors and buyers. Private account contact details and raw assessment answers are not displayed as public profile fields. Any information shared during an introduction must follow the applicable request and consent process.\n\nThe exact provider locations, international-transfer arrangements and contractual safeguards for each provider must be confirmed before this policy is approved for production.`,
   },
   {
     title: '6. How long we keep your data',
-    body: `• Assessment data: retained indefinitely to support the 12-month retake policy and to maintain your score history. You may request deletion at any time.\n• Profile data: retained until you delete your account.\n• Enquiry data: retained for 36 months after the enquiry is closed, then deleted.\n• Waitlist data: retained until you register or request removal.\n\nYou may request deletion of your data at any time by emailing privacy@valoriainstitute.com. We will action deletion requests within 30 days.`,
+    body: `We intend to retain personal data only for as long as necessary to provide the service, maintain assessment integrity, manage accounts and enquiries, resolve disputes and meet applicable legal obligations.\n\nThe specific retention periods and deletion procedures for assessment records, professional profiles, enquiries, waitlist records, backups and provider logs have not yet been approved. They must be confirmed and documented before production publication. You may direct a data request to privacy@valoriainstitute.com.`,
   },
   {
     title: '7. Your rights',
-    body: `Under NDPA 2023, you have the right to:\n\n• Access: request a copy of the personal data we hold about you.\n• Correction: request correction of inaccurate data.\n• Deletion: request deletion of your data, subject to our retention obligations.\n• Objection: object to processing based on legitimate interest.\n• Portability: receive your data in a machine-readable format.\n• Withdraw consent: where processing is based on consent, you may withdraw at any time.\n\nTo exercise any of these rights, contact: privacy@valoriainstitute.com`,
+    body: `Depending on the applicable law and circumstances, you may have rights to request access to personal data, correction of inaccurate data, deletion, restriction or objection to certain processing, data portability, and withdrawal of consent where processing relies on consent. These rights may be subject to legal exceptions.\n\nTo make a request, contact privacy@valoriainstitute.com. The identity-verification process and response timelines must be confirmed in the final approved policy.`,
   },
   {
     title: '8. Cookies and tracking',
-    body: `We use a single functional cookie (vi_waitlist_v2) to remember that you have registered for the waitlist and allow you to access the platform. This is a strictly necessary cookie and does not track you across other websites.\n\nWe do not use advertising cookies, third-party tracking, or analytics cookies on this platform.`,
+    body: `The website and platform may use cookies or similar browser storage to support essential functionality, authentication, session continuity, preferences and security. The complete cookie and local-storage inventory, including any analytics or third-party tags, must be verified against the deployed site before this section is finalised.`,
   },
   {
     title: '9. Data security',
-    body: `All data is transmitted over HTTPS. Passwords are hashed using bcrypt and are never stored in plaintext. Database access is protected by Row Level Security — each user can only access their own records. Assessment answers are stored server-side only and are never accessible to other users or third parties.`,
+    body: `The service uses HTTPS, authenticated access, server-side controls and database Row Level Security. Public profile information may be visible where a professional has chosen the relevant visibility and met the applicable listing requirements. Private account data and raw assessment responses are intended to remain restricted to authorised processing. A complete security and access-control review is required before this statement is treated as a final assurance.`,
   },
   {
     title: '10. Changes to this policy',
@@ -58,7 +59,7 @@ const sections = [
   },
   {
     title: '11. Contact',
-    body: `African Talent Bureau Ltd\nValoria Institute\nLagos, Nigeria\n\nEmail: privacy@valoriainstitute.com\nGeneral enquiries: info@valoriainstitute.com`,
+    body: `Valoria Institute (public-facing service name)\nNigeria (current operating jurisdiction)\n\nRegistered legal entity, registered address and formal data-controller identity: pending confirmation.\n\nEmail: privacy@valoriainstitute.com\nGeneral enquiries: info@valoriainstitute.com`,
   },
 ]
 
@@ -68,6 +69,7 @@ export default function PrivacyPolicyPage() {
       <Nav />
       <main id="main-content" style={{ minHeight: '100vh', background: DARK, fontFamily: "'Raleway','Helvetica Neue',Arial,sans-serif", color: PARCHMENT }}>
 
+        {IS_PREVIEW && <div role="status" style={{maxWidth:'860px',margin:'24px auto 0',padding:'14px 20px',border:'1px solid rgba(201,168,76,.35)',background:'rgba(201,168,76,.07)',color:PARCHMENT,fontSize:'12px',lineHeight:1.7}}>LEGAL REVIEW REQUIRED — This staging draft must not be treated as a final privacy notice. Confirm the legal controller, provider locations, retention schedule, consent wording and international-transfer safeguards before production.</div>}
         {/* Hero */}
         <section style={{ padding: 'clamp(64px,8vw,120px) clamp(24px,5vw,80px) 48px', borderBottom: '1px solid rgba(201,168,76,.1)', maxWidth: '860px', margin: '0 auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
@@ -78,10 +80,10 @@ export default function PrivacyPolicyPage() {
             How we handle<br /><em style={{ fontStyle: 'italic', color: GOLD }}>your data.</em>
           </h1>
           <p style={{ fontSize: '15px', fontWeight: 300, color: DIM, lineHeight: 1.8, maxWidth: '560px' }}>
-            African Talent Bureau Ltd is committed to protecting your personal data. This policy explains what we collect, why, and how — in plain language, compliant with the Nigeria Data Protection Act 2023.
+            This draft explains how Valoria Institute handles personal data. It is not a final legal notice; controller identity, processor arrangements, retention periods and international-transfer safeguards require approval before production.
           </p>
           <p style={{ fontSize: '12px', color: 'rgba(247,244,238,.3)', marginTop: '16px' }}>
-            Last updated: 1 July 2026 · NDPA 2023 Compliant
+            Draft for legal review · 7 November 2026
           </p>
         </section>
 
@@ -96,7 +98,7 @@ export default function PrivacyPolicyPage() {
 
           <div style={{ padding: '24px', background: 'rgba(201,168,76,.04)', border: '1px solid rgba(201,168,76,.12)', borderRadius: '10px', marginTop: '16px' }}>
             <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.7, margin: 0 }}>
-              Questions about this policy? Email <a href="mailto:privacy@valoriainstitute.com" style={{ color: GOLD }}>privacy@valoriainstitute.com</a> and we will respond within 5 business days.
+              Questions about this draft? Email <a href="mailto:privacy@valoriainstitute.com" style={{ color: GOLD }}>privacy@valoriainstitute.com</a>.
             </p>
           </div>
         </div>
