@@ -202,3 +202,7 @@ nav.vi-nav.scrolled,
   .session-series-primary,
   .session-series-secondary { transition:none; }
 }
+
+
+/* Static homepage registry layout; suppress the legacy marquee motion. */
+.home-redesign-root .vi-scroll-track { animation: none; }
