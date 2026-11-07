@@ -26,7 +26,7 @@ describe('participant-facing assessment clarity', () => {
 
   test('public VALU information distinguishes the taster from the full assessment', () => {
     const valu = read('src/app/valu/page.jsx')
-    expect(valu).toContain('guided snapshot')
+    expect(valu).toContain('guided taster')
     expect(valu).toContain('full assessment')
     expect(valu).toContain('official VALU Index')
   })
