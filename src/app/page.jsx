@@ -53,7 +53,7 @@ const pathwayCards = [
     title: 'Find capability with context.',
     body: 'Explore professionals through structured profiles that bring capability, experience and professional pathways into view.',
     href: '/marketplace',
-    cta: 'EXPLORE THE BUREAU',
+    cta: 'EXPLORE THE MARKETPLACE',
   },
   {
     label: 'FOR EVENT ORGANISERS',
