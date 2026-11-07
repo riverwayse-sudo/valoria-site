@@ -57,10 +57,12 @@ as $$
             where taster.user_id = profile.id
               and taster.completed_at is not null
           )
-          and nullif(btrim(profile.display_name), '') is not null
+          and nullif(btrim(coalesce(profile.display_name, roster.full_name)), '') is not null
           and coalesce(
             nullif(btrim(profile.headline), ''),
-            nullif(btrim(profile.current_job_title), '')
+            nullif(btrim(profile.current_job_title), ''),
+            nullif(btrim(roster.headline), ''),
+            nullif(btrim(roster.current_job_title), '')
           ) is not null
         )
       )
