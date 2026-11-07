@@ -41,7 +41,7 @@ export default async function LiveProfilesScroll() {
         <div className="live-profiles-copy">
           <div className="live-profiles-kicker">THE VALORIA MARKETPLACE</div>
           <h2 id="marketplace-title" className="live-profiles-title">Find professionals <em>by capability.</em></h2>
-          <p className="live-profiles-subtitle">Explore public professional profiles when the professional has completed the required profile, met the listing requirements and explicitly chosen public visibility.</p>
+          <p className="live-profiles-subtitle">Explore public professional profiles at Basic and Full levels. Basic listings show verified identity and capabilities; Full listings add VALU insight. Every public listing requires explicit visibility consent.</p>
           {!dataUnavailable && <div className="live-profiles-proof" aria-label="Public marketplace profile count"><strong>{discoverableCount}</strong><span>public professional profiles</span></div>}
         </div>
 
@@ -82,6 +82,7 @@ export default async function LiveProfilesScroll() {
                 const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
                 const profileHref = profile.atb_id ? `/profile/${encodeURIComponent(profile.atb_id)}` : '/marketplace'
                 const development = developmentArea(profile.cluster_scores)
+                const isBasic = profile.assessment_access === 'basic'
                 return (
                   <Link href={profileHref} key={profile.id} className="vi-scroll-card" data-marketplace-intent={normalizedTracks[0] || 'all'} aria-label={`View public professional profile ${profile.atb_id || ''}`}>
                     <div className="vi-scroll-avatar" aria-hidden="true"><ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} /></div>
@@ -90,14 +91,13 @@ export default async function LiveProfilesScroll() {
                       <strong className="vi-scroll-name">{displayText(profile.full_name)}</strong>
                       <div className="vi-scroll-headline">{displayText(profile.headline)}</div>
                       <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'NO DECLARED ROLE'}</div>
-                      <div className="vi-scroll-designation">{displayText(profile.designation)}</div>
-                      <div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div>
-                      <div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div>
+                      <div className="vi-scroll-designation">{isBasic ? 'BASIC LISTING' : displayText(profile.designation)}</div>
+                      {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div><div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div></>}
                     </div>
-                    <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'} points`}>
-                      <span className="vi-scroll-score-label">VALU INDEX</span>
-                      <strong>{profile.valu_index ?? '—'}</strong>
-                      <span className="vi-scroll-score-max">points</span>
+                    <div className="vi-scroll-score" aria-label={isBasic ? 'Basic marketplace listing' : `VALU Index ${profile.valu_index} points`}>
+                      <span className="vi-scroll-score-label">{isBasic ? 'MEMBER TIER' : 'VALU INDEX'}</span>
+                      <strong>{isBasic ? 'BASIC' : profile.valu_index}</strong>
+                      {!isBasic && <span className="vi-scroll-score-max">points</span>}
                     </div>
                     <span className="vi-scroll-card-arrow" aria-hidden="true">↗</span>
                   </Link>
@@ -114,7 +114,7 @@ export default async function LiveProfilesScroll() {
       <div className="live-profiles-professional-cta">
         <span className="live-profiles-professional-rule" />
         <div><small>WANT TO BE DISCOVERED?</small><strong>Build a professional profile that helps relevant buyers understand your capabilities.</strong></div>
-        <Link href={BRAND.assessmentUrl}>TAKE THE 9-QUESTION TASTER <span>→</span></Link>
+        <Link href={BRAND.assessmentUrl}>TAKE THE VALU TASTER <span>→</span></Link>
       </div>
     </section>
   )
