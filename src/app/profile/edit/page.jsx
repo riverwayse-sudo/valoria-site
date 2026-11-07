@@ -225,6 +225,7 @@ function EditPageInner() {
       )
       return
     }
+    window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'professional_profile_updated', params: { section } } }))
     setDirty(d => ({ ...d, [section]: false }))
     setSaved(s => ({ ...s, [section]: true }))
     setOriginal(o => ({ ...o, ...payload }))
@@ -289,6 +290,7 @@ function EditPageInner() {
       if (!response.ok) throw new Error(result.error || 'Your visibility preference could not be saved.')
       setForm(current => ({ ...current, visibility: visibilityChoice }))
       setConsentConfirmed(false)
+      window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: visibilityChoice === 'public' ? 'public_visibility_consent_granted' : 'registered_only_visibility_selected', params: { source: 'profile_edit' } } }))
       setConsentMessage(visibilityChoice === 'public'
         ? 'Your consent is recorded. Your profile will be publicly visible only when all listing requirements are met.'
         : 'Your profile is now set to registered-only visibility.')
