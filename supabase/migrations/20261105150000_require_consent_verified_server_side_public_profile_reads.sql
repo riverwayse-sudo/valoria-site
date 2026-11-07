@@ -1,7 +1,8 @@
 -- Public profile access is consent-gated at both the application and Data API
--- layers. Public clients may read only the small, non-contact profile projection.
--- Full profile data is owner/admin-only; the site uses its server-only service
--- role helper to render consent-verified public profiles.
+-- layers. Full listings require a completed VALU profile. Basic listings are
+-- available to authenticated taster participants after account linking, a
+-- minimal professional identity, and explicit public-profile consent.
+-- Basic listings do not expose VALU points, designation, or assessment summary.
 
 create schema if not exists private;
 revoke all on schema private from public;
@@ -32,24 +33,43 @@ language sql
 stable
 security definer
 set search_path = pg_catalog
-as $
+as $$
   select exists (
     select 1
     from public.marketplace_public_roster roster
     join public.professional_profiles profile
       on profile.id = roster.professional_id
     where roster.professional_id = p_professional_id
-      and roster.assessment_access = 'full'
-      and roster.assessment_summary is not null
-      and length(btrim(roster.assessment_summary)) >= 12
       and cardinality(coalesce(roster.capabilities, '{}'::text[])) > 0
-      and profile.profile_complete is true
+      and (
+        (
+          roster.assessment_access = 'full'
+          and roster.assessment_summary is not null
+          and length(btrim(roster.assessment_summary)) >= 12
+          and profile.profile_complete is true
+        )
+        or
+        (
+          roster.assessment_access = 'basic'
+          and exists (
+            select 1
+            from public.taster_sessions taster
+            where taster.user_id = profile.id
+              and taster.completed_at is not null
+          )
+          and nullif(btrim(profile.display_name), '') is not null
+          and coalesce(
+            nullif(btrim(profile.headline), ''),
+            nullif(btrim(profile.current_job_title), '')
+          ) is not null
+        )
+      )
       and profile.is_test is false
       and profile.visibility = 'public'
       and profile.listing_status = 'listed'
       and profile.revoked_at is null
   );
-$;
+$$;
 
 revoke all on function private.is_public_profile_eligible(uuid) from public;
 grant execute on function private.is_public_profile_eligible(uuid) to anon, authenticated;
@@ -63,8 +83,7 @@ create policy pp_public_read_consent_verified
   for select
   to anon, authenticated
   using (
-    profile_complete is true
-    and is_test is false
+    is_test is false
     and visibility = 'public'
     and listing_status = 'listed'
     and revoked_at is null
