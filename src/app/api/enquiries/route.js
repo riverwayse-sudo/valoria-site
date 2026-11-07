@@ -35,7 +35,7 @@ async function notifyAdmin({ enquiryType, atbId, buyerName, buyerEmail, buyerCom
   const html = `
     <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;">
       <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">NEW ${label.toUpperCase()}</p>
-      <p><strong>Professional:</strong> ${escapeHtml(atbId)}</p>
+      <p><strong>Target:</strong> ${escapeHtml(atbId)}</p>
       <p><strong>From:</strong> ${escapeHtml(buyerName)} &lt;${escapeHtml(buyerEmail)}&gt;${buyerCompany ? ` — ${escapeHtml(buyerCompany)}` : ''}</p>
       <p><strong>Subject:</strong> ${escapeHtml(subject || '(none given)')}</p>
       <p><strong>Message:</strong><br/>${escapeHtml(body || '').replace(/\n/g, '<br/>')}</p>
