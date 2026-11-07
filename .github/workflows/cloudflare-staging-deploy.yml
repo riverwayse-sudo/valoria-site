@@ -67,8 +67,8 @@ jobs:
           CF_WORKERS_PREVIEW=1
           VALU_PREVIEW=1
           NEXT_PUBLIC_VALU_PREVIEW=1
-          VALU_STAGING_API_ENABLED=0
-          NEXT_PUBLIC_VALU_STAGING_API_ENABLED=0
+          VALU_STAGING_API_ENABLED=1
+          NEXT_PUBLIC_VALU_STAGING_API_ENABLED=1
           EOF
       - name: Install pinned Cloudflare build tools
         run: npm install --no-save @opennextjs/cloudflare@1.20.15 wrangler@4.156.1
@@ -182,9 +182,10 @@ jobs:
             cat /tmp/valu-link-taster-noauth || true
             exit 1
           fi
-          status="$(curl -sS -o /tmp/valu-opportunities-disabled -w '%{http_code}' "$base/api/opportunities")"
-          if [[ "$status" != "503" ]]; then
-            echo "Read-only staging opportunity API returned HTTP $status (expected 503)"
-            cat /tmp/valu-opportunities-disabled || true
+          status="$(curl -sS -o /tmp/valu-opportunities-enabled -w '%{http_code}' "$base/api/opportunities")"
+          if [[ "$status" != "200" ]]; then
+            echo "Staging opportunity API returned HTTP $status (expected 200)"
+            cat /tmp/valu-opportunities-enabled || true
             exit 1
           fi
+          grep -q '"opportunities"' /tmp/valu-opportunities-enabled
