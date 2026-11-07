@@ -304,7 +304,7 @@ export default function DashboardPage() {
         <>
           <VALUJourneyProgress stage="full" />
           <h1 style={{fontSize:'clamp(26px,4vw,38px)',textAlign:'center',margin:0}}>Your assessment is ready to continue.</h1>
-          <p style={{maxWidth:560,textAlign:'center',color:DIM,lineHeight:1.7}}>Your snapshot is saved. Start or resume your VALU Index from your dashboard.</p>
+          <p style={{maxWidth:560,textAlign:'center',color:DIM,lineHeight:1.7}}>Your taster is saved. Start or resume your VALU Index from your dashboard.</p>
           <AssessmentStartLink href="/dashboard" dashboardOnly style={{padding:'14px 24px',background:GOLD,color:DARK,fontSize:12,fontWeight:800,textDecoration:'none',borderRadius:999}}>CONTINUE YOUR ASSESSMENT →</AssessmentStartLink>
         </>
       ) : assessmentAccess === null ? (
@@ -361,7 +361,7 @@ export default function DashboardPage() {
     { label:'Industry',   value: p.industry || '—' },
     { label:'Experience', value: p.years_experience || p.experience_years ? `${p.years_experience || p.experience_years} yrs` : '—' },
     { label: compLabel,   value: compensation || '—' },
-    { label:'VALU Index', value: p.valu_index != null ? `${p.valu_index} points` : 'Basic · Snapshot', href: p.valu_index != null ? '#valu-card' : null },
+    { label:'VALU Index', value: p.valu_index != null ? `${p.valu_index} points` : 'Basic · taster', href: p.valu_index != null ? '#valu-card' : null },
     { label:'Profile Views', value: profileViewCount != null ? String(profileViewCount) : '—' },
   ] : []
 
@@ -609,7 +609,7 @@ export default function DashboardPage() {
                       </div>
                       <p style={{ fontSize:'11px', fontWeight:300, color:DIM, lineHeight:1.65, margin:0 }}>
                         {assessmentAccess?.can_continue
-                          ? 'Your snapshot is saved. Continue your Valoria journey from your dashboard.'
+                          ? 'Your taster is saved. Continue your Valoria journey from your dashboard.'
                           : 'Your official VALU Index and PRIME insights will appear here when your assessment is complete.'}
                       </p>
                     </div>
@@ -881,8 +881,8 @@ function DashboardAssessmentHandover({ standalone = false }) {
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap', marginBottom:12 }}>
         <div style={{ flex:'1 1 420px', minWidth:0 }}>
           <div style={{ color:'#C9A84C', fontSize:10, fontWeight:800, letterSpacing:'.2em' }}>YOUR VALORIA JOURNEY</div>
-          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>Your snapshot is saved. Continue your VALU journey.</h1>
-          <p style={{ margin:0, maxWidth:700, color:'rgba(247,244,238,.68)', fontSize:13, lineHeight:1.7 }}>Your snapshot is saved. Start or resume your VALU Index here; your progress will be restored.</p>
+          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>Your taster is saved. Continue your VALU journey.</h1>
+          <p style={{ margin:0, maxWidth:700, color:'rgba(247,244,238,.68)', fontSize:13, lineHeight:1.7 }}>Your taster is saved. Start or resume your VALU Index here; your progress will be restored.</p>
         </div>
         <div style={{ flex:'0 1 220px', minWidth:180 }}>
           <VALUJourneyProgress stage="full" />
@@ -940,7 +940,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
 
   const explanation = !next ? 'Explore opportunities and keep your professional presence current.'
     : next.key === 'valu' ? (canStartFullAssessment
-      ? 'Your snapshot is saved. Start or resume your VALU Index; your progress is preserved.'
+      ? 'Your taster is saved. Start or resume your VALU Index; your progress is preserved.'
       : 'Start the VALU Index to receive your official result.')
       : next.key === 'profile' ? 'Add the details that help organisations understand your experience and strengths.'
         : next.key === 'capability' ? 'Select the professional capabilities you want Valoria to represent.'
