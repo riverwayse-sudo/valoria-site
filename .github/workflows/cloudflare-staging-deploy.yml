@@ -98,6 +98,10 @@ jobs:
             /opportunities
             /opportunities/submit
             /events
+            /privacy
+            /terms
+            /privacypolicy
+            /terms-of-use
             /knowledge
             /knowledge/valu-index
             /knowledge/prime-framework
