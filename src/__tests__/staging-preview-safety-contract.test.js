@@ -85,4 +85,14 @@ describe('staging preview safety boundary', () => {
     expect(layout).toContain('IS_STAGING')
     expect(layout).toContain('!IS_STAGING')
   })
+  test('staging assessment bridge uses a delay-free, validated one-time handoff', () => {
+    const page = read('src/app/assessment/bridge/page.jsx')
+    const bridge = read('src/components/ValoriaAssessmentBridge.jsx')
+    expect(page).toContain('ValoriaAssessmentBridge')
+    expect(page).toContain('index: false')
+    expect(bridge).toContain('handoffPromiseRef')
+    expect(bridge).toContain("destination.protocol !== 'https:'")
+    expect(bridge).not.toContain('setTimeout')
+  })
+
 })
