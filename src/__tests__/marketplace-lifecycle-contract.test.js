@@ -558,6 +558,16 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(endpoint).toContain(".not('completed_at', 'is', null)")
   })
 
+  test('taster-linked Full assessments retain Full tier while taster-only accounts remain Basic', () => {
+    const tierMigration = read('supabase/migrations/20261107082952_separate_full_assessment_tier_from_listing_readiness.sql')
+    const recoveryMigration = read('supabase/migrations/20261107082645_preserve_existing_profile_completeness_on_taster_link.sql')
+    expect(tierMigration).toContain('assessment_ok := private.valu_assessment_is_current(p_professional_id)')
+    expect(tierMigration).not.toContain('assessment_ok := private.is_full_marketplace_listing_ready')
+    expect(tierMigration).toContain("now(), 'full', assessment_summary")
+    expect(tierMigration).toContain("now(), 'basic', null")
+    expect(recoveryMigration).not.toContain('profile_complete = false')
+  })
+
   test('conversion analytics cover discovery, profile visibility and opportunity engagement', () => {
     const instrumentation = read('src/components/MarketingInstrumentation.jsx')
     const opportunity = read('src/app/opportunities/[slug]/page.jsx')
