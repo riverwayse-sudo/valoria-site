@@ -27,7 +27,21 @@ export async function POST(request){
   if(!body?.title||!body?.description||!body?.organisation_name||!body?.submitter_name||!body?.submitter_email)return Response.json({error:'Title, description, organisation, name and email are required.'},{status:400})
   const email=String(body.submitter_email).trim().toLowerCase()
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return Response.json({error:'Please provide a valid email address.'},{status:400})
-  if(String(body.title).length>180||String(body.description).length>10000||String(body.organisation_name).length>180||String(body.submitter_name).length>140)return Response.json({error:'One or more fields exceed the allowed length.'},{status:400})
+  if(String(body.title).length>180||String(body.description).length>10000||String(body.organisation_name).length>180||String(body.submitter_name).length>140||String(body.submitter_email).length>254||String(body.summary||'').length>400)return Response.json({error:'One or more fields exceed the allowed length.'},{status:400})
+  const allowedTypes = new Set(['job','contract','consulting','speaking','facilitation','coaching','project'])
+  const allowedWorkModes = new Set(['onsite','hybrid','remote'])
+  const allowedEmploymentTypes = new Set(['full-time','part-time','contract','temporary','internship'])
+  const opportunityType = String(body.opportunity_type || 'job').toLowerCase()
+  const workMode = body.work_mode == null || body.work_mode === '' ? null : String(body.work_mode).toLowerCase()
+  const employmentType = body.employment_type == null || body.employment_type === '' ? null : String(body.employment_type).toLowerCase()
+  if (!allowedTypes.has(opportunityType)) return Response.json({error:'Choose a valid opportunity type.'},{status:400})
+  if (workMode && !allowedWorkModes.has(workMode)) return Response.json({error:'Choose a valid work arrangement.'},{status:400})
+  if (employmentType && !allowedEmploymentTypes.has(employmentType)) return Response.json({error:'Choose a valid employment type.'},{status:400})
+  if (body.application_url) {
+    try { const applicationUrl = new URL(String(body.application_url)); if (!['http:','https:'].includes(applicationUrl.protocol)) throw new Error('invalid protocol') }
+    catch { return Response.json({error:'Application URL must be a valid HTTPS or HTTP link.'},{status:400}) }
+  }
+  if (body.closing_at && Number.isNaN(Date.parse(body.closing_at))) return Response.json({error:'Provide a valid application deadline.'},{status:400})
   const sb=db()
   const {data:allowed,error:rateError}=await sb.rpc('consume_opportunity_submission_rate_limit',{p_key_hash:clientKey(request,email),p_limit:5,p_window_seconds:3600})
   if(rateError)return Response.json({error:'Submission service is temporarily unavailable.'},{status:503})
@@ -35,7 +49,7 @@ export async function POST(request){
   let slug=slugify(body.title)
   const {data:existing}=await sb.from('opportunities').select('id').eq('slug',slug).maybeSingle()
   if(existing)slug=slug+'-'+Date.now().toString().slice(-6)
-  const {data:op,error:opError}=await sb.from('opportunities').insert({slug,title:body.title,opportunity_type:body.opportunity_type||'job',summary:body.summary||null,description:body.description,organisation_name:body.organisation_name,location:body.location||null,work_mode:body.work_mode||null,employment_type:body.employment_type||null,experience_level:body.experience_level||null,industry:body.industry||null,capabilities:body.capabilities||[],skills:body.skills||[],compensation:body.compensation||null,application_method:body.application_url?'external':'valoria',application_url:body.application_url||null,closing_at:body.closing_at||null,status:'pending_review',access_level:'public'}).select('id').single()
+  const {data:op,error:opError}=await sb.from('opportunities').insert({slug,title:body.title,opportunity_type:opportunityType,summary:body.summary||null,description:body.description,organisation_name:body.organisation_name,location:body.location||null,work_mode:workMode,employment_type:employmentType,experience_level:body.experience_level||null,industry:body.industry||null,capabilities:body.capabilities||[],skills:body.skills||[],compensation:body.compensation||null,application_method:body.application_url?'external':'valoria',application_url:body.application_url||null,closing_at:body.closing_at||null,status:'pending_review',access_level:'public'}).select('id').single()
   if(opError)return Response.json({error:opError.message},{status:500})
   const {error:subError}=await sb.from('opportunity_submissions').insert({opportunity_id:op.id,submitter_name:body.submitter_name,submitter_email:email,organisation_name:body.organisation_name,payload:body,status:'pending_review'})
   if(subError){
