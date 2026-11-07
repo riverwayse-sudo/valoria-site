@@ -9,7 +9,7 @@ function db() {
 async function requireAdmin(request) {
   const supabase = db()
   if (!supabase) return { response: Response.json({ error: 'Service not configured.' }, { status: 503 }) }
-  const token = (request.headers.get('authorization') || '').replace(/^Bearer\\s+/i, '')
+  const token = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '')
   if (!token) return { response: Response.json({ error: 'Not authenticated.' }, { status: 401 }) }
   const { data, error } = await supabase.auth.getUser(token)
   if (error || !data?.user?.id) return { response: Response.json({ error: 'Not authenticated.' }, { status: 401 }) }
@@ -35,6 +35,15 @@ export async function POST(request) {
   if (title.length > 180 || organisation.length > 180 || description.length > 10000) {
     return Response.json({ error: 'One or more fields exceed the allowed length.' }, { status: 400 })
   }
+  const applicationUrl = String(body.application_url || '').trim()
+  if (applicationUrl) {
+    try {
+      const parsedUrl = new URL(applicationUrl)
+      if (!['http:', 'https:'].includes(parsedUrl.protocol)) throw new Error('Unsupported protocol')
+    } catch {
+      return Response.json({ error: 'Enter a valid http or https application URL.' }, { status: 400 })
+    }
+  }
   const email = admin.email || user.email || ''
   const name = admin.full_name || user.user_metadata?.full_name || email || 'Valoria Administrator'
   let slug = slugify(title)
@@ -57,7 +66,7 @@ export async function POST(request) {
     skills: Array.isArray(body.skills) ? body.skills : [],
     compensation: String(body.compensation || '').trim() || null,
     application_method: body.application_url ? 'external' : 'valoria',
-    application_url: String(body.application_url || '').trim() || null,
+    application_url: applicationUrl || null,
     closing_at: body.closing_at || null,
     status: 'published',
     access_level: 'public',
