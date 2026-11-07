@@ -17,7 +17,7 @@ const dimensions = [
 ]
 
 const faqs = [
-  ['How does it work?', 'Start with the 9-question taster. If you choose to continue, create your account and complete the full VALU assessment.'],
+  ['How does it work?', 'Start with the VALU taster. If you choose to continue, create your account and complete the VALU Index.'],
   ['Do I need an account first?', 'No account is needed to begin the taster. An account is required to continue with the full VALU assessment.'],
   ['Who is it for?', 'It is designed for African professionals who want a clearer view of their current professional capability and a stronger foundation for development, visibility and opportunity.'],
   ['Is it free?', 'Yes. The VALU Index is free to take. It is the entry point into the wider Valoria professional ecosystem.'],
@@ -41,10 +41,10 @@ export default function ValuStartPage() {
               <h1 style={{ maxWidth: "12.5ch", fontSize: "clamp(1.85rem, 3.1vw, 3.1rem)", lineHeight: 1.12, letterSpacing: "-0.045em", marginBlock: "0 1.1rem" }}>Your CV tells people what you’ve done.<br /><em>VALU shows what you can become.</em></h1>
               <p className="vs-lede">A professional diagnostic built around PRIME to give you a clearer starting point for understanding your capability, direction and professional presence.</p>
               <div className="vs-actions">
-                <AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">TAKE THE 9-QUESTION TASTER <b>→</b></AssessmentStartLink>
+                <AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">TAKE THE VALU TASTER <b>→</b></AssessmentStartLink>
                 <a href="#how" className="vs-btn vs-secondary">SEE HOW IT WORKS <b>↓</b></a>
               </div>
-              <div className="vs-proof"><span>9-QUESTION TASTER</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
+              <div className="vs-proof"><span>VALU TASTER</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
             </div>
             <div className="vs-score" style={{ borderRadius: "22px", overflow: "hidden", minWidth: 0 }} aria-label="Illustrative full VALU Index result in points">
               <div className="vs-score-top"><span>VALU INDEX</span><span>01</span></div>
@@ -83,9 +83,9 @@ export default function ValuStartPage() {
           <div className="vs-kicker dark"><span /> HOW IT WORKS</div>
           <h2>Taster. Account. Full assessment.<br /><em>Then become discoverable.</em></h2>
           <div className="vs-journey-grid">
-            <article><span>01</span><h3>Start</h3><p>Complete the 9-question taster. No account is needed.</p></article>
+            <article><span>01</span><h3>Start</h3><p>Complete the VALU taster. No account is needed.</p></article>
             <article><span>02</span><h3>Create your account</h3><p>Create your account and confirm your email. Your progress is saved as you go.</p></article>
-            <article><span>03</span><h3>Complete the full assessment</h3><p>Continue with the 58-question VALU Index and receive your official result in points across the five PRIME dimensions.</p></article>
+            <article><span>03</span><h3>Complete the full assessment</h3><p>Continue with the VALU Index and receive your official result in points across the five PRIME dimensions.</p></article>
             <article><span>04</span><h3>Discover</h3><p>Subject to governance checks, become discoverable through the marketplace.</p></article>
           </div>
         </div>
@@ -117,7 +117,7 @@ export default function ValuStartPage() {
       </section>
 
       <section className="vs-final">
-        <div className="vs-shell"><div className="vs-kicker"><span /> WORTH. BUILT.</div><h2>Your capability deserves<br /><em>more than a CV.</em></h2><p>Start with a clearer understanding of where you stand.</p><AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">TAKE THE 9-QUESTION TASTER <b>→</b></AssessmentStartLink><Link href="/valu" className="vs-back">Learn more about VALU →</Link></div>
+        <div className="vs-shell"><div className="vs-kicker"><span /> WORTH. BUILT.</div><h2>Your capability deserves<br /><em>more than a CV.</em></h2><p>Start with a clearer understanding of where you stand.</p><AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">TAKE THE VALU TASTER <b>→</b></AssessmentStartLink><Link href="/valu" className="vs-back">Learn more about VALU →</Link></div>
       </section>
     </main>
     <Footer />
