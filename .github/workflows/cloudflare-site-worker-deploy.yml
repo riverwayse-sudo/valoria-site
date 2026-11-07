@@ -89,6 +89,10 @@ jobs:
               exit 1
             fi
           done
+          assessment_html="$(curl -fsS --max-time 30 "$base/valu/assessment/")"
+          grep -qi 'VALU ASSESSMENT' <<<"$assessment_html"
+          grep -qi 'BEGIN MY TASTER' <<<"$assessment_html"
+
           assessment_api_status="$(curl -sS --max-time 25 -o /tmp/valoria-assessment-api-response -w '%{http_code}' "$base/valu/assessment/api/taster-progress")"
           if [[ "$assessment_api_status" != "405" ]]; then
             echo "Assessment API proxy returned HTTP $assessment_api_status; expected 405 for GET."
