@@ -517,4 +517,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(page).toContain('identity_review_reason')
   })
 
+
+  test('admin roster blocks public readiness for non-canonical ATB identifiers', () => {
+    const route = read('src/app/api/admin/marketplace-roster/route.js')
+    const page = read('src/app/admin/marketplace-roster/page.jsx')
+    expect(route).toContain('/^ATB-[A-Z0-9-]{4,40}$/i')
+    expect(route).toContain('atb_id_review_required: !atbIdValid')
+    expect(route).toContain('const publicReady = atbIdValid && publicConsent')
+    expect(page).toContain('ATB ID REVIEW REQUIRED')
+    expect(page).toContain('atbIdReviewCount')
+  })
+
 })
