@@ -115,7 +115,7 @@ export default function AdminMarketplaceRosterPage() {
                 <span style={{...tagStyle,color:profile.public_ready?'#527A61':'#9A6A32'}}>{state}</span>
                 <span style={{ color:MUTED, fontSize:10 }}>Listing: {profile.listing_status} · Visibility: {profile.visibility}</span>
                 <span style={{ color:MUTED, fontSize:10 }}>Public permission: {profile.public_consent?'Recorded':'Not recorded'}</span>
-                <Link href={`/profile/${profile.id}`} style={{ marginTop:4, color:'#8B702B', fontSize:9, fontWeight:800, letterSpacing:'.12em', textDecoration:'none' }}>REVIEW PROFILE ↗</Link>
+                <span style={{ marginTop:4, color:'#9898A4', fontSize:9, letterSpacing:'.06em' }}>Private profile · internal readiness review</span>
               </div>
             </article>
           })}
