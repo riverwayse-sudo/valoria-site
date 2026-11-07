@@ -6,7 +6,7 @@ export const metadata = {
   title: 'Privacy Policy | Valoria Institute',
   description: 'Draft privacy information for Valoria Institute. Legal operator, retention and cross-border processing details require confirmation before production publication.',
   robots: process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? { index: false, follow: false } : { index: true, follow: true },
-  alternates: { canonical: 'https://valoriainstitute.com/privacypolicy' },
+  alternates: { canonical: 'https://valoriainstitute.com/privacy' },
 }
 
 const GOLD = '#C9A84C'
@@ -18,7 +18,7 @@ const IS_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'
 const sections = [
   {
     title: '1. Who we are',
-    body: `Valoria Institute is the public-facing name of the institution and platform described in this policy. Nigeria is the current operating jurisdiction. The registered legal entity responsible for the service, its registered address and the formal data-controller details are pending confirmation and must be completed before this policy is approved for production.\n\nWe operate the Valoria Institute website, professional Marketplace and VALU Index assessment experience. For privacy questions, contact privacy@valoriainstitute.com.`,
+    body: `Valoria Institute is the public-facing name of the institution and platform described in this policy. Nigeria is the current operating jurisdiction. The registered legal entity responsible for the service, its registered address and the formal data-controller details are pending confirmation and must be completed before this policy is approved for production.\n\nWe operate the Valoria Institute website, professional Marketplace and VALU Index assessment experience. For privacy questions, contact info@valoriainstitute.com.`,
   },
   {
     title: '2. Data we collect',
@@ -31,7 +31,7 @@ const sections = [
   },
   {
     title: '4. Legal basis for processing',
-    body: `The intended processing bases include steps necessary to provide services requested by you, legitimate interests such as platform security and fraud prevention, and consent where required — including public profile visibility. The final lawful-basis mapping, consent wording and controller responsibilities must be reviewed and approved against the Nigeria Data Protection Act 2023 before production publication. You may contact privacy@valoriainstitute.com with questions about consent or data use.`,
+    body: `The intended processing bases include steps necessary to provide services requested by you, legitimate interests such as platform security and fraud prevention, and consent where required — including public profile visibility. The final lawful-basis mapping, consent wording and controller responsibilities must be reviewed and approved against the Nigeria Data Protection Act 2023 before production publication. You may contact info@valoriainstitute.com with questions about consent or data use.`,
   },
   {
     title: '5. Who we share data with',
@@ -39,11 +39,11 @@ const sections = [
   },
   {
     title: '6. How long we keep your data',
-    body: `We intend to retain personal data only for as long as necessary to provide the service, maintain assessment integrity, manage accounts and enquiries, resolve disputes and meet applicable legal obligations.\n\nThe specific retention periods and deletion procedures for assessment records, professional profiles, enquiries, event registrations, waitlist records, backups and provider logs have not yet been approved. They must be confirmed and documented before production publication. You may direct a data request to privacy@valoriainstitute.com.`,
+    body: `We intend to retain personal data only for as long as necessary to provide the service, maintain assessment integrity, manage accounts and enquiries, resolve disputes and meet applicable legal obligations.\n\nThe specific retention periods and deletion procedures for assessment records, professional profiles, enquiries, event registrations, waitlist records, backups and provider logs have not yet been approved. They must be confirmed and documented before production publication. You may direct a data request to info@valoriainstitute.com.`,
   },
   {
     title: '7. Your rights',
-    body: `Depending on the applicable law and circumstances, you may have rights to request access to personal data, correction of inaccurate data, deletion, restriction or objection to certain processing, data portability, and withdrawal of consent where processing relies on consent. These rights may be subject to legal exceptions.\n\nTo make a request, contact privacy@valoriainstitute.com. The identity-verification process and response timelines must be confirmed in the final approved policy.`,
+    body: `Depending on the applicable law and circumstances, you may have rights to request access to personal data, correction of inaccurate data, deletion, restriction or objection to certain processing, data portability, and withdrawal of consent where processing relies on consent. These rights may be subject to legal exceptions.\n\nTo make a request, contact info@valoriainstitute.com. The identity-verification process and response timelines must be confirmed in the final approved policy.`,
   },
   {
     title: '8. Cookies and tracking',
@@ -59,7 +59,7 @@ const sections = [
   },
   {
     title: '11. Contact',
-    body: `Valoria Institute (public-facing service name)\nNigeria (current operating jurisdiction)\n\nRegistered legal entity, registered address and formal data-controller identity: pending confirmation.\n\nEmail: privacy@valoriainstitute.com\nGeneral enquiries: info@valoriainstitute.com`,
+    body: `Valoria Institute (public-facing service name)\nNigeria (current operating jurisdiction)\n\nRegistered legal entity, registered address and formal data-controller identity: pending confirmation.\n\nEmail: info@valoriainstitute.com\nGeneral enquiries: info@valoriainstitute.com`,
   },
 ]
 
@@ -98,7 +98,7 @@ export default function PrivacyPolicyPage() {
 
           <div style={{ padding: '24px', background: 'rgba(201,168,76,.04)', border: '1px solid rgba(201,168,76,.12)', borderRadius: '10px', marginTop: '16px' }}>
             <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.7, margin: 0 }}>
-              Questions about this draft? Email <a href="mailto:privacy@valoriainstitute.com" style={{ color: GOLD }}>privacy@valoriainstitute.com</a>.
+              Questions about this draft? Email <a href="mailto:info@valoriainstitute.com" style={{ color: GOLD }}>info@valoriainstitute.com</a>.
             </p>
           </div>
         </div>
