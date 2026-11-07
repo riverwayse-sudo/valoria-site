@@ -26,7 +26,7 @@ export const NAVIGATION = {
           label: 'Understand',
           items: [
             { label: 'About the VALU Index', href: '/valu', description: 'Understand the VALU Index and its assessment journey.' },
-            { label: 'Take the 9-question taster', href: BRAND.assessmentUrl, external: true, description: 'Start the separate VALU taster.' },
+            { label: 'Take the VALU taster', href: BRAND.assessmentUrl, external: true, description: 'Begin your VALU assessment journey.' },
           ],
         },
       ],
@@ -56,7 +56,7 @@ export const NAVIGATION = {
     ],
     valu: [
       { label: 'About the VALU Index', href: '/valu' },
-      { label: 'Take the 9-question taster', href: BRAND.assessmentUrl, external: true },
+      { label: 'Take the VALU taster', href: BRAND.assessmentUrl, external: true },
     ],
     about: [
       { label: 'About Valoria', href: '/about' },
