@@ -87,6 +87,13 @@ Brand punctuation is resolved: the user accepted the 9 October 2026 Website Cont
 - Assessment/platform: `riverwayse-sudo/valoria-platform`, branch `fix/separate-taster-from-full-assessment`, PR #118.
 - Database consent/RLS changes are coordinated through platform PR #118; site PR #204 contains the matching server-side profile projection and consent UI.
 
+## Residual Supabase Auth security warning
+
+- The production Supabase Security Advisor reports one external-facing warning: leaked-password protection is disabled. This does **not** mean a Valoria password has been breached; it means Supabase Auth does not reject passwords already present in known breach corpora.
+- Supabase documents its native Have I Been Pwned password check as available on the Pro plan and above. The no-paid-tools constraint has been preserved; no Pro upgrade or account-plan change was made.
+- The seven RLS-enabled/no-policy informational findings relate to private or service-role-only identity, review, acknowledgement and taster tables. They are intentionally not directly readable by client roles; retain that boundary.
+- Treat the leaked-password warning as a known residual risk requiring explicit owner acceptance or a separately approved security/plan change. Do not describe the production Auth configuration as having zero security warnings.
+
 ## 7. Validation and release boundary
 
 - Main-site code head `cf424b5`: **15 test suites, 273 tests passed**; design check, production excellence gate, Next.js 15.5.29 build, OpenNext bundle and Cloudflare Wrangler Preview deployment all passed. Subsequent site-branch commits only update the closeout documentation; runtime code remains at the validated `cf424b5`.
