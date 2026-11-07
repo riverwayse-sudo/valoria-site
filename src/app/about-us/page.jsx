@@ -4,9 +4,9 @@ import Reveal from '@/components/Reveal'
 import '../pages.css'
 
 export const metadata = {
-  title: 'About Valoria Institute — Africa’s Human Capital Institution',
-  description: 'Valoria Institute builds the infrastructure through which African professional capability is understood, developed, surfaced and connected to opportunity.',
-  keywords: ['Valoria Institute', 'African human capital', 'PRIME framework', 'VALU Index', 'African Talent Bureau', 'professional capability development'],
+  title: 'About Valoria Institute | Professional Capability Marketplace',
+  description: 'Valoria Institute helps professionals understand, develop and present their capabilities, connecting relevant expertise with opportunity through a structured marketplace.',
+  keywords: ['Valoria Institute', 'professional capability', 'PRIME framework', 'VALU Index', 'professional development', 'talent marketplace'],
   openGraph: {
     title: 'About Valoria Institute',
     description: 'The institution connecting professional capability to development, visibility and opportunity.',
