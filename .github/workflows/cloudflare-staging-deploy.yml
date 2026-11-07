@@ -209,4 +209,8 @@ jobs:
             cat /tmp/valu-opportunities-enabled || true
             exit 1
           fi
-          grep -q '"opportunities"' /tmp/valu-opportunities-enabled
+          if ! jq -e '.opportunities | type == "array"' /tmp/valu-opportunities-enabled >/dev/null; then
+            echo "Staging opportunity API response did not contain an opportunities array:"
+            cat /tmp/valu-opportunities-enabled
+            exit 1
+          fi
