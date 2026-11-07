@@ -558,6 +558,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(endpoint).toContain(".not('completed_at', 'is', null)")
   })
 
+  test('public profile identity normalizes compatibility glyphs without rewriting stored records', () => {
+    const marketplace = read('src/lib/marketplace-data.js')
+    const publicProfile = read('src/lib/public-profile.js')
+    expect(marketplace).toContain("value.normalize('NFKC')")
+    expect(publicProfile).toContain("value.normalize('NFKC')")
+    expect(marketplace).toContain('full_name: normalizePublicDisplayText(row.full_name)')
+    expect(publicProfile).toContain('display_name: normalizePublicDisplayText(profile.display_name)')
+  })
+
   test('public PRIME and VALU pages use the approved seventeen-skill framework', () => {
     const brand = read('src/lib/brand.js')
     const prime = read('src/app/prime/page.jsx')
