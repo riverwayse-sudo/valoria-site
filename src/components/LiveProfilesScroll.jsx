@@ -57,7 +57,7 @@ export default async function LiveProfilesScroll() {
     unique.push(profile)
   }
 
-  const loop = [...unique, ...unique]
+  const loop = unique.slice(0, 4)
   // The count endpoint covers the full public roster, while previews are capped at 24.
   // Only show a count when every public row was returned and passed the same quality bar.
   const discoverableCount = count !== null && count <= 24 && count === unique.length ? count : null
