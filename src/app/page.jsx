@@ -154,7 +154,7 @@ export default function HomePage() {
                 </div>
                 <div className="vcc-step">
                   <span>03</span>
-                  <div><b>Explore relevant opportunities</b><small>Connect your professional record to the Bureau.</small></div>
+                  <div><b>Explore relevant opportunities</b><small>Connect your professional record to the Marketplace.</small></div>
                 </div>
               </div>
             </Reveal>
