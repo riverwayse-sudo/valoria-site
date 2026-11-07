@@ -436,8 +436,13 @@ describe('VALUI marketplace lifecycle contract', () => {
     const data = read('src/lib/marketplace-data.js')
     const migration = read('supabase/migrations/20261105150000_require_consent_verified_server_side_public_profile_reads.sql')
     expect(helper).toContain('Number(profile.valu_index) < 35')
+    expect(helper).toContain('capabilitiesReady')
+    expect(helper).toContain(".from('professional_capabilities')")
     expect(data).toContain('Number(row.valu_index) >= 35')
+    expect(data).toContain('fullReadyIds.has(profile.id)')
+    expect(data).toContain(".from('professional_capabilities')")
     expect(migration).toContain('profile.valu_index >= 35')
+    expect(migration).toContain('private.is_full_marketplace_listing_ready(profile.id)')
     expect(data).toContain("if (row.assessment_access === 'basic') return true")
   })
 
