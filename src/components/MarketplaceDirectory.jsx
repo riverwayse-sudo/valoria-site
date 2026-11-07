@@ -198,7 +198,7 @@ function Profile({p}) {
     {!isBasic && <div className={styles.developmentFocus}><small>TOP DEVELOPMENT AREA</small><strong>{developmentFocus}</strong></div>}
     <div className={styles.capabilities} aria-label={`Declared roles: ${capabilityBadges.filter(b=>b.selected).map(b=>b.title).join(', ') || 'none selected'}`}>
       <small className={styles.capabilityLabel}>DECLARED ROLES</small>
-      {capabilityBadges.map(badge=><span className={`${styles.capabilityBadge} ${badge.selected ? styles.capabilitySelected : styles.capabilityUnselected}`} key={badge.key}><strong>{badge.title}</strong><small>{badge.selected ? 'SELECTED' : 'NOT SELECTED'}</small></span>)}
+      {capabilityBadges.map(badge=><span className={`${styles.capabilityBadge} ${badge.selected ? styles.capabilitySelected : styles.capabilityUnselected}`} key={badge.key}><strong>{badge.title}</strong><small>{badge.selected ? 'SELECTED' : isBasic ? 'NOT DECLARED' : 'NOT SELECTED'}</small></span>)}
     </div>
     {!isBasic && <div className={styles.assessmentInsight}>
       <small>VALU INDEX ASSESSMENT INSIGHT</small>
