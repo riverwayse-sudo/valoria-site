@@ -28,7 +28,7 @@ export default function HomepageEvents() {
         </div>
 
         <div className="home-events-feature">
-          <a className="home-events-poster" href={youtubeUrl} aria-label={'Watch ' + replay.title + ' on YouTube'}>
+          <a className="home-events-poster" href={youtubeUrl}>
             <span className="home-events-poster-kicker">VALORIA INSTITUTE · SESSION {replay.id}</span>
             <strong>{replay.title}</strong>
             <span className="home-events-poster-action">WATCH THE FULL REPLAY <span aria-hidden="true">→</span></span>
