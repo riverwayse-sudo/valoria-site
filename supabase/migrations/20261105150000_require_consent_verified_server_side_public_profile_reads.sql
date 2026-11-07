@@ -202,7 +202,7 @@ language sql
 stable
 security definer
 set search_path = pg_catalog
-as $
+as $fn$
   select count(distinct roster.professional_id)::bigint
   from public.marketplace_public_roster roster
   join public.professional_profiles profile
@@ -212,7 +212,7 @@ as $
     and profile.listing_status = 'listed'
     and private.has_public_profile_consent(profile.id)
     and private.is_public_profile_eligible(profile.id);
-$;
+$fn$;
 
 create or replace function public.get_homepage_professional_previews_v2()
 returns table(
@@ -230,7 +230,7 @@ language sql
 stable
 security definer
 set search_path = pg_catalog
-as $
+as $fn$
   select roster.professional_id,
          roster.atb_id,
          roster.display_initials,
@@ -251,7 +251,7 @@ as $
     and private.is_public_profile_eligible(profile.id)
   order by roster.valu_index desc nulls last, roster.atb_id
   limit 24;
-$;
+$fn$;
 
 revoke all on function public.get_homepage_professional_count() from public;
 revoke all on function public.get_homepage_professional_previews_v2() from public;
