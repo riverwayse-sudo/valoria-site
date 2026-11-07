@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 
 const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,fee_range,salary_expectation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
-const IS_READ_ONLY_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'
+const IS_READ_ONLY_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'
 
 const PLACEHOLDER_HEADLINES = new Set([
   'model',
