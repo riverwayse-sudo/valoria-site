@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import Link from 'next/link'
 import styles from './PremiumInteractions.module.css'
 
 const GOLD  = '#C9A84C'
@@ -13,23 +14,26 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
   const [open, setOpen] = useState(false)
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
+  const [sentPreview, setSentPreview] = useState(false)
   const [error, setError] = useState('')
   const [form, setForm] = useState({
     buyer_name: currentUser?.user_metadata?.full_name || '',
     buyer_email: currentUser?.email || '',
     buyer_company: '',
     message: '',
+    privacy_consent: false,
   })
 
   function set(key, val) { setForm(f => ({ ...f, [key]: val })) }
 
   function closeAndReset() {
     setOpen(false)
-    setTimeout(() => { setSent(false); setError('') }, 200)
+    setTimeout(() => { setSent(false); setSentPreview(false); setError('') }, 200)
   }
 
   async function submit(e) {
     e.preventDefault()
+    if (!form.privacy_consent) { setError('Please acknowledge the Privacy Notice before submitting.'); return }
     setSending(true)
     setError('')
     try {
@@ -44,7 +48,7 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
           buyer_email: form.buyer_email,
           buyer_company: form.buyer_company,
           message: form.message,
-          buyer_user_id: currentUser?.id || null,
+          privacy_consent: form.privacy_consent,
         }),
       })
       const data = await res.json().catch(() => ({}))
@@ -53,6 +57,7 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
         setSending(false)
         return
       }
+      setSentPreview(Boolean(data?.preview))
       setSent(true)
       setSending(false)
     } catch {
@@ -89,9 +94,9 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
 
             {sent ? (
               <div style={{ padding: '12px 0 4px' }}>
-                <div style={{ fontSize: '15px', fontWeight: 600, color: PARCH, marginBottom: '8px' }}>Sent</div>
+                <div style={{ fontSize: '15px', fontWeight: 600, color: PARCH, marginBottom: '8px' }}>{sentPreview ? 'Recorded in staging' : 'Enquiry submitted'}</div>
                 <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.6, margin: 0 }}>
-                  Valoria Institute will review and be in touch shortly.
+                  {sentPreview ? 'Your enquiry has been saved in the isolated staging environment. No emails were sent.' : 'Your enquiry has been submitted to Valoria Institute for review.'}
                 </p>
                 <button type="button" onClick={closeAndReset}
                   style={{ marginTop: '20px', padding: '10px 20px', background: GOLD, color: DARK, fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', border: 'none', cursor: 'pointer' }}>
@@ -102,17 +107,21 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
               <>
                 <div style={{ fontSize: '15px', fontWeight: 600, color: GOLD, marginBottom: '4px' }}>{ctaLabel}</div>
                 <p style={{ fontSize: '12px', color: DIM, marginBottom: '18px', lineHeight: 1.5 }}>
-                  Valoria Institute facilitates all introductions — your details stay protected.
+                  Your enquiry is sent to Valoria Institute for review. Private contact details are not displayed on this public profile.
                 </p>
                 <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <input required value={form.buyer_name} onChange={e => set('buyer_name', e.target.value)} placeholder="Your name" style={inputStyle} />
                   <input required type="email" value={form.buyer_email} onChange={e => set('buyer_email', e.target.value)} placeholder="Your email" style={inputStyle} />
                   <input value={form.buyer_company} onChange={e => set('buyer_company', e.target.value)} placeholder="Company / organisation (optional)" style={inputStyle} />
                   <textarea required value={form.message} onChange={e => set('message', e.target.value)} placeholder="What would you like to discuss?" rows={3} style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }} />
+                  <label style={{ display:'flex', alignItems:'flex-start', gap:'9px', color:DIM, fontSize:'11px', lineHeight:1.6, marginTop:'2px' }}>
+                    <input type="checkbox" required checked={form.privacy_consent} onChange={e => set('privacy_consent', e.target.checked)} style={{ marginTop:'2px', accentColor:GOLD, flexShrink:0 }} />
+                    <span>I have read the <Link href="/privacypolicy" target="_blank" style={{color:GOLD,textDecoration:'underline'}}>Privacy Notice</Link> and agree that Valoria Institute may use these details to review and respond to this enquiry.</span>
+                  </label>
                   {error && <div style={{ fontSize: '12px', color: '#D85A30' }}>{error}</div>}
                   <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
                     <button type="submit" disabled={sending} className={styles.premiumTrigger} style={{ flex: 1, padding: '12px 24px', background: GOLD, color: DARK, fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', border: 'none', cursor: sending ? 'default' : 'pointer', opacity: sending ? 0.6 : 1 }}>
-                      {sending ? 'SENDING…' : 'SEND'}
+                      {sending ? 'SUBMITTING…' : 'SUBMIT ENQUIRY'}
                     </button>
                     <button type="button" onClick={closeAndReset} style={{ padding: '12px 20px', background: 'none', color: DIM, fontSize: '11px', border: `1px solid ${GLINE}`, cursor: 'pointer' }}>
                       Cancel
