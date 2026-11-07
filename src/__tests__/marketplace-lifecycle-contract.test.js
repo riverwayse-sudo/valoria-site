@@ -569,7 +569,7 @@ describe('VALUI marketplace lifecycle contract', () => {
       'Execution & Accountability', 'Resilience & Self-Leadership', 'Adaptability',
       'Commercial Creativity', 'Influence Without Authority', 'Human-AI Collaboration',
     ]
-    const skillLists = [...brand.matchAll(/skills: \\[([^\\]]+)\\]/g)]
+    const skillLists = [...brand.matchAll(/skills: \[([^\]]+)\]/g)]
     const configuredSkills = skillLists.flatMap(([, list]) => [...list.matchAll(/'([^']+)'/g)].map(([, skill]) => skill))
     expect(configuredSkills).toHaveLength(17)
     expect(configuredSkills).toEqual(canonicalSkills)
