@@ -8,13 +8,14 @@ const MIDNIGHT = '#1A1A2E'
 const INQUIRY_TYPES = [
   { id: 'hiring', label: 'Hiring Enquiry — ATB Connect' },
   { id: 'speaker', label: 'Speaker Booking — ATB Spotlight' },
-  { id: 'training', label: 'Training Enquiry — Valoria Develop' },
-  { id: 'general', label: 'General Question' },
+  { id: 'training', label: 'Capability Development — Valoria Develop' },
+  { id: 'partnership', label: 'Institutional Partnership — Strategy / Programme / Sector Collaboration' },
+  { id: 'general', label: 'General Enquiry' },
 ]
 
 export default function ContactForm() {
   const [currentUser, setCurrentUser] = useState(null)
-  const [form, setForm] = useState({ name: '', email: '', organisation: '', inquiryType: 'general', message: '' })
+  const [form, setForm] = useState({ name: '', email: '', organisation: '', inquiryType: 'partnership', message: '' })
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [formError, setFormError] = useState('')
@@ -98,9 +99,9 @@ const styles = {
   field: { display: 'flex', flexDirection: 'column', gap: '6px' },
   label: { fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(247,244,238,.5)', textTransform: 'uppercase' },
   input: { padding: '12px 14px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.2)', borderRadius: '6px', color: '#F7F4EE', fontSize: '14px', fontFamily: "'Raleway', sans-serif", outline: 'none', width: '100%', boxSizing: 'border-box' },
-  btnGold: { padding: '16px', background: GOLD, color: MIDNIGHT, fontSize: '12px', fontWeight: 700, letterSpacing: '.14em', borderRadius: '999px', border: 'none', cursor: 'pointer', textAlign: 'center', marginTop: '8px' },
+  btnGold: { padding: '16px', background: GOLD, color: MIDNIGHT, fontSize: '12px', fontWeight: 700, letterSpacing: '.14em', borderRadius: '999px', border: 'none', cursor: 'pointer', textAlign: 'left', marginTop: '8px' },
   errorBox: { padding: '12px 14px', background: 'rgba(216,90,48,.12)', border: '1px solid rgba(216,90,48,.3)', borderRadius: '6px', fontSize: '13px', color: '#F09595' },
-  successCard: { textAlign: 'center', padding: '40px 20px' },
+  successCard: { textAlign: 'left', padding: '40px 20px' },
   successIcon: { fontSize: '32px', color: GOLD, marginBottom: '12px' },
   successTitle: { fontSize: '24px', fontWeight: 200, color: '#F7F4EE', marginBottom: '8px', fontFamily: "'Raleway', sans-serif" },
   successSub: { fontSize: '14px', color: 'rgba(247,244,238,.5)' },
