@@ -156,9 +156,21 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Your preference was recorded, but listing visibility could not be refreshed. Please retry submission.' }, { status: 502 })
   }
 
+  const { data: roster, error: rosterError } = await admin
+    .from('marketplace_public_roster')
+    .select('assessment_access')
+    .eq('professional_id', user.id)
+    .maybeSingle()
+  if (rosterError) {
+    console.error('Profile tier verification after consent failed:', rosterError)
+    return NextResponse.json({ error: 'Your preference was saved, but your listing tier could not be verified.' }, { status: 502 })
+  }
+
   return NextResponse.json({
     ok: true,
     visibility,
+    listing_status: readiness?.listing_status || null,
+    assessment_access: roster?.assessment_access || null,
     acknowledgement_version: acknowledgementVersion,
   })
 }
