@@ -599,7 +599,7 @@ describe('VALUI marketplace lifecycle contract', () => {
   test('public profile pages use VALU report summaries and show speaker/facilitator evidence', () => {
     const helper = read('src/lib/public-profile.js')
     const profile = read('src/app/profile/[id]/ProfileClient.jsx')
-    expect(helper).toContain(".select('professional_id,atb_id,assessment_access,assessment_summary,capabilities,selected_capabilities,full_name,headline,current_job_title')")
+    expect(helper).toContain(".select('professional_id,atb_id,assessment_access,assessment_summary,capabilities,selected_capabilities,full_name,headline,current_job_title,valu_index')")
     expect(helper).toContain("'past_events'")
     expect(helper).toContain("'past_clients'")
     expect(helper).not.toContain("'bio'")
