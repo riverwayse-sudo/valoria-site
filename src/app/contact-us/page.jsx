@@ -34,7 +34,7 @@ export default function ContactPage() {
               </div>
             </Reveal>
             <Reveal>
-              <div className="info-card" className="info-card contact-direct-card">
+              <div className="info-card contact-direct-card">
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">EMAIL DIRECTLY</span></div>
                 <a href={`mailto:${BRAND.email}`} className="contact-email">{BRAND.email}</a>
                 <p className="contact-note">We respond within two business days.</p>
