@@ -78,7 +78,7 @@ describe('VALU presentation consistency', () => {
   })
 
   test('brand line punctuation is consistent in the shared brand source and metadata', () => {
-    expect(read('src/lib/brand.js')).toContain("tagline: 'Worth, Built.'")
+    expect(read('src/lib/brand.js')).toContain("tagline: 'Worth. Built.'")
     expect(read('src/app/layout.jsx')).toContain('Valoria Institute — Worth, Built.')
     expect(read('src/app/layout.jsx')).not.toContain('Worth. Built.')
   })
