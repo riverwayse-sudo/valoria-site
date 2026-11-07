@@ -1,4 +1,5 @@
 name: Deploy Valoria site to isolated Cloudflare staging
+# Staging refresh: validate and deploy the current experience branch without touching production.
 
 on:
   pull_request:
@@ -87,105 +88,36 @@ jobs:
         run: |
           set -euo pipefail
           base="https://valoria-staging-site.riverwayse.workers.dev"
-          routes=(
-            /
-            /valu
-            /valu/start
-            /valu/assessment
-            /prime
-            /about-us
-            /atb-connect
-            /atb-spotlight
-            /develop
-            /careers
-            /contact-us
-            /login
-            /professional-signup
-            /dashboard
-            /marketplace
-            /marketplace/talent
-            /marketplace/speakers
-            /marketplace/facilitators
-            /jobs
-            /opportunities
-            /opportunities/submit
-            /events
-            /privacy
-            /terms
-            /privacypolicy
-            /terms-of-use
-            /knowledge
-            /knowledge/valu-index
-            /knowledge/prime-framework
-            /knowledge/professional-capability
-            /robots.txt
-            /sitemap.xml
-            /llms.txt
-          )
+          routes=( / /valu /valu/start /valu/assessment /prime /about-us /atb-connect /atb-spotlight /develop /careers /contact-us /login /professional-signup /dashboard /marketplace /marketplace/talent /marketplace/speakers /marketplace/facilitators /jobs /opportunities /opportunities/submit /events /privacy /terms /privacypolicy /terms-of-use /knowledge /knowledge/valu-index /knowledge/prime-framework /knowledge/professional-capability /robots.txt /sitemap.xml /llms.txt )
           for route in "${routes[@]}"; do
             status="$(curl -sSL --retry 4 --retry-all-errors --max-time 25 -o /tmp/valoria-route-response -w '%{http_code}' "$base$route" || true)"
-            if [[ "$status" != "200" ]]; then
-              echo "Route $route returned HTTP $status"
-              cat /tmp/valoria-route-response || true
-              exit 1
-            fi
+            if [[ "$status" != "200" ]]; then echo "Route $route returned HTTP $status"; cat /tmp/valoria-route-response || true; exit 1; fi
           done
-
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
           grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
-
           curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
           grep -q 'staging.valoriainstitute.com' /tmp/valoria-sitemap.xml
           grep -q '/knowledge/prime-framework' /tmp/valoria-sitemap.xml
           grep -q '/jobs' /tmp/valoria-sitemap.xml
-
           curl -fsS "$base/llms.txt" -o /tmp/valoria-llms.txt
           grep -q 'Human-AI Collaboration' /tmp/valoria-llms.txt
           grep -q 'Basic is a marketplace access state, not a merit tier' /tmp/valoria-llms.txt
-
           curl -fsS "$base/" -o /tmp/valoria-home.html
           grep -q 'THE PROFESSIONAL CAPABILITY MARKETPLACE' /tmp/valoria-home.html
           grep -q 'FOUR WAYS TO ENGAGE' /tmp/valoria-home.html
           grep -q 'INITIAL MARKET' /tmp/valoria-home.html
           grep -q 'initial operating focus is Nigeria' /tmp/valoria-home.html
-
           : > /tmp/valoria-css-bundle.css
           css_assets="$(grep -oE 'href="[^"]+\.css[^"]*"' /tmp/valoria-home.html | cut -d '"' -f 2)"
-          if [[ -z "$css_assets" ]]; then
-            echo "No compiled CSS assets found in homepage HTML"
-            exit 1
-          fi
-          while IFS= read -r asset; do
-            [[ -z "$asset" ]] && continue
-            if [[ "$asset" =~ ^https?:// ]]; then
-              css_url="$asset"
-            else
-              css_url="$base$asset"
-            fi
-            curl -fsSL --retry 4 --retry-all-errors --max-time 25 "$css_url" >> /tmp/valoria-css-bundle.css
-          done <<< "$css_assets"
+          if [[ -z "$css_assets" ]]; then echo "No compiled CSS assets found in homepage HTML"; exit 1; fi
+          while IFS= read -r asset; do [[ -z "$asset" ]] && continue; if [[ "$asset" =~ ^https?:// ]]; then css_url="$asset"; else css_url="$base$asset"; fi; curl -fsSL --retry 4 --retry-all-errors --max-time 25 "$css_url" >> /tmp/valoria-css-bundle.css; done <<< "$css_assets"
           grep -Fq '.vi-nav .nav-dropdown' /tmp/valoria-css-bundle.css
           grep -Fq '.nav-mobile .nav-dropdown' /tmp/valoria-css-bundle.css
           grep -Fq 'text-align:left!important' /tmp/valoria-css-bundle.css
-
-          # The two identity/handoff APIs must pass the preview middleware and
-          # reject unauthenticated calls themselves; all other site APIs stay disabled.
           status="$(curl -sS -o /tmp/valu-handoff-noauth -w '%{http_code}' "$base/api/valu-handoff")"
-          if [[ "$status" != "401" ]]; then
-            echo "Unauthenticated VALU handoff returned HTTP $status (expected 401)"
-            cat /tmp/valu-handoff-noauth || true
-            exit 1
-          fi
+          if [[ "$status" != "401" ]]; then echo "Unauthenticated VALU handoff returned HTTP $status (expected 401)"; cat /tmp/valu-handoff-noauth || true; exit 1; fi
           status="$(curl -sS -o /tmp/valu-link-taster-noauth -w '%{http_code}' -X POST "$base/api/link-taster" -H 'Content-Type: application/json' -d '{}')"
-          if [[ "$status" != "401" ]]; then
-            echo "Unauthenticated taster link returned HTTP $status (expected 401)"
-            cat /tmp/valu-link-taster-noauth || true
-            exit 1
-          fi
+          if [[ "$status" != "401" ]]; then echo "Unauthenticated taster link returned HTTP $status (expected 401)"; cat /tmp/valu-link-taster-noauth || true; exit 1; fi
           status="$(curl -sS -o /tmp/valu-opportunities-enabled -w '%{http_code}' "$base/api/opportunities")"
-          if [[ "$status" != "200" ]]; then
-            echo "Staging opportunity API returned HTTP $status (expected 200)"
-            cat /tmp/valu-opportunities-enabled || true
-            exit 1
-          fi
+          if [[ "$status" != "200" ]]; then echo "Staging opportunity API returned HTTP $status (expected 200)"; cat /tmp/valu-opportunities-enabled || true; exit 1; fi
           grep -q '"opportunities"' /tmp/valu-opportunities-enabled
