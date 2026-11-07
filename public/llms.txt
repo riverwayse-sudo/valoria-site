@@ -43,7 +43,7 @@ AI Fluency and Human-AI Collaboration are designated Future-Ready skills.
 
 ## Marketplace model
 
-- Canonical data model: one account → one professional profile → one or more of three capabilities.
+- Canonical data model: one account → one professional profile → 1–3+ capabilities across Talent, Speaker and Facilitator.
 - Capability pathways are Talent, Speaker and Facilitator.
 - Capabilities are not separate professional profiles.
 - Basic is a marketplace access state, not a merit tier; capability eligibility and public listing remain separate requirements.
