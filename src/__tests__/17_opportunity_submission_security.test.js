@@ -47,6 +47,11 @@ describe("opportunity submission security contracts", () => {
     expect(rateLimiter).not.toContain("SET search_path TO 'public', 'pg_temp'");
   });
 
+  test("submission keys reject changed payloads instead of reporting a false retry success", () => {
+    const exactRetry = fs.readFileSync(path.join(__dirname, "../../supabase/migrations/20261107150002_require_exact_opportunity_submission_retries.sql"), "utf8");
+    expect(exactRetry.match(/v_existing_payload IS DISTINCT FROM coalesce\(p_submission_payload/g)?.length).toBe(2);
+  });
+
   test("opportunity detail pages only render safe external destinations", () => {
     const detail = read("src/app/opportunities/[slug]/page.jsx");
     expect(detail).toContain("safeApplicationUrl");
