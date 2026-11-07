@@ -7,3 +7,6 @@ Staging-only follow-up: keep the OpenNext Cloudflare adapter in devDependencies,
 
 
 Dispatch permissions and staging-only Vite preview environment have been verified; repeat the production dependency audit and staging deploy hand-off.
+
+
+Additional transitive remediation: pin patched browserslist, baseline-browser-mapping, and js-yaml release lines before the next staging validation run.
