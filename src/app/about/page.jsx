@@ -68,8 +68,7 @@ export default function AboutPage() {
                 <article className="card-gold">
                   <div className="vi-card-num">02</div>
                   <div className="vi-card-name about-principle-name">Mission</div>
-                  <p className="vi-card-body">To develop professionals with rigour, surface talent with merit, and connect capability to meaningful opportunity.</p>
-                  <p className="vi-card-body">One that develops professionals with rigour, surfaces talent with merit, and enables precision hiring through a technology ecosystem designed for the seriousness the African professional market has always deserved.</p>
+                  <p className="vi-card-body">Develop professionals with rigour, surface talent with merit, and enable precision hiring through technology designed for the seriousness of the African professional market.</p>
                 </article>
               </Reveal>
               <Reveal>
@@ -77,7 +76,7 @@ export default function AboutPage() {
                   <div className="vi-card-num">03</div>
                   <div className="vi-card-name about-principle-name">Purpose</div>
                   <p className="vi-card-body">To bridge the gap between latent brilliance and institutional scale.</p>
-                  <p className="vi-card-body">We exist because talent is not the problem. Infrastructure is. For every professional whose career has stalled not for lack of ability, but lack of access. Valoria Institute is the answer.</p>
+                  <p className="vi-card-body">We exist because talent is not the problem. The mechanisms that turn talent into opportunity must work better. Valoria builds those mechanisms.</p>
                 </article>
               </Reveal>
             </div>
