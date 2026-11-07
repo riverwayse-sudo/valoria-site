@@ -445,7 +445,7 @@ describe('journey integrity contract', () => {
     const signup = read('src/app/professional-signup/page.jsx')
     const dashboard = read('src/app/dashboard/page.jsx')
     expect(progress).toContain("title: 'Register'")
-    expect(progress).toContain("title: 'Snapshot'")
+    expect(progress).toContain("title: 'Taster'")
     expect(progress).toContain("title: 'Account'")
     expect(progress).toContain("title: 'Assessment'")
     expect(progress).not.toContain('9 separate questions')
@@ -466,8 +466,8 @@ describe('journey integrity contract', () => {
     expect(dashboard).toContain('COMING UP AFTER THIS')
     expect(dashboard).toContain('You’ll unlock:')
     expect(dashboard).toContain('canStartFullAssessment={!!assessmentAccess?.can_continue}')
-    expect(dashboard).toContain('Your snapshot is saved. Continue your VALU journey.')
-    expect(dashboard).toContain('Your snapshot is saved. Start or resume your VALU Index; your progress is preserved.')
+    expect(dashboard).toContain('Your taster is saved. Continue your VALU journey.')
+    expect(dashboard).toContain('Your taster is saved. Start or resume your VALU Index; your progress is preserved.')
     expect(dashboard).not.toContain('Continue from Question 10')
   })
 
@@ -484,7 +484,7 @@ describe('journey integrity contract', () => {
 
   test('public VALU explanation describes the taster value and next step', () => {
     const start = read('src/app/valu/start/page.jsx')
-    expect(start).toContain('Register your contact and professional details before the snapshot')
+    expect(start).toContain('Register your contact and professional details before the taster')
     expect(start).toContain('This is not your Valoria account')
     expect(start).not.toMatch(/\b(?:9|58)\s+(?:question|questions)/i)
     expect(start).toContain('START THE VALU TASTER')
@@ -520,7 +520,7 @@ describe('journey integrity contract', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
     expect(dashboard).toContain('if (!profile && assessmentAccess?.can_continue) return <DashboardAssessmentHandover standalone />')
     expect(dashboard).toContain('{assessmentAccess?.can_continue && (')
-    expect(dashboard).toContain('Your snapshot is saved. Continue your VALU journey.')
+    expect(dashboard).toContain('Your taster is saved. Continue your VALU journey.')
     expect(dashboard).not.toContain('<ValoriaHandoverCards />')
     expect(dashboard).toContain('AssessmentStartLink')
     expect(dashboard).toContain('dashboardOnly')
