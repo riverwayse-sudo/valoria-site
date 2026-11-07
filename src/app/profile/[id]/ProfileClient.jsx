@@ -171,6 +171,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
 
       if (initialProfile) {
         await loadCertificates(initialProfile.id)
+        if (cancelled) return
         if (!user || user.id !== initialProfile.id) await recordView(initialProfile.id, user)
         if (!cancelled) setLoading(false)
         return
@@ -282,6 +283,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
     : (isFacilitator ? 'facilitator' : isSpeaker ? 'speaker' : 'candidate')
   const tags        = displayTrack === 'facilitator' ? (p.programme_types || []) : displayTrack === 'speaker' ? (p.topics || []) : (p.skills || [])
   const isOwnProfile = !!(currentUser && currentUser.id === p.id)
+  const displayDesignation = p.valu_score != null ? (getValuTier(p.valu_score, 'full')?.name || p.designation) : null
 
   const stats = [
     { label:'Location',   value: p.location || '—' },
