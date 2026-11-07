@@ -47,6 +47,9 @@ describe('participant-facing assessment clarity', () => {
     expect(stagingWorkflow).toContain('NEXT_PUBLIC_VALU_PREVIEW=1')
     expect(stagingWorkflow).toContain('NEXT_PUBLIC_VALU_STAGING_API_ENABLED=0')
     expect(stagingWorkflow).toContain('VALU_STAGING_API_ENABLED=0')
+    expect(stagingWorkflow).toContain('NEXT_PUBLIC_SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co')
+    expect(stagingWorkflow).toContain('VALU_PREVIEW_ASSESSMENT_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev')
+    expect(stagingWorkflow).not.toContain('https://placeholder.supabase.co')
   })
 
   test('the isolated dashboard preview launches the interactive taster', () => {
