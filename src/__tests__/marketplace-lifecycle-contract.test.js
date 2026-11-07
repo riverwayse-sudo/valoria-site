@@ -232,7 +232,8 @@ describe('VALUI marketplace lifecycle contract', () => {
   test('public VALU pages use the authoritative PRIME vocabulary', () => {
     const valu = read('src/app/valu/page.jsx')
     const start = read('src/app/valu/start/page.jsx')
-    for (const source of [valu, start]) {
+    const prime = read('src/app/prime/page.jsx')
+    for (const source of [valu, start, prime]) {
       expect(source).toContain('Presence')
       expect(source).toContain('Relationships')
       expect(source).toContain('Intelligence')
@@ -243,16 +244,16 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(start).not.toContain("'Motivation & Stamina'")
   })
 
-  test('public copy distinguishes the separate nine-question taster and 58-question full assessment', () => {
+  test('public copy explains the taster and formal assessment without exposing internal mechanics', () => {
     const prime = read('src/app/prime/page.jsx')
     const reminders = read('src/app/api/cron/valu-reminders/route.js')
     for (const source of [prime, reminders]) {
       expect(source).not.toContain('15-question')
       expect(source).not.toContain('15 question')
     }
-    expect(prime).toContain('9-question taster is a separate, no-account starting point')
-    expect(prime).toContain('separate 58-question assessment: 54 scored questions and 4 validity anchors')
-    expect(prime).toContain('15–20 minutes')
+    expect(prime).toContain('The VALU taster offers a guided introduction to the PRIME framework.')
+    expect(prime).toContain('Completing it establishes your official VALU Index in points')
+    expect(prime).not.toMatch(/(?:9|58)[- ]questions?|54 scored|validity anchors|15–20 minutes/i)
     expect(reminders).toContain('RETURN TO YOUR DASHBOARD')
     expect(reminders).not.toContain('CONTINUE TO QUESTION 10')
   })
