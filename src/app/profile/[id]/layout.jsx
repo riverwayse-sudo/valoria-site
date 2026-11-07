@@ -9,14 +9,14 @@ const ATB_RE = /^ATB-[A-Z0-9-]{4,40}$/i
 export async function generateMetadata({ params }) {
   const { id } = await params
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-  if (!url || !anonKey || (!UUID_RE.test(id) && !ATB_RE.test(id))) {
+  if (!url || !serviceRoleKey || (!UUID_RE.test(id) && !ATB_RE.test(id))) {
     return { title: 'Professional Profile | Valoria Institute', robots: { index: false, follow: true } }
   }
 
   try {
-    const supabase = createClient(url, anonKey, {
+    const supabase = createClient(url, serviceRoleKey, {
       auth: { persistSession: false, autoRefreshToken: false },
     })
     const { data: profile, error } = await supabase
