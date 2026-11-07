@@ -6,7 +6,7 @@ export const metadata = {
   title: 'Terms of Use | Valoria Institute',
   description: 'Draft terms for the Valoria Institute platform. Legal operator identity and final legal review are pending before production publication.',
   robots: process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? { index: false, follow: false } : { index: true, follow: true },
-  alternates: { canonical: 'https://valoriainstitute.com/terms-of-use' },
+  alternates: { canonical: 'https://valoriainstitute.com/terms' },
 }
 
 const GOLD = '#C9A84C'
