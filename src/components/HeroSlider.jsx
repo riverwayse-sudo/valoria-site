@@ -14,7 +14,7 @@ export default function HeroSlider() {
             <div className="hero-copy">
               <div className="hero-eyebrow">
                 <div className="hero-eyebrow-line" />
-                <span className="hero-eyebrow-text">AFRICAN-ROOTED. GLOBALLY CONNECTED.</span>
+                <span className="hero-eyebrow-text">AFRICA FIRST. BUILT FOR CONTINENTAL GROWTH.</span>
               </div>
               <h1 className="hero-title" id="valoria-hero-title">
                 Capability should decide<br />
