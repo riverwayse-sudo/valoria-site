@@ -300,7 +300,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     }
     expect(start).toContain('directional taster')
     expect(start).toContain('START THE VALU TASTER')
-    expect(start).toContain('TAKE THE VALU TASTER')
+    expect(start).toContain('START THE VALU TASTER')
     expect(prime).toContain('points-based capability profile')
     expect(start).not.toMatch(/\b(?:9|58)\s+(?:question|questions)/i)
     expect(prime).not.toMatch(/\b(?:9|58)\s+(?:question|questions)/i)
