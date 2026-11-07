@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
+// The preview query states are visual-only; normal display still follows the signed-in profile state.
+
 export default function ValuCompletionNudge() {
   const [show, setShow] = useState(false)
   const [assessed, setAssessed] = useState(false)
