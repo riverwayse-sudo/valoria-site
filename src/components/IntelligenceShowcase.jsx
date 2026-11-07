@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import styles from './IntelligenceShowcase.module.css'
 import CapabilitySearchLab from './CapabilitySearchLab'
+import IntelligenceDataArchitecture from './IntelligenceDataArchitecture'
 
 const journeys = [
   {
@@ -140,6 +141,7 @@ export default function IntelligenceShowcase() {
       </section>
 
       <CapabilitySearchLab />
+      <IntelligenceDataArchitecture />
 
       <section className={styles.method}>
         <div className={styles.sectionHeading}>
