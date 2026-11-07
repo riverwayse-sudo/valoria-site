@@ -40,6 +40,7 @@ jobs:
         run: npm ci
 
       - name: Audit production dependencies
+        working-directory: platform/valoria-final
         run: npm audit --omit=dev --audit-level=high
       - name: Run assessment regression suite
         working-directory: platform/valoria-final
