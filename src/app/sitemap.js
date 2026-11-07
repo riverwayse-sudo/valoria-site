@@ -46,12 +46,12 @@ export default async function sitemap() {
   let profileEntries = []
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     if (supabaseUrl && supabaseKey) {
       const { createClient } = await import('@supabase/supabase-js')
       const client = createClient(supabaseUrl, supabaseKey)
       const { data, error } = await client
-        .from('marketplace_public_roster')
+        .rpc('get_consent_verified_marketplace_roster')
         .select('professional_id,projection_refreshed_at,full_name,atb_id,headline,current_job_title,assessment_access,valu_index,assessment_summary')
         .not('professional_id', 'is', null)
       if (error) console.error('sitemap: public roster fetch failed:', error)
