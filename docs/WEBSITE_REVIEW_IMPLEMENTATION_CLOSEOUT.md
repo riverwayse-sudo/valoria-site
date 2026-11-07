@@ -33,8 +33,10 @@ This closeout separates implemented code from production state, unverified behav
 | Review area | Implementation status | Remaining verification |
 |---|---|---|
 | Information architecture and navigation | Implemented | Browser walkthrough on desktop and mobile. |
+| Global content alignment | Implemented | Global stylesheet and regression tests cover all route content, cards, forms, CTAs, desktop dropdowns, nested links and mobile navigation. Visual verification at target widths remains required. |
+| Typography foundation | Implemented | Single canonical Raleway request, shared approved weight/line-height tokens and automated design-check enforcement. Visual verification at target widths remains required. |
 | Value proposition and conversion paths | Implemented | Validate buyer and professional journeys with stakeholders. |
-| Assessment journey and session continuity | Code changes implemented across site/platform branches | Full staging E2E: save/resume, confirmation, dashboard handoff and completion. |
+| Assessment journey and session continuity | Code changes implemented across site/platform branches | Taster and Full VALU now share the left-alignment contract; regression coverage verifies the Full screen wrapper, progress labels and assessment navigation. Full staging E2E remains required: save/resume, confirmation, dashboard handoff and completion. |
 | Marketplace and profile quality | Implemented | Existing participants must complete profile/evidence requirements and choose public visibility. |
 | Opportunities and matching | Implemented where supported | No live opportunity supply exists; matching relevance needs real listings to validate. |
 | Application and enquiry tracking | Implemented | Exercise a real buyer submission and admin review in staging. |
@@ -67,7 +69,8 @@ Public website copy deliberately avoids assessment question counts and validity-
 ## 5. Decisions required from Valoria
 
 1. Confirm the legal entity name used in the footer, About page, Terms, Privacy and contracts.
-2. Approve the adapted About mission wording.\n3. Confirm the current registered brand punctuation: the October developer brief says “Worth, Built.” per Brand Guidelines v4, while the April master brand PDF supplied in the library says “Worth. Built.” The later comma version has been applied; the referenced v4 master was not available in the library for direct verification.
+2. Approve the adapted About mission wording.
+3. Confirm the current registered brand punctuation: the October developer brief says “Worth, Built.” per Brand Guidelines v4, while the April master brand PDF supplied in the library says “Worth. Built.” The later comma version has been applied; the referenced v4 master was not available in the library for direct verification.
 4. Confirm the public name and role for the Session 03 replay speaker/host.
 5. Confirm Develop pricing and any certification claims.
 6. Confirm the 17-versus-18 skill interpretation and taster skill coverage.
@@ -86,5 +89,6 @@ Public website copy deliberately avoids assessment question counts and validity-
 - Latest completed site unit tests, static checks, validation and secret scan passed.
 - Latest completed platform unit tests, production build, secret scan, environment parity and Cloudflare checks passed.
 - The newest site build and Cloudflare Worker checks must be green before the branch is described as fully validated.
-- Both PRs remain open. No merge or production deployment is claimed.\n- A fresh Vercel preview for the latest code commit could not be created: the Vercel Hobby team's free deployment quota is exhausted for 24 hours. The newest existing READY preview is behind the latest code and should not be used for final approval. Preview deployments are also SSO-protected on the current project settings.
+- Both PRs remain open. No merge or production deployment is claimed.
+- A fresh Vercel preview for the latest code commit could not be created: the Vercel Hobby team's free deployment quota is exhausted for 24 hours. The newest existing READY preview is behind the latest code and should not be used for final approval. Preview deployments are also SSO-protected on the current project settings.
 - Do not release until methodology/copy/legal approvals are obtained, the consent-aware RLS migration is coordinated, and the full assessment-to-dashboard-to-profile journey is tested.
