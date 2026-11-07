@@ -272,6 +272,7 @@ describe('journey integrity contract', () => {
     expect(assessmentProxy).toContain("suffix ? `/valu/assessment/${suffix}` : '/'")
     expect(assessmentProxy).toContain('export async function GET')
     expect(assessmentProxy).toContain('export async function HEAD')
+    expect(assessmentProxy).not.toContain("runtime = 'edge'")
     expect(config).not.toContain("source: '/valu/assessment'")
     expect(reportTrigger).toContain("from '@/lib/valu-origin'")
     expect(reportTrigger).toContain('getValuAssessmentOrigin(process.env)')
