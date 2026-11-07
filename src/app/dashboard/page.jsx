@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import ThreadPanel, { MessagesButton } from '@/components/ThreadPanel'
 import MarketplaceCTA from '@/components/MarketplaceCTA'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
+import PublicMarketplaceVisibility from '@/components/PublicMarketplaceVisibility'
 
 // ─── brand tokens — same system as the public profile page ─────────────────
 const GOLD    = '#C9A84C'
@@ -301,6 +302,7 @@ export default function DashboardPage() {
           </Link>
           <nav style={{ display:'flex', gap:'22px', alignItems:'center' }}>
             <MarketplaceCTA style={{ fontSize:'12px', color: DIM, textDecoration:'none' }}>Marketplace</MarketplaceCTA>
+            {isSupply && <Link href="#marketplace-visibility" style={{ fontSize:'12px', color: DIM, textDecoration:'none' }}>Visibility</Link>}
             {isSupply && <Link href="/profile/edit" style={{ fontSize:'12px', color: DIM, textDecoration:'none' }}>Edit Profile</Link>}
             <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')}
               style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.1em', color:'rgba(201,168,76,.7)', background:'transparent', border:`1px solid ${GLINE2}`, borderRadius:'999px', padding:'7px 16px', cursor:'pointer', fontFamily:'inherit' }}>
@@ -308,6 +310,10 @@ export default function DashboardPage() {
             </button>
           </nav>
         </header>
+
+        {isSupply && <div style={{ maxWidth:1240, margin:'24px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+          <PublicMarketplaceVisibility />
+        </div>}
 
         {/* COVER BANNER */}
         <div style={{ position:'relative', height:'280px', overflow:'hidden', background:`radial-gradient(ellipse 800px 400px at 10% 30%, rgba(201,168,76,.22), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 70%, rgba(201,168,76,.1), transparent 55%), linear-gradient(155deg, ${MID} 0%, ${DARK} 70%)` }}>
