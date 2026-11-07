@@ -32,7 +32,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain("row.assessment_access === 'basic'")
     expect(data).toContain("row.assessment_access === 'full'")
     expect(data).toContain("from('taster_sessions')")
-    expect(data).toContain("public-profile-visibility-v2-2026-11-06")
+    expect(data).toContain("public-profile-visibility-v3-2026-11-07")
     expect(data).toContain('assessment_summary: null')
     expect(directory).toContain('FULL VALU ASSESSED')
     expect(directory).toContain('BASIC LISTING')
