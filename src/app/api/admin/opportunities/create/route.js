@@ -61,6 +61,7 @@ export async function POST(request) {
     closing_at: body.closing_at || null,
     status: 'published',
     access_level: 'public',
+    created_by: user.id,
     reviewed_by: user.id,
     reviewed_at: now,
     published_at: now,
@@ -70,6 +71,7 @@ export async function POST(request) {
 
   const { error: auditError } = await supabase.from('opportunity_submissions').insert({
     opportunity_id: opportunity.id,
+    submitter_user_id: user.id,
     submitter_name: name,
     submitter_email: email,
     organisation_name: organisation,
