@@ -17,7 +17,7 @@ const DIM = 'rgba(247,244,238,.55)'
 const sections = [
   {
     title: '1. About these terms',
-    body: `These Terms of Use govern your access to and use of the Valoria Institute platform, including the marketplace at valoriainstitute.com and the VALU Index assessment at valoriainstitute.com/valu/assessment, operated by African Talent Bureau Ltd ("Valoria Institute", "we", "us").\n\nBy creating an account or joining the waitlist, you agree to these terms. If you do not agree, do not use the platform.`,
+    body: `These Terms of Use govern your access to and use of the Valoria Institute platform, including the marketplace at valoriainstitute.com and the VALU Index assessment at valoriainstitute.com/valu, operated by African Talent Bureau Ltd ("Valoria Institute", "we", "us").\n\nBy creating an account or joining the waitlist, you agree to these terms. If you do not agree, do not use the platform.`,
   },
   {
     title: '2. Who can use the platform',
@@ -29,7 +29,7 @@ const sections = [
   },
   {
     title: '4. Marketplace listing',
-    body: `Professionals who score 35 or above and have no unresolved integrity flags are eligible for marketplace listing. Listing is not automatic — it requires:\n\n• A completed profile with at minimum: display name, headline, bio, and photo.\n• Explicit consent to be visible in marketplace search results.\n\nValoria Institute reserves the right to suspend or remove any listing that violates these terms, contains false information, or is associated with integrity concerns.\n\nYour contact details are never shown to buyers. All introductions are facilitated by Valoria Institute. You may receive communication from buyers only via the platform's managed introduction process.`,
+    body: `Marketplace access is assigned according to the professional's completed assessment journey:\n\n• Basic: a professional who has completed and linked a VALU taster may be represented in the Basic tier. A Basic tier entry is not an official VALU Index result or merit designation.\n• Full: a professional who has completed a current Full VALU Index assessment receives a Full tier, with a points result and any designation earned under the published scoring standard. Full-tier public listing remains subject to the applicable eligibility threshold and profile requirements.\n\nA tier assignment is not, by itself, public visibility. Public discovery requires a verified professional identity, the relevant profile and capability information, any required evidence and review, and explicit, current consent to public visibility. A professional may choose registered-only visibility. Valoria Institute may suspend or remove a listing that violates these terms, contains false information, or is associated with substantiated integrity or governance concerns.\n\nYour contact details are not displayed on public profile cards. Buyer introductions are handled through Valoria's managed enquiry process.`,
   },
   {
     title: '5. Buyer obligations',
@@ -88,7 +88,7 @@ export default function TermsPage() {
             These terms govern your use of Valoria Institute — the marketplace, the VALU Index, and all associated services. They apply to all user types: professionals, employers, event organisers, and training buyers.
           </p>
           <p style={{ fontSize: '12px', color: 'rgba(247,244,238,.3)', marginTop: '16px' }}>
-            Last updated: 1 July 2026 · Governing law: Federal Republic of Nigeria
+            Last updated: 7 November 2026 · Governing law: Federal Republic of Nigeria
           </p>
         </section>
 
