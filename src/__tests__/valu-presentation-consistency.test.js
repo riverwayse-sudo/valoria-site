@@ -83,6 +83,33 @@ describe('VALU presentation consistency', () => {
     expect(read('src/app/layout.jsx')).not.toContain('Worth. Built.')
   })
 
+  test('left alignment is enforced across route copy and desktop/mobile dropdown content', () => {
+    const alignment = read('src/styles/left-alignment.css')
+    expect(alignment).toContain('text-align: left !important')
+    expect(alignment).toContain('.vi-nav .nav-dropdown')
+    expect(alignment).toContain('.nav-mobile .nav-dropdown')
+    expect(alignment).toContain('align-items: flex-start !important')
+  })
+
+  test('PRIME uses the canonical future-ready skills and all five earned designations', () => {
+    const brand = read('src/lib/brand.js')
+    const prime = read('src/app/prime/page.jsx')
+    expect(brand).toContain("name: 'Presence'")
+    expect(brand).toContain("name: 'Relationships'")
+    expect(brand).toContain("name: 'Intelligence'")
+    expect(brand).toContain("name: 'Mastery'")
+    expect(brand).toContain("name: 'Enterprise'")
+    expect(brand).toContain("'AI Fluency'")
+    expect(brand).toContain("'Human-AI Collaboration'")
+    expect(prime).toContain('Force to Align With')
+    expect(prime).toContain('Emerging Force')
+    expect(prime).toContain('Developing Professional')
+    expect(prime).toContain('Building Foundations')
+    expect(prime).toContain('At the Starting Point')
+    expect(prime).not.toContain('Distinguished')
+    expect(prime).not.toContain('Proficient')
+  })
+
   test('legacy stored designation strings cannot override the canonical points-based merit bands', () => {
     expect(read('src/app/dashboard/page.jsx')).not.toContain('p.designation.replace')
     expect(read('src/app/report/page.jsx')).not.toContain('assessment.designation ||')
