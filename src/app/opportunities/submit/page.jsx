@@ -92,7 +92,6 @@ export default function SubmitOpportunity() {
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
   const submissionKey = useRef(null)
-  const submissionKey = useRef(null)
 
   function set(name, value) {
     setForm(current => ({ ...current, [name]: value }))
@@ -107,7 +106,6 @@ export default function SubmitOpportunity() {
     setSaving(true)
     setError('')
     try {
-      if (!submissionKey.current) submissionKey.current = window.crypto.randomUUID()
       if (!submissionKey.current) submissionKey.current = window.crypto.randomUUID()
       const response = await fetch('/api/opportunities', {
         method: 'POST',
