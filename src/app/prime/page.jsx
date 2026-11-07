@@ -32,7 +32,7 @@ export default function PrimePage() {
             <p className="page-sub">PRIME describes how professional capability shows up in the work. The VALU Index measures it.</p>
             <div className="page-hero-actions">
               <a href="/valu" className="btn-gold">UNDERSTAND THE VALU INDEX</a>
-              <a href="/valu/assessment/" className="btn-outline">TAKE THE 9-QUESTION TASTER</a>
+              <a href="/valu/assessment/" className="btn-outline">TAKE THE VALU TASTER</a>
             </div>
           </div>
         </section>
@@ -64,7 +64,7 @@ export default function PrimePage() {
             <Reveal>
               <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">THE VALU INDEX</span><div className="eyebrow-line" /></div>
               <h2 className="section-title section-title-centered">One framework.<br /><em>Scores in points.</em></h2>
-              <p className="page-sub prime-centered-copy">The full VALU Index contains 58 questions: 54 scored questions and four validity checks. Results run from 0 to 100 points across the five PRIME clusters.</p>
+              <p className="page-sub prime-centered-copy">The VALU Index provides a points-based capability profile across the five PRIME clusters. Results are reported in points, not percentages.</p>
             </Reveal>
           </div>
         </section>
@@ -90,7 +90,7 @@ export default function PrimePage() {
             <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">WORTH. BUILT.</span><div className="eyebrow-line" /></div>
             <h2 className="section-title">Take the taster.<br /><em>See your first signal.</em></h2>
             <div className="page-hero-actions eyebrow-center">
-              <a href="/valu/assessment/" className="btn-gold">TAKE THE 9-QUESTION TASTER</a>
+              <a href="/valu/assessment/" className="btn-gold">TAKE THE VALU TASTER</a>
               <a href="/valu" className="btn-outline">HOW VALU WORKS</a>
             </div>
           </Reveal>
