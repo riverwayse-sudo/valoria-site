@@ -3,7 +3,7 @@
 
 export const BRAND = {
   name: 'Valoria Institute',
-  tagline: 'Worth, Built.',
+  tagline: 'Worth. Built.',
   belief: 'Talent is not the problem. Infrastructure is.',
   promise: ['Develop', 'Surface', 'Connect'],
   email: 'info@valoriainstitute.com',
