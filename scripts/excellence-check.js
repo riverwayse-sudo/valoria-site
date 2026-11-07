@@ -52,9 +52,15 @@ if (fs.existsSync(profileRoutePath)) {
   if (!/const\s+resolvedSearchParams\s*=\s*await\s+searchParams\b/.test(route)) {
     violations.push('public profile route must await Next.js 15 async searchParams');
   }
-  if (!/\.eq\(\s*['"]visibility['"]\s*,\s*['"]public['"]\s*\)/.test(route) ||
-      !/\.eq\(\s*['"]listing_status['"]\s*,\s*['"]listed['"]\s*\)/.test(route)) {
-    violations.push('public profile route must enforce public visibility and listed status');
+  if (!route.includes(".from('marketplace_public_roster')")) {
+    violations.push('public profile route must read from the restricted Marketplace roster projection');
+  }
+  const rosterMigrationPath = path.join(root, 'supabase/migrations/20260926100000_harden_marketplace_public_roster.sql');
+  const rosterMigration = fs.existsSync(rosterMigrationPath) ? fs.readFileSync(rosterMigrationPath, 'utf8') : '';
+  if (!/p\\.visibility\\s*=\\s*['"]public['"]/.test(rosterMigration) ||
+      !/p\\.listing_status\\s*=\\s*['"]listed['"]/.test(rosterMigration) ||
+      !/pc\\.eligible_for_listing\\s*=\\s*true/.test(rosterMigration)) {
+    violations.push('public roster projection must enforce public visibility, listed status and capability eligibility');
   }
   if (/\.eq\(\s*['"]profile_complete['"]/.test(route)) {
     violations.push('public profile route must not confuse profile completion with public listing eligibility');
