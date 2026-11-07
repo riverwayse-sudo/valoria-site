@@ -558,4 +558,15 @@ describe('journey integrity contract', () => {
     }
   })
 
+  test('assessment bridge reuses one secure handoff request without delaying the expiring code', () => {
+    const page = read('src/app/assessment/bridge/page.jsx')
+    const bridge = read('src/components/ValoriaAssessmentBridge.jsx')
+    expect(page).toContain('ValoriaAssessmentBridge')
+    expect(bridge).toContain('handoffPromiseRef')
+    expect(bridge).toContain('window.location.replace(result.url)')
+    expect(bridge).toContain('Do not add an artificial delay')
+    expect(bridge).not.toContain('setTimeout')
+    expect(bridge).toContain("destination.protocol !== 'https:'")
+  })
+
 })
