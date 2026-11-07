@@ -86,7 +86,6 @@ export async function POST(request) {
         acknowledgement_type: 'profile_submission',
         acknowledgement_version: CONSENT_VERSION,
         acknowledgement_text: ACKNOWLEDGEMENT_TEXT,
-        source: 'profile_visibility_settings',
         acknowledged_at: new Date().toISOString(),
       })
       if (insertError) {
