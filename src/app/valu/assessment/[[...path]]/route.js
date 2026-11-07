@@ -3,13 +3,11 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 const ALLOWED_ASSESSMENT_HOSTS = new Set([
   'assessment.valoriainstitute.com',
   'valoria-platform.riverwayse.workers.dev',
-  'valoria-staging-assessment.riverwayse.workers.dev',
 ])
 
 function getAssessmentOrigin() {
   const configured =
-    process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN ||
-    process.env.VALU_UPSTREAM_ORIGIN ||
+    process.env.VALU_ASSESSMENT_ORIGIN ||
     process.env.NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN ||
     'https://assessment.valoriainstitute.com'
 
