@@ -270,6 +270,8 @@ describe('journey integrity contract', () => {
     expect(assessmentProxy).toContain('valoria-staging-assessment.riverwayse.workers.dev')
     expect(assessmentProxy).toContain("redirect: 'follow'")
     expect(assessmentProxy).toContain("suffix ? `/valu/assessment/${suffix}` : '/'")
+    expect(assessmentProxy).toContain('getCloudflareContext')
+    expect(assessmentProxy).toContain('env.VALU_ASSESSMENT')
     expect(assessmentProxy).toContain('export async function GET')
     expect(assessmentProxy).toContain('export async function HEAD')
     expect(assessmentProxy).not.toContain("runtime = 'edge'")
