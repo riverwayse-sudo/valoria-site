@@ -13,7 +13,9 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export const metadata = {
-  title: 'Valoria Institute | Professional Capability Marketplace',
+  title: 'Valoria Institute — Worth, Built.',
+  openGraph: { title: 'Valoria Institute — Worth, Built.', description: 'Assess professional capability, build a credible professional profile and discover opportunities through Valoria’s capability-led marketplace.', url: 'https://valoriainstitute.com/' },
+  twitter: { card: 'summary_large_image', title: 'Valoria Institute — Worth, Built.' },
   description: 'Assess professional capability, build a credible professional profile and discover opportunities through Valoria’s capability-led marketplace.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
 }
