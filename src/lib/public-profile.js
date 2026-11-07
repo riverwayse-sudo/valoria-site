@@ -71,7 +71,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
   // account-linked completed taster and a minimal professional identity.
   const { data: roster, error: rosterError } = await admin
     .from('marketplace_public_roster')
-    .select('professional_id,atb_id,assessment_access,assessment_summary,capabilities,selected_capabilities')
+    .select('professional_id,atb_id,assessment_access,assessment_summary,capabilities,selected_capabilities,full_name,headline,current_job_title')
     .eq(lookupField, identifier)
     .in('assessment_access', ['full', 'basic'])
     .maybeSingle()
