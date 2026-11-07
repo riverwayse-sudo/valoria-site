@@ -25,7 +25,7 @@ export default function HeroSlider() {
               </p>
               <div className="hero-actions">
                 <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">
-                  START THE 9-QUESTION TASTER <span aria-hidden="true">→</span>
+                  START THE VALU TASTER <span aria-hidden="true">→</span>
                 </AssessmentStartLink>
                 <MarketplaceCTA className="btn-outline">
                   EXPLORE THE TALENT MARKETPLACE <span aria-hidden="true">→</span>
