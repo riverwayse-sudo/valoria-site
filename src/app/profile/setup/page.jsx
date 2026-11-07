@@ -1081,8 +1081,8 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
           </p>
           <p style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.6, margin:0 }}>
             {Number(form.valu_index) >= 35
-              ? 'You\u2019re eligible for marketplace listing once this profile is reviewed.'
-              : 'Your completed VALU assessment keeps your marketplace listing active. Build out your profile to unlock more of what Valoria can make available to you.'}
+              ? 'Your Full VALU Index score meets the 35-point threshold for Full marketplace eligibility, subject to profile and capability checks.'
+              : 'This Full VALU Index score is below the 35-point threshold for Full marketplace eligibility. Basic marketplace access is a separate pathway based on the completed VALU taster.'}
           </p>
         </div>
       ) : (
