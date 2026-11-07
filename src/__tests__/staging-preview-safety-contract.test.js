@@ -19,13 +19,28 @@ describe('staging preview safety boundary', () => {
     expect(read('src/components/ValuCompletionNudge.jsx')).toContain("if(process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') return")
   })
 
+  test('read-only preview never queries the live public roster or lists member profile URLs', () => {
+    const marketplace = read('src/lib/marketplace-data.js')
+    expect(marketplace).toContain("const IS_READ_ONLY_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'")
+    expect(marketplace).toContain('if (IS_READ_ONLY_PREVIEW) return []')
+    expect(marketplace).toContain('if (IS_READ_ONLY_PREVIEW) return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }')
+    expect(marketplace.indexOf('if (IS_READ_ONLY_PREVIEW) return []')).toBeLessThan(marketplace.indexOf('createClient(url, key'))
+
+    const sitemap = read('src/app/sitemap.js')
+    expect(sitemap).toContain('if (IS_PREVIEW) return staticEntries')
+    expect(sitemap.indexOf('if (IS_PREVIEW) return staticEntries')).toBeLessThan(sitemap.indexOf("await import('@supabase/supabase-js')"))
+  })
+
   test('the OpenNext Worker handles dynamic routes before static asset fallback', () => {
     const wrangler = read('wrangler.jsonc')
     const nextConfig = read('next.config.js')
+    const assessmentProxy = read('src/app/valu/assessment/[[...path]]/route.js')
     expect(wrangler).toContain('"run_worker_first": true')
     expect(wrangler).toContain('"VALU_PREVIEW_ASSESSMENT_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev"')
-    expect(nextConfig).toContain("source: '/valu/assessment/:path*'")
-    expect(nextConfig).toContain('VALU_PREVIEW_ASSESSMENT_ORIGIN')
+    expect(assessmentProxy).toContain('ALLOWED_ASSESSMENT_HOSTS')
+    expect(assessmentProxy).toContain('process.env.VALU_PREVIEW_ASSESSMENT_ORIGIN')
+    expect(assessmentProxy).toContain("suffix ? `/valu/assessment/${suffix}` : '/'")
+    expect(nextConfig).not.toContain("source: '/valu/assessment'")
   })
 
   test('preview metadata is not indexable and production analytics are disabled', () => {
