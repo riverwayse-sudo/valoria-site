@@ -62,7 +62,7 @@ async function confirmToBuyer({ enquiryType, atbId, buyerName, buyerEmail }) {
   const html = `
     <div style="font-family:sans-serif;font-size:14px;line-height:1.7;color:#1A1A2E;">
       <p>Hi ${escapeHtml(buyerName.split(' ')[0] || 'there')},</p>
-      <p>We've received your ${label.toLowerCase()} regarding <strong>${atbId}</strong>. Valoria Institute facilitates all introductions — someone from our team will be in touch shortly.</p>
+      <p>We've received your ${label.toLowerCase()} regarding <strong>${escapeHtml(atbId)}</strong>. Valoria Institute facilitates all introductions — someone from our team will be in touch shortly.</p>
       <p style="color:#888;font-size:12px;">Valoria Institute · African Talent Bureau Ltd · Lagos, Nigeria</p>
     </div>`
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -88,7 +88,7 @@ async function notifyProfessional(supabase, { professionalProfileId, enquiryType
     user_id: professionalProfileId,
     type: 'enquiry',
     title: `New ${label.toLowerCase()}`,
-    body: `${escapeHtml(buyerName)}${buyerCompany ? ` (${escapeHtml(buyerCompany)})` : ''} wants to connect with you.`,
+    body: `${buyerName}${buyerCompany ? ` (${buyerCompany})` : ''} wants to connect with you.`,
     action_url: actionUrl,
   }])
   if (notifError) console.error('Enquiry professional in-app notify failed:', notifError)
@@ -103,7 +103,7 @@ async function notifyProfessional(supabase, { professionalProfileId, enquiryType
   const html = `
     <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;">
       <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">NEW ${label.toUpperCase()}</p>
-      <p>${buyerName}${buyerCompany ? ` from ${buyerCompany}` : ''} has requested an introduction through Valoria Institute.</p>
+      <p>${escapeHtml(buyerName)}${buyerCompany ? ` from ${escapeHtml(buyerCompany)}` : ''} has requested an introduction through Valoria Institute.</p>
       <p>Valoria will review and be in touch with next steps — no action needed from you right now.</p>
       <p style="margin-top:20px;"><a href="https://valoriainstitute.com${actionUrl}">View your profile</a></p>
     </div>`
@@ -142,13 +142,13 @@ export async function POST(request) {
     if (!buyer_name?.trim() || !buyer_email?.trim() || !message?.trim()) {
       return Response.json({ error: 'Name, email, and message are required.' }, { status: 400 })
     }
-    const emailRe = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRe.test(buyer_email.trim())) {
       return Response.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     }
 
     let buyerUserId = null
-    const token = request.headers.get('authorization')?.match(/^Bearer\\s+(.+)$/i)?.[1]?.trim()
+    const token = request.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim()
     if (token) {
       const { data: authData, error: authError } = await supabase.auth.getUser(token)
       if (authError || !authData?.user?.id) {
