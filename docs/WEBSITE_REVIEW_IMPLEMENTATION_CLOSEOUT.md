@@ -92,6 +92,7 @@ Brand punctuation is resolved: the user accepted the 9 October 2026 Website Cont
 - The production Supabase Security Advisor reports one external-facing warning: leaked-password protection is disabled. This does **not** mean a Valoria password has been breached; it means Supabase Auth does not reject passwords already present in known breach corpora.
 - Supabase documents its native Have I Been Pwned password check as available on the Pro plan and above. The no-paid-tools constraint has been preserved; no Pro upgrade or account-plan change was made.
 - The seven RLS-enabled/no-policy informational findings relate to private or service-role-only identity, review, acknowledgement and taster tables. They are intentionally not directly readable by client roles; retain that boundary.
+- Free-tier mitigation is available: Auth settings can enforce a longer minimum password length and require digits, lowercase, uppercase and symbols. This setting was not inspected or changed in this pass; Supabase warns that existing users whose passwords fall below a strengthened policy may receive `WeakPasswordError` at sign-in, so test the impact before enabling it.
 - Treat the leaked-password warning as a known residual risk requiring explicit owner acceptance or a separately approved security/plan change. Do not describe the production Auth configuration as having zero security warnings.
 
 ## 7. Validation and release boundary
