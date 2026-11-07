@@ -494,7 +494,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(edit).toContain("'/api/profile/acknowledgements'")
     expect(edit).toContain("source: 'profile_edit'")
     expect(endpoint).toContain("body.source === 'profile_edit' ? 'profile_edit' : 'profile_setup'")
-    expect(endpoint).toContain('PUBLIC_ACKNOWLEDGEMENT_VERSION')
+    expect(endpoint).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
     expect(endpoint).toContain('Confirm your email before submitting your profile.')
   })
 
