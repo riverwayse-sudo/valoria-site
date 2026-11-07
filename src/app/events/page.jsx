@@ -87,7 +87,7 @@ export default function EventsPage() {
                   />
                 </div>
                 <p style={{ marginTop: 14, fontSize: 14, lineHeight: 1.7 }}>
-                  If the video does not load, <a href={`https://youtube.com/live/${webinar.youtubeVideoId}`} style={{ color: '#C9A84C', textDecoration: 'underline' }}>watch the webinar directly on YouTube</a>.
+                  If the video does not load, <a href={`https://youtube.com/live/${webinar.youtubeVideoId}`} style={{ color: '#735B20', textDecoration: 'underline' }}>watch the webinar directly on YouTube</a>.
                 </p>
               </div>
             </div>
