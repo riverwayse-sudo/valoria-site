@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "valoria-institute-site",
+  "account_id": "1ac6d89c2eeba85a5390422d6fe97613",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-11-01",
   "compatibility_flags": [
