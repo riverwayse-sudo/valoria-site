@@ -57,7 +57,27 @@ export async function getMarketplaceRows(track = 'all') {
   }
 
   const rows = dedupeProfessionals(data)
-  return rows.filter(row => track === 'all' || row.capabilities.includes(normalizeTrack(track)))
+  // Keep records that fail the public profile-content standard out of the
+  // discoverable directory until an administrator can correct them using
+  // verified professional information. The underlying account/profile stays intact.
+  const placeholderHeadlines = new Set([
+    'model',
+    'growth dev',
+    'help people find meaning in their life and career',
+    'valoria professional',
+  ])
+  const publicReadyRows = rows.filter(row => {
+    const headline = String(row.headline || row.current_job_title || '').trim()
+    const normalizedHeadline = headline.toLowerCase()
+    return Boolean(
+      row.full_name &&
+      row.atb_id &&
+      headline.length >= 8 &&
+      !placeholderHeadlines.has(normalizedHeadline) &&
+      !/[\\u{1D400}-\\u{1D7FF}]/u.test(headline)
+    )
+  })
+  return publicReadyRows.filter(row => track === 'all' || row.capabilities.includes(normalizeTrack(track)))
 }
 
 export async function getMarketplaceCounts() {
