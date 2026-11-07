@@ -151,7 +151,7 @@ export default function HomePage() {
           <div className="container">
             <Reveal className="home-section-heading">
               <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FIVE WAYS TO ENGAGE.</span></div>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOUR WAYS TO ENGAGE.</span></div>
                 <h2 id="decision-pathways-title">Start with the outcome your organisation <em>needs.</em></h2>
               </div>
               <p>Whether you are sourcing talent, curating an event or building workforce capability, Valoria provides a clear route into the relevant part of the institution.</p>
