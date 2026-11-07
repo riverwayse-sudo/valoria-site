@@ -24,7 +24,7 @@ describe('staging preview safety boundary', () => {
     expect(marketplace).toContain("const IS_READ_ONLY_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'")
     expect(marketplace).toContain('if (IS_READ_ONLY_PREVIEW) return []')
     expect(marketplace).toContain('if (IS_READ_ONLY_PREVIEW) return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }')
-    expect(marketplace.indexOf('if (IS_READ_ONLY_PREVIEW) return []')).toBeLessThan(marketplace.indexOf('createClient'))
+    expect(marketplace.indexOf('if (IS_READ_ONLY_PREVIEW) return []')).toBeLessThan(marketplace.indexOf('createClient(url, key'))
 
     const sitemap = read('src/app/sitemap.js')
     expect(sitemap).toContain("if (process.env.VALU_PREVIEW === '1') return staticEntries")
