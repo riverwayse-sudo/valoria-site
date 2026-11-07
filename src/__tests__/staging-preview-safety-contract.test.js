@@ -4,13 +4,31 @@ const path = require('path')
 const read = relative => fs.readFileSync(path.join(process.cwd(), relative), 'utf8')
 
 describe('staging preview safety boundary', () => {
-  test('site API routes are blocked before the unauthenticated preview bypass', () => {
+  test('read-only staging permits only confirmed taster linking and assessment handoff APIs', () => {
     const middleware = read('src/middleware.js')
     expect(middleware).toContain("process.env.VALU_PREVIEW === '1'")
-    expect(middleware).toContain("if (isReadOnlyPreview && pathname.startsWith('/api/'))")
+    expect(middleware).toContain("(pathname === '/api/link-taster' && request.method === 'POST')")
+    expect(middleware).toContain("(pathname === '/api/valu-handoff' && ['GET', 'POST'].includes(request.method))")
+    expect(middleware).toContain("if (isReadOnlyPreview && pathname.startsWith('/api/') && !isPreviewApiAllowed)")
+    expect(middleware).toContain("if (isReadOnlyPreview && !isPreviewApiAllowed) return NextResponse.next()")
     expect(middleware).toContain("status: 503")
     expect(middleware).toContain('Staging preview is simulation-only; API access is disabled.')
-    expect(middleware.indexOf("if (isReadOnlyPreview && pathname.startsWith('/api/'))")).toBeLessThan(middleware.indexOf('if (isReadOnlyPreview) return NextResponse.next()'))
+    expect(middleware.indexOf("if (isReadOnlyPreview && pathname.startsWith('/api/') && !isPreviewApiAllowed)")).toBeLessThan(middleware.indexOf('if (isReadOnlyPreview && !isPreviewApiAllowed) return NextResponse.next()'))
+
+    const linkTaster = read('src/app/api/link-taster/route.js')
+    expect(linkTaster).toContain("if (!user.email_confirmed_at)")
+    expect(linkTaster).toContain('candidate_email')
+    const handoff = read('src/app/api/valu-handoff/route.js')
+    expect(handoff).toContain("if (!data.user.email_confirmed_at)")
+    expect(handoff).toContain("source: 'authenticated_dashboard'")
+  })
+
+  test('dashboard assessment CTAs do not bypass secure handoff in preview mode', () => {
+    const nav = read('src/components/Nav.jsx')
+    expect(nav).toContain("if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' && !dashboardOnly)")
+    expect(nav).toContain("fetch('/api/valu-handoff'")
+    expect(nav).toContain('const linkHref = dashboardOnly ?')
+    expect(nav).toContain('NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN')
   })
 
   test('preview navigation, journey cards, and reminders do not query account data', () => {
