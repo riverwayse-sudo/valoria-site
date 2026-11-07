@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { AssessmentStartLink } from '@/components/Nav'
 import PublicMarketplaceVisibility from '@/components/PublicMarketplaceVisibility'
 import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
 
@@ -1127,9 +1128,9 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
                 ? 'Your VALU taster is in progress. Continue it to complete the Basic marketplace entry pathway. The Full VALU Index is a separate assessment for official points and a merit tier.'
                 : 'Start with the VALU taster. Completing it can qualify you for Basic marketplace access. The Full VALU Index is a separate assessment for official points and a merit tier.'}
           </p>
-          {!tasterCompleted && <a href="/valu/assessment/" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
+          {!tasterCompleted && <AssessmentStartLink href="/valu/assessment/" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
             {tasterStarted ? 'CONTINUE THE VALU TASTER →' : 'START THE VALU TASTER →'}
-          </a>}
+          </AssessmentStartLink>}
         </div>
       )}
 
