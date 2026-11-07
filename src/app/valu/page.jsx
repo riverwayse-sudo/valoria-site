@@ -1,14 +1,14 @@
-import Nav from '@/components/Nav'
+import Nav, { AssessmentStartLink } from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { BRAND, PRIME_CLUSTERS } from '@/lib/brand'
 
 export const metadata = {
-  title: 'VALU Index',
-  description: 'Start with the VALU taster, then continue with the VALU Index to understand your professional capability in points.',
+  title: 'VALU Index | Valoria Institute',
+  description: 'Understand your professional capability through the VALU Index and the five dimensions of PRIME.',
   alternates: { canonical: 'https://valoriainstitute.com/valu' },
 }
 
-const dimensions = PRIME_CLUSTERS.map(({ letter, name, description, skills }) => [letter, name, description, skills])
+const dimensions = PRIME_CLUSTERS
 
 export default function ValuPage() {
   return <>
@@ -17,52 +17,51 @@ export default function ValuPage() {
       <section className="valu-hero">
         <div className="valu-wrap">
           <div className="valu-kicker"><span /> THE VALU INDEX</div>
-          <h1>Know where you stand,<br /><em>in points.</em></h1>
-          <p className="valu-lede">Begin with the VALU taster. If you choose to continue, complete the VALU Index. It measures capability across the five PRIME clusters and reports your results in points.</p>
+          <h1>Make your capability<br /><em>visible and actionable.</em></h1>
+          <p className="valu-lede">The VALU Index gives professionals a structured view of capability across the 17 skills in PRIME. Register your details first, complete a guided snapshot, then create your Valoria account when you are ready to continue to the full assessment and establish your official VALU Index in points.</p>
           <div className="valu-actions">
-            <a href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">TAKE THE VALU TASTER <span>→</span></a>
-            <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW IT WORKS <span>↓</span></a>
+            <AssessmentStartLink href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">START THE VALU TASTER <span>→</span></AssessmentStartLink>
+            <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW VALU SUPPORTS YOUR GROWTH <span>↓</span></a>
           </div>
-          <div className="valu-meta"><span>VALU TASTER</span><i>·</i><span>FULL VALU INDEX</span><i>·</i><span>POINTS-BASED</span></div>
+          <div className="valu-meta"><span>VALU TASTER</span><i>·</i><span>FULL ASSESSMENT</span><i>·</i><span>5 PRIME DIMENSIONS</span></div>
         </div>
       </section>
 
       <section className="valu-intro" id="how-it-works">
         <div className="valu-wrap valu-two">
           <div><div className="valu-kicker valu-dark"><span /> WHY VALU</div><h2>Professional capability is bigger than a job title.</h2></div>
-          <div><p>Experience tells part of the story. The VALU Index creates a structured view of how your capability shows up across the five PRIME clusters. The taster is a first step; the full assessment establishes your official VALU Index.</p><p>You do not need a perfect score to begin. The taster helps you decide whether to continue. Your full assessment produces a points score, a designation and a professional profile that remains valid for 12 months.</p></div>
+          <div><p>Experience tells part of the story. The VALU Index creates a structured way to understand how you currently show up across the professional dimensions that influence development, visibility and opportunity.</p><p>It connects professional assessment to a practical next step: build a credible record, strengthen your capabilities and become discoverable for relevant opportunities.</p></div>
         </div>
       </section>
 
       <section className="valu-process">
         <div className="valu-wrap">
-          <div className="valu-kicker"><span /> THE JOURNEY</div>
-          <h2>Four steps from<br /><em>assessment to opportunity.</em></h2>
+          <div className="valu-kicker"><span /> A CLEAR PROFESSIONAL STARTING POINT</div>
+          <h2>A clear starting point.<br /><em>A fuller professional picture.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Take the taster</h3><p>Complete the VALU taster with no account required. It gives a first read on professional capability.</p></article>
-            <article><b>02</b><h3>Create your account</h3><p>Choose to continue, create your Valoria account and confirm your email. Your responses are saved as you go.</p></article>
-            <article><b>03</b><h3>Complete the full assessment</h3><p>Complete the VALU Index. It takes about 15 to 20 minutes, and your progress is saved.</p></article>
-            <article><b>04</b><h3>Build your profile and get found</h3><p>Complete your professional profile and choose public visibility. Discoverability follows consent, verification and the applicable listing rules.</p></article>
+            <article><b>01</b><h3>Register your details</h3><p>Share your name, email and professional context first. This creates the record that keeps your snapshot and Valoria follow-up connected. It is not your Valoria account.</p></article>
+            <article><b>02</b><h3>Complete your guided snapshot</h3><p>Begin with a free, guided view of your professional capability. Your responses are saved against your registration so you can return without losing your place.</p></article>
+            <article><b>03</b><h3>Create your Valoria account</h3><p>When you choose to continue, secure your account, confirm your email and enter your dashboard. Your registration and snapshot remain connected.</p></article>
+            <article><b>04</b><h3>Complete the full assessment</h3><p>The formal assessment covers all 17 PRIME skills. Completion establishes your official VALU Index in points and your earned designation. Results remain valid for 12 months.</p></article>
           </div>
         </div>
       </section>
 
       <section className="valu-prime">
         <div className="valu-wrap">
-          <div className="valu-prime-head"><div><div className="valu-kicker"><span /> THE PRIME FRAMEWORK</div><h2>Five dimensions.<br /><em>One professional picture.</em></h2></div><p>PRIME provides the framework through which Valoria interprets professional readiness and development.</p></div>
-          <div className="valu-dimensions">{dimensions.map(([letter,title,text,skills]) => <article key={letter}><div className="valu-letter">{letter}</div><h3>{title}</h3><p>{text}</p><ul className="valu-skill-list">{skills.map(skill => <li key={skill}>{skill}{['AI Fluency','Human-AI Collaboration'].includes(skill) && <sup aria-label="Future-Ready skill"> ★</sup>}</li>)}</ul></article>)}</div>
-          <p className="valu-future-ready-note">★ Future-Ready skill — critical for the professional talent market of 2025 to 2035.</p>
+          <div className="valu-prime-head"><div><div className="valu-kicker"><span /> THE PRIME FRAMEWORK</div><h2>Five dimensions.<br /><em>One professional picture.</em></h2></div><p>PRIME provides the framework through which Valoria interprets professional readiness, capability and development.</p></div>
+          <div className="valu-dimensions">{dimensions.map((cluster) => <article key={cluster.letter}><div className="valu-letter">{cluster.letter}</div><h3>{cluster.name}</h3><p>{cluster.subtitle}</p><p><strong>Skills:</strong> {cluster.skills.join(' · ')}</p></article>)}</div>
         </div>
       </section>
 
       <section className="valu-outcome">
         <div className="valu-wrap valu-outcome-grid">
-          <div><div className="valu-kicker valu-dark"><span /> WHAT YOU DO NEXT</div><h2>Your result is a starting point, not a label.</h2></div>
-          <div><p>The taster offers an initial directional read. The VALU Index establishes your official result in points across five PRIME clusters.</p><p>The full assessment produces your official VALU Index in points, a designation and a profile valid for 12 months. The VALU Index is not a badge you buy, a subscription tier or a score that repeated attempts can inflate. A lower score points to a development pathway; it does not block access to the platform.</p><a href={BRAND.assessmentUrl} className="valu-inline">TAKE THE VALU TASTER →</a></div>
+          <div><div className="valu-kicker valu-dark"><span /> WHAT THE FULL ASSESSMENT ADDS</div><h2>Move from a directional snapshot to an official professional record.</h2></div>
+          <div><p>The taster offers an initial perspective on your professional capability. Your official VALU Index is established when you complete the assessment journey.</p><p>The formal assessment covers all 17 PRIME skills across Presence, Relationships, Intelligence, Mastery and Enterprise. It establishes your official VALU Index and PRIME results in points, with a 12-month validity period. Your professional profile and marketplace access then reflect your completed assessment and the applicable eligibility requirements.</p><AssessmentStartLink href={BRAND.assessmentUrl} className="valu-inline">START THE VALU TASTER →</AssessmentStartLink></div>
         </div>
       </section>
 
-      <section className="valu-final"><div className="valu-wrap"><div className="valu-kicker"><span /> WORTH, BUILT.</div><h2>Start by understanding<br /><em>where you stand.</em></h2><a href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">TAKE THE VALU TASTER <span>→</span></a></div></section>
+      <section className="valu-final"><div className="valu-wrap"><div className="valu-kicker"><span /> {BRAND.tagline.toUpperCase()}</div><h2>Start with a clearer view<br /><em>of your capability.</em></h2><AssessmentStartLink href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">START THE VALU TASTER <span>→</span></AssessmentStartLink></div></section>
     </main>
     <Footer />
   </>
