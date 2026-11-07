@@ -46,7 +46,7 @@ export default function ValuStartPage() {
               </div>
               <div className="vs-proof"><span>A QUICK START</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
             </div>
-            <div className="vs-score" style={{ borderRadius: "22px", overflow: "hidden", minWidth: 0 }} aria-label="Illustrative VALU Index result">
+            <div className="vs-score" style={{ borderRadius: "22px", overflow: "hidden", minWidth: 0 }} aria-label="Illustrative VALU taster directional snapshot">
               <div className="vs-score-top"><span>VALU TASTER</span><span>SNAPSHOT</span></div>
               <div className="vs-ring"><strong>5</strong><small>DIMENSIONS</small></div>
               <div className="vs-bars">{dimensions.map(([letter, title], i) => <div key={letter} className="vs-bar"><span>{letter}</span><div><i className={`vs-bar-fill score-${i + 1}`} /></div><b>{title}</b></div>)}</div>
