@@ -125,7 +125,8 @@ if (!page.includes('ParallaxController')) add('Homepage: parallax controller mus
 if (!parallaxController.includes("prefers-reduced-motion: reduce") ||
     !parallaxController.includes('requestAnimationFrame') ||
     !parallaxController.includes('IntersectionObserver') ||
-    !parallaxController.includes('MAX_PARALLAX_OFFSET')) {
+    !parallaxController.includes('MAX_PARALLAX_OFFSET') ||
+    !parallaxController.includes('previousOffset')) {
   add('ParallaxController must respect reduced motion, schedule scroll work, observe visible layers and cap displacement');
 }
 if (!motion.includes('[data-parallax-speed]') || !motion.includes('prefers-reduced-motion: reduce')) {
