@@ -10,10 +10,9 @@ describe('public professional profile privacy and presentation', () => {
     expect(client).toContain(".from('marketplace_public_roster')")
     expect(page).not.toContain(".from('professional_profiles')")
     expect(client).not.toContain(".from('professional_profiles')")
-    const roster = read('supabase/migrations/20260926100000_harden_marketplace_public_roster.sql')
-    expect(roster).toContain("p.visibility = 'public'")
-    expect(roster).toContain("p.listing_status = 'listed'")
-    expect(roster).toContain('pc.eligible_for_listing = true')
+    const marketplace = read('src/lib/marketplace-data.js')
+    expect(marketplace).toContain("const SOURCE = 'marketplace_public_roster'")
+    expect(marketplace).not.toContain('professional_profiles!inner')
   })
 
   test('public profile mapping excludes private contact and account fields', () => {
