@@ -116,6 +116,30 @@ for (const token of spacingTokens) if (!homeCss.includes(token)) add(`src/app/ho
 if (!/\.home-redesign-root\s*>\s*section:not\(\.hero\)/.test(homeCss)) add('src/app/home.css: major homepage sections must inherit the canonical section-spacing rule');
 if (!/\.home-redesign-root\s+\.container\s*\{/.test(homeCss)) add('src/app/home.css: homepage container contract is missing');
 
+const leftAlignment = existing.find((x) => x.file === 'src/styles/left-alignment.css')?.text || '';
+if (!leftAlignment.includes('body *') || !leftAlignment.includes('text-align: left !important') ||
+    !leftAlignment.includes('[role="menu"]') || !leftAlignment.includes('[data-radix-popper-content-wrapper]')) {
+  add('src/styles/left-alignment.css: site-wide and portalled-dropdown left-alignment contract is required');
+}
+
+const opportunityValidation = existing.find((x) => x.file === 'src/lib/opportunityValidation.js')?.text || '';
+if (!opportunityValidation.includes('new URL(raw)') || !opportunityValidation.includes("['http:', 'https:']") ||
+    !opportunityValidation.includes('normalizeClosingDate') || !opportunityValidation.includes('isSubmissionKey')) {
+  add('opportunityValidation.js: validate application destinations, deadlines and idempotency keys on the server');
+}
+const employerApi = existing.find((x) => x.file === 'src/app/api/opportunities/route.js')?.text || '';
+const adminApi = existing.find((x) => x.file === 'src/app/api/admin/opportunities/create/route.js')?.text || '';
+const opportunityDetail = existing.find((x) => x.file === 'src/app/opportunities/[slug]/page.jsx')?.text || '';
+if (!employerApi.includes('create_employer_opportunity_submission') || !employerApi.includes('p_submission_key')) {
+  add('Employer opportunity API must use the atomic idempotent database submission RPC');
+}
+if (!adminApi.includes('create_admin_opportunity') || !adminApi.includes('p_submission_key')) {
+  add('Valoria administrator publishing API must use the atomic idempotent database publishing RPC');
+}
+if (!opportunityDetail.includes('safeApplicationUrl') || !opportunityDetail.includes("['http:', 'https:']")) {
+  add('Opportunity detail pages must reject unsafe external application destinations');
+}
+
 const negativeMargin = existing.filter(({ file, text }) => homepageFiles.includes(file) && /margin(?:-(?:top|right|bottom|left))?\s*:\s*-\\d/.test(text));
 for (const { file } of negativeMargin) add(`${file}: negative margin detected; justify or remove before production`);
 
