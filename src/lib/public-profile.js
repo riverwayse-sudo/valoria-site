@@ -57,9 +57,9 @@ async function hasCompletedTaster(admin, professionalId) {
 }
 
 function hasBasicPublicIdentity(profile, roster = {}) {
-  const displayName = profile.display_name || roster.full_name
-  const headline = profile.headline || profile.current_job_title || roster.headline || roster.current_job_title
-  return Boolean(displayName?.trim() && headline?.trim())
+  const displayName = profile.display_name?.trim() || roster.full_name?.trim()
+  const headline = profile.headline?.trim() || profile.current_job_title?.trim() || roster.headline?.trim() || roster.current_job_title?.trim()
+  return Boolean(displayName && headline)
 }
 
 export async function getConsentVerifiedPublicProfile(identifier, field = 'id') {
