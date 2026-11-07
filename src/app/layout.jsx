@@ -11,6 +11,7 @@ import '../styles/left-alignment.css'
 import Script from 'next/script'
 import ValuCompletionNudge from '../components/ValuCompletionNudge'
 import MarketingInstrumentation from '../components/MarketingInstrumentation'
+import ParallaxController from '../components/ParallaxController'
 
 const SITE_URL = 'https://valoriainstitute.com'
 const SITE_NAME = 'Valoria Institute'
