@@ -52,8 +52,9 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain('selected_capabilities')
     expect(data).toContain('selectedCapabilities: []')
     expect(data).toContain('target.selectedCapabilities')
-    expect(directory).toContain('Array.isArray(p.selectedCapabilities)')
-    expect(directory).toContain('Array.isArray(p.selected_capabilities)')
+    expect(directory).toContain('function getSelectedCapabilities(profile)')
+    expect(directory).toContain('Array.isArray(profile.selectedCapabilities)')
+    expect(directory).toContain('Array.isArray(profile.selected_capabilities)')
     expect(directory).toContain('selectedCaps.has')
     expect(directory).toContain('Selection status only; category listing eligibility is assessed separately')
     expect(directory).toContain('CAPABILITY SELECTION')
@@ -64,6 +65,17 @@ describe('VALUI marketplace lifecycle contract', () => {
     const categoryFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
     expect(categoryFilter).toContain('p.capabilities || p.tracks || [p.track]')
     expect(categoryFilter).not.toContain('selectedCapabilities')
+  })
+
+  test('marketplace discovery filters use consented PRIME, skill, sector and declared-role data', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    expect(directory).toContain('Filter by leading PRIME cluster')
+    expect(directory).toContain('Filter by professional skill')
+    expect(directory).toContain('Filter by sector')
+    expect(directory).toContain('Filter by declared role')
+    expect(directory).toContain('getLeadingCluster(p)')
+    expect(directory).toContain('labelValues(p.skills)')
+    expect(directory).toContain('getSelectedCapabilities(p)')
   })
 
   test('open marketplace directories refresh server-rendered counts automatically', () => {
