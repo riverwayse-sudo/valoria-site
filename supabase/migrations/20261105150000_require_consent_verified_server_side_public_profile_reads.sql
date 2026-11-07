@@ -15,13 +15,16 @@ stable
 security definer
 set search_path = pg_catalog
 as $$
-  select exists (
-    select 1
+  select coalesce((
+    select acknowledgement.acknowledgement_version = 'public-profile-visibility-v3-2026-11-07'
     from public.professional_profile_acknowledgements acknowledgement
     where acknowledgement.professional_id = p_professional_id
       and acknowledgement.acknowledgement_type = 'profile_submission'
-      and acknowledgement.acknowledgement_version = 'public-profile-visibility-v3-2026-11-07'
-  );
+    order by acknowledgement.acknowledged_at desc nulls last,
+             acknowledgement.created_at desc,
+             acknowledgement.id desc
+    limit 1
+  ), false);
 $$;
 
 revoke all on function private.has_public_profile_consent(uuid) from public;
@@ -189,13 +192,70 @@ create policy certificates_public_verified_read
   );
 
 
--- The old public homepage RPCs are invoker functions over the roster table.
--- The site now builds its homepage directory through the consent-verified
--- server-side projection above. Disable the legacy anonymous RPC surface so
--- callers cannot bypass the consent gate or rely on the revoked table grant.
-revoke execute on function public.get_homepage_professional_previews() from public, anon, authenticated;
-revoke execute on function public.get_homepage_professional_previews_v2() from public, anon, authenticated;
-revoke execute on function public.get_homepage_professional_count() from public, anon, authenticated;
+-- Keep the legacy homepage count RPC available, but return only consented,
+-- eligible public profiles. The homepage preview RPC intentionally returns Full
+-- profiles only; the current site directory renders Basic and Full via its
+-- consent-verified server-side projection.
+create or replace function public.get_homepage_professional_count()
+returns bigint
+language sql
+stable
+security definer
+set search_path = pg_catalog
+as $
+  select count(distinct roster.professional_id)::bigint
+  from public.marketplace_public_roster roster
+  join public.professional_profiles profile
+    on profile.id = roster.professional_id
+  where profile.is_test is false
+    and profile.visibility = 'public'
+    and profile.listing_status = 'listed'
+    and private.has_public_profile_consent(profile.id)
+    and private.is_public_profile_eligible(profile.id);
+$;
+
+create or replace function public.get_homepage_professional_previews_v2()
+returns table(
+  id uuid,
+  atb_id text,
+  display_initials text,
+  headline text,
+  assessment_summary text,
+  photo_url text,
+  active_tracks text[],
+  valu_index integer,
+  listing_track text
+)
+language sql
+stable
+security definer
+set search_path = pg_catalog
+as $
+  select roster.professional_id,
+         roster.atb_id,
+         roster.display_initials,
+         roster.headline,
+         roster.assessment_summary,
+         roster.photo_url,
+         roster.selected_capabilities,
+         roster.valu_index,
+         roster.track
+  from public.marketplace_public_roster roster
+  join public.professional_profiles profile
+    on profile.id = roster.professional_id
+  where profile.is_test is false
+    and profile.visibility = 'public'
+    and profile.listing_status = 'listed'
+    and roster.assessment_access = 'full'
+    and private.has_public_profile_consent(profile.id)
+    and private.is_public_profile_eligible(profile.id)
+  order by roster.valu_index desc nulls last, roster.atb_id
+  limit 24;
+$;
+
+revoke all on function public.get_homepage_professional_count() from public;
+revoke all on function public.get_homepage_professional_previews_v2() from public;
+revoke all on function public.get_homepage_professional_previews() from public;
+grant execute on function public.get_homepage_professional_count() to anon, authenticated, service_role;
+grant execute on function public.get_homepage_professional_previews_v2() to anon, authenticated, service_role;
 grant execute on function public.get_homepage_professional_previews() to service_role;
-grant execute on function public.get_homepage_professional_previews_v2() to service_role;
-grant execute on function public.get_homepage_professional_count() to service_role;
