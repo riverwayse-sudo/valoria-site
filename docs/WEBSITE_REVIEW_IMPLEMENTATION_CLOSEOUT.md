@@ -67,13 +67,13 @@ Public website copy deliberately avoids assessment question counts and validity-
 ## 5. Decisions required from Valoria
 
 1. Confirm the legal entity name used in the footer, About page, Terms, Privacy and contracts.
-2. Approve the adapted About mission wording.
-3. Confirm the public name and role for the Session 03 replay speaker/host.
-4. Confirm Develop pricing and any certification claims.
-5. Confirm the 17-versus-18 skill interpretation and taster skill coverage.
-6. Approve a public seniority taxonomy before a seniority filter is introduced.
-7. Confirm initial opportunity categories, buyer launch scope, commercial model and opportunity operations.
-8. Confirm evidence and review standards for speakers and facilitators.
+2. Approve the adapted About mission wording.\n3. Confirm the current registered brand punctuation: the October developer brief says “Worth, Built.” per Brand Guidelines v4, while the April master brand PDF supplied in the library says “Worth. Built.” The later comma version has been applied; the referenced v4 master was not available in the library for direct verification.
+4. Confirm the public name and role for the Session 03 replay speaker/host.
+5. Confirm Develop pricing and any certification claims.
+6. Confirm the 17-versus-18 skill interpretation and taster skill coverage.
+7. Approve a public seniority taxonomy before a seniority filter is introduced.
+8. Confirm initial opportunity categories, buyer launch scope, commercial model and opportunity operations.
+9. Confirm evidence and review standards for speakers and facilitators.
 
 ## 6. Repositories and release references
 
