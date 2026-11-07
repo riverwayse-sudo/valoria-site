@@ -1,0 +1,63 @@
+const fs = require('fs')
+const path = require('path')
+
+function read(relative) {
+  return fs.readFileSync(path.join(process.cwd(), relative), 'utf8')
+}
+
+describe('Valoria SEO and discovery foundation', () => {
+  test('Knowledge Hub pages exist and use canonical metadata', () => {
+    const pages = [
+      ['src/app/knowledge/page.jsx', '/knowledge'],
+      ['src/app/knowledge/valu-index/page.jsx', '/knowledge/valu-index'],
+      ['src/app/knowledge/prime-framework/page.jsx', '/knowledge/prime-framework'],
+      ['src/app/knowledge/professional-capability/page.jsx', '/knowledge/professional-capability'],
+    ]
+    for (const [file, canonical] of pages) {
+      const source = read(file)
+      expect(source).toContain(`canonical: 'https://valoriainstitute.com${canonical}'`)
+    }
+  })
+
+  test('profile indexing and metadata use only the consented public roster', () => {
+    const layout = read('src/app/profile/[id]/layout.jsx')
+    expect(layout).toContain(".from('marketplace_public_roster')")
+    expect(layout).toContain('isPublicProfileContentReady(profile)')
+    expect(layout).not.toContain(".from('professional_profiles')")
+    expect(layout).toContain('robots: { index: false, follow: true }')
+    expect(layout).toContain('openGraph:')
+  })
+
+  test('public profile and marketplace pages expose appropriate structured data', () => {
+    const profile = read('src/app/profile/[id]/page.jsx')
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    expect(profile).toContain("'@type': 'ProfilePage'")
+    expect(profile).toContain("'@type': 'Person'")
+    expect(directory).toContain("'@type': 'ItemList'")
+    expect(directory).toContain("'@type': 'ListItem'")
+  })
+
+  test('root layout publishes Organization and WebSite entities', () => {
+    const layout = read('src/app/layout.jsx')
+    expect(layout).toContain('organizationSchema')
+    expect(layout).toContain('websiteSchema')
+    expect(layout).toContain("'@type': 'WebSite'")
+  })
+
+  test('machine-readable reference uses current PRIME and VALU decisions', () => {
+    const llms = read('public/llms.txt')
+    expect(llms).toContain('17 skills')
+    expect(llms).toContain('AI Fluency')
+    expect(llms).toContain('Human-AI Collaboration')
+    expect(llms).toContain('points, not percentages')
+    expect(llms).not.toMatch(/15[- ]question|54[- ]question/i)
+    expect(llms).not.toContain('Composure Under Scrutiny')
+    expect(llms).not.toContain('Systems Building')
+  })
+
+  test('navigation and footer no longer point to the nonexistent jobs route', () => {
+    expect(read('src/config/navigation.js')).not.toContain("href: '/jobs'")
+    expect(read('src/components/Footer.jsx')).not.toContain('href="/jobs"')
+    expect(read('src/app/sitemap.js')).not.toContain("path: '/jobs'")
+  })
+})
