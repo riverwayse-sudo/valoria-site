@@ -313,3 +313,24 @@
   .events-page .poster-bottom{grid-template-columns:1fr;gap:16px}
   .events-page .poster-details{border-left:0;border-top:1px solid rgba(247,244,238,.2);padding:16px 0 0}
 }
+
+
+/* About page follows the same left-aligned institutional editorial grid. */
+.about-page,
+.about-page :where(h1,h2,h3,h4,p,span,small,strong,a,button,li,label) {
+  text-align: left !important;
+}
+
+.about-page .page-hero-actions {
+  justify-content: flex-start;
+}
+
+.about-page .page-sub {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.about-page .about-principles-grid > *,
+.about-page .about-timeline-row {
+  text-align: left;
+}
