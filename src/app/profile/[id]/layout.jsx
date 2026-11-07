@@ -1,3 +1,4 @@
+import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 import { PUBLIC_PROFILE_SELECT } from '@/lib/public-profile'
 import { isPublicProfileContentReady } from '@/lib/marketplace-data'
