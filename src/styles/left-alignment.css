@@ -1,0 +1,33 @@
+/*
+ * Valoria site-wide alignment contract.
+ * The entire public experience—including page content, navigation, forms,
+ * cards, buttons and portalled dropdowns—uses left-aligned text. !important is
+ * intentional: it overrides legacy inline text-align declarations.
+ */
+html,
+body,
+body * {
+  text-align: left !important;
+}
+
+/* Keep menus aligned even when a component library portals them to body. */
+body [role="menu"],
+body [role="listbox"],
+body [data-radix-popper-content-wrapper],
+body .dropdown-menu,
+body .dropdown-content,
+body .nav-dropdown,
+body [data-dropdown-menu],
+body [data-state="open"][data-side] {
+  text-align: left !important;
+}
+
+body [role="menu"] *,
+body [role="listbox"] *,
+body [data-radix-popper-content-wrapper] *,
+body .dropdown-menu *,
+body .dropdown-content *,
+body .nav-dropdown *,
+body [data-dropdown-menu] * {
+  text-align: left !important;
+}
