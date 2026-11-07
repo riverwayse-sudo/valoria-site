@@ -28,7 +28,7 @@ export default function ValuKnowledgePage() {
         {TIER_DESIGNATIONS.map(tier => (
           <article className="card-gold programme-card" key={tier.name}>
             <h3 className="cluster-name">{tier.name}</h3>
-            <p className="programme-label">{tier.min === 0 ? 'Below 35 points' : \`\${tier.min}–\${tier.max} points\`}</p>
+            <p className="programme-label">{tier.min === 0 ? 'Below 35 points' : tier.min + '–' + tier.max + ' points'}</p>
             <p className="cluster-desc">{tier.description}</p>
           </article>
         ))}
