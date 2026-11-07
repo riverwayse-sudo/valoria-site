@@ -50,5 +50,6 @@ describe('main website left-alignment contract', () => {
     expect(css).toContain('html body .session-series-primary')
     expect(css).toContain('html body .session-series-secondary')
     expect(css).toContain('justify-content: flex-start !important')
+    expect(css).toContain('@media (prefers-reduced-motion: reduce)')
   })
 })
