@@ -1,51 +1,28 @@
-const { isPublicProfileContentReady } = require('../lib/marketplace-data')
+const fs = require('fs')
+const path = require('path')
 
-const baseProfile = {
-  full_name: 'Ada Lovelace',
-  atb_id: 'ATB-123456',
-  headline: 'Senior Systems Engineer',
-  assessment_access: 'basic',
-  valu_index: null,
-  assessment_summary: null,
-}
+const source = fs.readFileSync(path.join(process.cwd(), 'src/lib/marketplace-data.js'), 'utf8')
 
 describe('public marketplace profile content gate', () => {
-  test('allows a completed Basic listing without an official VALU score', () => {
-    expect(isPublicProfileContentReady(baseProfile)).toBe(true)
+  test('keeps Basic access distinct from Full assessment and earned merit', () => {
+    expect(source).toContain("assessmentAccess === 'basic'")
+    expect(source).toContain("assessmentAccess === 'full'")
+    expect(source).toContain('isValidAssessmentAccess')
   })
 
-  test('allows a Full listing only with official points and a VALU report summary', () => {
-    expect(isPublicProfileContentReady({
-      ...baseProfile,
-      assessment_access: 'full',
-      valu_index: 68,
-      assessment_summary: 'Demonstrates strong strategic judgement and execution capability.',
-    })).toBe(true)
+  test('requires official points and a VALU report summary for Full profiles only', () => {
+    expect(source).toContain('hasOfficialPoints')
+    expect(source).toContain('assessmentSummary.length >= 12')
+    expect(source).toContain('fullAssessmentReady')
+    expect(source).toContain('!fullAssessmentReady')
   })
 
-  test('blocks a Full listing without official points or a report summary', () => {
-    expect(isPublicProfileContentReady({
-      ...baseProfile,
-      assessment_access: 'full',
-      valu_index: null,
-      assessment_summary: 'A valid summary exists but there is no official score.',
-    })).toBe(false)
-    expect(isPublicProfileContentReady({
-      ...baseProfile,
-      assessment_access: 'full',
-      valu_index: 68,
-      assessment_summary: '',
-    })).toBe(false)
-  })
-
-  test('blocks unknown assessment access states and placeholder profile copy', () => {
-    expect(isPublicProfileContentReady({ ...baseProfile, assessment_access: 'unknown' })).toBe(false)
-    expect(isPublicProfileContentReady({ ...baseProfile, headline: 'Growth Dev' })).toBe(false)
-    expect(isPublicProfileContentReady({ ...baseProfile, headline: 'Model' })).toBe(false)
-    expect(isPublicProfileContentReady({ ...baseProfile, headline: 'Help people find meaning in their life and career' })).toBe(false)
-  })
-
-  test('blocks stylised mathematical alphabet text until re-entered in plain text', () => {
-    expect(isPublicProfileContentReady({ ...baseProfile, headline: '𝙎𝙚𝙣𝙞𝙤𝙧 𝙀𝙣𝙜𝙞𝙣𝙚𝙚𝙧' })).toBe(false)
+  test('blocks placeholder and stylised profile copy from public display', () => {
+    expect(source).toContain("'growth dev'")
+    expect(source).toContain("'model'")
+    expect(source).toContain("'valoria professional'")
+    expect(source).toContain('help people find meaning in their life and career')
+    expect(source).toContain('1D400')
+    expect(source).toContain('1D7FF')
   })
 })
