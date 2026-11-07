@@ -45,7 +45,7 @@ const sections = [
   },
   {
     title: '8. Cookies and tracking',
-    body: `The site uses authentication/session technologies, including cookies and browser storage, to maintain sign-in and support platform functionality. The marketing site also loads Google Analytics for usage and conversion measurement. A Meta Pixel may load when its site configuration is enabled. These measurement tools may use cookies or similar technologies and may receive information such as page views, device/browser details, referring pages and interactions with site features.`,
+    body: `The site uses authentication/session technologies, including cookies and browser storage, to maintain sign-in and support platform functionality. The marketing site also loads Google Analytics for usage and conversion measurement. A Meta Pixel may load when its site configuration is enabled. Embedded event/replay videos connect to YouTube when played. These services may use cookies or similar technologies and may receive information such as page views, device/browser details, referring pages, playback activity and interactions with site features.`,
   },
   {
     title: '9. Data security',
