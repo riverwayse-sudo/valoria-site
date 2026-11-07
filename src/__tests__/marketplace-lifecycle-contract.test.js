@@ -558,6 +558,22 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(endpoint).toContain(".not('completed_at', 'is', null)")
   })
 
+  test('guest programme and buyer enquiries enter the admin enquiry workflow', () => {
+    const contact = read('src/app/contact-us/ContactForm.jsx')
+    const api = read('src/app/api/enquiries/route.js')
+    const admin = read('src/app/admin/page.jsx')
+    expect(contact).toContain("fetch('/api/enquiries'")
+    expect(contact).toContain('Team / audience:')
+    expect(contact).toContain('PRIME cluster(s):')
+    expect(contact).toContain('Timeline:')
+    expect(contact).not.toContain("from('messages')")
+    expect(api).toContain("'training', 'general'")
+    expect(api).toContain('getConsentVerifiedPublicProfile')
+    expect(api).toContain('buyerUserId = authData.user.id')
+    expect(admin).toContain("m.enquiry_type === 'training' ? 'Valoria Develop'")
+    expect(admin).toContain('m.professional_profile_id && m.status')
+  })
+
   test('taster-linked Full assessments retain Full tier while taster-only accounts remain Basic', () => {
     const tierMigration = read('supabase/migrations/20261107082952_separate_full_assessment_tier_from_listing_readiness.sql')
     const recoveryMigration = read('supabase/migrations/20261107082645_preserve_existing_profile_completeness_on_taster_link.sql')
