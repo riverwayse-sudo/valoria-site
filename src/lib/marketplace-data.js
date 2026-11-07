@@ -47,6 +47,10 @@ function dedupeProfessionals(rows) {
     if (!map.has(row.professional_id)) {
       map.set(row.professional_id, {
         ...row,
+        full_name: normalizePublicDisplayText(row.full_name),
+        display_initials: normalizePublicDisplayText(row.display_initials),
+        headline: normalizePublicDisplayText(row.headline),
+        current_job_title: normalizePublicDisplayText(row.current_job_title),
         id: row.professional_id,
         capabilities: [],
         tracks: [],
