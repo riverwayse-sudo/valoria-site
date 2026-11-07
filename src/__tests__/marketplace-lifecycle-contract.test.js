@@ -504,7 +504,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     const helper = read('src/lib/public-profile.js')
     const directory = read('src/lib/marketplace-data.js')
     expect(helper).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
-    expect(helper).toContain('consent.acknowledgement_version')
+    expect(helper).toContain('acknowledgement.acknowledgement_version')
     expect(helper).toContain('hasCompletedTaster')
     expect(directory).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
     expect(directory).toContain('consentedIds.has(profile.id)')
