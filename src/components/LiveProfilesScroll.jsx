@@ -61,11 +61,11 @@ export default async function LiveProfilesScroll() {
   const discoverableCount = count !== null && count <= 24 && count === unique.length ? count : null
 
   return (
-    <section className="live-profiles" aria-labelledby="registry-title">
+    <section className="live-profiles" aria-labelledby="marketplace-title">
       <div className="live-profiles-shell">
         <div className="live-profiles-copy">
           <div className="live-profiles-kicker">{unique.length > 0 ? 'THE VALORIA MARKETPLACE · LIVE' : 'THE VALORIA MARKETPLACE'}</div>
-          <h2 id="registry-title" className="live-profiles-title">
+          <h2 id="marketplace-title" className="live-profiles-title">
             {unique.length > 0 ? <>See who is already <em>discoverable.</em></> : <>Professional capability, <em>made discoverable.</em></>}
           </h2>
           <p className="live-profiles-subtitle">
@@ -74,7 +74,7 @@ export default async function LiveProfilesScroll() {
               : 'A capability-led marketplace for employers, event organisers and training buyers to discover professional expertise.'}
           </p>
           {discoverableCount > 0 && unique.length > 0 && (
-            <div className="live-profiles-proof" aria-label="Registry summary">
+            <div className="live-profiles-proof" aria-label="Marketplace summary">
               <strong>{discoverableCount}</strong>
               <span>professionals currently discoverable</span>
             </div>
