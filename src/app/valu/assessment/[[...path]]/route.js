@@ -22,6 +22,7 @@ function getAssessmentOrigin() {
   }
 }
 
+// Use the bound assessment Worker for same-account traffic; public workers.dev subrequests can be rejected by Cloudflare.
 async function proxyAssessment(request) {
   const origin = getAssessmentOrigin()
   if (!origin) {
