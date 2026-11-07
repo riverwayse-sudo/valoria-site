@@ -1,5 +1,7 @@
 'use client'
 
+// Staging deployment marker: connect the jobs board to the isolated live opportunity API.
+
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import Nav from '@/components/Nav'
