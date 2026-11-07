@@ -51,12 +51,13 @@ export default function PrimePage() {
                     <div className="prime-subtitle">{cluster.subtitle}</div>
                     <p className="prime-body">{cluster.description}</p>
                     <ul className="prime-signals">
-                      {cluster.skills.map(skill => <li key={skill} className="prime-signal"><span className="prime-signal-mark">✦</span>{skill}</li>)}
+                      {cluster.skills.map(skill => <li key={skill} className="prime-signal"><span className="prime-signal-mark">✦</span>{skill}{['AI Fluency','Human-AI Collaboration'].includes(skill) && <sup aria-label="Future-Ready skill"> ★</sup>}</li>)}
                     </ul>
                   </div>
                 </article>
               </Reveal>
             ))}
+            <p className="prime-copy">★ Future-Ready skill — critical for the professional talent market of 2025 to 2035.</p>
           </div>
         </section>
         <section className="page-section alt">
