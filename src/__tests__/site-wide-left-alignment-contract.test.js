@@ -10,7 +10,7 @@ describe('main website left-alignment contract', () => {
     const layout = read('src/app/layout.jsx')
     expect(layout).toContain("import '../styles/globals.css'")
     expect(layout).toContain('href="#site-content-start"')
-    expect(layout).toContain('id="site-content-start" tabIndex={-1}')
+    expect(layout).toContain('id="site-content-start" tabIndex={-1} role="region" aria-label="Main content"')
   })
 
   test('all page copy is left aligned across every route, including inline-styled elements', () => {
