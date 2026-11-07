@@ -126,7 +126,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
   if (!profile) return null
 
   if (roster.assessment_access === 'full') {
-    if (profile.profile_complete !== true || Number(profile.valu_index) < 35) return null
+    if (profile.profile_complete !== true || Number(profile.valu_index) < 35 || Number(roster.valu_index) !== Number(profile.valu_index)) return null
     const expiry = Date.parse(profile.assessment_expires_at || '')
     const profileCompletedAt = Date.parse(profile.assessment_completed_at || '')
     if (!Number.isFinite(expiry) || expiry <= Date.now() || !Number.isFinite(profileCompletedAt)) return null
@@ -316,7 +316,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
   return profiles.filter(profile => {
     const access = rosterById.get(profile.id)?.assessment_access
     const ready = access === 'full'
-      ? profile.profile_complete === true && Number(profile.valu_index) >= 35 && fullReadyIds.has(profile.id)
+      ? profile.profile_complete === true && Number(profile.valu_index) >= 35 && Number(rosterById.get(profile.id)?.valu_index) === Number(profile.valu_index) && fullReadyIds.has(profile.id)
       : access === 'basic'
         && tasterIds.has(profile.id)
         && hasBasicPublicIdentity(profile, rosterById.get(profile.id))
