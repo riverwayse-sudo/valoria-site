@@ -43,6 +43,9 @@ export async function POST(request) {
   }
 
   const user = authData.user
+  if (!user.email_confirmed_at) {
+    return NextResponse.json({ error: 'Confirm your email before linking a VALU assessment.' }, { status: 403 })
+  }
   const userEmail = String(user.email || '').trim().toLowerCase()
   if (!userEmail) {
     return NextResponse.json({ error: 'Your account has no verified email address.' }, { status: 403 })
