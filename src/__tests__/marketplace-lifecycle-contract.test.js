@@ -161,8 +161,9 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('required:false })')
     expect(source).toContain(".select('atb_id, listing_status, profile_complete')")
     expect(source).not.toContain('if (!row?.profile_complete)')
-    expect(source).toContain('assessment_access')
-    expect(source).toContain('basicEligible')
+    const consentRoute = read('src/app/api/profile/acknowledgements/route.js')
+    expect(consentRoute).toContain('basicEligible')
+    expect(consentRoute).toContain('fullEligible')
   })
 
   test('database keeps profile completeness separate from full-assessment and listing eligibility', () => {
@@ -305,8 +306,10 @@ describe('VALUI marketplace lifecycle contract', () => {
       expect(source).not.toContain('remaining 49')
     }
     expect(start).toContain('The taster gives you an initial directional read.')
-    expect(start).toContain('58-question VALU Index')
-    expect(prime).toContain('58 questions: 54 scored questions and four validity checks')
+    expect(start).toContain('TAKE THE VALU TASTER')
+    expect(prime).toContain('points-based capability profile')
+    expect(start).not.toMatch(/\\b(?:9|58)\\s+(?:question|questions)/i)
+    expect(prime).not.toMatch(/\\b(?:9|58)\\s+(?:question|questions)/i)
     expect(reminders).toContain('start or resume your VALU Index')
     expect(reminders).toContain('RETURN TO YOUR DASHBOARD')
   })
@@ -421,9 +424,10 @@ describe('VALUI marketplace lifecycle contract', () => {
 
   test('legacy anonymous homepage RPCs are disabled when the roster becomes server-only', () => {
     const migration = read('supabase/migrations/20261105150000_require_consent_verified_server_side_public_profile_reads.sql')
-    expect(migration).toContain('revoke execute on function public.get_homepage_professional_previews() from public, anon, authenticated')
-    expect(migration).toContain('revoke execute on function public.get_homepage_professional_previews_v2() from public, anon, authenticated')
-    expect(migration).toContain('revoke execute on function public.get_homepage_professional_count() from public, anon, authenticated')
+    expect(migration).toContain('security definer')
+    expect(migration).toContain('private.has_public_profile_consent(profile.id)')
+    expect(migration).toContain('private.is_public_profile_eligible(profile.id)')
+    expect(migration).toContain('revoke select on table public.marketplace_public_roster from anon, authenticated, public')
     expect(read('src/components/LiveProfilesScroll.jsx')).toContain('getMarketplaceDirectoryData')
   })
 
