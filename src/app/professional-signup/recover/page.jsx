@@ -84,7 +84,7 @@ export default function RecoverTasterPage() {
             <p style={{ fontSize: 13, lineHeight: 1.8, margin: '0 0 18px', color: 'rgba(247,244,238,.72)' }}>
               Sign in with this email address. Valoria will check for a saved taster that matches your confirmed account and profile name.
             </p>
-            <Link href="/login" style={{ display: 'inline-block', padding: '12px 20px', borderRadius: 999, background: GOLD, color: '#1A1A2E', fontSize: 11, fontWeight: 800, letterSpacing: '.08em', textDecoration: 'none' }}>SIGN IN TO RECONNECT</Link>
+            <Link href={`/login?claim_name=${encodeURIComponent(form.name.trim())}`} style={{ display: 'inline-block', padding: '12px 20px', borderRadius: 999, background: GOLD, color: '#1A1A2E', fontSize: 11, fontWeight: 800, letterSpacing: '.08em', textDecoration: 'none' }}>SIGN IN TO RECONNECT</Link>
           </div>
         ) : (
           <form onSubmit={submit} style={{ display: 'grid', gap: 14 }}>
