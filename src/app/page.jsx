@@ -123,7 +123,7 @@ export default function HomePage() {
 
       <section className="home-close">
         <div className="container">
-          <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">WORTH. BUILT.</span></div>
+          <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">WORTH, BUILT.</span></div>
           <h2>Capability deserves<br/><em>to be seen.</em></h2>
           <p>Start with the taster. Build your professional profile. Become discoverable when your profile meets the listing standard.</p>
           <a href={BRAND.assessmentUrl} className="btn-gold">TAKE THE VALU TASTER <span aria-hidden="true">→</span></a>
