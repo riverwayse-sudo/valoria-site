@@ -130,11 +130,21 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
                 <p>Public listings appear after a professional completes the required profile, chooses public visibility, records consent and meets the applicable listing requirements.</p>
                 <Link className={styles.view} href="/login?returnTo=%2Fprofile%2Fsetup">EXISTING PROFESSIONAL? REVIEW YOUR PROFILE →</Link>
               </div>
+            ) : rows.length === 0 && Number(counts?.all || 0) === 0 ? (
+              <div className={styles.empty}>
+                <strong>{activeTrack === 'candidate' ? 'ATB Connect is preparing its first public talent listings.' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'ATB Spotlight is preparing its first public event-professional listings.' : 'The public marketplace is being prepared.'}</strong>
+                <p>{activeTrack === 'candidate' ? 'Employers can request sourcing access now. Tell Valoria the roles, sectors and capability requirements your organisation needs.' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'Event organisers can share an event brief, audience, format and facilitation requirements with Valoria.' : 'Employers and event organisers can begin a conversation with Valoria while public profiles and opportunities are being prepared.'}</p>
+                <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
+                  <Link className={styles.view} href="/contact-us?type=candidate">REQUEST SOURCING ACCESS →</Link>
+                  <Link className={styles.view} href="/contact-us?type=speaker_booking">DISCUSS AN EVENT BRIEF →</Link>
+                </div>
+                <Link className={styles.view} href="/login?returnTo=%2Fprofile%2Fsetup">EXISTING PROFESSIONAL? REVIEW YOUR PROFILE →</Link>
+              </div>
             ) : rows.length === 0 && activeTrack !== 'all' ? (
               <div className={styles.empty}>
-                <strong>{activeTrack === 'candidate' ? 'No public talent profiles are available yet.' : activeTrack === 'speaker' ? 'No public speaker profiles are available yet.' : 'No public facilitator profiles are available yet.'}</strong>
-                <p>{activeTrack === 'candidate' ? 'ATB Connect search becomes useful when public profiles are available for the roles employers need. Request sourcing access to discuss the roles and capability requirements your organisation needs.' : 'ATB Spotlight will show profiles when professionals meet the relevant listing and visibility requirements. Discuss your event brief, audience and facilitation requirements with Valoria.'}</p>
-                <a className={styles.view} href={activeTrack === 'candidate' ? 'mailto:info@valoriainstitute.com?subject=ATB%20Connect%20Access%20Enquiry' : 'mailto:info@valoriainstitute.com?subject=ATB%20Spotlight%20Enquiry'}>{activeTrack === 'candidate' ? 'REQUEST SOURCING ACCESS' : 'DISCUSS AN EVENT BRIEF'} →</a>
+                <strong>{activeTrack === 'candidate' ? 'No public talent profiles match this view yet.' : activeTrack === 'speaker' ? 'No public speaker profiles match this view yet.' : 'No public facilitator profiles match this view yet.'}</strong>
+                <p>Public profiles appear only after participants meet the relevant listing requirements and choose public visibility.</p>
+                <Link className={styles.view} href={activeTrack === 'candidate' ? '/contact-us?type=candidate' : activeTrack === 'speaker' ? '/contact-us?type=speaker_booking' : '/contact-us?type=facilitator_commission'}>{activeTrack === 'candidate' ? 'REQUEST SOURCING ACCESS' : 'DISCUSS AN EVENT BRIEF'} →</Link>
               </div>
             ) : (
               <div className={styles.empty}><strong>No public professionals match these filters.</strong><p>Try clearing a filter or selecting another declared role.</p></div>
