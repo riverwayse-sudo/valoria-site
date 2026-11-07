@@ -1,0 +1,63 @@
+name: Patch Valoria production dependencies
+
+on:
+  push:
+    branches:
+      - experience/staging-redesign-20261106
+    paths:
+      - "DEPENDENCY_REMEDIATION_TRIGGER.md"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: valoria-production-dependency-remediation
+  cancel-in-progress: false
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout staging branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Upgrade to patched Next.js maintenance releases and pin safe transitive dependencies
+        run: |
+          npm install --save-exact next@15.5.29 @next/third-parties@15.5.29 --ignore-scripts --no-audit --no-fund
+          npm pkg set "overrides.nanoid=3.3.20"
+          npm pkg set "overrides.postcss=8.5.31"
+          npm pkg set "overrides.source-map-js=1.2.2"
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Install the exact remediated dependency tree
+        run: npm ci
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Run application contract tests
+        run: npm test -- --runInBand
+
+      - name: Run opportunity validation tests
+        run: npm run test:opportunity-validation
+
+      - name: Commit the verified package manifest and lockfile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          if git diff --cached --quiet; then
+            echo "No dependency changes to commit."
+            exit 0
+          fi
+          git commit -m "chore(deps): patch Next.js and vulnerable production dependencies"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
