@@ -148,3 +148,8 @@
 .previewUnavailable{padding:28px 24px;border:1px dashed rgba(201,168,76,.35);background:rgba(46,46,74,.24);color:#FAFAF7}
 .previewUnavailable strong{display:block;font-size:14px;font-weight:700;line-height:1.5}
 .previewUnavailable p{max-width:620px;margin:8px 0 0;color:rgba(250,250,247,.62);font-size:12px;line-height:1.7}
+
+
+/* Public roster identity hierarchy: name first, role context second. */
+.professionalName{font-family:var(--font);font-size:16px;line-height:1.3;font-weight:800;letter-spacing:-.01em;color:#1A1A2E;margin:16px 0 3px;overflow-wrap:anywhere}
+.professionalHeadline{font-family:var(--font);font-size:11px;line-height:1.5;font-weight:600;color:#2E2E4A;margin:0 0 4px;overflow-wrap:anywhere}
