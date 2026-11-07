@@ -23,10 +23,19 @@ export const metadata = { metadataBase:new URL(SITE_URL), title:{default:'Valori
 
 const organizationSchema = {'@context':'https://schema.org','@type':'Organization',name:'Valoria Institute',url:SITE_URL,logo:`${SITE_URL}/logo.png`,description:DESCRIPTION,slogan:'Worth, Built.',areaServed:[{'@type':'Country',name:'Nigeria'}],address:{'@type':'PostalAddress',addressLocality:'Lagos',addressCountry:'NG'},sameAs:[],makesOffer:[{'@type':'Offer',name:'ATB Connect — Capability-Led Talent Discovery',description:'Employer pathway for exploring professional profiles and requesting buyer access. Search availability depends on the public Marketplace inventory.',url:`${SITE_URL}/atb-connect`},{'@type':'Offer',name:'ATB Spotlight — Speaker and Facilitator Discovery',description:'Event organiser and training buyer pathway for discovering speakers and facilitators through capability-led profiles, where available.',url:`${SITE_URL}/atb-spotlight`},{'@type':'Offer',name:'Valoria Develop — PRIME-Based Professional Development',description:'Professional development pathways structured around the PRIME framework. Programme availability and certification status are confirmed on the service page.',url:`${SITE_URL}/develop`}]}
 
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE_NAME,
+  url: SITE_URL,
+  inLanguage: 'en-NG',
+  publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+}
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(organizationSchema)}} /></head>
+      <head><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(organizationSchema)}} /><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(websiteSchema)}} /></head>
       <body>
         {IS_STAGING ? <div className="staging-site-banner" role="status">STAGING PREVIEW · NOT PRODUCTION · ISOLATED TEST ENVIRONMENT</div> : <MarketingInstrumentation />}
         {!IS_STAGING && GA_MEASUREMENT_ID && <><Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive"/><Script id="ga4-init" strategy="afterInteractive">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_MEASUREMENT_ID}');`}</Script></>}

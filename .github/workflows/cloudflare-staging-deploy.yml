@@ -54,3 +54,73 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Smoke-test staging routes and SEO endpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://valoria-staging-site.riverwayse.workers.dev"
+          routes=(
+            /
+            /valu
+            /prime
+            /about-us
+            /marketplace
+            /marketplace/talent
+            /marketplace/speakers
+            /marketplace/facilitators
+            /jobs
+            /opportunities
+            /events
+            /knowledge
+            /knowledge/valu-index
+            /knowledge/prime-framework
+            /knowledge/professional-capability
+            /robots.txt
+            /sitemap.xml
+            /llms.txt
+          )
+          for route in "${routes[@]}"; do
+            status="$(curl -fsSL --retry 4 --retry-all-errors --max-time 25 -o /tmp/valoria-route-response -w '%{http_code}' "$base$route")"
+            if [[ "$status" != "200" ]]; then
+              echo "Route $route returned HTTP $status"
+              cat /tmp/valoria-route-response
+              exit 1
+            fi
+          done
+
+          curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
+          grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
+
+          curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
+          grep -q 'staging.valoriainstitute.com' /tmp/valoria-sitemap.xml
+          grep -q '/knowledge/prime-framework' /tmp/valoria-sitemap.xml
+          grep -q '/jobs' /tmp/valoria-sitemap.xml
+
+          curl -fsS "$base/llms.txt" -o /tmp/valoria-llms.txt
+          grep -q 'Human-AI Collaboration' /tmp/valoria-llms.txt
+          grep -q 'Basic is a marketplace access state, not a merit tier' /tmp/valoria-llms.txt
+
+          curl -fsS "$base/" -o /tmp/valoria-home.html
+          grep -q 'THE PROFESSIONAL CAPABILITY MARKETPLACE' /tmp/valoria-home.html
+          grep -q 'FOUR WAYS TO ENGAGE' /tmp/valoria-home.html
+          grep -q 'INITIAL MARKET' /tmp/valoria-home.html
+          grep -q 'initial operating focus is Nigeria' /tmp/valoria-home.html
+
+          : > /tmp/valoria-css-bundle.css
+          css_assets="$(grep -oE 'href="[^"]+\.css[^"]*"' /tmp/valoria-home.html | cut -d '"' -f 2)"
+          if [[ -z "$css_assets" ]]; then
+            echo "No compiled CSS assets found in homepage HTML"
+            exit 1
+          fi
+          while IFS= read -r asset; do
+            [[ -z "$asset" ]] && continue
+            if [[ "$asset" =~ ^https?:// ]]; then
+              css_url="$asset"
+            else
+              css_url="$base$asset"
+            fi
+            curl -fsSL --retry 4 --retry-all-errors --max-time 25 "$css_url" >> /tmp/valoria-css-bundle.css
+          done <<< "$css_assets"
+          grep -Fq '.vi-nav .nav-dropdown' /tmp/valoria-css-bundle.css
+          grep -Fq '.nav-mobile .nav-dropdown' /tmp/valoria-css-bundle.css
+          grep -Fq 'text-align:left!important' /tmp/valoria-css-bundle.css

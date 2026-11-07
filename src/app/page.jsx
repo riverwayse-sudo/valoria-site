@@ -14,9 +14,9 @@ export const revalidate = 0
 
 export const metadata = {
   title: 'Valoria Institute — Worth, Built.',
-  openGraph: { title: 'Valoria Institute — Worth, Built.', description: 'Assess professional capability, build a credible professional profile and discover opportunities through Valoria’s capability-led marketplace.', url: 'https://valoriainstitute.com/' },
+  openGraph: { title: 'Valoria Institute — Worth, Built.', description: 'Starting in Nigeria, Valoria helps professionals understand capability, build credible profiles and discover relevant opportunities through a capability-led marketplace.', url: 'https://valoriainstitute.com/' },
   twitter: { card: 'summary_large_image', title: 'Valoria Institute — Worth, Built.' },
-  description: 'Assess professional capability, build a credible professional profile and discover opportunities through Valoria’s capability-led marketplace.',
+  description: 'Starting in Nigeria, Valoria helps professionals understand capability, build credible profiles and discover relevant opportunities through a capability-led marketplace.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
 }
 
@@ -93,6 +93,12 @@ export default function HomePage() {
       <ParallaxController rootSelector="#main-content" />
       <main id="main-content" className="home-redesign-root">
         <HeroSlider />
+        <section className="home-market-scope" aria-label="Initial market focus">
+          <div className="container">
+            <span>INITIAL MARKET</span>
+            <p>Valoria’s initial operating focus is Nigeria. The framework is designed with broader African and international audiences in view as the platform grows.</p>
+          </div>
+        </section>
 
         <section className="home-institutional-case" aria-labelledby="institutional-case-title">
           <div className="container">

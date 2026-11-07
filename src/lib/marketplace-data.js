@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 
 const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,fee_range,salary_expectation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
-const IS_READ_ONLY_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'
+const IS_READ_ONLY_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'
 
 const PLACEHOLDER_HEADLINES = new Set([
   'model',
@@ -11,14 +11,21 @@ const PLACEHOLDER_HEADLINES = new Set([
   'valoria professional',
 ])
 
-function isPublicProfileContentReady(row) {
+export function isPublicProfileContentReady(row) {
   const headline = String(row.headline || row.current_job_title || '').trim()
+  const assessmentAccess = row.assessment_access
+  const isValidAssessmentAccess = assessmentAccess === 'basic' || assessmentAccess === 'full'
+  const hasOfficialPoints = row.valu_index !== null && row.valu_index !== undefined
+  const assessmentSummary = String(row.assessment_summary || '').trim()
+  const fullAssessmentReady = assessmentAccess !== 'full' || (hasOfficialPoints && assessmentSummary.length >= 12)
   return Boolean(
     row.full_name &&
     row.atb_id &&
     headline.length >= 8 &&
     !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
-    !/[\u{1D400}-\u{1D7FF}]/u.test(headline)
+    !/[\u{1D400}-\u{1D7FF}]/u.test(headline) &&
+    isValidAssessmentAccess &&
+    fullAssessmentReady
   )
 }
 
@@ -92,7 +99,7 @@ export async function getMarketplaceCounts() {
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
   const { data, error } = await supabase
     .from(SOURCE)
-    .select('professional_id,full_name,atb_id,headline,current_job_title,capability,track,capabilities')
+    .select('professional_id,full_name,atb_id,headline,current_job_title,assessment_access,valu_index,assessment_summary,capability,track,capabilities')
 
   if (error) {
     console.error('Marketplace count query failed:', error)
