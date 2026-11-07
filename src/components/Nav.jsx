@@ -150,8 +150,10 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
     if (onClick) onClick(event)
     if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
     event.preventDefault()
-    if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') {
-      window.location.assign(dashboardOnly ? '/valu/assessment/?full=1&preview=1' : href)
+    // Anonymous staging visitors can enter the real registration-first taster.
+    // Signed-in participants must always use the authenticated handoff, even in preview mode.
+    if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' && !dashboardOnly) {
+      window.location.assign(href)
       return
     }
     if (opening) return
@@ -199,7 +201,7 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
   // The anchor must advertise the actual assessment destination. Normal clicks
   // still obtain a fresh, short-lived handoff code before navigating, so this
   // canonical URL is never used as a substitute for the authenticated token.
-  const linkHref = dashboardOnly ? (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? '/valu/assessment/?full=1&preview=1' : `${process.env.NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN || 'https://assessment.valoriainstitute.com'}/remaining`) : href
+  const linkHref = dashboardOnly ? `${process.env.NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN || 'https://assessment.valoriainstitute.com'}/remaining` : href
 
   return <>
     <a href={linkHref} className={className} style={style} onClick={handleClick} aria-busy={opening} {...props}>
