@@ -69,8 +69,9 @@ export async function GET(request){
     const headline=p.headline||p.current_job_title||roster?.headline||roster?.current_job_title||a?.role||''
     const normalizedAtbId=String(p.atb_id||'').normalize('NFKC').trim()
     const validAtbId=/^ATB-[A-Z0-9-]{4,40}$/i.test(normalizedAtbId)
-    const normalizedHeadline=String(headline||'').normalize('NFKC').trim()
-    const validHeadline=normalizedHeadline.length>=8&&!['model','growth dev','help people find meaning in their life and career','valoria professional'].includes(normalizedHeadline.toLowerCase())
+    const rawHeadline=String(headline||'').trim()
+    const normalizedHeadline=rawHeadline.normalize('NFKC')
+    const validHeadline=rawHeadline.length>=8&&!['model','growth dev','help people find meaning in their life and career','valoria professional'].includes(normalizedHeadline.toLowerCase())&&!/[\\u{1D400}-\\u{1D7FF}]/u.test(rawHeadline)
     const identityReady=Boolean(String(displayName||'').trim()&&validHeadline&&validAtbId)
     const publicConsent=latestConsentById.get(j.user_id)===publicConsentVersion
     const completedTaster=completedTasterUserIds.has(j.user_id)
