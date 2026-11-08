@@ -57,7 +57,7 @@ export default function ProgrammesPage() {
           <div className="page-section-inner">
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE FIVE PROGRAMMES</span></div>
-              <h2 className="section-title" className="section-title programmes-clusters-title">Built on PRIME.<br /><em>Measured against it too.</em></h2>
+              <h2 className="section-title programmes-clusters-title">Built on PRIME.<br /><em>Measured against it too.</em></h2>
             </Reveal>
             <div className="programmes-grid">
               {PRIME_CLUSTERS.map((c) => {
