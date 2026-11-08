@@ -480,4 +480,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('atb_id:p.atb_id||null')
   })
 
+  test('admin marketplace readiness keeps Basic taster listings separate from Full capability gates', () => {
+    const route = read('src/app/api/admin/reconciliation/route.js')
+    const page = read('src/app/admin/reconciliation/page.jsx')
+    expect(route).toContain("assessmentAccess==='basic'&&completedTaster&&identityReady&&roster?.assessment_access==='basic'")
+    expect(route).toContain('publicReady=Boolean(roster&&visibilityReady&&identityReady')
+    expect(route).toContain('counts.roster_projection_professionals')
+    expect(page).toContain('Basic listings require a linked completed taster')
+    expect(page).toContain('BASIC LISTING PATH')
+    expect(page).toContain("r.public_roster?'PUBLIC':'NOT PUBLIC'")
+  })
+
 })
