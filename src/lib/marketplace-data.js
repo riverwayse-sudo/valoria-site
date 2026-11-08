@@ -35,7 +35,7 @@ function isQualifiedPublicProfile(row) {
   )
   if (!hasIdentity) return false
 
-  if (row.assessmentAccess === 'basic') return true
+  if (row.assessment_access === 'basic') return true
   return Boolean(
     row.assessment_access === 'full' &&
     Array.isArray(row.capabilities) && row.capabilities.length > 0 &&
@@ -61,6 +61,7 @@ function dedupeProfessionals(rows) {
     if (!map.has(row.professional_id)) {
       map.set(row.professional_id, {
         ...row,
+        assessmentAccess: row.assessment_access,
         full_name: normalizePublicDisplayText(row.full_name),
         display_initials: normalizePublicDisplayText(row.display_initials),
         headline: normalizePublicDisplayText(row.headline),
