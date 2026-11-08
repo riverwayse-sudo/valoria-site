@@ -33,7 +33,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain("assessment_access === 'basic'")
     expect(data).toContain("assessment_access === 'full'")
     expect(directory).toContain("p.assessment_access === 'basic'")
-    expect(directory).toContain("isFull ? 'FULL VALU ASSESSMENT' : 'BASIC DIRECTORY PROFILE'")
+    expect(directory).toContain("isFull ? 'VALU ASSESSMENT INSIGHT' : 'BASIC PROFESSIONAL LISTING'")
     expect(directory).toContain('BASIC LISTING')
     expect(directory).toContain('applicable Basic or Full listing requirements')
   })
@@ -506,7 +506,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain('rawHeadline.length >= 2')
     expect(publicProfile).toContain('hasCurrentFullAssessment')
     expect(homepage).toContain('profiles.slice(0, 13)')
-    expect(directory).toContain('BASIC DIRECTORY PROFILE')
+    expect(directory).toContain('BASIC PROFESSIONAL LISTING')
     expect(directory).not.toContain('completed the VALU taster and has Basic marketplace access')
   })
 
