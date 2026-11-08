@@ -26,6 +26,7 @@ describe('marketplace enquiry API security', () => {
     expect(form).toContain('headers.Authorization = `Bearer ${session.access_token}`')
     expect(api).toContain('authClient.auth.getUser()')
     expect(api).toContain('buyer_user_id: verifiedBuyerId')
+    expect(api).toContain("request.headers.get('cf-connecting-ip')")
     expect(api).not.toContain('buyer_user_id: buyer_user_id || null')
   })
 
