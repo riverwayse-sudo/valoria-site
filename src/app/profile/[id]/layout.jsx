@@ -2,12 +2,15 @@ import { createClient } from '@supabase/supabase-js'
 import { PUBLIC_PROFILE_SELECT } from '@/lib/public-profile'
 import { isPublicProfileContentReady } from '@/lib/marketplace-data'
 
+const IS_STAGING = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1'
 const SITE_URL = 'https://valoriainstitute.com'
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const ATB_RE = /^ATB-[A-Z0-9-]{4,40}$/i
 
 export async function generateMetadata({ params }) {
   const { id } = await params
+  // Child metadata overrides the root layout, so staging profile routes must set noindex explicitly.
+  if (IS_STAGING) return { title: 'Professional Profile | Valoria Institute', robots: { index: false, follow: false } }
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
