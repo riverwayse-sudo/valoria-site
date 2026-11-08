@@ -32,7 +32,7 @@ export const PROFESSIONAL_STANDARD_SERIES = [
     id: '05', cluster: 'ENTERPRISE',
     title: 'Influence Without Authority: The Real Currency of Organisational Power',
     description: 'Understand authority versus influence and build a 90-day stakeholder influence map.',
-    start: '2026-12-05T10:00:00+01:00', end: '2026-12-05T11:30:00+01:00', dateApproved: false,
+    start: '2026-12-05T10:00:00+01:00', end: '2026-12-05T11:30:00+01:00', dateApproved: false, publiclyAnnounced: false,
   },
 ]
 
