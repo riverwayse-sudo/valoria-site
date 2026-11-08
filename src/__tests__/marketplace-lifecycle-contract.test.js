@@ -121,15 +121,20 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).not.toContain("update({ profile_complete: true")
   })
 
-  test('profile setup and edit collect explicit public-visibility consent', () => {
+  test('profile setup and edit collect explicit consent while preserving the Basic listing path', () => {
     const setup = read('src/app/profile/setup/page.jsx')
     const edit = read('src/app/profile/edit/page.jsx')
+    const route = read('src/app/api/profile/acknowledgements/route.js')
     const copy = read('src/lib/profile-consent-copy.js')
     expect(setup).toContain("visibility: 'registered_only'")
     expect(setup).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
     expect(setup).toContain('REGISTERED_PROFILE_CONSENT_TEXT')
+    expect(setup).toContain("fetch('/api/profile/acknowledgements'")
+    expect(setup).not.toContain('if (!row.profile_complete)')
     expect(edit).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
     expect(edit).toContain('REGISTERED_PROFILE_CONSENT_TEXT')
+    expect(route).toContain("const basicEligible = roster?.assessment_access === 'basic' && Boolean(taster)")
+    expect(route).toContain("const fullEligible = roster?.assessment_access === 'full' && currentProfile?.profile_complete === true")
     expect(copy).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
   })
   test('database keeps profile completeness separate from full-assessment and listing eligibility', () => {
