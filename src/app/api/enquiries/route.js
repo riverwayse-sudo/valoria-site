@@ -151,14 +151,14 @@ export async function POST(request) {
     if (!professional_profile_id || !enquiry_type) {
       return Response.json({ error: 'Missing profile or enquiry type.' }, { status: 400 })
     }
-    if (!buyer_name?.trim() || !buyer_email?.trim() || !message?.trim()) {
+    if (typeof buyer_name !== 'string' || typeof buyer_email !== 'string' || typeof message !== 'string' || !buyer_name.trim() || !buyer_email.trim() || !message.trim()) {
       return Response.json({ error: 'Name, email, and message are required.' }, { status: 400 })
     }
-    const normalizedName = String(buyer_name).trim()
+    const normalizedName = buyer_name.replace(/[\r\n\t]+/g, ' ').trim()
     const normalizedEmail = String(buyer_email).trim().toLowerCase()
-    const normalizedCompany = String(buyer_company || '').trim()
-    const normalizedSubject = String(subject || '').trim()
-    const normalizedMessage = String(message).trim()
+    const normalizedCompany = String(typeof buyer_company === 'string' ? buyer_company : '').replace(/[\r\n\t]+/g, ' ').trim()
+    const normalizedSubject = String(typeof subject === 'string' ? subject : '').replace(/[\r\n\t]+/g, ' ').trim()
+    const normalizedMessage = message.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '').trim()
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRe.test(normalizedEmail)) {
       return Response.json({ error: 'Please enter a valid email address.' }, { status: 400 })
