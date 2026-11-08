@@ -1894,3 +1894,65 @@
 .vi-scroll-development{margin-top:8px;color:rgba(247,244,238,.48);font-size:8px;font-weight:800;letter-spacing:.08em}
 .valu-card .vc-cluster-list{display:flex;flex-wrap:wrap;gap:6px;margin:18px 0 8px}
 .valu-card .vc-cluster-list span{padding:6px 8px;border:1px solid rgba(201,168,76,.25);border-radius:4px;color:rgba(247,244,238,.75);font-size:8px;font-weight:700;letter-spacing:.04em}
+
+/* Event countdown card — compact, deliberate hierarchy with no overflow. */
+.hero-slider .hero-event-panel{
+  max-width:440px;
+  padding:clamp(22px,2.5vw,30px);
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  border-radius:8px;
+  background:linear-gradient(150deg,rgba(38,39,65,.96),rgba(20,20,37,.96));
+  border:1px solid rgba(201,168,76,.32);
+  box-shadow:0 26px 80px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.045);
+}
+.hero-slider .hero-event-panel .hero-event-cluster{
+  display:flex;align-items:center;gap:9px;margin-bottom:13px;
+  font-size:9px;letter-spacing:.19em;
+}
+.hero-slider .hero-event-panel .hero-event-cluster:before{
+  content:"";width:22px;height:1px;background:var(--gold);opacity:.8;
+}
+.hero-slider .hero-event-panel h2{
+  max-width:15ch;font-size:clamp(25px,2.45vw,32px);line-height:1.08;
+  letter-spacing:-.035em;margin-bottom:10px;
+}
+.hero-slider .hero-event-panel p{font-size:12px;line-height:1.6;color:rgba(247,244,238,.68)}
+.hero-slider .hero-event-status{
+  display:flex;align-items:center;gap:8px;margin-top:17px;padding-top:13px;
+  border-top:1px solid rgba(201,168,76,.2);font-size:8px;letter-spacing:.15em;
+}
+.hero-slider .hero-event-status:before{
+  content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);
+  box-shadow:0 0 0 4px rgba(201,168,76,.1);flex:0 0 auto;
+}
+.hero-slider .hero-event-panel .session-timer{
+  margin-top:12px;padding:13px 14px 12px;border:1px solid rgba(201,168,76,.18);
+  border-radius:5px;background:rgba(7,8,18,.34);
+}
+.hero-slider .hero-event-panel .event-modal-countdown{margin:0;padding:0;border:0}
+.hero-slider .hero-event-panel .event-modal-countdown-heading{
+  margin-bottom:10px;font-size:8px;letter-spacing:.16em;color:rgba(201,168,76,.86)
+}
+.hero-slider .hero-event-panel .event-modal-countdown-units{gap:7px}
+.hero-slider .hero-event-panel .event-modal-countdown-unit{
+  padding:10px 3px 8px;border:1px solid rgba(201,168,76,.15);
+  border-radius:3px;background:rgba(247,244,238,.045)
+}
+.hero-slider .hero-event-panel .event-modal-countdown-unit strong{
+  font-size:clamp(22px,2.25vw,29px);font-weight:350;letter-spacing:-.04em
+}
+.hero-slider .hero-event-panel .event-modal-countdown-unit span{
+  margin-top:6px;font-size:7px;letter-spacing:.13em;color:rgba(247,244,238,.48)
+}
+@media(max-width:900px){
+  .hero-slider .hero-event-panel{padding:22px;max-width:none}
+  .hero-slider .hero-event-panel h2{max-width:22ch;font-size:27px}
+}
+@media(max-width:480px){
+  .hero-slider .hero-event-panel{padding:20px;border-radius:6px}
+  .hero-slider .hero-event-panel .session-timer{padding:11px 10px}
+  .hero-slider .hero-event-panel .event-modal-countdown-unit{padding:8px 2px}
+  .hero-slider .hero-event-panel .event-modal-countdown-unit strong{font-size:22px}
+}
