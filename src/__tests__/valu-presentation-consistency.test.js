@@ -12,6 +12,9 @@ describe('VALU presentation consistency', () => {
     expect(home).toContain('START THE VALU TASTER')
     expect(home).not.toMatch(/9 questions|58 questions|Question\s+\d+\s+of\s+\d+/i)
     expect(home).not.toContain('no account needed')
+    expect(home).not.toMatch(/\\b9\\s*QUESTIONS\\b|\\b58\\s*QUESTIONS\\b/i)
+    const waitlist = read('src/components/WaitlistModal.jsx')
+    expect(waitlist).not.toMatch(/\\b9\\s*QUESTIONS\\b|\\b58\\s*QUESTIONS\\b/i)
   })
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
     const hero = read('src/components/HeroSlider.jsx')
