@@ -75,7 +75,7 @@ async function confirmToBuyer({ enquiryType, atbId, buyerName, buyerEmail }) {
   if (!res.ok) console.error('Enquiry buyer confirm failed:', res.status, await res.text().catch(() => ''))
 }
 
-async function notifyProfessional({ professionalProfileId, enquiryType, atbId, buyerName, buyerCompany, actionUrl }) {
+async function notifyProfessional({ supabase, professionalProfileId, enquiryType, atbId, buyerName, buyerCompany, actionUrl }) {
   // In-app bell notification — goes in platform_notifications, the table
   // NotificationBell.jsx actually reads (see that file's fix note).
   const label = TYPE_LABELS[enquiryType] || 'Enquiry'
@@ -176,7 +176,7 @@ export async function POST(request) {
     const atbId = atb_id || 'a Valoria professional'
     notifyAdmin({ enquiryType: enquiry_type, atbId, buyerName: buyer_name.trim(), buyerEmail: buyer_email.trim(), buyerCompany: buyer_company?.trim(), subject, body: message }).catch(e => console.error('notifyAdmin error:', e))
     confirmToBuyer({ enquiryType: enquiry_type, atbId, buyerName: buyer_name.trim(), buyerEmail: buyer_email.trim() }).catch(e => console.error('confirmToBuyer error:', e))
-    notifyProfessional({ professionalProfileId: professional_profile_id, enquiryType: enquiry_type, atbId, buyerName: buyer_name.trim(), buyerCompany: buyer_company?.trim(), actionUrl: `/profile/${professional_profile_id}` }).catch(e => console.error('notifyProfessional error:', e))
+    notifyProfessional({ supabase, professionalProfileId: professional_profile_id, enquiryType: enquiry_type, atbId, buyerName: buyer_name.trim(), buyerCompany: buyer_company?.trim(), actionUrl: `/profile/${professional_profile_id}` }).catch(e => console.error('notifyProfessional error:', e))
 
     return Response.json({ message: 'Enquiry sent.' }, { status: 200 })
   } catch (err) {

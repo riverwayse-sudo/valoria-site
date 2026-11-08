@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import EnquiryForm from '@/components/EnquiryForm'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -145,8 +146,8 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             ) : rows.length === 0 && activeTrack !== 'all' ? (
               <div className={styles.empty}>
                 <strong>{activeTrack === 'candidate' ? 'No public talent profiles match this view yet.' : activeTrack === 'speaker' ? 'No public speaker profiles match this view yet.' : 'No public facilitator profiles match this view yet.'}</strong>
-                <p>Public profiles appear only after participants meet the relevant listing requirements and choose public visibility.</p>
-                <Link className={styles.view} href={activeTrack === 'candidate' ? '/contact-us?type=candidate' : activeTrack === 'speaker' ? '/contact-us?type=speaker_booking' : '/contact-us?type=facilitator_commission'}>{activeTrack === 'candidate' ? 'REQUEST SOURCING ACCESS' : 'DISCUSS AN EVENT BRIEF'} →</Link>
+                <p>{activeTrack === 'candidate' ? 'Share the role, sector and capability requirements you need. Our team can advise on the right sourcing route.' : activeTrack === 'speaker' ? 'Share the event, audience and subject you need covered. Our team can advise on the next step.' : 'Share your programme goals, audience and delivery format. Our team can advise on a suitable facilitation route.'}</p>
+                <Link className={styles.view} href={activeTrack === 'candidate' ? '/contact-us?type=candidate' : activeTrack === 'speaker' ? '/contact-us?type=speaker_booking' : '/contact-us?type=facilitator_commission'}>{activeTrack === 'candidate' ? 'SHARE A TALENT BRIEF' : activeTrack === 'speaker' ? 'SHARE AN EVENT BRIEF' : 'DISCUSS A FACILITATION BRIEF'} →</Link>
               </div>
             ) : (
               <div className={styles.empty}><strong>No public professionals match these filters.</strong><p>Try clearing a filter or selecting another declared role.</p></div>
@@ -296,6 +297,11 @@ function ProfilePreviewModal({ profile, onClose }) {
   const topics = labelValues(profile.topics).slice(0, 6)
   const assessmentSummary = isFull ? displayText(profile.assessment_summary || '') : ''
   const profileHref = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
+  const enquiryActions = [
+    { key: 'candidate', enquiryType: 'candidate', ctaLabel: 'REQUEST TALENT INTRO' },
+    { key: 'speaker', enquiryType: 'speaker_booking', ctaLabel: 'BOOK SPEAKER' },
+    { key: 'facilitator', enquiryType: 'facilitator_commission', ctaLabel: 'COMMISSION FACILITATOR' },
+  ].filter(action => capabilities.has(action.key))
 
   return (
     <div className={styles.modalBackdrop} role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) onClose() }}>
@@ -318,9 +324,9 @@ function ProfilePreviewModal({ profile, onClose }) {
               </div>
             </div>
             <div className={styles.modalIndex}>
-              <small>VALU INDEX</small>
-              <strong>{isFull ? profile.valu_index : '—'}</strong>
-              <span>{isFull ? 'POINTS' : 'BASIC ACCESS'}</span>
+              <small>{isFull ? 'VALU INDEX' : 'LISTING LEVEL'}</small>
+              <strong>{isFull ? profile.valu_index : 'BASIC'}</strong>
+              <span>{isFull ? 'POINTS' : 'PUBLIC LISTING'}</span>
               {tier && <b>{tier.name}</b>}
             </div>
           </div>
@@ -330,10 +336,10 @@ function ProfilePreviewModal({ profile, onClose }) {
               <p id="profile-preview-description" className={styles.modalSummary}>
                 {isFull
                   ? (assessmentSummary || 'The Full VALU assessment is complete. The professional insight is being prepared.')
-                  : 'This professional is displayed at the Basic directory level. VALU points and assessment-derived insight are withheld until the Full listing requirements are met; declared capability selections are shown separately from evidence approval.'}
+                  : 'This Basic listing introduces the professional’s public identity, declared capabilities and areas of expertise. Additional assessment insight is displayed only when available.'}
               </p>
               <div className={styles.modalCredential}>
-                <span>{isFull ? 'FULL VALU ASSESSMENT' : 'BASIC DIRECTORY PROFILE'}</span>
+                <span>{isFull ? 'VALU ASSESSMENT INSIGHT' : 'BASIC PROFESSIONAL LISTING'}</span>
                 <strong>{tier ? tier.name : 'VALU SCORE NOT DISPLAYED'}</strong>
               </div>
             </section>
@@ -353,8 +359,20 @@ function ProfilePreviewModal({ profile, onClose }) {
           {skills.length > 0 && <section className={styles.modalListSection}><p className={styles.modalSectionLabel}>PROFESSIONAL SKILLS</p><div className={styles.modalChips}>{skills.map(skill => <span key={skill}>{skill}</span>)}</div></section>}
           {topics.length > 0 && <section className={styles.modalListSection}><p className={styles.modalSectionLabel}>AREAS OF EXPERTISE</p><div className={styles.modalChips}>{topics.map(topic => <span key={topic}>{topic}</span>)}</div></section>}
           <div className={styles.modalFooter}>
-            <p>Contact details and individual assessment answers are not displayed in this public preview.</p>
-            <Link href={profileHref} className={styles.modalPrimary}>OPEN FULL PROFILE <span>↗</span></Link>
+            <p>Choose the introduction that matches this professional’s selected capability. Valoria will review the request and coordinate the next step.</p>
+            <div className={styles.modalActions}>
+              {enquiryActions.map(action => (
+                <EnquiryForm
+                  key={action.key}
+                  professionalProfileId={profile.professional_id || profile.id}
+                  atbId={displayText(profile.atb_id || 'PENDING')}
+                  enquiryType={action.enquiryType}
+                  ctaLabel={action.ctaLabel}
+                  triggerStyle={{ padding: '11px 14px', background: '#C9A84C', color: '#1A1A2E', fontSize: '8px', letterSpacing: '.08em', borderRadius: '4px' }}
+                />
+              ))}
+              <Link href={profileHref} className={styles.modalPrimary}>EXPLORE FULL PROFILE <span>↗</span></Link>
+            </div>
           </div>
         </div>
       </section>

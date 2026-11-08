@@ -33,7 +33,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain("assessment_access === 'basic'")
     expect(data).toContain("assessment_access === 'full'")
     expect(directory).toContain("p.assessment_access === 'basic'")
-    expect(directory).toContain("isFull ? 'FULL VALU ASSESSMENT' : 'BASIC DIRECTORY PROFILE'")
+    expect(directory).toContain("isFull ? 'VALU ASSESSMENT INSIGHT' : 'BASIC PROFESSIONAL LISTING'")
     expect(directory).toContain('BASIC LISTING')
     expect(directory).toContain('applicable Basic or Full listing requirements')
   })
@@ -506,8 +506,32 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain('rawHeadline.length >= 2')
     expect(publicProfile).toContain('hasCurrentFullAssessment')
     expect(homepage).toContain('profiles.slice(0, 13)')
-    expect(directory).toContain('BASIC DIRECTORY PROFILE')
+    expect(directory).toContain('BASIC PROFESSIONAL LISTING')
     expect(directory).not.toContain('completed the VALU taster and has Basic marketplace access')
+  })
+
+  test('marketplace profile preview uses the facilitated enquiry workflow', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    expect(directory).toContain("import EnquiryForm from '@/components/EnquiryForm'")
+    expect(directory).toContain("enquiryType: 'candidate'")
+    expect(directory).toContain("enquiryType: 'speaker_booking'")
+    expect(directory).toContain("enquiryType: 'facilitator_commission'")
+    expect(directory).toContain('professionalProfileId={profile.professional_id || profile.id}')
+    expect(directory).toContain('COMMISSION FACILITATOR')
+  })
+
+  test('empty capability directories guide buyers to a relevant brief', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    expect(directory).toContain('Share the role, sector and capability requirements you need.')
+    expect(directory).toContain('Share the event, audience and subject you need covered.')
+    expect(directory).toContain('Share your programme goals, audience and delivery format.')
+    expect(directory).not.toContain('Public profiles appear only after participants meet the relevant listing requirements')
+  })
+
+  test('marketplace enquiries notify the professional through the request client', () => {
+    const api = read('src/app/api/enquiries/route.js')
+    expect(api).toContain('async function notifyProfessional({ supabase, professionalProfileId')
+    expect(api).toContain('notifyProfessional({ supabase, professionalProfileId: professional_profile_id')
   })
 
 })
