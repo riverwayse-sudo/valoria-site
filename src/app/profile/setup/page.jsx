@@ -509,8 +509,8 @@ function ProfileSetupForm() {
       return
     }
     // Basic listings do not require Full-profile completion. The consent API
-    // checks the linked completed taster and minimum public identity for Basic,
-    // and applies the stricter complete-profile and capability checks to Full.
+    // checks a linked completed taster or current Full assessment plus minimum
+    // public identity for Basic, and applies stricter profile/capability checks to Full.
     let acknowledgementResponse
     try {
       acknowledgementResponse = await fetch('/api/profile/acknowledgements', {
