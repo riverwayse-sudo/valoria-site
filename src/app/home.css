@@ -701,7 +701,6 @@
   color: var(--gold);
   font-size: 25px;
   box-shadow: 0 12px 40px rgba(0,0,0,.3);
-  transition: transform .2s ease,background .2s ease;
 }
 .home-events-video-link:hover .home-events-play,
 .home-events-video-link:focus-visible .home-events-play {
