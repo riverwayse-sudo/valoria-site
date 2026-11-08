@@ -171,6 +171,67 @@ export default function EventRegistrationModal({ session, onClose }) {
         @keyframes eventSuccessIn{from{opacity:0;transform:scale(.75) rotate(-8deg)}to{opacity:1;transform:scale(1) rotate(0)}}
         @media(max-width:720px){.event-modal{display:block;max-height:94vh}.event-modal-event-panel{min-height:auto;padding:28px 24px 24px}.event-modal-event-panel h2{font-size:34px}.event-modal-description{font-size:12px}.event-modal-event-meta{margin-top:20px}.event-modal-speaker{margin-top:20px}.event-modal-countdown{margin-top:22px}.event-modal-form-panel{padding:28px 24px 30px}.event-modal-form-title{font-size:30px}.event-modal-field-grid{grid-template-columns:1fr}.event-modal-close{background:#1A1A2E}.event-modal form{gap:13px}}
         @media(max-width:430px){.event-modal-backdrop{padding:0}.event-modal{width:100%;max-height:100dvh;border:none}.event-modal-event-panel{padding-top:24px}.event-modal-event-panel h2{font-size:31px}.event-modal-form-panel{padding:25px 20px 28px}.event-modal-countdown-unit{padding:8px 2px}.event-modal-countdown-unit strong{font-size:19px}}
+
+        /* Compact editorial registration card: the full experience fits without a nested scroll area. */
+        .event-modal-backdrop{padding:16px}
+        .event-modal{width:min(980px,100%);height:min(650px,calc(100dvh - 32px));max-height:none;overflow:hidden;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);border-radius:8px}
+        .event-modal-event-panel{min-height:0;padding:30px 32px 24px;justify-content:flex-start}
+        .event-modal-kicker{margin-bottom:12px;font-size:8px;letter-spacing:.17em}
+        .event-modal-event-panel h2{font-size:clamp(28px,3vw,40px);line-height:1.04;margin-bottom:12px}
+        .event-modal-description{font-size:12px;line-height:1.55}
+        .event-modal-event-meta{gap:7px;margin-top:17px;padding-top:14px}
+        .event-modal-event-meta-row{font-size:10px}
+        .event-modal-speaker{margin-top:15px}
+        .event-modal-countdown{margin-top:auto;padding-top:18px}
+        .event-modal-countdown-heading{margin-bottom:9px}
+        .event-modal-countdown-units{gap:7px}
+        .event-modal-countdown-unit{padding:11px 4px;border-radius:4px;background:rgba(201,168,76,.09)}
+        .event-modal-countdown-unit strong{font-size:clamp(22px,2.5vw,30px)}
+        .event-modal-form-panel{padding:34px 38px 28px;display:flex;flex-direction:column;justify-content:center;min-height:0}
+        .event-modal-form-kicker{margin-bottom:8px}
+        .event-modal-form-title{font-size:clamp(28px,3vw,36px);margin-bottom:7px}
+        .event-modal-form-intro{font-size:12px;line-height:1.5;margin-bottom:17px}
+        .event-modal form{gap:11px}
+        .event-modal-field-grid{gap:10px}
+        .event-modal input:not([type=checkbox]){height:43px;margin-top:5px;padding:0 11px;font-size:14px}
+        .event-consent{padding:10px 11px;font-size:9px}
+        .event-submit{min-height:47px}
+        .event-form-note{font-size:9px}
+        @media(max-width:720px){
+          .event-modal-backdrop{padding:10px}
+          .event-modal{display:grid;grid-template-columns:1fr;width:min(520px,100%);height:min(760px,calc(100dvh - 20px));max-height:none;overflow:hidden}
+          .event-modal-event-panel{padding:20px 22px 16px;min-height:0}
+          .event-modal-kicker{margin-bottom:8px}
+          .event-modal-event-panel h2{font-size:27px;max-width:25ch;margin-bottom:7px}
+          .event-modal-description{font-size:11px;line-height:1.4}
+          .event-modal-event-meta{display:none}
+          .event-modal-speaker{display:none}
+          .event-modal-countdown{margin-top:14px;padding-top:12px}
+          .event-modal-countdown-unit{padding:7px 3px}
+          .event-modal-countdown-unit strong{font-size:21px}
+          .event-modal-countdown-unit span{font-size:6px;margin-top:3px}
+          .event-modal-form-panel{padding:20px 22px 18px;justify-content:flex-start}
+          .event-modal-form-title{font-size:27px}
+          .event-modal-form-intro{font-size:11px;margin-bottom:11px}
+          .event-modal form{gap:9px}
+          .event-modal-field-grid{grid-template-columns:1fr 1fr;gap:9px}
+          .event-modal-field{font-size:8px}
+          .event-modal input:not([type=checkbox]){height:39px;font-size:13px}
+          .event-consent{padding:8px 9px}
+          .event-submit{min-height:43px}
+          .event-modal-close{top:10px;right:10px;width:32px;height:32px}
+        }
+        @media(max-width:390px){
+          .event-modal-backdrop{padding:6px}
+          .event-modal{height:calc(100dvh - 12px)}
+          .event-modal-event-panel{padding:17px 17px 13px}
+          .event-modal-form-panel{padding:16px 17px 14px}
+          .event-modal-event-panel h2{font-size:24px}
+          .event-modal-form-title{font-size:24px}
+          .event-modal-form-intro{margin-bottom:8px}
+          .event-modal form{gap:7px}
+          .event-modal input:not([type=checkbox]){height:36px}
+        }
         @media(prefers-reduced-motion:reduce){.event-modal-backdrop,.event-modal,.event-success-mark,.event-modal-countdown-dot{animation:none!important}.event-modal-close,.event-modal input:not([type=checkbox]),.event-submit{transition:none}.event-modal input:not([type=checkbox]):focus{transform:none}.event-submit:hover:not(:disabled){transform:none}}
       `}</style>
       <div className="event-modal-backdrop" role="presentation" onMouseDown={event => event.target === event.currentTarget && onClose()}>
