@@ -30,4 +30,15 @@ describe('main website left-alignment contract', () => {
     expect(css).toContain('@media (prefers-reduced-motion: reduce)')
     expect(css).toContain('justify-content: flex-start !important')
   })
+  test('main website JSX does not overwrite layout classes with duplicate className props', () => {
+    for (const path of [
+      'src/app/facilitators/page.jsx',
+      'src/app/contact-us/page.jsx',
+      'src/app/programmes/page.jsx',
+    ]) {
+      const source = read(path)
+      expect(source).not.toMatch(/className="[^"]+"\s+className="/)
+    }
+  })
+
 })
