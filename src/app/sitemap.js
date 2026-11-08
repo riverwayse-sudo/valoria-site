@@ -1,5 +1,7 @@
 import { getConsentVerifiedPublicProfileSitemapRows } from '@/lib/public-profile'
 
+export const dynamic = 'force-dynamic'
+
 const SITE_URL = 'https://valoriainstitute.com'
 
 export default async function sitemap() {
