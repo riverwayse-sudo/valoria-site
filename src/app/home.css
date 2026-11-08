@@ -126,7 +126,7 @@
 .hero-slider .hero-inner {
   position: relative;
   z-index: 1;
-  width: min(var(--space-content-width), calc(100% - 48px));
+  width: min(var(--space-content-width), calc(100% - 2 * var(--pad)));
   max-width: var(--space-content-width);
   min-height: 100%;
   margin-inline: auto;
@@ -1126,7 +1126,7 @@
 }
 
 .live-profiles-shell {
-  width: min(var(--space-content-width), calc(100% - 48px));
+  width: min(var(--space-content-width), calc(100% - 2 * var(--pad)));
   max-width: var(--space-content-width);
   margin-inline: auto;
   padding-bottom: 44px;
@@ -1403,7 +1403,7 @@
 }
 
 .live-profiles-bottom {
-  width: min(var(--space-content-width), calc(100% - 48px));
+  width: min(var(--space-content-width), calc(100% - 2 * var(--pad)));
   max-width: var(--space-content-width);
   margin-inline: auto;
   padding-bottom: 26px;
@@ -1444,7 +1444,7 @@
 }
 
 .live-profiles-public-state {
-  width: min(var(--space-content-width), calc(100% - 48px));
+  width: min(var(--space-content-width), calc(100% - 2 * var(--pad)));
   max-width: var(--space-content-width);
   margin-inline: auto;
   padding-bottom: 28px;
@@ -1453,7 +1453,7 @@
 }
 
 .live-profiles-professional-cta {
-  width: min(var(--space-content-width), calc(100% - 48px));
+  width: min(var(--space-content-width), calc(100% - 2 * var(--pad)));
   max-width: var(--space-content-width);
   margin-inline: auto;
   padding: 24px 0 28px;
@@ -1649,7 +1649,7 @@
   }
 
   .hero-slider .hero-inner {
-    width: min(100% - 36px, var(--space-content-width));
+    width: min(100% - 2 * var(--pad), var(--space-content-width));
     gap: 20px;
     padding-block: 22px 58px;
   }
