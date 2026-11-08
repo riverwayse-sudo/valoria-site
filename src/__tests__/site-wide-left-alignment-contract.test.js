@@ -85,4 +85,13 @@ describe('main website left-alignment contract', () => {
     expect(source).toContain('/contact-us?type=training')
   })
 
+
+  test('fixed navigation and footer container share the public-page content grid', () => {
+    const components = read('src/styles/component-system.css')
+    expect(components).toContain('padding-inline:max(var(--pad),calc((100vw - var(--vi-content,1160px))/2))')
+    expect(components).toContain('.vi-footer > .container{')
+    expect(components).toContain('max-width:none;')
+    expect(components).toContain('.uf-bottom{align-items:flex-start;text-align:left}')
+  })
+
 })
