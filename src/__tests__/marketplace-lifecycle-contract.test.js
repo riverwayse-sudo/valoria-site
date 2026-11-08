@@ -531,7 +531,7 @@ describe('VALUI marketplace lifecycle contract', () => {
   test('marketplace enquiries notify the professional through the request client', () => {
     const api = read('src/app/api/enquiries/route.js')
     expect(api).toContain('async function notifyProfessional({ supabase, professionalProfileId')
-    expect(api).toContain('notifyProfessional({ supabase, professionalProfileId: professional_profile_id')
+    expect(api).toContain('notifyProfessional({ supabase, professionalProfileId: targetProfile.id')
   })
 
 })
