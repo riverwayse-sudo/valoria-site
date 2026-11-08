@@ -37,6 +37,12 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).toContain('BASIC LISTING')
     expect(directory).toContain('applicable Basic or Full listing requirements')
   })
+  test('marketplace accepts canonically equivalent Unicode ATB identifiers without changing the stored ID', () => {
+    const source = read('src/lib/marketplace-data.js')
+    expect(source).toContain("String(row?.atb_id || '').normalize('NFKC').trim()")
+    expect(source).toContain('/^ATB-[A-Z0-9-]{4,40}$/i.test(normalizedAtbId)')
+  })
+
   test('marketplace data is professional-first and deduplicates capabilities', () => {
     const source = read('src/lib/marketplace-data.js')
     expect(source).toContain('professional_id')
