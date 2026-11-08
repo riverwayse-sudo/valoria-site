@@ -81,10 +81,10 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             {activeTrack === 'facilitator' && <>Find a facilitator<br/><i>for the work ahead.</i></>}
           </h1>
           <p className={styles.lede}>
-            {activeTrack === 'all' && 'Explore public professional profiles at Basic and Full levels. Basic listings present verified professional identity and declared capabilities; Full listings also present VALU points and assessment-derived capability insight.'}
-            {activeTrack === 'candidate' && 'ATB Connect helps employers explore public professional profiles by declared capability and sector. Full listings also include VALU points and assessment-derived capability insight.'}
-            {activeTrack === 'speaker' && 'ATB Spotlight helps event organisers discover public speakers by declared expertise and PRIME capability. Full listings include assessment-derived insight; Basic listings show verified professional information.'}
-            {activeTrack === 'facilitator' && 'ATB Spotlight helps training buyers discover public facilitators by declared expertise and PRIME capability. Full listings include assessment-derived insight; Basic listings show verified professional information. For a structured team development programme, explore Valoria Develop.'}
+            {activeTrack === 'all' && 'Explore public professional profiles at Basic and Full levels. Basic listings show public profile details and declared capability selections; Full listings also show current VALU points, assessment-derived insight and evidence-approved capability lanes.'}
+            {activeTrack === 'candidate' && 'ATB Connect helps employers explore public professional profiles by sector and declared capability. Full listings unlock evidence-approved capability discovery and VALU insight.'}
+            {activeTrack === 'speaker' && 'ATB Spotlight helps event organisers discover professionals who have selected the speaker pathway. Evidence-approved speaker listings unlock capability-specific discovery; Basic profiles show public professional information and selections.'}
+            {activeTrack === 'facilitator' && 'ATB Spotlight helps training buyers discover professionals who have selected the facilitator pathway. Evidence-approved facilitator listings unlock capability-specific discovery; Basic profiles show public professional information and selections. For a structured team development programme, explore Valoria Develop.'}
           </p>
           {activeTrack === 'facilitator' && <Link className={styles.view} href="/programmes">EXPLORE VALORIA DEVELOP</Link>}
           <nav className={styles.tabs} aria-label="Filter by declared role">{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
@@ -227,7 +227,7 @@ function Profile({p, onSelect}) {
 
     {skills.length > 0 && <div className={styles.profileSkills}>{skills.map(value=><span key={value}>{value}</span>)}</div>}
     <div className={styles.signalRow}>
-      <span className={`${styles.tierBadge} ${designationClass}`}>{isBasic ? 'BASIC MEMBER' : designation}</span>
+      <span className={`${styles.tierBadge} ${designationClass}`}>{isBasic ? 'BASIC LISTING' : designation}</span>
     </div>
     {!isBasic && <div className={styles.developmentFocus}><small>TOP DEVELOPMENT AREA</small><strong>{developmentFocus}</strong></div>}
     <div className={styles.capabilities} aria-label={`Declared roles: ${capabilityBadges.filter(b=>b.selected).map(b=>b.title).join(', ') || 'none selected'}`}>
@@ -330,11 +330,11 @@ function ProfilePreviewModal({ profile, onClose }) {
               <p id="profile-preview-description" className={styles.modalSummary}>
                 {isFull
                   ? (assessmentSummary || 'The Full VALU assessment is complete. The professional insight is being prepared.')
-                  : 'This professional has completed the VALU taster and has Basic marketplace access. The Full VALU Index is a separate assessment for official points, merit designation and report insight.'}
+                  : 'This professional is displayed at the Basic directory level. VALU points and assessment-derived insight are withheld until the Full listing requirements are met; declared capability selections are shown separately from evidence approval.'}
               </p>
               <div className={styles.modalCredential}>
-                <span>{isFull ? 'FULL VALU ASSESSMENT' : 'BASIC · VALU SNAPSHOT'}</span>
-                <strong>{tier ? tier.name : 'OFFICIAL RESULT PENDING'}</strong>
+                <span>{isFull ? 'FULL VALU ASSESSMENT' : 'BASIC DIRECTORY PROFILE'}</span>
+                <strong>{tier ? tier.name : 'VALU SCORE NOT DISPLAYED'}</strong>
               </div>
             </section>
             <section className={styles.modalPanel}>
