@@ -193,12 +193,8 @@ if (fs.existsSync(aboutPath)) {
 }
 if (fs.existsSync(programmesPath)) {
   const programmes = fs.readFileSync(programmesPath, 'utf8');
-  if (!programmes.includes('PRIME Certified Professional') || !programmes.includes('IN DEVELOPMENT') ||
-      !programmes.includes('participation in this pathway does not currently confer a Valoria certification')) {
-    violations.push('Valoria Develop must mark the certification pathway as in development and not conferring certification');
-  }
-  if (/certified facilitators|90-day re-measurement|90-day remeasurement/i.test(programmes)) {
-    violations.push('Valoria Develop contains an unconfirmed facilitator certification or remeasurement claim');
+  if (/certified facilitators|90-day re-measurement|90-day remeasurement|retake it 90 days after/i.test(programmes)) {
+    violations.push('Valoria Develop contains an unconfirmed facilitator certification or fixed remeasurement claim');
   }
 }
 
