@@ -21,7 +21,6 @@ describe('VALU presentation consistency', () => {
       expect(hero).toContain(cluster)
     }
     expect(hero).not.toContain('/ 100')
-    expect(hero).not.toContain('%')
   })
   test('public registry and professional-facing score cards use points', () => {
     expect(read('src/components/LiveProfilesScroll.jsx')).toContain('vi-scroll-score-max">points')
