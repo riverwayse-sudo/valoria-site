@@ -71,7 +71,7 @@ export async function GET(request){
     const validAtbId=/^ATB-[A-Z0-9-]{4,40}$/i.test(normalizedAtbId)
     const rawHeadline=String(headline||'').trim()
     const normalizedHeadline=rawHeadline.normalize('NFKC')
-    const validHeadline=rawHeadline.length>=8&&!['model','growth dev','help people find meaning in their life and career','valoria professional'].includes(normalizedHeadline.toLowerCase())&&!/[\\u{1D400}-\\u{1D7FF}]/u.test(rawHeadline)
+    const validHeadline=rawHeadline.length>=8&&!['model','growth dev','help people find meaning in their life and career','valoria professional'].includes(normalizedHeadline.toLowerCase())&&!/[\u{1D400}-\u{1D7FF}]/u.test(rawHeadline)
     const identityReady=Boolean(String(displayName||'').trim()&&validHeadline&&validAtbId)
     const publicConsent=latestConsentById.get(j.user_id)===publicConsentVersion
     const completedTaster=completedTasterUserIds.has(j.user_id)
