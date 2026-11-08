@@ -450,4 +450,10 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain("style={{ background:'#1A1A2E', color:'#F7F4EE' }}")
   })
 
+  test('public profile sitemap resolves consent-verified profiles at request time', () => {
+    const sitemap = read('src/app/sitemap.js')
+    expect(sitemap).toContain("export const dynamic = 'force-dynamic'")
+    expect(sitemap).toContain('getConsentVerifiedPublicProfileSitemapRows')
+  })
+
 })
