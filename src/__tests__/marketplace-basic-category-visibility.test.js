@@ -7,6 +7,7 @@ describe('Basic listing capability directories', () => {
     const source = read('src/lib/marketplace-data.js')
     expect(source).toContain("row.assessment_access === 'basic'")
     expect(source).toContain('assessmentAccess: row.assessment_access')
+    expect(source).toContain('valu_index: null, cluster_scores: null, assessment_summary: null, designation: null')
     expect(source).toContain('row.selectedCapabilities.includes(normalizedTrack)')
     expect(source).toContain('...(row.selectedCapabilities || [])')
     expect(source).toContain("row.capabilities.includes(normalizedTrack)")
