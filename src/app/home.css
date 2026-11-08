@@ -36,15 +36,18 @@
 /* Shared editorial hierarchy */
 .home-section-heading {
   display: grid;
-  justify-items: center;
-  gap: 18px;
-  margin: 0 auto clamp(40px, 5vw, 60px);
-  max-width: 820px;
-  text-align: center;
+  grid-template-columns: minmax(0, 1.1fr) minmax(260px, .9fr);
+  align-items: end;
+  justify-items: start;
+  gap: clamp(24px, 5vw, 64px);
+  width: 100%;
+  max-width: none;
+  margin: 0 0 clamp(40px, 5vw, 60px);
+  text-align: left;
 }
 
 .home-section-heading .eyebrow {
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .home-section-heading h2 {
@@ -64,8 +67,8 @@
 }
 
 .home-section-heading > p {
-  max-width: 680px;
-  margin: 0 auto;
+  max-width: 560px;
+  margin: 0;
   color: #555565;
   font-size: 16px;
   line-height: 1.7;
@@ -664,14 +667,66 @@
 .home-events-video {
   position: relative;
   min-height: 100%;
+  overflow: hidden;
   background: #090910;
 }
-.home-events-video iframe {
+.home-events-video-link {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
+  display: grid;
+  place-items: center;
+  background-color: #090910;
+  background-image: linear-gradient(90deg,rgba(9,9,16,.24),rgba(9,9,16,.08)),var(--video-thumbnail);
+  background-position: center;
+  background-size: cover;
+  color: var(--parchment);
+  text-decoration: none;
+}
+.home-events-video-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg,rgba(9,9,16,.82),rgba(9,9,16,.08) 65%);
+}
+.home-events-play {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border: 1px solid rgba(201,168,76,.8);
+  border-radius: 50%;
+  background: rgba(26,26,46,.84);
+  color: var(--gold);
+  font-size: 25px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.3);
+  transition: transform .2s ease,background .2s ease;
+}
+.home-events-video-link:hover .home-events-play,
+.home-events-video-link:focus-visible .home-events-play {
+  transform: scale(1.06);
+  background: var(--dark-mid);
+}
+.home-events-video-label {
+  position: absolute;
+  z-index: 1;
+  left: clamp(20px,3vw,36px);
+  bottom: clamp(20px,3vw,36px);
+  display: grid;
+  gap: 6px;
+}
+.home-events-video-label strong {
+  color: var(--parchment);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+.home-events-video-label span {
+  color: rgba(247,244,238,.7);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
 }
 .home-events-slider {
   display: flex;
@@ -1447,9 +1502,51 @@
   width: min(var(--space-content-width), calc(100% - 2 * var(--pad)));
   max-width: var(--space-content-width);
   margin-inline: auto;
-  padding-bottom: 28px;
-  color: rgba(247,244,238,.38);
-  font-size: 11px;
+  padding: 28px clamp(22px, 3vw, 36px);
+  border: 1px solid rgba(201,168,76,.22);
+  border-radius: var(--home-radius);
+  background: linear-gradient(135deg,rgba(201,168,76,.075),rgba(247,244,238,.025));
+  color: rgba(247,244,238,.72);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.live-profiles-empty-title {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--parchment);
+  font-size: clamp(21px,2.2vw,28px);
+  font-weight: 350;
+  line-height: 1.2;
+}
+.live-profiles-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+.live-profiles-empty-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid rgba(201,168,76,.45);
+  border-radius: 999px;
+  color: var(--gold);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-decoration: none;
+}
+.live-profiles-empty-actions a:first-child {
+  background: var(--gold);
+  color: var(--dark-mid);
+}
+.live-profiles-empty-actions a:hover,
+.live-profiles-empty-actions a:focus-visible {
+  border-color: var(--gold);
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
 }
 
 .live-profiles-professional-cta {
@@ -1636,6 +1733,7 @@
   }
 
   .home-section-heading {
+    grid-template-columns: 1fr;
     gap: 14px;
     margin-bottom: 30px;
   }
