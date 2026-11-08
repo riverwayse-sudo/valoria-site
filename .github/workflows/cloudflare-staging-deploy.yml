@@ -131,6 +131,7 @@ jobs:
               exit 1
             fi
           done
+          echo "PASS: public route smoke"
 
           # This must reach the Worker handler (405), not fall through to an HTML asset or 404.
           assessment_html="$(curl -fsS --max-time 30 "$base/valu/assessment/")"
@@ -151,6 +152,7 @@ jobs:
             cat /tmp/valu-assessment-options-response || true
             exit 1
           fi
+          echo "PASS: assessment shell and API proxy"
 
 
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
@@ -160,6 +162,7 @@ jobs:
           grep -q 'staging.valoriainstitute.com' /tmp/valoria-sitemap.xml
           grep -q '/knowledge/prime-framework' /tmp/valoria-sitemap.xml
           grep -q '/jobs' /tmp/valoria-sitemap.xml
+          echo "PASS: robots and sitemap"
 
           curl -fsS "$base/llms.txt" -o /tmp/valoria-llms.txt
           grep -q 'Human-AI Collaboration' /tmp/valoria-llms.txt
@@ -189,6 +192,7 @@ jobs:
           grep -Fq '.vi-nav .nav-dropdown' /tmp/valoria-css-bundle.css
           grep -Fq '.nav-mobile .nav-dropdown' /tmp/valoria-css-bundle.css
           grep -Fq 'text-align:left!important' /tmp/valoria-css-bundle.css
+          echo "PASS: compiled left-alignment CSS"
 
           # The two identity/handoff APIs must pass the preview middleware and
           # reject unauthenticated calls themselves; all other site APIs stay disabled.
@@ -204,6 +208,7 @@ jobs:
             cat /tmp/valu-link-taster-noauth || true
             exit 1
           fi
+          echo "PASS: unauthenticated handoff guards"
           status="$(curl -sS -o /tmp/valu-opportunities-enabled -w '%{http_code}' "$base/api/opportunities")"
           if [[ "$status" != "200" ]]; then
             echo "Staging opportunity API returned HTTP $status (expected 200)"
@@ -215,3 +220,4 @@ jobs:
             cat /tmp/valu-opportunities-enabled
             exit 1
           fi
+          echo "PASS: staging opportunity API"
