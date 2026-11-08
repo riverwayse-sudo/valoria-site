@@ -28,7 +28,7 @@ export default function HomepageEventPopup() {
     const timer = window.setTimeout(() => {
       try { window.sessionStorage.setItem(DISMISS_KEY, '1') } catch {}
       setOpen(true)
-    }, 2200)
+    }, 8000)
     return () => window.clearTimeout(timer)
   }, [])
 

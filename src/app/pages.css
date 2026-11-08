@@ -330,7 +330,7 @@
   display:grid;
   grid-template-columns:minmax(0,1fr) minmax(0,.92fr);
   width:min(900px,100%);
-  max-height:min(88svh,820px);
+  max-height:min(84svh,760px);
   overflow:auto;
   background:#F7F4EE;
   color:#1A1A2E;
