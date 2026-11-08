@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import EnquiryForm from '@/components/EnquiryForm'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -296,8 +297,11 @@ function ProfilePreviewModal({ profile, onClose }) {
   const topics = labelValues(profile.topics).slice(0, 6)
   const assessmentSummary = isFull ? displayText(profile.assessment_summary || '') : ''
   const profileHref = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
-  const contactType = capabilities.has('candidate') ? 'candidate' : capabilities.has('speaker') ? 'speaker_booking' : 'facilitator_commission'
-  const contactHref = `/contact-us?type=${contactType}`
+  const enquiryActions = [
+    { key: 'candidate', enquiryType: 'candidate', ctaLabel: 'REQUEST TALENT INTRO' },
+    { key: 'speaker', enquiryType: 'speaker_booking', ctaLabel: 'BOOK SPEAKER' },
+    { key: 'facilitator', enquiryType: 'facilitator_commission', ctaLabel: 'COMMISSION FACILITATOR' },
+  ].filter(action => capabilities.has(action.key))
 
   return (
     <div className={styles.modalBackdrop} role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) onClose() }}>
@@ -320,9 +324,9 @@ function ProfilePreviewModal({ profile, onClose }) {
               </div>
             </div>
             <div className={styles.modalIndex}>
-              <small>VALU INDEX</small>
-              <strong>{isFull ? profile.valu_index : '—'}</strong>
-              <span>{isFull ? 'POINTS' : 'BASIC ACCESS'}</span>
+              <small>{isFull ? 'VALU INDEX' : 'LISTING LEVEL'}</small>
+              <strong>{isFull ? profile.valu_index : 'BASIC'}</strong>
+              <span>{isFull ? 'POINTS' : 'PUBLIC LISTING'}</span>
               {tier && <b>{tier.name}</b>}
             </div>
           </div>
@@ -355,9 +359,18 @@ function ProfilePreviewModal({ profile, onClose }) {
           {skills.length > 0 && <section className={styles.modalListSection}><p className={styles.modalSectionLabel}>PROFESSIONAL SKILLS</p><div className={styles.modalChips}>{skills.map(skill => <span key={skill}>{skill}</span>)}</div></section>}
           {topics.length > 0 && <section className={styles.modalListSection}><p className={styles.modalSectionLabel}>AREAS OF EXPERTISE</p><div className={styles.modalChips}>{topics.map(topic => <span key={topic}>{topic}</span>)}</div></section>}
           <div className={styles.modalFooter}>
-            <p>See a professional whose capabilities match your needs? Share your brief with Valoria and discuss a suitable introduction.</p>
+            <p>Choose the introduction that matches this professional’s selected capability. Valoria will review the request and coordinate the next step.</p>
             <div className={styles.modalActions}>
-              <Link href={contactHref} className={styles.modalSecondary}>REQUEST AN INTRODUCTION</Link>
+              {enquiryActions.map(action => (
+                <EnquiryForm
+                  key={action.key}
+                  professionalProfileId={profile.professional_id || profile.id}
+                  atbId={displayText(profile.atb_id || 'PENDING')}
+                  enquiryType={action.enquiryType}
+                  ctaLabel={action.ctaLabel}
+                  triggerStyle={{ padding: '11px 14px', background: '#C9A84C', color: '#1A1A2E', fontSize: '8px', letterSpacing: '.08em', borderRadius: '4px' }}
+                />
+              ))}
               <Link href={profileHref} className={styles.modalPrimary}>EXPLORE FULL PROFILE <span>↗</span></Link>
             </div>
           </div>
