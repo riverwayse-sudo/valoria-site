@@ -492,6 +492,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(page).toContain('Basic listings require a linked completed taster')
     expect(page).toContain('BASIC LISTING PATH')
     expect(page).toContain("r.public_roster?'PUBLIC':'NOT PUBLIC'")
+    expect(page).toContain("r.public_roster?<Link href={'/profile/'+r.user_id}")
+    expect(page).toContain('PRIVATE')
   })
 
 })
