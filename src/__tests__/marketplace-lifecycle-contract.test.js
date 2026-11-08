@@ -520,4 +520,12 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).toContain('COMMISSION FACILITATOR')
   })
 
+  test('empty capability directories guide buyers to a relevant brief', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    expect(directory).toContain('Share the role, sector and capability requirements you need.')
+    expect(directory).toContain('Share the event, audience and subject you need covered.')
+    expect(directory).toContain('Share your programme goals, audience and delivery format.')
+    expect(directory).not.toContain('Public profiles appear only after participants meet the relevant listing requirements')
+  })
+
 })
