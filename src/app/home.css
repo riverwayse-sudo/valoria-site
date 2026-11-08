@@ -3547,3 +3547,76 @@
     gap: 5px;
   }
 }
+
+
+/* Homepage hero — compact event panel and prevent the second slide being clipped. */
+.hero-slider .hero-event-panel {
+  max-width: 380px;
+  padding: 19px 20px;
+}
+.hero-slider .hero-event-panel .hero-event-cluster {
+  margin-bottom: 9px;
+  font-size: 8px;
+}
+.hero-slider .hero-event-panel h2 {
+  max-width: 18ch;
+  font-size: clamp(22px, 2vw, 27px);
+  line-height: 1.08;
+  margin-bottom: 8px;
+}
+.hero-slider .hero-event-panel p {
+  font-size: 11px;
+  line-height: 1.5;
+}
+.hero-slider .hero-event-status {
+  margin-top: 12px;
+  padding-top: 10px;
+}
+.hero-slider .hero-event-panel .session-timer {
+  margin-top: 9px;
+  padding: 10px 11px;
+}
+.hero-slider .hero-event-panel .event-modal-countdown-heading {
+  margin-bottom: 7px;
+}
+.hero-slider .hero-event-panel .event-modal-countdown-units {
+  gap: 5px;
+}
+.hero-slider .hero-event-panel .event-modal-countdown-unit {
+  padding: 8px 2px 7px;
+}
+.hero-slider .hero-event-panel .event-modal-countdown-unit strong {
+  font-size: clamp(19px, 1.8vw, 23px);
+}
+.hero-slider .hero-event-panel .event-modal-countdown-unit span {
+  margin-top: 4px;
+  font-size: 6px;
+}
+@media (min-width: 901px) {
+  .hero-slider {
+    min-height: clamp(680px, 92svh, 860px);
+  }
+  .hero-slider .hero-slides {
+    min-height: clamp(600px, calc(92svh - 80px), 780px);
+  }
+  .hero-slider .hero-event-slide .hero-inner {
+    padding-block: 28px 66px;
+  }
+}
+@media (max-width: 900px) {
+  .hero-slider .hero-event-panel {
+    max-width: 620px;
+    padding: 18px;
+  }
+}
+@media (max-width: 480px) {
+  .hero-slider .hero-event-panel {
+    padding: 16px;
+  }
+  .hero-slider .hero-event-panel h2 {
+    font-size: 23px;
+  }
+  .hero-slider .hero-event-panel .session-timer {
+    padding: 9px 8px;
+  }
+}
