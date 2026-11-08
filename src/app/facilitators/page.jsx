@@ -45,7 +45,7 @@ export default function FacilitatorsPage() {
             </p>
             <div className="page-hero-actions">
               <a href="/contact-us" className="btn-gold">COMMISSION A PROGRAMME</a>
-              <a href="/valoria-develop" className="btn-outline">BROWSE CERTIFIED FACILITATORS</a>
+              <a href="/marketplace/facilitators" className="btn-outline">BROWSE CERTIFIED FACILITATORS</a>
             </div>
           </div>
         </section>
