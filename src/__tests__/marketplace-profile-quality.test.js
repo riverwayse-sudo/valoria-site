@@ -24,4 +24,8 @@ describe('public marketplace profile content gate', () => {
     expect(source).toContain('1D400')
     expect(source).toContain('1D7FF')
   })
+  test('exports the public profile quality gate used by profile pages and sitemap', () => {
+    expect(source).toContain('export function isPublicProfileContentReady(row)')
+  })
+
 })
