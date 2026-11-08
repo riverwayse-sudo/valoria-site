@@ -35,6 +35,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).toContain("p.assessment_access === 'basic'")
     expect(directory).toContain("isFull ? 'FULL VALU ASSESSMENT' : 'BASIC · VALU SNAPSHOT'")
     expect(directory).toContain('BASIC LISTING')
+    expect(directory).toContain('applicable Basic or Full listing requirements')
   })
   test('marketplace data is professional-first and deduplicates capabilities', () => {
     const source = read('src/lib/marketplace-data.js')
