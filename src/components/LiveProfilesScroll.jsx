@@ -33,7 +33,7 @@ export default async function LiveProfilesScroll() {
     dataUnavailable = true
   }
 
-  const qualityProfiles = profiles.slice(0, 5)
+  const qualityProfiles = profiles.slice(0, 13)
   const discoverableCount = counts.all
 
   return (
@@ -42,7 +42,7 @@ export default async function LiveProfilesScroll() {
         <div className="live-profiles-copy">
           <div className="live-profiles-kicker">THE VALORIA MARKETPLACE</div>
           <h2 id="marketplace-title" className="live-profiles-title">Find professionals <em>by capability.</em></h2>
-          <p className="live-profiles-subtitle">Explore public professional profiles at Basic and Full levels. Basic listings show verified identity and capabilities; Full listings add VALU insight. Every public listing requires explicit visibility consent.</p>
+          <p className="live-profiles-subtitle">Explore 13 public professional profiles at Basic and Full levels. Basic listings show public profile details and declared capability selections; Full listings add VALU insight and evidence-approved capability lanes. Every public listing requires explicit visibility consent.</p>
           {!dataUnavailable && <div className="live-profiles-proof" aria-label="Public marketplace profile count"><strong>{discoverableCount}</strong><span>public professional profiles</span></div>}
         </div>
 
@@ -78,7 +78,11 @@ export default async function LiveProfilesScroll() {
           <div className="vi-scroll-mask vi-scroll-mask-static">
             <div className="vi-scroll-track vi-scroll-track-static">
               {qualityProfiles.map(profile => {
-                const tracks = Array.isArray(profile.capabilities) ? profile.capabilities : []
+                const tracks = Array.isArray(profile.selectedCapabilities) && profile.selectedCapabilities.length
+                  ? profile.selectedCapabilities
+                  : Array.isArray(profile.selected_capabilities) && profile.selected_capabilities.length
+                    ? profile.selected_capabilities
+                    : (Array.isArray(profile.capabilities) ? profile.capabilities : [])
                 const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
                 const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
                 const profileHref = profile.atb_id ? `/profile/${encodeURIComponent(profile.atb_id)}` : '/marketplace'
@@ -96,7 +100,7 @@ export default async function LiveProfilesScroll() {
                       {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div><div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div></>}
                     </div>
                     <div className="vi-scroll-score" aria-label={isBasic ? 'Basic marketplace listing' : `VALU Index ${profile.valu_index} points`}>
-                      <span className="vi-scroll-score-label">{isBasic ? 'MEMBER TIER' : 'VALU INDEX'}</span>
+                      <span className="vi-scroll-score-label">{isBasic ? 'LISTING LEVEL' : 'VALU INDEX'}</span>
                       <strong>{isBasic ? 'BASIC' : profile.valu_index}</strong>
                       {!isBasic && <span className="vi-scroll-score-max">points</span>}
                     </div>
