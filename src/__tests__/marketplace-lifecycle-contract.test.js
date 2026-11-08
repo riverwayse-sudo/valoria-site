@@ -30,7 +30,7 @@ describe('VALUI marketplace lifecycle contract', () => {
   test('marketplace keeps Basic taster listings distinct from Full VALU listings', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
     const data = read('src/lib/marketplace-data.js')
-    expect(data).toContain("assessment_access === 'basic'")
+    expect(data).toContain("assessmentAccess === 'basic'")
     expect(data).toContain("assessment_access === 'full'")
     expect(directory).toContain("p.assessment_access === 'basic'")
     expect(directory).toContain("isFull ? 'VALU ASSESSMENT INSIGHT' : 'BASIC PROFESSIONAL LISTING'")
