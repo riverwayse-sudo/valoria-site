@@ -78,9 +78,9 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Your listing eligibility could not be verified. Please try again.' }, { status: 502 })
     }
 
-    const [{ data: currentProfile, error: currentProfileError }, { data: roster, error: rosterError }, { data: taster, error: tasterError }] = await Promise.all([
+    const [{ data: currentProfile, error: currentProfileError }, { data: roster, error: rosterError }, { data: taster, error: tasterError }, { data: currentAssessment, error: assessmentError }] = await Promise.all([
       admin.from('professional_profiles')
-        .select('profile_complete,display_name,headline,current_job_title,listing_status,revoked_at,is_test')
+        .select('profile_complete,display_name,headline,current_job_title,listing_status,revoked_at,is_test,valu_index,assessment_completed_at,assessment_expires_at')
         .eq('id', user.id)
         .maybeSingle(),
       admin.from('marketplace_public_roster')
@@ -93,13 +93,28 @@ export async function POST(request) {
         .not('completed_at', 'is', null)
         .limit(1)
         .maybeSingle(),
+      admin.from('valu_assessments')
+        .select('total_score,completed_at,expires_at')
+        .eq('user_id', user.id)
+        .not('completed_at', 'is', null)
+        .order('completed_at', { ascending: false })
+        .limit(1)
+        .maybeSingle(),
     ])
 
-    if (currentProfileError || rosterError || tasterError) {
+    if (currentProfileError || rosterError || tasterError || assessmentError) {
       return NextResponse.json({ error: 'Your Basic or Full listing status could not be verified.' }, { status: 502 })
     }
 
-    const basicEligible = roster?.assessment_access === 'basic' && Boolean(taster)
+    const assessmentExpiry = Date.parse(currentAssessment?.expires_at || currentProfile?.assessment_expires_at || '')
+    const profileExpiry = Date.parse(currentProfile?.assessment_expires_at || '')
+    const currentAssessmentEligible = Boolean(currentAssessment
+      && Number(currentAssessment.total_score) >= 35
+      && Number(currentAssessment.total_score) === Number(currentProfile?.valu_index)
+      && Date.parse(currentAssessment.completed_at || '') === Date.parse(currentProfile?.assessment_completed_at || '')
+      && Number.isFinite(assessmentExpiry) && assessmentExpiry > Date.now()
+      && Number.isFinite(profileExpiry) && profileExpiry > Date.now())
+    const basicEligible = roster?.assessment_access === 'basic' && (Boolean(taster) || currentAssessmentEligible)
     const fullEligible = roster?.assessment_access === 'full' && currentProfile?.profile_complete === true
     const displayName = currentProfile?.display_name?.trim() || roster?.full_name?.trim()
     const headline = currentProfile?.headline?.trim()
@@ -113,7 +128,7 @@ export async function POST(request) {
 
     if (!(listingReady && identityReady && (basicEligible || fullEligible))) {
       return NextResponse.json({
-        error: 'Your profile is not yet ready for public listing. Basic listing requires a linked completed taster and a verified professional identity; Full listing requires a complete Full VALU profile.',
+        error: 'Your profile is not yet ready for public listing. Basic listing requires a linked completed taster or a current Full assessment, plus a valid professional identity; Full listing requires a complete Full VALU profile.',
       }, { status: 409 })
     }
   }
