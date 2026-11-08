@@ -1,26 +1,34 @@
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
-import ContactForm from '../contact-us/ContactForm'
+import { PRIME_CLUSTERS } from '@/lib/brand'
 import '../pages.css'
 
 export const metadata = {
-  title: 'Valoria Develop — PRIME-Based Programmes',
-  description: 'PRIME-based development programmes for individuals and organisations, designed around capability gaps surfaced by the VALU Index.',
-  keywords: ['Valoria Develop', 'PRIME development programmes', 'professional capability development'],
+  title: 'Development Programmes',
+  description: 'Five PRIME-mapped development programmes for individuals and organisations. Each programme targets a specific cluster — so development can address the capability gaps your VALU Index assessment surfaces.',
+  keywords: ['PRIME programmes', 'professional development Nigeria', 'capability training Africa', 'VALU Index development', 'Valoria Develop programmes'],
   openGraph: {
-    title: 'Valoria Develop | Valoria Institute',
-    description: 'Development that closes the capability gaps your assessment found.',
+    title: 'Development Programmes | Valoria Institute',
+    description: 'A programme for every cluster. Development that maps to the same standard you\'re measured against.',
     url: 'https://valoriainstitute.com/programmes',
   },
   alternates: { canonical: 'https://valoriainstitute.com/programmes' },
 }
 
-const FORMATS = [
-  { name: 'PRIME Sprint', duration: 'One day', detail: 'A focused workshop built around one skill.' },
-  { name: 'PRIME Cluster Programme', duration: 'Six weeks', detail: 'A structured development programme focused on one PRIME cluster.' },
-  { name: 'PRIME Certified Professional', duration: 'Six months', detail: 'A development pathway spanning all five PRIME clusters. The certification process is in development; participation in this pathway does not currently confer a Valoria certification.', status: 'IN DEVELOPMENT' },
-  { name: 'Executive Immersion', duration: 'Three days', detail: 'An intensive experience for no more than 12 senior participants.' },
+const CLUSTER_DETAIL = {
+  P: { focus: 'Communication · Executive presence · Composure under scrutiny', outcome: 'Professionals who can carry their capability clearly into any room — without losing it to nerves, noise, or hierarchy.' },
+  R: { focus: 'Trust-building · Collaborative intelligence · Network quality', outcome: 'Professionals who don\'t just work with others — they raise the output of everyone around them.' },
+  I: { focus: 'Critical thinking · Analytical depth · Decision-making · Cognitive agility', outcome: 'Professionals who don\'t just consume information — they synthesise it into decisions that hold under scrutiny.' },
+  M: { focus: 'Execution discipline · Accountability · Resilience · Adaptability', outcome: 'Professionals who finish what they start, improve while doing it, and don\'t externalise when things break.' },
+  E: { focus: 'Commercial thinking · Systems building · Venture mindset', outcome: 'Professionals who can build structures that outlast them, not just work well inside ones others built.' },
+}
+
+const FORMAT_OPTIONS = [
+  { label: 'Half-day intensive', desc: 'Single cluster focus. High-intensity, practical — suited to senior teams with limited time.' },
+  { label: 'Two-day cohort workshop', desc: 'One or two clusters, full facilitation. Standard for graduate and mid-career cohorts.' },
+  { label: 'Multi-week programme', desc: 'Full PRIME coverage or deep-dive into one cluster. Suited to organisational transformation contexts.' },
+  { label: 'Custom format', desc: 'Built to your team size, delivery preference, and the specific cluster profile your VALU Index surfaced.' },
 ]
 
 export default function ProgrammesPage() {
@@ -28,74 +36,118 @@ export default function ProgrammesPage() {
     <>
       <Nav />
       <main id="main-content">
+
+        {/* HERO */}
         <section className="page-hero">
           <div className="page-hero-inner">
-            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">VALORIA DEVELOP</span></div>
-            <h1 className="page-title">Development that<br /><em>closes the gap.</em></h1>
+            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">DEVELOPMENT PROGRAMMES</span></div>
+            <h1 className="page-title">A programme<br />for every <em>cluster.</em></h1>
             <p className="page-sub">
-              Valoria Develop runs PRIME-based programmes for individuals and organisations. Each one targets the capability areas where development can make a difference.
+              Every Valoria Develop programme is built against one or more PRIME clusters — the same framework used by the VALU Index. Programme scope and follow-up measurement are agreed with each organisation.
             </p>
             <div className="page-hero-actions">
-              <a href="#programme-enquiry" className="btn-gold">ENQUIRE ABOUT A PROGRAMME</a>
-              <a href="/prime" className="btn-outline">EXPLORE THE PRIME FRAMEWORK</a>
+              <a href="/contact-us" className="btn-gold">COMMISSION A PROGRAMME</a>
+              <a href="/prime" className="btn-outline">SEE THE PRIME FRAMEWORK</a>
             </div>
           </div>
         </section>
 
+        {/* THE FIVE PROGRAMMES */}
         <section className="page-section">
           <div className="page-section-inner">
             <Reveal>
-              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOUR DEVELOPMENT FORMATS</span></div>
-              <h2 className="section-title">A format for<br /><em>the work ahead.</em></h2>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE FIVE PROGRAMMES</span></div>
+              <h2 className="section-title" className="section-title programmes-clusters-title">Built on PRIME.<br /><em>Measured against it too.</em></h2>
             </Reveal>
             <div className="programmes-grid">
-              {FORMATS.map((format, index) => (
-                <Reveal key={format.name}>
-                  <article className="card-gold programme-card">
-                    <div className="facilitator-step">0{index + 1}</div>
-                    <div className="cluster-name">{format.name}</div>
-                    <div className="programme-label">{format.duration}</div>
-                    {format.status && <div className="programme-label">{format.status}</div>}
-                    <p className="cluster-desc">{format.detail}</p>
-                  </article>
-                </Reveal>
-              ))}
+              {PRIME_CLUSTERS.map((c) => {
+                const detail = CLUSTER_DETAIL[c.letter]
+                return (
+                  <Reveal key={c.letter}>
+                    <div className="card-gold programme-card">
+                      <div className="programme-head">
+                        <div className="cluster-letter programme-letter">{c.letter}</div>
+                        <div className="cluster-name">{c.name} Programme</div>
+                      </div>
+                      <div className="programme-label">Focus areas</div>
+                      <p className="cluster-desc programme-focus">{detail?.focus}</p>
+                      <div className="programme-label">Outcome</div>
+                      <p className="cluster-desc">{detail?.outcome}</p>
+                    </div>
+                  </Reveal>
+                )
+              })}
             </div>
           </div>
         </section>
 
+        {/* HOW PROGRAMMES ARE MEASURED */}
         <section className="page-section alt">
           <div className="page-section-inner two-col">
             <Reveal>
-              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">HOW IT IS TAUGHT</span></div>
-              <h2 className="section-title">Learning through<br /><em>practice and people.</em></h2>
-              <p className="page-copy">The proposed delivery model balances practical application, learning with others and focused formal instruction.</p>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WHY MEASUREMENT MATTERS</span></div>
+              <h2 className="section-title">Development that<br /><em>shows up in the numbers.</em></h2>
+              <p className="page-copy">
+                Because Valoria Develop programmes use the same PRIME framework as the VALU Index, baseline and follow-up measurement can be included where agreed. The timing and reporting approach are confirmed in the programme scope. Cluster score movement can then provide a structured view of progress.
+              </p>
+              <p className="page-copy page-copy-spaced">
+                Most organisations spend training budgets and then rely on a Net Promoter Score to know if it worked. Valoria Develop gives you a five-cluster score instead.
+              </p>
             </Reveal>
             <Reveal>
-              <div className="prime-tier-list">
-                <article className="card-gold prime-tier"><div className="prime-tier-meta"><div>70% Experiential</div></div><p className="cluster-desc">Learning through practice, application and real work.</p></article>
-                <article className="card-gold prime-tier"><div className="prime-tier-meta"><div>20% Social</div></div><p className="cluster-desc">Learning through peers, collaboration and shared reflection.</p></article>
-                <article className="card-gold prime-tier"><div className="prime-tier-meta"><div>10% Formal</div></div><p className="cluster-desc">Focused instruction that supports the learning process.</p></article>
-              </div>
+              <ul className="checklist" role="list">
+                {[
+                  'Where included, a pre-programme VALU Index can establish a baseline across all five clusters',
+                  'Programme targets the specific cluster(s) where movement is needed most',
+                  'Facilitators deliver against defined PRIME behavioural anchors within the agreed programme scope',
+                  'Post-programme VALU Index (90 days out) shows what actually moved',
+                  'Cohort-level reporting available for organisational development leads',
+                ].map((t, i) => (
+                  <li key={i}>
+                    <span className="dot"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#1D9E75" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+                    {t}
+                  </li>
+                ))}
+              </ul>
             </Reveal>
           </div>
         </section>
 
-        <section className="page-section" id="programme-enquiry">
-          <div className="page-section-inner two-col">
+        {/* FORMAT OPTIONS */}
+        <section className="page-section">
+          <div className="page-section-inner">
             <Reveal>
-              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">PROGRAMME ENQUIRY</span></div>
-              <h2 className="section-title">Tell us about<br /><em>your development need.</em></h2>
-              <p className="page-copy">Share the team or audience, the PRIME cluster you want to focus on and your timeline. If you are not sure which cluster to select, tell us that in the form and we can clarify the scope with you.</p>
-              <p className="page-copy">Facilitator certification, formal certification outcomes, remeasurement schedules and programme prices are not represented as available until confirmed.</p>
+              <div className="eyebrow" style={{ justifyContent: 'center' }}><div className="eyebrow-line" /><span className="eyebrow-text">DELIVERY FORMATS</span><div className="eyebrow-line" /></div>
+              <h2 className="section-title" style={{ textAlign: 'center', marginBottom: '40px' }}>Built around<br /><em>your team, not ours.</em></h2>
             </Reveal>
-            <Reveal>
-              <div className="info-card">
-                <ContactForm initialInquiryType="training" />
-              </div>
-            </Reveal>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+              {FORMAT_OPTIONS.map((f, i) => (
+                <Reveal key={i}>
+                  <div className="card-gold">
+                    <div className="cluster-name" style={{ marginBottom: '10px', fontSize: '14px' }}>{f.label}</div>
+                    <p className="cluster-desc">{f.desc}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+            <p style={{ color: 'var(--faint)', fontSize: '12px', marginTop: '32px', textAlign: 'center' }}>
+              Full programme outlines, facilitator profiles, and commercial terms are confirmed at commissioning.
+            </p>
           </div>
         </section>
+
+        {/* CTA */}
+        <section className="page-section alt cta-banner">
+          <Reveal>
+            <h2 className="section-title">Commission a programme<br /><em>against the standard.</em></h2>
+            <p className="page-sub">Tell us which cluster your team needs to close, and we&apos;ll match you with the right certified facilitator.</p>
+            <div className="page-hero-actions" style={{ justifyContent: 'center' }}>
+              <a href="/contact-us" className="btn-gold">COMMISSION A PROGRAMME</a>
+              <a href="/facilitators" className="btn-outline">HOW COMMISSIONING WORKS</a>
+            </div>
+          </Reveal>
+        </section>
+
       </main>
       <Footer />
     </>
