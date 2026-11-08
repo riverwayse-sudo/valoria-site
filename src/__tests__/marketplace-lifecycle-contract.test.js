@@ -77,7 +77,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     const layout = read('src/app/profile/[id]/layout.jsx')
     expect(page).toContain("String(id || '').normalize('NFKC')")
     expect(layout).toContain("String(id || '').normalize('NFKC')")
-    expect(page).toContain('isAtbId ? \'atb_id\'')
+    expect(page).toContain("getConsentVerifiedPublicProfile(id, isUuid ? 'id' : 'atb_id')")
   })
 
   test('public profile metadata and direct URLs use consent-verified lookup', () => {
