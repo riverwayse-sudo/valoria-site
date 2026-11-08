@@ -60,4 +60,29 @@ describe('main website left-alignment contract', () => {
     }
   })
 
+
+  test('homepage section headings use the shared left-aligned editorial grid', () => {
+    const css = read('src/app/home.css')
+    expect(css).toContain('grid-template-columns: minmax(0, 1.1fr) minmax(260px, .9fr)')
+    expect(css).toContain('text-align: left')
+    expect(css).toContain('justify-content: flex-start')
+    expect(css).toContain('.home-section-heading {')
+    expect(css).toContain('grid-template-columns: 1fr')
+  })
+
+  test('homepage replay does not depend on an owner-disabled embedded player', () => {
+    const source = read('src/components/HomepageEvents.jsx')
+    expect(source).toContain('home-events-video-link')
+    expect(source).toContain('i.ytimg.com/vi/')
+    expect(source).not.toContain('youtube-nocookie.com/embed/')
+  })
+
+  test('empty marketplace state offers truthful sourcing routes without implying public listings exist', () => {
+    const source = read('src/components/LiveProfilesScroll.jsx')
+    expect(source).toContain('The registry is opening through verified capability.')
+    expect(source).toContain('/contact-us?type=candidate')
+    expect(source).toContain('/contact-us?type=speaker_booking')
+    expect(source).toContain('/contact-us?type=training')
+  })
+
 })
