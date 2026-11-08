@@ -508,11 +508,9 @@ function ProfileSetupForm() {
       setSaveError('Your profile was saved, but Valoria could not verify the profile record. Please try again.')
       return
     }
-    if (!row.profile_complete) {
-      setSaving(false)
-      setSaveError('Your profile was saved, but Valoria has not confirmed it is complete. Review the required sections and try again.')
-      return
-    }
+    // Basic listings do not require Full-profile completion. The consent API
+    // checks the linked completed taster and minimum public identity for Basic,
+    // and applies the stricter complete-profile and capability checks to Full.
     let acknowledgementResponse
     try {
       acknowledgementResponse = await fetch('/api/profile/acknowledgements', {
