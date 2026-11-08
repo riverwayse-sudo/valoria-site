@@ -20,7 +20,7 @@ describe('main website left-alignment contract', () => {
 
   test('desktop dropdowns and mobile navigation are explicitly covered', () => {
     const css = read('src/styles/globals.css')
-    for (const selector of ['.nav-dropdown', '.nav-dropdown-grid', '.nav-dropdown-link', '.nav-dropdown-description', '.nav-mobile', '.nav-mobile-link']) {
+    for (const selector of ['.nav-dropdown', '.nav-dropdown-grid', '.nav-dropdown-link', '.nav-dropdown-description', '.nav-mobile', '.nav-mobile-link', '.page-hero-actions-centered', '.eyebrow-center']) {
       expect(css).toContain(selector)
     }
   })
