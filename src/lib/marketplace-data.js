@@ -16,7 +16,7 @@ function isValidAtbId(value) {
   return /^ATB-[A-Z0-9-]{4,40}$/i.test(String(value || '').trim())
 }
 
-function isPublicProfileContentReady(row) {
+export function isPublicProfileContentReady(row) {
   const headline = String(row.headline || row.current_job_title || '').trim()
   const assessmentAccess = row.assessment_access
   const isValidAssessmentAccess = assessmentAccess === 'basic' || assessmentAccess === 'full'
