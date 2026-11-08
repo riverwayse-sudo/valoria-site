@@ -98,8 +98,8 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
   const admin = getAdminClient()
   const lookupField = field === 'atb_id' ? 'atb_id' : 'professional_id'
 
-  // Full listings require a completed VALU report. Basic listings require an
-  // account-linked completed taster and a minimal professional identity.
+  // Full listings require approved capability evidence. Basic listings require
+  // a linked completed taster or current Full assessment and minimal identity.
   const { data: roster, error: rosterError } = await admin
     .from('marketplace_public_roster')
     .select('professional_id,atb_id,assessment_access,assessment_summary,capabilities,selected_capabilities,full_name,headline,current_job_title,valu_index')
