@@ -177,7 +177,8 @@ export async function POST(request) {
     // submit an enquiry without an account), and had zero abuse protection
     // until now. Keyed by IP, not email, since buyer_email is
     // self-reported and trivially spoofable per-request.
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || request.headers.get('x-real-ip') || 'unknown'
+    const forwardedFor = request.headers.get('x-forwarded-for')
+    const ip = request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip') || forwardedFor?.split(',').pop()?.trim() || 'unknown'
     const { data: allowed, error: rateLimitError } = await supabase.rpc('check_rate_limit', {
       p_key: `enquiry:${ip}`, p_max_count: 5, p_window_seconds: 3600,
     })
