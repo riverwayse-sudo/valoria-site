@@ -13,12 +13,12 @@ describe('VALUI marketplace lifecycle contract', () => {
 
     expect(rootSource).toContain("import MarketplaceDirectory from '@/components/MarketplaceDirectory'")
     expect(rootSource).toContain("getMarketplaceDirectoryData('all')")
-    expect(rootSource).toContain('getMarketplaceCounts')
+    expect(rootSource).toContain('getMarketplaceDirectoryData')
     expect(rootSource).toContain('activeTrack="all"')
 
     for (const source of [talent, speakers, facilitators]) {
       expect(source).toContain("import MarketplaceDirectory from '@/components/MarketplaceDirectory'")
-      expect(source).toContain('getMarketplaceRows')
+      expect(source).toContain('getMarketplaceDirectoryData')
       expect(source).toContain('getMarketplaceDirectoryData')
       expect(source).toContain('activeTrack=')
     }
@@ -46,21 +46,20 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('facilitator: byTrack.facilitator.size')
   })
 
-  test('marketplace cards display selected capabilities without changing category eligibility filters', () => {
+  test('marketplace cards show all three capability lanes without using selection as an eligibility shortcut', () => {
     const data = read('src/lib/marketplace-data.js')
     const directory = read('src/components/MarketplaceDirectory.jsx')
     expect(data).toContain('selected_capabilities')
-    expect(data).toContain('selectedCapabilities: []')
-    expect(data).toContain('target.selectedCapabilities')
+    expect(data).toContain('selectedCapabilities')
     expect(directory).toContain('Array.isArray(p.selectedCapabilities)')
     expect(directory).toContain('Array.isArray(p.selected_capabilities)')
     expect(directory).toContain('selectedCaps.has')
-    expect(directory).toContain('Selection status only; category listing eligibility is assessed separately')
     expect(directory).toContain('CAPABILITY SELECTION')
     expect(directory).toContain("key:'candidate'")
     expect(directory).toContain("key:'speaker'")
     expect(directory).toContain("key:'facilitator'")
     expect(directory).toContain('NOT SELECTED')
+    expect(directory).toContain('Selection is distinct from capability-specific listing eligibility.')
     const categoryFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
     expect(categoryFilter).toContain('p.capabilities || p.tracks || [p.track]')
     expect(categoryFilter).not.toContain('selectedCapabilities')
