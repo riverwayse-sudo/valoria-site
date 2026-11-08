@@ -94,4 +94,16 @@ describe('main website left-alignment contract', () => {
     expect(components).toContain('.uf-bottom{align-items:flex-start;text-align:left}')
   })
 
+
+  
+  test('registration popup and homepage countdown use compact no-scroll card layouts', () => {
+    const modal = read('src/components/EventRegistrationModal.jsx')
+    const home = read('src/app/home.css')
+    expect(modal).toContain('height:min(650px,calc(100dvh - 32px))')
+    expect(modal).toContain('overflow:hidden')
+    expect(modal).toContain('.event-modal-event-meta{display:none}')
+    expect(home).toContain('Event countdown card — compact, deliberate hierarchy with no overflow.')
+    expect(home).toContain('border-radius:5px;background:rgba(7,8,18,.34)')
+  })
+
 })
