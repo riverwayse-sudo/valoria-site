@@ -1,7 +1,7 @@
 import MarketplaceDirectory from '@/components/MarketplaceDirectory'
 import { getMarketplaceDirectoryData } from '@/lib/marketplace-data'
 export const dynamic = 'force-dynamic'
-export const metadata={title:'ATB Spotlight — Facilitators | Valoria Institute',description:'ATB Spotlight helps training buyers discover facilitators by declared expertise. For PRIME-based team development, explore Valoria Develop.'}
+export const metadata={title:'ATB Spotlight — Facilitators | Valoria Institute',description:'Discover public facilitators by declared expertise and discuss a suitable programme with Valoria Institute.'}
 export default async function Page() {
   let rows = []
   let counts = { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
