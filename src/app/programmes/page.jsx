@@ -6,7 +6,7 @@ import '../pages.css'
 
 export const metadata = {
   title: 'Development Programmes',
-  description: 'Five PRIME-mapped development programmes delivered by certified facilitators. Each programme targets a specific cluster — so development closes the exact gaps your VALU Index assessment surfaced.',
+  description: 'Five PRIME-mapped development programmes for individuals and organisations. Each programme targets a specific cluster — so development can address the capability gaps your VALU Index assessment surfaces.',
   keywords: ['PRIME programmes', 'professional development Nigeria', 'capability training Africa', 'VALU Index development', 'Valoria Develop programmes'],
   openGraph: {
     title: 'Development Programmes | Valoria Institute',
@@ -43,7 +43,7 @@ export default function ProgrammesPage() {
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">DEVELOPMENT PROGRAMMES</span></div>
             <h1 className="page-title">A programme<br />for every <em>cluster.</em></h1>
             <p className="page-sub">
-              Every Valoria Develop programme is built against one or more PRIME clusters — the same architecture the VALU Index measures against. So development closes real gaps, not hypothetical ones. And movement shows up in the next assessment, not just in feedback forms.
+              Every Valoria Develop programme is built against one or more PRIME clusters — the same framework used by the VALU Index. Programme scope and follow-up measurement are agreed with each organisation.
             </p>
             <div className="page-hero-actions">
               <a href="/contact-us" className="btn-gold">COMMISSION A PROGRAMME</a>
@@ -88,7 +88,7 @@ export default function ProgrammesPage() {
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WHY MEASUREMENT MATTERS</span></div>
               <h2 className="section-title">Development that<br /><em>shows up in the numbers.</em></h2>
               <p className="page-copy">
-                Because Valoria Develop programmes run on the same PRIME framework as the VALU Index, the before-and-after measurement is built in. Teams take the VALU Index before the programme. They retake it 90 days after. The cluster score movement is your ROI — visible, specific, and comparable across the cohort.
+                Because Valoria Develop programmes use the same PRIME framework as the VALU Index, baseline and follow-up measurement can be included where agreed. The timing and reporting approach are confirmed in the programme scope. Cluster score movement can then provide a structured view of progress.
               </p>
               <p className="page-copy page-copy-spaced">
                 Most organisations spend training budgets and then rely on a Net Promoter Score to know if it worked. Valoria Develop gives you a five-cluster score instead.
@@ -97,9 +97,9 @@ export default function ProgrammesPage() {
             <Reveal>
               <ul className="checklist" role="list">
                 {[
-                  'Pre-programme VALU Index establishes the baseline across all five clusters',
+                  'Where included, a pre-programme VALU Index can establish a baseline across all five clusters',
                   'Programme targets the specific cluster(s) where movement is needed most',
-                  'Certified facilitators deliver against defined PRIME behavioural anchors',
+                  'Facilitators deliver against defined PRIME behavioural anchors within the agreed programme scope',
                   'Post-programme VALU Index (90 days out) shows what actually moved',
                   'Cohort-level reporting available for organisational development leads',
                 ].map((t, i) => (

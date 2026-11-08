@@ -12,69 +12,68 @@ describe('VALUI marketplace lifecycle contract', () => {
     const facilitators = read('src/app/marketplace/facilitators/page.jsx')
 
     expect(rootSource).toContain("import MarketplaceDirectory from '@/components/MarketplaceDirectory'")
-    expect(rootSource).toContain("getMarketplaceRows('all')")
-    expect(rootSource).toContain('getMarketplaceCounts')
+    expect(rootSource).toContain("getMarketplaceDirectoryData('all')")
+    expect(rootSource).toContain('getMarketplaceDirectoryData')
     expect(rootSource).toContain('activeTrack="all"')
 
     for (const source of [talent, speakers, facilitators]) {
       expect(source).toContain("import MarketplaceDirectory from '@/components/MarketplaceDirectory'")
-      expect(source).toContain('getMarketplaceRows')
-      expect(source).toContain('getMarketplaceCounts')
+      expect(source).toContain('getMarketplaceDirectoryData')
+      expect(source).toContain('getMarketplaceDirectoryData')
       expect(source).toContain('activeTrack=')
     }
-    expect(talent).toContain("getMarketplaceRows('candidate')")
-    expect(speakers).toContain("getMarketplaceRows('speaker')")
-    expect(facilitators).toContain("getMarketplaceRows('facilitator')")
+    expect(talent).toContain("getMarketplaceDirectoryData('candidate')")
+    expect(speakers).toContain("getMarketplaceDirectoryData('speaker')")
+    expect(facilitators).toContain("getMarketplaceDirectoryData('facilitator')")
   })
 
-  test('marketplace distinguishes Basic snapshot access from Full VALU assessment', () => {
+  test('marketplace keeps Basic taster listings distinct from Full VALU listings', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
     const data = read('src/lib/marketplace-data.js')
-    expect(data).toContain('assessment_access')
-    expect(directory).toContain("p.assessment_access === 'full'")
-    expect(directory).toContain('BASIC · SNAPSHOT')
-    expect(directory).toContain('official points, merit tier and assessment insight')
+    expect(data).toContain("assessment_access === 'basic'")
+    expect(data).toContain("assessment_access === 'full'")
+    expect(directory).toContain("p.assessment_access === 'basic'")
+    expect(directory).toContain("isFull ? 'FULL VALU ASSESSMENT' : 'BASIC · VALU SNAPSHOT'")
+    expect(directory).toContain('BASIC LISTING')
+    expect(directory).toContain('applicable Basic or Full listing requirements')
   })
-
   test('marketplace data is professional-first and deduplicates capabilities', () => {
     const source = read('src/lib/marketplace-data.js')
     expect(source).toContain('professional_id')
     expect(source).toContain('new Set')
-    expect(source).toContain('all: all.size')
+    expect(source).toContain('all: (rows || []).length')
     expect(source).toContain('candidate: byTrack.candidate.size')
     expect(source).toContain('speaker: byTrack.speaker.size')
     expect(source).toContain('facilitator: byTrack.facilitator.size')
   })
 
-  test('marketplace cards display selected capabilities without changing category eligibility filters', () => {
+  test('marketplace cards show all three capability lanes without using selection as an eligibility shortcut', () => {
     const data = read('src/lib/marketplace-data.js')
     const directory = read('src/components/MarketplaceDirectory.jsx')
     expect(data).toContain('selected_capabilities')
-    expect(data).toContain('selectedCapabilities: []')
-    expect(data).toContain('target.selectedCapabilities')
+    expect(data).toContain('selectedCapabilities')
     expect(directory).toContain('Array.isArray(p.selectedCapabilities)')
     expect(directory).toContain('Array.isArray(p.selected_capabilities)')
     expect(directory).toContain('selectedCaps.has')
-    expect(directory).toContain('Selection status only; category listing eligibility is assessed separately')
     expect(directory).toContain('CAPABILITY SELECTION')
     expect(directory).toContain("key:'candidate'")
     expect(directory).toContain("key:'speaker'")
     expect(directory).toContain("key:'facilitator'")
     expect(directory).toContain('NOT SELECTED')
+    expect(directory).toContain('Selection is distinct from capability-specific listing eligibility.')
     const categoryFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
     expect(categoryFilter).toContain('p.capabilities || p.tracks || [p.track]')
     expect(categoryFilter).not.toContain('selectedCapabilities')
   })
 
-  test('public profile metadata resolves both UUID and canonical ATB profile IDs', () => {
+  test('public profile metadata and direct URLs use consent-verified lookup', () => {
     const layout = read('src/app/profile/[id]/layout.jsx')
     const page = read('src/app/profile/[id]/page.jsx')
-    expect(layout).toContain('const { id } = await params')
-    expect(layout).toContain(".eq(isUuid ? 'id' : 'atb_id', id)")
-    expect(layout).toContain('const isAtbId =')
-    expect(page).toContain(".eq(isUuid ? 'id' : 'atb_id', id)")
+    expect(layout).toContain('getConsentVerifiedPublicProfile')
+    expect(page).toContain('getConsentVerifiedPublicProfile')
+    expect(page).toContain('const isAtbId =')
+    expect(page).toContain('initialProfile={initialProfile}')
   })
-
   test('open marketplace directories refresh server-rendered counts automatically', () => {
     const source = read('src/components/MarketplaceDirectory.jsx')
     expect(source).toContain('useRouter')
@@ -122,15 +121,22 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).not.toContain("update({ profile_complete: true")
   })
 
-  test('profile setup matches database readiness requirements and verifies completion read-back', () => {
-    const source = read('src/app/profile/setup/page.jsx')
-    expect(source).toContain("key:'photo_url', kind:'photo'")
-    expect(source).toContain('sub:\'Optional. Valoria uses a professional default avatar')
-    expect(source).toContain('required:false })')
-    expect(source).toContain(".select('atb_id, listing_status, profile_complete')")
-    expect(source).toContain('if (!row?.profile_complete)')
+  test('profile setup and edit collect explicit consent while preserving the Basic listing path', () => {
+    const setup = read('src/app/profile/setup/page.jsx')
+    const edit = read('src/app/profile/edit/page.jsx')
+    const route = read('src/app/api/profile/acknowledgements/route.js')
+    const copy = read('src/lib/profile-consent-copy.js')
+    expect(setup).toContain("visibility: 'registered_only'")
+    expect(setup).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
+    expect(setup).toContain('REGISTERED_PROFILE_CONSENT_TEXT')
+    expect(setup).toContain("fetch('/api/profile/acknowledgements'")
+    expect(setup).not.toContain('if (!row.profile_complete)')
+    expect(edit).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
+    expect(edit).toContain('REGISTERED_PROFILE_CONSENT_TEXT')
+    expect(route).toContain("const basicEligible = roster?.assessment_access === 'basic' && Boolean(taster)")
+    expect(route).toContain("const fullEligible = roster?.assessment_access === 'full' && currentProfile?.profile_complete === true")
+    expect(copy).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
   })
-
   test('database keeps profile completeness separate from full-assessment and listing eligibility', () => {
     const migration = read('supabase/migrations/20261008140000_default_avatar_photo_optional.sql')
     const profileTriggerStart = migration.indexOf('create or replace function public.enforce_valu_profile_lifecycle()')
@@ -252,18 +258,19 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(start).not.toContain("'Motivation & Stamina'")
   })
 
-  test('public copy describes the two-session VALU assessment, not the retired fifteen-question snapshot', () => {
+  test('public VALU copy follows registration-first taster and points-based Full assessment', () => {
     const prime = read('src/app/prime/page.jsx')
-    const reminders = read('src/app/api/cron/valu-reminders/route.js')
-    for (const source of [prime, reminders]) {
-      expect(source).not.toContain('15-question')
-      expect(source).not.toContain('15 question')
+    const valu = read('src/app/valu/page.jsx')
+    const start = read('src/app/valu/start/page.jsx')
+    const signup = read('src/app/signup/page.jsx')
+    for (const source of [prime, valu, start, signup]) {
+      expect(source).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
+      expect(source).not.toMatch(/9-question|58-question|15-question/i)
     }
-    expect(prime).toContain('completed in two sessions')
-    expect(reminders).toContain('RETURN TO YOUR DASHBOARD')
-    expect(reminders).not.toContain('CONTINUE TO QUESTION 10')
+    expect(start).toContain('Register your contact and professional details before the taster')
+    expect(start).toContain('Your official result in points')
+    expect(signup).toContain('VALU taster')
   })
-
   test('profile capability selection is reconciled through an authenticated server endpoint', () => {
     const setup = read('src/app/profile/setup/page.jsx')
     const route = read('src/app/api/profile/capabilities/route.js')

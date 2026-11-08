@@ -1,5 +1,8 @@
 import Link from 'next/link'
+import { AssessmentStartLink } from '@/components/Nav'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
+import { BRAND, PRIME_CLUSTERS } from '@/lib/brand'
+import { getMarketplaceDirectoryData } from '@/lib/marketplace-data'
 
 const TRACK_META = {
   candidate: { label: 'Talent', href: '/marketplace/talent' },
@@ -7,103 +10,95 @@ const TRACK_META = {
   facilitator: { label: 'Facilitator', href: '/marketplace/facilitators' },
 }
 
-async function getHomepageProfiles() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) return { profiles: [], count: null }
-  const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }
-  try {
-    const [profilesResponse, countResponse] = await Promise.all([
-      fetch(`${url}/rest/v1/rpc/get_homepage_professional_previews_v2`, { method: 'POST', headers, body: '{}', cache: 'no-store' }),
-      fetch(`${url}/rest/v1/rpc/get_homepage_professional_count`, { method: 'POST', headers, body: '{}', cache: 'no-store' }),
-    ])
-    const profilesPayload = profilesResponse.ok ? await profilesResponse.json() : []
-    const countPayload = countResponse.ok ? await countResponse.json() : null
-    return { profiles: Array.isArray(profilesPayload) ? profilesPayload : [], count: typeof countPayload === 'number' ? countPayload : null }
-  } catch (error) {
-    console.error('Homepage profile data fetch failed:', error)
-    return { profiles: [], count: null }
-  }
+const displayText = value => String(value ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
+
+function developmentArea(scores) {
+  if (!scores || typeof scores !== 'object') return 'Not available'
+  const weakest = Object.entries(scores)
+    .filter(([letter, value]) => PRIME_CLUSTERS.some(cluster => cluster.letter === letter) && Number.isFinite(Number(value)))
+    .sort((a, b) => Number(a[1]) - Number(b[1]))[0]
+  return weakest ? PRIME_CLUSTERS.find(cluster => cluster.letter === weakest[0])?.name || 'Not available' : 'Not available'
 }
 
 export default async function LiveProfilesScroll() {
-  const { profiles, count } = await getHomepageProfiles()
-  const unique = []
-  const seen = new Set()
-  for (const profile of profiles) {
-    if (seen.has(profile.id)) continue
-    seen.add(profile.id)
-    unique.push(profile)
+  let profiles = []
+  let counts = { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
+  let dataUnavailable = false
+  try {
+    const data = await getMarketplaceDirectoryData('all')
+    profiles = data.rows
+    counts = data.counts
+  } catch (error) {
+    console.error('Homepage marketplace data unavailable:', error)
+    dataUnavailable = true
   }
 
-  const loop = [...unique, ...unique]
-  const discoverableCount = count ?? unique.length
-  const trackCounts = unique.reduce((acc, profile) => {
-    const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
-    tracks.forEach(track => { const normalized = track === 'talent' ? 'candidate' : track; if (TRACK_META[normalized]) acc[normalized] = (acc[normalized] || 0) + 1 })
-    return acc
-  }, {})
+  const qualityProfiles = profiles.slice(0, 5)
+  const discoverableCount = counts.all
 
   return (
-    <section className="live-profiles" aria-labelledby="registry-title">
+    <section className="live-profiles" aria-labelledby="marketplace-title">
       <div className="live-profiles-shell">
         <div className="live-profiles-copy">
-          <div className="live-profiles-kicker">THE VALORIA REGISTRY · LIVE</div>
-          <h2 id="registry-title" className="live-profiles-title">See who is already <em>discoverable.</em></h2>
-          <p className="live-profiles-subtitle">
-            This is not a feature preview. These are professionals in the live Valoria marketplace — assessed, positioned and discoverable by capability.
-          </p>
-          <div className="live-profiles-proof" aria-label="Registry summary">
-            <strong>{discoverableCount}</strong>
-            <span>professionals currently discoverable</span>
-          </div>
+          <div className="live-profiles-kicker">THE VALORIA MARKETPLACE</div>
+          <h2 id="marketplace-title" className="live-profiles-title">Find professionals <em>by capability.</em></h2>
+          <p className="live-profiles-subtitle">Explore public professional profiles at Basic and Full levels. Basic listings show verified identity and capabilities; Full listings add VALU insight. Every public listing requires explicit visibility consent.</p>
+          {!dataUnavailable && <div className="live-profiles-proof" aria-label="Public marketplace profile count"><strong>{discoverableCount}</strong><span>public professional profiles</span></div>}
         </div>
 
-        <div className="live-profiles-actions" aria-label="Marketplace actions">
-          <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent">
-            <span><small>HIRING / SOURCING</small>Find talent</span><b>→</b>
-          </Link>
-          <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker">
-            <span><small>EVENTS / PROGRAMMES</small>Find a speaker</span><b>→</b>
-          </Link>
-          <Link href="/marketplace/facilitators" className="live-profile-action" data-marketplace-intent="facilitator">
-            <span><small>WORKSHOPS / CHANGE</small>Find a facilitator</span><b>→</b>
-          </Link>
-        </div>
+        {dataUnavailable ? (
+          <div className="live-profiles-actions">
+            <Link href="/marketplace" className="live-profile-action primary"><span><small>PUBLIC MARKETPLACE</small>Listings temporarily unavailable</span><b>→</b></Link>
+          </div>
+        ) : (
+          <div className="live-profiles-actions" aria-label="Marketplace and development actions">
+            {counts.candidate > 0 ? (
+              <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent"><span><small>ATB CONNECT</small>Find talent</span><b>→</b></Link>
+            ) : (
+              <a href="/contact-us?type=candidate" className="live-profile-action primary"><span><small>ATB CONNECT</small>Request sourcing access</span><b>→</b></a>
+            )}
+            {counts.speaker > 0 ? (
+              <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker"><span><small>ATB SPOTLIGHT</small>Find a speaker</span><b>→</b></Link>
+            ) : (
+              <a href="/contact-us?type=speaker_booking" className="live-profile-action"><span><small>ATB SPOTLIGHT</small>Discuss a speaker brief</span><b>→</b></a>
+            )}
+            {counts.facilitator > 0 ? (
+              <Link href="/marketplace/facilitators" className="live-profile-action" data-marketplace-intent="facilitator"><span><small>ATB SPOTLIGHT</small>Find a facilitator</span><b>→</b></Link>
+            ) : (
+              <Link href="/contact-us?type=training" className="live-profile-action"><span><small>VALORIA DEVELOP</small>Commission a PRIME programme</span><b>→</b></Link>
+            )}
+          </div>
+        )}
       </div>
 
-      {unique.length > 0 ? (
+      {dataUnavailable ? (
+        <div className="live-profiles-public-state" role="status">Public profile data could not be verified right now. Please try the marketplace again shortly.</div>
+      ) : qualityProfiles.length > 0 ? (
         <>
-          <div className="vi-scroll-mask">
-            <div className="vi-scroll-track">
-              {loop.map((profile, index) => {
-                const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
+          <div className="vi-scroll-mask vi-scroll-mask-static">
+            <div className="vi-scroll-track vi-scroll-track-static">
+              {qualityProfiles.map(profile => {
+                const tracks = Array.isArray(profile.capabilities) ? profile.capabilities : []
                 const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
-                const primaryTrack = normalizedTracks.find(track => TRACK_META[track]) || 'candidate'
-                const meta = TRACK_META[primaryTrack]
                 const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
+                const profileHref = profile.atb_id ? `/profile/${encodeURIComponent(profile.atb_id)}` : '/marketplace'
+                const development = developmentArea(profile.cluster_scores)
+                const isBasic = profile.assessment_access === 'basic'
                 return (
-                  <Link
-                    href={meta.href}
-                    key={`${profile.id}-${index}`}
-                    className="vi-scroll-card"
-                    data-marketplace-intent={primaryTrack}
-                    aria-label={`Discover more ${meta.label.toLowerCase()} professionals`}
-                    aria-hidden={index >= unique.length ? true : undefined}
-                    tabIndex={index >= unique.length ? -1 : undefined}
-                  >
-                    <div className="vi-scroll-avatar" aria-hidden="true">
-                      <ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} />
-                    </div>
+                  <Link href={profileHref} key={profile.id} className="vi-scroll-card" data-marketplace-intent={normalizedTracks[0] || 'all'} aria-label={`View public professional profile ${profile.atb_id || ''}`}>
+                    <div className="vi-scroll-avatar" aria-hidden="true"><ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} /></div>
                     <div className="vi-scroll-copy">
-                      <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>LIVE</i></div>
-                      <div className="vi-scroll-headline">{profile.assessment_summary || 'Assessment-based capability descriptor unavailable.'}</div>
-                      <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
+                      <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>PUBLIC</i></div>
+                      <strong className="vi-scroll-name">{displayText(profile.full_name)}</strong>
+                      <div className="vi-scroll-headline">{displayText(profile.headline)}</div>
+                      <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'NO DECLARED ROLE'}</div>
+                      <div className="vi-scroll-designation">{isBasic ? 'BASIC LISTING' : displayText(profile.designation)}</div>
+                      {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div><div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div></>}
                     </div>
-                    <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'}`}>
-                      <span className="vi-scroll-score-label">VALU INDEX</span>
-                      <strong>{profile.valu_index ?? '—'}</strong>
-                      <span className="vi-scroll-score-max">points</span>
+                    <div className="vi-scroll-score" aria-label={isBasic ? 'Basic marketplace listing' : `VALU Index ${profile.valu_index} points`}>
+                      <span className="vi-scroll-score-label">{isBasic ? 'MEMBER TIER' : 'VALU INDEX'}</span>
+                      <strong>{isBasic ? 'BASIC' : profile.valu_index}</strong>
+                      {!isBasic && <span className="vi-scroll-score-max">points</span>}
                     </div>
                     <span className="vi-scroll-card-arrow" aria-hidden="true">↗</span>
                   </Link>
@@ -111,27 +106,17 @@ export default async function LiveProfilesScroll() {
               })}
             </div>
           </div>
-
-          <div className="live-profiles-bottom">
-            <div className="live-profiles-counts">
-              {Object.entries(TRACK_META).map(([track, meta]) => (
-                <span key={track}><b>{trackCounts[track] || 0}</b> {meta.label.toLowerCase()} profiles</span>
-              ))}
-            </div>
-            <Link href="/marketplace" className="live-profiles-link" data-marketplace-intent="all">OPEN THE FULL REGISTRY <span>→</span></Link>
-          </div>
+          <div className="live-profiles-bottom"><Link href="/marketplace" className="live-profiles-link">VIEW THE MARKETPLACE <span>→</span></Link></div>
         </>
       ) : (
-        <div className="live-profiles-public-state"><span className="live-profiles-dot" />The public registry is being populated. Start with VALU to build a discoverable professional record.</div>
+        <div className="live-profiles-public-state" role="status">No public professional profiles are currently available. Listings appear after profile completion, applicable listing checks and explicit public-visibility consent.</div>
       )}
 
       <div className="live-profiles-professional-cta">
         <span className="live-profiles-professional-rule" />
-        <div>
-          <small>WANT TO BE DISCOVERED?</small>
-          <strong>Build the professional record that makes your capability visible.</strong>
-        </div>
-        <Link href="/valu">START WITH VALU INDEX <span>→</span></Link>
-      </div></section>
+        <div><small>WANT TO BE DISCOVERED?</small><strong>Build a professional profile that helps relevant buyers understand your capabilities.</strong></div>
+        <AssessmentStartLink href={BRAND.assessmentUrl}>TAKE THE VALU TASTER <span>→</span></AssessmentStartLink>
+      </div>
+    </section>
   )
 }

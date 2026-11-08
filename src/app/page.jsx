@@ -1,4 +1,4 @@
-import Nav from '@/components/Nav'
+import Nav, { AssessmentStartLink } from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
@@ -92,11 +92,11 @@ export default function HomePage() {
               <div className="vcc-radar-center">VALU INDEX</div>
             </div>
             <div className="vcc-steps">
-              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>First 9 questions, no account needed</small></div></div>
+              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>Register your details before the taster</small></div></div>
               <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Full VALU Index assessment + profile</small></div></div>
               <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Capability, eligibility and marketplace</small></div></div>
             </div>
-            <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="vcc-bottom-cta">BEGIN THE FIRST 9 QUESTIONS <span>→</span></a>
+            <AssessmentStartLink href={BRAND.assessmentUrl} className="vcc-bottom-cta">START THE VALU TASTER <span>→</span></AssessmentStartLink>
           </Reveal>
         </div>
       </section>

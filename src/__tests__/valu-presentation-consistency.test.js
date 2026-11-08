@@ -6,20 +6,22 @@ function read(relative) {
 }
 
 describe('VALU presentation consistency', () => {
-  test('homepage communicates the approved nine-question entry assessment', () => {
+  test('homepage communicates registration before the VALU taster without exposing question counts', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('<b>9</b> QUESTIONS')
-    expect(home).not.toContain('<b>15</b> QUESTIONS')
+    expect(home).toContain('Register your details before the taster')
+    expect(home).toContain('START THE VALU TASTER')
+    expect(home).not.toMatch(/9 questions|58 questions|Question\s+\d+\s+of\s+\d+/i)
+    expect(home).not.toContain('no account needed')
   })
-
-  test('homepage illustrative VALU card uses points and the current merit designation', () => {
+  test('homepage VALU card uses the approved points-based PRIME presentation', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('vc-denom">POINTS')
-    expect(hero).toContain('FORCE TO ALIGN WITH')
-    expect(hero).not.toContain('DISTINGUISHED')
-    expect(hero).not.toContain('vc-denom">/ 100')
+    expect(hero).toContain('POINTS-BASED CAPABILITY PROFILE')
+    expect(hero).toContain('PRIME framework · results expressed in points')
+    for (const cluster of ['Presence', 'Relationships', 'Intelligence', 'Mastery', 'Enterprise']) {
+      expect(hero).toContain(cluster)
+    }
+    expect(hero).not.toContain('/ 100')
   })
-
   test('public registry and professional-facing score cards use points', () => {
     expect(read('src/components/LiveProfilesScroll.jsx')).toContain('vi-scroll-score-max">points')
     expect(read('src/app/profile/[id]/ProfileClient.jsx')).toContain('> points</span>')
@@ -44,11 +46,11 @@ describe('VALU presentation consistency', () => {
     expect(brand).not.toContain("displaySuffix: '/100'")
   })
 
-  test('the prototype is explicitly non-production and starts with nine questions', () => {
+  test('the assessment prototype is explicitly non-production and hides internal question mechanics', () => {
     const prototype = read('src/app/test/assessment/page.jsx')
-    expect(prototype).toContain('const teaser = [')
-    expect(prototype).toContain('].slice(0, 9)')
-    expect(prototype).toContain('9 opening questions followed by the remaining 49 questions (58 in total)')
-    expect(prototype).not.toContain('15 thoughtful questions')
+    expect(prototype).toContain('This is a shortened prototype only.')
+    expect(prototype).toContain('does not create an account, send email or store your responses')
+    expect(prototype).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
+    expect(prototype).not.toMatch(/9 opening questions|remaining 49 questions|58 in total/i)
   })
 })
