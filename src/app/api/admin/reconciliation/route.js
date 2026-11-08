@@ -65,14 +65,14 @@ export async function GET(request){
     const c=capMap.get(j.user_id)||[]
     const a=latestAssessment.get(j.user_id)||null
     const roster=rosterMap.get(j.user_id)||null
-    const assessmentAccess=a?'full':completedTasterUserIds.has(j.user_id)?'basic':'none'
+    const assessmentAccess=roster?.assessment_access==='basic'?'basic':a?'full':completedTasterUserIds.has(j.user_id)?'basic':'none'
     const displayName=j.display_name||p.display_name||a?.name||roster?.full_name||'Unnamed professional'
     const headline=p.headline||p.current_job_title||roster?.headline||roster?.current_job_title||a?.role||''
     const normalizedAtbId=String(p.atb_id||'').normalize('NFKC').trim()
     const validAtbId=/^ATB-[A-Z0-9-]{4,40}$/i.test(normalizedAtbId)
     const rawHeadline=String(headline||'').trim()
     const normalizedHeadline=rawHeadline.normalize('NFKC')
-    const validHeadline=rawHeadline.length>=8&&!['model','growth dev','help people find meaning in their life and career','valoria professional'].includes(normalizedHeadline.toLowerCase())&&!/[\u{1D400}-\u{1D7FF}]/u.test(rawHeadline)
+    const validHeadline=rawHeadline.length>=2&&!['model','growth dev','help people find meaning in their life and career','valoria professional'].includes(normalizedHeadline.toLowerCase())&&!/[\u{1D400}-\u{1D7FF}]/u.test(rawHeadline)
     const identityReady=Boolean(String(displayName||'').trim()&&validHeadline&&validAtbId)
     const publicConsent=latestConsentById.get(j.user_id)===publicConsentVersion
     const completedTaster=completedTasterUserIds.has(j.user_id)
@@ -90,7 +90,7 @@ export async function GET(request){
       &&Array.isArray(roster.capabilities)&&roster.capabilities.length>0
       &&typeof roster.assessment_summary==='string'&&roster.assessment_summary.trim().length>=12
       &&typeof roster.designation==='string'&&roster.designation.trim()
-    const basicReady=assessmentAccess==='basic'&&completedTaster&&identityReady&&roster?.assessment_access==='basic'
+    const basicReady=assessmentAccess==='basic'&&(completedTaster||fullAssessmentCurrent)&&identityReady&&roster?.assessment_access==='basic'
     const visibilityReady=p.visibility==='public'&&p.listing_status==='listed'
       &&p.is_test===false&&p.revoked_at==null&&publicConsent
     const publicReady=Boolean(roster&&visibilityReady&&identityReady
@@ -131,7 +131,7 @@ export async function GET(request){
     if(r.is_test) reasons.push('test profile excluded')
     if(r.revoked_at) reasons.push('profile revoked')
     if(r.assessment_access==='basic'){
-      if(!r.basic_taster_complete) reasons.push('completed taster is not linked')
+      if(!r.basic_taster_complete&&!r.full_assessment_current) reasons.push('completed taster or current Full assessment is not verified')
       if(!r.identity_ready) reasons.push('Basic professional identity is incomplete')
       if(r.listing_status!=='listed') reasons.push('Basic listing is not activated')
       if(!r.roster_projection) reasons.push('Basic listing projection is missing')

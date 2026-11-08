@@ -24,7 +24,7 @@ function isQualifiedPublicProfile(row) {
   const headline = normalizePublicDisplayText(rawHeadline)
   const normalizedAtbId = String(row?.atb_id || '').normalize('NFKC').trim()
   const validAtbId = /^ATB-[A-Z0-9-]{4,40}$/i.test(normalizedAtbId)
-  const validHeadline = rawHeadline.length >= 8 &&
+  const validHeadline = rawHeadline.length >= 2 &&
     !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
     !/[\u{1D400}-\u{1D7FF}]/u.test(rawHeadline)
   const hasIdentity = Boolean(
@@ -117,6 +117,41 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
     linkedTasterIds = new Set((tasters || []).map(row => row.user_id))
   }
 
+  // A current full assessment may qualify for a restricted Basic directory card
+  // when capability/CV evidence is still pending. No VALU score is exposed.
+  let currentBasicAssessmentIds = new Set()
+  if (basicIds.length) {
+    const { data: basicAssessments, error: basicAssessmentError } = await admin
+      .from('valu_assessments')
+      .select('user_id,total_score,completed_at,expires_at')
+      .in('user_id', basicIds)
+      .not('completed_at', 'is', null)
+      .order('completed_at', { ascending: false })
+    if (basicAssessmentError) {
+      console.error('Basic listing assessment verification failed:', basicAssessmentError)
+      throw new Error('Basic listing assessment eligibility could not be verified.')
+    }
+    const latestBasicAssessmentById = new Map()
+    for (const assessment of basicAssessments || []) {
+      if (!latestBasicAssessmentById.has(assessment.user_id)) {
+        latestBasicAssessmentById.set(assessment.user_id, assessment)
+      }
+    }
+    const profileById = new Map((profiles || []).map(profile => [profile.id, profile]))
+    currentBasicAssessmentIds = new Set(basicIds.filter(id => {
+      const assessment = latestBasicAssessmentById.get(id)
+      const profile = profileById.get(id)
+      const assessmentExpiry = Date.parse(assessment?.expires_at || profile?.assessment_expires_at || '')
+      const profileExpiry = Date.parse(profile?.assessment_expires_at || '')
+      return Boolean(assessment && profile
+        && Number(assessment.total_score) >= 35
+        && Number(assessment.total_score) === Number(profile.valu_index)
+        && Date.parse(assessment.completed_at || '') === Date.parse(profile.assessment_completed_at || '')
+        && Number.isFinite(assessmentExpiry) && assessmentExpiry > Date.now()
+        && Number.isFinite(profileExpiry) && profileExpiry > Date.now())
+    }))
+  }
+
   const fullIds = rows
     .filter(row => row.assessment_access === 'full')
     .map(row => row.professional_id)
@@ -204,7 +239,7 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
 
     if (row.assessment_access === 'full') return profile.profile_complete === true && Number(row.valu_index) >= 35 && Number(row.valu_index) === Number(profile.valu_index) && fullReadyIds.has(profile.id)
     return row.assessment_access === 'basic'
-      && linkedTasterIds.has(profile.id)
+      && (linkedTasterIds.has(profile.id) || currentBasicAssessmentIds.has(profile.id))
       && Boolean(profile.display_name?.trim() || row.full_name?.trim())
       && Boolean(profile.headline?.trim() || profile.current_job_title?.trim() || row.headline?.trim() || row.current_job_title?.trim())
   }).map(row => row.professional_id))

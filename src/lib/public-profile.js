@@ -62,6 +62,31 @@ async function hasCompletedTaster(admin, professionalId) {
   return Boolean(data)
 }
 
+async function hasCurrentFullAssessment(admin, profile) {
+  const { data: assessment, error } = await admin
+    .from('valu_assessments')
+    .select('total_score,completed_at,expires_at')
+    .eq('user_id', profile.id)
+    .not('completed_at', 'is', null)
+    .order('completed_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (error) {
+    console.error('Basic listing assessment verification failed:', error)
+    throw new Error('Basic listing assessment eligibility could not be verified.')
+  }
+
+  const assessmentExpiry = Date.parse(assessment?.expires_at || profile.assessment_expires_at || '')
+  const profileExpiry = Date.parse(profile.assessment_expires_at || '')
+  return Boolean(assessment
+    && Number(assessment.total_score) >= 35
+    && Number(assessment.total_score) === Number(profile.valu_index)
+    && Date.parse(assessment.completed_at || '') === Date.parse(profile.assessment_completed_at || '')
+    && Number.isFinite(assessmentExpiry) && assessmentExpiry > Date.now()
+    && Number.isFinite(profileExpiry) && profileExpiry > Date.now())
+}
+
 function hasBasicPublicIdentity(profile, roster = {}) {
   const displayName = profile.display_name?.trim() || roster.full_name?.trim()
   const headline = profile.headline?.trim() || profile.current_job_title?.trim() || roster.headline?.trim() || roster.current_job_title?.trim()
@@ -73,8 +98,8 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
   const admin = getAdminClient()
   const lookupField = field === 'atb_id' ? 'atb_id' : 'professional_id'
 
-  // Full listings require a completed VALU report. Basic listings require an
-  // account-linked completed taster and a minimal professional identity.
+  // Full listings require approved capability evidence. Basic listings require
+  // a linked completed taster or current Full assessment and minimal identity.
   const { data: roster, error: rosterError } = await admin
     .from('marketplace_public_roster')
     .select('professional_id,atb_id,assessment_access,assessment_summary,capabilities,selected_capabilities,full_name,headline,current_job_title,valu_index')
@@ -92,8 +117,6 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
   if (roster.assessment_access === 'full') {
     if (!Array.isArray(roster.capabilities) || roster.capabilities.length === 0) return null
     if (!roster.assessment_summary || roster.assessment_summary.trim().length < 12) return null
-  } else if (!(await hasCompletedTaster(admin, professionalId))) {
-    return null
   }
 
   const { data: acknowledgement, error: acknowledgementError } = await admin
@@ -128,6 +151,12 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
     throw new Error('Public profile could not be verified.')
   }
   if (!profile) return null
+
+  if (roster.assessment_access === 'basic') {
+    const hasTaster = await hasCompletedTaster(admin, professionalId)
+    const hasCurrentAssessment = await hasCurrentFullAssessment(admin, profile)
+    if (!hasTaster && !hasCurrentAssessment) return null
+  }
 
   if (roster.assessment_access === 'full') {
     if (profile.profile_complete !== true || Number(profile.valu_index) < 35 || Number(roster.valu_index) !== Number(profile.valu_index)) return null
@@ -298,6 +327,39 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
     tasterIds = new Set((tasters || []).map(row => row.user_id))
   }
 
+  let basicAssessmentIds = new Set()
+  if (basicIds.length) {
+    const { data: basicAssessments, error: basicAssessmentError } = await admin
+      .from('valu_assessments')
+      .select('user_id,total_score,completed_at,expires_at')
+      .in('user_id', basicIds)
+      .not('completed_at', 'is', null)
+      .order('completed_at', { ascending: false })
+    if (basicAssessmentError) {
+      console.error('Basic listing sitemap assessment verification failed:', basicAssessmentError)
+      throw new Error('Basic profile sitemap assessment could not be verified.')
+    }
+    const latestBasicAssessmentById = new Map()
+    for (const assessment of basicAssessments || []) {
+      if (!latestBasicAssessmentById.has(assessment.user_id)) {
+        latestBasicAssessmentById.set(assessment.user_id, assessment)
+      }
+    }
+    const profileById = new Map(profiles.map(profile => [profile.id, profile]))
+    basicAssessmentIds = new Set(basicIds.filter(id => {
+      const assessment = latestBasicAssessmentById.get(id)
+      const profile = profileById.get(id)
+      const assessmentExpiry = Date.parse(assessment?.expires_at || profile?.assessment_expires_at || '')
+      const profileExpiry = Date.parse(profile?.assessment_expires_at || '')
+      return Boolean(assessment && profile
+        && Number(assessment.total_score) >= 35
+        && Number(assessment.total_score) === Number(profile.valu_index)
+        && Date.parse(assessment.completed_at || '') === Date.parse(profile.assessment_completed_at || '')
+        && Number.isFinite(assessmentExpiry) && assessmentExpiry > Date.now()
+        && Number.isFinite(profileExpiry) && profileExpiry > Date.now())
+    }))
+  }
+
   const { data: acknowledgements, error: acknowledgementError } = await admin
     .from('professional_profile_acknowledgements')
     .select('professional_id,acknowledgement_version')
@@ -326,7 +388,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
     const ready = access === 'full'
       ? profile.profile_complete === true && Number(profile.valu_index) >= 35 && Number(rosterById.get(profile.id)?.valu_index) === Number(profile.valu_index) && fullReadyIds.has(profile.id)
       : access === 'basic'
-        && tasterIds.has(profile.id)
+        && (tasterIds.has(profile.id) || basicAssessmentIds.has(profile.id))
         && hasBasicPublicIdentity(profile, rosterById.get(profile.id))
     return ready && consented.has(profile.id)
   })
