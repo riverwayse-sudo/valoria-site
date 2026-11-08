@@ -6,7 +6,7 @@
 :root {
   --space-section: clamp(88px, 8vw, 124px);
   --space-section-tight: clamp(64px, 7vw, 88px);
-  --space-content-width: 1200px;
+  --space-content-width: var(--vi-content, 1160px);
   --home-radius: 22px;
   --home-radius-sm: 16px;
 }
@@ -27,7 +27,7 @@
 }
 
 .home-redesign-root .container {
-  width: min(var(--space-content-width), calc(100% - 48px));
+  width: min(var(--space-content-width), calc(100% - 2 * var(--pad)));
   max-width: var(--space-content-width);
   margin-inline: auto;
   padding-inline: 0;
@@ -1560,7 +1560,7 @@
   }
 
   .hero-slider .hero-inner {
-    width: min(var(--space-content-width), calc(100% - 40px));
+    width: min(var(--space-content-width), calc(100% - 2 * var(--pad)));
     min-height: auto;
     grid-template-columns: 1fr;
     gap: 26px;
@@ -1632,7 +1632,7 @@
   .live-profiles-bottom,
   .live-profiles-public-state,
   .live-profiles-professional-cta {
-    width: min(100% - 36px, var(--space-content-width));
+    width: min(100% - 2 * var(--pad), var(--space-content-width));
   }
 
   .home-section-heading {
