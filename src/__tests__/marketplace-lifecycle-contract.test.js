@@ -510,4 +510,14 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).not.toContain('completed the VALU taster and has Basic marketplace access')
   })
 
+  test('marketplace profile preview uses the facilitated enquiry workflow', () => {
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    expect(directory).toContain("import EnquiryForm from '@/components/EnquiryForm'")
+    expect(directory).toContain("enquiryType: 'candidate'")
+    expect(directory).toContain("enquiryType: 'speaker_booking'")
+    expect(directory).toContain("enquiryType: 'facilitator_commission'")
+    expect(directory).toContain('professionalProfileId={profile.professional_id || profile.id}')
+    expect(directory).toContain('COMMISSION FACILITATOR')
+  })
+
 })
