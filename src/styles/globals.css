@@ -250,3 +250,9 @@ main footer,
 [role="main"] {
   text-align: left !important;
 }
+
+/* Legacy page-specific centered flex wrappers must follow the production left edge. */
+html body .page-hero-actions-centered,
+html body .eyebrow-center {
+  justify-content: flex-start !important;
+}
