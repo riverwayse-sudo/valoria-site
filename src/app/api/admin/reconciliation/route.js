@@ -84,6 +84,7 @@ export async function GET(request){
     const capabilityReady=c.length>0&&listedCapabilities.length===c.length
     const fullReady=assessmentAccess==='full'&&fullAssessmentCurrent&&p.profile_complete===true
       &&capabilityReady&&roster?.assessment_access==='full'
+      &&Number(roster.valu_index)===Number(p.valu_index)
       &&typeof roster.assessment_summary==='string'&&roster.assessment_summary.trim().length>=12
       &&typeof roster.designation==='string'&&roster.designation.trim()
     const basicReady=assessmentAccess==='basic'&&completedTaster&&identityReady&&roster?.assessment_access==='basic'
