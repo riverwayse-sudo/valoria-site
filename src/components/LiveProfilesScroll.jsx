@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { AssessmentStartLink } from '@/components/Nav'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { BRAND, PRIME_CLUSTERS } from '@/lib/brand'
 import { getMarketplaceDirectoryData } from '@/lib/marketplace-data'
@@ -114,7 +115,7 @@ export default async function LiveProfilesScroll() {
       <div className="live-profiles-professional-cta">
         <span className="live-profiles-professional-rule" />
         <div><small>WANT TO BE DISCOVERED?</small><strong>Build a professional profile that helps relevant buyers understand your capabilities.</strong></div>
-        <Link href={BRAND.assessmentUrl}>TAKE THE VALU TASTER <span>→</span></Link>
+        <AssessmentStartLink href={BRAND.assessmentUrl}>TAKE THE VALU TASTER <span>→</span></AssessmentStartLink>
       </div>
     </section>
   )
