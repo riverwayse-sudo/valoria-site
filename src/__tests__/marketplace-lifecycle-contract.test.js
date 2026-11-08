@@ -470,4 +470,11 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(sitemap).toContain('getConsentVerifiedPublicProfileSitemapRows')
   })
 
+  test('admin reconciliation reads the installed professional journey table', () => {
+    const source = read('src/app/api/admin/reconciliation/route.js')
+    expect(source).toContain("from('professional_journey').select('*')")
+    expect(source).not.toContain("from('professional_journey_directory')")
+    expect(source).toContain("from('professional_profile_acknowledgements')")
+  })
+
 })
