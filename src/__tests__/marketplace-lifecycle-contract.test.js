@@ -72,6 +72,14 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(categoryFilter).not.toContain('selectedCapabilities')
   })
 
+  test('public profile routes validate canonically equivalent Unicode ATB identifiers', () => {
+    const page = read('src/app/profile/[id]/page.jsx')
+    const layout = read('src/app/profile/[id]/layout.jsx')
+    expect(page).toContain("String(id || '').normalize('NFKC')")
+    expect(layout).toContain("String(id || '').normalize('NFKC')")
+    expect(page).toContain('isAtbId ? \'atb_id\'')
+  })
+
   test('public profile metadata and direct URLs use consent-verified lookup', () => {
     const layout = read('src/app/profile/[id]/layout.jsx')
     const page = read('src/app/profile/[id]/page.jsx')
