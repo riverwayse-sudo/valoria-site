@@ -475,6 +475,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain("from('professional_journey').select('*')")
     expect(source).not.toContain("from('professional_journey_directory')")
     expect(source).toContain("from('professional_profile_acknowledgements')")
+    expect(source).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
     expect(source).toContain("from('users').select('id,email,full_name')")
     expect(source).toContain("const assessmentAccess=a?'full':completedTasterUserIds.has(j.user_id)?'basic':'none'")
     expect(source).toContain('atb_id:p.atb_id||null')
