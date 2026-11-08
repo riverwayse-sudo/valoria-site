@@ -528,4 +528,10 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).not.toContain('Public profiles appear only after participants meet the relevant listing requirements')
   })
 
+  test('marketplace enquiries notify the professional through the request client', () => {
+    const api = read('src/app/api/enquiries/route.js')
+    expect(api).toContain('async function notifyProfessional({ supabase, professionalProfileId')
+    expect(api).toContain('notifyProfessional({ supabase, professionalProfileId: professional_profile_id')
+  })
+
 })
