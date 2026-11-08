@@ -1776,3 +1776,24 @@
   .home-pathway-card:hover .home-pathway-cta,
   .home-pathway-card:focus-visible .home-pathway-cta { transform: none; }
 }
+
+
+/* Main-site marketplace rail: verified public profiles only, with horizontal browsing. */
+.vi-scroll-mask-static {
+  overflow-x: auto;
+  -webkit-mask-image: none;
+  mask-image: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201,168,76,.45) transparent;
+}
+.vi-scroll-track-static {
+  width: max-content;
+  transform: none !important;
+  will-change: auto;
+}
+.vi-scroll-name{display:block;margin:5px 0;color:var(--parchment);font-size:14px;font-weight:800;line-height:1.3}
+.vi-scroll-designation{margin:6px 0;color:var(--gold);font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.vi-scroll-summary{margin:7px 0;color:rgba(247,244,238,.72);font-size:10px;line-height:1.55}
+.vi-scroll-development{margin-top:8px;color:rgba(247,244,238,.48);font-size:8px;font-weight:800;letter-spacing:.08em}
+.valu-card .vc-cluster-list{display:flex;flex-wrap:wrap;gap:6px;margin:18px 0 8px}
+.valu-card .vc-cluster-list span{padding:6px 8px;border:1px solid rgba(201,168,76,.25);border-radius:4px;color:rgba(247,244,238,.75);font-size:8px;font-weight:700;letter-spacing:.04em}
