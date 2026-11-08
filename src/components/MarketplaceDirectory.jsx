@@ -296,6 +296,8 @@ function ProfilePreviewModal({ profile, onClose }) {
   const topics = labelValues(profile.topics).slice(0, 6)
   const assessmentSummary = isFull ? displayText(profile.assessment_summary || '') : ''
   const profileHref = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
+  const contactType = capabilities.has('candidate') ? 'candidate' : capabilities.has('speaker') ? 'speaker_booking' : 'facilitator_commission'
+  const contactHref = `/contact-us?type=${contactType}`
 
   return (
     <div className={styles.modalBackdrop} role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) onClose() }}>
@@ -330,10 +332,10 @@ function ProfilePreviewModal({ profile, onClose }) {
               <p id="profile-preview-description" className={styles.modalSummary}>
                 {isFull
                   ? (assessmentSummary || 'The Full VALU assessment is complete. The professional insight is being prepared.')
-                  : 'This professional is displayed at the Basic directory level. VALU points and assessment-derived insight are withheld until the Full listing requirements are met; declared capability selections are shown separately from evidence approval.'}
+                  : 'This Basic listing introduces the professional’s public identity, declared capabilities and areas of expertise. Additional assessment insight is displayed only when available.'}
               </p>
               <div className={styles.modalCredential}>
-                <span>{isFull ? 'FULL VALU ASSESSMENT' : 'BASIC DIRECTORY PROFILE'}</span>
+                <span>{isFull ? 'VALU ASSESSMENT INSIGHT' : 'BASIC PROFESSIONAL LISTING'}</span>
                 <strong>{tier ? tier.name : 'VALU SCORE NOT DISPLAYED'}</strong>
               </div>
             </section>
@@ -353,8 +355,11 @@ function ProfilePreviewModal({ profile, onClose }) {
           {skills.length > 0 && <section className={styles.modalListSection}><p className={styles.modalSectionLabel}>PROFESSIONAL SKILLS</p><div className={styles.modalChips}>{skills.map(skill => <span key={skill}>{skill}</span>)}</div></section>}
           {topics.length > 0 && <section className={styles.modalListSection}><p className={styles.modalSectionLabel}>AREAS OF EXPERTISE</p><div className={styles.modalChips}>{topics.map(topic => <span key={topic}>{topic}</span>)}</div></section>}
           <div className={styles.modalFooter}>
-            <p>Contact details and individual assessment answers are not displayed in this public preview.</p>
-            <Link href={profileHref} className={styles.modalPrimary}>OPEN FULL PROFILE <span>↗</span></Link>
+            <p>See a professional whose capabilities match your needs? Share your brief with Valoria and discuss a suitable introduction.</p>
+            <div className={styles.modalActions}>
+              <Link href={contactHref} className={styles.modalSecondary}>REQUEST AN INTRODUCTION</Link>
+              <Link href={profileHref} className={styles.modalPrimary}>EXPLORE FULL PROFILE <span>↗</span></Link>
+            </div>
           </div>
         </div>
       </section>
