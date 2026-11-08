@@ -46,10 +46,12 @@ export default function EventsPage() {
     return getSessionState(session) === 'ended'
   })
 
-  const comingSoon = PROFESSIONAL_STANDARD_SERIES.filter(session => {
-    if (session.replay) return false
-    return getSessionState(session) === 'coming-soon'
-  })
+  // Provisional calendar entries stay private until they are explicitly approved for public announcement.
+  const comingSoon = PROFESSIONAL_STANDARD_SERIES.filter(session =>
+    !session.replay
+    && session.publiclyAnnounced === true
+    && getSessionState(session) === 'coming-soon'
+  )
 
   return (
     <>
