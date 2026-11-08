@@ -147,7 +147,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(setup).not.toContain('if (!row.profile_complete)')
     expect(edit).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
     expect(edit).toContain('REGISTERED_PROFILE_CONSENT_TEXT')
-    expect(route).toContain("const basicEligible = roster?.assessment_access === 'basic' && Boolean(taster)")
+    expect(route).toContain("const basicEligible = roster?.assessment_access === 'basic' && (Boolean(taster) || currentAssessmentEligible)")
     expect(route).toContain("const fullEligible = roster?.assessment_access === 'full' && currentProfile?.profile_complete === true")
     expect(copy).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
   })
