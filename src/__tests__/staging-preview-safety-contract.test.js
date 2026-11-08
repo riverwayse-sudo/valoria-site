@@ -83,9 +83,12 @@ describe('staging preview safety boundary', () => {
 
   test('preview metadata is not indexable and production analytics are disabled', () => {
     const layout = read('src/app/layout.jsx')
+    const profileLayout = read('src/app/profile/[id]/layout.jsx')
     expect(layout).toMatch(/index:\s*false/)
     expect(layout).toMatch(/follow:\s*false/)
     expect(layout).toContain('IS_STAGING')
     expect(layout).toContain('!IS_STAGING')
+    expect(profileLayout).toContain('if (IS_STAGING) return')
+    expect(profileLayout).toContain('robots: { index: false, follow: false }')
   })
 })
