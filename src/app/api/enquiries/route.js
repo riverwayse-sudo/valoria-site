@@ -130,7 +130,7 @@ async function notifyProfessional({ supabase, professionalProfileId, enquiryType
     body: JSON.stringify({
       sender: { name: FROM_NAME, email: FROM_EMAIL },
       to: [{ email: userRow.user.email }],
-      subject: `New ${label.toLowerCase()} — ${atbId}`,
+      subject: `New ${label.toLowerCase()} — ${safeAtbId}`,
       htmlContent: html,
       tags: ['enquiry-professional-notify', enquiryType],
     }),
