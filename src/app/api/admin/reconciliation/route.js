@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION } from '@/lib/profile-consent-copy'
 
 function db() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -38,7 +39,7 @@ export async function GET(request){
   const profiles=profileRes.data||[]
   const latestConsentById=new Map()
   for(const acknowledgement of acknowledgementRes.data||[]) if(!latestConsentById.has(acknowledgement.professional_id)) latestConsentById.set(acknowledgement.professional_id,acknowledgement.acknowledgement_version)
-  const publicConsentVersion='public-profile-visibility-v3-2026-11-07'
+  const publicConsentVersion=PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION
   const profileMap=new Map(profiles.map(p=>[p.id,p]))
   const userMap=new Map((usersRes.data||[]).map(user=>[user.id,user]))
   const completedTasterUserIds=new Set((tasterRes.data||[]).map(taster=>taster.user_id).filter(Boolean))
