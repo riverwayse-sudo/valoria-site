@@ -129,7 +129,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             rows.length === 0 && activeTrack === 'all' ? (
               <div className={styles.empty}>
                 <strong>No public professional profiles are currently available.</strong>
-                <p>Public listings appear after a professional completes the required profile, chooses public visibility, records consent and meets the applicable listing requirements.</p>
+                <p>Public listings appear when a professional meets the applicable Basic or Full listing requirements, chooses public visibility and records consent.</p>
                 <Link className={styles.view} href="/login?returnTo=%2Fprofile%2Fsetup">EXISTING PROFESSIONAL? REVIEW YOUR PROFILE →</Link>
               </div>
             ) : rows.length === 0 && Number(counts?.all || 0) === 0 ? (
