@@ -86,15 +86,15 @@ export default function FacilitatorsPage() {
         <section className="page-section alt">
           <div className="page-section-inner">
             <Reveal>
-              <div className="eyebrow" className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">HOW COMMISSIONING WORKS</span><div className="eyebrow-line" /></div>
-              <h2 className="section-title" className="section-title section-title-centered">From gap identification<br /><em>to measurable outcome.</em></h2>
+              <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">HOW COMMISSIONING WORKS</span><div className="eyebrow-line" /></div>
+              <h2 className="section-title section-title-centered">From gap identification<br /><em>to measurable outcome.</em></h2>
             </Reveal>
             <div className="facilitator-grid">
               {HOW_IT_WORKS.map(s => (
                 <Reveal key={s.step}>
                   <div className="card-gold">
                     <div className="facilitator-step">{s.step}</div>
-                    <div className="cluster-name" className="cluster-name cluster-name-spaced">{s.title}</div>
+                    <div className="cluster-name cluster-name-spaced">{s.title}</div>
                     <p className="cluster-desc">{s.body}</p>
                   </div>
                 </Reveal>
@@ -132,10 +132,10 @@ export default function FacilitatorsPage() {
         {/* CTA */}
         <section className="page-section alt cta-banner">
           <Reveal>
-            <div className="eyebrow" className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">FOR TRAINING BUYERS</span><div className="eyebrow-line" /></div>
+            <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">FOR TRAINING BUYERS</span><div className="eyebrow-line" /></div>
             <h2 className="section-title">Commission a programme<br /><em>against the standard.</em></h2>
             <p className="page-sub">Valoria Develop runs through a direct conversation for now — tell us the cluster, the team, and the context, and we&apos;ll match you with the right facilitator.</p>
-            <div className="page-hero-actions" className="eyebrow eyebrow-center">
+            <div className="page-hero-actions">
               <a href="/contact-us" className="btn-gold">COMMISSION A PROGRAMME</a>
               <a href="/programmes" className="btn-outline">SEE PROGRAMMES BY CLUSTER</a>
             </div>
