@@ -19,19 +19,20 @@ async function requireAdmin(request) {
 export async function GET(request){
   const {supabase,response}=await requireAdmin(request)
   if(response) return response
-  const [journeyRes, assessmentRes, profileRes, capabilityRes, documentRes, rosterRes, tasterRes, identityLinkRes, tasterCandidateRes, acknowledgementRes] = await Promise.all([
+  const [journeyRes, assessmentRes, profileRes, capabilityRes, documentRes, rosterRes, tasterRes, identityLinkRes, tasterCandidateRes, acknowledgementRes, usersRes] = await Promise.all([
     supabase.from('professional_journey').select('*').order('updated_at',{ascending:false}),
     supabase.from('valu_assessments').select('id,user_id,taster_id,email,name,role,total_score,completed_at,assessment_version,scoring_version').not('completed_at','is',null).order('completed_at',{ascending:false}),
-    supabase.from('professional_profiles').select('id,display_name,headline,profile_complete,active_tracks,photo_url,current_job_title,updated_at,visibility,listing_status,is_test,revoked_at'),
+    supabase.from('professional_profiles').select('id,atb_id,display_name,headline,profile_complete,active_tracks,photo_url,current_job_title,updated_at,visibility,listing_status,is_test,revoked_at'),
     supabase.from('professional_capabilities').select('professional_id,capability,is_active,eligibility_status,eligible_for_listing,missing_requirements'),
     supabase.from('professional_documents').select('professional_id,verification_status,document_type,storage_path,original_filename,created_at'),
     supabase.from('marketplace_public_roster').select('professional_id,capabilities,track'),
     supabase.from('taster_sessions').select('id,user_id,name,role,experience,taster_version,taster_version_source,completed_at,created_at,linked_at').not('completed_at','is',null).order('completed_at',{ascending:false}),
     supabase.from('assessment_identity_links').select('assessment_id,user_id,link_method'),
     supabase.from('taster_identity_candidates').select('taster_id,candidate_name,candidate_role,candidate_email,evidence_source_count,evidence_sources,same_contact_taster_count,identity_status,linked_user_id,resolution_notes,first_reconciled_at,last_reconciled_at'),
-    supabase.from('professional_profile_acknowledgements').select('professional_id,acknowledgement_version,acknowledgement_type,acknowledged_at,created_at').eq('acknowledgement_type','profile_submission').order('acknowledged_at',{ascending:false}).order('created_at',{ascending:false})
+    supabase.from('professional_profile_acknowledgements').select('professional_id,acknowledgement_version,acknowledgement_type,acknowledged_at,created_at').eq('acknowledgement_type','profile_submission').order('acknowledged_at',{ascending:false}).order('created_at',{ascending:false}),
+    supabase.from('users').select('id,email,full_name')
   ])
-  if([journeyRes,assessmentRes,profileRes,capabilityRes,documentRes,rosterRes,tasterRes,identityLinkRes,tasterCandidateRes,acknowledgementRes].some(result=>result.error)) {
+  if([journeyRes,assessmentRes,profileRes,capabilityRes,documentRes,rosterRes,tasterRes,identityLinkRes,tasterCandidateRes,acknowledgementRes,usersRes].some(result=>result.error)) {
     return Response.json({error:'The reconciliation report could not load every required source. No records were changed.'},{status:500})
   }
   const profiles=profileRes.data||[]
@@ -39,6 +40,8 @@ export async function GET(request){
   for(const acknowledgement of acknowledgementRes.data||[]) if(!latestConsentById.has(acknowledgement.professional_id)) latestConsentById.set(acknowledgement.professional_id,acknowledgement.acknowledgement_version)
   const publicConsentVersion='public-profile-visibility-v3-2026-11-07'
   const profileMap=new Map(profiles.map(p=>[p.id,p]))
+  const userMap=new Map((usersRes.data||[]).map(user=>[user.id,user]))
+  const completedTasterUserIds=new Set((tasterRes.data||[]).map(taster=>taster.user_id).filter(Boolean))
   const documentMap=new Map()
   for(const d of (documentRes.data||[])){
     if(!documentMap.has(d.professional_id)) documentMap.set(d.professional_id,[])
@@ -63,6 +66,8 @@ export async function GET(request){
     return {...j,
       display_name:j.display_name||p.display_name||a?.name||'Unnamed professional',
       current_job_title:j.current_job_title||p.current_job_title||p.headline||a?.role||'—',
+      atb_id:p.atb_id||null,
+      assessment_access:a?'full':completedTasterUserIds.has(j.user_id)?'basic':'none',
       profile_complete:p.profile_complete===true,
       visibility:p.visibility||'registered_only',
       listing_status:p.listing_status||'unlisted',
@@ -75,7 +80,7 @@ export async function GET(request){
       assessment_score:a?.total_score??null,
       assessment_completed_at:a?.completed_at||null,
       assessment_version:a?.assessment_version||null,
-      capabilities:c,email:a?.email||null,
+      capabilities:c,email:a?.email||userMap.get(j.user_id)?.email||null,
       evidence:(documentMap.get(j.user_id)||[]),
       public_roster:rosterMap.has(j.user_id),
       public_capabilities:rosterMap.get(j.user_id)?.capabilities||[],
