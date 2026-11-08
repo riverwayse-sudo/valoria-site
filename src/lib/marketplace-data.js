@@ -22,7 +22,8 @@ const PLACEHOLDER_HEADLINES = new Set([
 function isQualifiedPublicProfile(row) {
   const rawHeadline = String(row?.headline || row?.current_job_title || '').trim()
   const headline = normalizePublicDisplayText(rawHeadline)
-  const validAtbId = /^ATB-[A-Z0-9-]{4,40}$/i.test(String(row?.atb_id || '').trim())
+  const normalizedAtbId = String(row?.atb_id || '').normalize('NFKC').trim()
+  const validAtbId = /^ATB-[A-Z0-9-]{4,40}$/i.test(normalizedAtbId)
   const validHeadline = rawHeadline.length >= 8 &&
     !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
     !/[\u{1D400}-\u{1D7FF}]/u.test(rawHeadline)
