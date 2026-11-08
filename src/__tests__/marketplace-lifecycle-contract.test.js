@@ -485,6 +485,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     const page = read('src/app/admin/reconciliation/page.jsx')
     expect(route).toContain("assessmentAccess==='basic'&&completedTaster&&identityReady&&roster?.assessment_access==='basic'")
     expect(route).toContain('publicReady=Boolean(roster&&visibilityReady&&identityReady')
+    expect(route).toContain('Array.isArray(roster.capabilities)&&roster.capabilities.length>0')
     expect(route).toContain('counts.roster_projection_professionals')
     expect(page).toContain('Basic listings require a linked completed taster')
     expect(page).toContain('BASIC LISTING PATH')
