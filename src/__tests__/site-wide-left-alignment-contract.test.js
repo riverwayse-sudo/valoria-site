@@ -25,6 +25,17 @@ describe('main website left-alignment contract', () => {
     }
   })
 
+  test('shared public-page and homepage shells use one content width and gutter', () => {
+    const pages = read('src/app/pages.css')
+    const home = read('src/app/home.css')
+    expect(pages).toContain('calc(100% - 2 * var(--pad))')
+    expect(pages).toContain('var(--vi-content,1160px)')
+    expect(pages).toContain('.page-hero{position:relative;padding:152px 0 88px')
+    expect(pages).toContain('.page-section{padding:clamp(72px,8vw,112px) 0')
+    expect(home).toContain('--space-content-width: var(--vi-content, 1160px)')
+    expect(home).toContain('calc(100% - 2 * var(--pad))')
+  })
+
   test('the global contract preserves reduced-motion accessibility', () => {
     const css = read('src/styles/globals.css')
     expect(css).toContain('@media (prefers-reduced-motion: reduce)')
