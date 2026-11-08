@@ -274,7 +274,10 @@ function countMarketplaceRows(rows) {
   const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
 
   for (const row of rows || []) {
-    for (const capability of row.capabilities || []) {
+    const visibleCapabilities = row.assessment_access === 'basic'
+      ? [...(row.capabilities || []), ...(row.selectedCapabilities || [])]
+      : (row.capabilities || [])
+    for (const capability of new Set(visibleCapabilities)) {
       if (byTrack[capability]) byTrack[capability].add(row.professional_id)
     }
   }
@@ -296,7 +299,10 @@ export async function getMarketplaceDirectoryData(track = 'all') {
   const allRows = await getMarketplaceRows('all')
   const normalizedTrack = normalizeTrack(track)
   return {
-    rows: normalizedTrack === 'all' ? allRows : allRows.filter(row => row.capabilities.includes(normalizedTrack)),
+    rows: normalizedTrack === 'all' ? allRows : allRows.filter(row =>
+      row.capabilities.includes(normalizedTrack)
+      || (row.assessment_access === 'basic' && row.selectedCapabilities.includes(normalizedTrack))
+    ),
     counts: countMarketplaceRows(allRows),
   }
 }
