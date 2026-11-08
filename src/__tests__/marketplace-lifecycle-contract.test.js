@@ -33,8 +33,10 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain("assessment_access === 'basic'")
     expect(data).toContain("assessment_access === 'full'")
     expect(directory).toContain("p.assessment_access === 'basic'")
-    expect(directory).toContain("isFull ? 'FULL VALU ASSESSMENT' : 'BASIC · VALU SNAPSHOT'")
-    expect(directory).toContain('BASIC LISTING')
+    expect(directory).toContain("isFull ? 'VALU ASSESSMENT INSIGHT' : 'BASIC PROFESSIONAL LISTING'")
+    expect(directory).toContain('BASIC PROFESSIONAL LISTING')
+    expect(directory).toContain('This Basic listing introduces the professional')
+    expect(directory).not.toContain('The Full VALU Index is a separate assessment')
     expect(directory).toContain('applicable Basic or Full listing requirements')
   })
   test('marketplace accepts canonically equivalent Unicode ATB identifiers without changing the stored ID', () => {
