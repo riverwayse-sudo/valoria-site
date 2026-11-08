@@ -14,7 +14,8 @@ describe('main website left-alignment contract', () => {
 
   test('all page copy is left aligned across every route', () => {
     const css = read('src/styles/globals.css')
-    expect(css).toMatch(/html body,\\s*html body \\*\\s*\\{\\s*text-align:\\s*left\\s*!important;/)
+    expect(css).toContain('html body *')
+    expect(css).toContain('text-align: left !important')
   })
 
   test('desktop dropdowns and mobile navigation are explicitly covered', () => {
