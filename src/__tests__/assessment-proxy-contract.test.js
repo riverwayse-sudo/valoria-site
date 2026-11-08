@@ -26,7 +26,7 @@ describe('same-origin assessment Worker proxy', () => {
 
   test('staging empty marketplace explains that genuine profiles require explicit consent', () => {
     const marketplace = read('src/components/MarketplaceDirectory.jsx')
-    expect(marketplace).toContain('No approved professional profiles are connected to this staging preview.')
+    expect(marketplace).toContain('Verified professional profiles are being onboarded.')
     expect(marketplace).toContain('explicit public-visibility consent')
     expect(marketplace).toContain("process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'")
   })
