@@ -80,7 +80,7 @@ export async function GET(request){
       assessment_score:a?.total_score??null,
       assessment_completed_at:a?.completed_at||null,
       assessment_version:a?.assessment_version||null,
-      capabilities:c,email:a?.email||userMap.get(j.user_id)?.email||null,
+      capabilities:c,email:userMap.get(j.user_id)?.email||a?.email||null,
       evidence:(documentMap.get(j.user_id)||[]),
       public_roster:rosterMap.has(j.user_id),
       public_capabilities:rosterMap.get(j.user_id)?.capabilities||[],
