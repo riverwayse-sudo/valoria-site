@@ -79,6 +79,7 @@ describe('staging preview safety boundary', () => {
     expect(workflow).toContain('github.event.pull_request.head.repo.full_name == github.repository')
     expect(workflow).toContain('environment: staging')
     expect(workflow).toContain('npx wrangler deploy')
+    expect(workflow).toContain('assessment_html="$(curl -fsSL')
     expect(workflow).toContain(`grep -qi 'id="root"' <<<"$assessment_html"`)
     expect(workflow).not.toContain("grep -qi 'BEGIN MY TASTER' <<<\"$assessment_html\"")
   })
