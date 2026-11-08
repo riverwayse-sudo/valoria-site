@@ -35,7 +35,7 @@ function isQualifiedPublicProfile(row) {
   )
   if (!hasIdentity) return false
 
-  if (row.assessment_access === 'basic') return true
+  if (row.assessmentAccess === 'basic') return true
   return Boolean(
     row.assessment_access === 'full' &&
     Array.isArray(row.capabilities) && row.capabilities.length > 0 &&
@@ -100,7 +100,7 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
   }
 
   const basicIds = rows
-    .filter(row => row.assessment_access === 'basic')
+    .filter(row => row.assessmentAccess === 'basic')
     .map(row => row.professional_id)
   let linkedTasterIds = new Set()
   if (basicIds.length) {
@@ -238,7 +238,7 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
       || !consentedIds.has(profile.id)) return false
 
     if (row.assessment_access === 'full') return profile.profile_complete === true && Number(row.valu_index) >= 35 && Number(row.valu_index) === Number(profile.valu_index) && fullReadyIds.has(profile.id)
-    return row.assessment_access === 'basic'
+    return row.assessmentAccess === 'basic'
       && (linkedTasterIds.has(profile.id) || currentBasicAssessmentIds.has(profile.id))
       && Boolean(profile.display_name?.trim() || row.full_name?.trim())
       && Boolean(profile.headline?.trim() || profile.current_job_title?.trim() || row.headline?.trim() || row.current_job_title?.trim())
@@ -264,7 +264,7 @@ export async function getMarketplaceRows(track = 'all') {
   const approvedIds = await getApprovedPublicProfessionalIds(admin, projected)
   const rows = projected
     .filter(row => approvedIds.has(row.professional_id))
-    .map(row => row.assessment_access === 'basic'
+    .map(row => row.assessmentAccess === 'basic'
       ? { ...row, valu_index: null, cluster_scores: null, assessment_summary: null, designation: null }
       : row)
   return rows.filter(row => track === 'all' || row.capabilities.includes(normalizeTrack(track)))
@@ -274,7 +274,7 @@ function countMarketplaceRows(rows) {
   const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
 
   for (const row of rows || []) {
-    const visibleCapabilities = row.assessment_access === 'basic'
+    const visibleCapabilities = row.assessmentAccess === 'basic'
       ? [...(row.capabilities || []), ...(row.selectedCapabilities || [])]
       : (row.capabilities || [])
     for (const capability of new Set(visibleCapabilities)) {
@@ -301,7 +301,7 @@ export async function getMarketplaceDirectoryData(track = 'all') {
   return {
     rows: normalizedTrack === 'all' ? allRows : allRows.filter(row =>
       row.capabilities.includes(normalizedTrack)
-      || (row.assessment_access === 'basic' && row.selectedCapabilities.includes(normalizedTrack))
+      || (row.assessmentAccess === 'basic' && row.selectedCapabilities.includes(normalizedTrack))
     ),
     counts: countMarketplaceRows(allRows),
   }
