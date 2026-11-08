@@ -11,7 +11,8 @@ export async function generateMetadata({ params }) {
   let profile = null
   try {
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)
-    const isAtbId = /^ATB-[A-Z0-9-]{4,40}$/i.test(id)
+    const normalizedId = String(id || '').normalize('NFKC')
+    const isAtbId = /^ATB-[A-Z0-9-]{4,40}$/i.test(normalizedId)
     if (isUuid || isAtbId) {
       profile = await getConsentVerifiedPublicProfile(id, isUuid ? 'id' : 'atb_id')
     }
