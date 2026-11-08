@@ -43,9 +43,9 @@ describe('staging preview safety boundary', () => {
     expect(read('src/components/ValuCompletionNudge.jsx')).toContain("if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') return")
   })
 
-  test('read-only preview never queries the live public roster or lists member profile URLs', () => {
+  test('read-only previews stay isolated while dedicated staging can query its consent-gated roster', () => {
     const marketplace = read('src/lib/marketplace-data.js')
-    expect(marketplace).toContain("const IS_READ_ONLY_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'")
+    expect(marketplace).toContain("const IS_READ_ONLY_PREVIEW = (process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1') && process.env.VALU_STAGING_API_ENABLED !== '1'")
     expect(marketplace).toContain('if (IS_READ_ONLY_PREVIEW) return []')
     expect(marketplace).toContain('if (IS_READ_ONLY_PREVIEW) return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }')
     expect(marketplace.indexOf('if (IS_READ_ONLY_PREVIEW) return []')).toBeLessThan(marketplace.indexOf('createClient(url, key'))
