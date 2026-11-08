@@ -486,6 +486,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(route).toContain("assessmentAccess==='basic'&&completedTaster&&identityReady&&roster?.assessment_access==='basic'")
     expect(route).toContain('publicReady=Boolean(roster&&visibilityReady&&identityReady')
     expect(route).toContain('Array.isArray(roster.capabilities)&&roster.capabilities.length>0')
+    expect(route).toContain('!/[\\\\u{1D400}-\\\\u{1D7FF}]/u.test(rawHeadline)')
     expect(route).toContain('counts.roster_projection_professionals')
     expect(page).toContain('Basic listings require a linked completed taster')
     expect(page).toContain('BASIC LISTING PATH')
