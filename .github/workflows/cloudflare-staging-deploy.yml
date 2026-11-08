@@ -136,7 +136,7 @@ jobs:
           assessment_html="$(curl -fsS --max-time 30 "$base/valu/assessment/")"
           grep -qi 'VALU ASSESSMENT' <<<"$assessment_html"
           grep -qi 'id="root"' <<<"$assessment_html"
-grep -Eqi '<script[^>]+src=' <<<"$assessment_html"
+          grep -Eqi '<script[^>]+src=' <<<"$assessment_html"
 
           assessment_api_status="$(curl -sS --max-time 25 -o /tmp/valu-assessment-api-response -w '%{http_code}' "$base/valu/assessment/api/taster-progress")"
           if [[ "$assessment_api_status" != "405" ]]; then
