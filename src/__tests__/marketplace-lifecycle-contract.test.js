@@ -63,8 +63,10 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).toContain("key:'facilitator'")
     expect(directory).toContain('NOT SELECTED')
     const categoryFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
-    expect(categoryFilter).toContain('p.capabilities || p.tracks || [p.track]')
-    expect(categoryFilter).not.toContain('selectedCapabilities')
+    expect(categoryFilter).toContain('p.selectedCapabilities || p.selected_capabilities || p.capabilities || p.tracks || [p.track]')
+    expect(categoryFilter.indexOf('p.selectedCapabilities')).toBeLessThan(categoryFilter.indexOf('p.capabilities'))
+    expect(data).toContain("row.selectedCapabilities.includes(normalizeTrack(track))")
+    expect(data).toContain('row.selected_capabilities')
   })
 
   test('marketplace discovery filters use consented PRIME, skill, sector and declared-role data', () => {
