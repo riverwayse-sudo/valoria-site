@@ -81,6 +81,9 @@
 .vi-ih-prime h2 { color: var(--ih-white); }
 .vi-ih-prime-intro > p { max-width: 610px; margin: 24px 0 0; color: rgba(250,250,247,.7); font-size: 16px; line-height: 1.75; }
 .vi-ih-prime .vi-ih-inline-link { margin-top: 24px; color: var(--ih-white); border-color: var(--ih-gold); }
+.vi-ih-prime-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 26px; margin-top: 22px; }
+.vi-ih-prime-actions .vi-ih-inline-link { margin-top: 0; }
+.vi-ih-prime-actions .vi-ih-button { margin-top: 0; }
 .vi-ih-dimensions { display: grid; grid-template-columns: repeat(5,1fr); gap: 0; margin-top: 76px; border-top: 1px solid rgba(201,168,76,.35); border-bottom: 1px solid rgba(201,168,76,.35); }
 .vi-ih-dimension { min-height: 260px; padding: 25px 22px 28px 0; }
 .vi-ih-dimension + .vi-ih-dimension { padding-left: 22px; border-left: 1px solid rgba(201,168,76,.25); }
