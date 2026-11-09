@@ -1,6 +1,7 @@
 import Nav, { AssessmentStartLink } from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { BRAND, PRIME_CLUSTERS } from '@/lib/brand'
+import '../audience-hero-imagery.css'
 
 export const metadata = {
   title: 'VALU Index | Valoria Institute',
