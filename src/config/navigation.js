@@ -14,7 +14,8 @@ export const NAVIGATION = {
         ]},
         { label: 'DISCOVER & CONNECT', items: [
           { label: 'Professional Registry', href: '/marketplace/talent', description: 'Discover capability-led professional profiles.' },
-          { label: 'Jobs & Opportunities', href: '/opportunities', description: 'Explore relevant professional opportunities.' },
+          { label: 'Browse Jobs', href: '/jobs', description: 'Explore current roles and vacancies.' },
+          { label: 'Explore Opportunities', href: '/opportunities', description: 'Discover projects and professional engagements.' },
         ]},
       ],
     },
@@ -39,7 +40,8 @@ export const NAVIGATION = {
       { label: 'Find Talent', href: '/atb-connect' },
       { label: 'Find Speakers & Facilitators', href: '/atb-spotlight' },
       { label: 'Professional Registry', href: '/marketplace/talent' },
-      { label: 'Jobs & Opportunities', href: '/opportunities' },
+      { label: 'Browse Jobs', href: '/jobs' },
+      { label: 'Explore Opportunities', href: '/opportunities' },
       { label: 'Valoria Develop', href: '/develop' },
     ],
     valu: [
