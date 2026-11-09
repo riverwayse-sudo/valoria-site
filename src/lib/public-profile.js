@@ -186,7 +186,8 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
   const { profile_complete: _profileComplete, ...publicProfile } = profile
   return {
     ...publicProfile,
-    atb_id: normalizePublicDisplayText(profile.atb_id),
+    atb_id: profile.atb_id,
+    valu_score: profile.valu_index,
     display_name: normalizePublicDisplayText(profile.display_name),
     display_initials: normalizePublicDisplayText(profile.display_initials),
     headline: normalizePublicDisplayText(profile.headline),
