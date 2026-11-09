@@ -10,23 +10,29 @@ const TRACK_META = {
 
 async function getHomepageProfiles() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  // This is a public homepage projection: use the anon key so roster RLS enforces visibility.
-  // Never use a service-role key for public Marketplace discovery reads.
+  // Use the narrowly scoped public roster RPC; direct roster table reads are denied by RLS.
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   if (!url || !key) return { profiles: [], count: null }
   const headers = { apikey: key, 'Content-Type': 'application/json' }
-  // Publishable API keys are sent in the apikey header, not as a Bearer JWT.
   if (!key.startsWith('sb_publishable_')) headers.Authorization = `Bearer ${key}`
   try {
-    const [profilesResponse, countResponse] = await Promise.all([
-      fetch(`${url}/rest/v1/rpc/get_homepage_professional_previews_v2`, { method: 'POST', headers, body: '{}', cache: 'no-store' }),
-      fetch(`${url}/rest/v1/rpc/get_homepage_professional_count`, { method: 'POST', headers, body: '{}', cache: 'no-store' }),
-    ])
-    const profilesPayload = profilesResponse.ok ? await profilesResponse.json() : []
-    const countPayload = countResponse.ok ? await countResponse.json() : null
-    return { profiles: Array.isArray(profilesPayload) ? profilesPayload : [], count: typeof countPayload === 'number' ? countPayload : null }
+    const response = await fetch(`${url}/rest/v1/rpc/get_marketplace_public_roster_v1`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ p_professional_id: null, p_atb_id: null }),
+      cache: 'no-store',
+    })
+    const payload = response.ok ? await response.json() : []
+    const profiles = Array.isArray(payload) ? payload.map(profile => ({
+      ...profile,
+      id: profile.professional_id,
+      active_tracks: Array.isArray(profile.selected_capabilities) && profile.selected_capabilities.length
+        ? profile.selected_capabilities
+        : (Array.isArray(profile.capabilities) ? profile.capabilities : []),
+    })) : []
+    return { profiles, count: null }
   } catch (error) {
-    console.error('Homepage profile data fetch failed:', error)
+    console.error('Homepage public roster RPC failed:', error)
     return { profiles: [], count: null }
   }
 }
@@ -39,14 +45,14 @@ export default async function LiveProfilesScroll() {
     const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
     const summary = String(profile.assessment_summary || '').trim()
     const headline = String(profile.headline || '').trim()
-    const profileId = String(profile.atb_id || '').trim()
+    const profileId = String(profile.atb_id || '').normalize('NFKC').trim()
     const points = Number(profile.valu_index)
     const placeholderHeadlines = new Set(['model', 'valoria professional', 'growth dev', 'help people find meaning in their life and career'])
     const isQualityReady = Boolean(
       profile.id &&
       profileId &&
       summary.length >= 24 &&
-      headline.length >= 8 &&
+      headline.length >= 3 &&
       !placeholderHeadlines.has(headline.toLowerCase()) &&
       !/[\u{1D400}-\u{1D7FF}]/u.test(headline) &&
       !/descriptor unavailable/i.test(summary) &&
