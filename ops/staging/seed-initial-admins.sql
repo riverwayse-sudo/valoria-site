@@ -22,6 +22,7 @@ where lower(u.email) in (
   'oluwafemi@valoriainstitute.com',
   'samsongracetayo@gmail.com'
 )
+  and u.email_confirmed_at is not null
 on conflict (id) do update
 set
   email = excluded.email,
