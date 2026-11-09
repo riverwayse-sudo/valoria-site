@@ -99,8 +99,8 @@ export default function ProgrammesPage() {
                 {[
                   'Where included, a pre-programme VALU Index can establish a baseline across all five clusters',
                   'Programme targets the specific cluster(s) where movement is needed most',
-                  'Facilitators deliver against defined PRIME behavioural anchors within the agreed programme scope',
-                  'Post-programme VALU Index (90 days out) shows what actually moved',
+                  'Programme delivery is scoped against relevant PRIME behavioural anchors',
+                  'Where included, a follow-up VALU Index provides a structured view of progress; timing is agreed in the programme scope',
                   'Cohort-level reporting available for organisational development leads',
                 ].map((t, i) => (
                   <li key={i}>
@@ -140,7 +140,7 @@ export default function ProgrammesPage() {
         <section className="page-section alt cta-banner">
           <Reveal>
             <h2 className="section-title">Commission a programme<br /><em>against the standard.</em></h2>
-            <p className="page-sub">Tell us which cluster your team needs to close, and we&apos;ll match you with the right certified facilitator.</p>
+            <p className="page-sub">Tell us which cluster your team needs to address. We&apos;ll review your requirements and confirm facilitator suitability for the engagement.</p>
             <div className="page-hero-actions" style={{ justifyContent: 'center' }}>
               <a href="/contact-us" className="btn-gold">COMMISSION A PROGRAMME</a>
               <a href="/facilitators" className="btn-outline">HOW COMMISSIONING WORKS</a>
