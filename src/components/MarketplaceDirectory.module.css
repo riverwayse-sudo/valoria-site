@@ -966,3 +966,7 @@
  .availabilityBadge{top:58px;font-size:10px}
  .profileSkills span{font-size:12px!important}
 }
+
+.directoryHead span{display:block!important;min-width:0!important;padding:0!important;border:0!important;background:transparent!important;border-radius:0!important;color:#D4C9A8!important;font-size:12px!important;font-weight:600!important;letter-spacing:.025em!important;text-align:right}
+.directoryHead span::before{content:none!important}
+.view.viewButton{margin-top:auto!important;padding-top:12px!important}
