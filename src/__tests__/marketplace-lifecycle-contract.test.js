@@ -27,14 +27,14 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(facilitators).toContain("getMarketplaceDirectoryData('facilitator')")
   })
 
-  test('marketplace keeps Basic taster listings distinct from Full VALU listings', () => {
+  test('marketplace preserves Basic and Full data without repeating Basic tier labels on cards', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
     const data = read('src/lib/marketplace-data.js')
     expect(data).toContain("assessmentAccess === 'basic'")
     expect(data).toContain("assessment_access === 'full'")
-    expect(directory).toContain("p.assessment_access === 'basic'")
-    expect(directory).toContain("isFull ? 'VALU ASSESSMENT INSIGHT' : 'BASIC PROFESSIONAL LISTING'")
-    expect(directory).toContain('BASIC LISTING')
+    expect(directory).toContain("p.assessment_access === 'full'")
+    expect(directory).toContain("p.assessment_access === 'full' && p.valu_index != null")
+    expect(directory).not.toContain('BASIC LISTING')
     expect(directory).toContain('applicable Basic or Full listing requirements')
   })
   test('marketplace accepts canonically equivalent Unicode ATB identifiers without changing the stored ID', () => {
@@ -60,8 +60,6 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain('selectedCapabilities')
     expect(directory).toContain('getCapabilitySelection(p)')
     expect(directory).toContain('selectedCaps.has(key)')
-    expect(directory).toContain('selectedCapabilityList')
-    expect(directory).toContain("['candidate','Talent']")
     expect(directory).toContain("['speaker','Speaker']")
     expect(directory).toContain("['facilitator','Facilitator']")
     const cardComponent = directory.slice(directory.indexOf('function Profile({p, onSelect})'), directory.indexOf('// The public preview'))

@@ -98,15 +98,15 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
         <div className={styles.containerControl}>
           <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search professionals, skills or sectors…" aria-label="Search marketplace"/>
           <select value={cluster} onChange={e=>setCluster(e.target.value)} aria-label="Filter by PRIME cluster">
-            <option value="">All PRIME clusters</option>
+            <option value="">All professional areas</option>
             {PRIME_CLUSTERS.map(item=><option key={item.letter} value={item.letter}>{item.name}</option>)}
           </select>
           <select value={skill} onChange={e=>setSkill(e.target.value)} aria-label="Filter by skill">
-            <option value="">All declared skills</option>
+            <option value="">All skills</option>
             {skills.map(value=><option key={value} value={value}>{value}</option>)}
           </select>
           <select value={scoreBand} onChange={e=>setScoreBand(e.target.value)} aria-label="Filter by VALU points band">
-            <option value="">All VALU points</option>
+            <option value="">All assessment scores</option>
             {SCORE_BANDS.map(value=><option key={value.name} value={value.name}>{value.name} · {value.min}–{value.max} points</option>)}
           </select>
           <select value={sector} onChange={e=>setSector(e.target.value)} aria-label="Filter by sector">
@@ -115,13 +115,13 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
           </select>
           {(query || sector || cluster || skill || scoreBand) && <button onClick={clearFilters}>CLEAR</button>}
         </div>
-        <details className={styles.filterHelp}><summary>How filtering works</summary><p>Filter by selected capability, PRIME cluster, declared skill, sector or VALU points. We only show information approved for public display.</p></details>
+        <details className={styles.filterHelp}><summary>How filtering works</summary><p>Filter by professional area, skills, sector or assessment score. We only show information approved for public display.</p></details>
       </section>
       <section className={styles.directory}>
         <div className={styles.container}>
           <div className={styles.directoryHead}>
             <div><p className={styles.eyebrow}>PUBLIC MARKETPLACE</p><h2>{dataUnavailable ? 'Directory unavailable' : `${results.length} ${results.length===1?'professional':'professionals'}`}</h2></div>
-            <span>VALU INDEX × PRIME</span>
+            <span>Assessment-informed professional profiles</span>
           </div>
           {dataUnavailable ? (
             <div className={styles.empty}>
@@ -184,9 +184,11 @@ function getCapabilitySelection(profile) {
 
 function Profile({p, onSelect}) {
   const selectedCaps = getCapabilitySelection(p)
-  const capabilityLabels = [['candidate','Talent'],['speaker','Speaker'],['facilitator','Facilitator']]
-    .filter(([key]) => selectedCaps.has(key)).map(([,label]) => label)
-  const isBasic = p.assessment_access === 'basic'
+  const specialistCapabilities = [
+    ['speaker','Speaker'],
+    ['facilitator','Facilitator'],
+  ].filter(([key]) => selectedCaps.has(key)).map(([,label]) => label)
+  const isFull = p.assessment_access === 'full' && p.valu_index != null
   const designation = displayText(p.designation)
   const designationClass = {
     'Force to Align With': styles.forceToAlignWith,
@@ -199,47 +201,48 @@ function Profile({p, onSelect}) {
   const availability = displayText(p.availability_status)
   const role = displayText(p.current_job_title || p.headline)
   const sector = displayText(p.industry)
+  const location = displayText(p.location)
   const summary = displayText(p.assessment_summary)
-  const available = /available|accepting|open/i.test(availability) && !/unavailable|not available|closed/i.test(availability)
-  const monogram = role.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase() || 'V'
+  const available = /^(available|accepting|open)$/i.test(availability)
+  const explicitlyUnavailable = /unavailable|not available|closed/i.test(availability)
+  const availabilityLabel = available ? 'Available' : explicitlyUnavailable ? 'Unavailable' : 'Availability not stated'
+  const idMark = profileId.match(/[A-Z0-9]{2}$/i)?.[0]?.toUpperCase() || 'ATB'
 
-  return <article className={`${styles.card} ${!available && availability ? styles.unavailableCard : ''}`}>
+  return <article className={`${styles.card} ${explicitlyUnavailable ? styles.unavailableCard : ''}`}>
     <header className={styles.cardHeader}>
       <div className={styles.identity}>
         {p.photo_url
           ? <ValoriaAvatar src={p.photo_url} seed={p.professional_id || profileId} size={58} className={styles.avatar}/>
-          : <span className={styles.avatarMonogram} aria-hidden="true">{monogram}</span>}
+          : <span className={styles.avatarMonogram} aria-hidden="true">{idMark}</span>}
         <div className={styles.identityCopy}>
           <strong className={styles.profileName}>{role || 'Professional profile'}</strong>
           <span className={styles.cardIdLabel}>{profileId || 'ATB ID PENDING'}</span>
         </div>
       </div>
-      {!isBasic && <div className={styles.valu} aria-label={`VALU Index ${p.valu_index} points`}>
+      {isFull && <div className={styles.valu} aria-label={`VALU Index ${p.valu_index} points`}>
         <small>VALU INDEX</small><b>{p.valu_index}</b><span>POINTS</span>
       </div>}
+      <span className={`${styles.availabilityBadge} ${available ? styles.availableBadge : explicitlyUnavailable ? styles.unavailableBadge : styles.unknownBadge}`}>
+        <i aria-hidden="true"/>{availabilityLabel}
+      </span>
     </header>
 
-    {sector && <p className={styles.specialisation}>{sector}</p>}
-    <div className={styles.profileDetails}>
-      {p.location && <span>{displayText(p.location)}</span>}
-      {availability && <span className={available ? styles.availableStatus : styles.unavailableStatus}>{titleCase(availability)}</span>}
+    <div className={styles.profileMeta}>
+      <p className={styles.specialisation}>{sector || 'Sector not specified'}</p>
+      <p className={styles.locationLine}>{location || 'Location not specified'}</p>
     </div>
 
-    {capabilityLabels.length > 0 && <section className={styles.cardCapabilities} aria-label={`Selected capabilities: ${capabilityLabels.join(', ')}`}>
-      <span className={styles.capabilityLabel}>CAPABILITIES</span>
-      <div className={styles.selectedCapabilityList}>{capabilityLabels.map(label=><span key={label}>{label}</span>)}</div>
-    </section>}
+    {skills.length > 0 && <div className={styles.profileSkills} aria-label="Professional skills">{skills.map(value=><span key={value}>{value}</span>)}</div>}
 
-    <footer className={styles.cardFooter}>
-      <div className={styles.cardCredential}>
-        {isBasic
-          ? <span className={styles.basicCredential}>BASIC LISTING</span>
-          : <><span className={`${styles.tierBadge} ${designationClass}`}>{designation || 'VALU ASSESSED'}</span><span className={styles.assessmentState}>FULL ASSESSMENT</span></>}
-      </div>
-      {skills.length > 0 && <div className={styles.profileSkills}>{skills.map(value=><span key={value}>{value}</span>)}</div>}
-    </footer>
+    {specialistCapabilities.length > 0 && <div className={styles.specialistCapabilities}>
+      {specialistCapabilities.map(label=><span key={label}>{label}</span>)}
+    </div>}
 
-    {!isBasic && summary && <section className={styles.assessmentInsight}>
+    {isFull && <div className={styles.cardCredential}>
+      <span className={`${styles.tierBadge} ${designationClass}`}>{designation || 'VALU ASSESSED'}</span>
+    </div>}
+
+    {isFull && summary && <section className={styles.assessmentInsight}>
       <span className={styles.insightLabel}>VALU ASSESSMENT INSIGHT</span>
       <p className={styles.assessmentSummary}>{summary}</p>
     </section>}
