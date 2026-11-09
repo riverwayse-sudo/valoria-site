@@ -1996,3 +1996,71 @@
     font-size: 20px;
   }
 }
+
+
+/* 9 Nov 2026 — reduce the featured event card footprint in the hero. */
+.hero-slider .hero-event-panel {
+  width: min(100%, 370px);
+  max-width: 370px;
+  padding: 18px 19px;
+  border-radius: 7px;
+}
+.hero-slider .hero-event-panel .hero-event-cluster {
+  margin-bottom: 9px;
+  font-size: 8px;
+}
+.hero-slider .hero-event-panel h2 {
+  max-width: 17ch;
+  margin-bottom: 7px;
+  font-size: clamp(22px, 2vw, 27px);
+  line-height: 1.08;
+}
+.hero-slider .hero-event-panel p {
+  font-size: 11px;
+  line-height: 1.45;
+}
+.hero-slider .hero-event-status {
+  margin-top: 11px;
+  padding-top: 9px;
+  font-size: 7px;
+}
+.hero-slider .hero-event-panel .session-timer {
+  margin-top: 8px;
+  padding: 9px 10px 8px;
+}
+.hero-slider .hero-event-panel .event-modal-countdown-heading {
+  margin-bottom: 6px;
+  font-size: 7px;
+}
+.hero-slider .hero-event-panel .event-modal-countdown-units {
+  gap: 5px;
+}
+.hero-slider .hero-event-panel .event-modal-countdown-unit {
+  padding: 7px 2px 6px;
+}
+.hero-slider .hero-event-panel .event-modal-countdown-unit strong {
+  font-size: 21px;
+}
+.hero-slider .hero-event-panel .event-modal-countdown-unit span {
+  margin-top: 4px;
+  font-size: 6px;
+}
+@media (max-width: 900px) {
+  .hero-slider .hero-event-panel {
+    width: 100%;
+    max-width: 370px;
+    padding: 17px;
+  }
+}
+@media (max-width: 480px) {
+  .hero-slider .hero-event-panel {
+    max-width: 100%;
+    padding: 15px;
+  }
+  .hero-slider .hero-event-panel h2 {
+    font-size: 22px;
+  }
+  .hero-slider .hero-event-panel .event-modal-countdown-unit strong {
+    font-size: 19px;
+  }
+}
