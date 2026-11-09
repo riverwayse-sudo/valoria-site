@@ -52,7 +52,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
   const results = useMemo(() => {
     const q=query.trim().toLowerCase()
     return rows.filter(p => {
-      const caps=(p.assessment_access === 'basic' ? (p.selectedCapabilities || p.selected_capabilities || []) : (p.capabilities || p.tracks || [p.track])).map(normalize)
+      const caps=[...(p.capabilities || p.tracks || [p.track]), ...(p.selectedCapabilities || p.selected_capabilities || [])].map(normalize)
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
       if(sector && displayText(p.industry) !== sector) return false
       if(cluster && !Number.isFinite(Number(p.cluster_scores?.[cluster]))) return false
