@@ -21,10 +21,15 @@ describe('Homepage and opportunity discovery contract', () => {
 
   test('opportunity discovery explains relevance without presenting an unexplained match score', () => {
     const opportunities = read('src/app/opportunities/page.jsx')
+    const matchingRoute = read('src/app/api/opportunities/matches/route.js')
     expect(opportunities).toContain('match_reasons')
     expect(opportunities).toContain('relevance')
     expect(opportunities).not.toContain('match_score')
     expect(opportunities).toContain('No public opportunities')
     expect(opportunities).toContain('/opportunities/submit')
+    expect(matchingRoute).toContain("eq('access_level', 'public')")
+    expect(matchingRoute).toContain("eq('eligibility_status', 'listed')")
+    expect(matchingRoute).not.toContain('match_score')
+    expect(matchingRoute).not.toContain('active_tracks')
   })
 })
