@@ -203,14 +203,11 @@ function Profile({p, onSelect}) {
   const available = /^(available|accepting|open)$/i.test(availability)
   const explicitlyUnavailable = /unavailable|not available|closed/i.test(availability)
   const availabilityLabel = available ? 'Available' : explicitlyUnavailable ? 'Unavailable' : 'Availability not stated'
-  const idMark = profileId.match(/[A-Z0-9]{2}$/i)?.[0]?.toUpperCase() || 'ATB'
 
   return <article className={`${styles.card} ${explicitlyUnavailable ? styles.unavailableCard : ''}`}>
     <header className={styles.cardHeader}>
       <div className={styles.identity}>
-        {p.photo_url
-          ? <ValoriaAvatar src={p.photo_url} seed={p.professional_id || profileId} size={58} className={styles.avatar}/>
-          : <span className={styles.avatarMonogram} aria-hidden="true">{idMark}</span>}
+<ValoriaAvatar src={p.photo_url} name={p.full_name} seed={p.professional_id || profileId} size={58} className={styles.avatar}/>
         <div className={styles.identityCopy}>
           <strong className={styles.profileName}>{displayText(p.full_name) || 'Professional profile'}</strong>
           {role && <span className={styles.profileRole}>{role}</span>}
@@ -320,7 +317,7 @@ function ProfilePreviewModal({ profile, onClose }) {
         </div>
         <div className={styles.modalBody}>
           <div className={styles.modalIdentity}>
-            <ValoriaAvatar src={profile.photo_url} seed={profile.professional_id || profile.atb_id} size={96} className={styles.modalAvatar}/>
+            <ValoriaAvatar src={profile.photo_url} name={profile.full_name} seed={profile.professional_id || profile.atb_id} size={96} className={styles.modalAvatar}/>
             <div className={styles.modalIdentityCopy}>
               <p className={styles.modalEyebrow}>ATB PROFILE ID · {displayText(profile.atb_id || 'PENDING')}</p>
               <h2 id="profile-preview-title">{displayText(profile.full_name || 'Professional profile')}</h2>
