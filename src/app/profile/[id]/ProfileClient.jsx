@@ -6,7 +6,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import EnquiryForm from '@/components/EnquiryForm'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { toPublicProfile, PUBLIC_PROFILE_SELECT } from '@/lib/public-profile'
+import { toPublicProfile } from '@/lib/public-profile'
 import { getValuTier } from '@/lib/brand'
 
 // ─── helpers ─────────────────────────────────────────────
@@ -190,13 +190,12 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
       }
 
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)
-      const { data: row, error } = await supabase
-        .from('marketplace_public_roster')
-        .select(PUBLIC_PROFILE_SELECT)
-        .eq(isUuid ? 'professional_id' : 'atb_id', id)
-        .maybeSingle()
-
-      if (error) console.error('public Marketplace profile fetch failed:', error)
+      const { data: rows, error } = await supabase.rpc('get_marketplace_public_roster_v1', {
+        p_professional_id: isUuid ? id : null,
+        p_atb_id: isUuid ? null : id,
+      })
+      if (error) console.error('public Marketplace profile RPC failed:', error)
+      const row = Array.isArray(rows) ? rows[0] || null : null
       const real = toPublicProfile(row)
 
       if (real) {
