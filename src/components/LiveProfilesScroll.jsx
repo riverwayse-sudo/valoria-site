@@ -135,7 +135,7 @@ export default async function LiveProfilesScroll() {
                           <ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} />
                         </div>
                         <div className="vi-scroll-copy">
-                          <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>LIVE</i></div>
+                          <div className="vi-scroll-topline"><span>{String(profile.atb_id || 'VALORIA PROFESSIONAL').normalize('NFKC')}</span><i>LIVE</i></div>
                           <div className="vi-scroll-headline">{profile.assessment_summary || 'Assessment-based capability descriptor unavailable.'}</div>
                           <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
                         </div>
