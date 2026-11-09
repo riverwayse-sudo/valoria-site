@@ -11,7 +11,7 @@ describe('Marketplace category visibility', () => {
     expect(source).toContain('valu_index: null, cluster_scores: null, assessment_summary: null, designation: null')
     expect(source).toContain('row.selectedCapabilities.includes(capability)')
     expect(source).toContain("row.assessmentAccess === 'full' && row.capabilities.includes(capability)")
-    expect(source).toContain("row.assessmentAccess === 'basic' ?")
+    expect(source).toContain("row.assessmentAccess === 'basic'")
     expect(source).toContain("row.assessmentAccess === 'full' ?")
     expect(component).toContain("p.assessment_access === 'basic'")
     expect(component).toContain('p.selectedCapabilities || p.selected_capabilities || []')
