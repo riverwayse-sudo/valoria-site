@@ -64,6 +64,9 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       }
       if(!q) return true
       return [p.full_name,p.headline,p.current_job_title,p.atb_id,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
+    }).sort((a, b) => {
+      const isAvailable = value => /^(available|accepting|open)$/i.test(displayText(value))
+      return Number(isAvailable(b.availability_status)) - Number(isAvailable(a.availability_status))
     })
   },[rows,activeTrack,query,sector,cluster,skill,scoreBand])
 
