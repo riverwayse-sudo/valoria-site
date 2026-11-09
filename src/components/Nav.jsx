@@ -170,6 +170,27 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
       // Returning to /dashboard here caused the public header CTA to loop
       // participants back to the page they were already on.
       if (session?.access_token) {
+        // Verify the participant's saved journey before requesting a full-assessment
+        // handoff. Accounts without a completed, verified taster must still be able
+        // to reach the public taster instead of receiving a dead-end 404.
+        const accessResponse = await fetch('/api/valu-handoff', {
+          method: 'GET',
+          headers: { Authorization: `Bearer ${session.access_token}` },
+          cache: 'no-store',
+        })
+        const access = await accessResponse.json().catch(() => ({}))
+        if (!accessResponse.ok) {
+          throw new Error(access.error || 'We could not verify your VALU assessment access.')
+        }
+        if (access.assessment_completed) {
+          window.location.assign('/dashboard')
+          return
+        }
+        if (!access.can_continue) {
+          window.location.assign(href)
+          return
+        }
+
         const response = await fetch('/api/valu-handoff', {
           method: 'POST',
           headers: { Authorization: `Bearer ${session.access_token}` },

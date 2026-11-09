@@ -442,6 +442,14 @@ describe('journey integrity contract', () => {
     expect(signup).toContain('VALUJourneyProgress stage="account"')
     expect(dashboard).toContain('AssessmentStartLink')
   })
+  test('signed-in assessment CTA returns participants without a linked taster to the public taster', () => {
+    const nav = read('src/components/Nav.jsx')
+    expect(nav).toContain("method: 'GET'")
+    expect(nav).toContain('if (!access.can_continue)')
+    expect(nav).toContain('window.location.assign(href)')
+    expect(nav.indexOf("method: 'GET'")).toBeLessThan(nav.indexOf("method: 'POST'"))
+  })
+
   test('dashboard shows the Full assessment continuation only when access is verified', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
     expect(dashboard).toContain('DashboardAssessmentHandover')
