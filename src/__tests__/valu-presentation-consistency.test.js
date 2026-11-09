@@ -44,7 +44,7 @@ describe('VALU presentation consistency', () => {
 
   test('email confirmation never exposes internal taster or full-assessment question counts', () => {
     const callback = read('src/app/auth/callback/page.jsx')
-    expect(callback).not.toMatch(/opening nine|9-question|58-question|Question\\s+\\d+\\s+of\\s+\\d+/i)
+    expect(callback).not.toMatch(/opening nine|9-question|58-question|Question\s+\d+\s+of\s+\d+/i)
     expect(callback).toContain('your saved VALU taster is connected')
   })
 
