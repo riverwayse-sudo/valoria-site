@@ -115,7 +115,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
           </select>
           {(query || sector || cluster || skill || scoreBand) && <button onClick={clearFilters}>CLEAR</button>}
         </div>
-        <details className={styles.filterHelp}><summary>How filtering works</summary><p>Filter by selected capability, PRIME cluster, declared skill, sector or VALU points. We only show information approved for public display.</p></details>
+        <details className={styles.filterHelp}><summary>How filtering works</summary><p>Filter by professional area, skills, sector or assessment score. We only show information approved for public display.</p></details>
       </section>
       <section className={styles.directory}>
         <div className={styles.container}>
@@ -242,7 +242,6 @@ function Profile({p, onSelect}) {
       <span className={`${styles.tierBadge} ${designationClass}`}>{designation || 'VALU ASSESSED'}</span>
     </div>}
 
-    {!isFull && summary && null}
     {isFull && summary && <section className={styles.assessmentInsight}>
       <span className={styles.insightLabel}>VALU ASSESSMENT INSIGHT</span>
       <p className={styles.assessmentSummary}>{summary}</p>
