@@ -1,7 +1,7 @@
 import { isPublicProfileContentReady } from '@/lib/marketplace-data'
 
 const IS_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'
-const SITE_URL = IS_PREVIEW ? 'https://staging.valoriainstitute.com' : 'https://valoriainstitute.com'
+const SITE_URL = IS_PREVIEW ? (process.env.VALU_PREVIEW_SITE_ORIGIN || 'https://valoria-staging-site.riverwayse.workers.dev') : 'https://valoriainstitute.com'
 
 export default async function sitemap() {
   const now = new Date()
