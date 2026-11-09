@@ -2,8 +2,8 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
   // Assessment completion and score must come from the canonical assessment row.
   // Profile fields are display projections and can remain populated after a taster,
   // migration or stale profile sync; they are not proof of full-assessment completion.
-  const assessmentScore = assessment?.total_score ?? null
   const hasAssessment = !!assessment?.completed_at
+  const assessmentScore = hasAssessment ? (assessment?.total_score ?? null) : null
   const assessmentExpiresAt = assessment?.expires_at || null
   const assessmentCurrent = hasAssessment && (!assessmentExpiresAt || new Date(assessmentExpiresAt).getTime() > Date.now())
   const assessmentEligible = assessmentCurrent && assessmentScore != null && Number(assessmentScore) >= 35
