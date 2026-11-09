@@ -1,11 +1,5 @@
 import { getConsentVerifiedPublicProfile } from '@/lib/public-profile'
 
-function getInitials(name) {
-  if (!name) return 'Valoria Professional'
-  const words = name.trim().split(/\s+/)
-  return words.length === 1 ? words[0].slice(0, 2).toUpperCase() : (words[0][0] + words[words.length - 1][0]).toUpperCase()
-}
-
 export async function generateMetadata({ params }) {
   const { id } = await params
   let profile = null
@@ -28,7 +22,7 @@ export async function generateMetadata({ params }) {
     }
   }
 
-  const name = getInitials(profile.display_name)
+  const name = String(profile.display_name || 'Valoria Professional').normalize('NFKC').replace(/\s+/g, ' ').trim()
   const type = (profile.active_tracks || []).includes('speaker') ? 'Speaker' : 'Professional'
   return {
     title: `${name} — ${type} Profile`,
@@ -40,7 +34,7 @@ export async function generateMetadata({ params }) {
       url: `/profile/${id}`,
       images: profile.photo_url ? [{ url: profile.photo_url }] : [{ url: '/logo.png?v=20260921' }],
     },
-    robots: { index: true, follow: true },
+    robots: profile.indexable ? { index: true, follow: true } : { index: false, follow: true },
   }
 }
 
