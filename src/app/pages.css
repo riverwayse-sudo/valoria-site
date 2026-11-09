@@ -475,3 +475,9 @@
  .homepage-event-popup-copy h2{font-size:28px}
  .homepage-event-popup-copy>p:not(.homepage-event-popup-eyebrow){font-size:14px}
 }
+
+@media(max-height:700px) and (min-width:701px){
+ .homepage-event-popup{min-height:0;max-height:90svh}
+ .homepage-event-popup-poster,.homepage-event-popup .event-poster{min-height:0}
+ .homepage-event-popup .event-poster{padding:18px 22px}
+}
