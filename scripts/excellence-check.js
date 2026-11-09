@@ -67,12 +67,12 @@ if (fs.existsSync(profileClientPath)) {
   // Helpers invoked by the profile client must remain declared in this module.
   // This catches the exact production crash: getAvatarLetters is not defined.
   for (const helper of ['getInitials', 'getAvatarLetters', 'getYouTubeId', 'rankedClusterStrengths']) {
-    const invoked = new RegExp('\b' + helper + '\s*\\(').test(client);
-    const declared = new RegExp('function\s+' + helper + '\s*\\(').test(client);
+    const invoked = new RegExp('\\b' + helper + '\\s*\\(').test(client);
+    const declared = new RegExp('function\\s+' + helper + '\\s*\\(').test(client);
     if (invoked && !declared) violations.push('ProfileClient references missing helper: ' + helper);
   }
   for (const component of ['PrimeRadarChart', 'Section']) {
-    if (!new RegExp('function\s+' + component + '\s*\\(').test(client)) {
+    if (!new RegExp('function\\s+' + component + '\\s*\\(').test(client)) {
       violations.push('ProfileClient component/helper missing: ' + component);
     }
   }
