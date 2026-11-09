@@ -263,3 +263,27 @@
   .tabs a{justify-content:space-between;min-width:0;padding:0 11px;font-size:8px}
 }
 @media(prefers-reduced-motion:reduce){.heroVisual img{transform:none}}
+
+
+/* Brand-manual compliance: 8px surfaces, no card shadows, pill actions. */
+.card,
+.modalDialog,
+.modalPanel,
+.modalListSection{border-radius:8px;box-shadow:none}
+.card:hover,
+.card:hover .avatar,
+.modalDialog,
+.modalPanel,
+.modalListSection,
+.tabs .activeTab{box-shadow:none}
+.card::after{border-radius:8px}
+.tierBadge,
+.capabilities .capabilityBadge,
+.modalCapability,
+.modalCapabilitySelected,
+.modalMeta span,
+.modalChips span,
+.modalIndex b{border-radius:8px}
+.tabs a,
+.controls button,
+.modalPrimary{border-radius:999px}
