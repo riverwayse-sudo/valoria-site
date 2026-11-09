@@ -55,10 +55,10 @@ export default function ValuPage() {
           <div className="valu-kicker"><span /> A CLEAR PROFESSIONAL STARTING POINT</div>
           <h2>A clear starting point.<br /><em>A fuller professional picture.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Register your details</h3><p>Share your name, email and professional context first. This creates the record that keeps your taster and Valoria follow-up connected. It is not your Valoria account.</p></article>
-            <article><b>02</b><h3>Complete your guided taster</h3><p>Begin with a free, guided view of your professional capability. Your responses are saved against your registration so you can return without losing your place.</p></article>
-            <article><b>03</b><h3>Create your Valoria account</h3><p>When you choose to continue, secure your account, confirm your email and enter your dashboard. Your registration and taster remain connected.</p></article>
-            <article><b>04</b><h3>Complete the full assessment</h3><p>The formal assessment covers all 17 PRIME skills. Completion establishes your official VALU Index in points and your earned designation. Results remain valid for 12 months.</p></article>
+            <article><b>01</b><h3>Begin with the guided taster</h3><p>Explore the PRIME framework through a short introductory assessment. Start with your capability — no account creation is required to begin.</p></article>
+            <article><b>02</b><h3>Choose to continue with Valoria</h3><p>After the taster, create your secure Valoria account to continue your professional journey. Your taster and account are connected as part of that transition.</p></article>
+            <article><b>03</b><h3>Enter your professional dashboard</h3><p>Confirm your email and arrive in your dashboard, where the full assessment is your next priority. You can return to continue without losing saved responses.</p></article>
+            <article><b>04</b><h3>Establish your official VALU Index</h3><p>Complete the full assessment across all 17 PRIME skills to receive your official VALU Index in points and your earned merit designation. Results remain valid for 12 months.</p></article>
           </div>
         </div>
       </section>
