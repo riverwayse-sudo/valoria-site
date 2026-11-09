@@ -52,7 +52,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
   const results = useMemo(() => {
     const q=query.trim().toLowerCase()
     return rows.filter(p => {
-      const caps=[...(p.capabilities || p.tracks || [p.track])].map(normalize)
+      const caps=[...(p.selectedCapabilities || p.selected_capabilities || []), ...(p.capabilities || p.tracks || [p.track])].map(normalize)
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
       if(sector && displayText(p.industry) !== sector) return false
       if(cluster && !Number.isFinite(Number(p.cluster_scores?.[cluster]))) return false
@@ -216,7 +216,8 @@ function Profile({p, onSelect}) {
           ? <ValoriaAvatar src={p.photo_url} seed={p.professional_id || profileId} size={58} className={styles.avatar}/>
           : <span className={styles.avatarMonogram} aria-hidden="true">{idMark}</span>}
         <div className={styles.identityCopy}>
-          <strong className={styles.profileName}>{role || 'Professional profile'}</strong>
+          <strong className={styles.profileName}>{displayText(p.full_name) || 'Professional profile'}</strong>
+          {role && <span className={styles.profileRole}>{role}</span>}
           <span className={styles.cardIdLabel}>{profileId || 'ATB ID PENDING'}</span>
         </div>
       </div>
@@ -326,8 +327,8 @@ function ProfilePreviewModal({ profile, onClose }) {
             <ValoriaAvatar src={profile.photo_url} seed={profile.professional_id || profile.atb_id} size={96} className={styles.modalAvatar}/>
             <div className={styles.modalIdentityCopy}>
               <p className={styles.modalEyebrow}>ATB PROFILE ID · {displayText(profile.atb_id || 'PENDING')}</p>
-              <h2 id="profile-preview-title">{displayText(profile.atb_id || 'ATB ID PENDING')}</h2>
-              <p className={styles.modalHeadline}>{displayText(profile.headline || profile.current_job_title || 'Professional capability')}</p>
+              <h2 id="profile-preview-title">{displayText(profile.full_name || 'Professional profile')}</h2>
+              <p className={styles.modalHeadline}>{displayText(profile.current_job_title || profile.headline || 'Professional capability')}</p>
               <div className={styles.modalMeta}>
                 {displayText(profile.industry) && <span>{displayText(profile.industry)}</span>}
                 {displayText(profile.location) && <span>{displayText(profile.location)}</span>}
