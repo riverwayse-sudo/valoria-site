@@ -235,10 +235,10 @@ function Profile({p, onSelect}) {
 
     {skills.length > 0 && <div className={styles.profileSkills} aria-label="Professional skills">{skills.map(value=><span key={value}>{value}</span>)}</div>}
 
-    <div className={styles.specialistCapabilities} aria-label="Declared capability selections">
+    <div className={styles.specialistCapabilities} aria-label="Declared capabilities">
       {capabilityBadges.map(([key,label]) => {
         const selected = selectedCaps.has(key)
-        return <span key={key} className={selected ? styles.capabilitySelected : styles.capabilityUnselected} aria-label={`${label}: ${selected ? 'selected' : 'not selected'}`}>{label}{selected ? ' ✓' : ''}</span>
+        return <span key={key} className={selected ? styles.capabilitySelected : styles.capabilityUnselected} aria-label={`${label}: ${selected ? 'declared' : 'not declared'}`}>{label}{selected ? ' ✓' : ''}</span>
       })}
     </div>
 
@@ -355,13 +355,13 @@ function ProfilePreviewModal({ profile, onClose }) {
               </div>
             </section>
             <section className={styles.modalPanel}>
-              <p className={styles.modalSectionLabel}>CAPABILITY SELECTION</p>
-              <p className={styles.modalSectionCopy}>The three capability lanes are shown consistently. Selection is distinct from capability-specific listing eligibility.</p>
+              <p className={styles.modalSectionLabel}>DECLARED CAPABILITIES</p>
+              <p className={styles.modalSectionCopy}>These are the professional roles this person has declared. Suitability for a specific brief is confirmed when an organisation makes an enquiry.</p>
               <div className={styles.modalCapabilities}>
                 {capabilityBadges.map(item => (
                   <div key={item.key} className={capabilities.has(item.key) ? styles.modalCapabilitySelected : styles.modalCapability}>
                     <strong>{item.title}</strong>
-                    <span>{capabilities.has(item.key) ? 'SELECTED' : 'NOT SELECTED'}</span>
+                    <span>{capabilities.has(item.key) ? 'DECLARED' : 'NOT DECLARED'}</span>
                   </div>
                 ))}
               </div>
@@ -370,7 +370,7 @@ function ProfilePreviewModal({ profile, onClose }) {
           {skills.length > 0 && <section className={styles.modalListSection}><p className={styles.modalSectionLabel}>PROFESSIONAL SKILLS</p><div className={styles.modalChips}>{skills.map(skill => <span key={skill}>{skill}</span>)}</div></section>}
           {topics.length > 0 && <section className={styles.modalListSection}><p className={styles.modalSectionLabel}>AREAS OF EXPERTISE</p><div className={styles.modalChips}>{topics.map(topic => <span key={topic}>{topic}</span>)}</div></section>}
           <div className={styles.modalFooter}>
-            <p>Choose the introduction that matches this professional’s selected capability. Valoria will review the request and coordinate the next step.</p>
+            <p>Choose the introduction that matches this professional’s declared capability. Valoria will review the request and coordinate the next step.</p>
             <div className={styles.modalActions}>
               {enquiryActions.map(action => (
                 <EnquiryForm
