@@ -6,12 +6,12 @@ describe('public professional profile privacy and presentation', () => {
   test('public profile routes use only the Marketplace roster projection', () => {
     const page = read('src/app/profile/[id]/page.jsx')
     const client = read('src/app/profile/[id]/ProfileClient.jsx')
-    expect(page).toContain(".from('marketplace_public_roster')")
-    expect(client).toContain(".from('marketplace_public_roster')")
+    expect(page).toContain("rpc('get_marketplace_public_roster_v1'")
+    expect(client).toContain("rpc('get_marketplace_public_roster_v1'")
     expect(page).not.toContain(".from('professional_profiles')")
     expect(client).not.toContain(".from('professional_profiles')")
     const marketplace = read('src/lib/marketplace-data.js')
-    expect(marketplace).toContain("const SOURCE = 'marketplace_public_roster'")
+    expect(marketplace).toContain("supabase.rpc('get_marketplace_public_roster_v1')")
     expect(marketplace).not.toContain('professional_profiles!inner')
   })
 
