@@ -394,22 +394,22 @@ describe('VALUI marketplace lifecycle contract', () => {
 
 
   test('marketplace category membership follows selected active capabilities for Full and Basic profiles', () => {
-    const migration = read('supabase/migrations/20261030122017_marketplace_roster_capability_eligibility_20261030100000.sql')
-    const fullBranch = migration.slice(
-      migration.indexOf("if assessment_ok and p.visibility = 'public'"),
-      migration.indexOf("select * into t", migration.indexOf("if assessment_ok and p.visibility = 'public'"))
-    )
-    const tasterBranch = migration.slice(migration.indexOf("select * into t"))
+    const data = read('src/lib/marketplace-data.js')
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    const projection = data.slice(data.indexOf('return rows.filter(row => track ==='), data.indexOf('function countMarketplaceRows'))
+    const counts = data.slice(data.indexOf('function countMarketplaceRows'), data.indexOf('export async function getMarketplaceCounts'))
+    const directoryData = data.slice(data.indexOf('export async function getMarketplaceDirectoryData'))
+    const clientFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
 
-    expect(fullBranch).toContain('public.professional_capabilities')
-    expect(fullBranch).toContain('pc.is_active = true')
-    expect(fullBranch).toContain('pc.is_active = true')
-    expect(fullBranch).toContain('selected_capabilities')
-    expect(fullBranch).toContain("caps := '{}'::text[]")
-    expect(fullBranch).toContain('General marketplace presence is independent of capability readiness')
-    expect(fullBranch).not.toContain("if cardinality(caps) = 0 then caps := array['talent']")
-    expect(tasterBranch).toContain("array['talent']::text[]")
-    expect(tasterBranch).toContain("'basic'")
+    // Selected capabilities determine category membership for every assessment tier.
+    expect(projection).toContain('row.selectedCapabilities.includes(normalizeTrack(track))')
+    expect(projection).toContain('row.capabilities.includes(normalizeTrack(track))')
+    expect(projection).not.toContain("assessmentAccess === 'basic'")
+    expect(counts).toContain('row.selectedCapabilities || []')
+    expect(counts).toContain('row.capabilities || []')
+    expect(directoryData).toContain('row.selectedCapabilities.includes(normalizedTrack)')
+    expect(clientFilter).toContain('p.selectedCapabilities || p.selected_capabilities || []')
+    expect(clientFilter).not.toContain("p.assessment_access === 'basic' ?")
   })
 
   test('existing capability eligibility is reconciled after historical evidence is marked pending', () => {
