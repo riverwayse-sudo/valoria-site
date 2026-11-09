@@ -170,3 +170,31 @@ test('stale enhanced journey labels cannot bypass a missing CV requirement', () 
   expect(state.eligibility.complete).toBe(false)
   expect(state.marketplace.capabilities).toEqual([])
 })
+
+
+test('profile VALU display fields cannot substitute for a completed full assessment record', () => {
+  const state = deriveJourneyState({
+    activation: { status: 'activated' },
+    profile: { ...completeProfile, valu_index: 72, assessment_completed_at: '2026-09-29T10:00:00.000Z' },
+    capabilities: [{ id: 'c1', capability: 'talent', is_active: true, eligibility_status: 'listed', eligible_for_listing: true }],
+  })
+
+  expect(state.assessment.complete).toBe(false)
+  expect(state.assessment.score).toBeNull()
+  expect(state.eligibility.complete).toBe(false)
+  expect(state.eligibility.missing).toContain('A completed full VALU Index assessment')
+  expect(state.marketplace.capabilities).toEqual([])
+  expect(state.next).toBe('assess')
+})
+
+test('an assessment score without a completion timestamp is not treated as complete', () => {
+  const state = deriveJourneyState({
+    assessment: { total_score: 72, report_status: 'READY' },
+    profile: completeProfile,
+  })
+
+  expect(state.assessment.complete).toBe(false)
+  expect(state.assessment.score).toBeNull()
+  expect(state.eligibility.complete).toBe(false)
+  expect(state.next).toBe('assess')
+})
