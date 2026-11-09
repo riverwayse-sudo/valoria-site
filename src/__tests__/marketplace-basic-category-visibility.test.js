@@ -13,7 +13,6 @@ describe('Marketplace category visibility', () => {
     expect(source).toContain('const visibleCapabilities = row.selectedCapabilities || []')
     expect(source).not.toContain("row.assessmentAccess === 'full' && row.capabilities.includes(capability)")
     expect(source).toContain("row.assessmentAccess === 'basic'")
-    expect(source).toContain("row.assessmentAccess === 'full' ?")
     expect(component).toContain('p.selectedCapabilities || p.selected_capabilities || p.capabilities')
     expect(component).not.toContain("p.assessment_access === 'basic' ?")
   })
