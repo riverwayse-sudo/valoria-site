@@ -293,8 +293,8 @@ function ProfilePreviewModal({ profile, onClose }) {
     { key: 'speaker', title: 'SPEAKER' },
     { key: 'facilitator', title: 'FACILITATOR' },
   ]
-  const skills = labelValues(profile.skills).slice(0, 8)
-  const topics = labelValues(profile.topics).slice(0, 6)
+  const skills = labelValues(profile.skills).slice(0, 4)
+  const topics = labelValues(profile.topics).slice(0, 3)
   const assessmentSummary = isFull ? displayText(profile.assessment_summary || '') : ''
   const profileHref = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
   const enquiryActions = [
