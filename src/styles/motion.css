@@ -204,8 +204,11 @@ nav.vi-nav.scrolled,
 }
 
 
-/* Static homepage registry layout; suppress the legacy marquee motion. */
-.home-redesign-root .vi-scroll-track { animation: none; }
+/* The duplicated profile groups form a seamless, accessible marquee. */
+@media (hover:hover) and (pointer:fine) {
+  .vi-scroll-mask:hover .vi-scroll-track,
+  .vi-scroll-mask:focus-within .vi-scroll-track { animation-play-state: paused; }
+}
 
 /* VALORIA PARALLAX SYSTEM — restrained, transform-only depth layers.
    Scroll remains native; ParallaxController updates only visible marked layers.
