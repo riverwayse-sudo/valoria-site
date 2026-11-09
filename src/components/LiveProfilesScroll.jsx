@@ -119,10 +119,10 @@ export default async function LiveProfilesScroll() {
                     return (
                       <Link
                         href={meta.href}
-                        key={\`\${profile.id}-\${index}\`}
+                        key={`${profile.id}-${index}`}
                         className="vi-scroll-card"
                         data-marketplace-intent={primaryTrack}
-                        aria-label={\`Discover more \${meta.label.toLowerCase()} professionals\`}
+                        aria-label={`Discover more ${meta.label.toLowerCase()} professionals`}
                         tabIndex={isClone ? -1 : undefined}
                       >
                         <div className="vi-scroll-avatar" aria-hidden="true">
@@ -133,7 +133,7 @@ export default async function LiveProfilesScroll() {
                           <div className="vi-scroll-headline">{profile.assessment_summary || 'Assessment-based capability descriptor unavailable.'}</div>
                           <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
                         </div>
-                        <div className="vi-scroll-score" aria-label={\`VALU Index \${profile.valu_index ?? 'not available'}\`}>
+                        <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'}`}>
                           <span className="vi-scroll-score-label">VALU INDEX</span>
                           <strong>{profile.valu_index ?? '—'}</strong>
                           <span className="vi-scroll-score-max">points</span>
@@ -144,7 +144,7 @@ export default async function LiveProfilesScroll() {
                   })}
                 </div>
               ))}
-            </div>      </div>
+            </div>
           </div>
 
           <div className="live-profiles-bottom">
