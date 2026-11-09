@@ -4,7 +4,7 @@ import { BRAND, PRIME_CLUSTERS } from '@/lib/brand'
 import '../audience-hero-imagery.css'
 
 export const metadata = {
-  title: 'VALU Index | Valoria Institute',
+  title: 'VALU Index',
   description: 'Understand your professional capability through the VALU Index and the five dimensions of PRIME.',
   alternates: { canonical: 'https://valoriainstitute.com/valu' },
 }
