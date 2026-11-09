@@ -395,20 +395,23 @@ describe('VALUI marketplace lifecycle contract', () => {
   test('marketplace category membership follows selected active capabilities for Full and Basic profiles', () => {
     const data = read('src/lib/marketplace-data.js')
     const directory = read('src/components/MarketplaceDirectory.jsx')
-    const projection = data.slice(data.indexOf('return rows.filter(row => track ==='), data.indexOf('function countMarketplaceRows'))
+    const projection = data.slice(data.indexOf('return rows.filter(row => {'), data.indexOf('function countMarketplaceRows'))
     const counts = data.slice(data.indexOf('function countMarketplaceRows'), data.indexOf('export async function getMarketplaceCounts'))
     const directoryData = data.slice(data.indexOf('export async function getMarketplaceDirectoryData'))
     const clientFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
 
     // Selected capabilities determine category membership for every assessment tier.
-    expect(projection).toContain('row.selectedCapabilities.includes(normalizeTrack(track))')
-    expect(projection).toContain('row.capabilities.includes(normalizeTrack(track))')
-    expect(projection).not.toContain("assessmentAccess === 'basic'")
+    expect(projection).toContain("row.assessmentAccess === 'basic'")
+    expect(projection).toContain('row.selectedCapabilities.includes(capability)')
+    expect(projection).toContain("row.assessmentAccess === 'full' && row.capabilities.includes(capability)")
+    expect(counts).toContain("row.assessmentAccess === 'basic'")
     expect(counts).toContain('row.selectedCapabilities || []')
     expect(counts).toContain('row.capabilities || []')
-    expect(directoryData).toContain('row.selectedCapabilities.includes(normalizedTrack)')
+    expect(directoryData).toContain("row.assessmentAccess === 'basic'")
+    expect(directoryData).toContain('row.capabilities.includes(normalizedTrack)')
+    expect(clientFilter).toContain("p.assessment_access === 'basic'")
     expect(clientFilter).toContain('p.selectedCapabilities || p.selected_capabilities || []')
-    expect(clientFilter).not.toContain("p.assessment_access === 'basic' ?")
+    expect(clientFilter).toContain('p.capabilities || p.tracks || [p.track]')
   })
 
   test('existing capability eligibility is reconciled after historical evidence is marked pending', () => {
@@ -420,7 +423,7 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
   test('capability projection preserves canonical VALU Index fields and derives descriptors from PRIME scores', () => {
-    const migration = read('supabase/migrations/20261109134130_decouple_full_valu_tier_from_capability_eligibility.sql')
+    const migration = read('supabase/migrations/20261030122017_marketplace_roster_capability_eligibility_20261030100000.sql')
     expect(migration).toContain('select v.total_score, v.cluster_scores, v.designation')
     expect(migration).toContain('canonical_valu_index := coalesce(canonical_valu_index, p.valu_index)')
     expect(migration).toContain('canonical_cluster_scores := coalesce(canonical_cluster_scores, p.cluster_scores)')
