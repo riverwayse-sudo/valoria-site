@@ -59,7 +59,28 @@ Form design:
 - Keep transactional and marketing templates visibly and operationally distinct.
 - Optimise for narrow email clients; avoid relying on complex CSS, background images or unsupported interactions.
 
-## 6. Portrait asset governance
+### Implemented email system
+
+The shared renderer is `src/lib/valoriaEmailDesign.js`. It provides:
+
+1. **Registration confirmation** — integrated into `src/lib/eventRegistrationBrevo.js`; confirms the registration and displays approved date, start time, guest speaker and host. The confirmation does not claim that a meeting link or venue has been confirmed.
+2. **Operational reminder** — reusable transactional layout; displays a join action only when a valid HTTPS meeting URL is supplied. It does not invent an event platform or access details.
+3. **Promotional campaign** — reusable marketing layout with a mandatory unsubscribe URL. Campaign copy, audience, consent and schedule still require owner approval before sending.
+
+Email layout is table-based with inline styles, a plain-text alternative, a hidden preheader, a 600px desktop canvas and narrow-screen-friendly padding. Raleway is declared first with email-safe fallbacks. Optional editorial hero imagery is supported by registration, reminder and campaign renderers; the template remains complete when images are blocked.
+
+Transactional email footer: Valoria Institute, website and support contact. Promotional email footer: website and unsubscribe link. These are intentionally different.
+
+## 6. Email imagery system
+
+- The shared renderer exposes optional `heroImage` input (`src`, `alt`, optional `caption`, optional `width`) for event registration, reminders and campaigns.
+- Image sources must be HTTPS URLs on trusted Valoria-controlled hosting; unsafe protocols are rejected. Use optimised WebP/JPEG assets with descriptive alt text and responsive width constraints.
+- The 14 November registration confirmation automatically includes the approved Temitayo Adetokunbo host portrait from `/images/temitayo-adetokunbo-host.webp`, clearly labelled **Your host**. It must never be labelled as the guest speaker.
+- Keep event title, date, time, speaker, host and CTA as live HTML text. Never make a poster the sole source of essential information.
+- Use a single strong hero or portrait module per email; avoid decorative stock-photo collages. Captions are optional and should add context rather than repeat the image.
+- Images are progressive enhancement: no CSS background-image dependency, no image-only CTA, and no loss of essential information when images are disabled.
+
+## 7. Portrait asset governance
 
 The supplied Temitayo portrait is the host portrait for the 14 November event. Before publication:
 - retain the confirmed host label (Temitayo Adetokunbo); do not present this image as the guest speaker;
@@ -70,7 +91,7 @@ The supplied Temitayo portrait is the host portrait for the 14 November event. B
 - do not crop away identifying/contextual details without design approval;
 - do not infer that the person is the speaker, host or facilitator solely because the image was supplied.
 
-## 7. Responsive and accessibility gates
+## 8. Responsive and accessibility gates
 
 Verify at 1440px, 1280px, 768px and 390px:
 - no horizontal overflow or clipped copy;
@@ -82,6 +103,8 @@ Verify at 1440px, 1280px, 768px and 390px:
 - touch targets are practical on mobile;
 - reduced motion is respected.
 
-## 8. Design acceptance
+For email verification, test at a narrow mobile width and in major HTML email clients. Confirm the plain-text alternative, link destinations, sender/reply-to identity, and image-disabled presentation. A code build alone does not establish email-client rendering.
+
+## 9. Design acceptance
 
 A design is accepted only after source review, automated design checks and real-browser inspection. A successful build alone is insufficient.

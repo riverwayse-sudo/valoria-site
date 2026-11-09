@@ -7,7 +7,8 @@ Status labels: **Pending**, **In progress**, **Blocked**, **Verified**. Do not m
 - [x] Retrieve the 28–29 October owner-approved event details: Professional Standard Series · Enterprise; “Influence Without Authority: The Real Currency of Organisational Power”; 14 November 2026; 10:00 AM WAT; guest speaker Yinlayefa Thompson, SPHRi; host Temitayo Adetokunbo.
 - [x] Update Session 04 in `professionalStandardSeries.js` to those confirmed details and set `dateApproved: true`.
 - [x] Remove the unconfirmed 90-minute/end-time and virtual-format claims from the poster, registration modal and confirmation email.
-- [x] Store an optimised copy of the supplied Temitayo host portrait at `public/images/temitayo-adetokunbo-host.webp` (working branch). It is not yet wired into the event creative; do not present it as the guest speaker.
+- [x] Store an optimised copy of the supplied Temitayo host portrait at `public/images/temitayo-adetokunbo-host.webp` and wire it into the registration confirmation as a clearly labelled host portrait (never as the guest speaker).
+- [x] Add optional, responsive hero-image support with alt text/caption to registration, reminder and promotional campaign email renderers; retain live-text content and image-disabled fallbacks.
 - [ ] Do not add a description, agenda, venue/platform, duration or event end time unless the owner supplies it.
 - [ ] Approve registration privacy/consent wording and marketing consent wording separately.
 - [ ] Approve campaign copy, sender identity, audience and schedule.
