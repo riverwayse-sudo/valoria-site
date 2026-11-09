@@ -52,8 +52,11 @@ if (fs.existsSync(profileRoutePath)) {
   if (!/const\s+resolvedSearchParams\s*=\s*await\s+searchParams\b/.test(route)) {
     violations.push('public profile route must await Next.js 15 async searchParams');
   }
-  if (!route.includes(".from('marketplace_public_roster')")) {
-    violations.push('public profile route must read from the restricted Marketplace roster projection');
+  if (!route.includes("rpc('get_marketplace_public_roster_v1'")) {
+    violations.push('public profile route must use the restricted Marketplace roster RPC');
+  }
+  if (route.includes(".from('marketplace_public_roster')")) {
+    violations.push('public profile route must not read the RLS-protected roster table directly');
   }
   if (route.includes(".from('professional_profiles')")) {
     violations.push('public profile route must not query the private professional_profiles table');

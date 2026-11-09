@@ -4,54 +4,53 @@ export const NAVIGATION = {
   assessmentUrl: BRAND.assessmentUrl,
   primary: [
     {
-      label: 'For Organisations',
+      label: 'For Professionals',
       groups: [
-        {
-          label: 'TALENT & EXPERTISE',
-          items: [
-            { label: 'Find Talent', href: '/atb-connect', description: 'Capability-led talent discovery for employers.' },
-            { label: 'Find Speakers & Facilitators', href: '/atb-spotlight', description: 'Find expertise for events and programmes.' },
-            { label: 'Marketplace', href: '/marketplace', description: 'Explore the professional capability marketplace.' },
-          ],
-        },
-        {
-          label: 'DEVELOPMENT & PARTNERSHIPS',
-          items: [
-            { label: 'Valoria Develop', href: '/develop', description: 'Build professional and organisational capability.' },
-            { label: 'Institutional Partnerships', href: '/contact-us', description: 'Discuss a programme or strategic collaboration.' },
-          ],
-        },
+        { label: 'UNDERSTAND & DEVELOP', items: [
+          { label: 'Start with VALU', href: '/valu', description: 'Understand your capability through the PRIME framework.' },
+          { label: 'PRIME Framework', href: '/prime', description: 'Explore the five dimensions of capability.' },
+          { label: 'Valoria Develop', href: '/develop', description: 'Build your professional capabilities.' },
+          { label: 'Your Dashboard', href: '/dashboard', description: 'Continue your Valoria journey.' },
+        ]},
+        { label: 'DISCOVER & CONNECT', items: [
+          { label: 'Professional Registry', href: '/marketplace/talent', description: 'Discover capability-led professional profiles.' },
+          { label: 'Browse Jobs', href: '/jobs', description: 'Explore current roles and vacancies.' },
+          { label: 'Explore Opportunities', href: '/opportunities', description: 'Discover projects and professional engagements.' },
+        ]},
       ],
     },
-    { label: 'Marketplace', href: '/marketplace' },
-    { label: 'Jobs', href: '/jobs' },
-    { label: 'Opportunities', href: '/opportunities' },
-    { label: 'Capability Intelligence', href: '/intelligence' },
-    { label: 'VALU Index', href: '/valu' },
+    {
+      label: 'For Organisations',
+      groups: [
+        { label: 'SOURCE EXPERTISE', items: [
+          { label: 'Find Talent', href: '/atb-connect', description: 'Discover professionals for your organisation.' },
+          { label: 'Find Speakers & Facilitators', href: '/atb-spotlight', description: 'Source expertise for events and programmes.' },
+          { label: 'Explore the Registry', href: '/marketplace', description: 'Discover professionals across capabilities.' },
+        ]},
+        { label: 'BUILD CAPABILITY', items: [
+          { label: 'Valoria Develop', href: '/develop', description: 'Explore professional and organisational development.' },
+          { label: 'Work with Valoria', href: '/contact-us', description: 'Discuss your organisation’s needs.' },
+        ]},
+      ],
+    },
     { label: 'About Valoria', href: '/about-us' },
   ],
   mobile: {
     explore: [
       { label: 'Find Talent', href: '/atb-connect' },
       { label: 'Find Speakers & Facilitators', href: '/atb-spotlight' },
-      { label: 'Marketplace', href: '/marketplace' },
+      { label: 'Professional Registry', href: '/marketplace/talent' },
       { label: 'Browse Jobs', href: '/jobs' },
-      { label: 'Browse Opportunities', href: '/opportunities' },
-      { label: 'Capability Intelligence', href: '/intelligence' },
+      { label: 'Explore Opportunities', href: '/opportunities' },
       { label: 'Valoria Develop', href: '/develop' },
-      { label: 'Institutional Partnerships', href: '/contact-us' },
-      { label: 'Knowledge Hub', href: '/knowledge' },
     ],
     valu: [
-      { label: 'Explore the VALU Index', href: '/valu' },
+      { label: 'Start with VALU', href: '/valu' },
       { label: 'PRIME Framework', href: '/prime' },
     ],
     about: [
       { label: 'About Valoria', href: '/about-us' },
-      { label: 'Events', href: '/events' },
-      { label: 'Insights', href: '/insights' },
-      { label: 'Capability Intelligence', href: '/intelligence' },
-      { label: 'Careers', href: '/careers' },
+      { label: 'Insights & Knowledge', href: '/insights' },
       { label: 'Contact', href: '/contact-us' },
     ],
   },

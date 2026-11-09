@@ -2,6 +2,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import '../pages.css'
+import '../audience-hero-imagery.css'
 
 export const metadata = {
   title: 'ATB Spotlight | Speakers and Facilitators',
@@ -14,7 +15,7 @@ export default function ATBSpotlightPage() {
     <>
       <Nav />
       <main id="main-content" className="decision-page">
-        <section className="page-hero">
+        <section className="page-hero atb-spotlight-cinematic-hero">
           <div className="page-hero-inner">
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">ATB SPOTLIGHT · FOR EVENT ORGANISERS & TRAINING BUYERS</span></div>
             <h1 className="page-title">Find a speaker or facilitator<br /><em>who can hold a room.</em></h1>

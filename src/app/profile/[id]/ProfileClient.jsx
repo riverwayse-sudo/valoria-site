@@ -6,7 +6,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import EnquiryForm from '@/components/EnquiryForm'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { toPublicProfile, PUBLIC_PROFILE_SELECT } from '@/lib/public-profile'
+import { toPublicProfile } from '@/lib/public-profile'
 import { getValuTier } from '@/lib/brand'
 
 // ─── helpers ─────────────────────────────────────────────
@@ -32,7 +32,7 @@ const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Ma
 
 // ─── brand tokens ─────────────────────────────────────────────
 const GOLD    = '#C9A84C'
-const DARK    = '#0F0F1A'
+const DARK    = '#1A1A2E'
 const MID     = '#1A1A2E'
 const PARCH   = '#F7F4EE'
 const DIM     = 'rgba(247,244,238,.5)'
@@ -190,13 +190,12 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
       }
 
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)
-      const { data: row, error } = await supabase
-        .from('marketplace_public_roster')
-        .select(PUBLIC_PROFILE_SELECT)
-        .eq(isUuid ? 'professional_id' : 'atb_id', id)
-        .maybeSingle()
-
-      if (error) console.error('public Marketplace profile fetch failed:', error)
+      const { data: rows, error } = await supabase.rpc('get_marketplace_public_roster_v1', {
+        p_professional_id: isUuid ? id : null,
+        p_atb_id: isUuid ? null : id,
+      })
+      if (error) console.error('public Marketplace profile RPC failed:', error)
+      const row = Array.isArray(rows) ? rows[0] || null : null
       const real = toPublicProfile(row)
 
       if (real) {
@@ -350,7 +349,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
           <div className="vi-header-block" style={{ display:'flex', alignItems:'flex-end', gap:'24px', marginTop:'-80px', position:'relative', zIndex:5, flexWrap:'wrap' }}>
 
             {/* Avatar — static ring, no longer spins the photo */}
-            <div className="vi-avatar-frame" style={{ width:'148px', height:'148px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
+            <div className="vi-avatar-frame" style={{ width:'148px', height:'148px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #D4C9A8, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
               <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
                 <div style={{ width:'100%', height:'100%', borderRadius:'50%', overflow:'hidden' }}>
                   <ValoriaAvatar src={p.photo_url} seed={p.id || p.atb_id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={136} />
@@ -369,7 +368,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                 <span style={{ fontSize:'14px', fontWeight:400, color: GOLD, letterSpacing:'.04em' }}>
                   {p.headline || (displayTrack === 'facilitator' ? 'Valoria Facilitator' : displayTrack === 'speaker' ? 'Valoria Speaker' : 'Valoria Professional')}
                 </span>
-                <span style={{ fontSize:'10px', letterSpacing:'.06em', background: MID, border:`1px solid ${GLINE2}`, padding:'4px 9px', borderRadius:'4px', color: DIM }}>
+                <span style={{ fontSize:'10px', letterSpacing:'.06em', background: MID, border:`1px solid ${GLINE2}`, padding:'4px 9px', borderRadius:'8px', color: DIM }}>
                   MARKETPLACE PROFILE
                 </span>
                 {p.valu_score != null && <span style={{ fontSize:'10px', letterSpacing:'.06em', background:'rgba(201,168,76,.12)', border:`1px solid ${GLINE2}`, padding:'4px 9px', borderRadius:'4px', color: GOLD, fontWeight:700 }}>{p.valu_score} VALU POINTS</span>}
@@ -658,7 +657,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                 links on /marketplace/talent and /marketplace/speakers, which point to
                 this page as #contact. scrollMarginTop accounts for the fixed nav. */}
             {p.is_dummy && (
-              <div style={{ padding:'14px 18px', background:'rgba(154,106,0,.1)', border:'1px solid rgba(154,106,0,.35)', borderRadius:'6px', fontSize:'12px', fontWeight:600, color:'#D9A441', marginBottom:'12px', letterSpacing:'.02em' }}>
+              <div style={{ padding:'14px 18px', background:'rgba(201,168,76,.1)', border:'1px solid rgba(201,168,76,.35)', borderRadius:'8px', fontSize:'12px', fontWeight:600, color:GOLD, marginBottom:'12px', letterSpacing:'.02em' }}>
                 ⚠ Sample profile — not a real person. Real professionals are still joining; this placeholder can't receive introductions.
               </div>
             )}

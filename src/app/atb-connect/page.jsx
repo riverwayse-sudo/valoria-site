@@ -2,6 +2,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import '../pages.css'
+import '../audience-hero-imagery.css'
 
 export const metadata = {
   title: 'ATB Connect | Capability-Led Talent Discovery',
@@ -14,7 +15,7 @@ export default function ATBConnectPage() {
     <>
       <Nav />
       <main id="main-content" className="decision-page">
-        <section className="page-hero">
+        <section className="page-hero atb-connect-cinematic-hero">
           <div className="page-hero-inner">
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">ATB CONNECT · FOR EMPLOYERS</span></div>
             <h1 className="page-title">Precision hiring.<br /><em>Not CV triage.</em></h1>

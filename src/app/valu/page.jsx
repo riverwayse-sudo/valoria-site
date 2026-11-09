@@ -1,9 +1,10 @@
 import Nav, { AssessmentStartLink } from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { BRAND, PRIME_CLUSTERS } from '@/lib/brand'
+import '../audience-hero-imagery.css'
 
 export const metadata = {
-  title: 'VALU Index | Valoria Institute',
+  title: 'VALU Index',
   description: 'Understand your professional capability through the VALU Index and the five dimensions of PRIME.',
   alternates: { canonical: 'https://valoriainstitute.com/valu' },
 }
@@ -15,15 +16,30 @@ export default function ValuPage() {
     <Nav />
     <main className="valu-page">
       <section className="valu-hero">
-        <div className="valu-wrap">
+        <div className="valu-wrap valu-hero-grid">
+          <div className="valu-hero-copy">
           <div className="valu-kicker"><span /> THE VALU INDEX</div>
           <h1>Make your capability<br /><em>visible and actionable.</em></h1>
-          <p className="valu-lede">The VALU Taster introduces the PRIME framework and gives you an initial view of your professional capability. Register your details first, complete the guided taster, then create your secure Valoria account when you are ready to continue to the separate Full VALU assessment and receive your official points-based VALU Index.</p>
+          <p className="valu-lede">VALU is Valoria’s capability assessment experience. It uses the PRIME framework to help you understand your professional strengths and development priorities. Begin with a guided introduction; when ready, create your account and continue to the full assessment to receive your official VALU Index in points.</p>
           <div className="valu-actions">
             <AssessmentStartLink href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">START THE VALU TASTER <span>→</span></AssessmentStartLink>
             <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW VALU SUPPORTS YOUR GROWTH <span>↓</span></a>
           </div>
           <div className="valu-meta"><span>VALU TASTER</span><i>·</i><span>FULL ASSESSMENT</span><i>·</i><span>5 PRIME DIMENSIONS</span></div>
+          </div>
+          <div className="valu-hero-visual" aria-hidden="true">
+            <div className="valu-orbit">
+              <div className="valu-orbit-ring valu-orbit-ring-one" />
+              <div className="valu-orbit-ring valu-orbit-ring-two" />
+              <div className="valu-orbit-core"><span>VALU</span><strong>INDEX</strong><small>CAPABILITY INTELLIGENCE</small></div>
+              <div className="valu-orbit-node valu-node-p"><b>P</b><span>PRESENCE</span></div>
+              <div className="valu-orbit-node valu-node-r"><b>R</b><span>RELATIONSHIPS</span></div>
+              <div className="valu-orbit-node valu-node-i"><b>I</b><span>INTELLIGENCE</span></div>
+              <div className="valu-orbit-node valu-node-m"><b>M</b><span>MASTERY</span></div>
+              <div className="valu-orbit-node valu-node-e"><b>E</b><span>ENTERPRISE</span></div>
+            </div>
+            <p className="valu-orbit-caption">FIVE CONNECTED DIMENSIONS · ONE PROFESSIONAL PICTURE</p>
+          </div>
         </div>
       </section>
 
@@ -39,10 +55,10 @@ export default function ValuPage() {
           <div className="valu-kicker"><span /> A CLEAR PROFESSIONAL STARTING POINT</div>
           <h2>A clear starting point.<br /><em>A fuller professional picture.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Register your details</h3><p>Share your name, email and professional context first. This creates the record that keeps your taster and Valoria follow-up connected. It is not your Valoria account.</p></article>
-            <article><b>02</b><h3>Complete your guided taster</h3><p>Begin with a free, guided view of your professional capability. Your responses are saved against your registration so you can return without losing your place.</p></article>
-            <article><b>03</b><h3>Create your Valoria account</h3><p>When you choose to continue, secure your account, confirm your email and enter your dashboard. Your registration and taster remain connected.</p></article>
-            <article><b>04</b><h3>Complete the full assessment</h3><p>The formal assessment covers all 17 PRIME skills. Completion establishes your official VALU Index in points and your earned designation. Results remain valid for 12 months.</p></article>
+            <article><b>01</b><h3>Begin with the guided taster</h3><p>Explore the PRIME framework through a short introductory assessment. Start with your capability — no account creation is required to begin.</p></article>
+            <article><b>02</b><h3>Choose to continue with Valoria</h3><p>After the taster, create your secure Valoria account to continue your professional journey. Your taster and account are connected as part of that transition.</p></article>
+            <article><b>03</b><h3>Enter your professional dashboard</h3><p>Confirm your email and arrive in your dashboard, where the full assessment is your next priority. You can return to continue without losing saved responses.</p></article>
+            <article><b>04</b><h3>Establish your official VALU Index</h3><p>Complete the full assessment across all 17 PRIME skills to receive your official VALU Index in points and your earned merit designation. Results remain valid for 12 months.</p></article>
           </div>
         </div>
       </section>

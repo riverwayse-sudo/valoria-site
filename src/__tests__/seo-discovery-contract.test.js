@@ -21,12 +21,13 @@ describe('Valoria SEO and discovery foundation', () => {
 
   test('profile indexing and metadata use only the consented public roster', () => {
     const layout = read('src/app/profile/[id]/layout.jsx')
-    expect(layout).toContain(".from('marketplace_public_roster')")
+    expect(layout).toContain("rpc('get_marketplace_public_roster_v1'")
     expect(layout).toContain('isPublicProfileContentReady(profile)')
     const directoryData = read('src/lib/marketplace-data.js')
     expect(directoryData).toContain("assessmentAccess === 'full'")
     expect(directoryData).toContain('assessmentSummary.length >= 12')
-    expect(directoryData).toContain("assessment_access,valu_index,assessment_summary")
+    expect(directoryData).toContain("assessmentAccess === 'full'")
+    expect(directoryData).toContain('get_marketplace_public_roster_v1')
     expect(directoryData).toContain("assessmentAccess === 'basic'")
     expect(directoryData).toContain('fullAssessmentReady')
     expect(layout).not.toContain(".from('professional_profiles')")
@@ -36,6 +37,9 @@ describe('Valoria SEO and discovery foundation', () => {
     const profileClient = read('src/app/profile/[id]/ProfileClient.jsx')
     expect(profilePage).toContain('profileContentNotReady={profileContentNotReady}')
     expect(profileClient).toContain('if (profileContentNotReady)')
+    const sitemap = read('src/app/sitemap.js')
+    expect(sitemap).toContain("client.rpc('get_marketplace_public_roster_v1')")
+    expect(sitemap).not.toContain(".from('marketplace_public_roster')")
   })
 
   test('public profile and marketplace pages expose appropriate structured data', () => {
@@ -50,9 +54,9 @@ describe('Valoria SEO and discovery foundation', () => {
   test('homepage states Nigeria as the initial market without overstating regional availability', () => {
     const home = read('src/app/page.jsx')
     expect(home).toContain('INITIAL MARKET')
-    expect(home).toContain('initial operating focus is Nigeria')
-    expect(home).toContain('broader African and international audiences in view')
-    expect(home).toContain('Starting in Nigeria')
+    expect(home).toContain('Initial operating focus is Nigeria')
+    expect(home).toContain('Built for an international audience. Operating first in Nigeria.')
+    expect(home).toContain('INITIAL MARKET')
   })
 
   test('root layout publishes Organization and WebSite entities', () => {

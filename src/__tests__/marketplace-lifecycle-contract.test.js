@@ -287,8 +287,8 @@ describe('VALUI marketplace lifecycle contract', () => {
 
   test('marketplace queries exclude registered-only and test profiles', () => {
     const data = read('src/lib/marketplace-data.js')
-    expect(data).toContain("const SOURCE = 'marketplace_public_roster'")
-    expect(data).toContain(".from(SOURCE)")
+    expect(data).toContain("supabase.rpc('get_marketplace_public_roster_v1')")
+    expect(data).not.toContain(".from('marketplace_public_roster')")
     expect(data).not.toContain('professional_profiles!inner')
     expect(data).not.toContain('professional_profiles.visibility')
   })

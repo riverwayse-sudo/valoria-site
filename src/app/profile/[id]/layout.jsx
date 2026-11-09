@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js'
-import { PUBLIC_PROFILE_SELECT } from '@/lib/public-profile'
 import { isPublicProfileContentReady } from '@/lib/marketplace-data'
 
 const IS_STAGING = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1'
@@ -14,7 +13,7 @@ export async function generateMetadata({ params }) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  if (!url || !anonKey || (!UUID_RE.test(id) && !ATB_RE.test(id))) {
+  if (!url || !anonKey || (!UUID_RE.test(id) && !ATB_RE.test(id.normalize('NFKC')))) {
     return { title: 'Professional Profile | Valoria Institute', robots: { index: false, follow: true } }
   }
 
@@ -22,18 +21,19 @@ export async function generateMetadata({ params }) {
     const supabase = createClient(url, anonKey, {
       auth: { persistSession: false, autoRefreshToken: false },
     })
-    const { data: profile, error } = await supabase
-      .from('marketplace_public_roster')
-      .select(PUBLIC_PROFILE_SELECT)
-      .eq(UUID_RE.test(id) ? 'professional_id' : 'atb_id', id)
-      .maybeSingle()
+    const isUuid = UUID_RE.test(id)
+    const { data: profiles, error } = await supabase.rpc('get_marketplace_public_roster_v1', {
+      p_professional_id: isUuid ? id : null,
+      p_atb_id: isUuid ? null : id,
+    })
+    const profile = Array.isArray(profiles) ? profiles[0] || null : null
 
     if (error || !profile || !isPublicProfileContentReady(profile)) {
       return { title: 'Professional Profile | Valoria Institute', robots: { index: false, follow: true } }
     }
 
     const canonicalId = profile.professional_id
-    const name = String(profile.full_name || 'Valoria Professional').trim()
+    const name = String(profile.full_name || 'Valoria Professional').normalize('NFKC').trim()
     const capabilities = Array.isArray(profile.capabilities) ? profile.capabilities : []
     const capability = capabilities.includes('speaker')
       ? 'Speaker'
@@ -41,12 +41,12 @@ export async function generateMetadata({ params }) {
         ? 'Facilitator'
         : 'Professional'
     const description = String(
-      profile.assessment_summary || profile.bio || profile.headline || name + ' on Valoria Institute.'
+      profile.assessment_summary || profile.headline || name + ' on Valoria Institute.'
     ).trim().slice(0, 160)
     const canonicalUrl = SITE_URL + '/profile/' + canonicalId
 
     return {
-      title: name + ' — ' + capability + ' Profile | Valoria Institute',
+      title: name + ' — ' + capability + ' Profile',
       description,
       alternates: { canonical: canonicalUrl },
       openGraph: {
