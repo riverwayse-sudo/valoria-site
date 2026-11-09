@@ -67,7 +67,9 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(cardComponent).not.toContain('Selection is distinct from capability-specific listing eligibility.')
     const categoryFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
     expect(categoryFilter).toContain('p.capabilities || p.tracks || [p.track]')
-    expect(categoryFilter).not.toContain('selectedCapabilities')
+    expect(categoryFilter).toContain("p.assessment_access === 'basic'")
+    expect(categoryFilter).toContain('p.selectedCapabilities || p.selected_capabilities')
+    expect(categoryFilter).toContain('selectedCapabilities only for Basic category visibility')
   })
 
   test('public profile routes validate canonically equivalent Unicode ATB identifiers', () => {
