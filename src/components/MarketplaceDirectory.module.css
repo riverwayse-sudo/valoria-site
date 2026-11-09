@@ -915,3 +915,54 @@
 @media(max-width:680px){.card{padding:17px!important}.identity .profileName{font-size:17px!important}.profileDetails{font-size:12px!important}.selectedCapabilityList span{font-size:12px}}
 
 .grid{grid-auto-rows:auto!important;align-items:stretch}
+
+
+/* Marketplace refinement: information first, no repeated generic labels. */
+.card{position:relative;min-height:0!important;height:auto!important;max-height:none!important;overflow:visible!important;display:flex;flex-direction:column;gap:0;padding:20px!important;background:#EDE8DC!important;color:#1A1A2E!important}
+.cardHeader{position:relative;display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:10px!important;padding:0 0 12px!important;min-height:64px}
+.identity{display:flex!important;align-items:center!important;gap:12px!important;min-width:0;padding-right:0!important;flex:1}
+.identityCopy{display:flex;flex-direction:column;gap:5px;min-width:0}
+.identity .profileName{font-size:clamp(16px,1.35vw,19px)!important;line-height:1.2!important;font-weight:800!important;color:#1A1A2E!important;letter-spacing:-.025em!important;overflow-wrap:anywhere}
+.cardIdLabel{font-size:11px!important;line-height:1.4!important;color:#5C574E!important;letter-spacing:.045em!important;font-weight:700!important}
+.avatarMonogram{display:grid;place-items:center;flex:0 0 54px;width:54px;height:54px;border:2px solid #C9A84C;border-radius:50%;background:#2E2E4A;color:#F7F4EE;font-family:var(--font);font-size:15px;font-weight:800;letter-spacing:.05em}
+.valu{position:static!important;flex:0 0 56px!important;width:56px!important;display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
+.valu small,.valu span{font-size:8px!important;color:#5C574E!important}
+.valu b{font-size:23px!important;color:#1A1A2E!important}
+.availabilityBadge{position:absolute;right:0;top:58px;display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid #D4C9A8;border-radius:999px;background:#F7F4EE;color:#4A463E;font-size:10px;font-weight:700;line-height:1.3;white-space:nowrap}
+.availabilityBadge i{display:block;width:6px;height:6px;border-radius:50%;background:#898477}
+.availableBadge{color:#205B3C;border-color:#A9C6B3;background:#F0F6F1}
+.availableBadge i{background:#28764A}
+.unavailableBadge{color:#6D5146;border-color:#D7B9AB;background:#F7F0EC}
+.unavailableBadge i{background:#A65C42}
+.unknownBadge{color:#625D53}
+.profileMeta{margin:8px 0 0;padding-right:0}
+.specialisation{font-size:13px!important;line-height:1.45!important;color:#403C35!important;font-weight:700!important;margin:0!important}
+.locationLine{font-size:12px;line-height:1.45;color:#5C574E;margin:4px 0 0}
+.profileSkills{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0!important}
+.profileSkills span{font-size:12px!important;line-height:1.35!important;font-weight:650;color:#37332D!important;padding:6px 9px!important;background:#F7F4EE!important;border:1px solid #C9BEA8!important;border-radius:4px}
+.specialistCapabilities{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 0}
+.specialistCapabilities span{padding:5px 9px;border:1px solid #C9A84C;border-radius:4px;background:#EDE8DC;color:#1A1A2E;font-size:11px;font-weight:800}
+.cardCredential{display:flex;align-items:center;margin:12px 0 0}
+.tierBadge{font-size:10px!important;line-height:1.35;padding:5px 8px!important;min-height:0!important}
+.assessmentInsight{margin:12px 0 0!important;padding:10px 11px!important}
+.insightLabel{font-size:9px!important}
+.assessmentSummary{font-size:12px!important;line-height:1.5!important;color:#37332D!important}
+.view.viewButton{display:flex!important;align-items:center;justify-content:center;gap:8px;width:100%;min-height:42px;margin-top:auto!important;padding:10px 14px!important;margin-top:18px!important;border:1px solid #8E7942!important;border-radius:4px;background:transparent!important;color:#1A1A2E!important;font-size:12px!important;font-weight:800!important;letter-spacing:.04em!important;text-align:center!important}
+.view.viewButton:hover{background:#1A1A2E!important;color:#F7F4EE!important;border-color:#1A1A2E!important}
+.view.viewButton::after{content:none!important}
+.unavailableCard{opacity:1!important;background:#EDE8DC!important}
+.unavailableCard .view.viewButton{background:transparent!important;color:#625D53!important;border-color:#A69D8D!important}
+.unavailableCard .view.viewButton:hover{background:#1A1A2E!important;color:#F7F4EE!important}
+.grid{grid-auto-rows:auto!important;align-items:stretch}
+.tabs a{font-size:10px!important}
+.tabs a b{font-size:13px!important;min-width:18px;text-align:center}
+.controls input,.controls select{font-size:13px!important;color:#29263A!important}
+.controls input::placeholder{color:#5E594F!important;opacity:1}
+.filterHelp{font-size:13px!important;color:#403C35!important}
+.directoryHead span{font-size:11px!important;letter-spacing:.035em!important}
+@media(max-width:680px){
+ .card{padding:17px!important}
+ .identity .profileName{font-size:17px!important}
+ .availabilityBadge{top:58px;font-size:10px}
+ .profileSkills span{font-size:12px!important}
+}
