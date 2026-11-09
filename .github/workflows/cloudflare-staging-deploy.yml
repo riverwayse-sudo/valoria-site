@@ -159,7 +159,7 @@ jobs:
           grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
 
           curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
-          grep -q 'staging.valoriainstitute.com' /tmp/valoria-sitemap.xml
+          grep -q 'valoria-staging-site.riverwayse.workers.dev' /tmp/valoria-sitemap.xml
           grep -q '/knowledge/prime-framework' /tmp/valoria-sitemap.xml
           grep -q '/jobs' /tmp/valoria-sitemap.xml
           echo "PASS: robots and sitemap"
