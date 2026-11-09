@@ -212,7 +212,7 @@ function Profile({p, onSelect}) {
     <div className={styles.identity}>
       <ValoriaAvatar src={p.photo_url} seed={p.professional_id || profileId} size={64} className={styles.avatar}/>
       <div className={styles.identityCopy}>
-        <strong className={styles.profileName}>{displayText(p.full_name)}</strong>
+        <strong className={styles.profileName}>{profileId || 'ATB ID PENDING'}</strong>
         <small>{profileId}</small>
         <span className={styles.assessedStatus}>{isBasic ? 'BASIC LISTING' : '✓ FULL VALU ASSESSED'}</span>
       </div>
@@ -315,7 +315,7 @@ function ProfilePreviewModal({ profile, onClose }) {
             <ValoriaAvatar src={profile.photo_url} seed={profile.professional_id || profile.atb_id} size={96} className={styles.modalAvatar}/>
             <div className={styles.modalIdentityCopy}>
               <p className={styles.modalEyebrow}>ATB PROFILE ID · {displayText(profile.atb_id || 'PENDING')}</p>
-              <h2 id="profile-preview-title">{displayText(profile.full_name)}</h2>
+              <h2 id="profile-preview-title">{displayText(profile.atb_id || 'ATB ID PENDING')}</h2>
               <p className={styles.modalHeadline}>{displayText(profile.headline || profile.current_job_title || 'Professional capability')}</p>
               <div className={styles.modalMeta}>
                 {displayText(profile.industry) && <span>{displayText(profile.industry)}</span>}
