@@ -38,7 +38,7 @@ function isQualifiedPublicProfile(row) {
   if (row.assessment_access === 'basic') return true
   return Boolean(
     row.assessment_access === 'full' &&
-    Array.isArray(row.capabilities) && row.capabilities.length > 0 &&
+    ((Array.isArray(row.capabilities) && row.capabilities.length > 0) || (Array.isArray(row.selected_capabilities) && row.selected_capabilities.length > 0)) &&
     row.valu_index !== null && row.valu_index !== undefined && Number.isFinite(Number(row.valu_index)) && Number(row.valu_index) >= 35 &&
     typeof row.assessment_summary === 'string' && row.assessment_summary.trim().length >= 12 &&
     typeof row.designation === 'string' && row.designation.trim()
@@ -160,7 +160,7 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
   if (fullIds.length) {
     const { data: fullAssessments, error: assessmentError } = await admin
       .from('valu_assessments')
-      .select('user_id,total_score,completed_at')
+      .select('user_id,total_score,completed_at,expires_at')
       .in('user_id', fullIds)
       .not('completed_at', 'is', null)
       .order('completed_at', { ascending: false })
@@ -172,39 +172,20 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
     for (const assessment of fullAssessments || []) {
       if (!latestAssessmentById.has(assessment.user_id)) latestAssessmentById.set(assessment.user_id, assessment)
     }
-    const { data: capabilities, error: capabilityError } = await admin
-      .from('professional_capabilities')
-      .select('professional_id,eligible_for_listing,eligibility_status,missing_requirements')
-      .in('professional_id', fullIds)
-      .eq('is_active', true)
-    if (capabilityError) {
-      console.error('Full capability evidence verification failed:', capabilityError)
-      throw new Error('Full capability evidence could not be verified.')
-    }
-    const capabilitiesById = new Map()
-    for (const capability of capabilities || []) {
-      const list = capabilitiesById.get(capability.professional_id) || []
-      list.push(capability)
-      capabilitiesById.set(capability.professional_id, list)
-    }
+    // Full assessment access is distinct from capability-specific listing readiness.
+    // A current, valid Full VALU result may appear in the general directory even when
+    // profile completion or capability evidence is still pending.
     fullReadyIds = new Set(fullIds.filter(id => {
-      const active = capabilitiesById.get(id) || []
       const profile = (profiles || []).find(item => item.id === id)
       const assessment = latestAssessmentById.get(id)
-      const expiry = Date.parse(profile?.assessment_expires_at || '')
-      const profileCompletedAt = Date.parse(profile?.assessment_completed_at || '')
-      return active.length > 0
-        && active.every(capability =>
-          capability.eligible_for_listing === true
-          && capability.eligibility_status === 'listed'
-          && (!Array.isArray(capability.missing_requirements) || capability.missing_requirements.length === 0)
-        )
-        && profile?.profile_complete === true
-        && Number(profile.valu_index) >= 35
-        && Number.isFinite(expiry) && expiry > Date.now()
-        && assessment
+      const assessmentExpiry = Date.parse(assessment?.expires_at || profile?.assessment_expires_at || '')
+      const profileExpiry = Date.parse(profile?.assessment_expires_at || '')
+      return Boolean(profile && assessment
+        && Number(assessment.total_score) >= 35
         && Number(assessment.total_score) === Number(profile.valu_index)
-        && Date.parse(assessment.completed_at || '') === profileCompletedAt
+        && Date.parse(assessment.completed_at || '') === Date.parse(profile.assessment_completed_at || '')
+        && Number.isFinite(assessmentExpiry) && assessmentExpiry > Date.now()
+        && Number.isFinite(profileExpiry) && profileExpiry > Date.now())
     }))
   }
 
@@ -238,7 +219,7 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
       || profile.listing_status !== 'listed' || profile.revoked_at != null
       || !consentedIds.has(profile.id)) return false
 
-    if (row.assessment_access === 'full') return profile.profile_complete === true && Number(row.valu_index) >= 35 && Number(row.valu_index) === Number(profile.valu_index) && fullReadyIds.has(profile.id)
+    if (row.assessment_access === 'full') return Number(row.valu_index) >= 35 && Number(row.valu_index) === Number(profile.valu_index) && fullReadyIds.has(profile.id)
     return row.assessmentAccess === 'basic'
       && (linkedTasterIds.has(profile.id) || currentBasicAssessmentIds.has(profile.id))
       && Boolean(profile.display_name?.trim() || row.full_name?.trim())
