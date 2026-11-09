@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { AssessmentStartLink } from '@/components/Nav'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { BRAND, PRIME_CLUSTERS } from '@/lib/brand'
+import { BRAND, getValuTier, PRIME_CLUSTERS } from '@/lib/brand'
 import { getMarketplaceDirectoryData } from '@/lib/marketplace-data'
 
 const TRACK_META = {
@@ -90,6 +90,7 @@ export default async function LiveProfilesScroll() {
                     const profileHref = profile.atb_id ? `/profile/${encodeURIComponent(profile.atb_id)}` : '/marketplace'
                     const development = developmentArea(profile.cluster_scores)
                     const isBasic = profile.assessment_access === 'basic'
+                    const tier = isBasic ? null : getValuTier(profile.valu_index, 'full')
                     return (
                       <Link href={profileHref} key={profile.id} tabIndex={isClone ? -1 : undefined} className="vi-scroll-card" data-marketplace-intent={normalizedTracks[0] || 'all'} aria-label={`View public professional profile ${profile.atb_id || ''}`}>
                         <div className="vi-scroll-avatar" aria-hidden="true"><ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} /></div>
@@ -98,7 +99,7 @@ export default async function LiveProfilesScroll() {
                           <strong className="vi-scroll-name">{displayText(profile.full_name)}</strong>
                           <div className="vi-scroll-headline">{displayText(profile.headline)}</div>
                           <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'NO DECLARED ROLE'}</div>
-                          <div className="vi-scroll-designation">{isBasic ? 'BASIC LISTING' : displayText(profile.designation)}</div>
+                          <div className="vi-scroll-designation">{isBasic ? 'BASIC LISTING' : (tier?.name || 'ASSESSMENT FOLLOW-UP')}</div>
                           {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div><div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div></>}
                         </div>
                         <div className="vi-scroll-score" aria-label={isBasic ? 'Basic marketplace listing' : `VALU Index ${profile.valu_index} points`}>
