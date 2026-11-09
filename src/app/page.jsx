@@ -181,7 +181,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="vi-ih-prime" aria-labelledby="vi-ih-prime-title">
+        <section className="vi-ih-prime valu-conversion" aria-labelledby="vi-ih-prime-title">
           <div className="vi-ih-prime-backdrop" aria-hidden="true" />
           <div className="vi-ih-wrap">
             <Reveal className="vi-ih-prime-intro">
@@ -203,7 +203,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="vi-ih-audiences" aria-labelledby="vi-ih-audiences-title">
+        <section className="vi-ih-audiences home-pathways" aria-labelledby="vi-ih-audiences-title">
           <div className="vi-ih-wrap">
             <Reveal className="vi-ih-section-intro">
               <div>
