@@ -1,14 +1,17 @@
 function deriveJourneyState({ journey = null, assessment, profile, capabilities = [], activation, documents = [], opportunity }) {
-  const assessmentScore = assessment?.total_score ?? profile?.valu_index ?? null
-  const hasAssessment = !!(assessment?.completed_at || profile?.assessment_completed_at || profile?.valu_index != null)
-  const assessmentExpiresAt = assessment?.expires_at || profile?.assessment_expires_at || null
+  // Full-assessment completion and score come only from the canonical assessment row.
+  // Profile fields are display projections, not proof of a completed assessment.
+  const hasAssessment = !!assessment?.completed_at
+  const assessmentScore = hasAssessment ? (assessment?.total_score ?? null) : null
+  const assessmentExpiresAt = assessment?.expires_at || null
   const assessmentCurrent = hasAssessment && (!assessmentExpiresAt || new Date(assessmentExpiresAt).getTime() > Date.now())
   const assessmentEligible = assessmentCurrent && assessmentScore != null && Number(assessmentScore) >= 35
 
-  const reportStatus = assessment?.report_status ||
-    (assessment?.ai_report ? 'READY' : hasAssessment ? 'PENDING' : 'NOT_STARTED')
-  const reportReady = ['READY', 'EMAIL_PENDING', 'SENT'].includes(reportStatus) || !!assessment?.ai_report
-  const reportDelivered = reportStatus === 'SENT' || !!assessment?.report_email_sent_at
+  const reportStatus = hasAssessment
+    ? (assessment?.report_status || (assessment?.ai_report ? 'READY' : 'PENDING'))
+    : 'NOT_STARTED'
+  const reportReady = hasAssessment && (['READY', 'EMAIL_PENDING', 'SENT'].includes(reportStatus) || !!assessment?.ai_report)
+  const reportDelivered = hasAssessment && (reportStatus === 'SENT' || !!assessment?.report_email_sent_at)
 
   const profileMissing = []
   if (!profile?.display_name?.trim()) profileMissing.push('Your name')
@@ -108,7 +111,7 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
       reportReady,
       reportDelivered,
       score: assessmentScore,
-      designation: assessment?.designation || profile?.designation || null,
+      designation: hasAssessment ? (assessment?.designation || null) : null,
     },
     report: {
       complete: reportReady && !!activation?.status && activation.status === 'activated',

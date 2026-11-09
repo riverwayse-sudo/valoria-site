@@ -150,22 +150,34 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
     if (onClick) onClick(event)
     if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
     event.preventDefault()
-    // Anonymous staging visitors can enter the real registration-first taster.
-    // Signed-in participants must always use the authenticated handoff, even in preview mode.
-    if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' && !dashboardOnly) {
-      window.location.assign(href)
-      return
-    }
     if (opening) return
     setOpening(true)
     setError('')
+
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      // Every signed-in assessment CTA must issue the secure continuation
-      // handoff and navigate directly to the dedicated /remaining route.
-      // Returning to /dashboard here caused the public header CTA to loop
-      // participants back to the page they were already on.
+
       if (session?.access_token) {
+        // Check the canonical journey first. A signed-in account without a
+        // completed, linked taster must still be able to enter the public taster.
+        const accessResponse = await fetch('/api/valu-handoff', {
+          method: 'GET',
+          headers: { Authorization: `Bearer ${session.access_token}` },
+          cache: 'no-store',
+        })
+        const access = await accessResponse.json().catch(() => ({}))
+        if (!accessResponse.ok) {
+          throw new Error(access.error || 'We could not verify your VALU assessment access.')
+        }
+        if (access.assessment_completed) {
+          window.location.assign('/dashboard')
+          return
+        }
+        if (!access.can_continue) {
+          window.location.assign(href)
+          return
+        }
+
         const response = await fetch('/api/valu-handoff', {
           method: 'POST',
           headers: { Authorization: `Bearer ${session.access_token}` },
@@ -173,10 +185,6 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
         })
         const data = await response.json().catch(() => ({}))
         if (!response.ok || !data.url) {
-          if (response.status === 404) {
-            window.location.assign(href)
-            return
-          }
           if (data.already_completed) {
             window.location.assign('/dashboard')
             return
@@ -186,11 +194,11 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
         window.location.assign(data.url)
         return
       }
+
       if (dashboardOnly) {
         window.location.assign('/login?returnTo=%2Fdashboard')
         return
       }
-      // Anonymous visitors start the public nine-question taster.
       window.location.assign(href)
     } catch (err) {
       setError(err?.message || 'We could not open your VALU assessment. Please try again.')
@@ -198,10 +206,9 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
     }
   }
 
-  // The anchor must advertise the actual assessment destination. Normal clicks
-  // still obtain a fresh, short-lived handoff code before navigating, so this
-  // canonical URL is never used as a substitute for the authenticated token.
-  const linkHref = dashboardOnly ? `${process.env.NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN || 'https://assessment.valoriainstitute.com'}/remaining` : href
+  // Same-origin fallback: opening this link without JavaScript must never
+  // send a staging participant to the production assessment service.
+  const linkHref = dashboardOnly ? '/dashboard' : href
 
   return <>
     <a href={linkHref} className={className} style={style} onClick={handleClick} aria-busy={opening} {...props}>

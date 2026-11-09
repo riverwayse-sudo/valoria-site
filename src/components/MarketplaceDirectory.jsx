@@ -48,7 +48,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     const q=query.trim().toLowerCase()
     return rows.filter(p => {
       if (!displayText(p.full_name)) return false
-      const caps=[...(p.capabilities || p.tracks || [p.track])].map(normalize)
+      const caps=[...(p.selectedCapabilities || p.selected_capabilities || p.capabilities || p.tracks || [p.track])].map(normalize)
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
       if(industry && displayText(p.industry) !== industry) return false
       if(cluster && getLeadingCluster(p) !== cluster) return false
@@ -173,7 +173,7 @@ function getCapabilitySelection(profile) {
 function Profile({p, onSelect}) {
   // Show the professional's selected capabilities, not only capabilities
   // that have passed the separate listing-eligibility gate. Category pages
-  // continue to filter against the eligible `capabilities` field above.
+  // follow declared selections; evidence-based eligibility remains separate.
   const selectedCaps = getCapabilitySelection(p)
   // Keep all three capability lanes visible on every card. Selection is a
   // profile preference; category listing eligibility remains a separate gate.

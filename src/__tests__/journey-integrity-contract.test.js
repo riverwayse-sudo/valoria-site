@@ -634,4 +634,15 @@ describe('journey integrity contract', () => {
 
 
 
+
+  test('signed-in assessment navigation checks canonical access before creating a handoff', () => {
+    const nav = read('src/components/Nav.jsx')
+    expect(nav).toContain("method: 'GET'")
+    expect(nav).toContain('if (!access.can_continue)')
+    expect(nav).toContain('window.location.assign(href)')
+    expect(nav.indexOf("method: 'GET'")).toBeLessThan(nav.indexOf("method: 'POST'"))
+    expect(nav).toContain("const linkHref = dashboardOnly ? '/dashboard' : href")
+    expect(nav).not.toContain('assessment.valoriainstitute.com/remaining')
+  })
+
 })

@@ -91,7 +91,7 @@ export async function getMarketplaceRows(track = 'all') {
   // Suppress incomplete or placeholder public-facing records until an
   // administrator can correct them using verified professional information.
   // The underlying account and professional profile remain intact.
-  return rows.filter(row => isPublicProfileContentReady(row) && (track === 'all' || row.capabilities.includes(normalizeTrack(track))))
+  return rows.filter(row => isPublicProfileContentReady(row) && (track === 'all' || row.selectedCapabilities.includes(normalizeTrack(track))))
 }
 
 export async function getMarketplaceCounts() {
@@ -104,7 +104,7 @@ export async function getMarketplaceCounts() {
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
   const { data, error } = await supabase
     .from(SOURCE)
-    .select('professional_id,full_name,atb_id,headline,current_job_title,assessment_access,valu_index,assessment_summary,capability,track,capabilities')
+    .select('professional_id,full_name,atb_id,headline,current_job_title,assessment_access,valu_index,assessment_summary,capability,track,capabilities,selected_capabilities')
 
   if (error) {
     console.error('Marketplace count query failed:', error)
@@ -117,11 +117,7 @@ export async function getMarketplaceCounts() {
   for (const row of data || []) {
     if (!row.professional_id || !isPublicProfileContentReady(row)) continue
     all.add(row.professional_id)
-    const values = new Set([
-      ...(Array.isArray(row.capabilities) ? row.capabilities : []),
-      row.capability,
-      row.track,
-    ].map(normalizeTrack).filter(Boolean))
+    const values = new Set((Array.isArray(row.selected_capabilities) ? row.selected_capabilities : []).map(normalizeTrack).filter(Boolean))
     for (const capability of values) {
       if (byTrack[capability]) byTrack[capability].add(row.professional_id)
     }
