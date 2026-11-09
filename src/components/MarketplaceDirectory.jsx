@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { PRIME_CLUSTERS, TIER_DESIGNATIONS } from '@/lib/brand'
+import { getValuTier, PRIME_CLUSTERS, TIER_DESIGNATIONS } from '@/lib/brand'
 
 const TRACKS = [
   ['all','All', '/marketplace'],
@@ -190,13 +190,14 @@ function Profile({p, onSelect}) {
     ['facilitator','Facilitator'],
   ]
   const isFull = p.assessment_access === 'full' && p.valu_index != null
-  const designation = displayText(p.designation)
-  const designationClass = {
-    'Force to Align With': styles.forceToAlignWith,
-    'Emerging Force': styles.emergingForce,
-    'Developing Professional': styles.developingProfessional,
-    'Building Foundations': styles.buildingFoundations,
-  }[designation] || ''
+  const tier = isFull ? getValuTier(p.valu_index, 'full') : null
+  const designation = tier?.name || 'Assessment Follow-up'
+  const designationClass = tier ? {
+    Elite: styles.elite,
+    Distinguished: styles.distinguished,
+    Proficient: styles.proficient,
+    Standard: styles.standard,
+  }[tier.name] || '' : ''
   const profileId = displayText(p.atb_id)
   const skills = labelValues(p.skills).slice(0, 3)
   const availability = displayText(p.availability_status)
