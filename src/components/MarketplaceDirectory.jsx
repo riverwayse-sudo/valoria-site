@@ -192,12 +192,7 @@ function Profile({p, onSelect}) {
   const isFull = p.assessment_access === 'full' && p.valu_index != null
   const tier = isFull ? getValuTier(p.valu_index, 'full') : null
   const designation = tier?.name || 'Assessment Follow-up'
-  const designationClass = tier ? {
-    Elite: styles.elite,
-    Distinguished: styles.distinguished,
-    Proficient: styles.proficient,
-    Standard: styles.standard,
-  }[tier.name] || '' : ''
+  const designationClass = tier ? styles[tier.name.toLowerCase()] || '' : ''
   const profileId = displayText(p.atb_id)
   const skills = labelValues(p.skills).slice(0, 3)
   const availability = displayText(p.availability_status)
