@@ -74,6 +74,9 @@ try {
         const robots = document.querySelector('meta[name="robots"]')?.content || ''
         const banner = document.querySelector('.staging-site-banner')?.innerText ||
           (document.body.innerText.includes('STAGING PREVIEW') ? 'STAGING PREVIEW' : '')
+        const navBrand = document.querySelector('a[aria-label="Valoria Institute home"]')?.href || ''
+        const navDashboard = [...document.querySelectorAll('a')].find(a => /return to dashboard/i.test(a.innerText))?.href || ''
+        const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
         const track = document.querySelector('.vi-scroll-track')
         const panel = document.querySelector('.hero-event-panel')
         const overflowingCards = [...document.querySelectorAll('[class*="card"]')]
@@ -101,6 +104,8 @@ try {
           } : null,
           overflowingCards,
           analyticsLoaded: Boolean(window.gtag || window.fbq),
+          literalNewlineVisible,
+          assessmentSiteLinks: [navBrand, navDashboard].filter(Boolean),
         }
       })
 
@@ -124,9 +129,13 @@ try {
       if (status === null || status >= 400) report.failures.push(`${route.name}/${viewport.name}: HTTP ${status}`)
       if (state.horizontalOverflow) report.failures.push(`${route.name}/${viewport.name}: horizontal overflow`)
       if (!state.robots.toLowerCase().includes('noindex')) report.failures.push(`${route.name}/${viewport.name}: staging page is missing noindex robots metadata`)
-      if (route.site && !state.banner.includes('STAGING PREVIEW')) report.failures.push(`${route.name}/${viewport.name}: staging banner is missing`)
-      if (route.site && state.analyticsLoaded) report.failures.push(`${route.name}/${viewport.name}: production analytics loaded in staging`)
+      if (!state.banner.includes('STAGING PREVIEW')) report.failures.push(`${route.name}/${viewport.name}: staging banner is missing`)
+      if (state.analyticsLoaded) report.failures.push(`${route.name}/${viewport.name}: production analytics loaded in staging`)
       if (forbiddenRequests.length) report.failures.push(`${route.name}/${viewport.name}: production Supabase/assessment request detected`)
+      if (state.literalNewlineVisible && route.name.startsWith('assessment-')) report.failures.push(`${route.name}/${viewport.name}: literal \\n text is visible in the assessment UI`)
+      if (route.name.startsWith('assessment-') && state.assessmentSiteLinks.some(href => {
+        try { return ['valoriainstitute.com', 'www.valoriainstitute.com'].includes(new URL(href).hostname) } catch { return false }
+      })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
 
