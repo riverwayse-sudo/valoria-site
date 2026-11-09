@@ -55,8 +55,8 @@ jobs:
           CF_WORKERS_PREVIEW=1
           VALU_PREVIEW=1
           NEXT_PUBLIC_VALU_PREVIEW=1
-          VALU_STAGING_API_ENABLED=0
-          NEXT_PUBLIC_VALU_STAGING_API_ENABLED=0
+          VALU_STAGING_API_ENABLED=1
+          NEXT_PUBLIC_VALU_STAGING_API_ENABLED=1
           EOF
       - name: Install pinned Cloudflare build tools
         run: npm install --no-save @opennextjs/cloudflare@1.20.15 wrangler@4.156.1
