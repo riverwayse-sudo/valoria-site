@@ -3,6 +3,7 @@ import { formatSessionDate } from '@/lib/professionalStandardSeries'
 const OUTCOMES = {
   '02': ['Problem selection', 'Strategic trade-offs', 'Three-question diagnostic'],
   '03': ['Output → impact', 'The indispensability trap', 'A sustainable operating model'],
+  '04': ['Building influence', 'Earning trust', 'Shaping decisions'],
 }
 
 export default function EventPoster({ session }) {
@@ -35,7 +36,7 @@ export default function EventPoster({ session }) {
           {outcomes.map((item, index) => <div key={item}><b>0{index + 1}</b>{item}</div>)}
         </div>
         <div className="poster-details">
-          <div><b>{date.replace(', 2026', '')}</b><span>{time} WAT</span></div>
+          <div><b>{date}</b><span>{time} WAT</span></div>
           {session.speaker && <div><b>{session.speaker}</b><span>GUEST SPEAKER</span></div>}
           {session.host && <div><b>{session.host}</b><span>HOST</span></div>}
         </div>
