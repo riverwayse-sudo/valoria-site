@@ -13,7 +13,7 @@ const PLACEHOLDER_HEADLINES = new Set([
 
 export // Only canonical route-safe ATB identifiers can enter the public profile projection.
 function isValidAtbId(value) {
-  return /^ATB-[A-Z0-9-]{4,40}$/i.test(String(value || '').trim())
+  return /^ATB-[A-Z0-9-]{4,40}$/i.test(String(value || '').normalize('NFKC').trim())
 }
 
 export function isPublicProfileContentReady(row) {
@@ -26,7 +26,7 @@ export function isPublicProfileContentReady(row) {
   return Boolean(
     row.full_name &&
     isValidAtbId(row.atb_id) &&
-    headline.length >= 8 &&
+    headline.length >= 3 &&
     !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
     !/[\u{1D400}-\u{1D7FF}]/u.test(headline) &&
     isValidAssessmentAccess &&
@@ -76,21 +76,16 @@ export async function getMarketplaceRows(track = 'all') {
   if (!url || !key) return []
 
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
-  const { data, error } = await supabase
-    .from(SOURCE)
-    .select(FIELDS)
-    .order('valu_index', { ascending: false, nullsFirst: false })
-    .order('full_name', { ascending: true })
+  const { data, error } = await supabase.rpc('get_marketplace_public_roster_v1')
 
   if (error) {
-    console.error('Marketplace query failed:', error)
+    console.error('Marketplace public roster RPC failed:', error)
     return []
   }
 
   const rows = dedupeProfessionals(data)
-  // Suppress incomplete or placeholder public-facing records until an
-  // administrator can correct them using verified professional information.
-  // The underlying account and professional profile remain intact.
+  // The RPC exposes only the public roster projection. Keep the same content
+  // quality gate here so incomplete records never appear as public cards.
   return rows.filter(row => isPublicProfileContentReady(row) && (track === 'all' || row.selectedCapabilities.includes(normalizeTrack(track))))
 }
 
@@ -102,18 +97,15 @@ export async function getMarketplaceCounts() {
   if (!url || !key) return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
 
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
-  const { data, error } = await supabase
-    .from(SOURCE)
-    .select('professional_id,full_name,atb_id,headline,current_job_title,assessment_access,valu_index,assessment_summary,capability,track,capabilities,selected_capabilities')
+  const { data, error } = await supabase.rpc('get_marketplace_public_roster_v1')
 
   if (error) {
-    console.error('Marketplace count query failed:', error)
+    console.error('Marketplace public roster count RPC failed:', error)
     return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
   }
 
   const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
   const all = new Set()
-
   for (const row of data || []) {
     if (!row.professional_id || !isPublicProfileContentReady(row)) continue
     all.add(row.professional_id)
