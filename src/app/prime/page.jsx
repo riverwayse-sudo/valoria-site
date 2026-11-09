@@ -3,6 +3,7 @@ import { BRAND, PRIME_CLUSTERS } from '@/lib/brand'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import '../pages.css'
+import '../audience-hero-imagery.css'
 
 export const metadata = { title: 'The PRIME Framework', description: 'PRIME is Valoria Institute’s proprietary capability architecture across Presence, Relationships, Intelligence, Mastery and Enterprise.', keywords: ['PRIME framework', 'VALU Index', 'African professional capability'], alternates: { canonical: 'https://valoriainstitute.com/prime' } }
 
