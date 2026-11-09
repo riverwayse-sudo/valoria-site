@@ -532,4 +532,14 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(api).toContain('notifyProfessional({ supabase, professionalProfileId: targetProfile.id')
   })
 
+  test('consented public Full profiles remain directly accessible while incomplete profiles stay noindex', () => {
+    const publicProfile = read('src/lib/public-profile.js')
+    const profileLayout = read('src/app/profile/[id]/layout.jsx')
+    expect(publicProfile).toContain("roster.selected_capabilities")
+    expect(publicProfile).toContain('hasCurrentFullAssessment(admin, profile)')
+    expect(publicProfile).toContain('const indexable = profile.profile_complete === true')
+    expect(publicProfile).toContain("&& profile.profile_complete === true")
+    expect(profileLayout).toContain('profile.indexable ? { index: true, follow: true } : { index: false, follow: true }')
+  })
+
 })
