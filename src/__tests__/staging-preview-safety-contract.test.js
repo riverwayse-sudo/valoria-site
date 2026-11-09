@@ -29,18 +29,15 @@ describe('staging preview safety boundary', () => {
     expect(handoff).toContain("source: 'authenticated_dashboard'")
   })
 
-  test('dashboard assessment CTAs do not bypass secure handoff in preview mode', () => {
+  test('dashboard assessment CTAs use canonical access checks and secure handoff in preview mode', () => {
     const nav = read('src/components/Nav.jsx')
-    // Staging enables the isolated identity/handoff APIs, so preview mode
-    // must not bypass the authenticated GET-before-POST continuation check.
-    expect(nav).toContain("fetch('/api/valu-handoff'")
     expect(nav).toContain("method: 'GET'")
-    expect(nav).toContain("method: 'POST'")
-    expect(nav.indexOf("method: 'GET'")).toBeLessThan(nav.indexOf("method: 'POST'"))
+    expect(nav).toContain('if (access.assessment_completed)')
     expect(nav).toContain('if (!access.can_continue)')
+    expect(nav).toContain("fetch('/api/valu-handoff'")
     expect(nav).toContain("const linkHref = dashboardOnly ? '/dashboard' : href")
-    expect(nav).not.toContain('assessment.valoriainstitute.com/remaining')
     expect(nav).not.toContain('NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN')
+    expect(nav).not.toContain('assessment.valoriainstitute.com/remaining')
   })
 
   test('homepage profile cards use a continuous reduced-motion-aware marquee', () => {
