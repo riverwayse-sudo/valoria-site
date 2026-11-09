@@ -173,7 +173,7 @@ function getCapabilitySelection(profile) {
 function Profile({p, onSelect}) {
   // Show the professional's selected capabilities, not only capabilities
   // that have passed the separate listing-eligibility gate. Category pages
-  // continue to filter against the eligible `capabilities` field above.
+  // follow declared selections; evidence-based eligibility remains separate.
   const selectedCaps = getCapabilitySelection(p)
   // Keep all three capability lanes visible on every card. Selection is a
   // profile preference; category listing eligibility remains a separate gate.
