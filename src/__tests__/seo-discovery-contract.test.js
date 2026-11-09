@@ -21,12 +21,13 @@ describe('Valoria SEO and discovery foundation', () => {
 
   test('profile indexing and metadata use only the consented public roster', () => {
     const layout = read('src/app/profile/[id]/layout.jsx')
-    expect(layout).toContain(".from('marketplace_public_roster')")
+    expect(layout).toContain("rpc('get_marketplace_public_roster_v1'")
     expect(layout).toContain('isPublicProfileContentReady(profile)')
     const directoryData = read('src/lib/marketplace-data.js')
     expect(directoryData).toContain("assessmentAccess === 'full'")
     expect(directoryData).toContain('assessmentSummary.length >= 12')
-    expect(directoryData).toContain("assessment_access,valu_index,assessment_summary")
+    expect(directoryData).toContain("assessmentAccess === 'full'")
+    expect(directoryData).toContain('get_marketplace_public_roster_v1')
     expect(directoryData).toContain("assessmentAccess === 'basic'")
     expect(directoryData).toContain('fullAssessmentReady')
     expect(layout).not.toContain(".from('professional_profiles')")
