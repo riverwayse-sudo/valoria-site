@@ -104,8 +104,14 @@ if (fs.existsSync(nudgePath)) {
 const registryPath = path.join(root, 'src/components/LiveProfilesScroll.jsx');
 if (fs.existsSync(registryPath)) {
   const registry = fs.readFileSync(registryPath, 'utf8');
-  if (!registry.includes('aria-hidden={index >= unique.length ? true : undefined}') ||
-      !registry.includes('tabIndex={index >= unique.length ? -1 : undefined}')) {
+  const hasAccessibleMarqueeClones = (
+    registry.includes('aria-hidden={index >= unique.length ? true : undefined}') &&
+    registry.includes('tabIndex={index >= unique.length ? -1 : undefined}')
+  ) || (
+    registry.includes('aria-hidden={isClone}') &&
+    registry.includes('tabIndex={isClone ? -1 : undefined}')
+  );
+  if (!hasAccessibleMarqueeClones) {
     violations.push('LiveProfilesScroll: decorative marquee duplicates must be hidden from assistive navigation');
   }
 }
