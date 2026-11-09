@@ -249,15 +249,14 @@ export async function getMarketplaceRows(track = 'all') {
     .map(row => row.assessmentAccess === 'basic'
       ? { ...row, valu_index: null, cluster_scores: null, assessment_summary: null, designation: null }
       : row)
-  // Category membership follows the participant's active capability choice.
-  // Profile-level public listing, consent, assessment validity and revocation checks
-  // are enforced above; evidence review does not hide a selected category.
+  // Category membership follows the participant's publicly declared active capability selection.
+  // This is distinct from evidence-approved capability readiness: selection determines the
+  // directory lane, while readiness remains separately governed in the admin workflow.
+  // Public listing, consent, assessment validity and revocation checks are enforced above.
   return rows.filter(row => {
     if (track === 'all') return true
     const capability = normalizeTrack(track)
-    return row.assessmentAccess === 'basic'
-      ? row.selectedCapabilities.includes(capability)
-      : row.assessmentAccess === 'full' && row.capabilities.includes(capability)
+    return row.selectedCapabilities.includes(capability)
   })
 }
 
@@ -265,10 +264,9 @@ function countMarketplaceRows(rows) {
   const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
 
   for (const row of rows || []) {
-    // Basic counts follow declared selections; Full counts follow approved eligible capabilities.
-    const visibleCapabilities = row.assessmentAccess === 'basic'
-      ? (row.selectedCapabilities || [])
-      : row.assessmentAccess === 'full' ? (row.capabilities || []) : []
+    // Category counts follow publicly declared active selections for both Basic and Full profiles.
+    // Evidence-approved readiness remains a separate admin eligibility state.
+    const visibleCapabilities = row.selectedCapabilities || []
     for (const capability of new Set(visibleCapabilities)) {
       if (byTrack[capability]) byTrack[capability].add(row.professional_id)
     }
@@ -292,9 +290,7 @@ export async function getMarketplaceDirectoryData(track = 'all') {
   const normalizedTrack = normalizeTrack(track)
   return {
     rows: normalizedTrack === 'all' ? allRows : allRows.filter(row =>
-      row.assessmentAccess === 'basic'
-        ? row.selectedCapabilities.includes(normalizedTrack)
-        : row.assessmentAccess === 'full' && row.capabilities.includes(normalizedTrack)
+      row.selectedCapabilities.includes(normalizedTrack)
     ),
     counts: countMarketplaceRows(allRows),
   }
