@@ -57,7 +57,7 @@ export default function HeroSlider() {
               <div className="hero-event-kicker">UPCOMING AT VALORIA</div>
               <h1 className="hero-title">The next conversation<br />on the <em>professional standard.</em></h1>
               <p className="hero-event-copy">The Professional Standard Series brings practical conversations on the capabilities that turn professional performance into recognised opportunity.</p>
-              <div className="hero-event-meta">{formatSessionDate(upcomingSession)} · 10:00 AM WAT · VIRTUAL · 90 MINUTES</div>
+              <div className="hero-event-meta">{formatSessionDate(upcomingSession)} · 10:00 AM WAT</div>
               <div className="hero-actions">
                 <button type="button" className="btn-gold hero-register-cta" onClick={openRegistration} disabled={!canRegister}>REGISTER FOR THIS CONVERSATION →</button>
                 <a href="/events" className="btn-outline">VIEW ALL EVENTS →</a>
