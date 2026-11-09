@@ -551,3 +551,334 @@
  .modalIdentityCopy h2{font-size:21px}
  .modalCapabilities{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
+
+
+/* Marketplace card redesign — editorial hierarchy, natural height, no clipping. */
+.grid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-auto-rows:auto;
+  align-items:stretch;
+  gap:20px;
+}
+.card{
+  box-sizing:border-box;
+  width:100%;
+  height:auto;
+  min-height:0;
+  max-height:none;
+  overflow:visible;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  padding:21px;
+  background:#F7F4EE;
+  border:1px solid #D4C9A8;
+  border-radius:8px;
+  box-shadow:none;
+  color:#1A1A2E;
+  transform:none!important;
+}
+.card:hover{background:#FAFAF7;border-color:#C9A84C;box-shadow:none;transform:translateY(-2px)!important}
+.card::after{display:none}
+.cardHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-width:0;
+  padding-bottom:15px;
+  border-bottom:1px solid #D4C9A8;
+}
+.identity{
+  position:static;
+  display:grid;
+  grid-template-columns:54px minmax(0,1fr);
+  align-items:center;
+  gap:12px;
+  min-width:0;
+  min-height:54px;
+  height:auto;
+  max-height:none;
+  padding:0!important;
+  overflow:visible;
+}
+.avatar{
+  width:54px;
+  height:54px;
+  border:2px solid #C9A84C;
+  border-radius:50%;
+  box-shadow:none;
+}
+.identityCopy{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0;overflow:visible}
+.cardIdLabel{
+  color:#777064;
+  font-family:var(--font);
+  font-size:7px;
+  font-weight:800;
+  letter-spacing:.13em;
+}
+.identity .profileName{
+  display:block;
+  max-width:100%;
+  color:#1A1A2E;
+  font-family:var(--font);
+  font-size:13px!important;
+  font-weight:900;
+  line-height:1.25!important;
+  letter-spacing:.025em!important;
+  overflow-wrap:anywhere;
+}
+.assessedStatus{
+  display:inline-flex!important;
+  margin:2px 0 0!important;
+  color:#6F5A26!important;
+  font-family:var(--font);
+  font-size:7px!important;
+  font-weight:800;
+  letter-spacing:.09em;
+  line-height:1.25;
+}
+.valu{
+  position:static;
+  flex:0 0 64px;
+  width:64px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:2px;
+  text-align:right;
+}
+.valu small,.valu span{
+  color:#777064;
+  font-family:var(--font);
+  font-size:6px;
+  font-weight:800;
+  letter-spacing:.12em;
+  line-height:1.25;
+}
+.valu b{color:#1A1A2E;font-family:var(--font);font-size:25px;font-weight:900;line-height:1}
+.cardRole{min-width:0;margin-top:16px}
+.career{
+  display:block;
+  margin:0;
+  color:#1A1A2E;
+  font-family:var(--font);
+  font-size:16px;
+  font-weight:800;
+  line-height:1.35;
+  overflow:visible;
+  overflow-wrap:anywhere;
+}
+.specialisation{
+  display:block;
+  height:auto;
+  min-height:0;
+  max-height:none;
+  margin:5px 0 0;
+  color:#6F6A60;
+  font-family:var(--font);
+  font-size:10px;
+  font-weight:600;
+  line-height:1.45;
+  white-space:normal;
+  overflow:visible;
+}
+.profileDetails{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px 12px;
+  margin:11px 0 0;
+  color:#777064;
+  font-family:var(--font);
+  font-size:9px;
+  line-height:1.45;
+}
+.profileDetails span{overflow-wrap:anywhere}
+.cardCapabilities{
+  margin-top:17px;
+  padding-top:13px;
+  border-top:1px solid #E1D9C8;
+}
+.capabilityLabel{
+  display:block;
+  margin:0 0 8px;
+  color:#777064;
+  font-family:var(--font);
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:.14em;
+}
+.capabilities{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+  min-height:0;
+  height:auto;
+  max-height:none;
+  margin:0;
+  overflow:visible;
+}
+.capabilities .capabilityBadge{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:4px;
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  min-height:48px;
+  padding:8px 7px;
+  border:1px solid #D4C9A8;
+  border-radius:5px;
+  overflow:visible;
+}
+.capabilityBadge strong{
+  display:block;
+  color:inherit;
+  font-family:var(--font);
+  font-size:7px;
+  font-weight:900;
+  line-height:1.2;
+  letter-spacing:.055em;
+  white-space:normal;
+}
+.capabilityBadge small{
+  display:block;
+  color:#777064;
+  font-family:var(--font);
+  font-size:6px;
+  font-weight:800;
+  line-height:1.2;
+  letter-spacing:.035em;
+  white-space:normal;
+}
+.capabilitySelected{background:#EDE8DC!important;border-color:#C9A84C!important;color:#1A1A2E!important;opacity:1}
+.capabilitySelected small{color:#6F5A26!important}
+.capabilityUnselected{background:#FAFAF7!important;border-color:#E1D9C8!important;color:#8A8578!important;opacity:1}
+.capabilityUnselected small{color:#8A8578!important}
+.cardFooter{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:10px;
+  margin-top:15px;
+  padding-top:13px;
+  border-top:1px solid #E1D9C8;
+}
+.cardCredential{display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-width:0}
+.basicCredential{
+  display:inline-flex;
+  align-items:center;
+  min-height:27px;
+  padding:0 9px;
+  border:1px solid #D4C9A8;
+  border-radius:4px;
+  background:#EDE8DC;
+  color:#2E2E4A;
+  font-family:var(--font);
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:.07em;
+}
+.assessmentState{
+  color:#777064;
+  font-family:var(--font);
+  font-size:7px;
+  font-weight:800;
+  letter-spacing:.08em;
+}
+.tierBadge{
+  min-width:0;
+  max-width:100%;
+  min-height:27px;
+  padding:6px 9px;
+  border-radius:4px;
+  font-size:8px;
+}
+.profileSkills{display:flex;flex-wrap:wrap;gap:5px;margin:0}
+.profileSkills span{
+  padding:5px 7px;
+  border:1px solid #E1D9C8;
+  border-radius:4px;
+  background:#FAFAF7;
+  color:#5D584F;
+  font-family:var(--font);
+  font-size:8px;
+  line-height:1.25;
+}
+.assessmentInsight{
+  flex:none;
+  box-sizing:border-box;
+  min-height:0;
+  height:auto;
+  max-height:none;
+  margin:13px 0 0;
+  padding:11px 12px;
+  overflow:visible;
+  background:#EDE8DC;
+  border-left:2px solid #C9A84C;
+}
+.insightLabel{
+  display:block;
+  color:#6F5A26;
+  font-family:var(--font);
+  font-size:7px;
+  font-weight:900;
+  line-height:1.35;
+  letter-spacing:.12em;
+}
+.assessmentSummary{
+  display:block;
+  margin:6px 0 0;
+  color:#2E2E4A;
+  font-family:var(--font);
+  font-size:9px;
+  font-weight:500;
+  line-height:1.55;
+  overflow:visible;
+  overflow-wrap:anywhere;
+}
+.view.viewButton{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  box-sizing:border-box;
+  width:100%;
+  min-height:40px;
+  height:auto;
+  max-height:none;
+  flex:none;
+  margin:16px 0 0;
+  padding:0 12px;
+  border:1px solid #C9A84C;
+  border-radius:4px;
+  background:#C9A84C;
+  color:#1A1A2E;
+  font-family:var(--font);
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-align:left;
+  white-space:normal;
+  cursor:pointer;
+}
+.view.viewButton::after{content:'↗';font-size:14px}
+.view.viewButton:hover{background:#1A1A2E;color:#C9A84C;letter-spacing:.12em}
+@media(max-width:1080px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+}
+@media(max-width:680px){
+  .grid{grid-template-columns:minmax(0,1fr);gap:13px}
+  .card{padding:18px}
+  .career{font-size:15px}
+}
+@media(max-width:380px){
+  .card{padding:15px}
+  .identity{grid-template-columns:48px minmax(0,1fr);gap:9px}
+  .avatar{width:48px;height:48px}
+  .valu{flex-basis:54px;width:54px}
+  .valu b{font-size:22px}
+  .capabilities{gap:4px}
+  .capabilities .capabilityBadge{padding:7px 5px}
+}

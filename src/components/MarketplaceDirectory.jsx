@@ -201,44 +201,63 @@ function Profile({p, onSelect}) {
     'Building Foundations': styles.buildingFoundations,
   }[designation] || ''
   const profileId = displayText(p.atb_id)
-  const clusterScores = p.cluster_scores && typeof p.cluster_scores === 'object' ? p.cluster_scores : {}
-  const weakest = Object.entries(clusterScores)
-    .filter(([key,value]) => CLUSTER_NAMES[key] && Number.isFinite(Number(value)))
-    .sort((a,b) => Number(a[1])-Number(b[1]))[0]
-  const developmentFocus = weakest ? CLUSTER_NAMES[weakest[0]] : 'Not available'
   const skills = labelValues(p.skills).slice(0, 3)
   const availability = displayText(p.availability_status)
+  const role = displayText(p.current_job_title || p.headline)
+  const sector = displayText(p.industry)
+  const summary = displayText(p.assessment_summary)
+
   return <article className={styles.card}>
-    <div className={styles.identity}>
-      <ValoriaAvatar src={p.photo_url} seed={p.professional_id || profileId} size={64} className={styles.avatar}/>
-      <div className={styles.identityCopy}>
-        <strong className={styles.profileName}>{profileId || 'ATB ID PENDING'}</strong>
-        <small>{profileId}</small>
-        <span className={styles.assessedStatus}>{isBasic ? 'BASIC LISTING' : '✓ FULL VALU ASSESSED'}</span>
+    <header className={styles.cardHeader}>
+      <div className={styles.identity}>
+        <ValoriaAvatar src={p.photo_url} seed={p.professional_id || profileId} size={64} className={styles.avatar}/>
+        <div className={styles.identityCopy}>
+          <span className={styles.cardIdLabel}>PROFESSIONAL ID</span>
+          <strong className={styles.profileName}>{profileId || 'ATB ID PENDING'}</strong>
+          <span className={styles.assessedStatus}>{isBasic ? 'BASIC LISTING' : 'FULL ASSESSMENT'}</span>
+        </div>
       </div>
       {!isBasic && <div className={styles.valu} aria-label={`VALU Index ${p.valu_index} points`}>
         <small>VALU INDEX</small>
         <b>{p.valu_index}</b>
         <span>POINTS</span>
       </div>}
-    </div>
-    <p className={styles.career}>{displayText(p.headline)}</p>
-    <p className={styles.specialisation}>{displayText(p.current_job_title)}{p.industry ? ` · ${displayText(p.industry)}` : ''}</p>
-    <div className={styles.profileDetails}>{[p.location, availability && `Availability: ${titleCase(availability)}`].filter(Boolean).map(value=><span key={value}>{displayText(value)}</span>)}</div>
+    </header>
 
-    {skills.length > 0 && <div className={styles.profileSkills}>{skills.map(value=><span key={value}>{value}</span>)}</div>}
-    <div className={styles.signalRow}>
-      <span className={`${styles.tierBadge} ${designationClass}`}>{isBasic ? 'BASIC LISTING' : designation}</span>
+    <div className={styles.cardRole}>
+      <p className={styles.career}>{role || 'Professional profile'}</p>
+      {sector && <p className={styles.specialisation}>{sector}</p>}
     </div>
-    {!isBasic && <div className={styles.developmentFocus}><small>TOP DEVELOPMENT AREA</small><strong>{developmentFocus}</strong></div>}
-    <div className={styles.capabilities} aria-label={`Declared roles: ${capabilityBadges.filter(b=>b.selected).map(b=>b.title).join(', ') || 'none selected'}`}>
-      <small className={styles.capabilityLabel}>DECLARED ROLES</small>
-      {capabilityBadges.map(badge=><span className={`${styles.capabilityBadge} ${badge.selected ? styles.capabilitySelected : styles.capabilityUnselected}`} key={badge.key}><strong>{badge.title}</strong><small>{badge.selected ? 'SELECTED' : isBasic ? 'NOT DECLARED' : 'NOT SELECTED'}</small></span>)}
-    </div>
-    {!isBasic && <div className={styles.assessmentInsight}>
-      <small>VALU INDEX ASSESSMENT INSIGHT</small>
-      <p className={styles.assessmentSummary}>{displayText(p.assessment_summary)}</p>
+
+    {(p.location || availability) && <div className={styles.profileDetails}>
+      {p.location && <span>{displayText(p.location)}</span>}
+      {availability && <span>{titleCase(availability)} availability</span>}
     </div>}
+
+    <section className={styles.cardCapabilities} aria-label={`Declared capabilities: ${capabilityBadges.filter(b=>b.selected).map(b=>b.title).join(', ') || 'none selected'}`}>
+      <span className={styles.capabilityLabel}>CAPABILITIES</span>
+      <div className={styles.capabilities}>
+        {capabilityBadges.map(badge=><span className={`${styles.capabilityBadge} ${badge.selected ? styles.capabilitySelected : styles.capabilityUnselected}`} key={badge.key}>
+          <strong>{badge.title}</strong>
+          <small>{badge.selected ? 'SELECTED' : 'NOT SELECTED'}</small>
+        </span>)}
+      </div>
+    </section>
+
+    <footer className={styles.cardFooter}>
+      <div className={styles.cardCredential}>
+        {isBasic
+          ? <span className={styles.basicCredential}>BASIC PUBLIC LISTING</span>
+          : <><span className={`${styles.tierBadge} ${designationClass}`}>{designation || 'VALU ASSESSED'}</span><span className={styles.assessmentState}>FULL VALU ASSESSED</span></>}
+      </div>
+      {skills.length > 0 && <div className={styles.profileSkills}>{skills.map(value=><span key={value}>{value}</span>)}</div>}
+    </footer>
+
+    {!isBasic && summary && <section className={styles.assessmentInsight}>
+      <span className={styles.insightLabel}>VALU ASSESSMENT INSIGHT</span>
+      <p className={styles.assessmentSummary}>{summary}</p>
+    </section>}
+
     <button type="button" onClick={onSelect} className={`${styles.view} ${styles.viewButton}`} aria-haspopup="dialog">VIEW PROFILE</button>
   </article>
 }
