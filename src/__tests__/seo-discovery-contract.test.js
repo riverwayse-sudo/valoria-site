@@ -51,8 +51,8 @@ describe('Valoria SEO and discovery foundation', () => {
     const home = read('src/app/page.jsx')
     expect(home).toContain('INITIAL MARKET')
     expect(home).toContain('Initial operating focus is Nigeria')
-    expect(home).toContain('broader African and international audiences in view')
-    expect(home).toContain('Starting in Nigeria')
+    expect(home).toContain('Built for an international audience. Operating first in Nigeria.')
+    expect(home).toContain('INITIAL MARKET')
   })
 
   test('root layout publishes Organization and WebSite entities', () => {
