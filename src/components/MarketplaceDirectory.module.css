@@ -979,3 +979,10 @@
 @media(max-width:680px){.hero .container{padding-top:118px}}
 
 .cardHeader{min-height:54px;padding-bottom:30px!important}
+
+
+/* Marketplace identity hierarchy: name first, role second, stable profile ID third. */
+.profileRole{display:block;margin-top:4px;color:#514C43;font-family:var(--font);font-size:11px;font-weight:600;line-height:1.4;overflow-wrap:anywhere}
+.identity .profileName{display:block;color:#1A1A2E;font-size:clamp(15px,1.25vw,18px);font-weight:900;line-height:1.2;letter-spacing:-.02em;overflow-wrap:anywhere}
+.cardIdLabel{display:block;margin-top:5px;color:#6F6A60;font-family:var(--font);font-size:9px;font-weight:800;letter-spacing:.07em}
+@media(max-width:680px){.profileRole{font-size:11px}.identity .profileName{font-size:16px}}
