@@ -1,10 +1,11 @@
+// Field contract returned by get_marketplace_public_roster_v1.
+// Compensation and free-form bio fields are deliberately excluded from the public RPC.
 export const PUBLIC_PROFILE_SELECT = [
-  'professional_id', 'full_name', 'bio', 'location', 'languages', 'headline',
+  'professional_id', 'full_name', 'location', 'languages', 'headline',
   'current_job_title', 'capability', 'track', 'capabilities', 'selected_capabilities',
   'atb_id', 'display_initials', 'photo_url', 'industry', 'skills', 'topics',
   'programme_types', 'availability', 'valu_index', 'cluster_scores', 'designation',
-  'fee_range', 'salary_expectation', 'availability_status', 'assessment_access',
-  'assessment_summary',
+  'availability_status', 'assessment_access', 'assessment_summary',
 ].join(',')
 
 const VALID_TRACKS = new Set(['candidate', 'speaker', 'facilitator'])
@@ -30,7 +31,7 @@ export function toPublicProfile(row) {
 
   return {
     id: row.professional_id,
-    display_name: row.full_name || 'Valoria Professional',
+    display_name: String(row.full_name || 'Valoria Professional').normalize('NFKC'),
     display_initials: row.display_initials || '',
     headline: row.headline || '',
     current_job_title: row.current_job_title || '',
@@ -56,7 +57,7 @@ export function toPublicProfile(row) {
     assessment_summary: row.assessment_summary || null,
     fee_range: row.fee_range || null,
     salary_expectation: row.salary_expectation || null,
-    atb_id: row.atb_id || null,
+    atb_id: row.atb_id ? String(row.atb_id).normalize('NFKC') : null,
     photo_url: row.photo_url || null,
     // These fields are deliberately not part of the public roster projection.
     phone: null,
