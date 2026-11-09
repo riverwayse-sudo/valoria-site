@@ -15,9 +15,9 @@ describe('VALU presentation consistency', () => {
 
   test('institutional homepage establishes Valoria’s category and connected system', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('AFRICA’S HUMAN CAPITAL INSTITUTION')
-    expect(home).toContain('Talent is not the problem.')
-    expect(home).toContain('Explore the institution')
+    expect(home).toContain('A PROFESSIONAL CAPABILITY INSTITUTION')
+    expect(home).toContain('Understand your capability.')
+    expect(home).toContain('How Valoria works')
     expect(home).toContain('PRIME Framework')
     expect(home).toContain('VALU Index')
     expect(home).toContain('African Talent Bureau')
