@@ -17,6 +17,7 @@ function isValidAtbId(value) {
 }
 
 export function isPublicProfileContentReady(row) {
+  if (!row || typeof row !== 'object') return false
   const headline = String(row.headline || row.current_job_title || '').trim()
   const assessmentAccess = row.assessment_access
   const isValidAssessmentAccess = assessmentAccess === 'basic' || assessmentAccess === 'full'
