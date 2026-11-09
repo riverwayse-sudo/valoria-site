@@ -169,7 +169,7 @@ jobs:
           grep -q 'Basic is a marketplace access state, not a merit tier' /tmp/valoria-llms.txt
 
           curl -fsS "$base/" -o /tmp/valoria-home.html
-          grep -q 'AFRICA’S HUMAN CAPITAL INSTITUTION' /tmp/valoria-home.html
+          grep -q 'THE AFRICAN TALENT BUREAU' /tmp/valoria-home.html
           grep -q 'THE VALORIA INSTITUTIONAL SYSTEM' /tmp/valoria-home.html
           grep -q 'INITIAL MARKET' /tmp/valoria-home.html
           grep -q 'NIGERIA' /tmp/valoria-home.html
