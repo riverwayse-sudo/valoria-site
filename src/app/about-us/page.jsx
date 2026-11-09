@@ -9,7 +9,7 @@ export const metadata = {
   keywords: ['Valoria Institute', 'professional capability', 'PRIME framework', 'VALU Index', 'professional development', 'talent marketplace'],
   openGraph: {
     title: 'About Valoria Institute',
-    description: 'The institution connecting professional capability to development, visibility and opportunity.',
+    description: 'A professional capability institution connecting understanding, development and opportunity.',
     url: 'https://valoriainstitute.com/about-us',
   },
   alternates: { canonical: 'https://valoriainstitute.com/about-us' },
@@ -50,8 +50,8 @@ export default function AboutPage() {
         <section className="page-hero">
           <div className="page-hero-inner">
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">ABOUT VALORIA INSTITUTE</span></div>
-            <h1 className="page-title">Talent is not the problem.<br /><em>Infrastructure is.</em></h1>
-            <p className="page-sub">Valoria Institute builds the infrastructure through which African professional capability is understood, developed, surfaced and connected to opportunity.</p>
+            <h1 className="page-title">A professional capability institution.<br /><em>Built for what comes next.</em></h1>
+            <p className="page-sub">Valoria Institute helps professionals understand and strengthen their capabilities, and helps organisations discover and engage expertise. We bring together a shared capability framework, structured assessment, professional development and a Registry for discovery. Our initial operating market is Nigeria, with an international outlook.</p>
           </div>
         </section>
 
