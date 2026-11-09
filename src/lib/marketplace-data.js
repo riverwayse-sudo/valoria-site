@@ -265,8 +265,7 @@ function countMarketplaceRows(rows) {
   const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
 
   for (const row of rows || []) {
-    // Category counts follow active participant selections for Basic and Full profiles.
-    // Evidence status controls verification, not whether a chosen category is shown.
+    // Basic counts follow declared selections; Full counts follow approved eligible capabilities.
     const visibleCapabilities = row.assessmentAccess === 'basic'
       ? (row.selectedCapabilities || [])
       : row.assessmentAccess === 'full' ? (row.capabilities || []) : []
