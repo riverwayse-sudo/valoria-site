@@ -107,41 +107,44 @@ export default async function LiveProfilesScroll() {
       {unique.length > 0 ? (
         <>
           <div className="vi-scroll-mask">
-            <div className="vi-scroll-track">
-              {loop.map((profile, index) => {
-                const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
-                const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
-                const primaryTrack = normalizedTracks.find(track => TRACK_META[track]) || 'candidate'
-                const meta = TRACK_META[primaryTrack]
-                const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
-                return (
-                  <Link
-                    href={meta.href}
-                    key={`${profile.id}-${index}`}
-                    className="vi-scroll-card"
-                    data-marketplace-intent={primaryTrack}
-                    aria-label={`Discover more ${meta.label.toLowerCase()} professionals`}
-                    aria-hidden={index >= unique.length ? true : undefined}
-                    tabIndex={index >= unique.length ? -1 : undefined}
-                  >
-                    <div className="vi-scroll-avatar" aria-hidden="true">
-                      <ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} />
-                    </div>
-                    <div className="vi-scroll-copy">
-                      <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>LIVE</i></div>
-                      <div className="vi-scroll-headline">{profile.assessment_summary || 'Assessment-based capability descriptor unavailable.'}</div>
-                      <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
-                    </div>
-                    <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'}`}>
-                      <span className="vi-scroll-score-label">VALU INDEX</span>
-                      <strong>{profile.valu_index ?? '—'}</strong>
-                      <span className="vi-scroll-score-max">points</span>
-                    </div>
-                    <span className="vi-scroll-card-arrow" aria-hidden="true">↗</span>
-                  </Link>
-                )
-              })}
-            </div>
+            <div className="vi-scroll-track" aria-label="Public professional profiles">
+              {[false, true].map((isClone) => (
+                <div className="vi-scroll-group" key={isClone ? 'clone' : 'original'} aria-hidden={isClone}>
+                  {loop.map((profile, index) => {
+                    const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
+                    const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
+                    const primaryTrack = normalizedTracks.find(track => TRACK_META[track]) || 'candidate'
+                    const meta = TRACK_META[primaryTrack]
+                    const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
+                    return (
+                      <Link
+                        href={meta.href}
+                        key={\`\${profile.id}-\${index}\`}
+                        className="vi-scroll-card"
+                        data-marketplace-intent={primaryTrack}
+                        aria-label={\`Discover more \${meta.label.toLowerCase()} professionals\`}
+                        tabIndex={isClone ? -1 : undefined}
+                      >
+                        <div className="vi-scroll-avatar" aria-hidden="true">
+                          <ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} />
+                        </div>
+                        <div className="vi-scroll-copy">
+                          <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>LIVE</i></div>
+                          <div className="vi-scroll-headline">{profile.assessment_summary || 'Assessment-based capability descriptor unavailable.'}</div>
+                          <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
+                        </div>
+                        <div className="vi-scroll-score" aria-label={\`VALU Index \${profile.valu_index ?? 'not available'}\`}>
+                          <span className="vi-scroll-score-label">VALU INDEX</span>
+                          <strong>{profile.valu_index ?? '—'}</strong>
+                          <span className="vi-scroll-score-max">points</span>
+                        </div>
+                        <span className="vi-scroll-card-arrow" aria-hidden="true">↗</span>
+                      </Link>
+                    )
+                  })}
+                </div>
+              ))}
+            </div>      </div>
           </div>
 
           <div className="live-profiles-bottom">
