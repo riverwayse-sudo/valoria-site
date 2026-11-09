@@ -59,6 +59,18 @@ Form design:
 - Keep transactional and marketing templates visibly and operationally distinct.
 - Optimise for narrow email clients; avoid relying on complex CSS, background images or unsupported interactions.
 
+### Implemented email system
+
+The shared renderer is `src/lib/valoriaEmailDesign.js`. It provides:
+
+1. **Registration confirmation** — integrated into `src/lib/eventRegistrationBrevo.js`; confirms the registration and displays approved date, start time, guest speaker and host. The confirmation does not claim that a meeting link or venue has been confirmed.
+2. **Operational reminder** — reusable transactional layout; displays a join action only when a valid HTTPS meeting URL is supplied. It does not invent an event platform or access details.
+3. **Promotional campaign** — reusable marketing layout with a mandatory unsubscribe URL. Campaign copy, audience, consent and schedule still require owner approval before sending.
+
+Email layout is table-based with inline styles, a plain-text alternative, a hidden preheader, a 600px desktop canvas and narrow-screen-friendly padding. It does not depend on remote images or web-font loading. Raleway is declared first with email-safe fallbacks.
+
+Transactional email footer: Valoria Institute, website and support contact. Promotional email footer: website and unsubscribe link. These are intentionally different.
+
 ## 6. Portrait asset governance
 
 The supplied Temitayo portrait is the host portrait for the 14 November event. Before publication:
@@ -81,6 +93,8 @@ Verify at 1440px, 1280px, 768px and 390px:
 - keyboard focus is visible;
 - touch targets are practical on mobile;
 - reduced motion is respected.
+
+For email verification, test at a narrow mobile width and in major HTML email clients. Confirm the plain-text alternative, link destinations, sender/reply-to identity, and image-disabled presentation. A code build alone does not establish email-client rendering.
 
 ## 8. Design acceptance
 
