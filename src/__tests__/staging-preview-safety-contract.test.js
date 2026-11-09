@@ -29,12 +29,15 @@ describe('staging preview safety boundary', () => {
     expect(handoff).toContain("source: 'authenticated_dashboard'")
   })
 
-  test('dashboard assessment CTAs do not bypass secure handoff in preview mode', () => {
+  test('dashboard assessment CTAs use canonical access checks and secure handoff in preview mode', () => {
     const nav = read('src/components/Nav.jsx')
-    expect(nav).toContain("if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' && !dashboardOnly)")
+    expect(nav).toContain("method: 'GET'")
+    expect(nav).toContain('if (access.assessment_completed)')
+    expect(nav).toContain('if (!access.can_continue)')
     expect(nav).toContain("fetch('/api/valu-handoff'")
-    expect(nav).toContain('const linkHref = dashboardOnly ?')
-    expect(nav).toContain('NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN')
+    expect(nav).toContain("const linkHref = dashboardOnly ? '/dashboard' : href")
+    expect(nav).not.toContain('NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN')
+    expect(nav).not.toContain('assessment.valoriainstitute.com/remaining')
   })
 
   test('preview navigation, journey cards, and reminders do not query account data', () => {

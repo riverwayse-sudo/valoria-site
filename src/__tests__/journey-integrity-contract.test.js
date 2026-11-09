@@ -517,7 +517,12 @@ describe('journey integrity contract', () => {
     expect(nav).toContain('export function AssessmentStartLink')
     expect(nav).toContain("fetch('/api/valu-handoff'")
     expect(nav).toContain('window.location.assign(data.url)')
-    expect(nav).toContain('NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN')
+    expect(nav).toContain("method: 'GET'")
+    expect(nav).toContain('if (access.assessment_completed)')
+    expect(nav).toContain('if (!access.can_continue)')
+    expect(nav).toContain("const linkHref = dashboardOnly ? '/dashboard' : href")
+    expect(nav).not.toContain('NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN')
+    expect(nav).not.toContain('assessment.valoriainstitute.com/remaining')
     expect(nav).toContain('<a href={linkHref}')
     expect(nav).not.toContain("window.location.assign('/assessment/bridge')")
     expect(nav).not.toContain('pending_taster_id')
@@ -643,6 +648,14 @@ describe('journey integrity contract', () => {
     expect(nav.indexOf("method: 'GET'")).toBeLessThan(nav.indexOf("method: 'POST'"))
     expect(nav).toContain("const linkHref = dashboardOnly ? '/dashboard' : href")
     expect(nav).not.toContain('assessment.valoriainstitute.com/remaining')
+  })
+
+  test('completed full assessments return to the dashboard before a new handoff is created', () => {
+    const nav = read('src/components/Nav.jsx')
+    expect(nav).toContain('if (access.assessment_completed)')
+    expect(nav).toContain("window.location.assign('/dashboard')")
+    expect(nav.indexOf('if (access.assessment_completed)')).toBeLessThan(nav.indexOf("method: 'POST'"))
+    expect(nav).toContain('if (!access.can_continue)')
   })
 
 })
