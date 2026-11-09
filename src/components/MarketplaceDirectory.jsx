@@ -184,10 +184,11 @@ function getCapabilitySelection(profile) {
 
 function Profile({p, onSelect}) {
   const selectedCaps = getCapabilitySelection(p)
-  const specialistCapabilities = [
+  const capabilityBadges = [
+    ['candidate','Talent'],
     ['speaker','Speaker'],
     ['facilitator','Facilitator'],
-  ].filter(([key]) => selectedCaps.has(key)).map(([,label]) => label)
+  ]
   const isFull = p.assessment_access === 'full' && p.valu_index != null
   const designation = displayText(p.designation)
   const designationClass = {
@@ -234,9 +235,12 @@ function Profile({p, onSelect}) {
 
     {skills.length > 0 && <div className={styles.profileSkills} aria-label="Professional skills">{skills.map(value=><span key={value}>{value}</span>)}</div>}
 
-    {specialistCapabilities.length > 0 && <div className={styles.specialistCapabilities}>
-      {specialistCapabilities.map(label=><span key={label}>{label}</span>)}
-    </div>}
+    <div className={styles.specialistCapabilities} aria-label="Declared capability selections">
+      {capabilityBadges.map(([key,label]) => {
+        const selected = selectedCaps.has(key)
+        return <span key={key} className={selected ? styles.capabilitySelected : styles.capabilityUnselected} aria-label={`${label}: ${selected ? 'selected' : 'not selected'}`}>{label}{selected ? ' ✓' : ''}</span>
+      })}
+    </div>
 
     {isFull && <div className={styles.cardCredential}>
       <span className={`${styles.tierBadge} ${designationClass}`}>{designation || 'VALU ASSESSED'}</span>
