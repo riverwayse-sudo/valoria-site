@@ -7,10 +7,11 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
   const assessmentCurrent = hasAssessment && (!assessmentExpiresAt || new Date(assessmentExpiresAt).getTime() > Date.now())
   const assessmentEligible = assessmentCurrent && assessmentScore != null && Number(assessmentScore) >= 35
 
-  const reportStatus = assessment?.report_status ||
-    (assessment?.ai_report ? 'READY' : hasAssessment ? 'PENDING' : 'NOT_STARTED')
-  const reportReady = ['READY', 'EMAIL_PENDING', 'SENT'].includes(reportStatus) || !!assessment?.ai_report
-  const reportDelivered = reportStatus === 'SENT' || !!assessment?.report_email_sent_at
+  const reportStatus = hasAssessment
+    ? (assessment?.report_status || (assessment?.ai_report ? 'READY' : 'PENDING'))
+    : 'NOT_STARTED'
+  const reportReady = hasAssessment && (['READY', 'EMAIL_PENDING', 'SENT'].includes(reportStatus) || !!assessment?.ai_report)
+  const reportDelivered = hasAssessment && (reportStatus === 'SENT' || !!assessment?.report_email_sent_at)
 
   const profileMissing = []
   if (!profile?.display_name?.trim()) profileMissing.push('Your name')
@@ -110,7 +111,7 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
       reportReady,
       reportDelivered,
       score: assessmentScore,
-      designation: assessment?.designation || profile?.designation || null,
+      designation: hasAssessment ? (assessment?.designation || null) : null,
     },
     report: {
       complete: reportReady && !!activation?.status && activation.status === 'activated',
