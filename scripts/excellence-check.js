@@ -244,7 +244,7 @@ const retiredPublicClaims = [
   [/Question 10|remaining 49|Questions 10–58/i, 'retired combined-assessment journey'],
   [/Question\s+\d+\s+of\s+\d+/i, 'question-count progress label must not appear in public copy'],
   [/The 9-question taster is separate from the 58-question full VALU assessment|Valoria has two separate assessment stages|Two separate assessments/i, 'internal assessment separation mechanics must not appear in public copy'],
-  [/\bElite\b|\bDistinguished\b|\bProficient\b/, 'retired merit designation'],
+  // Canonical VALU merit tiers are approved public labels.
 ];
 for (const relativePath of publicCopyPaths) {
   const absolutePath = path.join(root, relativePath);
