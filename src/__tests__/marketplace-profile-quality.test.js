@@ -28,4 +28,15 @@ describe('public marketplace profile content gate', () => {
     expect(source).toContain('export function isPublicProfileContentReady(row)')
   })
 
+
+  test('reads the public roster through the safe RPC instead of direct table access', () => {
+    expect(source).toContain("supabase.rpc('get_marketplace_public_roster_v1')")
+    expect(source).not.toContain(".from(SOURCE)")
+  })
+
+  test('accepts legitimate short role titles and normalises Unicode ATB identifiers for validation', () => {
+    expect(source).toContain("headline.length >= 3")
+    expect(source).toContain("normalize('NFKC')")
+  })
+
 })
