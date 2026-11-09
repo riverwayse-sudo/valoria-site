@@ -30,7 +30,7 @@ async function getHomepageProfiles() {
         ? profile.selected_capabilities
         : (Array.isArray(profile.capabilities) ? profile.capabilities : []),
     })) : []
-    return { profiles, count: null }
+    return { profiles, count: profiles.length }
   } catch (error) {
     console.error('Homepage public roster RPC failed:', error)
     return { profiles: [], count: null }
@@ -69,7 +69,7 @@ export default async function LiveProfilesScroll() {
   const loop = unique.slice(0, 4)
   // The count endpoint covers the full public roster, while previews are capped at 24.
   // Only show a count when every public row was returned and passed the same quality bar.
-  const discoverableCount = count !== null && count <= 24 && count === unique.length ? count : null
+  const discoverableCount = Number.isInteger(count) && count >= unique.length ? count : null
 
   return (
     <section className="live-profiles" aria-labelledby="marketplace-title">
@@ -87,7 +87,7 @@ export default async function LiveProfilesScroll() {
           {discoverableCount > 0 && unique.length > 0 && (
             <div className="live-profiles-proof" aria-label="Marketplace summary">
               <strong>{discoverableCount}</strong>
-              <span>professionals currently discoverable</span>
+              <span>professionals listed in the public registry</span>
             </div>
           )}
           <p className="live-profiles-trust">
