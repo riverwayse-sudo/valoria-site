@@ -6,10 +6,10 @@
   box-shadow:0 8px 28px rgba(15,15,26,.14);
 }
 .nav-logo img{width:182px;height:42px;}
-.nav-links{gap:4px;}
+ .nav-links{gap:clamp(8px,1.1vw,18px);}
 .nav-link,.nav-trigger{min-height:40px;display:inline-flex;align-items:center;}
-.nav-link{padding-inline:11px;}
-.nav-trigger{padding:10px 11px;}
+ .nav-link{padding-inline:8px;white-space:nowrap;}
+ .nav-trigger{padding:10px 8px;white-space:nowrap;}
 .nav-chevron{transition:transform .2s ease,opacity .2s ease;}
 .nav-trigger[aria-expanded="true"] .nav-chevron{transform:rotate(180deg);opacity:.9;}
 .nav-dropdown{
@@ -23,13 +23,13 @@
 .nav-dropdown-grid{gap:8px;}
 .nav-dropdown-link{padding:11px 12px;}
 .nav-dropdown-description{max-width:360px;}
-.nav-cta{min-height:40px;display:inline-flex;align-items:center;padding-inline:18px;margin-left:8px;}
+ .nav-cta{min-height:40px;display:inline-flex;align-items:center;padding-inline:16px;margin-left:12px;white-space:nowrap;}
 .nav-mobile{top:80px;}
-@media (max-width:1240px){
+@media (max-width:1120px){
   .nav-links{display:none;}
   .nav-burger{display:flex;}
 }
-@media (min-width:1241px){
+@media (min-width:1121px){
   .nav-mobile{display:none!important;}
 }
 @media (max-width:560px){
@@ -171,4 +171,22 @@
 .nav-mobile .m-label,
 .nav-mobile .nav-mobile-link {
   text-align: left;
+}
+
+/* Focus-first header: generous spacing, restrained labels, predictable focus. */
+.vi-nav{gap:clamp(18px,2.4vw,36px)}
+.nav-links{flex:1;justify-content:flex-end;min-width:0}
+.nav-link,.nav-trigger{letter-spacing:.015em}
+.nav-trigger[aria-expanded="true"]{color:var(--valoria-gold-light,#E2C97E)}
+.nav-mobile{padding-bottom:max(28px,env(safe-area-inset-bottom))}
+.nav-mobile .m-label{margin-top:24px;margin-bottom:9px;letter-spacing:.16em}
+.nav-mobile .nav-mobile-link{min-height:44px}
+@media (min-width:1121px) and (max-width:1320px){
+  .nav-logo img{width:160px}
+  .nav-links{gap:6px}
+  .nav-link,.nav-trigger{font-size:12px}
+  .nav-cta{padding-inline:12px;font-size:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  .nav-trigger,.nav-link,.nav-cta{transition:none!important}
 }
