@@ -147,9 +147,16 @@ if (fs.existsSync(nudgePath)) {
 const registryPath = path.join(root, 'src/components/LiveProfilesScroll.jsx');
 if (fs.existsSync(registryPath)) {
   const registry = fs.readFileSync(registryPath, 'utf8');
-  if (!registry.includes('vi-scroll-track-static') ||
-      !registry.includes('getMarketplaceDirectoryData')) {
-    violations.push('LiveProfilesScroll: public profiles must render from the verified, deduplicated server roster');
+  if (!registry.includes('vi-scroll-group') ||
+      !registry.includes('getMarketplaceDirectoryData') ||
+      !registry.includes('[false, true].map((isClone)') ||
+      !registry.includes('tabIndex={isClone ? -1 : undefined}')) {
+    violations.push('LiveProfilesScroll: public profiles must retain the verified roster and an accessible duplicated rail for continuous motion');
+  }
+  const motionPath = path.join(root, 'src/styles/motion.css');
+  const motion = fs.existsSync(motionPath) ? fs.readFileSync(motionPath, 'utf8') : '';
+  if (!motion.includes('.vi-scroll-track { animation: vi-scroll-x var(--motion-registry-loop) linear infinite;')) {
+    violations.push('LiveProfilesScroll: continuous registry animation must use the canonical motion system');
   }
 }
 const navPath = path.join(root, 'src/components/Nav.jsx');
