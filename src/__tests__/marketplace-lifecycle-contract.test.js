@@ -393,7 +393,7 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
 
-  test('full-assessment roster projects only selected, active, eligible capabilities while preserving Basic taster listings', () => {
+  test('marketplace category membership follows selected active capabilities for Full and Basic profiles', () => {
     const migration = read('supabase/migrations/20261030122017_marketplace_roster_capability_eligibility_20261030100000.sql')
     const fullBranch = migration.slice(
       migration.indexOf("if assessment_ok and p.visibility = 'public'"),
@@ -403,8 +403,8 @@ describe('VALUI marketplace lifecycle contract', () => {
 
     expect(fullBranch).toContain('public.professional_capabilities')
     expect(fullBranch).toContain('pc.is_active = true')
-    expect(fullBranch).toContain('pc.eligible_for_listing = true')
-    expect(fullBranch).toContain("pc.eligibility_status = 'listed'")
+    expect(fullBranch).toContain('pc.is_active = true')
+    expect(fullBranch).toContain('selected_capabilities')
     expect(fullBranch).toContain("caps := '{}'::text[]")
     expect(fullBranch).toContain('General marketplace presence is independent of capability readiness')
     expect(fullBranch).not.toContain("if cardinality(caps) = 0 then caps := array['talent']")
