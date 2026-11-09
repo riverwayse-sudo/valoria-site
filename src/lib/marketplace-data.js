@@ -249,21 +249,21 @@ export async function getMarketplaceRows(track = 'all') {
     .map(row => row.assessmentAccess === 'basic'
       ? { ...row, valu_index: null, cluster_scores: null, assessment_summary: null, designation: null }
       : row)
-  // Category routes expose only capabilities that passed the platform eligibility gate.
+  // Category membership follows the participant's active capability choice.
+  // Profile-level public listing, consent, assessment validity and revocation checks
+  // are enforced above; evidence review does not hide a selected category.
   return rows.filter(row => track === 'all' ||
-    row.capabilities.includes(normalizeTrack(track)) ||
-    (row.assessmentAccess === 'basic' && row.selectedCapabilities.includes(normalizeTrack(track))))
+    row.selectedCapabilities.includes(normalizeTrack(track)) ||
+    row.capabilities.includes(normalizeTrack(track)))
 }
 
 function countMarketplaceRows(rows) {
   const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
 
   for (const row of rows || []) {
-    // Basic cards may appear in their declared category without exposing Full assessment data.
-    // Full profiles remain restricted to capability-specific eligibility.
-    const visibleCapabilities = row.assessmentAccess === 'basic'
-      ? [...(row.capabilities || []), ...(row.selectedCapabilities || [])]
-      : (row.capabilities || [])
+    // Category counts follow active participant selections for Basic and Full profiles.
+    // Evidence status controls verification, not whether a chosen category is shown.
+    const visibleCapabilities = [...(row.capabilities || []), ...(row.selectedCapabilities || [])]
     for (const capability of new Set(visibleCapabilities)) {
       if (byTrack[capability]) byTrack[capability].add(row.professional_id)
     }
@@ -287,8 +287,8 @@ export async function getMarketplaceDirectoryData(track = 'all') {
   const normalizedTrack = normalizeTrack(track)
   return {
     rows: normalizedTrack === 'all' ? allRows : allRows.filter(row =>
-      row.capabilities.includes(normalizedTrack) ||
-      (row.assessmentAccess === 'basic' && row.selectedCapabilities.includes(normalizedTrack))
+      row.selectedCapabilities.includes(normalizedTrack) ||
+      row.capabilities.includes(normalizedTrack)
     ),
     counts: countMarketplaceRows(allRows),
   }
