@@ -1272,9 +1272,15 @@
 
 .vi-scroll-track {
   display: flex;
-  gap: 12px;
+  gap: 0;
   width: max-content;
   will-change: transform;
+}
+.vi-scroll-group {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 12px;
+  padding-right: 12px;
 }
 
 .vi-scroll-card {
@@ -2978,11 +2984,7 @@
 }
 
 
-/* Use a short, non-repeating row of verified public profiles. */
-.vi-scroll-mask{overflow:visible}
-.vi-scroll-track{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;transform:none}
-@media(max-width:1000px){.vi-scroll-track{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:640px){.vi-scroll-track{grid-template-columns:minmax(0,1fr)}}
+/* Continuous profile motion is controlled by the canonical motion system. */
 
 
 /* Four clear stages from first signal to opportunity. */
