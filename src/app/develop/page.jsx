@@ -3,6 +3,7 @@ import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import { PRIME_CLUSTERS } from '@/lib/brand'
 import '../pages.css'
+import '../audience-hero-imagery.css'
 
 export const metadata = {
   title: 'Valoria Develop | PRIME-Based Professional Development',
@@ -22,7 +23,7 @@ export default function DevelopPage() {
     <>
       <Nav />
       <main id="main-content" className="decision-page">
-        <section className="page-hero">
+        <section className="page-hero develop-cinematic-hero">
           <div className="page-hero-inner">
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">VALORIA DEVELOP</span></div>
             <h1 className="page-title">Development that closes<br /><em>the gap your assessment found.</em></h1>
