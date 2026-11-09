@@ -11,11 +11,11 @@ export const revalidate = 0
 
 export const metadata = {
   title: 'Valoria Institute — Africa’s Human Capital Institution',
-  description: 'The institutional infrastructure to recognise, develop and connect professional capability.',
+  description: 'Starting in Nigeria, Valoria builds the institutional infrastructure to recognise, develop and connect professional capability, with broader African and international audiences in view.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
   openGraph: {
     title: 'Valoria Institute — Africa’s Human Capital Institution',
-    description: 'Recognise capability. Develop potential. Connect expertise to opportunity.',
+    description: 'Starting in Nigeria, Valoria connects professional capability to development and opportunity for broader African and international audiences.',
     url: 'https://valoriainstitute.com/',
   },
 }
@@ -62,7 +62,7 @@ const system = [
 const audiences = [
   {
     number: '01',
-    label: 'EMPLOYERS & TALENT LEADERS',
+    label: 'FOR EMPLOYERS & TALENT LEADERS',
     title: 'Make more informed talent decisions.',
     body: 'Discover professionals through structured capability profiles, relevant experience and clearer context for sourcing and engagement.',
     href: '/atb-connect',
@@ -70,7 +70,7 @@ const audiences = [
   },
   {
     number: '02',
-    label: 'INSTITUTIONS & ORGANISATIONS',
+    label: 'FOR INSTITUTIONS & PARTNERS',
     title: 'Build capability with purpose.',
     body: 'Connect organisational priorities to professional development, capability insight and institutional programmes.',
     href: '/develop',
@@ -78,7 +78,7 @@ const audiences = [
   },
   {
     number: '03',
-    label: 'EVENT ORGANISERS & PROGRAMME TEAMS',
+    label: 'FOR EVENT ORGANISERS',
     title: 'Bring the right expertise into the room.',
     body: 'Find speakers and facilitators whose knowledge and experience are relevant to your audience, event or programme.',
     href: '/atb-spotlight',
@@ -86,11 +86,19 @@ const audiences = [
   },
   {
     number: '04',
-    label: 'PROFESSIONALS & PRACTITIONERS',
+    label: 'FOR PROFESSIONALS SEEKING DEVELOPMENT',
     title: 'Make your capability clearer.',
     body: 'Understand your professional strengths, build a credible profile and become discoverable for relevant opportunities.',
     href: '/valu',
     action: 'Begin with VALU',
+  },
+  {
+    number: '05',
+    label: 'FOR FACILITATORS & EXPERTS',
+    title: 'Put your expertise to work.',
+    body: 'Make your facilitation and specialist expertise visible to organisations seeking people who can lead learning, dialogue and meaningful change.',
+    href: '/marketplace/facilitators',
+    action: 'Explore facilitator pathways',
   },
 ]
 
@@ -121,8 +129,9 @@ export default function HomePage() {
               <a className="vi-ih-button vi-ih-button-quiet" href="/contact-us">Engage Valoria <span>↗</span></a>
             </div>
             <div className="vi-ih-hero-foot">
-              <span>INITIAL OPERATING MARKET <b>NIGERIA</b></span>
-              <span>BUILT FOR <b>AFRICAN & INTERNATIONAL RELEVANCE</b></span>
+              <span>INITIAL MARKET <b>NIGERIA</b></span>
+              <span>Starting in Nigeria. Built with broader African and international audiences in view.</span>
+              <span>Initial operating focus is Nigeria.</span>
             </div>
           </div>
           <div className="vi-ih-hero-index" aria-hidden="true">
@@ -178,8 +187,8 @@ export default function HomePage() {
             <Reveal className="vi-ih-prime-intro">
               <div className="vi-ih-kicker">THE PRIME FRAMEWORK</div>
               <h2 id="vi-ih-prime-title">A broader view of<br /><em>professional capability.</em></h2>
-              <p>Five dimensions. Seventeen skills. One shared language for understanding the capabilities that shape professional contribution.</p>
-              <a className="vi-ih-inline-link" href="/prime">Explore all 17 skills <span>↗</span></a>
+              <p>A shared language across five PRIME dimensions and seventeen skills, helping professionals and institutions understand the capabilities that shape professional contribution.</p>
+              <div className="vi-ih-prime-actions"><a className="vi-ih-inline-link" href="/prime">Explore all 17 skills <span>↗</span></a><a className="vi-ih-button vi-ih-button-gold" href="/valu/assessment/">START THE VALU TASTER <span>↗</span></a></div>
             </Reveal>
             <div className="vi-ih-dimensions">
               {dimensions.map(([letter, name, question, skills]) => (
@@ -199,9 +208,9 @@ export default function HomePage() {
             <Reveal className="vi-ih-section-intro">
               <div>
                 <div className="vi-ih-kicker">WHERE THE SYSTEM CREATES VALUE</div>
-                <h2 id="vi-ih-audiences-title">Different needs.<br /><em>One institutional partner.</em></h2>
+                <h2 id="vi-ih-audiences-title">Five ways to engage.<br /><em>One institutional partner.</em></h2>
               </div>
-              <p>Valoria works across the professional and organisational landscape. Start with the outcome you need to achieve.</p>
+              <p>Valoria works across the professional and organisational landscape. From talent sourcing and facilitation to professional development and institutional partnerships, start with the outcome you need to achieve.</p>
             </Reveal>
             <div className="vi-ih-audience-list">
               {audiences.map((item) => (
@@ -235,7 +244,7 @@ export default function HomePage() {
             </div>
             <div>
               <p>Tell us what your organisation is working towards. We can explore talent access, capability development, event expertise or a wider institutional partnership.</p>
-              <a className="vi-ih-button vi-ih-button-gold" href="/contact-us">Start an institutional conversation <span>↗</span></a>
+              <a className="vi-ih-button vi-ih-button-gold" href="/contact-us">START A CONVERSATION <span>↗</span></a>
             </div>
           </div>
         </section>
