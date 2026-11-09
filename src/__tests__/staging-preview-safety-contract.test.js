@@ -43,6 +43,21 @@ describe('staging preview safety boundary', () => {
     expect(nav).not.toContain('NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN')
   })
 
+  test('homepage profile cards use a continuous reduced-motion-aware marquee', () => {
+    const profiles = read('src/components/LiveProfilesScroll.jsx')
+    const home = read('src/app/home.css')
+    const motion = read('src/styles/motion.css')
+    expect(profiles).toContain('[false, true].map((isClone)')
+    expect(profiles).toContain('aria-hidden={isClone}')
+    expect(profiles).toContain('tabIndex={isClone ? -1 : undefined}')
+    expect(home).toContain('.vi-scroll-group')
+    expect(home).not.toContain('.vi-scroll-track{display:grid')
+    expect(motion).toContain('.vi-scroll-track { animation: vi-scroll-x')
+    expect(motion).toContain('vi-scroll-mask:hover .vi-scroll-track')
+    expect(motion).not.toContain('.home-redesign-root .vi-scroll-track { animation: none; }')
+    expect(motion).toContain('@media (prefers-reduced-motion: reduce)')
+  })
+
   test('preview navigation, journey cards, and reminders do not query account data', () => {
     expect(read('src/components/Nav.jsx')).toContain("if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') { setUser(null); setAuthChecked(true); return }")
     expect(read('src/components/ValoriaJourneyCards.jsx')).toContain("if (process.env.NEXT_PUBLIC_VALU_PREVIEW === '1') { setLoading(false); return }")
