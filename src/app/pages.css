@@ -421,3 +421,63 @@
 @media(prefers-reduced-motion:reduce){
   .homepage-event-popup-backdrop,.homepage-event-popup{animation:none}
 }
+
+
+/* Homepage event popup critique pass: a single title, full-height poster and legible event facts. */
+.homepage-event-popup{grid-template-columns:minmax(0,1fr) minmax(0,1fr);overflow:hidden;max-height:min(82svh,680px);min-height:560px}
+.homepage-event-popup-poster{display:flex;min-height:100%;background:#1A1A2E}
+.homepage-event-popup .event-poster{display:flex;flex:1;flex-direction:column;justify-content:space-between;width:100%;height:100%;min-height:560px;box-sizing:border-box;padding:30px 26px}
+.homepage-event-popup .poster-session{font-size:10px;color:#E0C879;letter-spacing:.13em}
+.homepage-event-popup .poster-title h3{font-size:clamp(29px,3vw,39px);line-height:1.08}
+.homepage-event-popup .poster-title p{font-size:clamp(20px,2vw,25px);line-height:1.15}
+.homepage-event-popup .poster-mark{display:none}
+.homepage-event-popup .poster-details{font-size:12px;line-height:1.45;padding-left:15px;gap:12px}
+.homepage-event-popup .poster-details b{font-size:14px;color:#FAFAF7}
+.homepage-event-popup .poster-details span{font-size:10px;color:#D4C9A8;letter-spacing:.08em}
+.homepage-event-popup-copy{padding:clamp(28px,4vw,46px);justify-content:center}
+.homepage-event-popup-copy h2{font-size:clamp(28px,3vw,38px);font-weight:500;line-height:1.12;max-width:13ch}
+.homepage-event-popup-copy>p:not(.homepage-event-popup-eyebrow){font-size:15px;line-height:1.7;color:#403F4A;margin-top:18px}
+.homepage-event-popup-actions .event-register-button{background:#C9A84C!important;border:1px solid #C9A84C!important;color:#1A1A2E!important;font-weight:900!important;min-height:52px}
+.homepage-event-popup-actions .event-register-button:hover{background:#1A1A2E!important;color:#F7F4EE!important}
+@media(max-width:700px){
+ .homepage-event-popup{grid-template-columns:1fr;min-height:0;max-height:92svh;overflow:auto}
+ .homepage-event-popup-poster{min-height:0}
+ .homepage-event-popup .event-poster{min-height:360px;height:auto;padding:22px 20px}
+ .homepage-event-popup .poster-details{font-size:11px}
+ .homepage-event-popup-copy{padding:24px 22px}
+ .homepage-event-popup-copy h2{font-size:28px}
+ .homepage-event-popup-copy>p:not(.homepage-event-popup-eyebrow){font-size:14px}
+}
+
+
+/* Homepage event popup critique pass: a single title, full-height poster and legible event facts. */
+.homepage-event-popup{grid-template-columns:minmax(0,1fr) minmax(0,1fr);overflow:hidden;max-height:min(82svh,680px);min-height:560px}
+.homepage-event-popup-poster{display:flex;min-height:100%;background:#1A1A2E}
+.homepage-event-popup .event-poster{display:flex;flex:1;flex-direction:column;justify-content:space-between;width:100%;height:100%;min-height:560px;box-sizing:border-box;padding:30px 26px}
+.homepage-event-popup .poster-session{font-size:10px;color:#E0C879;letter-spacing:.13em}
+.homepage-event-popup .poster-title h3{font-size:clamp(29px,3vw,39px);line-height:1.08}
+.homepage-event-popup .poster-title p{font-size:clamp(20px,2vw,25px);line-height:1.15}
+.homepage-event-popup .poster-mark{display:none}
+.homepage-event-popup .poster-details{font-size:12px;line-height:1.45;padding-left:15px;gap:12px}
+.homepage-event-popup .poster-details b{font-size:14px;color:#FAFAF7}
+.homepage-event-popup .poster-details span{font-size:10px;color:#D4C9A8;letter-spacing:.08em}
+.homepage-event-popup-copy{padding:clamp(28px,4vw,46px);justify-content:center}
+.homepage-event-popup-copy h2{font-size:clamp(28px,3vw,38px);font-weight:500;line-height:1.12;max-width:13ch}
+.homepage-event-popup-copy>p:not(.homepage-event-popup-eyebrow){font-size:15px;line-height:1.7;color:#403F4A;margin-top:18px}
+.homepage-event-popup-actions .event-register-button{background:#C9A84C!important;border:1px solid #C9A84C!important;color:#1A1A2E!important;font-weight:900!important;min-height:52px}
+.homepage-event-popup-actions .event-register-button:hover{background:#1A1A2E!important;color:#F7F4EE!important}
+@media(max-width:700px){
+ .homepage-event-popup{grid-template-columns:1fr;min-height:0;max-height:92svh;overflow:auto}
+ .homepage-event-popup-poster{min-height:0}
+ .homepage-event-popup .event-poster{min-height:360px;height:auto;padding:22px 20px}
+ .homepage-event-popup .poster-details{font-size:11px}
+ .homepage-event-popup-copy{padding:24px 22px}
+ .homepage-event-popup-copy h2{font-size:28px}
+ .homepage-event-popup-copy>p:not(.homepage-event-popup-eyebrow){font-size:14px}
+}
+
+@media(max-height:700px) and (min-width:701px){
+ .homepage-event-popup{min-height:0;max-height:90svh}
+ .homepage-event-popup-poster,.homepage-event-popup .event-poster{min-height:0}
+ .homepage-event-popup .event-poster{padding:18px 22px}
+}

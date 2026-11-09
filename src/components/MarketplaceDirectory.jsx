@@ -64,6 +64,9 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       }
       if(!q) return true
       return [p.full_name,p.headline,p.current_job_title,p.atb_id,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
+    }).sort((a, b) => {
+      const isAvailable = value => /^(available|accepting|open)$/i.test(displayText(value))
+      return Number(isAvailable(b.availability_status)) - Number(isAvailable(a.availability_status))
     })
   },[rows,activeTrack,query,sector,cluster,skill,scoreBand])
 
@@ -82,10 +85,10 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             {activeTrack === 'facilitator' && <>Find a facilitator<br/><i>for the work ahead.</i></>}
           </h1>
           <p className={styles.lede}>
-            {activeTrack === 'all' && 'Explore public professional profiles at Basic and Full levels. Basic listings show public profile details and declared capability selections; Full listings also show current VALU points, assessment-derived insight and evidence-approved capability lanes.'}
-            {activeTrack === 'candidate' && 'ATB Connect helps employers explore public professional profiles by sector and declared capability. Full listings unlock evidence-approved capability discovery and VALU insight.'}
-            {activeTrack === 'speaker' && 'ATB Spotlight helps event organisers discover professionals who have selected the speaker pathway. Evidence-approved speaker listings unlock capability-specific discovery; Basic profiles show public professional information and selections.'}
-            {activeTrack === 'facilitator' && 'ATB Spotlight helps training buyers discover professionals who have selected the facilitator pathway. Evidence-approved facilitator listings unlock capability-specific discovery; Basic profiles show public professional information and selections. For a structured team development programme, explore Valoria Develop.'}
+            {activeTrack === 'all' && 'Browse professionals by role, sector and skills. Open a profile to review their public details and capabilities.'}
+            {activeTrack === 'candidate' && 'Find professionals by role, sector and skills, then review their public profiles and capabilities.'}
+            {activeTrack === 'speaker' && 'Discover speakers and review their professional focus, experience and public profile.'}
+            {activeTrack === 'facilitator' && 'Discover facilitators by professional focus and sector. For a structured team development programme, explore Valoria Develop.'}
           </p>
           {activeTrack === 'facilitator' && <Link className={styles.view} href="/programmes">EXPLORE VALORIA DEVELOP</Link>}
           <nav className={styles.tabs} aria-label="Filter by declared role">{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
@@ -112,7 +115,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
           </select>
           {(query || sector || cluster || skill || scoreBand) && <button onClick={clearFilters}>CLEAR</button>}
         </div>
-        <p className={styles.filterNote}>Filter by declared role, PRIME cluster, declared skill, sector and VALU points band. Seniority is not currently included because no approved public seniority field exists; private work-history data is not inferred or exposed as a filter.</p>
+        <details className={styles.filterHelp}><summary>How filtering works</summary><p>Filter by selected capability, PRIME cluster, declared skill, sector or VALU points. We only show information approved for public display.</p></details>
       </section>
       <section className={styles.directory}>
         <div className={styles.container}>
@@ -180,18 +183,9 @@ function getCapabilitySelection(profile) {
 }
 
 function Profile({p, onSelect}) {
-  const selectedCaps = new Set([
-    ...(Array.isArray(p.selectedCapabilities) ? p.selectedCapabilities : []),
-    ...(Array.isArray(p.selected_capabilities) ? p.selected_capabilities : []),
-    ...(Array.isArray(p.capabilities) ? p.capabilities : []),
-    ...(Array.isArray(p.tracks) ? p.tracks : []),
-    p.track,
-  ].map(normalize).filter(Boolean))
-  const capabilityBadges = [
-    { key:'candidate', title:'TALENT', selected:selectedCaps.has('candidate') },
-    { key:'speaker', title:'SPEAKER', selected:selectedCaps.has('speaker') },
-    { key:'facilitator', title:'FACILITATOR', selected:selectedCaps.has('facilitator') },
-  ]
+  const selectedCaps = getCapabilitySelection(p)
+  const capabilityLabels = [['candidate','Talent'],['speaker','Speaker'],['facilitator','Facilitator']]
+    .filter(([key]) => selectedCaps.has(key)).map(([,label]) => label)
   const isBasic = p.assessment_access === 'basic'
   const designation = displayText(p.designation)
   const designationClass = {
@@ -206,49 +200,41 @@ function Profile({p, onSelect}) {
   const role = displayText(p.current_job_title || p.headline)
   const sector = displayText(p.industry)
   const summary = displayText(p.assessment_summary)
+  const available = /available|accepting|open/i.test(availability) && !/unavailable|not available|closed/i.test(availability)
+  const monogram = role.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase() || 'V'
 
-  return <article className={styles.card}>
+  return <article className={`${styles.card} ${!available && availability ? styles.unavailableCard : ''}`}>
     <header className={styles.cardHeader}>
       <div className={styles.identity}>
-        <ValoriaAvatar src={p.photo_url} seed={p.professional_id || profileId} size={64} className={styles.avatar}/>
+        {p.photo_url
+          ? <ValoriaAvatar src={p.photo_url} seed={p.professional_id || profileId} size={58} className={styles.avatar}/>
+          : <span className={styles.avatarMonogram} aria-hidden="true">{monogram}</span>}
         <div className={styles.identityCopy}>
-          <span className={styles.cardIdLabel}>PROFESSIONAL ID</span>
-          <strong className={styles.profileName}>{profileId || 'ATB ID PENDING'}</strong>
-          <span className={styles.assessedStatus}>{isBasic ? 'BASIC LISTING' : 'FULL ASSESSMENT'}</span>
+          <strong className={styles.profileName}>{role || 'Professional profile'}</strong>
+          <span className={styles.cardIdLabel}>{profileId || 'ATB ID PENDING'}</span>
         </div>
       </div>
       {!isBasic && <div className={styles.valu} aria-label={`VALU Index ${p.valu_index} points`}>
-        <small>VALU INDEX</small>
-        <b>{p.valu_index}</b>
-        <span>POINTS</span>
+        <small>VALU INDEX</small><b>{p.valu_index}</b><span>POINTS</span>
       </div>}
     </header>
 
-    <div className={styles.cardRole}>
-      <p className={styles.career}>{role || 'Professional profile'}</p>
-      {sector && <p className={styles.specialisation}>{sector}</p>}
+    {sector && <p className={styles.specialisation}>{sector}</p>}
+    <div className={styles.profileDetails}>
+      {p.location && <span>{displayText(p.location)}</span>}
+      {availability && <span className={available ? styles.availableStatus : styles.unavailableStatus}>{titleCase(availability)}</span>}
     </div>
 
-    {(p.location || availability) && <div className={styles.profileDetails}>
-      {p.location && <span>{displayText(p.location)}</span>}
-      {availability && <span>{titleCase(availability)} availability</span>}
-    </div>}
-
-    <section className={styles.cardCapabilities} aria-label={`Declared capabilities: ${capabilityBadges.filter(b=>b.selected).map(b=>b.title).join(', ') || 'none selected'}`}>
+    {capabilityLabels.length > 0 && <section className={styles.cardCapabilities} aria-label={`Selected capabilities: ${capabilityLabels.join(', ')}`}>
       <span className={styles.capabilityLabel}>CAPABILITIES</span>
-      <div className={styles.capabilities}>
-        {capabilityBadges.map(badge=><span className={`${styles.capabilityBadge} ${badge.selected ? styles.capabilitySelected : styles.capabilityUnselected}`} key={badge.key}>
-          <strong>{badge.title}</strong>
-          <small>{badge.selected ? 'SELECTED' : 'NOT SELECTED'}</small>
-        </span>)}
-      </div>
-    </section>
+      <div className={styles.selectedCapabilityList}>{capabilityLabels.map(label=><span key={label}>{label}</span>)}</div>
+    </section>}
 
     <footer className={styles.cardFooter}>
       <div className={styles.cardCredential}>
         {isBasic
-          ? <span className={styles.basicCredential}>BASIC PUBLIC LISTING</span>
-          : <><span className={`${styles.tierBadge} ${designationClass}`}>{designation || 'VALU ASSESSED'}</span><span className={styles.assessmentState}>FULL VALU ASSESSED</span></>}
+          ? <span className={styles.basicCredential}>BASIC LISTING</span>
+          : <><span className={`${styles.tierBadge} ${designationClass}`}>{designation || 'VALU ASSESSED'}</span><span className={styles.assessmentState}>FULL ASSESSMENT</span></>}
       </div>
       {skills.length > 0 && <div className={styles.profileSkills}>{skills.map(value=><span key={value}>{value}</span>)}</div>}
     </footer>
@@ -258,10 +244,9 @@ function Profile({p, onSelect}) {
       <p className={styles.assessmentSummary}>{summary}</p>
     </section>}
 
-    <button type="button" onClick={onSelect} className={`${styles.view} ${styles.viewButton}`} aria-haspopup="dialog">VIEW PROFILE</button>
+    <button type="button" onClick={onSelect} className={`${styles.view} ${styles.viewButton}`} aria-haspopup="dialog">View profile <span aria-hidden="true">→</span></button>
   </article>
 }
-
 
 // The public preview receives only the consent-gated, route-safe roster projection.
 function ProfilePreviewModal({ profile, onClose }) {
