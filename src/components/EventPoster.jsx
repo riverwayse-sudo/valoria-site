@@ -3,11 +3,12 @@ import { formatSessionDate } from '@/lib/professionalStandardSeries'
 const OUTCOMES = {
   '02': ['Problem selection', 'Strategic trade-offs', 'Three-question diagnostic'],
   '03': ['Output → impact', 'The indispensability trap', 'A sustainable operating model'],
+  '04': ['Building influence', 'Earning trust', 'Shaping decisions'],
 }
 
 export default function EventPoster({ session }) {
   const outcomes = OUTCOMES[session.id] || []
-  const date = formatSessionDate(session)
+  const date = session.start ? new Intl.DateTimeFormat('en-NG', { timeZone: 'Africa/Lagos', weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(session.start)) : formatSessionDate(session)
   const time = session.start ? new Intl.DateTimeFormat('en-NG', { timeZone: 'Africa/Lagos', hour: 'numeric', minute: '2-digit' }).format(new Date(session.start)) : '10:00 AM'
   const titleParts = session.title.split(': ')
   const lead = titleParts[0]
@@ -21,7 +22,7 @@ export default function EventPoster({ session }) {
         <span className="poster-brand">VALORIA<br /><small>INSTITUTE</small></span>
       </div>
       <div className="poster-rule" />
-      <div className="poster-session">{session.cluster}</div>
+      <div className="poster-session">PRIME CLUSTER · {session.cluster}</div>
       <div className="poster-main">
         <div className="poster-title">
           <h3>{lead}{titleParts.length > 1 && ':'}</h3>
@@ -35,7 +36,7 @@ export default function EventPoster({ session }) {
           {outcomes.map((item, index) => <div key={item}><b>0{index + 1}</b>{item}</div>)}
         </div>
         <div className="poster-details">
-          <div><b>{date.replace(', 2026', '')}</b><span>{time} WAT</span></div>
+          <div><b>{date}</b><span>{time} WAT</span></div>
           {session.speaker && <div><b>{session.speaker}</b><span>GUEST SPEAKER</span></div>}
           {session.host && <div><b>{session.host}</b><span>HOST</span></div>}
         </div>
