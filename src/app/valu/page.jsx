@@ -15,7 +15,8 @@ export default function ValuPage() {
     <Nav />
     <main className="valu-page">
       <section className="valu-hero">
-        <div className="valu-wrap">
+        <div className="valu-wrap valu-hero-grid">
+          <div className="valu-hero-copy">
           <div className="valu-kicker"><span /> THE VALU INDEX</div>
           <h1>Make your capability<br /><em>visible and actionable.</em></h1>
           <p className="valu-lede">The VALU Taster introduces the PRIME framework and gives you an initial view of your professional capability. Register your details first, complete the guided taster, then create your secure Valoria account when you are ready to continue to the separate Full VALU assessment and receive your official points-based VALU Index.</p>
@@ -24,6 +25,20 @@ export default function ValuPage() {
             <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW VALU SUPPORTS YOUR GROWTH <span>↓</span></a>
           </div>
           <div className="valu-meta"><span>VALU TASTER</span><i>·</i><span>FULL ASSESSMENT</span><i>·</i><span>5 PRIME DIMENSIONS</span></div>
+          </div>
+          <div className="valu-hero-visual" aria-hidden="true">
+            <div className="valu-orbit">
+              <div className="valu-orbit-ring valu-orbit-ring-one" />
+              <div className="valu-orbit-ring valu-orbit-ring-two" />
+              <div className="valu-orbit-core"><span>VALU</span><strong>INDEX</strong><small>CAPABILITY INTELLIGENCE</small></div>
+              <div className="valu-orbit-node valu-node-p"><b>P</b><span>PRESENCE</span></div>
+              <div className="valu-orbit-node valu-node-r"><b>R</b><span>RELATIONSHIPS</span></div>
+              <div className="valu-orbit-node valu-node-i"><b>I</b><span>INTELLIGENCE</span></div>
+              <div className="valu-orbit-node valu-node-m"><b>M</b><span>MASTERY</span></div>
+              <div className="valu-orbit-node valu-node-e"><b>E</b><span>ENTERPRISE</span></div>
+            </div>
+            <p className="valu-orbit-caption">FIVE CONNECTED DIMENSIONS · ONE PROFESSIONAL PICTURE</p>
+          </div>
         </div>
       </section>
 
