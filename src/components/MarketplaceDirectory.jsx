@@ -192,7 +192,7 @@ function Profile({p, onSelect}) {
   const isFullAssessment = p.assessment_access === 'full' && p.valu_index != null
   const isBasic = !isFullAssessment
   const tier = isFullAssessment ? getValuTier(p.valu_index, 'full') : null
-  const profileId = displayText(p.atb_id || 'PROFILE ID PENDING')
+  const profileId = displayText(p.atb_id || 'PROFILE ID PENDING').normalize('NFKC')
   // This text is sourced from the canonical VALU Index report projection, never the member's bio/headline.
   const assessmentSummary = isFullAssessment ? displayText(p.assessment_summary || '') : ''
   return <article className={styles.card}>
@@ -282,7 +282,7 @@ function ProfilePreviewModal({ profile, onClose }) {
   const skills = labelValues(profile.skills).slice(0, 8)
   const topics = labelValues(profile.topics).slice(0, 6)
   const assessmentSummary = isFull ? displayText(profile.assessment_summary || '') : ''
-  const profileHref = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
+  const profileHref = `/profile/${encodeURIComponent(displayText(profile.professional_id || profile.id))}`
 
   return (
     <div
