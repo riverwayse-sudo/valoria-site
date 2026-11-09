@@ -10,8 +10,8 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export const metadata = {
-  title: 'Valoria Institute — Africa’s Human Capital Institution',
-  description: 'Starting in Nigeria, Valoria builds the institutional infrastructure to recognise, develop and connect professional capability, with broader African and international audiences in view.',
+  title: 'Valoria Institute — Understand capability. Build it. Put it to work.',
+  description: 'Valoria Institute helps people and organisations understand professional capability, strengthen it through development, and connect expertise to meaningful work.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
   openGraph: {
     title: 'Valoria Institute — Africa’s Human Capital Institution',
@@ -121,16 +121,16 @@ export default function HomePage() {
           </div>
           <div className="vi-ih-hero-shade" aria-hidden="true" />
           <div className="vi-ih-hero-content">
-            <div className="vi-ih-eyebrow"><span /> AFRICA’S HUMAN CAPITAL INSTITUTION</div>
-            <h1 id="vi-ih-title">Talent is not the problem.<br /><em>Infrastructure is.</em></h1>
-            <p className="vi-ih-hero-lede">We build the systems that help organisations recognise capability, develop people and connect professional expertise to meaningful opportunity.</p>
+            <div className="vi-ih-eyebrow"><span /> A PROFESSIONAL CAPABILITY INSTITUTION</div>
+            <h1 id="vi-ih-title">Understand your capability.<br /><em>Put it to work.</em></h1>
+            <p className="vi-ih-hero-lede">Valoria helps professionals understand what they bring, build what comes next, and become easier to discover. Organisations use Valoria to find relevant talent, speakers and facilitators, and develop the capabilities their work requires.</p>
             <div className="vi-ih-actions">
-              <a className="vi-ih-button vi-ih-button-gold" href="#institutional-system">Explore the institution <span>↗</span></a>
-              <a className="vi-ih-button vi-ih-button-quiet" href="/contact-us">Engage Valoria <span>↗</span></a>
+              <a className="vi-ih-button vi-ih-button-gold" href="#how-valoria-works">How Valoria works <span>↗</span></a>
+              <a className="vi-ih-button vi-ih-button-quiet" href="/valu">Start with VALU <span>↗</span></a>
             </div>
             <div className="vi-ih-hero-foot">
               <span>INITIAL MARKET <b>NIGERIA</b></span>
-              <span>Starting in Nigeria. Built with broader African and international audiences in view.</span>
+              <span>Built for an international audience. Operating first in Nigeria.</span>
               <span>Initial operating focus is Nigeria.</span>
             </div>
           </div>
@@ -159,14 +159,30 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="vi-ih-system" id="institutional-system" aria-labelledby="vi-ih-system-title">
+
+        <section className="vi-ih-how" id="how-valoria-works" aria-labelledby="vi-ih-how-title">
+          <div className="vi-ih-wrap">
+            <div className="vi-ih-how-head">
+              <div><div className="vi-ih-kicker">VALORIA, IN PRACTICE</div><h2 id="vi-ih-how-title">A clearer picture of capability.<br /><em>A practical path forward.</em></h2></div>
+              <p>Valoria connects assessment, professional development and talent discovery. You can enter through the pathway that matches what you need.</p>
+            </div>
+            <div className="vi-ih-how-steps">
+              <article><span>01</span><small>UNDERSTAND</small><h3>Explore your capability</h3><p>Start with the VALU taster to become familiar with PRIME. It is an introduction, not your official VALU Index.</p><a href="/valu">Understand VALU <b>↗</b></a></article>
+              <article><span>02</span><small>ASSESS</small><h3>Receive your VALU Index</h3><p>After creating your account, complete the separate full assessment. Your official result is expressed in points and gives you a structured view of your capability.</p><a href="/valu">How the Index works <b>↗</b></a></article>
+              <article><span>03</span><small>DEVELOP & PRESENT</small><h3>Build your professional profile</h3><p>Use your capability insight to shape your professional profile, identify development priorities and present your experience clearly.</p><a href="/signup">Create your account <b>↗</b></a></article>
+              <article><span>04</span><small>CONNECT</small><h3>Find relevant next steps</h3><p>Explore development pathways, professional opportunities and the Registry, where eligible public profiles can be discovered.</p><a href="/marketplace">Explore the Registry <b>↗</b></a></article>
+            </div>
+            <p className="vi-ih-how-note">For organisations, Valoria provides pathways to discover talent, source speakers and facilitators, and discuss capability development.</p>
+          </div>
+        </section>
+\n        <section className="vi-ih-system" id="institutional-system" aria-labelledby="vi-ih-system-title">
           <div className="vi-ih-wrap">
             <Reveal className="vi-ih-section-intro">
               <div>
                 <div className="vi-ih-kicker">THE VALORIA INSTITUTIONAL SYSTEM</div>
-                <h2 id="vi-ih-system-title">One connected system.<br /><em>Four distinct functions.</em></h2>
+                <h2 id="vi-ih-system-title">One institution.<br /><em>Four connected functions.</em></h2>
               </div>
-              <p>Each part has a defined role. Together, they create a connected pathway from understanding capability to putting it to work.</p>
+              <p>PRIME gives Valoria its shared capability framework. VALU turns assessment into insight. The Registry makes approved professional expertise discoverable. Valoria Develop supports growth.</p>
             </Reveal>
             <div className="vi-ih-system-list">
               {system.map((item) => (
