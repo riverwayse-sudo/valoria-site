@@ -992,3 +992,20 @@
 .identity .profileName{display:block;color:#1A1A2E;font-size:clamp(15px,1.25vw,18px);font-weight:900;line-height:1.2;letter-spacing:-.02em;overflow-wrap:anywhere}
 .cardIdLabel{display:block;margin-top:5px;color:#6F6A60;font-family:var(--font);font-size:9px;font-weight:800;letter-spacing:.07em}
 @media(max-width:680px){.profileRole{font-size:11px}.identity .profileName{font-size:16px}}
+
+/* Marketplace card hierarchy: score, tier and availability are distinct, readable signals. */
+.scoreDesignation{display:flex;align-items:center;gap:9px;min-width:0;flex-shrink:0}
+.scoreDesignation .valu{position:static!important;display:flex;flex-direction:column;align-items:flex-end;gap:2px;width:auto!important;flex:0 0 auto!important;text-align:right}
+.scoreDesignation .valu b{font-size:25px;line-height:1}
+.scoreDesignation .tierBadge{min-width:0;max-width:120px;min-height:34px;padding:6px 9px;font-size:8px}
+.cardAvailability{display:flex;align-items:center;min-height:26px;margin-top:8px}
+.cardAvailability .availabilityBadge{position:static!important;top:auto!important;right:auto!important}
+.profileMeta{display:flex;flex-wrap:wrap;gap:4px 12px;margin:8px 0 0!important;padding:0!important}
+.profileMeta p{margin:0!important;color:#514C43!important;font-size:10px!important;line-height:1.4}
+.specialistCapabilities{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.specialistCapabilities .capabilitySelected{display:inline-flex;align-items:center;padding:6px 9px;border:1px solid #C9A84C;border-radius:5px;background:#EDE8DC;color:#1A1A2E;font-size:9px;font-weight:800}
+.strongestCapability{display:inline-flex;align-self:flex-start;margin-top:10px;padding:5px 8px;border-radius:4px;background:#EDE8DC;color:#2E2E4A;font-size:9px;font-weight:800;line-height:1.3}
+.assessmentPending{display:inline-flex;align-items:center;color:#514C43;font-size:9px;font-weight:700;line-height:1.4}
+.shortlistCta{display:inline-flex;align-items:center;gap:12px;margin:0 0 22px;padding:11px 15px;border:1px solid #C9A84C;border-radius:4px;color:#FAFAF7;text-decoration:none;font-size:9px;font-weight:900;letter-spacing:.1em}
+.shortlistCta:hover{background:#C9A84C;color:#1A1A2E}
+@media(max-width:520px){.scoreDesignation{gap:6px}.scoreDesignation .valu b{font-size:22px}.scoreDesignation .tierBadge{max-width:105px}}
