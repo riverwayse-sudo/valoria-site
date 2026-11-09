@@ -249,16 +249,22 @@ export async function getMarketplaceRows(track = 'all') {
     .map(row => row.assessmentAccess === 'basic'
       ? { ...row, valu_index: null, cluster_scores: null, assessment_summary: null, designation: null }
       : row)
-  return rows.filter(row => track === 'all' || row.capabilities.includes(normalizeTrack(track)))
+  // Category tabs count declared selections; this does not bypass separate evidence eligibility.
+  return rows.filter(row => track === 'all' ||
+    row.selectedCapabilities.includes(normalizeTrack(track)) ||
+    row.capabilities.includes(normalizeTrack(track)))
 }
 
 function countMarketplaceRows(rows) {
   const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
 
   for (const row of rows || []) {
-    const visibleCapabilities = row.assessmentAccess === 'basic'
-      ? [...(row.capabilities || []), ...(row.selectedCapabilities || [])]
-      : (row.capabilities || [])
+    // Count declared selections consistently for Basic and Full profiles.
+    // Capability evidence eligibility remains a separate governance decision.
+    const visibleCapabilities = [
+      ...(row.selectedCapabilities || []),
+      ...(row.capabilities || []),
+    ]
     for (const capability of new Set(visibleCapabilities)) {
       if (byTrack[capability]) byTrack[capability].add(row.professional_id)
     }
@@ -282,8 +288,8 @@ export async function getMarketplaceDirectoryData(track = 'all') {
   const normalizedTrack = normalizeTrack(track)
   return {
     rows: normalizedTrack === 'all' ? allRows : allRows.filter(row =>
+      row.selectedCapabilities.includes(normalizedTrack) ||
       row.capabilities.includes(normalizedTrack)
-      || (row.assessmentAccess === 'basic' && row.selectedCapabilities.includes(normalizedTrack))
     ),
     counts: countMarketplaceRows(allRows),
   }
