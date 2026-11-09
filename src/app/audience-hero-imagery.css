@@ -23,3 +23,23 @@
     background-position: 48% center;
   }
 }
+
+/* Accessible PRIME cluster explorer */
+.prime-cluster{display:block}
+.prime-cluster-summary{display:grid;grid-template-columns:72px minmax(0,1fr) 36px;gap:24px;align-items:center;cursor:pointer;list-style:none;outline-offset:8px}
+.prime-cluster-summary::-webkit-details-marker{display:none}
+.prime-cluster-heading{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.prime-cluster-heading .prime-name{font-size:clamp(20px,2.5vw,28px);margin:0 0 5px}
+.prime-cluster-heading .prime-subtitle{margin:0}
+.prime-cluster-toggle{display:grid;place-items:center;width:34px;height:34px;border:1px solid rgba(201,168,76,.45);border-radius:50%;color:#C9A84C;font-size:22px;font-weight:300;transition:transform .25s ease,background .25s ease}
+.prime-cluster[open] .prime-cluster-toggle{transform:rotate(45deg);background:rgba(201,168,76,.1)}
+.prime-cluster-content{grid-column:2;margin:22px 60px 0 96px;animation:prime-panel-in .28s ease both}
+.prime-cluster-content .prime-body{max-width:700px}
+@keyframes prime-panel-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:700px){
+  .prime-cluster-summary{grid-template-columns:42px minmax(0,1fr) 30px;gap:14px}
+  .prime-cluster-summary .prime-letter{font-size:32px}
+  .prime-cluster-content{margin:18px 0 0 56px}
+  .prime-cluster-toggle{width:30px;height:30px}
+}
+@media(prefers-reduced-motion:reduce){.prime-cluster-toggle,.prime-cluster-content{transition:none;animation:none}}
