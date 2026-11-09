@@ -75,39 +75,43 @@ export default async function LiveProfilesScroll() {
         <div className="live-profiles-public-state" role="status">Public profile data could not be verified right now. Please try the marketplace again shortly.</div>
       ) : qualityProfiles.length > 0 ? (
         <>
-          <div className="vi-scroll-mask vi-scroll-mask-static">
-            <div className="vi-scroll-track vi-scroll-track-static">
-              {qualityProfiles.map(profile => {
-                const tracks = Array.isArray(profile.selectedCapabilities) && profile.selectedCapabilities.length
-                  ? profile.selectedCapabilities
-                  : Array.isArray(profile.selected_capabilities) && profile.selected_capabilities.length
-                    ? profile.selected_capabilities
-                    : (Array.isArray(profile.capabilities) ? profile.capabilities : [])
-                const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
-                const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
-                const profileHref = profile.atb_id ? `/profile/${encodeURIComponent(profile.atb_id)}` : '/marketplace'
-                const development = developmentArea(profile.cluster_scores)
-                const isBasic = profile.assessment_access === 'basic'
-                return (
-                  <Link href={profileHref} key={profile.id} className="vi-scroll-card" data-marketplace-intent={normalizedTracks[0] || 'all'} aria-label={`View public professional profile ${profile.atb_id || ''}`}>
-                    <div className="vi-scroll-avatar" aria-hidden="true"><ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} /></div>
-                    <div className="vi-scroll-copy">
-                      <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>PUBLIC</i></div>
-                      <strong className="vi-scroll-name">{displayText(profile.full_name)}</strong>
-                      <div className="vi-scroll-headline">{displayText(profile.headline)}</div>
-                      <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'NO DECLARED ROLE'}</div>
-                      <div className="vi-scroll-designation">{isBasic ? 'BASIC LISTING' : displayText(profile.designation)}</div>
-                      {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div><div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div></>}
-                    </div>
-                    <div className="vi-scroll-score" aria-label={isBasic ? 'Basic marketplace listing' : `VALU Index ${profile.valu_index} points`}>
-                      <span className="vi-scroll-score-label">{isBasic ? 'LISTING LEVEL' : 'VALU INDEX'}</span>
-                      <strong>{isBasic ? 'BASIC' : profile.valu_index}</strong>
-                      {!isBasic && <span className="vi-scroll-score-max">points</span>}
-                    </div>
-                    <span className="vi-scroll-card-arrow" aria-hidden="true">↗</span>
-                  </Link>
-                )
-              })}
+          <div className="vi-scroll-mask">
+            <div className="vi-scroll-track" aria-label="Public professional profiles">
+              {[false, true].map((isClone) => (
+                <div className="vi-scroll-group" key={isClone ? 'clone' : 'original'} aria-hidden={isClone}>
+                  {qualityProfiles.map(profile => {
+                    const tracks = Array.isArray(profile.selectedCapabilities) && profile.selectedCapabilities.length
+                      ? profile.selectedCapabilities
+                      : Array.isArray(profile.selected_capabilities) && profile.selected_capabilities.length
+                        ? profile.selected_capabilities
+                        : (Array.isArray(profile.capabilities) ? profile.capabilities : [])
+                    const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
+                    const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
+                    const profileHref = profile.atb_id ? `/profile/${encodeURIComponent(profile.atb_id)}` : '/marketplace'
+                    const development = developmentArea(profile.cluster_scores)
+                    const isBasic = profile.assessment_access === 'basic'
+                    return (
+                      <Link href={profileHref} key={profile.id} tabIndex={isClone ? -1 : undefined} className="vi-scroll-card" data-marketplace-intent={normalizedTracks[0] || 'all'} aria-label={`View public professional profile ${profile.atb_id || ''}`}>
+                        <div className="vi-scroll-avatar" aria-hidden="true"><ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} /></div>
+                        <div className="vi-scroll-copy">
+                          <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>PUBLIC</i></div>
+                          <strong className="vi-scroll-name">{displayText(profile.full_name)}</strong>
+                          <div className="vi-scroll-headline">{displayText(profile.headline)}</div>
+                          <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'NO DECLARED ROLE'}</div>
+                          <div className="vi-scroll-designation">{isBasic ? 'BASIC LISTING' : displayText(profile.designation)}</div>
+                          {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div><div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div></>}
+                        </div>
+                        <div className="vi-scroll-score" aria-label={isBasic ? 'Basic marketplace listing' : `VALU Index ${profile.valu_index} points`}>
+                          <span className="vi-scroll-score-label">{isBasic ? 'LISTING LEVEL' : 'VALU INDEX'}</span>
+                          <strong>{isBasic ? 'BASIC' : profile.valu_index}</strong>
+                          {!isBasic && <span className="vi-scroll-score-max">points</span>}
+                        </div>
+                        <span className="vi-scroll-card-arrow" aria-hidden="true">↗</span>
+                      </Link>
+                    )
+                  })}
+                </div>
+              ))}
             </div>
           </div>
           <div className="live-profiles-bottom"><Link href="/marketplace" className="live-profiles-link">VIEW THE MARKETPLACE <span>→</span></Link></div>
