@@ -91,7 +91,7 @@ describe('VALU presentation consistency', () => {
     expect(alignment).toContain('align-items: flex-start !important')
   })
 
-  test('PRIME uses the canonical future-ready skills and all five earned designations', () => {
+  test('PRIME uses the canonical future-ready skills and four VALU v4 merit designations', () => {
     const brand = read('src/lib/brand.js')
     const prime = read('src/app/prime/page.jsx')
     expect(brand).toContain("name: 'Presence'")
@@ -101,13 +101,18 @@ describe('VALU presentation consistency', () => {
     expect(brand).toContain("name: 'Enterprise'")
     expect(brand).toContain("'AI Fluency'")
     expect(brand).toContain("'Human-AI Collaboration'")
-    expect(prime).toContain('Force to Align With')
-    expect(prime).toContain('Emerging Force')
-    expect(prime).toContain('Developing Professional')
-    expect(prime).toContain('Building Foundations')
-    expect(prime).toContain('At the Starting Point')
-    expect(prime).not.toContain('Distinguished')
-    expect(prime).not.toContain('Proficient')
+    for (const tier of ['Elite', 'Distinguished', 'Proficient', 'Standard']) {
+      expect(prime).toContain(`tier:'${tier}'`)
+    }
+    expect(prime).toContain('90–100 points')
+    expect(prime).toContain('75–89 points')
+    expect(prime).toContain('55–74 points')
+    expect(prime).toContain('35–54 points')
+    expect(prime).toContain('FOUR SCORE-BASED DESIGNATIONS')
+    expect(prime).toContain('Scores below 35 points receive no merit designation')
+    for (const retired of ['Force to Align With', 'Emerging Force', 'Developing Professional', 'Building Foundations', 'At the Starting Point']) {
+      expect(prime).not.toContain(retired)
+    }
   })
 
   test('legacy stored designation strings cannot override the canonical points-based merit bands', () => {
