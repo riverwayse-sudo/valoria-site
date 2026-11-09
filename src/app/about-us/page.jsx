@@ -47,7 +47,10 @@ export default function AboutPage() {
     <>
       <Nav />
       <main id="main-content" className="about-page">
-        <section className="page-hero">
+        <section className="page-hero about-cinematic-hero">
+          <div className="about-cinematic-image" aria-hidden="true">
+            <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=2200&q=90" alt="" fetchPriority="high" />
+          </div>
           <div className="page-hero-inner">
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">ABOUT VALORIA INSTITUTE</span></div>
             <h1 className="page-title">A professional capability institution.<br /><em>Built for what comes next.</em></h1>
