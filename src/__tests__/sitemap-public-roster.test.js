@@ -24,7 +24,7 @@ describe('public sitemap privacy and route contract', () => {
   test('staging sitemap uses the staging host', () => {
     expect(sitemap).toContain('const IS_PREVIEW =')
     expect(sitemap).toContain('https://valoria-staging-site.riverwayse.workers.dev')
-    expect(sitemap).toContain('process.env.VALU_PREVIEW_SITE_ORIGIN')
+    expect(sitemap).toContain("const SITE_URL = IS_PREVIEW ? 'https://valoria-staging-site.riverwayse.workers.dev'")
   })
 })
 
