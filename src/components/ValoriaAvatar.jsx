@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 
 function getInitials(name) {
-  const parts = String(name || '').normalize('NFKC').trim().split(/\\s+/).filter(Boolean)
+  const parts = String(name || '').normalize('NFKC').trim().split(/\s+/).filter(Boolean)
   if (!parts.length) return 'V'
   return parts.length === 1
     ? parts[0].slice(0, 1).toUpperCase()
