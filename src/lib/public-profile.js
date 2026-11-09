@@ -73,8 +73,8 @@ async function hasCurrentFullAssessment(admin, profile) {
     .maybeSingle()
 
   if (error) {
-    console.error('Basic listing assessment verification failed:', error)
-    throw new Error('Basic listing assessment eligibility could not be verified.')
+    console.error('Current Full assessment verification failed:', error)
+    throw new Error('Current Full assessment eligibility could not be verified.')
   }
 
   const assessmentExpiry = Date.parse(assessment?.expires_at || profile.assessment_expires_at || '')
@@ -115,7 +115,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
 
   const professionalId = roster.professional_id
   if (roster.assessment_access === 'full') {
-    if (!Array.isArray(roster.capabilities) || roster.capabilities.length === 0) return null
+    if (!Array.isArray(roster.selected_capabilities) || roster.selected_capabilities.length === 0) return null
     if (!roster.assessment_summary || roster.assessment_summary.trim().length < 12) return null
   }
 
@@ -158,48 +158,36 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
     if (!hasTaster && !hasCurrentAssessment) return null
   }
 
+  let capabilitiesReady = false
   if (roster.assessment_access === 'full') {
-    if (profile.profile_complete !== true || Number(profile.valu_index) < 35 || Number(roster.valu_index) !== Number(profile.valu_index)) return null
-    const expiry = Date.parse(profile.assessment_expires_at || '')
-    const profileCompletedAt = Date.parse(profile.assessment_completed_at || '')
-    if (!Number.isFinite(expiry) || expiry <= Date.now() || !Number.isFinite(profileCompletedAt)) return null
-    const { data: latestAssessment, error: assessmentError } = await admin
-      .from('valu_assessments')
-      .select('total_score,completed_at')
-      .eq('user_id', professionalId)
-      .not('completed_at', 'is', null)
-      .order('completed_at', { ascending: false })
-      .limit(1)
-      .maybeSingle()
-    if (assessmentError) {
-      console.error('Full assessment validity verification failed:', assessmentError)
-      throw new Error('Full assessment validity could not be verified.')
-    }
-    if (!latestAssessment
-      || Number(latestAssessment.total_score) !== Number(profile.valu_index)
-      || Date.parse(latestAssessment.completed_at || '') !== profileCompletedAt) return null
+    if (Number(profile.valu_index) < 35 || Number(roster.valu_index) !== Number(profile.valu_index)) return null
+    if (!(await hasCurrentFullAssessment(admin, profile))) return null
+
     const { data: activeCapabilities, error: capabilityError } = await admin
       .from('professional_capabilities')
       .select('capability,eligible_for_listing,eligibility_status,missing_requirements')
       .eq('professional_id', professionalId)
       .eq('is_active', true)
     if (capabilityError) {
-      console.error('Full capability evidence verification failed:', capabilityError)
-      throw new Error('Full profile capability evidence could not be verified.')
+      console.error('Full capability indexability verification failed:', capabilityError)
+      throw new Error('Full profile capability indexability could not be verified.')
     }
-    const capabilitiesReady = (activeCapabilities || []).length > 0
+    capabilitiesReady = (activeCapabilities || []).length > 0
       && activeCapabilities.every(capability =>
         capability.eligible_for_listing === true
         && capability.eligibility_status === 'listed'
         && (!Array.isArray(capability.missing_requirements) || capability.missing_requirements.length === 0)
       )
-    if (!capabilitiesReady) return null
   }
-  if (roster.assessment_access === 'basic' && !hasBasicPublicIdentity(profile, roster)) return null
+  if (!hasBasicPublicIdentity(profile, roster)) return null
+  const indexable = profile.profile_complete === true
+    && (roster.assessment_access === 'basic' || capabilitiesReady)
 
   const { profile_complete: _profileComplete, ...publicProfile } = profile
   return {
     ...publicProfile,
+    atb_id: profile.atb_id,
+    valu_score: profile.valu_index,
     display_name: normalizePublicDisplayText(profile.display_name),
     display_initials: normalizePublicDisplayText(profile.display_initials),
     headline: normalizePublicDisplayText(profile.headline),
@@ -217,6 +205,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
       ? roster.selected_capabilities
       : (profile.active_tracks || []),
     assessment_access: roster.assessment_access,
+    indexable,
   }
 }
 
@@ -388,6 +377,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
     const ready = access === 'full'
       ? profile.profile_complete === true && Number(profile.valu_index) >= 35 && Number(rosterById.get(profile.id)?.valu_index) === Number(profile.valu_index) && fullReadyIds.has(profile.id)
       : access === 'basic'
+        && profile.profile_complete === true
         && (tasterIds.has(profile.id) || basicAssessmentIds.has(profile.id))
         && hasBasicPublicIdentity(profile, rosterById.get(profile.id))
     return ready && consented.has(profile.id)

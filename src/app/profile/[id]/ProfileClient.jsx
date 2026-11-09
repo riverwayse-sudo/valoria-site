@@ -271,10 +271,10 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
   const tracks        = p.active_tracks || (p.user_type ? [p.user_type] : [])
   const isSpeaker     = tracks.includes('speaker')
   const isFacilitator = tracks.includes('facilitator')
-  const isCandidate   = tracks.includes('candidate') || tracks.length === 0
+  const isCandidate   = tracks.includes('candidate') || tracks.includes('talent') || tracks.length === 0
   const initials    = getInitials(p.display_name)
   const avatarLetters = getAvatarLetters(p.display_name)
-  const atbId       = p.atb_id || '—'
+  const atbId       = String(p.atb_id || '—').normalize('NFKC')
   const videos      = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
   const compensation = (isSpeaker || isFacilitator) ? (p.fee_range || p.salary_expectation || null) : (p.salary_expectation || p.fee_range || null)
   const compLabel   = (isSpeaker || isFacilitator) ? 'Fee Range' : 'Salary Range'
@@ -351,15 +351,18 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
 
             {/* ID block */}
             <div style={{ paddingBottom:'16px', flex:1, minWidth:'200px' }}>
-              <div style={{ fontSize:'clamp(22px,3.5vw,32px)', fontWeight:700, letterSpacing:'.04em', lineHeight:1.1, marginBottom:'10px', color: PARCH, fontVariantNumeric:'tabular-nums' }}>
-                {atbId}
+              <div style={{ fontSize:'clamp(22px,3.5vw,32px)', fontWeight:700, letterSpacing:'-.025em', lineHeight:1.1, marginBottom:'7px', color: PARCH }}>
+                {p.display_name || 'Valoria Professional'}
+              </div>
+              <div style={{ fontSize:'9px', fontWeight:800, letterSpacing:'.12em', color: DIM, marginBottom:'10px', fontVariantNumeric:'tabular-nums' }}>
+                ATB PROFILE ID · {atbId}
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
                 <span style={{ fontSize:'14px', fontWeight:400, color: GOLD, letterSpacing:'.04em' }}>
-                  {p.headline || (displayTrack === 'facilitator' ? 'Valoria Facilitator' : displayTrack === 'speaker' ? 'Valoria Speaker' : 'Valoria Professional')}
+                  {p.headline || (displayTrack === 'facilitator' ? 'Facilitator profile' : displayTrack === 'speaker' ? 'Speaker profile' : 'Professional profile')}
                 </span>
-                <span style={{ fontSize:'11px', letterSpacing:'.06em', background: MID, border:`1px solid ${GLINE2}`, padding:'4px 10px', borderRadius:'4px', color: DIM }}>
-                  {initials} · Verified {displayTrack === 'facilitator' ? 'Facilitator' : displayTrack === 'speaker' ? 'Speaker' : 'Professional'}
+                <span style={{ fontSize:'9px', letterSpacing:'.1em', background: MID, border:`1px solid ${GLINE2}`, padding:'5px 10px', borderRadius:'4px', color: DIM, fontWeight:800 }}>
+                  PUBLIC PROFILE
                 </span>
               </div>
               {p.current_job_title && (
