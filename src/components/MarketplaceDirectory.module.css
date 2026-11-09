@@ -425,3 +425,57 @@
   .view::after, .tabs a, .controls input, .controls select,
   .controls button { transition: none !important; }
 }
+
+
+/* 9 Nov 2026 — compact profile pop-out; keep scrolling on the page, never inside the dialog. */
+.modalBackdrop {
+  overflow-y: auto;
+  place-items: start center;
+  padding: 24px 16px;
+}
+.modalDialog {
+  width: min(100%, 820px);
+  max-height: none;
+  overflow: visible;
+  margin: auto;
+  border-radius: 10px;
+}
+.modalTopline { padding: 11px 18px; }
+.modalBody { padding: 18px 20px; }
+.modalIdentity {
+  grid-template-columns: 76px minmax(0, 1fr) 112px;
+  gap: 16px;
+  padding: 17px;
+}
+.modalAvatar { width: 76px; height: 76px; }
+.modalIdentityCopy h2 { font-size: clamp(23px, 3vw, 32px); }
+.modalHeadline { font-size: 12px; }
+.modalIndex { min-height: 104px; padding: 10px; }
+.modalIndex strong { font-size: 36px; }
+.modalGrid { gap: 12px; margin-top: 12px; }
+.modalPanel { padding: 15px; }
+.modalSummary { font-size: 11px; line-height: 1.6; }
+.modalSectionCopy { font-size: 10px; line-height: 1.5; }
+.modalCredential { margin-top: 12px; padding-top: 10px; }
+.modalCapabilities { gap: 6px; }
+.modalCapability, .modalCapabilitySelected { min-height: 56px; padding: 8px 7px; }
+.modalListSection { margin-top: 12px; padding: 12px 14px; }
+.modalChips { gap: 6px; }
+.modalChips span { padding: 6px 8px; font-size: 8px; }
+.modalFooter { gap: 12px; margin-top: 14px; padding-top: 13px; }
+.modalFooter p { font-size: 9px; line-height: 1.5; }
+.modalPrimary, .modalSecondary { min-height: 40px; padding: 0 12px; }
+@media (max-width: 760px) {
+  .modalBackdrop { padding: 12px; }
+  .modalIdentity { grid-template-columns: 64px minmax(0, 1fr); gap: 12px; padding: 14px; }
+  .modalAvatar { width: 64px; height: 64px; }
+  .modalIndex { grid-column: 1 / -1; }
+  .modalBody { padding: 14px; }
+}
+@media (max-width: 480px) {
+  .modalBackdrop { padding: 6px; }
+  .modalDialog { width: 100%; }
+  .modalTopline { padding: 9px 11px; }
+  .modalBody { padding: 11px; }
+  .modalIdentityCopy h2 { font-size: 22px; }
+}
