@@ -4,6 +4,21 @@ export const NAVIGATION = {
   assessmentUrl: BRAND.assessmentUrl,
   primary: [
     {
+      label: 'For Professionals',
+      groups: [
+        { label: 'UNDERSTAND & DEVELOP', items: [
+          { label: 'Start with VALU', href: '/valu', description: 'Understand the PRIME framework and your capability.' },
+          { label: 'PRIME Framework', href: '/prime', description: 'Explore the five dimensions and seventeen skills.' },
+          { label: 'Valoria Develop', href: '/develop', description: 'Explore professional development pathways.' },
+          { label: 'Your Dashboard', href: '/dashboard', description: 'Continue your assessment and manage your profile.' },
+        ]},
+        { label: 'DISCOVER & CONNECT', items: [
+          { label: 'Professional Registry', href: '/marketplace/talent', description: 'Explore capability-led professional profiles.' },
+          { label: 'Opportunities', href: '/opportunities', description: 'Explore reviewed professional opportunities.' },
+        ]},
+      ],
+    },
+    {
       label: 'For Organisations',
       groups: [
         {
@@ -11,7 +26,7 @@ export const NAVIGATION = {
           items: [
             { label: 'Find Talent', href: '/atb-connect', description: 'Capability-led talent discovery for employers.' },
             { label: 'Find Speakers & Facilitators', href: '/atb-spotlight', description: 'Find expertise for events and programmes.' },
-            { label: 'Marketplace', href: '/marketplace', description: 'Explore the professional capability marketplace.' },
+            { label: 'Explore the Registry', href: '/marketplace', description: 'Discover professionals, speakers and facilitators.' },
           ],
         },
         {
@@ -23,7 +38,7 @@ export const NAVIGATION = {
         },
       ],
     },
-    { label: 'Marketplace', href: '/marketplace' },
+    { label: 'Registry', href: '/marketplace' },
     { label: 'Jobs', href: '/jobs' },
     { label: 'Opportunities', href: '/opportunities' },
     { label: 'Capability Intelligence', href: '/intelligence' },
