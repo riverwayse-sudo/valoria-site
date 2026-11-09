@@ -645,4 +645,12 @@ describe('journey integrity contract', () => {
     expect(nav).not.toContain('assessment.valoriainstitute.com/remaining')
   })
 
+  test('completed full assessments return to the dashboard before a new handoff is created', () => {
+    const nav = read('src/components/Nav.jsx')
+    expect(nav).toContain('if (access.assessment_completed)')
+    expect(nav).toContain("window.location.assign('/dashboard')")
+    expect(nav.indexOf('if (access.assessment_completed)')).toBeLessThan(nav.indexOf("method: 'POST'"))
+    expect(nav).toContain('if (!access.can_continue)')
+  })
+
 })
