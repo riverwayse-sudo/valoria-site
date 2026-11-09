@@ -60,6 +60,20 @@ function button(label, href) {
     </table>`
 }
 
+function imageBlock({ src, alt = '', caption = '', width = 540 }) {
+  const url = safeHref(src)
+  if (!url) return ''
+  const imageWidth = Math.min(Number(width) || 540, 540)
+  const safeCaption = caption ? `<p style="margin:8px 0 0;color:#858392;font-family:${FONT};font-size:10px;line-height:1.5">${escapeEmailHtml(caption)}</p>` : ''
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:0 0 22px"><tr><td align="center"><img src="${escapeEmailHtml(url)}" width="${imageWidth}" alt="${escapeEmailHtml(alt)}" border="0" style="display:block;width:100%;max-width:${imageWidth}px;height:auto;border:0;outline:none;text-decoration:none">${safeCaption}</td></tr></table>`
+}
+
+function hostPortraitBlock(session) {
+  if (session?.host !== 'Temitayo Adetokunbo') return ''
+  const src = `${SITE_URL}/images/temitayo-adetokunbo-host.webp`
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;background:${BRAND.ivory};border:1px solid ${BRAND.line}"><tr><td width="104" valign="middle" style="width:104px;padding:12px"><img src="${src}" width="80" alt="Portrait of Temitayo Adetokunbo, event host" border="0" style="display:block;width:80px;height:auto;border:0"></td><td valign="middle" style="padding:12px 14px 12px 0;font-family:${FONT}"><p style="margin:0 0 5px;color:#92752D;font-size:9px;line-height:1.4;font-weight:800;letter-spacing:1.4px">YOUR HOST</p><p style="margin:0;color:${BRAND.midnight};font-size:14px;line-height:1.4;font-weight:700">Temitayo Adetokunbo</p><p style="margin:4px 0 0;color:${BRAND.muted};font-size:11px;line-height:1.5">Valoria Institute</p></td></tr></table>`
+}
+
 function shell({ preheader, eyebrow, heading, content, footer = '', promotional = false }) {
   const unsubscribe = promotional && footer
     ? `<tr><td style="padding:0 30px 26px;background:${BRAND.ivory};font-family:${FONT};font-size:10px;line-height:1.7;color:#858392;text-align:center">${footer}</td></tr>`
@@ -91,7 +105,7 @@ function shell({ preheader, eyebrow, heading, content, footer = '', promotional 
 </body></html>`
 }
 
-export function renderEventRegistrationEmail({ fullName, session, journeyUrl }) {
+export function renderEventRegistrationEmail({ fullName, session, journeyUrl, heroImage }) {
   const firstName = escapeEmailHtml(String(fullName || '').trim().split(/\\s+/)[0] || 'there')
   const title = escapeEmailHtml(session.title)
   const date = escapeEmailHtml(formatEventDate(session.start))
@@ -101,6 +115,7 @@ export function renderEventRegistrationEmail({ fullName, session, journeyUrl }) 
     session.host ? `<tr><td style="padding:10px 0;border-top:1px solid ${BRAND.line};font-size:12px;color:${BRAND.muted}">Host</td><td align="right" style="padding:10px 0;border-top:1px solid ${BRAND.line};font-size:12px;font-weight:700;color:${BRAND.midnight}">${escapeEmailHtml(session.host)}</td></tr>` : '',
   ].join('')
   const content = `
+    ${heroImage ? imageBlock(heroImage) : ''}
     <p style="margin:0 0 18px;color:${BRAND.midnight}">Hello ${firstName},</p>
     <p style="margin:0 0 22px">Your registration for <strong style="color:${BRAND.midnight}">${title}</strong> has been received and confirmed.</p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;border:1px solid ${BRAND.line};background:${BRAND.ivory}">
@@ -111,6 +126,7 @@ export function renderEventRegistrationEmail({ fullName, session, journeyUrl }) 
       </td></tr>
       <tr><td style="padding:0 18px 12px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${people}</table></td></tr>
     </table>
+    ${hostPortraitBlock(session)}
     <p style="margin:0 0 12px">Keep this message for your records. Any essential event updates will be sent to this email address.</p>
     ${button('Continue your Valoria journey', journeyUrl)}
     <p style="margin:16px 0 0;font-size:11px;line-height:1.7;color:#858392">If you did not make this registration, please contact the Institute at <a href="mailto:info@valoriainstitute.com" style="color:#72591C">info@valoriainstitute.com</a>.</p>`
@@ -121,7 +137,7 @@ export function renderEventRegistrationEmail({ fullName, session, journeyUrl }) 
   }
 }
 
-export function renderEventReminderEmail({ fullName, session, meetingUrl, calendarUrl, reminderLabel = 'A NOTE BEFORE THE CONVERSATION' }) {
+export function renderEventReminderEmail({ fullName, session, meetingUrl, calendarUrl, reminderLabel = 'A NOTE BEFORE THE CONVERSATION', heroImage }) {
   const firstName = escapeEmailHtml(String(fullName || '').trim().split(/\\s+/)[0] || 'there')
   const title = escapeEmailHtml(session.title)
   const date = escapeEmailHtml(formatEventDate(session.start))
@@ -129,6 +145,7 @@ export function renderEventReminderEmail({ fullName, session, meetingUrl, calend
   const meeting = safeHref(meetingUrl)
   const calendar = safeHref(calendarUrl)
   const content = `
+    ${heroImage ? imageBlock(heroImage) : ''}
     <p style="margin:0 0 18px;color:${BRAND.midnight}">Hello ${firstName},</p>
     <p style="margin:0 0 22px">This is a reminder of your registration for <strong style="color:${BRAND.midnight}">${title}</strong>.</p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px;background:${BRAND.ivory};border:1px solid ${BRAND.line}">
@@ -144,10 +161,11 @@ export function renderEventReminderEmail({ fullName, session, meetingUrl, calend
   }
 }
 
-export function renderValoriaCampaignEmail({ preheader, eyebrow, heading, greeting, paragraphs = [], ctaLabel, ctaUrl, unsubscribeUrl }) {
+export function renderValoriaCampaignEmail({ preheader, eyebrow, heading, greeting, paragraphs = [], ctaLabel, ctaUrl, unsubscribeUrl, heroImage }) {
   const unsubscribe = safeHref(unsubscribeUrl)
   if (!unsubscribe) throw new Error('A valid unsubscribe URL is required for promotional email.')
   const content = `
+    ${heroImage ? imageBlock(heroImage) : ''}
     ${greeting ? `<p style="margin:0 0 18px;color:${BRAND.midnight}">${escapeEmailHtml(greeting)}</p>` : ''}
     ${paragraphs.map(paragraph => `<p style="margin:0 0 17px">${escapeEmailHtml(paragraph)}</p>`).join('')}
     ${button(ctaLabel || 'Explore Valoria', ctaUrl)}`
