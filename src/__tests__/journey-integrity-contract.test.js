@@ -31,6 +31,28 @@ describe('participant-facing assessment clarity', () => {
     expect(valu).toContain('official VALU Index')
   })
 
+  test('public PRIME page and marketplace use canonical VALU v4 merit bands', () => {
+    const brand = read('src/lib/brand.js')
+    const prime = read('src/app/prime/page.jsx')
+    const marketplaceCss = read('src/components/MarketplaceDirectory.module.css')
+    const tiers = [
+      { min: 90, max: 100, name: 'Elite' },
+      { min: 75, max: 89, name: 'Distinguished' },
+      { min: 55, max: 74, name: 'Proficient' },
+      { min: 35, max: 54, name: 'Standard' },
+    ]
+    for (const tier of tiers) {
+      expect(brand).toContain(`min: ${tier.min}, max: ${tier.max}, name: '${tier.name}'`)
+      expect(prime).toContain(`tier:'${tier.name}'`)
+      expect(marketplaceCss).toContain(`.${tier.name.toLowerCase()}`)
+    }
+    expect(prime).toContain('FOUR SCORE-BASED DESIGNATIONS')
+    expect(prime).toContain('Scores below 35 points receive no merit designation')
+    for (const retired of ['Force to Align With', 'Emerging Force', 'Developing Professional', 'Building Foundations', 'At the Starting Point']) {
+      expect(prime).not.toContain(retired)
+    }
+  })
+
   test('staging preview blocks public writes but permits only confirmed identity and assessment handoff', () => {
     const middleware = read('src/middleware.js')
     const opportunities = read('src/app/api/opportunities/route.js')
