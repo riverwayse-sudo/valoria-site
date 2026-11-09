@@ -46,7 +46,7 @@ export async function generateMetadata({ params }) {
     const canonicalUrl = SITE_URL + '/profile/' + canonicalId
 
     return {
-      title: name + ' — ' + capability + ' Profile | Valoria Institute',
+      title: name + ' — ' + capability + ' Profile',
       description,
       alternates: { canonical: canonicalUrl },
       openGraph: {
