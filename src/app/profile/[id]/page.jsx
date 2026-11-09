@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import ProfileClient from './ProfileClient'
-import { toPublicProfile, PUBLIC_PROFILE_SELECT } from '@/lib/public-profile'
+import { toPublicProfile } from '@/lib/public-profile'
 import { isPublicProfileContentReady } from '@/lib/marketplace-data'
 
 export const dynamic = 'force-dynamic'
