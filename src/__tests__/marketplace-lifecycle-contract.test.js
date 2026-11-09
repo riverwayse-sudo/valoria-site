@@ -69,7 +69,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(categoryFilter).toContain('p.capabilities || p.tracks || [p.track]')
     expect(categoryFilter).toContain("p.assessment_access === 'basic'")
     expect(categoryFilter).toContain('p.selectedCapabilities || p.selected_capabilities')
-    expect(categoryFilter).toContain('selectedCapabilities only for Basic category visibility')
+    expect(categoryFilter).toContain("p.assessment_access === 'basic' ?")
   })
 
   test('public profile routes validate canonically equivalent Unicode ATB identifiers', () => {
