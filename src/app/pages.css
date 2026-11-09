@@ -416,3 +416,17 @@
  .about-cinematic-hero .page-title { font-size:clamp(42px,11.5vw,60px); }
 }
 @media(prefers-reduced-motion:reduce) { .about-cinematic-image img { animation:none; transform:none; } }
+
+
+/* VALU cinematic capability visual — human expertise, not abstract dashboard stock */
+.valu-hero-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);gap:clamp(36px,6vw,88px);align-items:center}
+.valu-hero-copy{position:relative;z-index:2;max-width:690px}
+.valu-hero-visual{position:relative;isolation:isolate;min-height:520px;display:grid;place-items:center;overflow:hidden;border:1px solid rgba(201,168,76,.22);background:#1A1A2E}
+.valu-hero-visual::before{content:"";position:absolute;inset:0;z-index:-2;background-image:linear-gradient(135deg,rgba(26,26,46,.12),rgba(26,26,46,.78)),url("https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=85");background-size:cover;background-position:center;transform:scale(1.025);animation:valu-image-arrive 1.2s ease-out both}
+.valu-hero-visual::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,rgba(26,26,46,.92),transparent 68%),linear-gradient(90deg,rgba(26,26,46,.38),transparent 65%)}
+.valu-orbit{transform:scale(.9);filter:drop-shadow(0 16px 45px rgba(0,0,0,.32))}
+.valu-orbit-caption{position:absolute;bottom:22px;left:18px;right:18px;text-align:center;color:rgba(250,250,247,.72);font-size:9px;letter-spacing:.16em}
+@keyframes valu-image-arrive{from{opacity:.45;transform:scale(1.09)}to{opacity:1;transform:scale(1.025)}}
+@media(max-width:900px){.valu-hero-grid{grid-template-columns:1fr}.valu-hero-visual{min-height:460px;max-width:680px;width:100%;margin:10px auto 0}}
+@media(max-width:620px){.valu-hero-grid{gap:34px}.valu-hero-visual{min-height:390px}.valu-orbit{transform:scale(.7)}.valu-orbit-caption{font-size:8px;letter-spacing:.1em}}
+@media(prefers-reduced-motion:reduce){.valu-hero-visual::before{animation:none;transform:none}}
