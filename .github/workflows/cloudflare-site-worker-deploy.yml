@@ -1,3 +1,4 @@
+# Re-run the Cloudflare production build for the merged marketplace card update (#310).
 name: Deploy Valoria site to Cloudflare production
 
 on:
