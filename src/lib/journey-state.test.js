@@ -194,7 +194,7 @@ test('an assessment score without a completion timestamp is not treated as compl
   })
 
   expect(state.assessment.complete).toBe(false)
-  expect(state.assessment.score).toBe(72)
+  expect(state.assessment.score).toBeNull()
   expect(state.eligibility.complete).toBe(false)
   expect(state.next).toBe('assess')
 })
