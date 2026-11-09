@@ -1883,10 +1883,14 @@
   scrollbar-width: thin;
   scrollbar-color: rgba(201,168,76,.45) transparent;
 }
-.vi-scroll-track-static {
-  width: max-content;
-  transform: none !important;
-  will-change: auto;
+.vi-scroll-group {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 12px;
+}
+
+.vi-scroll-track {
+  gap: 0;
 }
 .vi-scroll-name{display:block;margin:5px 0;color:var(--parchment);font-size:14px;font-weight:800;line-height:1.3}
 .vi-scroll-designation{margin:6px 0;color:var(--gold);font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
