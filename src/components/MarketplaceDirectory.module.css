@@ -969,6 +969,12 @@
 }
 
 .directoryHead span{display:block!important;min-width:0!important;padding:0!important;border:0!important;background:transparent!important;border-radius:0!important;color:#D4C9A8!important;font-size:12px!important;font-weight:600!important;letter-spacing:.025em!important;text-align:right}
+
+/* Canonical VALU v4 merit designations. */
+.elite{background:#1A1A2E;color:#C9A84C;border:1px solid #C9A84C}
+.distinguished{background:#2E2E4A;color:#FAFAF7;border:1px solid #C9A84C}
+.proficient{background:#EDE8DC;color:#2E2E4A;border:1px solid #D4C9A8}
+.standard{background:#F7F4EE;color:#2E2E4A;border:1px solid #D4C9A8}
 .directoryHead span::before{content:none!important}
 .view.viewButton{margin-top:auto!important;padding-top:12px!important}
 
