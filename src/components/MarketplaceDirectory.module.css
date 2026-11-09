@@ -913,3 +913,5 @@
 .filterHelp summary{cursor:pointer;color:#2E2E4A;font-weight:700}
 .filterHelp p{margin:8px 0 0;line-height:1.5}
 @media(max-width:680px){.card{padding:17px!important}.identity .profileName{font-size:17px!important}.profileDetails{font-size:12px!important}.selectedCapabilityList span{font-size:12px}}
+
+.grid{grid-auto-rows:auto!important;align-items:stretch}
