@@ -42,6 +42,12 @@ describe('VALU presentation consistency', () => {
     expect(read('src/app/profile/passport/page.jsx')).not.toContain('profile?.designation||')
   })
 
+  test('email confirmation never exposes internal taster or full-assessment question counts', () => {
+    const callback = read('src/app/auth/callback/page.jsx')
+    expect(callback).not.toMatch(/opening nine|9-question|58-question|Question\\s+\\d+\\s+of\\s+\\d+/i)
+    expect(callback).toContain('your saved VALU taster is connected')
+  })
+
   test('public marketplace and homepage merit labels are derived from canonical VALU points, not stored legacy labels', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
     const homepage = read('src/components/LiveProfilesScroll.jsx')
