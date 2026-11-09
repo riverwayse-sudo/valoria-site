@@ -208,3 +208,79 @@
 .vi-ih-how-note{margin:24px 0 0;color:#5E5B57;font-size:13px;line-height:1.7}
 @media(max-width:900px){.vi-ih-how-head{grid-template-columns:1fr;gap:20px}.vi-ih-how-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.vi-ih-how-steps article:nth-child(2){border-right:0}.vi-ih-how-steps article:nth-child(3){border-top:1px solid rgba(26,26,46,.16)}.vi-ih-how-steps article:nth-child(4){border-top:1px solid rgba(26,26,46,.16)}}
 @media(max-width:560px){.vi-ih-how-steps{grid-template-columns:1fr}.vi-ih-how-steps article,.vi-ih-how-steps article+article{min-height:0;padding:22px 0;border-right:0;border-top:1px solid rgba(26,26,46,.16)}.vi-ih-how-steps article:first-child{border-top:0}.vi-ih-how-steps small{margin-top:20px}.vi-ih-how-head h2{font-size:38px}}
+
+
+/* Audience-led cinematic pathways — imagery carries the message, not decoration. */
+.vi-ih-audience-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 18px;
+}
+.vi-ih-audience-card {
+  grid-column: span 2;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--ih-paper);
+  border: 1px solid rgba(26,26,46,.12);
+  border-radius: 8px;
+  transition: border-color .3s ease, transform .5s cubic-bezier(.2,.7,.2,1);
+}
+.vi-ih-audience-card:nth-child(4) { grid-column: 2 / span 2; }
+.vi-ih-audience-card:nth-child(5) { grid-column: 4 / span 2; }
+.vi-ih-audience-card:hover { border-color: var(--ih-gold); transform: translateY(-4px); }
+.vi-ih-audience-image {
+  display: block;
+  position: relative;
+  height: clamp(190px, 22vw, 280px);
+  overflow: hidden;
+  background: var(--ih-indigo);
+}
+.vi-ih-audience-image::after {
+  content: '';
+  position: absolute;
+  inset: 35% 0 0;
+  background: linear-gradient(180deg, transparent, rgba(26,26,46,.56));
+  pointer-events: none;
+}
+.vi-ih-audience-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .8s cubic-bezier(.2,.7,.2,1), filter .5s ease;
+  filter: saturate(.78);
+}
+.vi-ih-audience-card:hover .vi-ih-audience-image img { transform: scale(1.055); filter: saturate(1); }
+.vi-ih-audience-image-number {
+  position: absolute;
+  z-index: 1;
+  left: 18px;
+  bottom: 15px;
+  color: var(--ih-white);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+.vi-ih-audience-card-copy { display: flex; flex-direction: column; align-items: flex-start; min-height: 250px; padding: 24px; }
+.vi-ih-audience-card-copy .vi-ih-audience-label { margin-bottom: 13px; color: #75602E; font-size: 9px; font-weight: 800; letter-spacing: .12em; line-height: 1.6; }
+.vi-ih-audience-card-copy h3 { margin: 0 0 10px; color: var(--ih-ink); font-size: clamp(20px, 2vw, 25px); line-height: 1.16; letter-spacing: -.03em; }
+.vi-ih-audience-card-copy p { margin: 0 0 22px; color: #59596A; font-size: 13px; line-height: 1.75; }
+.vi-ih-audience-card-link { display: inline-flex; gap: 12px; align-items: center; margin-top: auto; padding-bottom: 8px; border-bottom: 1px solid var(--ih-gold); color: var(--ih-ink); font-size: 10px; font-weight: 800; text-decoration: none; }
+.vi-ih-audience-card-link span { color: #75602E; transition: transform .25s ease; }
+.vi-ih-audience-card-link:hover span { transform: translate(3px,-3px); }
+.vi-ih-audience-card a:focus-visible { outline: 2px solid var(--ih-gold); outline-offset: 4px; }
+@media (max-width: 900px) {
+  .vi-ih-audience-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .vi-ih-audience-card, .vi-ih-audience-card:nth-child(4), .vi-ih-audience-card:nth-child(5) { grid-column: auto; }
+}
+@media (max-width: 560px) {
+  .vi-ih-audience-grid { grid-template-columns: 1fr; gap: 16px; }
+  .vi-ih-audience-image { height: 230px; }
+  .vi-ih-audience-card-copy { min-height: 0; padding: 22px; }
+  .vi-ih-audience-card-copy p { margin-bottom: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vi-ih-audience-card, .vi-ih-audience-image img, .vi-ih-audience-card-link span { transition: none; }
+  .vi-ih-audience-card:hover { transform: none; }
+  .vi-ih-audience-card:hover .vi-ih-audience-image img { transform: none; }
+}
