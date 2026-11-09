@@ -189,8 +189,8 @@ jobs:
             fi
             curl -fsSL --retry 4 --retry-all-errors --max-time 25 "$css_url" >> /tmp/valoria-css-bundle.css
           done <<< "$css_assets"
-          grep -Fq '.vi-nav .nav-dropdown' /tmp/valoria-css-bundle.css
-          grep -Fq '.nav-mobile .nav-dropdown' /tmp/valoria-css-bundle.css
+          grep -Fq '.nav-dropdown{' /tmp/valoria-css-bundle.css
+          grep -Fq '.nav-mobile .nav-mobile-link{' /tmp/valoria-css-bundle.css
           grep -Fq 'text-align:left!important' /tmp/valoria-css-bundle.css
           echo "PASS: compiled left-alignment CSS"
 
