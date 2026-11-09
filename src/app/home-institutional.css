@@ -186,3 +186,25 @@
   .vi-ih-hero-image img { animation: none; transform: none; }
   .vi-ih-button, .vi-ih-system-row, .vi-ih-system-mark, .vi-ih-inline-link span { transition: none; }
 }
+
+/* Clear-explanation layer: make the institution understandable before asking visitors to navigate it. */
+.vi-ih-hero h1{max-width:1000px}
+.vi-ih-hero-lede{max-width:760px;font-size:clamp(16px,1.45vw,20px);line-height:1.75}
+.vi-ih-how{padding:clamp(76px,9vw,132px) 0;background:#F7F4EE;color:#1A1A2E}
+.vi-ih-how-head{display:grid;grid-template-columns:1.2fr .8fr;gap:60px;align-items:end;margin-bottom:48px}
+.vi-ih-how-head h2{font-size:clamp(36px,5vw,64px);line-height:1.04;letter-spacing:-.045em;margin:18px 0 0}
+.vi-ih-how-head h2 em{color:#98752D;font-style:normal}
+.vi-ih-how-head>p{max-width:490px;margin:0 0 6px;color:#5E5B57;line-height:1.8;font-size:15px}
+.vi-ih-how-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid rgba(26,26,46,.2);border-bottom:1px solid rgba(26,26,46,.2)}
+.vi-ih-how-steps article{position:relative;min-height:320px;padding:26px 24px 28px 0;border-right:1px solid rgba(26,26,46,.16);display:flex;flex-direction:column;align-items:flex-start}
+.vi-ih-how-steps article+article{padding-left:24px}
+.vi-ih-how-steps article:last-child{border-right:0}
+.vi-ih-how-steps article>span{font-size:13px;color:#98752D;font-weight:800;letter-spacing:.12em}
+.vi-ih-how-steps small{margin-top:38px;color:#98752D;font-size:9px;letter-spacing:.17em;font-weight:800}
+.vi-ih-how-steps h3{font-size:22px;line-height:1.2;letter-spacing:-.025em;margin:12px 0}
+.vi-ih-how-steps p{font-size:13px;line-height:1.8;color:#5E5B57;margin:0 0 24px}
+.vi-ih-how-steps a{margin-top:auto;color:#1A1A2E;font-size:10px;font-weight:800;letter-spacing:.08em;text-decoration:none;border-bottom:1px solid #C9A84C;padding-bottom:7px}
+.vi-ih-how-steps a b{color:#98752D;margin-left:8px}
+.vi-ih-how-note{margin:24px 0 0;color:#5E5B57;font-size:13px;line-height:1.7}
+@media(max-width:900px){.vi-ih-how-head{grid-template-columns:1fr;gap:20px}.vi-ih-how-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.vi-ih-how-steps article:nth-child(2){border-right:0}.vi-ih-how-steps article:nth-child(3){border-top:1px solid rgba(26,26,46,.16)}.vi-ih-how-steps article:nth-child(4){border-top:1px solid rgba(26,26,46,.16)}}
+@media(max-width:560px){.vi-ih-how-steps{grid-template-columns:1fr}.vi-ih-how-steps article,.vi-ih-how-steps article+article{min-height:0;padding:22px 0;border-right:0;border-top:1px solid rgba(26,26,46,.16)}.vi-ih-how-steps article:first-child{border-top:0}.vi-ih-how-steps small{margin-top:20px}.vi-ih-how-head h2{font-size:38px}}
