@@ -203,7 +203,7 @@ function Profile({p, onSelect}) {
   const role = displayText(p.current_job_title || p.headline)
   const sector = displayText(p.industry)
   const location = displayText(p.location)
-  const clusterScores = p.cluster_scores && typeof p.cluster_scores === 'object' ? Object.entries(p.cluster_scores).filter(([, value]) => Number.isFinite(Number(value))) : []
+  const clusterScores = p.cluster_scores && typeof p.cluster_scores === 'object' ? Object.entries(p.cluster_scores).filter(([key, value]) => Object.hasOwn(CLUSTER_NAMES, key) && value != null && value !== '' && Number.isFinite(Number(value))) : []
   const strongestCluster = clusterScores.sort((a, b) => Number(b[1]) - Number(a[1]))[0]?.[0]
   const available = /^(available|accepting|open)$/i.test(availability)
   const explicitlyUnavailable = /unavailable|not available|closed/i.test(availability)
@@ -225,7 +225,7 @@ function Profile({p, onSelect}) {
             <small>VALU INDEX</small><b>{p.valu_index}</b><span>POINTS</span>
           </div>
           <span className={`${styles.tierBadge} ${designationClass}`}>{designation}</span>
-        </> : <span className={styles.assessmentPending}>Assessment not yet completed</span>}
+        </> : <span className={styles.assessmentPending}>Full assessment pending</span>}
       </div>
     </header>
 
