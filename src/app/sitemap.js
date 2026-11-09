@@ -50,14 +50,11 @@ export default async function sitemap() {
     if (supabaseUrl && supabaseKey) {
       const { createClient } = await import('@supabase/supabase-js')
       const client = createClient(supabaseUrl, supabaseKey)
-      const { data, error } = await client
-        .from('marketplace_public_roster')
-        .select('professional_id,projection_refreshed_at,full_name,atb_id,headline,current_job_title,assessment_access,valu_index,assessment_summary')
-        .not('professional_id', 'is', null)
-      if (error) console.error('sitemap: public roster fetch failed:', error)
+      const { data, error } = await client.rpc('get_marketplace_public_roster_v1')
+      if (error) console.error('sitemap: public roster RPC failed:', error)
       profileEntries = (data || []).filter(isPublicProfileContentReady).map(p => ({
         url: `${SITE_URL}/profile/${p.professional_id}`,
-        lastModified: p.projection_refreshed_at ? new Date(p.projection_refreshed_at) : now,
+        lastModified: now,
         changeFrequency: 'weekly',
         priority: 0.6,
       }))
