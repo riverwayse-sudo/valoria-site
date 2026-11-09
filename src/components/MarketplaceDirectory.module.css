@@ -970,3 +970,9 @@
 .directoryHead span{display:block!important;min-width:0!important;padding:0!important;border:0!important;background:transparent!important;border-radius:0!important;color:#D4C9A8!important;font-size:12px!important;font-weight:600!important;letter-spacing:.025em!important;text-align:right}
 .directoryHead span::before{content:none!important}
 .view.viewButton{margin-top:auto!important;padding-top:12px!important}
+
+/* The global navigation is fixed; reserve its full height before the marketplace hero. */
+.hero .container{padding-top:132px}
+.page{scroll-padding-top:88px}
+.card{scroll-margin-top:88px}
+@media(max-width:680px){.hero .container{padding-top:118px}}
