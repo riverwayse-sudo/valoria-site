@@ -28,8 +28,8 @@
 .vi-ih-hero h1 em, .vi-ih-thesis h2 em, .vi-ih-section-intro h2 em, .vi-ih-prime h2 em, .vi-ih-registry-grid h2 em, .vi-ih-partnership h2 em { color: var(--ih-gold); font-style: normal; }
 .vi-ih-hero-lede { max-width: 610px; margin: 30px 0 0; color: rgba(250,250,247,.82); font-size: clamp(17px, 1.6vw, 21px); line-height: 1.65; }
 .vi-ih-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 34px; }
-.vi-ih-button { display: inline-flex; min-height: 54px; align-items: center; justify-content: space-between; gap: 30px; padding: 0 21px; font-size: 11px; font-weight: 800; letter-spacing: .045em; text-decoration: none; transition: transform .25s ease, background .25s ease, border-color .25s ease; }
-.vi-ih-button:hover { transform: translateY(-3px); }
+.vi-ih-button { border-radius: 999px; display: inline-flex; min-height: 54px; align-items: center; justify-content: space-between; gap: 30px; padding: 0 21px; font-size: 11px; font-weight: 800; letter-spacing: .045em; text-decoration: none; transition: transform .25s ease, background .25s ease, border-color .25s ease; }
+.vi-ih-button:hover { transform: translateY(-2px); }
 .vi-ih-button-gold { background: var(--ih-gold); color: var(--ih-ink); border: 1px solid var(--ih-gold); }
 .vi-ih-button-gold:hover { background: #ddbd69; border-color: #ddbd69; }
 .vi-ih-button-quiet { color: var(--ih-white); border: 1px solid rgba(250,250,247,.36); }
