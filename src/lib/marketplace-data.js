@@ -252,13 +252,9 @@ export async function getMarketplaceRows(track = 'all') {
   // Category membership follows the participant's active capability choice.
   // Profile-level public listing, consent, assessment validity and revocation checks
   // are enforced above; evidence review does not hide a selected category.
-  return rows.filter(row => {
-    if (track === 'all') return true
-    const capability = normalizeTrack(track)
-    return row.assessmentAccess === 'basic'
-      ? row.selectedCapabilities.includes(capability)
-      : row.assessmentAccess === 'full' && row.capabilities.includes(capability)
-  })
+  return rows.filter(row => track === 'all' ||
+    row.selectedCapabilities.includes(normalizeTrack(track)) ||
+    row.capabilities.includes(normalizeTrack(track)))
 }
 
 function countMarketplaceRows(rows) {
@@ -267,9 +263,7 @@ function countMarketplaceRows(rows) {
   for (const row of rows || []) {
     // Category counts follow active participant selections for Basic and Full profiles.
     // Evidence status controls verification, not whether a chosen category is shown.
-    const visibleCapabilities = row.assessmentAccess === 'basic'
-      ? (row.selectedCapabilities || [])
-      : row.assessmentAccess === 'full' ? (row.capabilities || []) : []
+    const visibleCapabilities = [...(row.capabilities || []), ...(row.selectedCapabilities || [])]
     for (const capability of new Set(visibleCapabilities)) {
       if (byTrack[capability]) byTrack[capability].add(row.professional_id)
     }
@@ -293,9 +287,8 @@ export async function getMarketplaceDirectoryData(track = 'all') {
   const normalizedTrack = normalizeTrack(track)
   return {
     rows: normalizedTrack === 'all' ? allRows : allRows.filter(row =>
-      row.assessmentAccess === 'basic'
-        ? row.selectedCapabilities.includes(normalizedTrack)
-        : row.assessmentAccess === 'full' && row.capabilities.includes(normalizedTrack)
+      row.selectedCapabilities.includes(normalizedTrack) ||
+      row.capabilities.includes(normalizedTrack)
     ),
     counts: countMarketplaceRows(allRows),
   }
