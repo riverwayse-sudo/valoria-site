@@ -53,7 +53,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('facilitator: byTrack.facilitator.size')
   })
 
-  test('marketplace cards show only selected capability roles without using selection as an eligibility shortcut', () => {
+  test('marketplace cards display selected capability roles and category filters apply to every assessment tier', () => {
     const data = read('src/lib/marketplace-data.js')
     const directory = read('src/components/MarketplaceDirectory.jsx')
     expect(data).toContain('selected_capabilities')
@@ -66,8 +66,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(cardComponent).not.toContain('NOT SELECTED')
     expect(cardComponent).not.toContain('Selection is distinct from capability-specific listing eligibility.')
     const categoryFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
+    expect(categoryFilter).toContain('p.selectedCapabilities || p.selected_capabilities')
     expect(categoryFilter).toContain('p.capabilities || p.tracks || [p.track]')
-    expect(categoryFilter).not.toContain('selectedCapabilities')
   })
 
   test('public profile routes validate canonically equivalent Unicode ATB identifiers', () => {
@@ -391,23 +391,26 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
 
-  test('full-assessment roster projects only selected, active, eligible capabilities while preserving Basic taster listings', () => {
-    const migration = read('supabase/migrations/20261030122017_marketplace_roster_capability_eligibility_20261030100000.sql')
-    const fullBranch = migration.slice(
-      migration.indexOf("if assessment_ok and p.visibility = 'public'"),
-      migration.indexOf("select * into t", migration.indexOf("if assessment_ok and p.visibility = 'public'"))
-    )
-    const tasterBranch = migration.slice(migration.indexOf("select * into t"))
+  test('marketplace category membership follows selected active capabilities for Full and Basic profiles', () => {
+    const data = read('src/lib/marketplace-data.js')
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    const projection = data.slice(data.indexOf('return rows.filter(row => {'), data.indexOf('function countMarketplaceRows'))
+    const counts = data.slice(data.indexOf('function countMarketplaceRows'), data.indexOf('export async function getMarketplaceCounts'))
+    const directoryData = data.slice(data.indexOf('export async function getMarketplaceDirectoryData'))
+    const clientFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
 
-    expect(fullBranch).toContain('public.professional_capabilities')
-    expect(fullBranch).toContain('pc.is_active = true')
-    expect(fullBranch).toContain('pc.eligible_for_listing = true')
-    expect(fullBranch).toContain("pc.eligibility_status = 'listed'")
-    expect(fullBranch).toContain("caps := '{}'::text[]")
-    expect(fullBranch).toContain('General marketplace presence is independent of capability readiness')
-    expect(fullBranch).not.toContain("if cardinality(caps) = 0 then caps := array['talent']")
-    expect(tasterBranch).toContain("array['talent']::text[]")
-    expect(tasterBranch).toContain("'basic'")
+    // Basic listings may use declared selections; Full listings require eligible capabilities.
+    expect(projection).toContain("row.assessmentAccess === 'basic'")
+    expect(projection).toContain('row.selectedCapabilities.includes(capability)')
+    expect(projection).toContain("row.assessmentAccess === 'full' && row.capabilities.includes(capability)")
+    expect(counts).toContain("row.assessmentAccess === 'basic'")
+    expect(counts).toContain('row.selectedCapabilities || []')
+    expect(counts).toContain('row.capabilities || []')
+    expect(directoryData).toContain("row.assessmentAccess === 'basic'")
+    expect(directoryData).toContain('row.capabilities.includes(normalizedTrack)')
+    expect(clientFilter).toContain("p.assessment_access === 'basic'")
+    expect(clientFilter).toContain('p.selectedCapabilities || p.selected_capabilities || []')
+    expect(clientFilter).toContain('p.capabilities || p.tracks || [p.track]')
   })
 
   test('existing capability eligibility is reconciled after historical evidence is marked pending', () => {
