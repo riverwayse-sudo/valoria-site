@@ -535,11 +535,17 @@ describe('VALUI marketplace lifecycle contract', () => {
   test('consented public Full profiles remain directly accessible while incomplete profiles stay noindex', () => {
     const publicProfile = read('src/lib/public-profile.js')
     const profileLayout = read('src/app/profile/[id]/layout.jsx')
+    const profileClient = read('src/app/profile/[id]/ProfileClient.jsx')
     expect(publicProfile).toContain("roster.selected_capabilities")
     expect(publicProfile).toContain('hasCurrentFullAssessment(admin, profile)')
     expect(publicProfile).toContain('const indexable = profile.profile_complete === true')
     expect(publicProfile).toContain("&& profile.profile_complete === true")
     expect(profileLayout).toContain('profile.indexable ? { index: true, follow: true } : { index: false, follow: true }')
+    expect(publicProfile).toContain('atb_id: profile.atb_id')
+    expect(publicProfile).toContain('valu_score: profile.valu_index')
+    expect(profileClient).toContain("p.display_name || 'Valoria Professional'")
+    expect(profileClient).toContain('PUBLIC PROFILE')
+    expect(profileClient).not.toContain('Verified {displayTrack')
   })
 
 })
