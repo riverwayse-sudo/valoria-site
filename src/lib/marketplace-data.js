@@ -250,15 +250,20 @@ export async function getMarketplaceRows(track = 'all') {
       ? { ...row, valu_index: null, cluster_scores: null, assessment_summary: null, designation: null }
       : row)
   // Category routes expose only capabilities that passed the platform eligibility gate.
-  return rows.filter(row => track === 'all' || row.capabilities.includes(normalizeTrack(track)))
+  return rows.filter(row => track === 'all' ||
+    row.capabilities.includes(normalizeTrack(track)) ||
+    (row.assessmentAccess === 'basic' && row.selectedCapabilities.includes(normalizeTrack(track))))
 }
 
 function countMarketplaceRows(rows) {
   const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
 
   for (const row of rows || []) {
-    // Category counts represent eligible/listed capabilities, never self-declared selections.
-    const visibleCapabilities = row.capabilities || []
+    // Basic cards may appear in their declared category without exposing Full assessment data.
+    // Full profiles remain restricted to capability-specific eligibility.
+    const visibleCapabilities = row.assessmentAccess === 'basic'
+      ? [...(row.capabilities || []), ...(row.selectedCapabilities || [])]
+      : (row.capabilities || [])
     for (const capability of new Set(visibleCapabilities)) {
       if (byTrack[capability]) byTrack[capability].add(row.professional_id)
     }
@@ -282,7 +287,8 @@ export async function getMarketplaceDirectoryData(track = 'all') {
   const normalizedTrack = normalizeTrack(track)
   return {
     rows: normalizedTrack === 'all' ? allRows : allRows.filter(row =>
-      row.capabilities.includes(normalizedTrack)
+      row.capabilities.includes(normalizedTrack) ||
+      (row.assessmentAccess === 'basic' && row.selectedCapabilities.includes(normalizedTrack))
     ),
     counts: countMarketplaceRows(allRows),
   }
