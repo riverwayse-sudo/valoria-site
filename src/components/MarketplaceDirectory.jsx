@@ -48,7 +48,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     const q=query.trim().toLowerCase()
     return rows.filter(p => {
       if (!displayText(p.full_name)) return false
-      const caps=[...(p.capabilities || p.tracks || [p.track])].map(normalize)
+      const caps=[...(p.selectedCapabilities || p.selected_capabilities || p.capabilities || p.tracks || [p.track])].map(normalize)
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
       if(industry && displayText(p.industry) !== industry) return false
       if(cluster && getLeadingCluster(p) !== cluster) return false
