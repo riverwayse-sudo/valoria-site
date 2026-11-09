@@ -45,10 +45,11 @@ describe('VALU presentation consistency', () => {
     expect(registry).toContain('/privacypolicy')
   })
 
-  test('marketplace explains snapshot and full assessment without exposing internal question counts', () => {
+  test('marketplace leads with capability-led discovery and protects the public roster', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
-    expect(directory).toContain('A completed VALU snapshot may support a Basic listing')
-    expect(directory).toContain('Completing the full assessment establishes your official VALU Index in points')
+    expect(directory).toContain('A capability-led registry for discovering professionals, speakers and facilitators.')
+    expect(directory).toContain('structured profiles, relevant experience')
+    expect(directory).toContain('No generated or unverified profiles are displayed.')
     expect(directory).not.toMatch(/(?:9|58)[- ]questions?/i)
   })
 
