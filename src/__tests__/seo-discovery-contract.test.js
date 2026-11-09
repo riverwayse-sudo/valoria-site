@@ -37,6 +37,9 @@ describe('Valoria SEO and discovery foundation', () => {
     const profileClient = read('src/app/profile/[id]/ProfileClient.jsx')
     expect(profilePage).toContain('profileContentNotReady={profileContentNotReady}')
     expect(profileClient).toContain('if (profileContentNotReady)')
+    const sitemap = read('src/app/sitemap.js')
+    expect(sitemap).toContain("client.rpc('get_marketplace_public_roster_v1')")
+    expect(sitemap).not.toContain(".from('marketplace_public_roster')")
   })
 
   test('public profile and marketplace pages expose appropriate structured data', () => {
