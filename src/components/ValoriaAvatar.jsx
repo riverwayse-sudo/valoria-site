@@ -10,7 +10,7 @@ function getInitials(name) {
     : (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
 }
 
-export default function ValoriaAvatar({ src, name, seed, alt = '', className = '', size = 64 }) {
+export default function ValoriaAvatar({ src, name, alt = '', className = '', size = 64 }) {
   const [imageFailed, setImageFailed] = useState(false)
   const initials = useMemo(() => getInitials(name), [name])
   const showImage = Boolean(src && !imageFailed)
