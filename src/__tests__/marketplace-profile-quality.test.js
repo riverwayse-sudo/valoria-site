@@ -60,6 +60,8 @@ describe('public marketplace profile content gate', () => {
     expect(profileRoute).toContain("rpc('get_marketplace_public_roster_v1'")
     expect(profileClient).toContain("rpc('get_marketplace_public_roster_v1'")
     expect(homepageProfiles).toContain('/rpc/get_marketplace_public_roster_v1')
+    expect(homepageProfiles).toContain('count: profiles.length')
+    expect(homepageProfiles).toContain('professionals listed in the public registry')
     expect(profileRoute).not.toContain(".from('marketplace_public_roster')")
     expect(profileClient).not.toContain(".from('marketplace_public_roster')")
     expect(homepageProfiles).not.toContain('get_homepage_professional_previews_v2')
