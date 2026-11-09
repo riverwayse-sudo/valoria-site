@@ -71,7 +71,7 @@ export default function HomePage() {
               </div>
               <div className="home-intro-copy">
                 <p>PRIME describes professional capability across five clusters and seventeen skills. The VALU Index measures capability through a structured Full assessment and reports results in points.</p>
-                <p>The taster, Full assessment, profile completion, capability eligibility and public discoverability are distinct stages. A public listing does not automatically confer eligibility for every capability.</p>
+                <p>Your assessment helps shape your professional profile. Public visibility depends on the information you provide and the requirements of the professional role you want to present.</p>
               </div>
             </div>
             <div className="home-cluster-list" aria-label="PRIME clusters">
