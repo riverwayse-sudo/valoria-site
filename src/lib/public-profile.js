@@ -73,8 +73,8 @@ async function hasCurrentFullAssessment(admin, profile) {
     .maybeSingle()
 
   if (error) {
-    console.error('Basic listing assessment verification failed:', error)
-    throw new Error('Basic listing assessment eligibility could not be verified.')
+    console.error('Current Full assessment verification failed:', error)
+    throw new Error('Current Full assessment eligibility could not be verified.')
   }
 
   const assessmentExpiry = Date.parse(assessment?.expires_at || profile.assessment_expires_at || '')
@@ -182,7 +182,6 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
   if (!hasBasicPublicIdentity(profile, roster)) return null
   const indexable = profile.profile_complete === true
     && (roster.assessment_access === 'basic' || capabilitiesReady)
-  if (roster.assessment_access === 'basic' && !hasBasicPublicIdentity(profile, roster)) return null
 
   const { profile_complete: _profileComplete, ...publicProfile } = profile
   return {
