@@ -1115,9 +1115,10 @@ function WelcomeModal({ firstName, isSupply, isOrganiser, completion, onClose })
 
 // ── Sub-components ──────────────────────────────────────────────────────────
 function LinkRow({ label, href }) {
+  const external = /^https?:\/\//i.test(String(href || ''))
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" style={{ display:'block', fontSize:'13px', fontWeight:400, color: GOLD, padding:'10px 0', borderTop:`1px solid ${GLINE}`, textDecoration:'none' }}>
-      {label} ↗
+    <a href={href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})} style={{ display:'block', fontSize:'13px', fontWeight:400, color: GOLD, padding:'10px 0', borderTop:`1px solid ${GLINE}`, textDecoration:'none' }}>
+      {label} {external ? '↗' : '→'}
     </a>
   )
 }
