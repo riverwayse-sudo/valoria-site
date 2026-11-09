@@ -6,7 +6,7 @@ import EventRegistrationTrigger from '@/components/EventRegistrationTrigger'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState } from '@/lib/professionalStandardSeries'
 
 const SESSION = PROFESSIONAL_STANDARD_SERIES.find((item) => item.id === '04')
-const DISMISS_KEY = 'valoria-home-event-popup-dismissed-2026-11'
+const DISMISS_KEY = 'valoria-home-event-popup-dismissed-2026-11-v2'
 
 export default function HomepageEventPopup() {
   const [open, setOpen] = useState(false)
@@ -14,7 +14,7 @@ export default function HomepageEventPopup() {
   const close = useCallback(() => {
     setOpen(false)
     try {
-      window.sessionStorage.setItem(DISMISS_KEY, '1')
+      window.localStorage.setItem(DISMISS_KEY, '1')
     } catch {}
   }, [])
 
@@ -22,13 +22,12 @@ export default function HomepageEventPopup() {
     if (!SESSION || getSessionState(SESSION) !== 'registration-open') return undefined
 
     try {
-      if (window.sessionStorage.getItem(DISMISS_KEY) === '1') return undefined
+      if (window.localStorage.getItem(DISMISS_KEY) === '1') return undefined
     } catch {}
 
     const timer = window.setTimeout(() => {
-      try { window.sessionStorage.setItem(DISMISS_KEY, '1') } catch {}
       setOpen(true)
-    }, 8000)
+    }, 10000)
     return () => window.clearTimeout(timer)
   }, [])
 
@@ -61,7 +60,7 @@ export default function HomepageEventPopup() {
         </div>
         <div className="homepage-event-popup-copy">
           <p className="homepage-event-popup-eyebrow">THE NEXT VALORIA CONVERSATION</p>
-          <h2 id="homepage-event-popup-title">{SESSION.title}</h2>
+          <h2 id="homepage-event-popup-title">Make your influence count.</h2>
           <p>{SESSION.description}</p>
           <div className="homepage-event-popup-actions">
             <EventRegistrationTrigger session={SESSION} className="event-register-button" >RESERVE YOUR PLACE <span aria-hidden="true">→</span></EventRegistrationTrigger>
