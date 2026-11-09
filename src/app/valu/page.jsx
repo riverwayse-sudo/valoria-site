@@ -19,7 +19,7 @@ export default function ValuPage() {
           <div className="valu-hero-copy">
           <div className="valu-kicker"><span /> THE VALU INDEX</div>
           <h1>Make your capability<br /><em>visible and actionable.</em></h1>
-          <p className="valu-lede">The VALU Taster introduces the PRIME framework and gives you an initial view of your professional capability. Register your details first, complete the guided taster, then create your secure Valoria account when you are ready to continue to the separate Full VALU assessment and receive your official points-based VALU Index.</p>
+          <p className="valu-lede">VALU is Valoria’s capability assessment experience. It uses the PRIME framework to help you understand your professional strengths and development priorities. Begin with a guided introduction; when ready, create your account and continue to the full assessment to receive your official VALU Index in points.</p>
           <div className="valu-actions">
             <AssessmentStartLink href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">START THE VALU TASTER <span>→</span></AssessmentStartLink>
             <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW VALU SUPPORTS YOUR GROWTH <span>↓</span></a>
