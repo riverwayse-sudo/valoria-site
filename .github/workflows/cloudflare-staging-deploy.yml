@@ -171,7 +171,7 @@ jobs:
           curl -fsS "$base/" -o /tmp/valoria-home.html
           grep -q 'AFRICA’S HUMAN CAPITAL INSTITUTION' /tmp/valoria-home.html
           grep -q 'THE VALORIA INSTITUTIONAL SYSTEM' /tmp/valoria-home.html
-          grep -q 'INITIAL OPERATING MARKET' /tmp/valoria-home.html
+          grep -q 'INITIAL MARKET' /tmp/valoria-home.html
           grep -q 'NIGERIA' /tmp/valoria-home.html
 
           : > /tmp/valoria-css-bundle.css
