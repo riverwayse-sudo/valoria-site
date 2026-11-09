@@ -13,11 +13,11 @@ const TRACK_META = {
 const displayText = value => String(value ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
 
 function developmentArea(scores) {
-  if (!scores || typeof scores !== 'object') return 'Not available'
+  if (!scores || typeof scores !== 'object') return null
   const weakest = Object.entries(scores)
     .filter(([letter, value]) => PRIME_CLUSTERS.some(cluster => cluster.letter === letter) && Number.isFinite(Number(value)))
     .sort((a, b) => Number(a[1]) - Number(b[1]))[0]
-  return weakest ? PRIME_CLUSTERS.find(cluster => cluster.letter === weakest[0])?.name || 'Not available' : 'Not available'
+  return weakest ? PRIME_CLUSTERS.find(cluster => cluster.letter === weakest[0])?.name || null : null
 }
 
 export default async function LiveProfilesScroll() {
@@ -93,14 +93,14 @@ export default async function LiveProfilesScroll() {
                     const tier = isBasic ? null : getValuTier(profile.valu_index, 'full')
                     return (
                       <Link href={profileHref} key={profile.id} tabIndex={isClone ? -1 : undefined} className="vi-scroll-card" data-marketplace-intent={normalizedTracks[0] || 'all'} aria-label={`View public professional profile ${profile.atb_id || ''}`}>
-                        <div className="vi-scroll-avatar" aria-hidden="true"><ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} /></div>
+                        <div className="vi-scroll-avatar" aria-hidden="true"><ValoriaAvatar src={profile.photo_url} name={profile.full_name} seed={profile.id || profile.atb_id} size={64} /></div>
                         <div className="vi-scroll-copy">
                           <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>PUBLIC</i></div>
                           <strong className="vi-scroll-name">{displayText(profile.full_name)}</strong>
                           <div className="vi-scroll-headline">{displayText(profile.headline)}</div>
                           <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'NO DECLARED ROLE'}</div>
                           <div className="vi-scroll-designation">{isBasic ? 'BASIC LISTING' : (tier?.name || 'ASSESSMENT FOLLOW-UP')}</div>
-                          {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div><div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div></>}
+                          {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div>{development && <div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div>}</>}
                         </div>
                         <div className="vi-scroll-score" aria-label={isBasic ? 'Basic marketplace listing' : `VALU Index ${profile.valu_index} points`}>
                           <span className="vi-scroll-score-label">{isBasic ? 'LISTING LEVEL' : 'VALU INDEX'}</span>

@@ -444,7 +444,7 @@ export default function DashboardPage() {
               <div style={{ width:'88px', height:'88px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
                 <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
                   <div style={{ width:'100%', height:'100%', borderRadius:'50%', overflow:'hidden' }}>
-                    <ValoriaAvatar src={p.photo_url} seed={p.id || user?.id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={88} />
+                    <ValoriaAvatar src={p.photo_url} name={p.display_name} seed={p.id || user?.id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={88} />
                   </div>          </div>
               </div>
             )}
