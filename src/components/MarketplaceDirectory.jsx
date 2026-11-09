@@ -65,8 +65,11 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       if(!q) return true
       return [p.full_name,p.headline,p.current_job_title,p.atb_id,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
     }).sort((a, b) => {
-      const isAvailable = value => /^(available|accepting|open)$/i.test(displayText(value))
-      return Number(isAvailable(b.availability_status)) - Number(isAvailable(a.availability_status))
+      const scored = value => value.assessment_access === 'full' && Number.isFinite(Number(value.valu_index))
+      const isAvailable = value => /^(available|accepting|open)$/i.test(displayText(value.availability_status))
+      return Number(scored(b)) - Number(scored(a)) ||
+        Number(isAvailable(b)) - Number(isAvailable(a)) ||
+        displayText(a.full_name).localeCompare(displayText(b.full_name))
     })
   },[rows,activeTrack,query,sector,cluster,skill,scoreBand])
 
@@ -85,11 +88,12 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             {activeTrack === 'facilitator' && <>Find a facilitator<br/><i>for the work ahead.</i></>}
           </h1>
           <p className={styles.lede}>
-            {activeTrack === 'all' && 'Browse professionals by role, sector and skills. Open a profile to review their public details and capabilities.'}
-            {activeTrack === 'candidate' && 'Find professionals by role, sector and skills, then review their public profiles and capabilities.'}
-            {activeTrack === 'speaker' && 'Discover speakers and review their professional focus, experience and public profile.'}
+            {activeTrack === 'all' && 'Discover professionals by demonstrated capability, sector and declared expertise.'}
+            {activeTrack === 'candidate' && 'Find professionals by demonstrated capability, sector and declared expertise.'}
+            {activeTrack === 'speaker' && 'Discover speakers by professional focus, experience and declared expertise.'}
             {activeTrack === 'facilitator' && 'Discover facilitators by professional focus and sector. For a structured team development programme, explore Valoria Develop.'}
           </p>
+          {(activeTrack === 'all' || activeTrack === 'candidate') && <Link className={styles.shortlistCta} href="/contact-us?type=candidate">REQUEST A SHORTLIST <span aria-hidden="true">→</span></Link>}
           {activeTrack === 'facilitator' && <Link className={styles.view} href="/programmes">EXPLORE VALORIA DEVELOP</Link>}
           <nav className={styles.tabs} aria-label="Filter by declared role">{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
         </div>
@@ -199,7 +203,8 @@ function Profile({p, onSelect}) {
   const role = displayText(p.current_job_title || p.headline)
   const sector = displayText(p.industry)
   const location = displayText(p.location)
-  const summary = displayText(p.assessment_summary)
+  const clusterScores = p.cluster_scores && typeof p.cluster_scores === 'object' ? Object.entries(p.cluster_scores).filter(([, value]) => Number.isFinite(Number(value))) : []
+  const strongestCluster = clusterScores.sort((a, b) => Number(b[1]) - Number(a[1]))[0]?.[0]
   const available = /^(available|accepting|open)$/i.test(availability)
   const explicitlyUnavailable = /unavailable|not available|closed/i.test(availability)
   const availabilityLabel = available ? 'Available' : explicitlyUnavailable ? 'Unavailable' : 'Availability not stated'
@@ -214,36 +219,36 @@ function Profile({p, onSelect}) {
           <span className={styles.cardIdLabel}>{profileId || 'ATB ID PENDING'}</span>
         </div>
       </div>
-      {isFull && <div className={styles.valu} aria-label={`VALU Index ${p.valu_index} points`}>
-        <small>VALU INDEX</small><b>{p.valu_index}</b><span>POINTS</span>
-      </div>}
+      <div className={styles.scoreDesignation}>
+        {isFull ? <>
+          <div className={styles.valu} aria-label={`VALU Index ${p.valu_index} points`}>
+            <small>VALU INDEX</small><b>{p.valu_index}</b><span>POINTS</span>
+          </div>
+          <span className={`${styles.tierBadge} ${designationClass}`}>{designation}</span>
+        </> : <span className={styles.assessmentPending}>Assessment not yet completed</span>}
+      </div>
+    </header>
+
+    <div className={styles.cardAvailability}>
       <span className={`${styles.availabilityBadge} ${available ? styles.availableBadge : explicitlyUnavailable ? styles.unavailableBadge : styles.unknownBadge}`}>
         <i aria-hidden="true"/>{availabilityLabel}
       </span>
-    </header>
-
-    <div className={styles.profileMeta}>
-      <p className={styles.specialisation}>{sector || 'Sector not specified'}</p>
-      <p className={styles.locationLine}>{location || 'Location not specified'}</p>
     </div>
+
+    {(sector || location) && <div className={styles.profileMeta}>
+      {sector && <p className={styles.specialisation}>{sector}</p>}
+      {location && <p className={styles.locationLine}>{location}</p>}
+    </div>}
 
     {skills.length > 0 && <div className={styles.profileSkills} aria-label="Professional skills">{skills.map(value=><span key={value}>{value}</span>)}</div>}
 
-    <div className={styles.specialistCapabilities} aria-label="Declared capability selections">
-      {capabilityBadges.map(([key,label]) => {
-        const selected = selectedCaps.has(key)
-        return <span key={key} className={selected ? styles.capabilitySelected : styles.capabilityUnselected} aria-label={`${label}: ${selected ? 'selected' : 'not selected'}`}>{label}{selected ? ' ✓' : ''}</span>
-      })}
-    </div>
-
-    {isFull && <div className={styles.cardCredential}>
-      <span className={`${styles.tierBadge} ${designationClass}`}>{designation || 'VALU ASSESSED'}</span>
+    {selectedCaps.size > 0 && <div className={styles.specialistCapabilities} aria-label="Declared capability selections">
+      {capabilityBadges.filter(([key]) => selectedCaps.has(key)).map(([key,label]) => (
+        <span key={key} className={styles.capabilitySelected}>{label}</span>
+      ))}
     </div>}
 
-    {isFull && summary && <section className={styles.assessmentInsight}>
-      <span className={styles.insightLabel}>VALU ASSESSMENT INSIGHT</span>
-      <p className={styles.assessmentSummary}>{summary}</p>
-    </section>}
+    {strongestCluster && <span className={styles.strongestCapability}>Strongest: {CLUSTER_NAMES[strongestCluster] || titleCase(strongestCluster)}</span>}
 
     <button type="button" onClick={onSelect} className={`${styles.view} ${styles.viewButton}`} aria-haspopup="dialog">View profile <span aria-hidden="true">→</span></button>
   </article>
