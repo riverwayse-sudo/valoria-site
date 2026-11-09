@@ -67,12 +67,12 @@ if (fs.existsSync(profileClientPath)) {
   // Helpers invoked by the profile client must remain declared in this module.
   // This catches the exact production crash: getAvatarLetters is not defined.
   for (const helper of ['getInitials', 'getAvatarLetters', 'getYouTubeId', 'rankedClusterStrengths']) {
-    const invoked = new RegExp('\\b' + helper + '\\s*\\(').test(client);
-    const declared = new RegExp('function\\s+' + helper + '\\s*\\(').test(client);
+    const invoked = new RegExp('\b' + helper + '\s*\\(').test(client);
+    const declared = new RegExp('function\s+' + helper + '\s*\\(').test(client);
     if (invoked && !declared) violations.push('ProfileClient references missing helper: ' + helper);
   }
   for (const component of ['PrimeRadarChart', 'Section']) {
-    if (!new RegExp('function\\s+' + component + '\\s*\\(').test(client)) {
+    if (!new RegExp('function\s+' + component + '\s*\\(').test(client)) {
       violations.push('ProfileClient component/helper missing: ' + component);
     }
   }
@@ -205,10 +205,10 @@ const publicServiceCopy = [programmesPath, facilitatorsPath, waitlistPath, publi
 for (const file of publicServiceCopy) {
   if (!fs.existsSync(file)) continue;
   const copy = fs.readFileSync(file, 'utf8');
-  if (/\\bPRIME[-\\s]?certified\\b|\\bcertified facilitator(s)?\\b|\\bpre-assessed candidates\\b|every profile is verified by the VALU Index/i.test(copy)) {
+  if (/\bPRIME[-\s]?certified\b|\bcertified facilitator(s)?\b|\bpre-assessed candidates\b|every profile is verified by the VALU Index/i.test(copy)) {
     violations.push(path.relative(root, file) + ': unsupported blanket assessment or facilitator certification claim');
   }
-  if (/\\b90\\s*[- ]day\\s+re[- ]?measurement\\b|\\bafter\\s+90\\s+days\\b|\\b90\\s+days\\s+out\\b|retake.{0,40}90\\s+days/i.test(copy)) {
+  if (/\b90\s*[- ]day\s+re[- ]?measurement\b|\bafter\s+90\s+days\b|\b90\s+days\s+out\b|retake.{0,40}90\s+days/i.test(copy)) {
     violations.push(path.relative(root, file) + ': fixed follow-up assessment timing must be agreed in programme scope');
   }
 }
@@ -238,7 +238,7 @@ const retiredPublicClaims = [
   [/Africa's human capital institution|human capital institution/i, 'retired institutional positioning'],
   [/Explore the Bureau/i, 'retired Bureau navigation'],
   [/21 professionals/i, 'unverified marketplace headcount'],
-  [/\\bPRIME[-\\s]?certified\\b|\\bcertified facilitator(s)?\\b/i, 'unverified facilitator certification'],
+  [/\bPRIME[-\s]?certified\b|\bcertified facilitator(s)?\b/i, 'unverified facilitator certification'],
   [/pre-assessed candidates|every profile is verified by the VALU Index/i, 'unverified blanket assessment claim'],
   [/independently assessed/i, 'independent assessment claim before validation is complete'],
   [/Question 10|remaining 49|Questions 10–58/i, 'retired combined-assessment journey'],
