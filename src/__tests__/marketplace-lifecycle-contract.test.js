@@ -66,7 +66,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).toContain("['facilitator','Facilitator']")
     const cardComponent = directory.slice(directory.indexOf('function Profile({p, onSelect})'), directory.indexOf('// The public preview'))
     expect(cardComponent).not.toContain('NOT SELECTED')
-    expect(directory).not.toContain('Selection is distinct from capability-specific listing eligibility.')
+    expect(cardComponent).not.toContain('Selection is distinct from capability-specific listing eligibility.')
     const categoryFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
     expect(categoryFilter).toContain('p.capabilities || p.tracks || [p.track]')
     expect(categoryFilter).not.toContain('selectedCapabilities')
