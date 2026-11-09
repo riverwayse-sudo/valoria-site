@@ -6,8 +6,8 @@ describe('public sitemap privacy and route contract', () => {
   const sitemap = read('src/app/sitemap.js')
 
   test('dynamic profile URLs come only from the public Marketplace projection', () => {
-    expect(sitemap).toContain(".from('marketplace_public_roster')")
-    expect(sitemap).toContain("select('professional_id,projection_refreshed_at,full_name,atb_id,headline,current_job_title,assessment_access,valu_index,assessment_summary')")
+    expect(sitemap).toContain("client.rpc('get_marketplace_public_roster_v1')")
+    expect(sitemap).not.toContain(".from('marketplace_public_roster')")
     expect(sitemap).toContain('filter(isPublicProfileContentReady)')
     expect(sitemap).not.toContain(".from('professional_profiles')")
   })
@@ -23,7 +23,8 @@ describe('public sitemap privacy and route contract', () => {
 
   test('staging sitemap uses the staging host', () => {
     expect(sitemap).toContain('const IS_PREVIEW =')
-    expect(sitemap).toContain('https://staging.valoriainstitute.com')
+    expect(sitemap).toContain('https://valoria-staging-site.riverwayse.workers.dev')
+    expect(sitemap).toContain('process.env.VALU_PREVIEW_SITE_ORIGIN')
   })
 })
 
