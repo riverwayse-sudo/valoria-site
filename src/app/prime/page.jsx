@@ -17,7 +17,6 @@ const DESIGNATIONS = [
   { name: 'Distinguished', range: '75–89 points', meaning: 'Strong professional capability, supported by clear strengths across the PRIME dimensions.' },
   { name: 'Proficient', range: '55–74 points', meaning: 'A credible professional capability baseline with demonstrated strengths and focused development opportunities.' },
   { name: 'Standard', range: '35–54 points', meaning: 'An established starting baseline for structured professional development.' },
-  { name: 'Below threshold', range: 'Below 35 points', meaning: 'An assessment result that points to development priorities; no public merit designation is assigned.' },
 ]
 
 export default function PrimePage() {
@@ -72,7 +71,7 @@ export default function PrimePage() {
         <section className="page-section">
           <div className="page-section-inner">
             <Reveal>
-              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FIVE SCORE-BASED DESIGNATIONS</span></div>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOUR SCORE-BASED DESIGNATIONS</span></div>
               <h2 className="section-title">Progress is<br /><em>earned, not purchased.</em></h2>
             </Reveal>
             <div className="prime-tier-list">
@@ -83,7 +82,7 @@ export default function PrimePage() {
                 </article>
               ))}
             </div>
-            <p className="prime-copy">Designations are score-based. They cannot be purchased, upgraded by subscription, or transferred. A designation is not, by itself, a public-listing decision. Listing also depends on the applicable profile, capability evidence, consent and governance requirements. A lower score points to a development pathway; it does not block access to the platform.</p>
+            <p className="prime-copy">The four merit designations are score-based. Scores below 35 points receive no merit designation. Designations cannot be purchased, upgraded by subscription, or transferred. A designation is not, by itself, a public-listing decision. Listing also depends on the applicable profile, capability evidence, consent and governance requirements. A lower score points to a development pathway; it does not block access to the platform.</p>
           </div>
         </section>
         <section className="page-section alt cta-banner">
