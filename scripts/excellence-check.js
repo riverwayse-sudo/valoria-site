@@ -198,10 +198,18 @@ if (fs.existsSync(aboutPath)) {
     if (!about.includes(statement)) violations.push('About page is missing approved institutional foundation: ' + statement);
   }
 }
-if (fs.existsSync(programmesPath)) {
-  const programmes = fs.readFileSync(programmesPath, 'utf8');
-  if (/certified facilitators|90-day re-measurement|90-day remeasurement|retake it 90 days after/i.test(programmes)) {
-    violations.push('Valoria Develop contains an unconfirmed facilitator certification or fixed remeasurement claim');
+const facilitatorsPath = path.join(root, 'src/app/facilitators/page.jsx');
+const waitlistPath = path.join(root, 'src/components/WaitlistForm.jsx');
+const publicLayoutPath = path.join(root, 'src/app/layout.jsx');
+const publicServiceCopy = [programmesPath, facilitatorsPath, waitlistPath, publicLayoutPath];
+for (const file of publicServiceCopy) {
+  if (!fs.existsSync(file)) continue;
+  const copy = fs.readFileSync(file, 'utf8');
+  if (/\\bPRIME[-\\s]?certified\\b|\\bcertified facilitator(s)?\\b|\\bpre-assessed candidates\\b|every profile is verified by the VALU Index/i.test(copy)) {
+    violations.push(path.relative(root, file) + ': unsupported blanket assessment or facilitator certification claim');
+  }
+  if (/\\b90\\s*[- ]day\\s+re[- ]?measurement\\b|\\bafter\\s+90\\s+days\\b|\\b90\\s+days\\s+out\\b|retake.{0,40}90\\s+days/i.test(copy)) {
+    violations.push(path.relative(root, file) + ': fixed follow-up assessment timing must be agreed in programme scope');
   }
 }
 
@@ -213,6 +221,10 @@ const publicCopyPaths = [
   'src/app/valu/page.jsx',
   'src/app/valu/start/page.jsx',
   'src/app/programmes/page.jsx',
+  'src/app/facilitators/page.jsx',
+  'src/components/WaitlistForm.jsx',
+  'src/app/layout.jsx',
+  'src/app/about-us/page.jsx',
   'src/app/marketplace/page.jsx',
   'src/app/dashboard/page.jsx',
   'src/app/professional-signup/page.jsx',
@@ -226,7 +238,9 @@ const retiredPublicClaims = [
   [/Africa's human capital institution|human capital institution/i, 'retired institutional positioning'],
   [/Explore the Bureau/i, 'retired Bureau navigation'],
   [/21 professionals/i, 'unverified marketplace headcount'],
-  [/certified facilitators/i, 'unverified facilitator certification'],
+  [/\\bPRIME[-\\s]?certified\\b|\\bcertified facilitator(s)?\\b/i, 'unverified facilitator certification'],
+  [/pre-assessed candidates|every profile is verified by the VALU Index/i, 'unverified blanket assessment claim'],
+  [/independently assessed/i, 'independent assessment claim before validation is complete'],
   [/Question 10|remaining 49|Questions 10–58/i, 'retired combined-assessment journey'],
   [/Question\s+\d+\s+of\s+\d+/i, 'question-count progress label must not appear in public copy'],
   [/The 9-question taster is separate from the 58-question full VALU assessment|Valoria has two separate assessment stages|Two separate assessments/i, 'internal assessment separation mechanics must not appear in public copy'],
