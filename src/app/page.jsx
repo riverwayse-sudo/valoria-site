@@ -228,15 +228,30 @@ export default function HomePage() {
               </div>
               <p>Valoria works across the professional and organisational landscape. From talent sourcing and facilitation to professional development and institutional partnerships, start with the outcome you need to achieve.</p>
             </Reveal>
-            <div className="vi-ih-audience-list">
-              {audiences.map((item) => (
-                <Reveal className="vi-ih-audience-row" key={item.number}>
-                  <span className="vi-ih-audience-number">{item.number}</span>
-                  <div className="vi-ih-audience-label">{item.label}</div>
-                  <div className="vi-ih-audience-copy"><h3>{item.title}</h3><p>{item.body}</p></div>
-                  <a href={item.href} aria-label={item.action}>{item.action} <span>↗</span></a>
-                </Reveal>
-              ))}
+            <div className="vi-ih-audience-grid">
+              {audiences.map((item, index) => {
+                const imagery = [
+                  { src: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1100&q=85', alt: 'Professionals collaborating around a shared worktable' },
+                  { src: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1100&q=85', alt: 'A leadership team working through a strategic decision' },
+                  { src: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1100&q=85', alt: 'A speaker addressing an engaged audience on stage' },
+                  { src: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1100&q=85', alt: 'Learners sharing ideas in a collaborative learning environment' },
+                  { src: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1100&q=85', alt: 'A facilitator guiding a focused group discussion' },
+                ][index]
+                return (
+                  <Reveal className="vi-ih-audience-card" key={item.number} delay={index * 0.06}>
+                    <a className="vi-ih-audience-image" href={item.href} tabIndex={-1} aria-hidden="true">
+                      <img src={imagery.src} alt={imagery.alt} loading="lazy" />
+                      <span className="vi-ih-audience-image-number">{item.number}</span>
+                    </a>
+                    <div className="vi-ih-audience-card-copy">
+                      <div className="vi-ih-audience-label">{item.label}</div>
+                      <h3>{item.title}</h3>
+                      <p>{item.body}</p>
+                      <a className="vi-ih-audience-card-link" href={item.href} aria-label={item.action}>{item.action} <span>↗</span></a>
+                    </div>
+                  </Reveal>
+                )
+              })}
             </div>
           </div>
         </section>
