@@ -10,7 +10,7 @@ describe('VALU presentation consistency', () => {
     const home = read('src/app/page.jsx')
     const hero = read('src/components/HeroSlider.jsx')
     expect(hero).toContain('Discover your capability')
-    expect(home).toContain('five PRIME dimensions')
+    expect(hero).toContain('five PRIME dimensions')
     expect(home).not.toMatch(/(?:9|58)[- ]questions?|<b>9<\/b> QUESTIONS/i)
   })
 
