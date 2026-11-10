@@ -16,9 +16,9 @@ describe('VALU presentation consistency', () => {
   test('homepage hero leads with marketplace value and clear visitor actions', () => {
     const hero = read('src/components/HeroSlider.jsx')
     expect(hero).toContain('Capability should decide')
-    expect(hero).toContain('who gets seen.')
-    expect(hero).toContain('Valoria builds the room where capability gets seen.')
-    expect(hero).toContain('assess African professionals against a shared standard')
+    expect(hero).toContain('who gets seen. Valoria is the room.')
+    expect(hero).toContain("AFRICA'S TALENT MARKETPLACE FOR PROFESSIONALS")
+    expect(hero).toContain('assesses African professionals on one standard')
     expect(hero).toContain('START THE VALU TASTER')
     expect(hero).toContain('SEE HOW IT WORKS')
     expect(hero).toContain('hero-institutional-panel')
