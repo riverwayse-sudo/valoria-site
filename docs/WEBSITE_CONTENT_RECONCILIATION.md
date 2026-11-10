@@ -21,12 +21,12 @@
 
 | Area | Required outcome | Current staging finding | Acceptance |
 |---|---|---|---|
-| Homepage | Clear global-facing proposition, Africa-first scope, taster CTA, concise problem/standard/path/proof/opportunity story | Capability-led hero, taster CTA, Africa-first copy and homepage metadata deployed to Cloudflare staging; profile module suppresses unverified counts | Desktop/mobile visual review remains; no unsupported live-count claim; CTA and homepage route checks pass |
+| Homepage | Clear global-facing proposition, Africa-first scope, taster CTA, concise problem/standard/path/proof/opportunity story | Capability-led hero, problem statement, Africa-first metadata, three audience routes and four-step professional journey deployed; profile module suppresses unverified counts | Desktop/mobile visual review remains; no unsupported live-count claim; CTA and homepage route checks pass |
 | PRIME | Five clusters, canonical 17 skills, points language and current designations | Canonical 17 skills and five approved designation bands now appear on PRIME; site and platform scoring/report helpers use the same point boundaries | Boundary tests pass across both repositories; visual review remains |
-| VALU Index | Explain value and outcome; taster is separate from full assessment | Public copy simplified to three user-facing stages; assessment Worker deployed to staging | No internal mechanics, no “1 of 9/58”, no percentages; taster and full assessment remain distinct; live participant journey still requires a real-user acceptance check |
-| About | Explain why Valoria exists, institutional role and operating footprint | /about-us copy and metadata updated to Africa-first/Nigeria jurisdiction/2028 wording; route smoke test passes | Confirm legal entity and approved leadership/governance statements before production |
+| VALU Index | Explain value and outcome; taster is separate from full assessment | Page headline now reads “Know where you stand, in points”; taster and separate full assessment are explained in three user-facing stages; assessment Worker deployed | No internal progress labels or percentages; live participant journey still requires a real-user acceptance check |
+| About | Explain why Valoria exists, institutional role and operating footprint | /about-us now uses the approved story and plainly distinguishes Valoria from recruitment agencies, training companies, speaker bureaus, certification bodies and jobs boards; Africa-first/Nigeria/2028 wording retained | Exact mission/vision/purpose wording, legal entity and named governance roles still require source-of-truth confirmation |
 | Develop | Merge overlapping programmes/facilitator messaging; distinguish proposed from available | Page labels formats enquiry-led or in development; no prices | No certification or 90-day claims; only confirmed programmes and commercial terms |
-| Marketplace | Quality-controlled real profiles and accurate access language | Public data component filters incomplete/placeholder records and hides unverified count; staging database currently has no completed assessment/profile rows to publish | Verify the intended real profiles, consent, quality and buyer search before enabling public counts or inventory |
+| Marketplace | Quality-controlled real profiles and accurate access language | Public data component filters incomplete/placeholder records and hides unverified count; seniority filter added; profile summaries remain sourced from the VALU report; staging database has no completed assessment/profile rows to publish | Verify intended real profiles, consent, quality and buyer search; top development area is not shown because no approved field exists in the public roster schema |
 | ATB Connect | Buyer access and capability discovery without implying unavailable search | Enquiry-led buyer access with profile discovery where inventory exists | Search is only advertised as live when the real buyer search journey works |
 | ATB Spotlight | Speaker/facilitator discovery; certification claims only after certification | Current copy correctly says facilitator certification remains in development | No certified label until certification is complete; real profile evidence only |
 | Navigation/footer/legal | Correct destinations, privacy/terms, legal name and consistent naming | Route smoke test passed across the main public pages; legal copy remains subject to entity confirmation | No 404s in staging route sweep; legal entity must be confirmed before footer/legal publication |
@@ -45,18 +45,20 @@ Designation is an assessment result, not a subscription tier or certification. M
 
 ## Staging verification record — 10 November 2026
 
-**Both staging PRs have been merged into the staging branches only:**
-- Website PR [#314](https://github.com/riverwayse-sudo/valoria-site/pull/314), merge commit `dbac7d7f47c0a11ccf76380740619f213eb38c29`.
+**Staging PRs merged into the staging branches only:**
+- Website PR [#314](https://github.com/riverwayse-sudo/valoria-site/pull/314), merge commit `dbac7d7f47c0a11ccf76380740619f213eb38c29` (initial copy/assessment clarity and API safety).
+- Website PR [#317](https://github.com/riverwayse-sudo/valoria-site/pull/317), merge commit `63cd43504eb5b30ac0797f9c06ec9a5d5b315069` (final content brief alignment and seniority filter).
 - Assessment platform PR [#163](https://github.com/riverwayse-sudo/valoria-platform/pull/163), merge commit `e48a2defc97297614ceaed1c2cb355511c5107d9`.
 
 **Cloudflare staging deployments:**
-- Website Worker `valoria-staging-site`: version `fe76ee7c-096b-4c78-b81c-bd04086ce9a4`, 100% traffic.
-- Assessment Worker `valoria-staging-assessment`: version `1d9e0455-a317-476a-b947-b23c4210f414`, 100% traffic.
+- Website Worker `valoria-staging-site`: version `2941d983-548e-4e3c-9988-28586c34816c`, 100% traffic.
+- Assessment Worker `valoria-staging-assessment`: version `0c491cf8-5387-482c-b6ed-245671134b65`, 100% traffic.
 
 **Automated verification:**
-- Website: 23 Jest suites passed; 312 tests passed; production dependency audit, production build, Cloudflare bundle validation and staging route/SEO smoke tests passed.
+- Website: 23 Jest suites passed; 315 tests passed; production dependency audit, production build, Cloudflare bundle validation and staging route/SEO smoke tests passed.
 - Assessment platform: 36 Jest suites passed; 341 tests passed; Worker routing, build, Cloudflare deployment and assessment entry/CORS smoke tests passed.
 - Staging API boundary: unauthenticated VALU handoff returns 401; unauthenticated taster linking returns 401; opportunity browsing returns 503. Only the three authenticated assessment-handoff endpoints are allow-listed.
+- Homepage routes now present three audiences: professionals, employers, and event organisers/facilitators/training buyers. The About, PRIME and VALU page copy matches the approved brief.
 - `robots.txt`, sitemap, `llms.txt`, CSS asset delivery and the required public route sweep passed.
 
 **Staging data migration:**
@@ -68,7 +70,8 @@ Designation is an assessment result, not a subscription tier or certification. M
 
 ## Known blockers — do not paper over
 
-- Manual visual review of desktop/mobile page layouts, especially the new PRIME designation grid and marketplace cards, remains outstanding.
+- Manual visual review of desktop/mobile page layouts, especially the new PRIME designation grid, three-route homepage and seniority filter, remains outstanding.
+- The brief requests a top development area on each Marketplace card, but the public roster schema has no approved top-development-area field. Do not infer it from the lowest cluster score; add an approved VALU-report field before displaying it.
 - The legal entity name and approved public mission/vision/purpose wording must be confirmed against the current institutional source of truth before final publication.
 - Marketplace counts, profile consent and buyer search availability require live verification; code-level placeholders are not proof of live capability.
 
