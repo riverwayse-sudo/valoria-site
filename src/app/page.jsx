@@ -144,6 +144,28 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section className="home-journey" aria-labelledby="home-journey-title">
+          <div className="container">
+            <Reveal className="home-section-heading">
+              <div>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">HOW IT WORKS</span></div>
+                <h2 id="home-journey-title">Four steps from insight <em>to opportunity.</em></h2>
+              </div>
+              <p>Start with a directional signal, build a fuller professional record, then become discoverable when the relevant eligibility and visibility requirements are met.</p>
+            </Reveal>
+            <div className="home-journey-grid">
+              <article className="home-journey-card"><span>01</span><h3>Take the taster</h3><p>Begin with nine questions for an initial read across four Intelligence skills.</p></article>
+              <article className="home-journey-card"><span>02</span><h3>Complete the full assessment</h3><p>Continue to the separate full assessment after creating or confirming your Valoria account.</p></article>
+              <article className="home-journey-card"><span>03</span><h3>Build your profile</h3><p>Use your VALU results and professional information to create a credible profile.</p></article>
+              <article className="home-journey-card"><span>04</span><h3>Become discoverable</h3><p>Present your capabilities to relevant buyers when eligibility and public visibility requirements are met.</p></article>
+            </div>
+            <div className="home-journey-actions">
+              <a href="/valu" className="home-journey-link">UNDERSTAND THE VALU JOURNEY <span aria-hidden="true">→</span></a>
+              <a href="/opportunities" className="home-journey-link">EXPLORE OPPORTUNITIES <span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </section>
+
         <section className="home-pathways home-decision-pathways" aria-labelledby="decision-pathways-title">
           <div className="container">
             <Reveal className="home-section-heading">
