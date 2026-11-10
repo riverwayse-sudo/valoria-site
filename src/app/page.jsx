@@ -3,7 +3,6 @@ import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import HomepageEvents from '@/components/HomepageEvents'
-import HomepageEventPopup from '@/components/HomepageEventPopup'
 import './home.css'
 import './home-institutional.css'
 
@@ -115,7 +114,6 @@ export default function HomePage() {
   return (
     <>
       <Nav />
-      <HomepageEventPopup />
       <main id="main-content" className="vi-institutional-home">
         <section className="vi-ih-hero" aria-labelledby="vi-ih-title">
           <div className="vi-ih-hero-image" aria-hidden="true">
@@ -131,8 +129,8 @@ export default function HomePage() {
               <a className="vi-ih-button vi-ih-button-quiet" href="/valu">Start with VALU <span>↗</span></a>
             </div>
             <div className="vi-ih-hero-foot">
-              <span>INITIAL OPERATING MARKET <b>NIGERIA</b></span>
-              <span>Designed for a global audience. Operating first in Nigeria.</span>
+              <span>INITIAL MARKET <b>NIGERIA</b></span>
+              <span>Built for an international audience. Operating first in Nigeria.</span>
             </div>
           </div>
           <div className="vi-ih-hero-index" aria-hidden="true">
