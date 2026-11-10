@@ -13,7 +13,7 @@ export async function syncEventRegistrationToBrevo({ email, fullName, role, orga
   const key = process.env.BREVO_API_KEY
   if (!key) return { synced: false, emailSent: false, errorCode: 'BREVO_NOT_CONFIGURED' }
 
-  const [firstName, ...rest] = String(fullName || '').trim().split(/\\s+/)
+  const [firstName, ...rest] = String(fullName || '').trim().split(/\s+/)
   const attributes = { FIRSTNAME: firstName || '', LASTNAME: rest.join(' ') }
   if (process.env.BREVO_CUSTOM_ATTRIBUTES_ENABLED === 'true') {
     Object.assign(attributes, {
