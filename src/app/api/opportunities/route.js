@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import { isSubmissionKey, normalizeOpportunityInput } from '@/lib/opportunityValidation'
 
 const IS_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1'
-const IS_READ_ONLY_PREVIEW = IS_PREVIEW && process.env.VALU_STAGING_API_ENABLED !== '1'
+const IS_READ_ONLY_PREVIEW = IS_PREVIEW
 
 function db() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
@@ -18,7 +18,7 @@ function clientKey(request, email) {
 }
 
 export async function GET() {
-  if (IS_READ_ONLY_PREVIEW) return Response.json({ opportunities: [], preview: true })
+  if (IS_READ_ONLY_PREVIEW) return Response.json({ error: 'Opportunity browsing is disabled in read-only staging preview.' }, { status: 503, headers: { 'Cache-Control': 'no-store' } })
   const sb = db()
   if (!sb) return Response.json({ error: 'Opportunity service is not configured.' }, { status: 503 })
   const { data, error } = await sb.from('opportunities')
