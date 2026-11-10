@@ -56,6 +56,9 @@ describe('VALU presentation consistency', () => {
     expect(directory).toContain("styles[tier.name.toLowerCase()]")
     expect(homepage).toContain("getValuTier(profile.valu_index, 'full')")
     expect(homepage).not.toContain('displayText(profile.designation)')
+    const adminRoster = read('src/app/admin/marketplace-roster/page.jsx')
+    expect(adminRoster).toContain("getValuTier(profile.valu_points, 'full')")
+    expect(adminRoster).not.toContain('profile.designation.toUpperCase()')
   })
 
   test('the shared score display contract declares points, not a percentage suffix', () => {
