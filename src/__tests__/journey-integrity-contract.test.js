@@ -26,31 +26,33 @@ describe('participant-facing assessment clarity', () => {
 
   test('public VALU information distinguishes the taster from the full assessment', () => {
     const valu = read('src/app/valu/page.jsx')
-    expect(valu).toContain('guided taster')
-    expect(valu).toContain('full assessment')
-    expect(valu).toContain('official VALU Index')
+    expect(valu).toContain('short VALU Taster')
+    expect(valu).toContain('separate full assessment')
+    expect(valu).toContain('official points-based VALU Index')
   })
 
-  test('public PRIME page and marketplace use canonical VALU v4 merit bands', () => {
+  test('public PRIME page and marketplace use the five approved VALU designation bands', () => {
     const brand = read('src/lib/brand.js')
     const prime = read('src/app/prime/page.jsx')
     const marketplaceCss = read('src/components/MarketplaceDirectory.module.css')
     const tiers = [
-      { min: 90, max: 100, name: 'Elite' },
-      { min: 75, max: 89, name: 'Distinguished' },
-      { min: 55, max: 74, name: 'Proficient' },
-      { min: 35, max: 54, name: 'Standard' },
+      { min: 80, max: 100, name: 'Force to Align With', className: 'force-to-align' },
+      { min: 65, max: 79, name: 'Emerging Force', className: 'emerging-force' },
+      { min: 50, max: 64, name: 'Developing Professional', className: 'developing-professional' },
+      { min: 35, max: 49, name: 'Building Foundations', className: 'building-foundations' },
+      { min: 0, max: 34, name: 'At the Starting Point', className: 'starting-point' },
     ]
     for (const tier of tiers) {
       expect(brand).toContain(`min: ${tier.min}, max: ${tier.max}, name: '${tier.name}'`)
-      expect(prime).toContain(`tier:'${tier.name}'`)
-      expect(marketplaceCss).toContain(`.${tier.name.toLowerCase()}`)
+      expect(prime).toContain(tier.name)
+      expect(marketplaceCss).toContain(`.${tier.className}`)
     }
-    expect(prime).toContain('FOUR SCORE-BASED DESIGNATIONS')
-    expect(prime).toContain('Scores below 35 points receive no merit designation')
-    for (const retired of ['Force to Align With', 'Emerging Force', 'Developing Professional', 'Building Foundations', 'At the Starting Point']) {
-      expect(prime).not.toContain(retired)
-    }
+    expect(prime).toContain('80–100 POINTS')
+    expect(prime).toContain('65–79 POINTS')
+    expect(prime).toContain('50–64 POINTS')
+    expect(prime).toContain('35–49 POINTS')
+    expect(prime).toContain('BELOW 35 POINTS')
+    expect(brand).toContain("unit: 'points'")
   })
 
   test('staging preview blocks public writes but permits only confirmed identity and assessment handoff', () => {
