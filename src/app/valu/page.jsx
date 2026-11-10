@@ -49,7 +49,8 @@ export default function ValuPage() {
       <section className="valu-prime">
         <div className="valu-wrap">
           <div className="valu-prime-head"><div><div className="valu-kicker"><span /> THE PRIME FRAMEWORK</div><h2>Five dimensions.<br /><em>One professional picture.</em></h2></div><p>PRIME provides the framework through which Valoria interprets professional readiness, capability and development.</p></div>
-          <div className="valu-dimensions">{dimensions.map((cluster) => <article key={cluster.letter}><div className="valu-letter">{cluster.letter}</div><h3>{cluster.name}</h3><p>{cluster.subtitle}</p><p><strong>Skills:</strong> {cluster.skills.join(' · ')}</p></article>)}</div>
+          <div className="valu-dimensions">{dimensions.map((cluster) => <article key={cluster.letter}><div className="valu-letter">{cluster.letter}</div><h3>{cluster.name}</h3><p>{cluster.letter === 'E' ? 'How you create. Enterprise measures the capacity to generate value beyond a task — through commercial thinking, creative problem-solving, and the ability to influence and collaborate in new ways.' : cluster.subtitle}</p><p><strong>Skills:</strong> {cluster.skills.map((skill, index) => <span key={skill}>{skill}{['AI Fluency', 'Human-AI Collaboration'].includes(skill) ? ' ★' : ''}{index < cluster.skills.length - 1 ? ' · ' : ''}</span>)}</p></article>)}</div>
+          <p className="valu-future-note">★ Future-Ready skill — critical for the professional talent market of 2025 to 2035.</p>
         </div>
       </section>
 
@@ -57,6 +58,13 @@ export default function ValuPage() {
         <div className="valu-wrap valu-outcome-grid">
           <div><div className="valu-kicker valu-dark"><span /> WHAT THE FULL ASSESSMENT ADDS</div><h2>Move from a directional taster to an official professional record.</h2></div>
           <div><p>The taster offers an initial perspective on your professional capability. Your official VALU Index is established when you complete the assessment journey.</p><p>The formal assessment covers all 17 PRIME skills across Presence, Relationships, Intelligence, Mastery and Enterprise. It establishes your official VALU Index and PRIME results in points, with a 12-month validity period. Your professional profile and marketplace access then reflect your completed assessment and the applicable eligibility requirements.</p><AssessmentStartLink href={BRAND.assessmentUrl} className="valu-inline">START THE VALU TASTER →</AssessmentStartLink></div>
+        </div>
+      </section>
+
+      <section className="valu-outcome">
+        <div className="valu-wrap valu-outcome-grid">
+          <div><div className="valu-kicker valu-dark"><span /> WHAT VALU IS — AND IS NOT</div><h2>An assessment standard, <em>not a purchasable badge.</em></h2></div>
+          <div><p>Your designation is earned through the assessment. It is not a subscription tier, cannot be purchased or transferred, and cannot be raised simply by repeatedly retaking the assessment.</p><p>A result below the listing threshold does not remove access to Valoria. It identifies development as the next step.</p></div>
         </div>
       </section>
 
