@@ -9,16 +9,17 @@ describe('VALU presentation consistency', () => {
   test('homepage keeps the professional VALU entry clear without exposing internal assessment mechanics', () => {
     const home = read('src/app/page.jsx')
     expect(home).toContain('START THE VALU TASTER')
-    expect(home).toContain('five PRIME dimensions')
+    expect(home).toContain('separate full assessment')
+    expect(home).toContain('build your professional profile')
     expect(home).not.toMatch(/(?:9|58)[- ]questions?|<b>9<\/b> QUESTIONS/i)
   })
 
   test('homepage hero leads with marketplace value and clear visitor actions', () => {
     const hero = read('src/components/HeroSlider.jsx')
     expect(hero).toContain('Capability should decide')
-    expect(hero).toContain('who gets seen. Valoria is the room.')
+    expect(hero).toContain('who gets seen.')
     expect(hero).toContain("AFRICA'S TALENT MARKETPLACE FOR PROFESSIONALS")
-    expect(hero).toContain('assesses African professionals on one standard')
+    expect(hero).toContain('Valoria gives professionals a clearer way')
     expect(hero).toContain('START THE VALU TASTER')
     expect(hero).toContain('SEE HOW IT WORKS')
     expect(hero).toContain('hero-institutional-panel')
@@ -38,10 +39,30 @@ describe('VALU presentation consistency', () => {
     expect(home).not.toContain('FOUR WAYS TO ENGAGE.')
     expect(home).toContain('FOR PROFESSIONALS')
     expect(home).toContain('FOR EMPLOYERS')
-    expect(home).toContain('FOR EVENT ORGANISERS & TRAINING BUYERS')
-    expect(home).toContain('Find out where you stand.')
+    expect(home).toContain('FOR EVENT ORGANISERS · FOR FACILITATORS & TRAINING BUYERS')
+    expect(home).toContain('Know where you stand.')
     expect(home).toContain('Hire by capability, not CV triage.')
-    expect(home).toContain('Find speakers and facilitators who can hold a room.')
+    expect(home).toContain('Find expertise that can hold a room.')
+  })
+
+  test('VALU Index page explains the taster and separate full assessment without progress mechanics', () => {
+    const valu = read('src/app/valu/page.jsx')
+    expect(valu).toContain('Know where you stand,')
+    expect(valu).toContain('separate full assessment')
+    expect(valu).toContain('official points-based VALU Index')
+    expect(valu).not.toMatch(/1 of 9|1 of 58/i)
+  })
+
+  test('About page follows the approved story and states institutional boundaries plainly', () => {
+    const about = read('src/app/about-us/page.jsx')
+    expect(about).toContain('Why Valoria')
+    expect(about).toContain('The mechanisms that turn talent into opportunity are.')
+    for (const statement of ['Not a recruitment agency', 'Not a training company', 'Not a speaker bureau', 'Not a certification body', 'Not a jobs board']) {
+      expect(about).toContain(statement)
+    }
+    expect(about).toContain('Africa-first')
+    expect(about).toContain('Continental expansion is a 2028 priority')
+    expect(about).not.toContain('MISSION, VISION & PURPOSE')
   })
 
   test('homepage registry explains VALU points and privacy context', () => {
