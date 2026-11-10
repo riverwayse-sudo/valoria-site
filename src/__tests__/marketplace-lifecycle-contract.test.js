@@ -266,23 +266,26 @@ describe('VALUI marketplace lifecycle contract', () => {
       expect(source).not.toContain('15 question')
     }
     expect(prime).toContain('The VALU taster offers a guided introduction to the PRIME framework.')
-    expect(prime).toContain('Completing it establishes your official VALU Index in points')
+    expect(prime).toContain('establishes your official VALU Index in points')
     expect(prime).not.toMatch(/(?:9|58)[- ]questions?|54 scored|validity anchors|15–20 minutes/i)
     expect(reminders).toContain('RETURN TO YOUR DASHBOARD')
     expect(reminders).not.toContain('CONTINUE TO QUESTION 10')
   })
 
-  test('Marketplace cards show VALU points beside the profile identity and all four merit tiers', () => {
+  test('Marketplace cards show VALU points beside the profile identity and all five merit tiers', () => {
     const brand = read('src/lib/brand.js')
     const directory = read('src/components/MarketplaceDirectory.jsx')
     const styles = read('src/components/MarketplaceDirectory.module.css')
-    expect(brand).toContain("name: 'Standard'")
-    expect(brand).toContain('min: 35, max: 54')
+    expect(brand).toContain("name: 'Building Foundations'")
+    expect(brand).toContain('min: 35, max: 49')
+    expect(brand).toContain("name: 'At the Starting Point'")
+    expect(brand).toContain('min: 0, max: 34')
     expect(directory).toContain('className={styles.valu}')
     expect(directory).toContain('FULL ASSESSMENT COMPLETE')
     expect(directory).toContain('CAPABILITY SELECTION')
     expect(directory).not.toContain('tier.stars')
-    expect(styles).toContain('.standard')
+    expect(styles).toContain('.building-foundations')
+    expect(styles).toContain('.starting-point')
   })
 
   test('marketplace queries exclude registered-only and test profiles', () => {
