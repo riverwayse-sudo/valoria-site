@@ -13,7 +13,7 @@ const PLACEHOLDER_HEADLINES = new Set([
 
 export // Only canonical route-safe ATB identifiers can enter the public profile projection.
 function isValidAtbId(value) {
-  return /^ATB-[A-Z0-9-]{4,40}$/i.test(String(value || '').trim())
+  return /^ATB-[A-Z0-9-]{4,40}$/i.test(String(value || '').normalize('NFKC').trim())
 }
 
 export function isPublicProfileContentReady(row) {
@@ -26,7 +26,7 @@ export function isPublicProfileContentReady(row) {
   return Boolean(
     row.full_name &&
     isValidAtbId(row.atb_id) &&
-    headline.length >= 8 &&
+    headline.length >= 3 &&
     !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
     !/[\u{1D400}-\u{1D7FF}]/u.test(headline) &&
     isValidAssessmentAccess &&
