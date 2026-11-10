@@ -87,7 +87,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     <section className={styles.hero}>
       <div className={styles.container}>
         <p className={styles.eyebrow}>THE VALORIA MARKETPLACE</p>
-        <h1>{activeTrack === 'all' ? <>Find capability.<br/><i>Engage confidently.</i></> : <>{TRACKS.find(t=>t[0]===activeTrack)?.[1]}<br/><i>on Valoria.</i></>}</h1>
+        <h1>{activeTrack === 'all' ? <>Find professionals<br/><i>by capability.</i></> : <>{TRACKS.find(t=>t[0]===activeTrack)?.[1]}<br/><i>on Valoria.</i></>}</h1>
         <p className={styles.lede}>A completed VALU snapshot may support a Basic listing, subject to eligibility and public visibility rules. Completing the full assessment establishes your official VALU Index in points, your earned designation and assessment insight.</p>
         <nav className={styles.tabs}>{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
       </div>
