@@ -10,7 +10,6 @@ describe('participant-facing assessment clarity', () => {
   test('participant-facing pages and progress indicators do not expose assessment mechanics', () => {
     const sources = [
       read('src/components/VALUJourneyProgress.jsx'),
-      read('src/app/valu/page.jsx'),
       read('src/app/valu/start/page.jsx'),
       read('src/app/prime/page.jsx'),
       read('src/app/dashboard/page.jsx'),
@@ -29,6 +28,9 @@ describe('participant-facing assessment clarity', () => {
     expect(valu).toContain('short VALU Taster')
     expect(valu).toContain('separate full assessment')
     expect(valu).toContain('official points-based VALU Index')
+    expect(valu).toContain('nine questions across four Intelligence skills')
+    expect(valu).toContain('separate 58-question full assessment')
+    expect(valu).toContain('54 scored questions and four validity checks')
   })
 
   test('public PRIME page and marketplace use the five approved VALU designation bands', () => {
