@@ -129,9 +129,8 @@ export default function HomePage() {
               <a className="vi-ih-button vi-ih-button-quiet" href="/valu">Start with VALU <span>↗</span></a>
             </div>
             <div className="vi-ih-hero-foot">
-              <span>INITIAL MARKET <b>NIGERIA</b></span>
-              <span>Built for an international audience. Operating first in Nigeria.</span>
-              <span>Initial operating focus is Nigeria.</span>
+              <span>INITIAL OPERATING MARKET <b>NIGERIA</b></span>
+              <span>Designed for a global audience. Operating first in Nigeria.</span>
             </div>
           </div>
           <div className="vi-ih-hero-index" aria-hidden="true">
