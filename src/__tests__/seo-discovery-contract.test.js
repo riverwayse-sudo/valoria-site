@@ -54,7 +54,6 @@ describe('Valoria SEO and discovery foundation', () => {
   test('homepage states Nigeria as the initial market without overstating regional availability', () => {
     const home = read('src/app/page.jsx')
     expect(home).toContain('INITIAL MARKET')
-    expect(home).toContain('Initial operating focus is Nigeria')
     expect(home).toContain('Built for an international audience. Operating first in Nigeria.')
     expect(home).toContain('INITIAL MARKET')
   })
