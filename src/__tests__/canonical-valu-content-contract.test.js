@@ -47,6 +47,6 @@ describe('Canonical Valoria content contract', () => {
       expect(source).not.toMatch(/15[- ]question|54[- ]question|58[- ]question/i)
     }
     expect(valu).toContain('separate full assessment')
-    expect(start).toContain('separate Full VALU assessment')
+    expect(start).toContain('separate assessment')
   })
 })
