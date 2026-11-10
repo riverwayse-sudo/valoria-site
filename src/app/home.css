@@ -3757,3 +3757,26 @@
     transform: none !important;
   }
 }
+
+
+/* Tablet refinement: preserve readable PRIME typography beside the portrait. */
+@media (min-width: 761px) and (max-width: 900px) {
+  .vi-editorial-hero { min-height: auto; }
+  .vi-hero-content {
+    width: min(100% - 64px, 680px);
+    min-height: auto;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 48px;
+    padding: 76px 0 88px;
+  }
+  .vi-hero-art {
+    width: 100%;
+    max-width: 560px;
+    min-height: 420px;
+    justify-self: center;
+    grid-template-columns: minmax(0, 1fr) minmax(190px, .72fr);
+  }
+  .vi-hero-art-content { padding: 28px 22px 24px; }
+  .vi-prime-word { font-size: clamp(64px, 9vw, 82px); }
+  .vi-prime-labels span { font-size: 9px; }
+}
