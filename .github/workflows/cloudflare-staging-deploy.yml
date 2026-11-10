@@ -2,17 +2,6 @@ name: Deploy Valoria site to isolated Cloudflare staging
 # Final verification: test canonical ATB IDs, consent-gated public data and premium profile preview.
 
 on:
-  pull_request:
-    branches: ["experience/staging-redesign-20261106"]
-    types: [opened, synchronize, reopened]
-    paths:
-      - "src/**"
-      - "next.config.js"
-      - "open-next.config.ts"
-      - "wrangler.jsonc"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/cloudflare-staging-deploy.yml"
   push:
     branches: ["experience/staging-redesign-20261106"]
     paths:
