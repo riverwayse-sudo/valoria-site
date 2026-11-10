@@ -20,7 +20,7 @@ export default function HeroSlider() {
                 <em>who gets seen.</em>
               </h1>
               <p className="hero-sub hero-institutional-sub">
-                Valoria gives professionals a clearer way to understand their capabilities, develop where needed and become visible to employers, event organisers and training buyers.
+                Valoria builds the room where capability gets seen. We assess African professionals against a shared standard, support development where it is needed and connect relevant expertise to employers, event organisers and training buyers.
               </p>
               <div className="hero-actions">
                 <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">
