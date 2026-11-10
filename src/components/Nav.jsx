@@ -228,6 +228,6 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
     <a href={linkHref} className={className} style={style} onClick={handleClick} aria-busy={opening} {...props}>
       {opening ? 'Opening VALU…' : children}
     </a>
-    {error && <span role="alert" style={{ display: 'block', color: '#F09595', fontSize: '12px', marginTop: '6px' }}>{error}</span>}
+    {error && <span role="alert" className="nav-assessment-error">{error}</span>}
   </>
 }
