@@ -105,7 +105,7 @@ describe('staging preview safety boundary', () => {
     expect(prWorkflow).toContain('npx wrangler deploy')
     expect(prWorkflow).toContain('assessment_html="$(curl -fsSL')
     expect(prWorkflow).toContain(`grep -qi 'id="root"' <<<"$assessment_html"`)
-    expect(prWorkflow).not.toContain("grep -qi 'BEGIN MY TASTER' <<<"$assessment_html"")
+    expect(prWorkflow).not.toContain(`grep -qi 'BEGIN MY TASTER' <<<"$assessment_html"`)
 
     const pushWorkflow = read('.github/workflows/cloudflare-staging-deploy.yml')
     expect(pushWorkflow).not.toContain('pull_request:')
