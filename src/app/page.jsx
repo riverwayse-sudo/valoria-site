@@ -15,7 +15,7 @@ export const metadata = {
   title: 'Valoria Institute — Worth, Built.',
   openGraph: { title: 'Valoria Institute — Worth, Built.', description: 'Valoria Institute is Africa-first, with Nigeria as its initial operating jurisdiction. It helps professionals and organisations understand, develop and connect professional capability through PRIME, the VALU Index and the Valoria Marketplace.', url: 'https://valoriainstitute.com/' },
   twitter: { card: 'summary_large_image', title: 'Valoria Institute — Worth, Built.' },
-  description: 'Starting in Nigeria, Valoria helps professionals understand capability, build credible profiles and discover relevant opportunities through a capability-led marketplace.',
+  description: 'Valoria Institute is Africa-first, with Nigeria as its initial operating jurisdiction. It helps professionals and organisations understand, develop and connect professional capability through PRIME, the VALU Index and the Valoria Marketplace.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
 }
 
@@ -50,30 +50,31 @@ const institutionalCapabilities = [
   },
 ]
 
+// Three audience routes: professionals, employers, and event organisers/training buyers; facilitators are the supply side.
 const decisionPathways = [
   {
     number: '01',
     label: 'FOR PROFESSIONALS',
-    title: 'Find out where you stand.',
-    body: 'Understand your professional capability through the VALU Taster, then build a stronger record through the full assessment and your Valoria profile.',
+    title: 'Know where you stand.',
+    body: 'Understand your capability through PRIME and the VALU Index, then take a clear next step in your professional development.',
     href: '/valu',
-    cta: 'EXPLORE THE VALU INDEX',
+    cta: 'START THE VALU TASTER',
   },
   {
     number: '02',
     label: 'FOR EMPLOYERS',
     title: 'Hire by capability, not CV triage.',
-    body: 'Discover professionals through a shared capability framework, structured insight and profiles aligned with your organisation’s requirements.',
+    body: 'Explore professional capability, experience and role context through a more structured talent discovery pathway.',
     href: '/atb-connect',
-    cta: 'EXPLORE ATB CONNECT',
+    cta: 'REQUEST BUYER ACCESS',
   },
   {
     number: '03',
-    label: 'FOR EVENT ORGANISERS & TRAINING BUYERS',
-    title: 'Find speakers and facilitators who can hold a room.',
-    body: 'Discover relevant expertise for events, workshops and development programmes through capability-led professional profiles.',
+    label: 'FOR EVENT ORGANISERS · FOR FACILITATORS & TRAINING BUYERS',
+    title: 'Find expertise that can hold a room.',
+    body: 'Discover speakers and facilitators through capability-led profiles and relevant professional experience.',
     href: '/atb-spotlight',
-    cta: 'EXPLORE ATB SPOTLIGHT',
+    cta: 'FIND A SPEAKER OR FACILITATOR',
   },
 ]
 
@@ -95,9 +96,9 @@ export default function HomePage() {
             <Reveal className="home-section-heading">
               <div>
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE INFRASTRUCTURE GAP</span></div>
-                <h2 id="institutional-case-title">Talent exists. The systems to recognise and mobilise it must work <em>better.</em></h2>
+                <h2 id="institutional-case-title">Careers still turn on who was in the right room at the right time. Your capability has not changed. <em>The room has.</em></h2>
               </div>
-              <p>Across hiring, leadership, learning and events, organisations need more than access to résumés or networks. They need clearer ways to understand capability, develop it and connect it to the right opportunity.</p>
+              <p>Professionals can be overlooked when familiarity shapes who gets considered. Employers, event organisers and training buyers need a more consistent way to understand capability beyond résumés, biographies and referrals.</p>
             </Reveal>
             <Reveal className="home-institutional-proof" as="div">
               <div className="home-institutional-proof-item">
@@ -150,7 +151,7 @@ export default function HomePage() {
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THREE WAYS TO ENGAGE.</span></div>
                 <h2 id="decision-pathways-title">Start with the outcome your organisation <em>needs.</em></h2>
               </div>
-              <p>Whether you are sourcing talent, curating an event or building workforce capability, Valoria provides a clear route into the relevant part of the institution.</p>
+              <p>Whether you are building your professional future, hiring talent or finding expertise for an event or programme, Valoria provides a clear next step.</p>
             </Reveal>
             <Reveal className="home-pathway-grid home-decision-grid" as="div">
               {decisionPathways.map((item) => (
@@ -187,7 +188,7 @@ export default function HomePage() {
               <div>
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR PROFESSIONALS</span></div>
                 <h2 id="professional-entry-title">Make your capability <em>clearer.</em></h2>
-                <p>Explore the VALU Index and begin with a short reflection on the five PRIME dimensions. Use the insight as a starting point for your next professional move.</p>
+                <p>Take the taster, complete the separate full assessment, build your professional profile and become discoverable for relevant opportunities. Start with a clearer view of your capability before your next move.</p>
               </div>
               <div className="home-professional-entry-actions">
                 <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">START THE VALU TASTER <span aria-hidden="true">→</span></AssessmentStartLink>
