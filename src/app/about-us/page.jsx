@@ -4,12 +4,12 @@ import Reveal from '@/components/Reveal'
 import '../pages.css'
 
 export const metadata = {
-  title: 'About Valoria Institute | Professional Capability Marketplace',
-  description: 'Valoria Institute is an Africa-first professional capability marketplace, with Nigeria as its initial operating jurisdiction. It connects PRIME, the VALU Index, professional development and relevant opportunities.',
+  title: 'About Valoria Institute | Professional Capability Institution',
+  description: 'Valoria Institute is an Africa-first professional capability institution, with Nigeria as its initial operating jurisdiction. Its connected system brings together PRIME, the VALU Index, professional development, certification pathways and a capability-led marketplace.',
   keywords: ['Valoria Institute', 'professional capability', 'PRIME framework', 'VALU Index', 'professional development', 'talent marketplace'],
   openGraph: {
     title: 'About Valoria Institute',
-    description: 'A professional capability marketplace connecting assessment, development, visibility and opportunity.',
+    description: 'A professional capability institution connecting standards, assessment, development, certification pathways, visibility and opportunity.',
     url: 'https://valoriainstitute.com/about-us',
   },
   alternates: { canonical: 'https://valoriainstitute.com/about-us' },
@@ -31,7 +31,7 @@ const POSITIONING = [
   { title: 'Not a recruitment agency', body: 'Valoria does not recruit on behalf of employers. The Marketplace helps buyers discover capability; hiring decisions remain with the organisations making them.' },
   { title: 'Not a training company', body: 'Valoria Institute provides the capability framework and assessment. Valoria Develop supports PRIME-based development pathways for individuals and organisations.' },
   { title: 'Not a speaker bureau', body: 'ATB Spotlight helps event organisers and training buyers discover speakers and facilitators through capability-led profiles and relevant experience.' },
-  { title: 'Not a certification body', body: 'The VALU Index is an assessment result, not a professional certification. Certification pathways remain in development; no professional is described as certified until the relevant process is complete.' },
+  { title: 'The VALU Index is not itself a certification', body: 'The VALU Index is an assessment result that informs capability development. It is distinct from a professional certification or credential. Valoria Institute’s institutional standards and certification role must be described separately; no credential should be represented as awarded until the relevant approved certification process is operational and completed.' },
   { title: 'Not a jobs board', body: 'Valoria connects capability to relevant opportunities. An opportunity is presented as active only when real supply and a working application or enquiry route exist.' },
 ]
 
