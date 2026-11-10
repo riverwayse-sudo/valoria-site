@@ -24,7 +24,8 @@
   "previews": {
     "vars": {
       "CF_WORKERS_PREVIEW": "1",
-      "VALU_PREVIEW": "1",
+      "CF_WORKERS": "1",
+        "VALU_PREVIEW": "1",
         "VALU_STAGING_API_ENABLED": "0",
       "NEXT_PUBLIC_VALU_STAGING_API_ENABLED": "0",
       "NEXT_PUBLIC_VALU_PREVIEW": "1",
