@@ -123,11 +123,11 @@ export default function Nav() {
     </nav>
 
     <nav className={`nav-mobile${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation">
-      <div className="m-label">Explore</div>
+      <div className="m-label">Professionals</div>
       {NAVIGATION.mobile.explore.map(item => <div key={item.label}>{renderItem(item, 'nav-mobile-link')}</div>)}
-      <div className="m-label">VALU Index</div>
+      <div className="m-label">Organisations</div>
       {NAVIGATION.mobile.valu.map(item => <div key={item.label}>{renderItem(item, 'nav-mobile-link')}</div>)}
-      <div className="m-label">About</div>
+      <div className="m-label">Explore Valoria</div>
       {NAVIGATION.mobile.about.map(item => <div key={item.label}>{renderItem(item, 'nav-mobile-link')}</div>)}
       <div className="m-label">Account</div>
       {process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? <div>{renderItem({ label: 'Dashboard Preview', href: '/dashboard' }, 'nav-mobile-link')}</div> : authChecked && user ? <>
