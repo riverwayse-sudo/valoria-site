@@ -277,7 +277,7 @@ function ProfilePreviewModal({ profile, onClose }) {
   const skills = labelValues(profile.skills).slice(0, 8)
   const topics = labelValues(profile.topics).slice(0, 6)
   const assessmentSummary = isFull ? displayText(profile.assessment_summary || '') : ''
-  const profileHref = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
+  const profileHref = `/profile/${encodeURIComponent(displayText(profile.id || profile.atb_id))}`
 
   return (
     <div
