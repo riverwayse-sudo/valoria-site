@@ -1009,3 +1009,56 @@
 .shortlistCta{display:inline-flex;align-items:center;gap:12px;margin:0 0 22px;padding:11px 15px;border:1px solid #C9A84C;border-radius:4px;color:#FAFAF7;text-decoration:none;font-size:9px;font-weight:900;letter-spacing:.1em}
 .shortlistCta:hover{background:#C9A84C;color:#1A1A2E}
 @media(max-width:520px){.scoreDesignation{gap:6px}.scoreDesignation .valu b{font-size:22px}.scoreDesignation .tierBadge{max-width:105px}}
+
+
+/* Marketplace directory — compact, scannable profile cards and one-row desktop filters. */
+.header { height: 68px; padding-inline: 24px; }
+.logo img { height: 36px; }
+.hero .container { padding-top: 44px; padding-bottom: 22px; }
+.hero h1 { font-size: clamp(38px, 5vw, 64px); line-height: 1.02; }
+.lede { max-width: 600px; font-size: 13px; line-height: 1.58; margin: 14px 0 18px; }
+.tabs { gap: 7px; }
+.tabs a { min-height: 36px; padding: 8px 12px; }
+.containerControl {
+  grid-template-columns: minmax(220px, 1.5fr) repeat(4, minmax(128px, 1fr)) auto;
+  gap: 8px;
+  padding: 12px 24px;
+}
+.controls input, .controls select, .controls button { height: 40px; }
+.directory .container { padding-top: 28px; padding-bottom: 52px; }
+.directoryHead { margin-bottom: 16px; padding-bottom: 12px; }
+.directoryHead h2 { font-size: 30px; }
+.grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.card { min-height: 292px; padding: 18px; border-radius: 10px; }
+.identity { grid-template-columns: 50px minmax(0, 1fr); gap: 11px; padding-right: 48px; }
+.avatar { width: 50px; height: 50px; }
+.identity strong { margin-top: 4px; font-size: 11px; line-height: 1.4; }
+.identity em { margin-top: 4px; }
+.valu { width: 44px; }
+.valu b { font-size: 20px; }
+.card h3 { margin: 13px 0 2px; font-size: 13px; }
+.career { margin-top: 10px; min-height: 30px; font-size: 11px; line-height: 1.45; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.location, .bio { font-size: 10px; line-height: 1.5; }
+.bio { margin: 11px 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+.capabilities { margin-top: 9px; gap: 5px; }
+.capabilities span { min-height: 21px; padding: 4px 7px; font-size: 7px; }
+.view { padding-top: 11px; }
+@media (max-width: 1200px) {
+  .containerControl { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .containerControl input { grid-column: span 2; }
+}
+@media (max-width: 900px) {
+  .containerControl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .containerControl input { grid-column: 1 / -1; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .header { height: 62px; padding-inline: 14px; }
+  .hero .container { padding-top: 32px; padding-bottom: 18px; }
+  .hero h1 { font-size: clamp(34px, 10vw, 46px); }
+  .containerControl { grid-template-columns: 1fr; padding: 12px 14px; }
+  .containerControl input { grid-column: auto; }
+  .grid { grid-template-columns: 1fr; gap: 12px; }
+  .card { min-height: 0; padding: 17px; }
+  .directory .container { padding: 24px 14px 40px; }
+}
