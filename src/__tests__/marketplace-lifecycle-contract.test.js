@@ -548,4 +548,13 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(profileClient).not.toContain('Verified {displayTrack')
   })
 
+
+  test('internal capability helpers are not executable by public client roles', () => {
+    const migration = read('supabase/migrations/20261110170000_restrict_internal_capability_function_execution.sql')
+    expect(migration).toContain('revoke execute on function private.is_basic_public_profile_ready(uuid)')
+    expect(migration).toContain('revoke execute on function private.refresh_existing_professional_capability(uuid, text)')
+    expect(migration).toContain('revoke execute on function private.sync_capability_eligibility_from_document()')
+    expect(migration).toContain('from public, anon, authenticated')
+    expect(migration).toContain('The public roster projection implementation is intentionally not changed')
+  })
 })
