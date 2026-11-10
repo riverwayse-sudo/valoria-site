@@ -284,3 +284,33 @@
   .vi-ih-audience-card:hover { transform: none; }
   .vi-ih-audience-card:hover .vi-ih-audience-image img { transform: none; }
 }
+
+/* Audience cards must collapse to readable full-width layouts on smaller screens. */
+@media (max-width: 900px) {
+  .vi-ih-audience-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .vi-ih-audience-card,
+  .vi-ih-audience-card:nth-child(4),
+  .vi-ih-audience-card:nth-child(5) {
+    grid-column: auto;
+  }
+  .vi-ih-audience-card-copy {
+    min-height: 230px;
+  }
+}
+
+@media (max-width: 620px) {
+  .vi-ih-audience-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  .vi-ih-audience-card-copy {
+    min-height: 0;
+    padding: 20px;
+  }
+  .vi-ih-audience-image {
+    height: clamp(190px, 60vw, 260px);
+  }
+}
