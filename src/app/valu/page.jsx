@@ -18,7 +18,7 @@ export default function ValuPage() {
         <div className="valu-wrap">
           <div className="valu-kicker"><span /> THE VALU INDEX</div>
           <h1>Make your capability<br /><em>visible and actionable.</em></h1>
-          <p className="valu-lede">The VALU Taster introduces the PRIME framework and gives you an initial view of your professional capability. Register your details first, complete the guided taster, then create your secure Valoria account when you are ready to continue to the separate Full VALU assessment and receive your official points-based VALU Index.</p>
+          <p className="valu-lede">Begin with a short VALU Taster to gain an initial view of your professional capability. Create your Valoria account to continue to the separate full assessment and receive your official points-based VALU Index.</p>
           <div className="valu-actions">
             <AssessmentStartLink href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">START THE VALU TASTER <span>→</span></AssessmentStartLink>
             <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW VALU SUPPORTS YOUR GROWTH <span>↓</span></a>
@@ -36,13 +36,12 @@ export default function ValuPage() {
 
       <section className="valu-process">
         <div className="valu-wrap">
-          <div className="valu-kicker"><span /> A CLEAR PROFESSIONAL STARTING POINT</div>
-          <h2>A clear starting point.<br /><em>A fuller professional picture.</em></h2>
+          <div className="valu-kicker"><span /> HOW IT WORKS</div>
+          <h2>Start with insight.<br /><em>Continue with evidence.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Register your details</h3><p>Share your name, email and professional context first. This creates the record that keeps your taster and Valoria follow-up connected. It is not your Valoria account.</p></article>
-            <article><b>02</b><h3>Complete your guided taster</h3><p>Begin with a free, guided view of your professional capability. Your responses are saved against your registration so you can return without losing your place.</p></article>
-            <article><b>03</b><h3>Create your Valoria account</h3><p>When you choose to continue, secure your account, confirm your email and enter your dashboard. Your registration and taster remain connected.</p></article>
-            <article><b>04</b><h3>Complete the full assessment</h3><p>The formal assessment covers all 17 PRIME skills. Completion establishes your official VALU Index in points and your earned designation. Results remain valid for 12 months.</p></article>
+            <article><b>01</b><h3>Begin with the taster</h3><p>Start with a short guided introduction to your professional capability. It gives you an initial signal and a clear next step.</p></article>
+            <article><b>02</b><h3>Continue with the full assessment</h3><p>Create your Valoria account and complete the separate full assessment. Your progress is saved so you can return and continue.</p></article>
+            <article><b>03</b><h3>Receive your VALU Index</h3><p>Once the full assessment is complete, receive your official points-based VALU Index, PRIME results and earned designation. Results remain valid for 12 months.</p></article>
           </div>
         </div>
       </section>
