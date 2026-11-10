@@ -44,8 +44,8 @@ export default function AboutPage() {
         <section className="page-hero">
           <div className="page-hero-inner">
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">ABOUT VALORIA INSTITUTE</span></div>
-            <h1 className="page-title">Talent is not the problem.<br /><em>Infrastructure is.</em></h1>
-            <p className="page-sub">Valoria Institute builds the infrastructure through which African professional capability is understood, developed, surfaced and connected to opportunity.</p>
+            <h1 className="page-title">Why Valoria <em>exists.</em></h1>
+            <p className="page-sub">Talent is not the problem. The mechanisms that turn talent into opportunity are. Valoria is that mechanism.</p>
           </div>
         </section>
 
