@@ -58,10 +58,11 @@ export const MARKETPLACE_ACCESS_LEVELS = {
 // VALU designations are assigned from full-assessment points.
 // A designation is an assessment result, not a certification or guarantee of performance.
 export const TIER_DESIGNATIONS = [
-  { level: 4, min: 90, max: 100, name: 'Elite', badgeClass: 'elite', description: 'The highest assessed expression of professional capability.' },
-  { level: 3, min: 75, max: 89, name: 'Distinguished', badgeClass: 'distinguished', description: 'Strong, well-developed professional capability.' },
-  { level: 2, min: 55, max: 74, name: 'Proficient', badgeClass: 'proficient', description: 'A capable and consistently demonstrated professional foundation.' },
-  { level: 1, min: 35, max: 54, name: 'Standard', badgeClass: 'standard', description: 'An established baseline of assessed professional capability.' },
+  { level: 5, min: 80, max: 100, name: 'Force to Align With', badgeClass: 'force-to-align', description: 'The highest expression of professional capability.' },
+  { level: 4, min: 65, max: 79, name: 'Emerging Force', badgeClass: 'emerging-force', description: 'Strong capability with clear cluster strengths.' },
+  { level: 3, min: 50, max: 64, name: 'Developing Professional', badgeClass: 'developing-professional', description: 'A solid baseline with clear development opportunities.' },
+  { level: 2, min: 35, max: 49, name: 'Building Foundations', badgeClass: 'building-foundations', description: 'An early-stage capability profile with development as the priority.' },
+  { level: 1, min: 0, max: 34, name: 'At the Starting Point', badgeClass: 'starting-point', description: 'A starting point for focused professional development.' },
 ]
 
 export function getValuTier(points, assessmentLevel = 'full') {
