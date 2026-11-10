@@ -8,7 +8,7 @@ function read(relative) {
 describe('VALU presentation consistency', () => {
   test('homepage communicates registration before the VALU taster without exposing question counts', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('Register your details before the taster')
+    expect(home).toContain('Register before your taster')
     expect(home).toContain('START THE VALU TASTER')
     expect(home).not.toMatch(/9 questions|58 questions|Question\s+\d+\s+of\s+\d+/i)
     expect(home).not.toContain('no account needed')
