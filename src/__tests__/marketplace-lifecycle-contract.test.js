@@ -69,15 +69,19 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain('row.selected_capabilities')
   })
 
-  test('marketplace discovery filters use consented PRIME, skill, sector and declared-role data', () => {
+  test('marketplace discovery filters use consented PRIME, skill, sector, seniority and declared-role data', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
     expect(directory).toContain('Filter by leading PRIME cluster')
     expect(directory).toContain('Filter by professional skill')
     expect(directory).toContain('Filter by sector')
     expect(directory).toContain('Filter by declared role')
+    expect(directory).toContain('Filter by seniority')
+    expect(directory).toContain('seniority_band')
     expect(directory).toContain('getLeadingCluster(p)')
     expect(directory).toContain('labelValues(p.skills)')
     expect(directory).toContain('getSelectedCapabilities(p)')
+    expect(directory).toContain('p.assessment_summary')
+    expect(directory).not.toContain('profile.bio')
   })
 
   test('open marketplace directories refresh server-rendered counts automatically', () => {
