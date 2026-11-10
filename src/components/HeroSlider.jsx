@@ -20,10 +20,13 @@ export default function HeroSlider() {
           <div className="vi-hero-footnote">ROOTED IN AFRICA. STARTING IN NIGERIA.</div>
         </div>
         <div className="vi-hero-art" aria-label="The five PRIME dimensions: Presence, Relationships, Intelligence, Mastery and Enterprise">
-          <div className="vi-hero-art-top"><span>THE PRIME FRAMEWORK</span><span>01 — 05</span></div>
-          <div className="vi-prime-word" aria-hidden="true"><span>P</span><span>R</span><span>I</span><span>M</span><span>E</span></div>
-          <div className="vi-prime-labels"><span>Presence</span><span>Relationships</span><span>Intelligence</span><span>Mastery</span><span>Enterprise</span></div>
-          <div className="vi-hero-art-bottom"><span>VALU INDEX</span><strong>Capability, made legible.</strong><Link href="/prime">Explore the standard ↗</Link></div>
+          <div className="vi-hero-art-content">
+            <div className="vi-hero-art-top"><span>THE PRIME FRAMEWORK</span><span>01 — 05</span></div>
+            <div className="vi-prime-word" aria-hidden="true"><span>P</span><span>R</span><span>I</span><span>M</span><span>E</span></div>
+            <div className="vi-prime-labels"><span>Presence</span><span>Relationships</span><span>Intelligence</span><span>Mastery</span><span>Enterprise</span></div>
+            <div className="vi-hero-art-bottom"><span>VALU INDEX</span><strong>Capability, made legible.</strong><Link href="/prime">Explore the standard ↗</Link></div>
+          </div>
+          <div className="vi-hero-art-photo" role="img" aria-label="Portrait of an African professional. Photograph by Taiye Salawu via Pexels" />
         </div>
       </div>
       <div className="vi-hero-index"><span>VALORIA INSTITUTE</span><span>LAGOS · AFRICA</span></div>
