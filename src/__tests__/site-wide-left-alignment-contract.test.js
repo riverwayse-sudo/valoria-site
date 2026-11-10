@@ -44,6 +44,25 @@ describe('main website left-alignment contract', () => {
     expect(home).toContain('calc(100% - 2 * var(--pad))')
   })
 
+  test('homepage and marketplace use compact first-viewport geometry and restrained card density', () => {
+    const home = read('src/app/home.css')
+    const marketplace = read('src/components/MarketplaceDirectory.module.css')
+    expect(home).toContain('--space-section: clamp(56px, 6vw, 88px)')
+    expect(home).toContain('min-height: clamp(540px, 72svh, 660px)')
+    expect(home).toContain('min-height: 276px')
+    expect(marketplace).toContain('grid-template-columns: repeat(3, minmax(0, 1fr))')
+    expect(marketplace).toContain('min-height: 292px')
+    expect(marketplace).toContain('-webkit-line-clamp: 3')
+  })
+
+  test('homepage conversion copy is concise and avoids repeated explanatory paragraphs', () => {
+    const page = read('src/app/page.jsx')
+    const profiles = read('src/components/LiveProfilesScroll.jsx')
+    expect(page).toContain('See your capability across five PRIME dimensions — and where to focus next.')
+    expect(profiles).toContain('Explore public profiles by capability.')
+    expect(profiles).not.toContain('Basic listings show public profile details')
+  })
+
   test('the global contract preserves reduced-motion accessibility', () => {
     const css = read('src/styles/globals.css')
     expect(css).toContain('@media (prefers-reduced-motion: reduce)')
