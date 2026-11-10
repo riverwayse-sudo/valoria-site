@@ -22,11 +22,11 @@ const PRINCIPLES = [
 ]
 
 const POSITIONING = [
-  { title: 'Not a conventional recruitment agency', body: 'The Valoria Marketplace supports capability-led discovery. Hiring decisions remain with the organisations making them.' },
-  { title: 'More than a training catalogue', body: 'Valoria Institute provides the institutional framework. Valoria Develop translates PRIME into structured development pathways.' },
-  { title: 'More than a speaker directory', body: 'ATB Spotlight helps event organisers and programme teams discover speakers and facilitators through capability-led professional profiles.' },
-  { title: 'Credentials are governed, not implied', body: 'Certification pathways are being developed. No professional is described as certified until the relevant assessment, approval and issuance process is operational.' },
-  { title: 'Not simply a jobs board', body: 'Opportunities are presented as active only when there is real supply and a working application or enquiry route.' },
+  { title: 'Not a recruitment agency', body: 'Valoria does not recruit on behalf of employers. The Marketplace helps buyers discover capability; hiring decisions remain with the organisations making them.' },
+  { title: 'Not a training company', body: 'Valoria Institute provides the capability framework and assessment. Valoria Develop supports PRIME-based development pathways for individuals and organisations.' },
+  { title: 'Not a speaker bureau', body: 'ATB Spotlight helps event organisers and training buyers discover speakers and facilitators through capability-led profiles and relevant experience.' },
+  { title: 'Not a certification body', body: 'The VALU Index is an assessment result, not a professional certification. Certification pathways remain in development; no professional is described as certified until the relevant process is complete.' },
+  { title: 'Not a jobs board', body: 'Valoria connects capability to relevant opportunities. An opportunity is presented as active only when real supply and a working application or enquiry route exist.' },
 ]
 
 const TIMELINE = [
