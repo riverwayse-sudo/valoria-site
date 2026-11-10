@@ -13,7 +13,7 @@ export const revalidate = 0
 
 export const metadata = {
   title: 'Valoria Institute — Worth, Built.',
-  openGraph: { title: 'Valoria Institute — Worth, Built.', description: 'Starting in Nigeria, Valoria helps professionals understand capability, build credible profiles and discover relevant opportunities through a capability-led marketplace.', url: 'https://valoriainstitute.com/' },
+  openGraph: { title: 'Valoria Institute — Worth, Built.', description: 'Valoria Institute is Africa-first, with Nigeria as its initial operating jurisdiction. It helps professionals and organisations understand, develop and connect professional capability through PRIME, the VALU Index and the Valoria Marketplace.', url: 'https://valoriainstitute.com/' },
   twitter: { card: 'summary_large_image', title: 'Valoria Institute — Worth, Built.' },
   description: 'Starting in Nigeria, Valoria helps professionals understand capability, build credible profiles and discover relevant opportunities through a capability-led marketplace.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
