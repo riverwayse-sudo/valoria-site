@@ -6,42 +6,42 @@ function read(relative) {
 }
 
 describe('VALU presentation consistency', () => {
-  test('homepage keeps the professional VALU entry clear without exposing internal assessment mechanics', () => {
+  test('homepage makes the VALU entry clear without exposing internal assessment mechanics', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('START THE VALU TASTER')
+    const hero = read('src/components/HeroSlider.jsx')
+    expect(hero).toContain('Discover your capability')
     expect(home).toContain('five PRIME dimensions')
     expect(home).not.toMatch(/(?:9|58)[- ]questions?|<b>9<\/b> QUESTIONS/i)
   })
 
-  test('homepage hero leads with marketplace value and clear visitor actions', () => {
+  test('homepage hero leads with a concise editorial proposition and clear visitor actions', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('Capability should decide')
-    expect(hero).toContain('who gets seen. Valoria is the room.')
-    expect(hero).toContain("AFRICA'S TALENT MARKETPLACE FOR PROFESSIONALS")
-    expect(hero).toContain('assesses African professionals on one standard')
-    expect(hero).toContain('START THE VALU TASTER')
-    expect(hero).toContain('SEE HOW IT WORKS')
-    expect(hero).toContain('hero-institutional-panel')
+    expect(hero).toContain('Make your')
+    expect(hero).toContain('capability')
+    expect(hero).toContain('AN INSTITUTION FOR PROFESSIONAL CAPABILITY')
+    expect(hero).toContain('Understand what you bring')
+    expect(hero).toContain('Discover your capability')
+    expect(hero).toContain('Explore the marketplace')
+    expect(hero).toContain('vi-hero-art')
     expect(hero).toContain('PRIME')
-    expect(hero).toContain('VALU Index')
-    expect(hero).toContain('Valoria Marketplace')
-    expect(hero).toContain('Valoria Develop')
-    expect(hero).not.toContain('HUMAN CAPITAL INSTITUTION')
-    expect(hero).not.toContain('Talent is not the problem.')
+    expect(hero).toContain('VALU INDEX')
+    expect(hero).toContain('Presence')
+    expect(hero).toContain('Enterprise')
     expect(hero).not.toMatch(/(?:9|58)[- ]questions?/i)
     expect(hero).not.toContain('84')
   })
 
-  test('homepage presents the three approved professional and buyer pathways', () => {
+  test('homepage gives professionals and organisations two clear routes', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('THREE WAYS TO ENGAGE.')
+    expect(home).toContain('TWO CLEAR WAYS IN')
+    expect(home).toContain('PROFESSIONALS')
+    expect(home).toContain('ORGANISATIONS')
+    expect(home).toContain('Where do you want')
+    expect(home).toContain('Explore your VALU Index')
+    expect(home).toContain('Explore talent access')
+    expect(home).toContain('THE VALORIA STANDARD')
+    expect(home).not.toContain('THREE WAYS TO ENGAGE.')
     expect(home).not.toContain('FOUR WAYS TO ENGAGE.')
-    expect(home).toContain('FOR PROFESSIONALS')
-    expect(home).toContain('FOR EMPLOYERS')
-    expect(home).toContain('FOR EVENT ORGANISERS & TRAINING BUYERS')
-    expect(home).toContain('Find out where you stand.')
-    expect(home).toContain('Hire by capability, not CV triage.')
-    expect(home).toContain('Find speakers and facilitators who can hold a room.')
   })
 
   test('homepage registry explains VALU points and privacy context', () => {
