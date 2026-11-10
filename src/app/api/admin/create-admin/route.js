@@ -1,16 +1,4 @@
 // src/app/api/admin/create-admin/route.js
-//
-// Deliberately NOT a public signup endpoint. An open "anyone can sign up as
-// admin" form would be a serious vulnerability — Femi asked for admin to
-// have "its own login page, signup and table," and the safe reading of
-// that is invite-only: only an existing, authenticated admin can create
-// another one. First admin(s) are seeded directly via SQL — see
-// pending-migrations/010_add_admin_users.sql.
-//
-// Uses Supabase's own inviteUserByEmail, which sends a secure magic-link
-// email the invitee uses to set their own password — this route never
-// generates, sees, or transmits a password.
-
 import { createClient } from '@supabase/supabase-js'
 
 function getSupabase() {
@@ -20,73 +8,101 @@ function getSupabase() {
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
 }
 
+async function requireAdmin(request, supabase) {
+  const token = request.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1]
+  if (!token) return { error: Response.json({ error: 'Not authenticated.' }, { status: 401 }) }
+  const { data: { user }, error } = await supabase.auth.getUser(token)
+  if (error || !user) return { error: Response.json({ error: 'Not authenticated.' }, { status: 401 }) }
+  const { data: admin, error: adminError } = await supabase.from('admin_users').select('id').eq('id', user.id).maybeSingle()
+  if (adminError) return { error: Response.json({ error: 'Could not verify administrator access.' }, { status: 500 }) }
+  if (!admin) return { error: Response.json({ error: 'Admin access required.' }, { status: 403 }) }
+  return { user }
+}
+
+async function findAuthUserByEmail(supabase, email) {
+  const perPage = 1000
+  for (let page = 1; page <= 20; page += 1) {
+    const { data, error } = await supabase.auth.admin.listUsers({ page, perPage })
+    if (error) throw error
+    const users = data?.users || []
+    const match = users.find(user => user.email?.toLowerCase() === email)
+    if (match) return match
+    if (users.length < perPage) return null
+  }
+  throw new Error('Could not safely resolve the existing account. Please contact the platform operator.')
+}
+
 export async function GET(request) {
-  const supabase = getSupabase()
-  const authHeader = request.headers.get('authorization') || ''
-  const token = authHeader.replace(/^Bearer\s+/i, '')
-  if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
-
-  const { data: callerData, error: callerErr } = await supabase.auth.getUser(token)
-  if (callerErr || !callerData?.user) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
-
-  const { data: callerAdmin } = await supabase.from('admin_users').select('id').eq('id', callerData.user.id).maybeSingle()
-  if (!callerAdmin) return Response.json({ error: 'Admin access required.' }, { status: 403 })
-
-  const { data: admins, error } = await supabase
-    .from('admin_users')
-    .select('id, email, full_name, created_at')
-    .order('created_at', { ascending: true })
-  if (error) return Response.json({ error: error.message }, { status: 500 })
-
-  return Response.json({ admins: admins || [], selfId: callerData.user.id })
+  try {
+    const supabase = getSupabase()
+    const auth = await requireAdmin(request, supabase)
+    if (auth.error) return auth.error
+    const { data: admins, error } = await supabase.from('admin_users').select('id, email, full_name, created_at').order('created_at', { ascending: true })
+    if (error) return Response.json({ error: 'Could not load administrators.' }, { status: 500 })
+    return Response.json({ admins: admins || [], selfId: auth.user.id })
+  } catch (error) {
+    console.error('admin/create-admin GET error:', error)
+    return Response.json({ error: 'Administrator service is unavailable.' }, { status: 503 })
+  }
 }
 
 export async function POST(request) {
-  const supabase = getSupabase()
   try {
-    const authHeader = request.headers.get('authorization') || ''
-    const token = authHeader.replace(/^Bearer\s+/i, '')
-    if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
-
-    const { data: callerData, error: callerErr } = await supabase.auth.getUser(token)
-    if (callerErr || !callerData?.user) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
-
-    const { data: callerAdmin } = await supabase.from('admin_users').select('id').eq('id', callerData.user.id).maybeSingle()
-    if (!callerAdmin) return Response.json({ error: 'Only an existing admin can invite another admin.' }, { status: 403 })
-
-    const { email, fullName } = await request.json()
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return Response.json({ error: 'A valid email is required.' }, { status: 400 })
+    const supabase = getSupabase()
+    const auth = await requireAdmin(request, supabase)
+    if (auth.error) return auth.error
+    let body
+    try { body = await request.json() } catch {
+      return Response.json({ error: 'A valid JSON request is required.' }, { status: 400 })
     }
 
-    const { data: invited, error: inviteErr } = await supabase.auth.admin.inviteUserByEmail(email, {
-      data: { full_name: fullName || undefined },
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'}/reset-password`,
+    const email = String(body?.email || '').trim().toLowerCase()
+    const fullName = String(body?.fullName || '').trim().slice(0, 120)
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
+      return Response.json({ error: 'Enter a valid email address.' }, { status: 400 })
+    }
+
+    const { data: existingAdmin, error: existingAdminError } = await supabase.from('admin_users').select('id').eq('email', email).maybeSingle()
+    if (existingAdminError) return Response.json({ error: 'Could not verify current administrator access.' }, { status: 500 })
+    if (existingAdmin) return Response.json({ error: 'This email is already an administrator.' }, { status: 409 })
+
+    const { data: invited, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(email, {
+      data: fullName ? { full_name: fullName } : {},
+      redirectTo: (process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com') + '/reset-password',
     })
-    if (inviteErr) {
-      // Most likely cause: this email already has an auth.users account
-      // (e.g. an existing buyer/professional). inviteUserByEmail can't
-      // double as "promote an existing user" — handle that case below.
-      const { data: existing } = await supabase.auth.admin.listUsers()
-      const match = existing?.users?.find(u => u.email?.toLowerCase() === email.toLowerCase())
-      if (match) {
-        const { error: promoteErr } = await supabase.from('admin_users').insert({
-          id: match.id, email: match.email, full_name: fullName || null, invited_by: callerAdmin.id,
-        })
-        if (promoteErr) return Response.json({ error: promoteErr.message }, { status: 500 })
-        return Response.json({ promoted: true, note: 'This email already had an account — granted admin access directly rather than sending an invite.' })
+
+    let targetUser = invited?.user || null
+    let promoted = false
+    if (inviteError) {
+      targetUser = await findAuthUserByEmail(supabase, email)
+      if (!targetUser) {
+        console.error('admin invite error:', inviteError)
+        return Response.json({ error: 'Supabase could not send the invitation. Check Auth email delivery and redirect configuration.' }, { status: 502 })
       }
-      return Response.json({ error: inviteErr.message }, { status: 500 })
+      promoted = true
     }
 
-    const { error: insertErr } = await supabase.from('admin_users').insert({
-      id: invited.user.id, email: invited.user.email, full_name: fullName || null, invited_by: callerAdmin.id,
-    })
-    if (insertErr) return Response.json({ error: insertErr.message }, { status: 500 })
+    if (!targetUser?.id || !targetUser.email) return Response.json({ error: 'Supabase did not return a valid invited account.' }, { status: 502 })
 
-    return Response.json({ invited: true })
-  } catch (err) {
-    console.error('admin/create-admin error:', err)
-    return Response.json({ error: 'Server error.' }, { status: 500 })
+    const { error: insertError } = await supabase.from('admin_users').insert({
+      id: targetUser.id,
+      email: targetUser.email.toLowerCase(),
+      full_name: fullName || targetUser.user_metadata?.full_name || null,
+      invited_by: auth.user.id,
+    })
+    if (insertError) {
+      console.error('admin membership insert error:', insertError)
+      return Response.json({ error: 'The Auth account was created, but administrator membership was not saved. Retry the invitation or contact the platform operator.' }, { status: 500 })
+    }
+
+    return Response.json({
+      invited: !promoted,
+      promoted,
+      email: targetUser.email,
+      message: promoted ? 'Existing Valoria account granted administrator access.' : 'Invitation email sent. The recipient must complete the secure email flow before signing in.',
+    }, { status: 201 })
+  } catch (error) {
+    console.error('admin/create-admin POST error:', error)
+    return Response.json({ error: 'Administrator invitation service is unavailable.' }, { status: 503 })
   }
 }
