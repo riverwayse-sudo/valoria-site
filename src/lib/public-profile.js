@@ -56,7 +56,7 @@ export function toPublicProfile(row) {
     assessment_summary: row.assessment_summary || null,
     fee_range: row.fee_range || null,
     salary_expectation: row.salary_expectation || null,
-    atb_id: row.atb_id || null,
+    atb_id: row.atb_id ? String(row.atb_id).normalize('NFKC') : null,
     photo_url: row.photo_url || null,
     // These fields are deliberately not part of the public roster projection.
     phone: null,
