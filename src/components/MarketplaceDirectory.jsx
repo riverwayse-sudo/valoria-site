@@ -145,6 +145,17 @@ function getSelectedCapabilities(profile) {
   ].map(normalize).filter(Boolean))]
 }
 
+function getDevelopmentFocus(profile) {
+  const scores = profile.cluster_scores
+  if (!scores || typeof scores !== 'object' || Array.isArray(scores)) return ''
+  const entries = Object.entries(scores).filter(([letter, value]) =>
+    PRIME_CLUSTERS.some(cluster => cluster.letter === letter) && value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value))
+  )
+  if (entries.length !== 5) return ''
+  entries.sort((a, b) => Number(a[1]) - Number(b[1]))
+  return PRIME_CLUSTERS.find(cluster => cluster.letter === entries[0][0])?.name || ''
+}
+
 function getLeadingCluster(profile) {
   const scores = profile.cluster_scores
   if (!scores || typeof scores !== 'object' || Array.isArray(scores)) return ''
@@ -194,6 +205,7 @@ function Profile({p, onSelect}) {
   const profileId = displayText(p.atb_id || 'PROFILE ID PENDING')
   // This text is sourced from the canonical VALU Index report projection, never the member's bio/headline.
   const assessmentSummary = isFullAssessment ? displayText(p.assessment_summary || '') : ''
+  const developmentFocus = isFullAssessment ? getDevelopmentFocus(p) : ''
   return <article className={styles.card}>
     <div className={styles.identity}>
       <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
@@ -215,7 +227,7 @@ function Profile({p, onSelect}) {
       <small>VALU INDEX ASSESSMENT INSIGHT</small>
       {isFullAssessment
         ? (assessmentSummary
-          ? <p className={styles.assessmentSummary} title={assessmentSummary}>{assessmentSummary}</p>
+          ? <p className={styles.assessmentSummary} title={assessmentSummary}>{developmentFocus ? `Top development area: ${developmentFocus}. ` : ''}{assessmentSummary}</p>
           : <p className={styles.assessmentPending}>Assessment insight is being prepared.</p>)
         : <p className={styles.assessmentPending}>Complete the full VALU Index assessment to unlock this insight.</p>}
     </div>
@@ -281,6 +293,7 @@ function ProfilePreviewModal({ profile, onClose }) {
   const skills = labelValues(profile.skills).slice(0, 8)
   const topics = labelValues(profile.topics).slice(0, 6)
   const assessmentSummary = isFull ? displayText(profile.assessment_summary || '') : ''
+  const developmentFocus = isFull ? getDevelopmentFocus(profile) : ''
   const profileHref = `/profile/${encodeURIComponent(displayText(profile.id || profile.atb_id))}`
 
   return (
@@ -341,6 +354,7 @@ function ProfilePreviewModal({ profile, onClose }) {
                 <span>{isFull ? 'FULL VALU ASSESSMENT' : 'BASIC · VALU SNAPSHOT'}</span>
                 <strong>{tier ? tier.name : 'OFFICIAL RESULT PENDING'}</strong>
               </div>
+              {developmentFocus && <div className={styles.modalCredential}><span>TOP DEVELOPMENT AREA</span><strong>{developmentFocus}</strong></div>}
             </section>
 
             <section className={styles.modalPanel}>
