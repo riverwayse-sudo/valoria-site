@@ -24,13 +24,13 @@ export default function HomePage() {
       <main id="main-content" className="home-redesign-root vi-home-editorial">
         <HeroSlider />
 
-        <section className="vi-audience-section" aria-labelledby="vi-audience-title">
+        <section className="vi-audience-section home-pathways" aria-labelledby="vi-audience-title">
           <div className="vi-section-intro">
             <span className="vi-section-kicker">TWO CLEAR WAYS IN</span>
             <h2 id="vi-audience-title">Where do you want<br /><em>to go next?</em></h2>
           </div>
           <div className="vi-audience-grid">
-            <Reveal className="vi-audience-panel vi-audience-professional">
+            <Reveal className="vi-audience-panel vi-audience-professional valu-conversion">
               <span className="vi-audience-number">01 / PROFESSIONALS</span>
               <h3>Your next move<br />starts with <em>clarity.</em></h3>
               <p>Explore your strengths, understand your PRIME capability profile and build a professional presence that can be discovered.</p>
@@ -41,6 +41,7 @@ export default function HomePage() {
               <h3>Find the capability<br />your work <em>needs.</em></h3>
               <p>Discover talent, speakers and facilitators through a shared framework for understanding professional capability.</p>
               <a href="/atb-connect" className="vi-audience-link">Explore talent access <span>↗</span></a>
+              <div className="vi-audience-secondary-links"><a href="/marketplace/speakers">For event organisers ↗</a><a href="/marketplace/facilitators">For facilitator discovery ↗</a></div>
             </Reveal>
           </div>
         </section>
