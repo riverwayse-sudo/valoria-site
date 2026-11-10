@@ -15,12 +15,12 @@ describe('VALU presentation consistency', () => {
 
   test('homepage hero leads with marketplace value and clear visitor actions', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('THE PROFESSIONAL CAPABILITY MARKETPLACE')
-    expect(hero).toContain('Make your professional')
-    expect(hero).toContain('capability visible.')
-    expect(hero).toContain('Understand your capabilities')
-    expect(hero).toContain('START YOUR SNAPSHOT')
-    expect(hero).toContain('EXPLORE OPPORTUNITIES')
+    expect(hero).toContain('Capability should decide')
+    expect(hero).toContain('who gets seen.')
+    expect(hero).toContain('who gets seen.')
+    expect(hero).toContain('Valoria gives professionals a clearer way')
+    expect(hero).toContain('START THE VALU TASTER')
+    expect(hero).toContain('SEE HOW IT WORKS')
     expect(hero).toContain('hero-institutional-panel')
     expect(hero).toContain('PRIME')
     expect(hero).toContain('VALU Index')
@@ -91,7 +91,7 @@ describe('VALU presentation consistency', () => {
     expect(alignment).toContain('align-items: flex-start !important')
   })
 
-  test('PRIME uses the canonical future-ready skills and four VALU v4 merit designations', () => {
+  test('PRIME uses the canonical future-ready skills and five approved VALU merit designations', () => {
     const brand = read('src/lib/brand.js')
     const prime = read('src/app/prime/page.jsx')
     expect(brand).toContain("name: 'Presence'")
@@ -101,18 +101,16 @@ describe('VALU presentation consistency', () => {
     expect(brand).toContain("name: 'Enterprise'")
     expect(brand).toContain("'AI Fluency'")
     expect(brand).toContain("'Human-AI Collaboration'")
-    for (const tier of ['Elite', 'Distinguished', 'Proficient', 'Standard']) {
-      expect(prime).toContain(`tier:'${tier}'`)
+    for (const tier of ['Force to Align With', 'Emerging Force', 'Developing Professional', 'Building Foundations', 'At the Starting Point']) {
+      expect(prime).toContain(tier)
     }
-    expect(prime).toContain('90–100 points')
-    expect(prime).toContain('75–89 points')
-    expect(prime).toContain('55–74 points')
-    expect(prime).toContain('35–54 points')
-    expect(prime).toContain('FOUR SCORE-BASED DESIGNATIONS')
-    expect(prime).toContain('Scores below 35 points receive no merit designation')
-    for (const retired of ['Force to Align With', 'Emerging Force', 'Developing Professional', 'Building Foundations', 'At the Starting Point']) {
-      expect(prime).not.toContain(retired)
-    }
+    expect(prime).toContain('80–100 POINTS')
+    expect(prime).toContain('65–79 POINTS')
+    expect(prime).toContain('50–64 POINTS')
+    expect(prime).toContain('35–49 POINTS')
+    expect(prime).toContain('BELOW 35 POINTS')
+    expect(brand).toContain("name: 'Force to Align With'")
+    expect(brand).toContain("min: 0, max: 34, name: 'At the Starting Point'")
   })
 
   test('legacy stored designation strings cannot override the canonical points-based merit bands', () => {
