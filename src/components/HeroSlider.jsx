@@ -17,7 +17,7 @@ export default function HeroSlider() {
             <AssessmentStartLink href={BRAND.assessmentUrl} className="vi-hero-primary">Discover your capability <span>↗</span></AssessmentStartLink>
             <Link href="/marketplace" className="vi-hero-secondary">Explore the marketplace <span>→</span></Link>
           </div>
-          <div className="vi-hero-footnote">ROOTED IN AFRICA. BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE.</div>
+          <div className="vi-hero-footnote">ROOTED IN AFRICA. STARTING IN NIGERIA.</div>
         </div>
         <div className="vi-hero-art" aria-label="The five PRIME dimensions: Presence, Relationships, Intelligence, Mastery and Enterprise">
           <div className="vi-hero-art-top"><span>THE PRIME FRAMEWORK</span><span>01 — 05</span></div>
