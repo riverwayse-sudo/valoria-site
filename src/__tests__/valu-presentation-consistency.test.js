@@ -50,6 +50,9 @@ describe('VALU presentation consistency', () => {
     expect(valu).toContain('Know where you stand,')
     expect(valu).toContain('separate full assessment')
     expect(valu).toContain('official points-based VALU Index')
+    expect(valu).toContain('Future-Ready skill — critical for the professional talent market of 2025 to 2035.')
+    expect(valu).toContain('How you create. Enterprise measures the capacity to generate value beyond a task')
+    expect(valu).toContain('cannot be purchased or transferred')
     expect(valu).not.toMatch(/1 of 9|1 of 58/i)
   })
 
@@ -62,7 +65,11 @@ describe('VALU presentation consistency', () => {
     }
     expect(about).toContain('Africa-first')
     expect(about).toContain('Continental expansion is a 2028 priority')
-    expect(about).not.toContain('MISSION, VISION & PURPOSE')
+    expect(about).toContain('VISION · MISSION · PURPOSE')
+    expect(about).toContain('An Africa where professional merit always finds its platform.')
+    expect(about).toContain("To build and operate Africa's premier professional capability marketplace")
+    expect(about).toContain('To bridge the gap between latent brilliance and institutional scale.')
+    expect(about).not.toContain('human capital institution')
   })
 
   test('homepage registry explains VALU points and privacy context', () => {
