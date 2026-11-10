@@ -17,10 +17,10 @@ export default function HeroSlider() {
               </div>
               <h1 className="hero-title" id="valoria-hero-title">
                 Capability should decide<br />
-                <em>who gets seen. Valoria is the room.</em>
+                <em>who gets seen.</em>
               </h1>
               <p className="hero-sub hero-institutional-sub">
-                Valoria assesses African professionals on one standard, develops them where they fall short, and connects them to employers, event organisers and training buyers.
+                Valoria gives professionals a clearer way to understand their capabilities, develop where needed and become visible to employers, event organisers and training buyers in the markets it serves.
               </p>
               <div className="hero-actions">
                 <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">
