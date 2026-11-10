@@ -129,10 +129,10 @@ jobs:
           grep -q 'Human-AI Collaboration' /tmp/valoria-llms.txt
           grep -q 'Basic is a marketplace access state, not a merit tier' /tmp/valoria-llms.txt
           curl -fsS "$base/" -o /tmp/valoria-home.html
-          grep -q 'Capability should decide' /tmp/valoria-home.html
-          grep -q 'THREE WAYS TO ENGAGE' /tmp/valoria-home.html
-          grep -q 'INITIAL MARKET' /tmp/valoria-home.html
-          grep -q 'Valoria is Africa-first' /tmp/valoria-home.html
+          grep -q 'Make your' /tmp/valoria-home.html
+          grep -q 'TWO CLEAR WAYS IN' /tmp/valoria-home.html
+          grep -q 'THE PRIME FRAMEWORK' /tmp/valoria-home.html
+          grep -q 'Explore the marketplace' /tmp/valoria-home.html
           : > /tmp/valoria-css-bundle.css
           css_assets="$(grep -oE 'href="[^"]+\.css[^"]*"' /tmp/valoria-home.html | cut -d '"' -f 2)"
           if [[ -z "$css_assets" ]]; then
