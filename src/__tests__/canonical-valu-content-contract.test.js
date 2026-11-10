@@ -13,7 +13,7 @@ describe('Canonical Valoria content contract', () => {
       'Execution & Accountability', 'Resilience & Self-Leadership', 'Adaptability',
       'Commercial Creativity', 'Influence Without Authority', 'Human-AI Collaboration',
     ]
-    for (const skill of skills) expect(brand).toContain(`'${skill}'`)
+    for (const skill of skills) expect(brand).toContain(\`'\${skill}'\`)
     expect(skills).toHaveLength(17)
     expect(brand).toContain("subtitle: 'How you create'")
     expect(brand).toContain("displaySuffix: 'points'")
@@ -31,8 +31,8 @@ describe('Canonical Valoria content contract', () => {
       'At the Starting Point',
     ]
     for (const designation of designations) {
-      expect(brand).toContain(`name: '${designation}'`)
-      expect(engine).toContain(`name: "${designation}"`)
+      expect(brand).toContain(\`name: '\${designation}'\`)
+      expect(engine).toContain(\`name: "\${designation}"\`)
     }
     expect(brand).toContain("if (assessmentLevel !== 'full' || points == null")
     expect(brand).toContain('meritTier: false')
@@ -43,7 +43,7 @@ describe('Canonical Valoria content contract', () => {
     const start = read('src/app/valu/start/page.jsx')
     const homepage = read('src/app/page.jsx')
     for (const source of [valu, start, homepage]) {
-      expect(source).not.toMatch(/Question\\s+\\d+\\s+of\\s+\\d+/i)
+      expect(source).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
       expect(source).not.toMatch(/15[- ]question|54[- ]question|58[- ]question/i)
     }
     expect(valu).toContain('separate full assessment')
