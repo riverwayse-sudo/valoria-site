@@ -238,3 +238,7 @@ nav.vi-nav.scrolled,
     will-change: auto;
   }
 }
+
+
+/* Reduced-motion support for the editorial homepage. */
+@media (prefers-reduced-motion: reduce) { .vi-hero-image, .vi-hero-art, .vi-audience-panel { transition: none !important; animation: none !important; } }
