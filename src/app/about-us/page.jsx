@@ -61,7 +61,7 @@ export default function AboutPage() {
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE PROBLEM WE ADDRESS</span></div>
               <h2 className="section-title">A great CV and a <em>great decision</em> are not the same thing.</h2>
               <p className="page-copy">In hiring, speaking and training, buyers often have to make decisions with incomplete signals. A CV or biography can describe experience, but it may not show how a person thinks, works or contributes. Professionals can be overlooked when access and familiarity shape who gets considered.</p>
-              <p className="page-copy page-copy-spaced">Valoria Institute exists to make professional capability easier to understand, develop and present. Its approach connects a shared framework, an assessment-led index, development pathways and a capability-led talent bureau.</p>
+              <p className="page-copy page-copy-spaced">Valoria Institute exists to make professional capability easier to understand, develop and present. Its approach connects a shared framework, an assessment-led index, development pathways and a capability-led marketplace.</p>
             </Reveal>
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE INSTITUTIONAL RESPONSE</span></div>
@@ -156,7 +156,7 @@ export default function AboutPage() {
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WORK WITH VALORIA</span></div>
               <h2 className="section-title">Build a stronger <em>capability infrastructure.</em></h2>
-              <p className="page-sub">Valoria Institute is rooted in African professional experience and designed for continental growth. Nigeria is its current operating market, with broader expansion guided by institutional readiness and partnerships.</p>
+              <p className="page-sub">Valoria Institute is Africa-first, with Nigeria as its initial operating jurisdiction. Continental expansion is a 2028 priority, guided by institutional readiness and partnerships.</p>
               <div className="page-hero-actions">
                 <a href="/contact-us" className="btn-gold">DISCUSS A PARTNERSHIP</a>
                 <a href="/valu" className="btn-outline">EXPLORE THE VALU INDEX</a>
