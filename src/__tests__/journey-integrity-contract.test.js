@@ -63,8 +63,8 @@ describe('participant-facing assessment clarity', () => {
     const stagingWorkflow = read('.github/workflows/cloudflare-staging-deploy.yml')
 
     expect(middleware).toContain("process.env.VALU_STAGING_API_ENABLED === '1'")
-    expect(middleware).toContain('const isReadOnlyPreview = isPreview && !stagingApiEnabled')
-    expect(middleware).toContain("if (isReadOnlyPreview && pathname.startsWith('/api/') && !isPreviewApiAllowed)")
+    expect(middleware).toContain('const isPreviewApiAllowed = stagingApiEnabled && (')
+    expect(middleware).toContain("if (isPreview && pathname.startsWith('/api/') && !isPreviewApiAllowed)")
     expect(middleware).toContain("(pathname === '/api/link-taster' && request.method === 'POST')")
     expect(middleware).toContain("(pathname === '/api/link-assessment' && request.method === 'POST')")
     expect(middleware).toContain("(pathname === '/api/valu-handoff' && ['GET', 'POST'].includes(request.method))")
