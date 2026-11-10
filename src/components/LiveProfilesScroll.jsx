@@ -38,21 +38,17 @@ export default async function LiveProfilesScroll() {
   for (const profile of profiles) {
     const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
     const summary = String(profile.assessment_summary || '').trim()
-    const headline = String(profile.headline || '').trim()
     const profileId = String(profile.atb_id || '').trim()
-    const points = Number(profile.valu_index)
-    const placeholderHeadlines = new Set(['model', 'valoria professional', 'growth dev', 'help people find meaning in their life and career'])
+    const points = profile.valu_index == null ? null : Number(profile.valu_index)
+    // Basic-access profiles have no official score or report summary yet.
+    // Full-assessment profiles must have both a valid points result and a VALU report summary.
+    const isBasicSnapshot = points === null && summary.length === 0
+    const isFullAssessmentReady = Number.isInteger(points) && points >= 0 && points <= 100 &&
+      summary.length >= 24 && !/descriptor unavailable/i.test(summary)
     const isQualityReady = Boolean(
       profile.id &&
       profileId &&
-      summary.length >= 24 &&
-      headline.length >= 8 &&
-      !placeholderHeadlines.has(headline.toLowerCase()) &&
-      !/[\u{1D400}-\u{1D7FF}]/u.test(headline) &&
-      !/descriptor unavailable/i.test(summary) &&
-      Number.isInteger(points) &&
-      points >= 0 &&
-      points <= 100 &&
+      (isBasicSnapshot || isFullAssessmentReady) &&
       tracks.some(track => TRACK_META[track === 'talent' ? 'candidate' : track])
     )
     if (!isQualityReady || seen.has(profile.id)) continue
@@ -60,7 +56,7 @@ export default async function LiveProfilesScroll() {
     unique.push(profile)
   }
 
-  const loop = unique.slice(0, 4)
+  const loop = unique
   // The count endpoint covers the full public roster, while previews are capped at 24.
   // Only show a count when every public row was returned and passed the same quality bar.
   const discoverableCount = count !== null && count <= 24 && count === unique.length ? count : null
@@ -130,13 +126,13 @@ export default async function LiveProfilesScroll() {
                         </div>
                         <div className="vi-scroll-copy">
                           <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>LIVE</i></div>
-                          <div className="vi-scroll-headline">{profile.assessment_summary || 'Assessment-based capability descriptor unavailable.'}</div>
+                          <div className="vi-scroll-headline">{profile.assessment_summary || 'Basic marketplace access. Complete the full VALU assessment to receive your official points-based Index.'}</div>
                           <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
                         </div>
-                        <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'}`}>
-                          <span className="vi-scroll-score-label">VALU INDEX</span>
-                          <strong>{profile.valu_index ?? '—'}</strong>
-                          <span className="vi-scroll-score-max">points</span>
+                        <div className="vi-scroll-score" aria-label={profile.valu_index != null ? `VALU Index ${profile.valu_index} points` : 'Basic marketplace access'}>
+                          <span className="vi-scroll-score-label">{profile.valu_index != null ? 'VALU INDEX' : 'ASSESSMENT'}</span>
+                          <strong>{profile.valu_index != null ? profile.valu_index : 'BASIC'}</strong>
+                          <span className="vi-scroll-score-max">{profile.valu_index != null ? 'points' : 'ACCESS'}</span>
                         </div>
                         <span className="vi-scroll-card-arrow" aria-hidden="true">↗</span>
                       </Link>
