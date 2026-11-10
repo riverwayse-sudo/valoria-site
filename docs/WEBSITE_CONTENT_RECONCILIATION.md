@@ -51,7 +51,7 @@ Designation is an assessment result, not a subscription tier or certification. M
 - Assessment platform PR [#163](https://github.com/riverwayse-sudo/valoria-platform/pull/163), merge commit `e48a2defc97297614ceaed1c2cb355511c5107d9`.
 
 **Cloudflare staging deployments:**
-- Website Worker `valoria-staging-site`: version `2941d983-548e-4e3c-9988-28586c34816c`, 100% traffic.
+- Website Worker `valoria-staging-site`: version `a1a5e294-36b5-4752-87dc-ea7dcd59e230`, 100% traffic.
 - Assessment Worker `valoria-staging-assessment`: version `0c491cf8-5387-482c-b6ed-245671134b65`, 100% traffic.
 
 **Automated verification:**
