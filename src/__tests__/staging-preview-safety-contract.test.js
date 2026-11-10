@@ -96,16 +96,23 @@ describe('staging preview safety boundary', () => {
     expect(nextConfig).not.toContain("source: '/valu/assessment'")
   })
 
-  test('staging deployment is opt-in for same-repository deploy branches', () => {
-    const workflow = read('.github/workflows/cloudflare-staging-deploy.yml')
-    expect(workflow).toContain('pull_request:')
-    expect(workflow).toContain("startsWith(github.event.pull_request.head.ref, 'deploy/staging-')")
-    expect(workflow).toContain('github.event.pull_request.head.repo.full_name == github.repository')
-    expect(workflow).toContain('environment: staging')
-    expect(workflow).toContain('npx wrangler deploy')
-    expect(workflow).toContain('assessment_html="$(curl -fsSL')
-    expect(workflow).toContain(`grep -qi 'id="root"' <<<"$assessment_html"`)
-    expect(workflow).not.toContain("grep -qi 'BEGIN MY TASTER' <<<\"$assessment_html\"")
+  test('staging pull requests deploy only from same-repository deploy branches and push deploys remain staging-only', () => {
+    const prWorkflow = read('.github/workflows/cloudflare-staging-pr-deploy.yml')
+    expect(prWorkflow).toContain('pull_request:')
+    expect(prWorkflow).toContain("startsWith(github.event.pull_request.head.ref, 'deploy/staging-')")
+    expect(prWorkflow).toContain('github.event.pull_request.head.repo.full_name == github.repository')
+    expect(prWorkflow).toContain('environment: staging')
+    expect(prWorkflow).toContain('npx wrangler deploy')
+    expect(prWorkflow).toContain('assessment_html="$(curl -fsSL')
+    expect(prWorkflow).toContain(`grep -qi 'id="root"' <<<"$assessment_html"`)
+    expect(prWorkflow).not.toContain("grep -qi 'BEGIN MY TASTER' <<<"$assessment_html"")
+
+    const pushWorkflow = read('.github/workflows/cloudflare-staging-deploy.yml')
+    expect(pushWorkflow).not.toContain('pull_request:')
+    expect(pushWorkflow).toContain('push:')
+    expect(pushWorkflow).toContain('workflow_dispatch:')
+    expect(pushWorkflow).toContain('environment: staging')
+    expect(pushWorkflow).toContain('npx wrangler deploy')
   })
 
   test('preview metadata is not indexable and production analytics are disabled', () => {
