@@ -3622,3 +3622,80 @@
     padding: 9px 8px;
   }
 }
+
+
+/* Four-step homepage journey — reuse the institutional tokens and editorial hierarchy. */
+.home-journey {
+  padding: clamp(58px, 7vw, 92px) 0;
+  background: var(--parchment);
+  color: var(--dark-mid);
+}
+.home-journey .home-section-heading h2 {
+  color: var(--dark-mid);
+}
+.home-journey .home-section-heading p {
+  color: #555565;
+}
+.home-journey-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 34px;
+}
+.home-journey-card {
+  min-width: 0;
+  min-height: 218px;
+  padding: 24px;
+  background: var(--valoria-ivory);
+  border: 1px solid var(--valoria-brass);
+  border-radius: var(--home-radius-sm);
+}
+.home-journey-card > span {
+  display: block;
+  margin-bottom: 28px;
+  color: var(--valoria-gold-deep);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+.home-journey-card h3 {
+  margin: 0 0 10px;
+  color: var(--dark-mid);
+  font-size: clamp(18px, 1.6vw, 22px);
+  font-weight: 650;
+  line-height: 1.2;
+}
+.home-journey-card p {
+  margin: 0;
+  color: #555565;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.home-journey-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 24px;
+}
+.home-journey-link {
+  color: var(--dark-mid);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-decoration: none;
+}
+.home-journey-link:hover,
+.home-journey-link:focus-visible {
+  color: #8B702B;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+@media (max-width: 900px) {
+  .home-journey-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .home-journey-grid { grid-template-columns: minmax(0, 1fr); }
+  .home-journey-card { min-height: 0; padding: 20px; }
+  .home-journey-card > span { margin-bottom: 18px; }
+  .home-journey-actions { flex-direction: column; gap: 14px; }
+}
