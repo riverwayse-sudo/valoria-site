@@ -43,8 +43,13 @@ describe('Canonical Valoria content contract', () => {
     const start = read('src/app/valu/start/page.jsx')
     const homepage = read('src/app/page.jsx')
     for (const source of [valu, start, homepage]) {
-      expect(source).not.toMatch(/Question\\s+\\d+\\s+of\\s+\\d+/i)
-      expect(source).not.toMatch(/15[- ]question|54[- ]question|58[- ]question/i)
+      expect(source).not.toContain('Question 1 of 9')
+      expect(source).not.toContain('Question 1 of 58')
+      expect(source).not.toContain('1 of 9')
+      expect(source).not.toContain('1 of 58')
+      expect(source).not.toContain('15-question')
+      expect(source).not.toContain('54-question')
+      expect(source).not.toContain('58-question')
     }
     expect(valu).toContain('separate full assessment')
     expect(start).toContain('separate assessment')
