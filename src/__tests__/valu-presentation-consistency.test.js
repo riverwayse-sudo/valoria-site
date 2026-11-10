@@ -49,6 +49,10 @@ describe('VALU presentation consistency', () => {
     expect(registry).toContain('VALU Index results are expressed in points')
     expect(registry).toContain('eligibility and visibility rules')
     expect(registry).toContain('/privacypolicy')
+    expect(registry).toContain('const loop = unique')
+    expect(registry).not.toContain('unique.slice(0, 4)')
+    expect(registry).toContain('Basic marketplace access. Complete the full VALU assessment')
+    expect(registry).toContain('const isBasicSnapshot = points === null && summary.length === 0')
   })
 
   test('marketplace explains snapshot and full assessment without exposing internal question counts', () => {
