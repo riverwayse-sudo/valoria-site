@@ -32,16 +32,16 @@ describe('VALU presentation consistency', () => {
     expect(hero).not.toContain('84')
   })
 
-  test('homepage presents decision-maker and professional pathways', () => {
+  test('homepage presents the three approved professional and buyer pathways', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('FOUR WAYS TO ENGAGE.')
-    expect(home).not.toContain('FIVE WAYS TO ENGAGE.')
+    expect(home).toContain('THREE WAYS TO ENGAGE.')
+    expect(home).not.toContain('FOUR WAYS TO ENGAGE.')
     expect(home).toContain('FOR PROFESSIONALS')
     expect(home).toContain('FOR EMPLOYERS')
-    expect(home).toContain('FOR EVENT ORGANISERS')
-    expect(home).toContain('FOR FACILITATORS & EXPERTS')
-    expect(home).toContain('FOR INSTITUTIONS & PARTNERS')
-    expect(home).toContain('START A CONVERSATION')
+    expect(home).toContain('FOR EVENT ORGANISERS & TRAINING BUYERS')
+    expect(home).toContain('Find out where you stand.')
+    expect(home).toContain('Hire by capability, not CV triage.')
+    expect(home).toContain('Find speakers and facilitators who can hold a room.')
   })
 
   test('homepage registry explains VALU points and privacy context', () => {
