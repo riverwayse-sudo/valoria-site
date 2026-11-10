@@ -26,6 +26,12 @@
       @media(max-width:1180px){.nav-links{display:none}.nav-burger{display:flex}}
       @media(min-width:1181px){.nav-mobile{display:none!important}}
     
+/* Component-owned presentation: navigation feedback and footer details. */
+.nav-assessment-error{display:block;color:#F09595;font-size:12px;margin-top:6px}
+.uf-logo{display:block;width:auto;height:52px;margin-bottom:16px}
+.uf-col-title-spaced{margin-top:28px}
+.uf-email-link{color:rgba(247,244,238,.72);text-decoration:none}
+
 /* Shared page grid: footer and fixed navigation use the same left edge as page sections. */
 nav.vi-nav{
   padding-inline:max(var(--pad),calc((100vw - var(--vi-content,1160px))/2));
