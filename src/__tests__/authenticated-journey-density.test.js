@@ -37,6 +37,14 @@ describe('authenticated journey visual density', () => {
     expect(onboarding).toContain('Save & continue later')
   })
 
+  test('dashboard header, cover and primary content use a shorter vertical footprint', () => {
+    const dashboard = read('src/app/dashboard/page.jsx')
+    expect(dashboard).toContain("height:'88px', overflow:'hidden'")
+    expect(dashboard).toContain('size={76}')
+    expect(dashboard).toContain("margin:'28px auto 56px'")
+    expect(dashboard).toContain('grid-template-columns:240px minmax(0,1fr) !important')
+  })
+
   test('report layout is compact while preserving the full result and next-step content', () => {
     const report = read('src/app/report/page.jsx')
     expect(report).toContain("padding:'56px 18px 64px'")
