@@ -11,6 +11,7 @@ export const NAVIGATION = {
           { label: 'Take the VALU Taster', href: '/valu', description: 'Start with a clearer view of your capability.' },
           { label: 'PRIME Framework', href: '/prime', description: 'Explore the five dimensions of professional capability.' },
           { label: 'Valoria Develop', href: '/develop', description: 'Explore professional development pathways.' },
+          { label: 'Browse Jobs', href: '/jobs', description: 'Explore listed professional opportunities.' },
         ],
       }],
     },
@@ -34,6 +35,7 @@ export const NAVIGATION = {
       { label: 'Take the VALU Taster', href: '/valu' },
       { label: 'PRIME Framework', href: '/prime' },
       { label: 'Valoria Develop', href: '/develop' },
+      { label: 'Browse Jobs', href: '/jobs' },
     ],
     valu: [
       { label: 'Find Talent', href: '/atb-connect' },
