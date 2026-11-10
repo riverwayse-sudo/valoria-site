@@ -400,9 +400,9 @@ export default function DashboardPage() {
         <div style={{ position:'fixed', top:0, left:0, right:0, height:'3px', background:GOLD, opacity:.9, zIndex:201, pointerEvents:'none' }} />
 
         {/* HEADER NAV */}
-        <header style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 clamp(20px,4vw,40px)', height:'64px', background: MID, borderBottom:`1px solid ${GLINE}`, position:'sticky', top:0, zIndex:100 }}>
+        <header style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 clamp(20px,4vw,40px)', height:'60px', background: MID, borderBottom:`1px solid ${GLINE}`, position:'sticky', top:0, zIndex:100 }}>
           <Link href="/" style={{ lineHeight:0 }}>
-            <img src="/logo.png" alt="Valoria Institute" style={{ height:'40px', width:'auto' }} />
+            <img src="/logo.png" alt="Valoria Institute" style={{ height:'36px', width:'auto' }} />
           </Link>
           <nav className="dv-nav" style={{ display:'flex', gap:'22px', alignItems:'center' }}>
             <MarketplaceCTA style={{ fontSize:'12px', color: DIM, textDecoration:'none' }}>Marketplace</MarketplaceCTA>
@@ -415,7 +415,7 @@ export default function DashboardPage() {
         </header>
 
         {/* COVER BANNER */}
-        <div style={{ position:'relative', height:'112px', overflow:'hidden', background:`radial-gradient(ellipse 800px 400px at 10% 30%, rgba(201,168,76,.22), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 70%, rgba(201,168,76,.1), transparent 55%), linear-gradient(155deg, ${MID} 0%, ${DARK} 70%)` }}>
+        <div style={{ position:'relative', height:'88px', overflow:'hidden', background:`radial-gradient(ellipse 800px 400px at 10% 30%, rgba(201,168,76,.22), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 70%, rgba(201,168,76,.1), transparent 55%), linear-gradient(155deg, ${MID} 0%, ${DARK} 70%)` }}>
           <svg viewBox="0 0 1200 280" preserveAspectRatio="none" style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:.45 }}>
             <g stroke="#C9A84C" strokeOpacity=".18" strokeWidth="1" fill="none">
               <path d="M0,240 C300,160 500,280 800,180 S1100,240 1200,160"/>
@@ -441,20 +441,20 @@ export default function DashboardPage() {
 
             {/* Avatar — individual professionals only; employer/organiser accounts are businesses, not people */}
             {isSupply && (
-              <div style={{ width:'88px', height:'88px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
+              <div style={{ width:'76px', height:'76px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
                 <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
                   <div style={{ width:'100%', height:'100%', borderRadius:'50%', overflow:'hidden' }}>
-                    <ValoriaAvatar src={p.photo_url} name={p.display_name} seed={p.id || user?.id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={88} />
+                    <ValoriaAvatar src={p.photo_url} name={p.display_name} seed={p.id || user?.id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={76} />
                   </div>          </div>
               </div>
             )}
 
             {/* ID block */}
-            <div style={{ paddingBottom:'14px', flex:1, minWidth:'200px' }}>
+            <div style={{ paddingBottom:'8px', flex:1, minWidth:'200px' }}>
               <div style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.6)', marginBottom:'6px' }}>
                 WELCOME BACK
               </div>
-              <div style={{ fontSize:'clamp(20px,3.2vw,30px)', fontWeight:700, letterSpacing:'.02em', lineHeight:1.1, marginBottom:'10px', color: PARCH }}>
+              <div style={{ fontSize:'clamp(20px,3vw,28px)', fontWeight:700, letterSpacing:'.02em', lineHeight:1.1, marginBottom:'10px', color: PARCH }}>
                 {p.display_name || (atbId ? atbId : 'Your Account')}
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
@@ -479,7 +479,7 @@ export default function DashboardPage() {
             {/* CTAs */}
             <div style={{ display:'flex', gap:'10px', paddingBottom:'14px', flexShrink:0, flexWrap:'wrap' }}>
               <button onClick={() => setShowMessages(true)}
-                style={{ padding:'12px 18px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', gap:'8px' }}>
+                style={{ padding:'10px 16px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', gap:'8px' }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                 </svg>
@@ -488,7 +488,7 @@ export default function DashboardPage() {
 
               {!assessmentAccess?.can_continue && (
                 <Link href={isSupply ? '/profile/edit' : '/marketplace'}
-                  style={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
+                  style={{ padding:'10px 18px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
                   {isSupply ? 'EDIT PROFILE' : 'BROWSE MARKETPLACE'}
                 </Link>
               )}
@@ -542,13 +542,13 @@ export default function DashboardPage() {
           <div className="dv-detail-content">
         {/* STAT STRIP — professionals only */}
         {stats.length > 0 && (
-        <div style={{ maxWidth:'1100px', margin:'32px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
+        <div style={{ maxWidth:'1100px', margin:'24px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
           <div className="dv-stat-strip" style={{ display:'flex', borderTop:`1px solid ${GLINE}`, borderBottom:`1px solid ${GLINE}`, flexWrap:'wrap' }}>
             {stats.map((s, i, arr) => {
               const itemStyle = {
-                flex:'1 1 140px', padding:'16px 16px 16px 0',
+                flex:'1 1 140px', padding:'12px 14px 12px 0',
                 borderRight: i < arr.length - 1 ? `1px solid ${GLINE}` : 'none',
-                paddingLeft: i > 0 ? '16px' : 0,
+                paddingLeft: i > 0 ? '14px' : 0,
                 textDecoration:'none', display:'block',
               }
               const inner = (
@@ -571,13 +571,13 @@ export default function DashboardPage() {
 
         {/* MAIN */}
         {isSupply ? (
-          <div className="dv-grid" style={{ maxWidth:'1100px', margin:'36px auto 80px', padding:'0 clamp(20px,4vw,40px)', display:'grid', gridTemplateColumns:'280px 1fr', gap:'40px' }}>
+          <div className="dv-grid" style={{ maxWidth:'1100px', margin:'28px auto 56px', padding:'0 clamp(20px,4vw,40px)', display:'grid', gridTemplateColumns:'280px 1fr', gap:'40px' }}>
 
             {/* SIDEBAR */}
             <div style={{ minWidth:0 }}>
 
               {/* VALU Index */}
-              <div id="valu-card" style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px', scrollMarginTop:'96px' }}>
+              <div id="valu-card" style={{ background: MID, border:`1px solid ${GLINE}`, padding:'18px', marginBottom:'16px', scrollMarginTop:'96px' }}>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'14px' }}>VALU Index</div>
                 {p.valu_index != null ? (
                   <>
@@ -829,7 +829,7 @@ export default function DashboardPage() {
         .dv-detail {
           border:1px solid rgba(201,168,76,.16);
           background:rgba(26,26,46,.48);
-          margin:0 0 12px;
+          margin:0 0 10px;
         }
         .dv-detail > summary {
           display:flex; align-items:center; justify-content:space-between; gap:16px;
@@ -840,12 +840,12 @@ export default function DashboardPage() {
         .dv-detail > summary::after { content:'+'; color:#C9A84C; font-size:18px; font-weight:400; }
         .dv-detail[open] > summary::after { content:'−'; }
         .dv-detail > summary span { margin-left:auto; color:rgba(247,244,238,.48); font-size:10px; font-weight:500; }
-        .dv-detail-content { padding:0 17px 16px; }
+        .dv-detail-content { padding:0 15px 14px; }
         .dv-detail-content > div { margin-bottom:0 !important; }
-        .dv-overview { max-width:1100px; margin:18px auto 0; }
-        .dv-grid { grid-template-columns:260px minmax(0,1fr) !important; gap:28px !important; margin-top:24px !important; }
-        .dv-grid section { margin-bottom:20px !important; }
-        .dv-header-block { gap:18px !important; }
+        .dv-overview { max-width:1100px; margin:14px auto 0; }
+        .dv-grid { grid-template-columns:240px minmax(0,1fr) !important; gap:24px !important; margin-top:22px !important; }
+        .dv-grid section { margin-bottom:16px !important; }
+        .dv-header-block { gap:16px !important; }
         @media (max-width:860px) {
           .dv-grid { grid-template-columns:minmax(0,1fr) !important; gap:18px !important; }
           .dv-overview { margin-left:20px; margin-right:20px; }
