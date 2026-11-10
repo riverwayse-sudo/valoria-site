@@ -77,22 +77,21 @@ describe("computeWeightedIndex", () => {
 
 describe("getDesignation", () => {
   const cases = [
-    [100, "Elite"], [90, "Elite"],
-    [89, "Distinguished"], [75, "Distinguished"],
-    [74, "Proficient"], [55, "Proficient"],
-    [54, "Standard"], [35, "Standard"],
+    [100, "Force to Align With"], [80, "Force to Align With"],
+    [79, "Emerging Force"], [65, "Emerging Force"],
+    [64, "Developing Professional"], [50, "Developing Professional"],
+    [49, "Building Foundations"], [35, "Building Foundations"],
+    [34, "At the Starting Point"], [0, "At the Starting Point"],
   ];
   test.each(cases)("score %i points → %s", (score, expected) => {
     expect(getDesignation(score).name).toBe(expected);
   });
-  test("scores below the 35-point threshold have no merit designation", () => {
-    expect(getDesignation(34)).toBeNull();
-    expect(getDesignation(0)).toBeNull();
-  });
-  test("approved merit band boundaries are applied", () => {
-    expect(getDesignation(89).name).toBe("Distinguished");
-    expect(getDesignation(74).name).toBe("Proficient");
-    expect(getDesignation(54).name).toBe("Standard");
+  test("all five canonical designation boundaries are applied", () => {
+    expect(getDesignation(80).name).toBe("Force to Align With");
+    expect(getDesignation(79).name).toBe("Emerging Force");
+    expect(getDesignation(50).name).toBe("Developing Professional");
+    expect(getDesignation(35).name).toBe("Building Foundations");
+    expect(getDesignation(34).name).toBe("At the Starting Point");
   });
 });
 
