@@ -53,35 +53,27 @@ const institutionalCapabilities = [
 const decisionPathways = [
   {
     number: '01',
-    label: 'FOR EMPLOYERS & TALENT LEADERS',
-    title: 'Make better talent decisions.',
-    body: 'Bring capability, professional context and role requirements into the same conversation. Explore a more considered approach to talent discovery and sourcing.',
+    label: 'FOR PROFESSIONALS',
+    title: 'Find out where you stand.',
+    body: 'Understand your professional capability through the VALU Taster, then build a stronger record through the full assessment and your Valoria profile.',
+    href: '/valu',
+    cta: 'EXPLORE THE VALU INDEX',
+  },
+  {
+    number: '02',
+    label: 'FOR EMPLOYERS',
+    title: 'Hire by capability, not CV triage.',
+    body: 'Discover professionals through a shared capability framework, structured insight and profiles aligned with your organisation’s requirements.',
     href: '/atb-connect',
     cta: 'EXPLORE ATB CONNECT',
   },
   {
-    number: '02',
-    label: 'FOR EVENT ORGANISERS',
-    title: 'Find expertise for the room.',
-    body: 'Identify speakers and facilitators whose knowledge and experience are relevant to your audience, event or programme.',
+    number: '03',
+    label: 'FOR EVENT ORGANISERS & TRAINING BUYERS',
+    title: 'Find speakers and facilitators who can hold a room.',
+    body: 'Discover relevant expertise for events, workshops and development programmes through capability-led professional profiles.',
     href: '/atb-spotlight',
     cta: 'EXPLORE ATB SPOTLIGHT',
-  },
-  {
-    number: '03',
-    label: 'FOR INSTITUTIONS & PARTNERS',
-    title: 'Build capability at scale.',
-    body: 'Explore development programmes and institutional partnerships that connect professional growth to organisational and sector priorities.',
-    href: '/develop',
-    cta: 'EXPLORE VALORIA DEVELOP',
-  },
-  {
-    number: '04',
-    label: 'FOR FACILITATORS & EXPERTS',
-    title: 'Put your expertise to work.',
-    body: 'Make your facilitation and specialist expertise visible to organisations seeking people who can lead learning, dialogue and meaningful change.',
-    href: '/marketplace/facilitators',
-    cta: 'EXPLORE FACILITATOR PATHWAYS',
   },
 ]
 
@@ -155,7 +147,7 @@ export default function HomePage() {
           <div className="container">
             <Reveal className="home-section-heading">
               <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOUR WAYS TO ENGAGE.</span></div>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THREE WAYS TO ENGAGE.</span></div>
                 <h2 id="decision-pathways-title">Start with the outcome your organisation <em>needs.</em></h2>
               </div>
               <p>Whether you are sourcing talent, curating an event or building workforce capability, Valoria provides a clear route into the relevant part of the institution.</p>
