@@ -17,7 +17,7 @@ export default function ValuPage() {
       <section className="valu-hero">
         <div className="valu-wrap">
           <div className="valu-kicker"><span /> THE VALU INDEX</div>
-          <h1>Make your capability<br /><em>visible and actionable.</em></h1>
+          <h1>Know where you stand,<br /><em>in points.</em></h1>
           <p className="valu-lede">Begin with a short VALU Taster to gain an initial view of your professional capability. Create your Valoria account to continue to the separate full assessment and receive your official points-based VALU Index.</p>
           <div className="valu-actions">
             <AssessmentStartLink href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">START THE VALU TASTER <span>→</span></AssessmentStartLink>
