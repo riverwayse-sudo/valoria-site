@@ -2171,3 +2171,125 @@
     padding: 13px 14px;
   }
 }
+
+
+/* PUBLIC EXPERIENCE DENSITY — calmer first viewport, shorter scroll and cleaner rhythm. */
+:root {
+  --space-section: clamp(56px, 6vw, 88px);
+  --space-section-tight: clamp(44px, 5vw, 64px);
+  --home-radius: 18px;
+  --home-radius-sm: 12px;
+}
+.home-redesign-root > section:not(.hero) {
+  padding-block: var(--space-section);
+}
+.home-section-heading {
+  gap: clamp(20px, 3.5vw, 44px);
+  margin-bottom: clamp(28px, 3.5vw, 42px);
+}
+.home-section-heading h2 {
+  font-size: clamp(34px, 4vw, 52px);
+  line-height: 1.06;
+}
+.home-section-heading > p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.hero-slider {
+  min-height: clamp(540px, 72svh, 660px);
+  padding-top: 68px;
+}
+.hero-slider .hero-slides {
+  min-height: clamp(472px, calc(72svh - 68px), 592px);
+}
+.hero-slider .hero-inner {
+  padding-block: clamp(20px, 3vw, 34px);
+  gap: clamp(24px, 4vw, 56px);
+}
+.hero-slider .hero-title {
+  font-size: clamp(30px, 3.6vw, 48px);
+  margin-bottom: 12px;
+}
+.hero-slider .hero-sub {
+  font-size: 13px;
+  line-height: 1.58;
+  margin-bottom: 16px;
+}
+.hero-slider .valu-card,
+.hero-slider .hero-event-panel {
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 18px;
+}
+.hero-slider .vc-bars { gap: 6px; margin-bottom: 10px; }
+.hero-slider .hero-actions .btn-gold,
+.hero-slider .hero-actions .btn-outline { min-height: 44px; }
+.home-pathway-card {
+  min-height: 276px;
+  padding: 24px;
+  border-radius: 16px;
+}
+.home-pathway-card h3 {
+  margin: 14px 0 9px;
+  font-size: clamp(20px, 2vw, 25px);
+  line-height: 1.12;
+}
+.home-pathway-card p {
+  font-size: 13px;
+  line-height: 1.55;
+}
+.valu-conversion .valu-conversion-shell {
+  gap: clamp(28px, 4vw, 52px);
+}
+.valu-conversion .valu-title {
+  font-size: clamp(34px, 4vw, 52px);
+  line-height: 1.06;
+}
+.valu-conversion .valu-desc {
+  max-width: 540px;
+  font-size: 14px;
+  line-height: 1.62;
+}
+.valu-conversion-card {
+  padding: 22px;
+  border-radius: 18px;
+}
+.valu-conversion .vcc-radar { max-height: 220px; }
+.valu-conversion .vcc-steps { gap: 9px; }
+.valu-conversion .vcc-step { padding-block: 8px; }
+.live-profiles-shell {
+  gap: clamp(20px, 3vw, 36px);
+}
+.live-profiles-title {
+  font-size: clamp(34px, 4vw, 52px);
+  line-height: 1.06;
+}
+.live-profiles-subtitle {
+  max-width: 560px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+@media (max-width: 900px) {
+  .hero-slider {
+    min-height: 0;
+    padding-top: 64px;
+  }
+  .hero-slider .hero-slides { min-height: 0; }
+  .hero-slider .hero-inner {
+    grid-template-columns: minmax(0, 1fr) minmax(260px, .8fr);
+    gap: 24px;
+  }
+}
+@media (max-width: 700px) {
+  .home-redesign-root > section:not(.hero) { padding-block: 48px; }
+  .hero-slider { padding-top: 60px; }
+  .hero-slider .hero-inner { grid-template-columns: 1fr; gap: 22px; }
+  .hero-slider .hero-title { font-size: clamp(30px, 8vw, 42px); }
+  .hero-slider .valu-card,
+  .hero-slider .hero-event-panel { max-width: 100%; padding: 18px; }
+  .home-pathway-card { min-height: 0; padding: 22px; }
+  .home-section-heading { grid-template-columns: 1fr; gap: 14px; margin-bottom: 26px; }
+  .home-section-heading h2,
+  .valu-conversion .valu-title,
+  .live-profiles-title { font-size: clamp(32px, 8vw, 42px); }
+}
