@@ -22,7 +22,6 @@ on:
       - "wrangler.jsonc"
       - "package.json"
       - "package-lock.json"
-      - ".github/workflows/cloudflare-staging-deploy.yml"
   workflow_dispatch:
 
 permissions:
@@ -137,7 +136,7 @@ jobs:
 
           # This must reach the Worker handler (405), not fall through to an HTML asset or 404.
           assessment_html="$(curl -fsSL --max-time 30 "$base/valu/assessment/")"
-          grep -qi 'VALU ASSESSMENT' <<<"$assessment_html"
+          grep -qi 'Valoria Platform' <<<"$assessment_html"
           grep -qi 'id="root"' <<<"$assessment_html"
           grep -Eqi '<script[^>]+src=' <<<"$assessment_html"
 
