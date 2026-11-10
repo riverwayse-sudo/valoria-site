@@ -71,7 +71,7 @@ export default async function LiveProfilesScroll() {
           </h2>
           <p className="live-profiles-subtitle">
             {unique.length > 0
-              ? 'These are professionals in the Valoria marketplace — assessed, positioned and discoverable by capability.'
+              ? 'Explore public professional profiles, with assessment information shown according to each person’s Valoria access and visibility status.'
               : 'A capability-led marketplace for employers, event organisers and training buyers to discover professional expertise.'}
           </p>
           {discoverableCount > 0 && unique.length > 0 && (
