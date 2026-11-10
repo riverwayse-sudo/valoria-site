@@ -3760,7 +3760,7 @@
 
 
 /* Tablet refinement: preserve readable PRIME typography beside the portrait. */
-@media (min-width: 761px) and (max-width: 900px) {
+@media (min-width: 761px) and (max-width: 1050px) {
   .vi-editorial-hero { min-height: auto; }
   .vi-hero-content {
     width: min(100% - 64px, 680px);
