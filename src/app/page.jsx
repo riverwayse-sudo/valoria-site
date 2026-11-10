@@ -3,6 +3,7 @@ import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import HomepageEvents from '@/components/HomepageEvents'
+import HomepageEventPopup from '@/components/HomepageEventPopup'
 import './home.css'
 import './home-institutional.css'
 
@@ -114,6 +115,7 @@ export default function HomePage() {
   return (
     <>
       <Nav />
+      <HomepageEventPopup />
       <main id="main-content" className="vi-institutional-home">
         <section className="vi-ih-hero" aria-labelledby="vi-ih-title">
           <div className="vi-ih-hero-image" aria-hidden="true">
