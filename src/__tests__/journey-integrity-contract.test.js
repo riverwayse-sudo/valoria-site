@@ -74,6 +74,8 @@ describe('participant-facing assessment clarity', () => {
     expect(eventRegistration).toContain('Event registration is disabled in staging preview')
     expect(eventTrigger).toContain('REGISTRATION DISABLED IN PREVIEW')
     expect(stagingWorkflow).toContain('NEXT_PUBLIC_VALU_PREVIEW=1')
+    expect(stagingWorkflow).toContain("grep -qi 'Valoria Platform' <<<\"$assessment_html\"")
+    expect(stagingWorkflow).not.toContain("grep -qi 'VALU ASSESSMENT'")
     expect(stagingWorkflow).toContain('NEXT_PUBLIC_VALU_STAGING_API_ENABLED=1')
     expect(stagingWorkflow).toContain('VALU_STAGING_API_ENABLED=1')
     expect(stagingWorkflow).toContain('NEXT_PUBLIC_SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co')
