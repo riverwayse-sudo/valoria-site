@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
@@ -15,6 +15,8 @@ export default function Nav() {
   const [user, setUser] = useState(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [accountType, setAccountType] = useState(null)
+  const navRootRef = useRef(null)
+  const mobileMenuButtonRef = useRef(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -26,6 +28,23 @@ export default function Nav() {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [menuOpen])
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key !== 'Escape') return
+      if (menuOpen) {
+        setMenuOpen(false)
+        mobileMenuButtonRef.current?.focus()
+      }
+      if (openMenu) {
+        const trigger = navRootRef.current?.querySelector('.nav-trigger[aria-expanded="true"]')
+        setOpenMenu(null)
+        trigger?.focus()
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [menuOpen, openMenu])
 
   useEffect(() => {
     const closeMenus = (event) => {
@@ -88,16 +107,16 @@ export default function Nav() {
   return <>
     
 
-    <nav className={`vi-nav${scrolled ? ' scrolled' : ''}`} aria-label="Primary navigation">
+    <nav ref={navRootRef} className={`vi-nav${scrolled ? ' scrolled' : ''}`} aria-label="Primary navigation">
       <Link href="/" className="nav-logo" aria-label="Valoria Institute home"><img src="/logo.png" alt="Valoria Institute" /></Link>
 
       <ul className="nav-links" role="list">
         {NAVIGATION.primary.map((item) => item.groups ? (
           <li className="vi-nav-menu" key={item.label}>
-            <button className={`nav-link nav-trigger${(openMenu === item.label || (!openMenu && item.groups.some(g => g.items.some(i => isPathActive(pathname, i.href))))) ? ' active' : ''}${openMenu === item.label ? ' is-open' : ''}`} aria-expanded={openMenu === item.label} aria-haspopup="true" onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === item.label ? null : item.label) }}>
+            <button className={`nav-link nav-trigger${(openMenu === item.label || (!openMenu && item.groups.some(g => g.items.some(i => isPathActive(pathname, i.href))))) ? ' active' : ''}${openMenu === item.label ? ' is-open' : ''}`} aria-expanded={openMenu === item.label} aria-controls={`vi-dropdown-${item.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} aria-haspopup="true" onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === item.label ? null : item.label) }}>
               {item.label}<span className="nav-chevron">⌄</span>
             </button>
-            <div className={`nav-dropdown${openMenu === item.label ? ' open' : ''}${item.groups.length === 1 ? ' nav-dropdown-single' : ''}`}>
+            <div id={`vi-dropdown-${item.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className={`nav-dropdown${openMenu === item.label ? ' open' : ''}${item.groups.length === 1 ? ' nav-dropdown-single' : ''}`}>
               <div className={`nav-dropdown-grid${item.groups.length === 1 ? ' nav-dropdown-single' : ''}`}>
                 {item.groups.map((group) => <div key={group.label}>
                   {group.label && <div className="nav-dropdown-label">{group.label}</div>}
@@ -119,10 +138,10 @@ export default function Nav() {
         <li><Link href={cta.href} className="nav-cta">{cta.label}</Link></li>
       </ul>
 
-      <button className={`nav-burger${menuOpen ? ' open' : ''}`} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span/><span/><span/></button>
+      <button ref={mobileMenuButtonRef} className={`nav-burger${menuOpen ? ' open' : ''}`} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-controls="vi-mobile-navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span/><span/><span/></button>
     </nav>
 
-    <nav className={`nav-mobile${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation">
+    <nav id="vi-mobile-navigation" className={`nav-mobile${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation">
       <div className="m-label">Professionals</div>
       {NAVIGATION.mobile.explore.map(item => <div key={item.label}>{renderItem(item, 'nav-mobile-link')}</div>)}
       <div className="m-label">Organisations</div>
