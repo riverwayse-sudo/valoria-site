@@ -43,6 +43,7 @@
         { "binding": "VALU_ASSESSMENT", "service": "valoria-staging-assessment" }
       ],
       "vars": {
+        "CF_WORKERS": "1",
         "VALU_PREVIEW": "1",
         "VALU_STAGING_API_ENABLED": "1",
         "NEXT_PUBLIC_VALU_STAGING_API_ENABLED": "1",
