@@ -127,4 +127,14 @@ describe('staging preview safety boundary', () => {
     expect(profileLayout).toContain('if (IS_STAGING) return')
     expect(profileLayout).toContain('robots: { index: false, follow: false }')
   })
+
+  test('global positioning and spatial PRIME hero remain accessible without motion', () => {
+    const hero = read('src/components/HeroSlider.jsx')
+    const home = read('src/app/home.css')
+    expect(hero).toContain('DESIGNED FOR A GLOBAL PROFESSIONAL LANDSCAPE.')
+    expect(hero).not.toContain('STARTING IN NIGERIA')
+    expect(home).toContain('.vi-hero-art::before')
+    expect(home).toContain('perspective: 1200px')
+    expect(home).toContain('@media (prefers-reduced-motion:reduce)')
+  })
 })
