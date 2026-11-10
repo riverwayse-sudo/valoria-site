@@ -16,18 +16,18 @@ export default function HeroSlider() {
                 <span className="hero-eyebrow-text">THE PROFESSIONAL CAPABILITY MARKETPLACE</span>
               </div>
               <h1 className="hero-title" id="valoria-hero-title">
-                Make your professional<br />
-                <em>capability visible.</em>
+                Capability should decide<br />
+                <em>who gets seen.</em>
               </h1>
               <p className="hero-sub hero-institutional-sub">
-                Understand your capabilities, build a stronger professional presence and discover opportunities aligned with what you can contribute.
+                Valoria gives professionals a clearer way to understand their capabilities, develop where needed and become visible to employers, event organisers and training buyers.
               </p>
               <div className="hero-actions">
                 <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">
-                  START YOUR SNAPSHOT <span aria-hidden="true">→</span>
+                  START THE VALU TASTER <span aria-hidden="true">→</span>
                 </AssessmentStartLink>
-                <Link href="/opportunities" className="btn-outline">
-                  EXPLORE OPPORTUNITIES <span aria-hidden="true">→</span>
+                <Link href="/valu" className="btn-outline">
+                  SEE HOW IT WORKS <span aria-hidden="true">→</span>
                 </Link>
               </div>
               <p className="hero-institutional-note">For professionals, employers, event organisers and facilitators.</p>
