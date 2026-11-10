@@ -4,12 +4,12 @@ import Reveal from '@/components/Reveal'
 import '../pages.css'
 
 export const metadata = {
-  title: 'About Valoria Institute | Professional Capability Institution',
-  description: 'Valoria Institute is an Africa-first professional capability institution, with Nigeria as its initial operating jurisdiction. It connects PRIME, the VALU Index, development and capability-led opportunity.',
+  title: 'About Valoria Institute | Professional Capability Marketplace',
+  description: 'Valoria Institute is an Africa-first professional capability marketplace, with Nigeria as its initial operating jurisdiction. It connects PRIME, the VALU Index, professional development and relevant opportunities.',
   keywords: ['Valoria Institute', 'professional capability', 'PRIME framework', 'VALU Index', 'professional development', 'talent marketplace'],
   openGraph: {
     title: 'About Valoria Institute',
-    description: 'The institution connecting professional capability to development, visibility and opportunity.',
+    description: 'A professional capability marketplace connecting assessment, development, visibility and opportunity.',
     url: 'https://valoriainstitute.com/about-us',
   },
   alternates: { canonical: 'https://valoriainstitute.com/about-us' },
