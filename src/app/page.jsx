@@ -94,7 +94,7 @@ export default function HomePage() {
         <section className="home-market-scope" aria-label="Initial market focus">
           <div className="container">
             <span>INITIAL MARKET</span>
-            <p>Valoria’s initial operating focus is Nigeria. The framework is designed with broader African and international audiences in view as the platform grows.</p>
+            <p>Valoria is Africa-first, with Nigeria as its initial operating jurisdiction. The experience is designed to be clear to international professionals and buyers without implying availability beyond the markets we currently serve.</p>
           </div>
         </section>
 
