@@ -22,7 +22,6 @@ on:
       - "wrangler.jsonc"
       - "package.json"
       - "package-lock.json"
-      - ".github/workflows/cloudflare-staging-deploy.yml"
   workflow_dispatch:
 
 permissions:
