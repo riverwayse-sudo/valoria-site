@@ -14,7 +14,13 @@
   --motion-distance-large: 32px;
 }
 
+/* Content remains visible by default. JavaScript opts into the reveal state
+   only after the observer is available, so failed/disabled JS never hides content. */
 .reveal {
+  opacity: 1;
+  transform: none;
+}
+.reveal.is-pending {
   opacity: 0;
   transform: translate3d(0,var(--motion-distance),0);
   transition:
