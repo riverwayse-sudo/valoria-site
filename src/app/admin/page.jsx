@@ -148,7 +148,7 @@ export default function AdminPage() {
       </header>
 
       <section className="vi-admin-page" style={styles.page}>
-        <div style={styles.heading}><div><div style={styles.eyebrow}>VALORIA INSTITUTE · CONTROL CENTRE</div><h1 style={styles.h1}>Administration</h1><p style={styles.sub}>Review the talent bureau, enquiries, marketplace listings and platform signals.</p></div><div style={styles.user}>{user?.email}</div></div>
+        <div style={styles.heading}><div><div style={styles.eyebrow}>VALORIA INSTITUTE · CONTROL CENTRE</div><h1 style={styles.h1}>Administration</h1><p style={styles.sub}>Review professional enquiries, marketplace listings and platform signals.</p></div><div style={styles.user}>{user?.email}</div></div>
 
         <div className="vi-admin-grid" style={styles.statsGrid}>{[['Enquiries',stats.enquiries],['Pending',stats.pending],['Introduced',stats.introduced],['Listed',stats.listed],['Complete profiles',stats.complete],['Talent',stats.talent],['Speakers',stats.speakers],['Facilitators',stats.facilitators]].map(([label,value]) => <div className="vi-admin-card" key={label} style={styles.card}><div style={styles.cardLabel}>{label}</div><div style={styles.cardValue}>{value}</div></div>)}</div>
 
