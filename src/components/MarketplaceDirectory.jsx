@@ -41,8 +41,10 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
   const [cluster,setCluster] = useState('')
   const [skill,setSkill] = useState('')
   const [declaredRole,setDeclaredRole] = useState('')
+  const [seniorityBand,setSeniorityBand] = useState('')
   const industries = useMemo(() => [...new Set(rows.map(r=>displayText(r.industry)).filter(Boolean))].sort(), [rows])
   const skills = useMemo(() => [...new Set(rows.flatMap(r=>labelValues(r.skills)))].sort(), [rows])
+  const seniorityBands = useMemo(() => [...new Set(rows.map(r=>displayText(r.seniority_band)).filter(Boolean))].sort(), [rows])
 
   const results = useMemo(() => {
     const q=query.trim().toLowerCase()
@@ -54,10 +56,11 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       if(cluster && getLeadingCluster(p) !== cluster) return false
       if(skill && !labelValues(p.skills).includes(skill)) return false
       if(declaredRole && !getSelectedCapabilities(p).includes(declaredRole)) return false
+      if(seniorityBand && displayText(p.seniority_band) !== seniorityBand) return false
       if(!q) return true
       return [p.atb_id,p.headline,p.current_job_title,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
     })
-  },[rows,activeTrack,query,industry,cluster,skill,declaredRole])
+  },[rows,activeTrack,query,industry,cluster,skill,declaredRole,seniorityBand])
 
   const itemListSchema = useMemo(() => ({
     '@context': 'https://schema.org',
@@ -113,7 +116,8 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
           <option value="speaker">Speaker</option>
           <option value="facilitator">Facilitator</option>
         </select>
-        {(query || industry || cluster || skill || declaredRole) && <button type="button" onClick={()=>{setQuery('');setIndustry('');setCluster('');setSkill('');setDeclaredRole('')}}>CLEAR</button>}
+        {seniorityBands.length > 0 && <select value={seniorityBand} onChange={e=>setSeniorityBand(e.target.value)} aria-label="Filter by seniority"><option value="">All seniority levels</option>{seniorityBands.map(value=><option key={value} value={value}>{value}</option>)}</select>}
+        {(query || industry || cluster || skill || declaredRole || seniorityBand) && <button type="button" onClick={()=>{setQuery('');setIndustry('');setCluster('');setSkill('');setDeclaredRole('');setSeniorityBand('')}}>CLEAR</button>}
       </div>
     </section>
     <section className={styles.directory}>

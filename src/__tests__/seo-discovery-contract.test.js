@@ -52,6 +52,7 @@ describe('Valoria SEO and discovery foundation', () => {
     expect(home).toContain('INITIAL MARKET')
     expect(home).toContain('Valoria is Africa-first, with Nigeria as its initial operating jurisdiction')
     expect(home).toContain('clear to international professionals and buyers')
+    expect(home).toContain('Careers still turn on who was in the right room at the right time.')
     expect(home).toContain('INITIAL MARKET')
   })
 

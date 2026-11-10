@@ -169,10 +169,10 @@ jobs:
           grep -q 'Basic is a marketplace access state, not a merit tier' /tmp/valoria-llms.txt
 
           curl -fsS "$base/" -o /tmp/valoria-home.html
-          grep -q 'THE PROFESSIONAL CAPABILITY MARKETPLACE' /tmp/valoria-home.html
-          grep -q 'FOUR WAYS TO ENGAGE' /tmp/valoria-home.html
+          grep -q 'Capability should decide' /tmp/valoria-home.html
+          grep -q 'THREE WAYS TO ENGAGE' /tmp/valoria-home.html
           grep -q 'INITIAL MARKET' /tmp/valoria-home.html
-          grep -q 'initial operating focus is Nigeria' /tmp/valoria-home.html
+          grep -q 'Valoria is Africa-first' /tmp/valoria-home.html
 
           : > /tmp/valoria-css-bundle.css
           css_assets="$(grep -oE 'href="[^"]+\.css[^"]*"' /tmp/valoria-home.html | cut -d '"' -f 2)"
@@ -209,15 +209,10 @@ jobs:
             exit 1
           fi
           echo "PASS: unauthenticated handoff guards"
-          status="$(curl -sS -o /tmp/valu-opportunities-enabled -w '%{http_code}' "$base/api/opportunities")"
-          if [[ "$status" != "200" ]]; then
-            echo "Staging opportunity API returned HTTP $status (expected 200)"
-            cat /tmp/valu-opportunities-enabled || true
+          status="$(curl -sS -o /tmp/valu-opportunities-disabled -w '%{http_code}' "$base/api/opportunities")"
+          if [[ "$status" != "503" ]]; then
+            echo "Staging opportunity API returned HTTP $status (expected 503)"
+            cat /tmp/valu-opportunities-disabled || true
             exit 1
           fi
-          if ! jq -e '.opportunities | type == "array"' /tmp/valu-opportunities-enabled >/dev/null; then
-            echo "Staging opportunity API response did not contain an opportunities array:"
-            cat /tmp/valu-opportunities-enabled
-            exit 1
-          fi
-          echo "PASS: staging opportunity API"
+          echo "PASS: staging opportunity API remains disabled"
