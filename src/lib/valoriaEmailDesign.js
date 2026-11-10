@@ -106,7 +106,7 @@ function shell({ preheader, eyebrow, heading, content, footer = '', promotional 
 }
 
 export function renderEventRegistrationEmail({ fullName, session, journeyUrl, heroImage }) {
-  const firstName = escapeEmailHtml(String(fullName || '').trim().split(/\\s+/)[0] || 'there')
+  const firstName = escapeEmailHtml(String(fullName || '').trim().split(/\s+/)[0] || 'there')
   const title = escapeEmailHtml(session.title)
   const date = escapeEmailHtml(formatEventDate(session.start))
   const time = escapeEmailHtml(formatEventTime(session.start))
@@ -133,12 +133,12 @@ export function renderEventRegistrationEmail({ fullName, session, journeyUrl, he
   return {
     subject: `Registration confirmed | ${session.title}`,
     html: shell({ preheader: `Your place is confirmed for ${session.title}.`, eyebrow: 'PROFESSIONAL STANDARD SERIES', heading: 'Your registration is confirmed.', content }),
-    text: `Hello ${String(fullName || '').trim().split(/\\s+/)[0] || 'there'},\n\nYour registration for ${session.title} has been received and confirmed.\n\nDate: ${formatEventDate(session.start)}\nTime: ${formatEventTime(session.start)} WAT\n${session.speaker ? `Guest speaker: ${session.speaker}\n` : ''}${session.host ? `Host: ${session.host}\n` : ''}\nKeep this message for your records. Any essential event updates will be sent to this email address.\n\nValoria Institute · Worth. Built.\ninfo@valoriainstitute.com`,
+    text: `Hello ${String(fullName || '').trim().split(/\s+/)[0] || 'there'},\n\nYour registration for ${session.title} has been received and confirmed.\n\nDate: ${formatEventDate(session.start)}\nTime: ${formatEventTime(session.start)} WAT\n${session.speaker ? `Guest speaker: ${session.speaker}\n` : ''}${session.host ? `Host: ${session.host}\n` : ''}\nKeep this message for your records. Any essential event updates will be sent to this email address.\n\nValoria Institute · Worth. Built.\ninfo@valoriainstitute.com`,
   }
 }
 
 export function renderEventReminderEmail({ fullName, session, meetingUrl, calendarUrl, reminderLabel = 'A NOTE BEFORE THE CONVERSATION', heroImage }) {
-  const firstName = escapeEmailHtml(String(fullName || '').trim().split(/\\s+/)[0] || 'there')
+  const firstName = escapeEmailHtml(String(fullName || '').trim().split(/\s+/)[0] || 'there')
   const title = escapeEmailHtml(session.title)
   const date = escapeEmailHtml(formatEventDate(session.start))
   const time = escapeEmailHtml(formatEventTime(session.start))
@@ -157,7 +157,7 @@ export function renderEventReminderEmail({ fullName, session, meetingUrl, calend
   return {
     subject: `A reminder from Valoria | ${session.title}`,
     html: shell({ preheader: `A reminder about your registered Valoria conversation on ${date}.`, eyebrow: reminderLabel, heading: 'We look forward to seeing you.', content }),
-    text: `Hello ${String(fullName || '').trim().split(/\\s+/)[0] || 'there'},\n\nA reminder of your registration for ${session.title}.\nDate: ${formatEventDate(session.start)}\nTime: ${formatEventTime(session.start)} WAT\n${meeting ? `Join: ${meeting}\n` : 'Access information will be shared separately when confirmed.\n'}${calendar ? `Add to calendar: ${calendar}\n` : ''}\nValoria Institute · Worth. Built.`,
+    text: `Hello ${String(fullName || '').trim().split(/\s+/)[0] || 'there'},\n\nA reminder of your registration for ${session.title}.\nDate: ${formatEventDate(session.start)}\nTime: ${formatEventTime(session.start)} WAT\n${meeting ? `Join: ${meeting}\n` : 'Access information will be shared separately when confirmed.\n'}${calendar ? `Add to calendar: ${calendar}\n` : ''}\nValoria Institute · Worth. Built.`,
   }
 }
 
