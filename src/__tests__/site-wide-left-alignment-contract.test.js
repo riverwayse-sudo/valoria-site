@@ -63,6 +63,14 @@ describe('main website left-alignment contract', () => {
     expect(profiles).not.toContain('Basic listings show public profile details')
   })
 
+  test('public content pages use compact hero, section and card spacing', () => {
+    const pages = read('src/app/pages.css')
+    expect(pages).toContain('.page-hero { padding: 128px 0 64px; }')
+    expect(pages).toContain('.page-section { padding: clamp(56px, 6vw, 80px) 0; }')
+    expect(pages).toContain('.insight-card { min-height: 290px; padding: 24px; }')
+    expect(pages).toContain('.event-card-copy { padding: 20px 22px 22px; }')
+  })
+
   test('the global contract preserves reduced-motion accessibility', () => {
     const css = read('src/styles/globals.css')
     expect(css).toContain('@media (prefers-reduced-motion: reduce)')
