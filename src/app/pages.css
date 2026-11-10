@@ -353,3 +353,16 @@
   margin-left: 0;
   margin-right: 0;
 }
+
+
+/* VALU merit designations — five score bands, distinct from access levels. */
+.prime-designations .page-sub{margin-left:0;margin-right:0;max-width:760px}
+.prime-designation-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin:36px 0;background:rgba(26,26,46,.16);border:1px solid rgba(26,26,46,.16)}
+.prime-designation-grid article{background:var(--valoria-ivory,#FAFAF7);padding:24px;min-width:0}
+.prime-designation-grid article:first-child{background:#1A1A2E;color:#F7F4EE}
+.prime-designation-grid article:first-child h3{color:#C9A84C}
+.prime-designation-grid article span{display:block;font-size:9px;font-weight:800;letter-spacing:.14em;color:#9A7B35;margin-bottom:12px}
+.prime-designation-grid article h3{font-size:clamp(17px,2vw,22px);line-height:1.2;margin:0 0 9px;color:#1A1A2E}
+.prime-designation-grid article p{font-size:13px;line-height:1.6;margin:0;color:#656575}
+.prime-designation-grid article:first-child p{color:rgba(247,244,238,.72)}
+@media(max-width:640px){.prime-designation-grid{grid-template-columns:1fr}.prime-designation-grid article{padding:20px}}
