@@ -22,7 +22,7 @@
 | Area | Required outcome | Current staging finding | Acceptance |
 |---|---|---|---|
 | Homepage | Clear global-facing proposition, Africa-first scope, taster CTA, concise problem/standard/path/proof/opportunity story | Hero updated to the capability-led proposition; profile module suppresses unverified counts | Hero and section order communicate the full proposition; no unsupported live-count claim; mobile CTA works |
-| PRIME | Five clusters, canonical 17 skills, points language and current designations | Skill list is drawn from src/lib/brand.js; designation block still contains legacy labels | Validate current designation names and scoring mapping across website and platform before publishing |
+| PRIME | Five clusters, canonical 17 skills, points language and current designations | Skill list is drawn from src/lib/brand.js; legacy designation labels removed from public PRIME explainer; underlying runtime mapping still needs reconciliation | Validate current designation names and scoring mapping across website and platform before publishing |
 | VALU Index | Explain value and outcome; taster is separate from full assessment | Public copy simplified to three user-facing stages | No internal mechanics, no “1 of 9/58”, no percentages; taster and full assessment remain distinct |
 | About | Explain why Valoria exists, institutional role and operating footprint | /about-us route exists; Africa-first/Nigeria jurisdiction/2028 wording and Marketplace terminology updated | No unconfirmed leadership or legal-entity claims |
 | Develop | Merge overlapping programmes/facilitator messaging; distinguish proposed from available | Page labels formats enquiry-led or in development; no prices | No certification or 90-day claims; only confirmed programmes and commercial terms |
@@ -33,7 +33,7 @@
 
 ## Known blockers — do not paper over
 
-- The PRIME page currently displays legacy designation labels (Elite, Distinguished, Proficient, Standard) and says there are four. The current agreed designation set has five names. Do not publish a replacement mapping until the score thresholds and runtime designation logic are reconciled across the site and platform.
+- The PRIME explainer no longer displays the legacy four-tier labels. The website and platform runtime still contain legacy designation mappings; do not publish the five agreed names until the approved score thresholds and runtime logic are reconciled across both repositories.
 - The legal entity name and approved public mission/vision/purpose wording must be confirmed against the current institutional source of truth before final publication.
 - Marketplace counts, profile consent and buyer search availability require live verification; code-level placeholders are not proof of live capability.
 
