@@ -24,6 +24,11 @@ describe('public marketplace profile content gate', () => {
     expect(source).toContain('1D400')
     expect(source).toContain('1D7FF')
   })
+  test('accepts short legitimate job titles and normalizes stylised ATB identifiers safely', () => {
+    expect(source).toContain("normalize('NFKC')")
+    expect(source).toContain('headline.length >= 3')
+  })
+
   test('exports the public profile quality gate used by profile pages and sitemap', () => {
     expect(source).toContain('export function isPublicProfileContentReady(row)')
   })
