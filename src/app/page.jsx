@@ -4,8 +4,6 @@ import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import HomepageEvents from '@/components/HomepageEvents'
-import { BRAND } from '@/lib/brand'
-import { AssessmentStartLink } from '@/components/Nav'
 import './home.css'
 
 export const dynamic = 'force-dynamic'
@@ -13,189 +11,54 @@ export const revalidate = 0
 
 export const metadata = {
   title: 'Valoria Institute — Worth, Built.',
-  openGraph: { title: 'Valoria Institute — Worth, Built.', description: 'Valoria Institute is Africa-first, with Nigeria as its initial operating jurisdiction. It helps professionals and organisations understand, develop and connect professional capability through PRIME, the VALU Index and the Valoria Marketplace.', url: 'https://valoriainstitute.com/' },
-  twitter: { card: 'summary_large_image', title: 'Valoria Institute — Worth, Built.' },
-  description: 'Valoria Institute is Africa-first, with Nigeria as its initial operating jurisdiction. It helps professionals and organisations understand, develop and connect professional capability through PRIME, the VALU Index and the Valoria Marketplace.',
+  description: 'Valoria Institute helps professionals understand capability, build credible professional profiles and connect with relevant opportunities through PRIME, the VALU Index and the Valoria Marketplace.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
+  openGraph: { title: 'Valoria Institute — Worth, Built.', description: 'Make your capability count.', url: 'https://valoriainstitute.com/' },
+  twitter: { card: 'summary_large_image', title: 'Valoria Institute — Worth, Built.' },
 }
-
-const institutionalCapabilities = [
-  {
-    number: '01',
-    label: 'A SHARED STANDARD',
-    title: 'PRIME Framework',
-    body: 'A structured framework for understanding professional capability across Presence, Relationships, Intelligence, Mastery and Enterprise.',
-    outcome: 'A common language for capability.',
-  },
-  {
-    number: '02',
-    label: 'ASSESSMENT & INSIGHT',
-    title: 'VALU Index',
-    body: 'An assessment-led view of capability that helps professionals understand their strengths and gives development decisions a clearer starting point.',
-    outcome: 'Evidence to inform the next decision.',
-  },
-  {
-    number: '03',
-    label: 'TALENT ACCESS',
-    title: 'Valoria Marketplace',
-    body: 'A capability-led route for employers, event organisers and programme teams to discover professionals, speakers and facilitators.',
-    outcome: 'Relevant expertise, easier to find.',
-  },
-  {
-    number: '04',
-    label: 'CAPABILITY DEVELOPMENT',
-    title: 'Valoria Develop',
-    body: 'Structured learning and development pathways that help individuals and organisations build the capabilities that matter.',
-    outcome: 'Development connected to real needs.',
-  },
-]
-
-// Three audience routes: professionals, employers, and event organisers/training buyers; facilitators are the supply side.
-const decisionPathways = [
-  {
-    number: '01',
-    label: 'FOR PROFESSIONALS',
-    title: 'Know where you stand.',
-    body: 'Understand your capability through PRIME and the VALU Index, then take a clear next step in your professional development.',
-    href: '/valu',
-    cta: 'START THE VALU TASTER',
-  },
-  {
-    number: '02',
-    label: 'FOR EMPLOYERS',
-    title: 'Hire by capability, not CV triage.',
-    body: 'Explore professional capability, experience and role context through a more structured talent discovery pathway.',
-    href: '/atb-connect',
-    cta: 'REQUEST BUYER ACCESS',
-  },
-  {
-    number: '03',
-    label: 'FOR EVENT ORGANISERS · FOR FACILITATORS & TRAINING BUYERS',
-    title: 'Find expertise that can hold a room.',
-    body: 'Discover speakers and facilitators through capability-led profiles and relevant professional experience.',
-    href: '/atb-spotlight',
-    cta: 'FIND A SPEAKER OR FACILITATOR',
-  },
-]
 
 export default function HomePage() {
   return (
     <>
       <Nav />
-      <main id="main-content" className="home-redesign-root">
+      <main id="main-content" className="home-redesign-root vi-home-editorial">
         <HeroSlider />
-        <section className="home-market-scope" aria-label="Initial market focus">
-          <div className="container">
-            <span>INITIAL MARKET</span>
-            <p>Valoria is Africa-first, with Nigeria as its initial operating jurisdiction. The experience is designed to be clear to international professionals and buyers without implying availability beyond the markets we currently serve.</p>
-          </div>
-        </section>
 
-        <section className="home-institutional-case" aria-labelledby="institutional-case-title">
-          <div className="container">
-            <Reveal className="home-section-heading">
-              <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE INFRASTRUCTURE GAP</span></div>
-                <h2 id="institutional-case-title">Careers still turn on who was in the right room at the right time. Your capability has not changed. <em>The room has.</em></h2>
-              </div>
-              <p>Professionals can be overlooked when familiarity shapes who gets considered. Employers, event organisers and training buyers need a more consistent way to understand capability beyond résumés, biographies and referrals.</p>
+        <section className="vi-audience-section home-pathways" aria-labelledby="vi-audience-title">
+          <div className="vi-section-intro">
+            <span className="vi-section-kicker">TWO CLEAR WAYS IN</span>
+            <h2 id="vi-audience-title">Where do you want<br /><em>to go next?</em></h2>
+          </div>
+          <div className="vi-audience-grid">
+            <Reveal className="vi-audience-panel vi-audience-professional valu-conversion">
+              <span className="vi-audience-number">01 / PROFESSIONALS</span>
+              <h3>Your next move<br />starts with <em>clarity.</em></h3>
+              <p>Explore your strengths, understand your PRIME capability profile and build a professional presence that can be discovered.</p>
+              <a href="/valu" className="vi-audience-link">Explore your VALU Index <span>↗</span></a>
             </Reveal>
-            <Reveal className="home-institutional-proof" as="div">
-              <div className="home-institutional-proof-item">
-                <span>THE CHALLENGE</span>
-                <strong>Capability is difficult to compare.</strong>
-                <p>Experience, potential and professional strengths are often presented in disconnected ways.</p>
-              </div>
-              <div className="home-institutional-proof-item">
-                <span>THE OPPORTUNITY</span>
-                <strong>Better decisions need better context.</strong>
-                <p>Shared language and structured insight can strengthen how people are assessed, developed and discovered.</p>
-              </div>
-              <div className="home-institutional-proof-item">
-                <span>THE VALORIA RESPONSE</span>
-                <strong>One connected capability infrastructure.</strong>
-                <p>Framework, assessment, development and talent access working as parts of one institutional system.</p>
-              </div>
+            <Reveal className="vi-audience-panel vi-audience-organisations">
+              <span className="vi-audience-number">02 / ORGANISATIONS</span>
+              <h3>Find the capability<br />your work <em>needs.</em></h3>
+              <p>Discover talent, speakers and facilitators through a shared framework for understanding professional capability.</p>
+              <a href="/atb-connect" className="vi-audience-link">Explore talent access <span>↗</span></a>
+              <div className="vi-audience-secondary-links" aria-label="Event and facilitation pathways"><a href="/marketplace/speakers">FOR EVENT ORGANISERS ↗</a><a href="/marketplace/facilitators">FOR FACILITATORS ↗</a></div>
             </Reveal>
           </div>
         </section>
 
-        <section className="home-framework" aria-labelledby="home-framework-title">
-          <div className="home-framework-atmosphere" data-parallax-speed="0.035" aria-hidden="true" />
-          <div className="container">
-            <Reveal className="home-section-heading">
-              <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">HOW THE INSTITUTION WORKS</span></div>
-                <h2 id="home-framework-title">Four connected capabilities. <em>One institutional system.</em></h2>
-              </div>
-              <p>Valoria Institute is the parent institution. Each part of its system has a distinct role, from the framework that defines capability to the pathways that help put it to work.</p>
-            </Reveal>
-            <Reveal className="home-framework-grid home-institutional-grid" as="div">
-              {institutionalCapabilities.map((item) => (
-                <article className="home-framework-card home-institutional-card" key={item.number}>
-                  <span className="home-framework-number">{item.number}</span>
-                  <span className="home-institutional-card-label">{item.label}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                  <strong className="home-institutional-outcome">{item.outcome}</strong>
-                </article>
-              ))}
-            </Reveal>
-          </div>
-        </section>
-
-        <section className="home-pathways home-decision-pathways" aria-labelledby="decision-pathways-title">
-          <div className="container">
-            <Reveal className="home-section-heading">
-              <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THREE WAYS TO ENGAGE.</span></div>
-                <h2 id="decision-pathways-title">Start with the outcome your organisation <em>needs.</em></h2>
-              </div>
-              <p>Whether you are building your professional future, hiring talent or finding expertise for an event or programme, Valoria provides a clear next step.</p>
-            </Reveal>
-            <Reveal className="home-pathway-grid home-decision-grid" as="div">
-              {decisionPathways.map((item) => (
-                <a className="home-pathway-card" href={item.href} key={item.number}>
-                  <span className="home-pathway-number">{item.number}</span>
-                  <span className="home-pathway-label">{item.label}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                  <span className="home-pathway-cta">{item.cta} <span aria-hidden="true">→</span></span>
-                </a>
-              ))}
-            </Reveal>
-          </div>
+        <section className="vi-standard-strip" aria-label="Valoria capability system">
+          <div className="vi-standard-heading"><span>THE VALORIA STANDARD</span><strong>One framework.<br />A clearer view of capability.</strong></div>
+          <div className="vi-standard-step"><b>01</b><span>PRIME</span><small>Understand capability</small></div>
+          <div className="vi-standard-step"><b>02</b><span>VALU INDEX</span><small>See it in points</small></div>
+          <div className="vi-standard-step"><b>03</b><span>MARKETPLACE</span><small>Connect to opportunity</small></div>
+          <a href="/prime" className="vi-standard-link">Explore the framework ↗</a>
         </section>
 
         <LiveProfilesScroll />
 
-        <section className="home-partnership-band" aria-labelledby="partnership-band-title">
-          <div className="container">
-            <Reveal className="home-partnership-content">
-              <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR ORGANISATIONS & INSTITUTIONS</span></div>
-                <h2 id="partnership-band-title">The next step is a better <em>capability conversation.</em></h2>
-                <p>Tell us what your organisation is trying to solve. We can explore talent access, professional development, event expertise or a wider institutional partnership.</p>
-              </div>
-              <a href="/contact-us" className="btn-gold">START A CONVERSATION <span aria-hidden="true">→</span></a>
-            </Reveal>
-          </div>
-        </section>
-
-        <section className="home-professional-entry valu-section valu-conversion" aria-labelledby="professional-entry-title">
-          <div className="container">
-            <Reveal className="home-professional-entry-content">
-              <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR PROFESSIONALS</span></div>
-                <h2 id="professional-entry-title">Make your capability <em>clearer.</em></h2>
-                <p>Take the taster, complete the separate full assessment, build your professional profile and become discoverable for relevant opportunities. Start with a clearer view of your capability before your next move.</p>
-              </div>
-              <div className="home-professional-entry-actions">
-                <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">START THE VALU TASTER <span aria-hidden="true">→</span></AssessmentStartLink>
-                <a href="/valu" className="home-professional-secondary">UNDERSTAND THE VALU INDEX <span aria-hidden="true">→</span></a>
-              </div>
-            </Reveal>
-          </div>
+        <section className="vi-develop-band">
+          <div><span className="vi-section-kicker">DEVELOP · CONNECT · CONTRIBUTE</span><h2>Capability is not<br />the destination. <em>It’s the beginning.</em></h2></div>
+          <a href="/develop">Explore Valoria Develop <span>↗</span></a>
         </section>
 
         <HomepageEvents />
