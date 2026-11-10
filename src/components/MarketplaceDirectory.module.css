@@ -234,3 +234,11 @@
   .modalBackdrop,.modalDialog{animation:none!important}
   .modalClose,.modalPrimary{transition:none!important}
 }
+
+
+/* Approved five-band VALU designation palette. */
+.force-to-align{background:#C9A84C;color:#1A1A2E;border:1px solid #C9A84C}
+.emerging-force{background:#1A1A2E;color:#C9A84C;border:1px solid #1A1A2E}
+.developing-professional{background:#EDE8DC;color:#2E2E4A;border:1px solid #D4C9A8}
+.building-foundations{background:#F7F4EE;color:#2E2E4A;border:1px solid #D4C9A8}
+.starting-point{background:#FAFAF7;color:#6F6A60;border:1px solid #D4C9A8}
