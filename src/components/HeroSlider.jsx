@@ -13,14 +13,14 @@ export default function HeroSlider() {
             <div className="hero-copy">
               <div className="hero-eyebrow">
                 <div className="hero-eyebrow-line" />
-                <span className="hero-eyebrow-text">THE PROFESSIONAL CAPABILITY MARKETPLACE</span>
+                <span className="hero-eyebrow-text">AFRICA'S TALENT MARKETPLACE FOR PROFESSIONALS</span>
               </div>
               <h1 className="hero-title" id="valoria-hero-title">
                 Capability should decide<br />
-                <em>who gets seen.</em>
+                <em>who gets seen. Valoria is the room.</em>
               </h1>
               <p className="hero-sub hero-institutional-sub">
-                Valoria builds the room where capability gets seen. We assess African professionals against a shared standard, support development where it is needed and connect relevant expertise to employers, event organisers and training buyers.
+                Valoria assesses African professionals on one standard, develops them where they fall short, and connects them to employers, event organisers and training buyers.
               </p>
               <div className="hero-actions">
                 <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">
