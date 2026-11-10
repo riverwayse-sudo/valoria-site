@@ -4,16 +4,22 @@ import Reveal from '@/components/Reveal'
 import '../pages.css'
 
 export const metadata = {
-  title: 'About Valoria Institute | Professional Capability Institution',
-  description: 'Valoria Institute is an Africa-first professional capability institution, with Nigeria as its initial operating jurisdiction. It connects PRIME, the VALU Index, development and capability-led opportunity.',
+  title: 'About Valoria Institute | Professional Capability Marketplace',
+  description: 'Valoria Institute is an Africa-first professional capability marketplace, with Nigeria as its initial operating jurisdiction. It connects PRIME, the VALU Index, professional development and relevant opportunities.',
   keywords: ['Valoria Institute', 'professional capability', 'PRIME framework', 'VALU Index', 'professional development', 'talent marketplace'],
   openGraph: {
     title: 'About Valoria Institute',
-    description: 'The institution connecting professional capability to development, visibility and opportunity.',
+    description: 'A professional capability marketplace connecting assessment, development, visibility and opportunity.',
     url: 'https://valoriainstitute.com/about-us',
   },
   alternates: { canonical: 'https://valoriainstitute.com/about-us' },
 }
+
+const FOUNDING_STATEMENTS = [
+  { title: 'Vision', body: 'An Africa where professional merit always finds its platform.' },
+  { title: 'Mission', body: "To build and operate Africa's premier professional capability marketplace: one that develops professionals with rigour, surfaces talent with merit, and enables precision hiring through a technology platform designed for the seriousness the African professional market has always deserved." },
+  { title: 'Purpose', body: 'To bridge the gap between latent brilliance and institutional scale. We exist because talent is not the problem. Infrastructure is. For every professional whose career has stalled not for lack of ability, but lack of access. Valoria Institute is the answer.' },
+]
 
 const PRINCIPLES = [
   { num: '01', title: 'Merit over familiarity.', body: 'Capability should be developed and assessed against a consistent standard. Visibility should follow merit rather than familiarity, network proximity or a polished presentation.' },
@@ -63,6 +69,26 @@ export default function AboutPage() {
               <p className="page-copy">PRIME provides the capability framework. The VALU Index provides an assessment-led view of capability. Valoria Develop supports structured growth. The Valoria Marketplace connects employers, event organisers and programme teams with relevant professional expertise.</p>
               <p className="page-copy page-copy-spaced">One institution. One connected system. Distinct pathways for professional merit.</p>
             </Reveal>
+          </div>
+        </section>
+
+        <section className="page-section">
+          <div className="page-section-inner">
+            <Reveal>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">VISION · MISSION · PURPOSE</span></div>
+              <h2 className="section-title">The foundations <em>behind the work.</em></h2>
+            </Reveal>
+            <div className="about-principles-grid">
+              {FOUNDING_STATEMENTS.map((item, i) => (
+                <Reveal key={item.title}>
+                  <div className="card-gold">
+                    <div className="vi-card-num">0{i + 1}</div>
+                    <div className="vi-card-name about-principle-name">{item.title}</div>
+                    <p className="vi-card-body">{item.body}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
           </div>
         </section>
 

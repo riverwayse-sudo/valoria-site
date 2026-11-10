@@ -366,3 +366,5 @@
 .prime-designation-grid article p{font-size:13px;line-height:1.6;margin:0;color:#656575}
 .prime-designation-grid article:first-child p{color:rgba(247,244,238,.72)}
 @media(max-width:640px){.prime-designation-grid{grid-template-columns:1fr}.prime-designation-grid article{padding:20px}}
+
+.valu-future-note{margin-top:18px;color:rgba(247,244,238,.58);font-size:11px;line-height:1.6;letter-spacing:.02em}

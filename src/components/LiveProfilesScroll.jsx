@@ -2,6 +2,13 @@ import Link from 'next/link'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { BRAND } from '@/lib/brand'
 
+const PLACEHOLDER_HEADLINES = new Set([
+  'model',
+  'growth dev',
+  'help people find meaning in their life and career',
+  'valoria professional',
+])
+
 const TRACK_META = {
   candidate: { label: 'Talent', href: '/marketplace/talent' },
   speaker: { label: 'Speaker', href: '/marketplace/speakers' },
@@ -38,11 +45,12 @@ export default async function LiveProfilesScroll() {
   for (const profile of profiles) {
     const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
     const summary = String(profile.assessment_summary || '').trim()
+    const headline = String(profile.headline || '').normalize('NFKC').trim()
     const profileId = String(profile.atb_id || '').trim()
     const points = profile.valu_index == null ? null : Number(profile.valu_index)
     // Basic-access profiles have no official score or report summary yet.
     // Full-assessment profiles must have both a valid points result and a VALU report summary.
-    const isBasicSnapshot = points === null && summary.length === 0
+    const isBasicSnapshot = points === null && summary.length === 0 && headline.length >= 3 && !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) && !/descriptor unavailable/i.test(headline)
     const isFullAssessmentReady = Number.isInteger(points) && points >= 0 && points <= 100 &&
       summary.length >= 24 && !/descriptor unavailable/i.test(summary)
     const isQualityReady = Boolean(
@@ -71,7 +79,7 @@ export default async function LiveProfilesScroll() {
           </h2>
           <p className="live-profiles-subtitle">
             {unique.length > 0
-              ? 'These are professionals in the Valoria marketplace — assessed, positioned and discoverable by capability.'
+              ? 'Explore public professional profiles, with assessment information shown according to each person’s Valoria access and visibility status.'
               : 'A capability-led marketplace for employers, event organisers and training buyers to discover professional expertise.'}
           </p>
           {discoverableCount > 0 && unique.length > 0 && (
@@ -126,7 +134,7 @@ export default async function LiveProfilesScroll() {
                         </div>
                         <div className="vi-scroll-copy">
                           <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>LIVE</i></div>
-                          <div className="vi-scroll-headline">{profile.assessment_summary || 'Basic marketplace access. Complete the full VALU assessment to receive your official points-based Index.'}</div>
+                          <div className="vi-scroll-headline">{profile.assessment_summary || profile.headline || 'Basic marketplace access. Complete the full VALU assessment to receive your official points-based Index.'}</div>
                           <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
                         </div>
                         <div className="vi-scroll-score" aria-label={profile.valu_index != null ? `VALU Index ${profile.valu_index} points` : 'Basic marketplace access'}>

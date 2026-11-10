@@ -20,7 +20,7 @@ export default function HeroSlider() {
                 <em>who gets seen.</em>
               </h1>
               <p className="hero-sub hero-institutional-sub">
-                Valoria gives professionals a clearer way to understand their capabilities, develop where needed and become visible to employers, event organisers and training buyers in the markets it serves.
+                Valoria is the room where professionals can understand their capabilities, develop where needed and become visible to employers, event organisers and training buyers in the markets it serves.
               </p>
               <div className="hero-actions">
                 <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">

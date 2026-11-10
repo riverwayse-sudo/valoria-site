@@ -1,10 +1,10 @@
 # Valoria Institute — Public Site
 
-The public Valoria Institute marketing and marketplace-entry site, built with Next.js 14 and deployed to Vercel.
+The public Valoria Institute marketing and marketplace-entry site, built with Next.js 15 and deployed as Cloudflare Workers using OpenNext and Wrangler.
 
 ## Staging deployment
 
-The `staging` branch is the integration validation branch. Changes must pass the Vercel build before production promotion.
+The `experience/staging-redesign-20261106` branch is the isolated Cloudflare staging integration line. Staging deployment pull requests use `deploy/staging-*` branches and must pass tests, build, Worker deployment and staging smoke checks. Staging is not production approval.
 
 ## Production architecture
 
@@ -27,15 +27,15 @@ Approved PRIME architecture:
 - **R — Relationships** — How you connect
 - **I — Intelligence** — How you think
 - **M — Mastery** — How you deliver
-- **E — Enterprise** — How you build
+- **E — Enterprise** — How you create
 
 The site uses the approved institutional palette and Raleway typography. Merit tiers are score-based credentials and are never paid upgrades.
 
 ## VALU funnel
 
-The public entry point is the **9-question directional VALU snapshot**. It is a teaser/acquisition experience and does **not** establish the official VALU Index; marketplace eligibility requires the current authoritative assessment.
+The public entry point is a directional VALU taster. It is separate from the full assessment and does **not** establish the official VALU Index. The full assessment contains 58 questions: 54 scored questions and 4 validity anchors. The taster is not included in, or subtracted from, the full assessment.
 
-After signup, a professional completes the authoritative full assessment and profile. The official VALU Index and marketplace eligibility are established only by the authoritative assessment lifecycle in the platform application.
+After the taster, the professional creates or confirms an account and continues to the separate full assessment. Progress must persist across sessions; the official points-based VALU Index and earned designation are established only after full-assessment completion. Do not expose question-count or internal progress mechanics in user-facing UI.
 
 ## Marketplace model
 
@@ -72,7 +72,7 @@ npm test
 
 ## Deployment
 
-Production is deployed through Vercel from the `main` branch. Environment variables are configured in Vercel; public browser code must never contain a Supabase service-role secret.
+The public site and isolated staging experience are deployed to Cloudflare Workers. Use the repository's pinned OpenNext/Wrangler configuration and Cloudflare staging workflow. Do not deploy staging changes to production without a separate release review and explicit approval. Public browser code must never contain a Supabase service-role secret.
 
 ## Closure baseline
 
@@ -88,7 +88,7 @@ Never use user-editable metadata as an authorization source, and never expose a 
 
 ## Release recovery
 
-The Phase 5 expansion that caused the September 28, 2026 Vercel production build failures is preserved on `backup/phase5-broken-2026-09-28` for staged repair. The repaired Phase 5–8 release line remains the canonical production source; failed historical deployments are not used as release baselines.
+The Phase 5 expansion that caused the September 28, 2026 historical production build failures is preserved on `backup/phase5-broken-2026-09-28` for reference. The repaired Phase 5–8 release line remains the canonical source; failed historical deployments are not used as release baselines.
 
 ## Phase 8 closure
 
