@@ -481,3 +481,50 @@
  .homepage-event-popup-poster,.homepage-event-popup .event-poster{min-height:0}
  .homepage-event-popup .event-poster{padding:18px 22px}
 }
+
+
+/* Public content pages — shorter lead-ins and balanced vertical rhythm. */
+.page-hero { padding: 128px 0 64px; }
+.page-title {
+  font-size: clamp(40px, 5vw, 64px);
+  margin: 14px 0 16px;
+  line-height: 1.06;
+}
+.page-sub {
+  max-width: 660px;
+  font-size: clamp(15px, 1.15vw, 17px);
+  line-height: 1.62;
+}
+.page-hero-actions { gap: 10px; margin-top: 22px; }
+.page-section { padding: clamp(56px, 6vw, 80px) 0; }
+.section-title {
+  font-size: clamp(34px, 4vw, 50px);
+  margin-bottom: 16px;
+}
+.info-card {
+  padding: clamp(20px, 2.5vw, 28px);
+  border-radius: 16px;
+}
+.checklist { gap: 12px; margin: 20px 0; }
+.checklist li { font-size: 14px; line-height: 1.55; }
+.cta-banner { padding: clamp(56px, 6vw, 80px) var(--pad); }
+.bridge-card { padding: clamp(24px, 3vw, 36px); border-radius: 16px; }
+.insight-card { min-height: 290px; padding: 24px; }
+.insight-card h2 { margin: 42px 0 12px; font-size: clamp(26px, 2.3vw, 34px); }
+.insight-card p { font-size: 14px; line-height: 1.6; }
+.events-list-head { gap: 28px; margin-bottom: 32px; }
+.events-grid { gap: 16px; }
+.event-card-copy { padding: 20px 22px 22px; }
+.event-card-copy h3 { font-size: clamp(24px, 2.1vw, 32px); margin: 14px 0 8px; }
+.event-card-copy p { font-size: 14px; line-height: 1.6; }
+.event-card-meta { margin-top: 16px; padding-top: 14px; }
+.valu-hero { min-height: 72vh; padding: 128px 0 76px; }
+@media (max-width: 640px) {
+  .page-hero { padding: 104px 0 48px; }
+  .page-title { font-size: clamp(36px, 10vw, 46px); }
+  .page-section { padding: 48px 0; }
+  .section-title { font-size: clamp(32px, 8vw, 40px); }
+  .insight-card { min-height: 0; padding: 22px; }
+  .insight-card h2 { margin-top: 28px; }
+  .valu-hero { min-height: 0; padding: 112px 0 56px; }
+}
