@@ -19,7 +19,7 @@ export default function HeroSlider() {
           </div>
           <div className="vi-hero-footnote">DESIGNED FOR A GLOBAL PROFESSIONAL LANDSCAPE.</div>
         </div>
-        <div className="vi-hero-art" aria-label="The five PRIME dimensions: Presence, Relationships, Intelligence, Mastery and Enterprise">
+        <div className="vi-hero-art" role="group" aria-label="The five PRIME dimensions: Presence, Relationships, Intelligence, Mastery and Enterprise">
           <div className="vi-hero-art-content">
             <div className="vi-hero-art-top"><span>THE PRIME FRAMEWORK</span><span>01 — 05</span></div>
             <div className="vi-prime-word" aria-hidden="true"><span>P</span><span>R</span><span>I</span><span>M</span><span>E</span></div>
