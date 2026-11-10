@@ -68,7 +68,7 @@ export async function POST(request) {
 
     const { data: invited, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(email, {
       data: fullName ? { full_name: fullName } : {},
-      redirectTo: \`\${process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'}/reset-password\`,
+      redirectTo: (process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com') + '/reset-password',
     })
 
     let targetUser = invited?.user || null
