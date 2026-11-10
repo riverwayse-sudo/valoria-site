@@ -108,6 +108,11 @@ describe('VALU presentation consistency', () => {
     expect(directoryData).toContain('headline,current_job_title')
     expect(directoryData).toContain('1D400')
     expect(directoryData).toContain('1D7FF')
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    expect(directory).toContain('function getDevelopmentFocus(profile)')
+    expect(directory).toContain('if (entries.length !== 5) return')
+    expect(directory).toContain('Top development area:')
+    expect(directory).toContain('TOP DEVELOPMENT AREA')
   })
 
   test('brand line punctuation is consistent in the shared brand source and metadata', () => {
