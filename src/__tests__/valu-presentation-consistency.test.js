@@ -19,7 +19,7 @@ describe('VALU presentation consistency', () => {
     expect(hero).toContain('Capability should decide')
     expect(hero).toContain('who gets seen.')
     expect(hero).toContain("AFRICA'S TALENT MARKETPLACE FOR PROFESSIONALS")
-    expect(hero).toContain('Valoria gives professionals a clearer way')
+    expect(hero).toContain('Valoria is the room where professionals')
     expect(hero).toContain('START THE VALU TASTER')
     expect(hero).toContain('SEE HOW IT WORKS')
     expect(hero).toContain('hero-institutional-panel')
@@ -72,8 +72,8 @@ describe('VALU presentation consistency', () => {
     expect(registry).toContain('/privacypolicy')
     expect(registry).toContain('const loop = unique')
     expect(registry).not.toContain('unique.slice(0, 4)')
-    expect(registry).toContain('Basic marketplace access. Complete the full VALU assessment')
-    expect(registry).toContain('const isBasicSnapshot = points === null && summary.length === 0')
+    expect(registry).toContain('profile.assessment_summary || profile.headline')
+    expect(registry).toContain('const isBasicSnapshot = points === null && summary.length === 0 && headline.length >= 3')
   })
 
   test('marketplace explains snapshot and full assessment without exposing internal question counts', () => {
