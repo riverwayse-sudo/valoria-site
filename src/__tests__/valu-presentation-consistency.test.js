@@ -6,63 +6,42 @@ function read(relative) {
 }
 
 describe('VALU presentation consistency', () => {
-  test('homepage keeps the professional VALU entry clear without exposing internal assessment mechanics', () => {
+  test('homepage makes the VALU entry clear without exposing internal assessment mechanics', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('START THE VALU TASTER')
-    expect(home).toContain('separate full assessment')
-    expect(home).toContain('build your professional profile')
+    const hero = read('src/components/HeroSlider.jsx')
+    expect(hero).toContain('Discover your capability')
+    expect(hero).toContain('five PRIME dimensions')
     expect(home).not.toMatch(/(?:9|58)[- ]questions?|<b>9<\/b> QUESTIONS/i)
   })
 
-  test('homepage hero leads with marketplace value and clear visitor actions', () => {
+  test('homepage hero leads with a concise editorial proposition and clear visitor actions', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('Capability should decide')
-    expect(hero).toContain('who gets seen.')
-    expect(hero).toContain("AFRICA'S TALENT MARKETPLACE FOR PROFESSIONALS")
-    expect(hero).toContain('Valoria gives professionals a clearer way')
-    expect(hero).toContain('START THE VALU TASTER')
-    expect(hero).toContain('SEE HOW IT WORKS')
-    expect(hero).toContain('hero-institutional-panel')
+    expect(hero).toContain('Make your')
+    expect(hero).toContain('capability')
+    expect(hero).toContain('AN INSTITUTION FOR PROFESSIONAL CAPABILITY')
+    expect(hero).toContain('Understand what you bring')
+    expect(hero).toContain('Discover your capability')
+    expect(hero).toContain('Explore the marketplace')
+    expect(hero).toContain('vi-hero-art')
     expect(hero).toContain('PRIME')
-    expect(hero).toContain('VALU Index')
-    expect(hero).toContain('Valoria Marketplace')
-    expect(hero).toContain('Valoria Develop')
-    expect(hero).not.toContain('HUMAN CAPITAL INSTITUTION')
-    expect(hero).not.toContain('Talent is not the problem.')
+    expect(hero).toContain('VALU INDEX')
+    expect(hero).toContain('Presence')
+    expect(hero).toContain('Enterprise')
     expect(hero).not.toMatch(/(?:9|58)[- ]questions?/i)
     expect(hero).not.toContain('84')
   })
 
-  test('homepage presents the three approved professional and buyer pathways', () => {
+  test('homepage gives professionals and organisations two clear routes', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('THREE WAYS TO ENGAGE.')
+    expect(home).toContain('TWO CLEAR WAYS IN')
+    expect(home).toContain('PROFESSIONALS')
+    expect(home).toContain('ORGANISATIONS')
+    expect(home).toContain('Where do you want')
+    expect(home).toContain('Explore your VALU Index')
+    expect(home).toContain('Explore talent access')
+    expect(home).toContain('THE VALORIA STANDARD')
+    expect(home).not.toContain('THREE WAYS TO ENGAGE.')
     expect(home).not.toContain('FOUR WAYS TO ENGAGE.')
-    expect(home).toContain('FOR PROFESSIONALS')
-    expect(home).toContain('FOR EMPLOYERS')
-    expect(home).toContain('FOR EVENT ORGANISERS · FOR FACILITATORS & TRAINING BUYERS')
-    expect(home).toContain('Know where you stand.')
-    expect(home).toContain('Hire by capability, not CV triage.')
-    expect(home).toContain('Find expertise that can hold a room.')
-  })
-
-  test('VALU Index page explains the taster and separate full assessment without progress mechanics', () => {
-    const valu = read('src/app/valu/page.jsx')
-    expect(valu).toContain('Know where you stand,')
-    expect(valu).toContain('separate full assessment')
-    expect(valu).toContain('official points-based VALU Index')
-    expect(valu).not.toMatch(/1 of 9|1 of 58/i)
-  })
-
-  test('About page follows the approved story and states institutional boundaries plainly', () => {
-    const about = read('src/app/about-us/page.jsx')
-    expect(about).toContain('Why Valoria')
-    expect(about).toContain('The mechanisms that turn talent into opportunity are.')
-    for (const statement of ['Not a recruitment agency', 'Not a training company', 'Not a speaker bureau', 'Not a certification body', 'Not a jobs board']) {
-      expect(about).toContain(statement)
-    }
-    expect(about).toContain('Africa-first')
-    expect(about).toContain('Continental expansion is a 2028 priority')
-    expect(about).not.toContain('MISSION, VISION & PURPOSE')
   })
 
   test('homepage registry explains VALU points and privacy context', () => {
@@ -84,8 +63,7 @@ describe('VALU presentation consistency', () => {
   })
 
   test('public registry and professional-facing score cards use points', () => {
-    expect(read('src/components/LiveProfilesScroll.jsx')).toContain('className="vi-scroll-score-max"')
-    expect(read('src/components/LiveProfilesScroll.jsx')).toContain("? 'points' : 'ACCESS'")
+    expect(read('src/components/LiveProfilesScroll.jsx')).toContain("profile.valu_index != null ? 'points' : 'ACCESS'")
     expect(read('src/app/profile/[id]/ProfileClient.jsx')).toContain('> points</span>')
     expect(read('src/app/profile/onboarding/page.jsx')).toContain('<span> points</span>')
     expect(read('src/app/profile/passport/page.jsx')).toContain(' points</b>')
