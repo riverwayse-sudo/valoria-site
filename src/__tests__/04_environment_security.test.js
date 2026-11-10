@@ -7,6 +7,7 @@
 
 const fs   = require("fs");
 const path = require("path");
+const { execFileSync } = require("child_process");
 
 // ── PATHS ─────────────────────────────────────────────────────────────────
 // Adjust these to point to your actual repo locations when running locally.
@@ -17,6 +18,18 @@ const platformTest = PLATFORM_ROOT ? test : test.skip;
 
 function repoExists(root) {
   return fs.existsSync(root);
+}
+
+function isGitTracked(root, relativePath) {
+  try {
+    execFileSync("git", ["ls-files", "--error-unmatch", relativePath], {
+      cwd: root,
+      stdio: "ignore",
+    });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 // ── SECTION 1: Required env vars ─────────────────────────────────────────
@@ -212,14 +225,11 @@ describe("Secret scanning — no credentials in source files", () => {
 
   platformTest(".env file is not committed to valoria-platform", () => {
     if (!repoExists(PLATFORM_ROOT)) return;
-    const envPath = path.join(PLATFORM_ROOT, ".env");
-    expect(fs.existsSync(envPath)).toBe(false);
+    expect(isGitTracked(PLATFORM_ROOT, ".env")).toBe(false);
   });
 
-  test(".env file is not committed to valoria-site (or skip)", () => {
-    if (!repoExists(SITE_ROOT)) return;
-    const envPath = path.join(SITE_ROOT, ".env");
-    expect(fs.existsSync(envPath)).toBe(false);
+  test(".env file is not tracked by git in valoria-site", () => {
+    expect(isGitTracked(SITE_ROOT, ".env")).toBe(false);
   });
 });
 
