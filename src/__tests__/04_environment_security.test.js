@@ -11,8 +11,9 @@ const path = require("path");
 // ── PATHS ─────────────────────────────────────────────────────────────────
 // Adjust these to point to your actual repo locations when running locally.
 // In CI, set VALORIA_PLATFORM_ROOT and VALORIA_SITE_ROOT env vars.
-const PLATFORM_ROOT = process.env.VALORIA_PLATFORM_ROOT || path.join(__dirname, "../../valoria-platform/valoria-final");
-const SITE_ROOT     = process.env.VALORIA_SITE_ROOT     || path.join(__dirname, "../../valoria-site");
+const PLATFORM_ROOT = process.env.VALORIA_PLATFORM_ROOT || null;
+const SITE_ROOT = process.env.VALORIA_SITE_ROOT || path.join(__dirname, "../..");
+const platformTest = PLATFORM_ROOT ? test : test.skip;
 
 function repoExists(root) {
   return fs.existsSync(root);
@@ -37,7 +38,7 @@ describe("Environment variables — required keys", () => {
     return fs.readFileSync(envPath, "utf8");
   }
 
-  test("valoria-platform .env.example exists (or skip)", () => {
+  platformTest("valoria-platform .env.example exists (or skip)", () => {
     if (!repoExists(PLATFORM_ROOT)) {
       console.warn("SKIP: valoria-platform not found at", PLATFORM_ROOT);
       return;
@@ -175,7 +176,7 @@ describe("Secret scanning — no credentials in source files", () => {
     return files;
   }
 
-  test("valoria-platform source files contain no PATs or service keys (or skip)", () => {
+  platformTest("valoria-platform source files contain no PATs or service keys", () => {
     const files = collectSourceFiles(PLATFORM_ROOT, SCAN_EXTENSIONS);
     if (files.length === 0) {
       console.warn("SKIP: valoria-platform not accessible for scanning");
@@ -209,7 +210,7 @@ describe("Secret scanning — no credentials in source files", () => {
     expect(violations).toHaveLength(0);
   });
 
-  test(".env file is not committed to valoria-platform (or skip)", () => {
+  platformTest(".env file is not committed to valoria-platform", () => {
     if (!repoExists(PLATFORM_ROOT)) return;
     const envPath = path.join(PLATFORM_ROOT, ".env");
     expect(fs.existsSync(envPath)).toBe(false);
@@ -288,7 +289,7 @@ describe("RLS security contract (logic layer)", () => {
 
 // ── SECTION 5: Build output validation ───────────────────────────────────
 describe("Build configuration checks", () => {
-  test("valoria-platform package.json has build script", () => {
+  platformTest("valoria-platform package.json has build script", () => {
     if (!repoExists(PLATFORM_ROOT)) return;
     const pkgPath = path.join(PLATFORM_ROOT, "package.json");
     if (!fs.existsSync(pkgPath)) return;
@@ -304,16 +305,16 @@ describe("Build configuration checks", () => {
     expect(pkg.scripts).toHaveProperty("build");
   });
 
-  test("valoria-site uses Next.js 14", () => {
+  test("valoria-site uses Next.js 15", () => {
     if (!repoExists(SITE_ROOT)) return;
     const pkgPath = path.join(SITE_ROOT, "package.json");
     if (!fs.existsSync(pkgPath)) return;
     const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
     const nextVersion = pkg.dependencies?.next || pkg.devDependencies?.next || "";
-    expect(nextVersion).toMatch(/^14/);
+    expect(nextVersion).toMatch(/^15\./);
   });
 
-  test("valoria-platform uses Vite + React", () => {
+  platformTest("valoria-platform uses Vite + React", () => {
     if (!repoExists(PLATFORM_ROOT)) return;
     const pkgPath = path.join(PLATFORM_ROOT, "package.json");
     if (!fs.existsSync(pkgPath)) {
