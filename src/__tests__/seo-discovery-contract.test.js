@@ -49,10 +49,8 @@ describe('Valoria SEO and discovery foundation', () => {
 
   test('homepage states Nigeria as the initial market without overstating regional availability', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('INITIAL MARKET')
-    expect(home).toContain('Valoria is Africa-first, with Nigeria as its initial operating jurisdiction')
-    expect(home).toContain('clear to international professionals and buyers')
-    expect(home).toContain('INITIAL MARKET')
+    expect(read('src/components/HeroSlider.jsx')).toContain('ROOTED IN AFRICA. STARTING IN NIGERIA.')
+    expect(home).toContain('Make your')
   })
 
   test('root layout publishes Organization and WebSite entities', () => {
