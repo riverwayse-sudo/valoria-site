@@ -15,7 +15,8 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - run: npm install
+      - run: npm ci
+      - run: npm audit --omit=dev --audit-level=high
       - run: npm test -- --runInBand
       - run: npm run excellence:check
       - run: npm run build
