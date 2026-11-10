@@ -1,7 +1,9 @@
 function deriveJourneyState({ journey = null, assessment, profile, capabilities = [], activation, documents = [], opportunity }) {
-  const assessmentScore = assessment?.total_score ?? profile?.valu_index ?? null
-  const hasAssessment = !!(assessment?.completed_at || profile?.assessment_completed_at || profile?.valu_index != null)
-  const assessmentExpiresAt = assessment?.expires_at || profile?.assessment_expires_at || null
+  // Full-assessment completion and score must come from the canonical assessment row.
+  // Profile fields are display projections and cannot prove completion or eligibility.
+  const hasAssessment = !!assessment?.completed_at
+  const assessmentScore = hasAssessment ? (assessment?.total_score ?? null) : null
+  const assessmentExpiresAt = assessment?.expires_at || null
   const assessmentCurrent = hasAssessment && (!assessmentExpiresAt || new Date(assessmentExpiresAt).getTime() > Date.now())
   const assessmentEligible = assessmentCurrent && assessmentScore != null && Number(assessmentScore) >= 35
 
