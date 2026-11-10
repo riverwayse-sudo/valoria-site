@@ -188,7 +188,7 @@ try {
     await freshPage.getByRole('button', { name: /CONTINUE TO MY VALU TASTER/ }).waitFor({ state: 'visible', timeout: 20000 })
     registrationVisible = await freshPage.getByPlaceholder('Your full professional name').isVisible()
     marketingConsentChecked = await freshPage.getByRole('checkbox').nth(1).isChecked()
-    privacyCheckboxRequired = await freshPage.getByRole('checkbox').nth(0).isRequired()
+    privacyCheckboxRequired = await freshPage.getByRole('checkbox').nth(0).evaluate(element => element.required)
   } catch (error) {
     freshNavigationError = error.message
   }
