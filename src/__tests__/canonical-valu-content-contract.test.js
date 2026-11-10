@@ -42,16 +42,18 @@ describe('Canonical Valoria content contract', () => {
     const valu = read('src/app/valu/page.jsx')
     const start = read('src/app/valu/start/page.jsx')
     const homepage = read('src/app/page.jsx')
+    const about = read('src/app/about-us/page.jsx')
     for (const source of [valu, start, homepage]) {
       expect(source).not.toContain('Question 1 of 9')
       expect(source).not.toContain('Question 1 of 58')
       expect(source).not.toContain('1 of 9')
       expect(source).not.toContain('1 of 58')
-      expect(source).not.toContain('15-question')
-      expect(source).not.toContain('54-question')
-      expect(source).not.toContain('58-question')
+
     }
-    expect(valu).toContain('separate full assessment')
+    expect(valu).toContain('nine questions across four Intelligence skills')
+    expect(valu).toContain('separate 58-question full assessment')
+    expect(valu).toContain('54 scored questions and four validity checks')
+    expect(about).toContain('Professional Capability Marketplace')
     expect(start).toContain('separate assessment')
   })
 })
