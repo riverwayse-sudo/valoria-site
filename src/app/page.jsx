@@ -174,7 +174,8 @@ export default function HomePage() {
             <p className="vi-ih-how-note">For organisations, Valoria provides pathways to discover talent, source speakers and facilitators, and discuss capability development.</p>
           </div>
         </section>
-\n        <section className="vi-ih-system" id="institutional-system" aria-labelledby="vi-ih-system-title">
+
+        <section className="vi-ih-system" id="institutional-system" aria-labelledby="vi-ih-system-title">
           <div className="vi-ih-wrap">
             <Reveal className="vi-ih-section-intro">
               <div>
