@@ -5,7 +5,7 @@ import '../pages.css'
 
 export const metadata = {
   title: 'About Valoria Institute | Professional Capability Institution',
-  description: 'Valoria Institute is a professional capability institution that assesses, develops and connects professional capability through PRIME, the VALU Index and Valoria Marketplace. Nigeria is its current operating market.',
+  description: 'Valoria Institute is an Africa-first professional capability institution, with Nigeria as its initial operating jurisdiction. It connects PRIME, the VALU Index, development and capability-led opportunity.',
   keywords: ['Valoria Institute', 'professional capability', 'PRIME framework', 'VALU Index', 'professional development', 'talent marketplace'],
   openGraph: {
     title: 'About Valoria Institute',
@@ -19,12 +19,6 @@ const PRINCIPLES = [
   { num: '01', title: 'Merit over familiarity.', body: 'Capability should be developed and assessed against a consistent standard. Visibility should follow merit rather than familiarity, network proximity or a polished presentation.' },
   { num: '02', title: 'Development before visibility.', body: 'Professional growth comes before public recognition. Valoria helps people strengthen capability before connecting that capability to relevant opportunities.' },
   { num: '03', title: 'One institution. Multiple pathways.', body: 'PRIME is the shared capability framework beneath assessment, development and professional visibility across Valoria.' },
-]
-
-const FOUNDATIONS = [
-  { title: 'Mission', body: 'Develop professional capability, make merit more visible, and connect people to meaningful opportunity.' },
-  { title: 'Vision', body: 'An Africa where professional capability is recognised, developed and connected to opportunity.' },
-  { title: 'Purpose', body: 'Build the institutional infrastructure that helps people and organisations understand, strengthen and mobilise capability.' },
 ]
 
 const POSITIONING = [
@@ -69,26 +63,6 @@ export default function AboutPage() {
               <p className="page-copy">PRIME provides the capability framework. The VALU Index provides an assessment-led view of capability. Valoria Develop supports structured growth. The Valoria Marketplace connects employers, event organisers and programme teams with relevant professional expertise.</p>
               <p className="page-copy page-copy-spaced">One institution. One connected system. Distinct pathways for professional merit.</p>
             </Reveal>
-          </div>
-        </section>
-
-        <section className="page-section">
-          <div className="page-section-inner">
-            <Reveal>
-              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">MISSION, VISION & PURPOSE</span></div>
-              <h2 className="section-title">The conviction <em>behind the institution.</em></h2>
-            </Reveal>
-            <div className="about-principles-grid">
-              {FOUNDATIONS.map((item, i) => (
-                <Reveal key={item.title}>
-                  <div className="card-gold">
-                    <div className="vi-card-num">0{i + 1}</div>
-                    <div className="vi-card-name about-principle-name">{item.title}</div>
-                    <p className="vi-card-body">{item.body}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
           </div>
         </section>
 
