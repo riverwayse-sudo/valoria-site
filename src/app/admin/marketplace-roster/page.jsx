@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { getValuTier } from '@/lib/brand'
 
 const C = { midnight: '#1A1A2E', gold: '#C9A84C', parchment: '#F7F4EE', muted: '#777786', line: 'rgba(26,26,46,.12)' }
 const styles = {
@@ -110,7 +111,9 @@ export default function AdminMarketplaceRosterPage() {
         {!loading && !error && filtered.length === 0 && <div style={styles.empty}><h2 style={{ margin: '0 0 8px', fontSize: 18 }}>{candidates.length ? 'No matching profiles' : 'No public profiles in this environment'}</h2><p style={{ margin: 0, color: C.muted, fontSize: 12 }}>Try another search or check the environment’s public roster.</p></div>}
 
         {!loading && !error && filtered.length > 0 && <div style={styles.list}>
-          {filtered.map(profile => <article style={styles.card} key={profile.id}>
+          {filtered.map(profile => {
+            const designation = profile.assessment_access === 'full' ? getValuTier(profile.valu_points, 'full')?.name : null
+            return <article style={styles.card} key={profile.id}>
             <div>
               <h2 style={styles.name}>{profile.display_name || 'Unnamed professional'}</h2>
               <div style={styles.id}>{profile.atb_id || 'ATB ID pending'}</div>
@@ -118,7 +121,7 @@ export default function AdminMarketplaceRosterPage() {
               <div style={styles.tags}>
                 <span style={styles.goldTag}>{profile.assessment_access === 'full' ? 'FULL ASSESSMENT' : 'BASIC · TASTER'}</span>
                 {profile.assessment_access === 'full' && profile.valu_points != null && <span style={styles.tag}>VALU {profile.valu_points} POINTS</span>}
-                {profile.designation && <span style={styles.goldTag}>{profile.designation.toUpperCase()}</span>}
+                {designation && <span style={styles.goldTag}>{designation.toUpperCase()}</span>}
                 <span style={styles.tag}>{profile.public_ready ? 'PUBLIC' : 'REVIEW'}</span>
               </div>
               <div style={styles.capLabel}>DECLARED CAPABILITIES</div>
@@ -137,7 +140,8 @@ export default function AdminMarketplaceRosterPage() {
               <div style={styles.sideRow}><span>Industry</span><strong>{profile.industry || 'Not supplied'}</strong></div>
               <div style={styles.sideRow}><span>Last roster refresh</span><strong>{profile.projection_refreshed_at ? new Date(profile.projection_refreshed_at).toLocaleString() : '—'}</strong></div>
             </div>
-          </article>)}
+          </article>
+          })}
         </div>}
       </div>
     </main>
