@@ -41,7 +41,7 @@ export default function HomePage() {
               <h3>Find the capability<br />your work <em>needs.</em></h3>
               <p>Discover talent, speakers and facilitators through a shared framework for understanding professional capability.</p>
               <a href="/atb-connect" className="vi-audience-link">Explore talent access <span>↗</span></a>
-              <div className="vi-audience-secondary-links"><a href="/marketplace/speakers">FOR EVENT ORGANISERS ↗</a><a href="/marketplace/facilitators">FOR FACILITATORS ↗</a></div>
+              <div className="vi-audience-secondary-links" aria-label="Event and facilitation pathways"><a href="/marketplace/speakers">FOR EVENT ORGANISERS ↗</a><a href="/marketplace/facilitators">FOR FACILITATORS ↗</a></div>
             </Reveal>
           </div>
         </section>
