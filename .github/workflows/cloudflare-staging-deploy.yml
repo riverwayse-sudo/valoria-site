@@ -14,7 +14,9 @@ on:
       - "package-lock.json"
       - ".github/workflows/cloudflare-staging-deploy.yml"
   push:
-    branches: ["experience/staging-redesign-20261106"]
+    branches:
+      - "experience/staging-redesign-20261106"
+      - "deploy/staging-institutional-experience-20261109"
     paths:
       - "src/**"
       - "next.config.js"
