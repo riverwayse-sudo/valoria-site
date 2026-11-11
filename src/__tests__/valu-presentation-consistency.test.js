@@ -11,7 +11,7 @@ describe('VALU presentation consistency', () => {
     expect(home).toContain('START THE VALU TASTER')
     expect(home).toContain('separate full assessment')
     expect(home).toContain('build your professional profile')
-    expect(home).not.toMatch(/(?:9|58)[- ]questions?|<b>9<\/b> QUESTIONS/i)
+    expect(home).not.toMatch(/(?:9|58)[- ]questions?|<b>9<\/b> QUESTIONS|54 scored questions|four validity checks/i)
   })
 
   test('homepage hero leads with marketplace value and clear visitor actions', () => {
@@ -53,7 +53,7 @@ describe('VALU presentation consistency', () => {
     expect(valu).toContain('Future-Ready skill — critical for the professional talent market of 2025 to 2035.')
     expect(valu).toContain('How you create. Enterprise measures the capacity to generate value beyond a task')
     expect(valu).toContain('cannot be purchased or transferred')
-    expect(valu).not.toMatch(/1 of 9|1 of 58/i)
+    expect(valu).not.toMatch(/1 of 9|1 of 58|(?:9|58)[- ]questions?|54 scored questions|four validity checks/i)
   })
 
   test('About page follows the approved story and states institutional boundaries plainly', () => {
