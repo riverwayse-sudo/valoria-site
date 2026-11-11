@@ -2,17 +2,6 @@ name: Deploy Valoria site to isolated Cloudflare staging
 # Final verification: test canonical ATB IDs, consent-gated public data and premium profile preview.
 
 on:
-  pull_request:
-    branches: ["experience/staging-redesign-20261106"]
-    types: [opened, synchronize, reopened]
-    paths:
-      - "src/**"
-      - "next.config.js"
-      - "open-next.config.ts"
-      - "wrangler.jsonc"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/cloudflare-staging-deploy.yml"
   push:
     branches: ["experience/staging-redesign-20261106"]
     paths:
@@ -173,8 +162,7 @@ jobs:
           grep -q 'Make your' /tmp/valoria-home.html
           grep -q 'AN INSTITUTION FOR PROFESSIONAL CAPABILITY' /tmp/valoria-home.html
           grep -q 'THREE WAYS TO ENGAGE' /tmp/valoria-home.html
-          grep -q 'INITIAL MARKET' /tmp/valoria-home.html
-          grep -q 'Valoria is Africa-first' /tmp/valoria-home.html
+          grep -q 'BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE' /tmp/valoria-home.html
           grep -q 'Take the taster' /tmp/valoria-home.html
           grep -q 'Complete the full assessment' /tmp/valoria-home.html
           grep -q 'Become discoverable' /tmp/valoria-home.html
