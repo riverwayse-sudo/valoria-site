@@ -281,7 +281,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     }
     expect(start).toContain('Register your contact and professional details before the taster')
     expect(start).toContain('Your official result in points')
-    expect(signup).toContain('VALU taster')
+    expect(signup).toContain('VALU Index Taster')
   })
   test('profile capability selection is reconciled through an authenticated server endpoint', () => {
     const setup = read('src/app/profile/setup/page.jsx')
@@ -438,7 +438,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(dashboard).toContain("talent_cv: ['/profile/edit', 'Upload CV']")
     expect(dashboard).toContain("speaker_evidence_approval: ['/profile/evidence', 'Submit speaker evidence']")
     expect(dashboard).toContain("facilitator_evidence_approval: ['/profile/evidence', 'Submit facilitator evidence']")
-    expect(dashboard).toContain("valu_assessment_score_35_current: ['/dashboard', 'Complete VALU assessment']")
+    expect(dashboard).toContain("valu_assessment_score_35_current: ['/dashboard', 'Complete VALU Index']")
     expect(dashboard).toContain('AssessmentStartLink href="/dashboard" dashboardOnly')
     expect(dashboard).toContain('href ? <Link href={href}')
   })
@@ -487,7 +487,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(route).toContain('Array.isArray(roster.capabilities)&&roster.capabilities.length>0')
     expect(route).toContain('rawHeadline.length>=2')
     expect(route).toContain('counts.roster_projection_professionals')
-    expect(page).toContain('Basic listings require a completed linked taster or a current Full assessment')
+    expect(page).toContain('Basic listings require a completed linked taster or a current full VALU Index')
     expect(page).toContain('BASIC LISTING PATH')
     expect(page).toContain("r.public_roster?'PUBLIC':'NOT PUBLIC'")
     expect(page).toContain("r.public_roster?<Link href={'/profile/'+r.user_id}")
@@ -505,7 +505,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(publicProfile).toContain('hasCurrentFullAssessment')
     expect(homepage).toContain('profiles.slice(0, 13)')
     expect(directory).toContain('BASIC PROFESSIONAL LISTING')
-    expect(directory).not.toContain('completed the VALU taster and has Basic marketplace access')
+    expect(directory).not.toContain('completed the VALU Index Taster and has Basic marketplace access')
   })
 
   test('marketplace profile preview uses the facilitated enquiry workflow', () => {

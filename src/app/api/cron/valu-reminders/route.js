@@ -67,8 +67,8 @@ export async function GET(request) {
     if (!profile || profile.profile_complete) continue
 
     // A linked professional can be in one of two incomplete states:
-    // 1) no authoritative full assessment yet -> assessment reminder
-    // 2) full assessment complete but profile incomplete -> profile reminder (handled below)
+    // 1) no authoritative full VALU Index yet -> assessment reminder
+    // 2) full VALU Index complete but profile incomplete -> profile reminder (handled below)
     if (profile.assessment_completed_at) continue
     const count = Number(row.reminder_count || 0)
     if (!dueForReminder(row.linked_at, count)) continue

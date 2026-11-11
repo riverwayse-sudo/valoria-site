@@ -309,7 +309,7 @@ export default function DashboardPage() {
         </>
       ) : assessmentAccess === null ? (
         <>
-          <h1 style={{fontSize:'clamp(26px,4vw,38px)',textAlign:'center',margin:0}}>Continue your VALU assessment.</h1>
+          <h1 style={{fontSize:'clamp(26px,4vw,38px)',textAlign:'center',margin:0}}>Continue your VALU Index.</h1>
           <p style={{maxWidth:560,textAlign:'center',color:DIM,lineHeight:1.7}}>We could not confirm your assessment status yet. You can retry the secure continuation; your saved responses will not be discarded.</p>
           <AssessmentStartLink href="/dashboard" dashboardOnly style={{padding:'14px 24px',background:GOLD,color:DARK,fontSize:12,fontWeight:800,textDecoration:'none',borderRadius:999}}>CONTINUE YOUR ASSESSMENT →</AssessmentStartLink>
         </>
@@ -610,7 +610,7 @@ export default function DashboardPage() {
                       <p style={{ fontSize:'11px', fontWeight:300, color:DIM, lineHeight:1.65, margin:0 }}>
                         {assessmentAccess?.can_continue
                           ? 'Your taster is saved. Continue your Valoria journey from your dashboard.'
-                          : 'Your official VALU Index and PRIME insights will appear here when your assessment is complete.'}
+                          : 'Your official VALU Index and PRIME insights will appear here when you complete the full VALU Index.'}
                       </p>
                     </div>
                   </>
@@ -917,7 +917,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
   const listedReady = eligibilityReady && activeCapabilities.every(c => c.eligibility_status === 'listed')
 
   const steps = [
-    { key:'valu', label:'VALU assessment', done:assessmentDone },
+    { key:'valu', label:'VALU Index', done:assessmentDone },
     { key:'profile', label:'Professional profile', done:profileComplete },
     { key:'capability', label:'Capabilities', done:capabilityReady },
     { key:'eligibility', label:'Eligibility', done:eligibilityReady },
@@ -932,7 +932,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
         : !listedReady ? '/marketplace' : '/opportunities'
 
   const heading = !next ? 'Your Valoria journey is up to date.'
-    : next.key === 'valu' ? 'Complete your VALU assessment.'
+    : next.key === 'valu' ? 'Complete your VALU Index.'
       : next.key === 'profile' ? 'Complete your professional profile.'
         : next.key === 'capability' ? 'Choose how your expertise is represented.'
           : next.key === 'eligibility' ? 'Complete your readiness requirements.'
@@ -950,7 +950,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
   const requirementLabels = {
     capability: 'Confirm this capability',
     profile: 'Complete your professional profile',
-    valu_assessment_score_35_current: 'Complete a current VALU assessment with at least 35 points',
+    valu_assessment_score_35_current: 'Complete a current VALU Index with at least 35 points',
     talent_cv: 'Submit your CV',
     talent_cv_approval: 'Await Valoria CV approval',
     speaker_topics: 'Add speaking topics',
@@ -964,7 +964,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
   const requirementActions = {
     profile: ['/profile/edit', 'Complete profile'],
     capability: ['/profile/edit', 'Review capabilities'],
-    valu_assessment_score_35_current: ['/dashboard', 'Complete VALU assessment'],
+    valu_assessment_score_35_current: ['/dashboard', 'Complete VALU Index'],
     talent_cv: ['/profile/edit', 'Upload CV'],
     speaker_topics: ['/profile/edit', 'Add speaking topics'],
     speaker_formats: ['/profile/edit', 'Select speaking formats'],
@@ -1063,7 +1063,7 @@ function WelcomeModal({ firstName, isSupply, isOrganiser, completion, onClose })
   const timerRef = useRef(null)
 
   const beats = isSupply ? [
-    { eyebrow:'PROFILE DETAILS', title:`Your profile is taking shape, ${firstName}.`, body:`${completion.filled} of ${completion.total} required profile details are complete. This is separate from your VALU assessment and marketplace eligibility.`, icon:'✓' },
+    { eyebrow:'PROFILE DETAILS', title:`Your profile is taking shape, ${firstName}.`, body:`${completion.filled} of ${completion.total} required profile details are complete. This is separate from your VALU Index and marketplace eligibility.`, icon:'✓' },
     { eyebrow:"YOU'RE IN GOOD COMPANY", title:'Welcome to Valoria.', body:"Your VALU Index helps make your professional capabilities clearer. Build your profile and choose how you want to be discovered.", icon:'◈' },
     { eyebrow:'WHAT HAPPENS NEXT', title:'Your next opportunity could start today.', body:'Stay visible to the right people. We’ll let you know when someone expresses interest in connecting with you.', icon:'→' },
   ] : [
@@ -1274,7 +1274,7 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
   const isListed = listedCapabilities.length > 0
 
   const current = !hasAssessment
-    ? { label:'Continue your VALU assessment', text:'Your opening responses are saved. Continue securely from your dashboard.', href:'/dashboard/continue-assessment' }
+    ? { label:'Continue your VALU Index', text:'Your opening responses are saved. Continue securely from your dashboard.', href:'/dashboard/continue-assessment' }
     : !hasProfile
       ? { label:'Build your profile', text:'Tell us about your work so people can understand you.', href:'/profile/onboarding' }
       : !hasCapability

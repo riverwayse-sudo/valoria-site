@@ -225,7 +225,7 @@ function Profile({p, onSelect}) {
             <small>VALU INDEX</small><b>{p.valu_index}</b><span>POINTS</span>
           </div>
           <span className={`${styles.tierBadge} ${designationClass}`}>{designation}</span>
-        </> : <span className={styles.assessmentPending}>Full assessment pending</span>}
+        </> : <span className={styles.assessmentPending}>Full VALU Index pending</span>}
       </div>
     </header>
 
@@ -342,14 +342,14 @@ function ProfilePreviewModal({ profile, onClose }) {
           </div>
           <div className={styles.modalGrid}>
             <section className={styles.modalPanel}>
-              <p className={styles.modalSectionLabel}>VALU INDEX · ASSESSMENT INSIGHT</p>
+              <p className={styles.modalSectionLabel}>VALU INDEX · PROFESSIONAL INSIGHT</p>
               <p id="profile-preview-description" className={styles.modalSummary}>
                 {isFull
-                  ? (assessmentSummary || 'The Full VALU assessment is complete. The professional insight is being prepared.')
-                  : 'This Basic listing introduces the professional’s public identity, declared capabilities and areas of expertise. Additional assessment insight is displayed only when available.'}
+                  ? (assessmentSummary || 'The Full VALU Index is complete. The professional insight is being prepared.')
+                  : 'This Basic listing introduces the professional’s public identity, declared capabilities and areas of expertise. Additional VALU Index insight is displayed only when available.'}
               </p>
               <div className={styles.modalCredential}>
-                <span>{isFull ? 'VALU ASSESSMENT INSIGHT' : 'BASIC PROFESSIONAL LISTING'}</span>
+                <span>{isFull ? 'VALU INDEX INSIGHT' : 'BASIC PROFESSIONAL LISTING'}</span>
                 <strong>{tier ? tier.name : 'VALU SCORE NOT DISPLAYED'}</strong>
               </div>
             </section>

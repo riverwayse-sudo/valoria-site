@@ -509,7 +509,7 @@ function ProfileSetupForm() {
       return
     }
     // Basic listings do not require Full-profile completion. The consent API
-    // checks a linked completed taster or current Full assessment plus minimum
+    // checks a linked completed taster or current Full VALU Index plus minimum
     // public identity for Basic, and applies stricter profile/capability checks to Full.
     let acknowledgementResponse
     try {
@@ -601,7 +601,7 @@ function ProfileSetupForm() {
         <button onClick={handleSaveExit} style={{ fontSize:'11px', color:DIM, background:'none', border:'none', cursor:'pointer', fontFamily:'inherit', letterSpacing:'.06em' }}>SAVE &amp; EXIT</button>
       </header>
 
-      {/* THIN PROGRESS BAR — same visual language as the VALU Index assessment */}
+      {/* THIN PROGRESS BAR — same visual language as the VALU Index */}
       <div style={{ height:'2px', background:'rgba(255,255,255,.06)' }}>
         <div style={{ height:'100%', width:`${progress}%`, background:GOLD, transition:'width .4s ease' }} />
       </div>
@@ -1154,17 +1154,17 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
             {form.designation ? <> — <strong style={{ color:'GOLD' }}>{form.designation}</strong></> : null}.
           </p>
           <p style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.6, margin:0 }}>
-            A completed taster can support a Basic listing. Full VALU insight and Full-tier benefits require a current full assessment. Public visibility depends on your consent and the applicable identity, eligibility and listing checks.
+            A completed taster can support a Basic listing. Full VALU Index insight and Full-tier benefits require a current full VALU Index. Public visibility depends on your consent and the applicable identity, eligibility and listing checks.
           </p>
         </div>
       ) : (
         <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
-          <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — VALU INDEX ASSESSMENT</div>
+          <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — COMPLETE YOUR VALU INDEX</div>
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
             A completed taster linked to your account can support a Basic listing. Continue with the Full VALU Index to receive your official points, PRIME insight and Full-tier benefits. Public display still requires your explicit consent and the applicable identity and listing checks.
           </p>
           <a href="https://valoriainstitute.com/valu/assessment/" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
-            COMPLETE THE FULL VALU ASSESSMENT →
+            COMPLETE THE FULL VALU INDEX →
           </a>
         </div>
       )}

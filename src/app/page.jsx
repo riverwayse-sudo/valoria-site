@@ -65,7 +65,7 @@ export default function HomePage() {
               <span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
             </div>
             <div className="home-dual-actions">
-              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START MY VALU INDEX SNAPSHOT <span aria-hidden="true">→</span></a>
+              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START THE VALU INDEX TASTER <span aria-hidden="true">→</span></a>
               <a href="/valu" className="text-link">SEE HOW THE VALU INDEX WORKS <span aria-hidden="true">→</span></a>
             </div>
             <p className="valu-conversion-note">A starting signal, not a final designation.</p>
@@ -96,7 +96,7 @@ export default function HomePage() {
               <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Complete your full assessment</small></div></div>
               <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Unlock relevant opportunities</small></div></div>
             </div>
-            <AssessmentStartLink href={BRAND.assessmentUrl} className="vcc-bottom-cta">START THE VALU TASTER <span>→</span></AssessmentStartLink>
+            <AssessmentStartLink href={BRAND.assessmentUrl} className="vcc-bottom-cta">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
           </Reveal>
         </div>
       </section>

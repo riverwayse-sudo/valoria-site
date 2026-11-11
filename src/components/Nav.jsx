@@ -180,7 +180,7 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
         })
         const access = await accessResponse.json().catch(() => ({}))
         if (!accessResponse.ok) {
-          throw new Error(access.error || 'We could not verify your VALU assessment access.')
+          throw new Error(access.error || 'We could not verify your VALU Index access.')
         }
         if (access.assessment_completed) {
           window.location.assign('/dashboard')
@@ -214,7 +214,7 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
       // Anonymous visitors start the public nine-question taster.
       window.location.assign(href)
     } catch (err) {
-      setError(err?.message || 'We could not open your VALU assessment. Please try again.')
+      setError(err?.message || 'We could not open your VALU Index. Please try again.')
       setOpening(false)
     }
   }

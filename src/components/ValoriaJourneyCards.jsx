@@ -124,7 +124,7 @@ export default function ValoriaJourneyCards({ compact=false }) {
           <div key={card.key} className={styles.webNodeWrap} role="listitem">
             {index > 0 && <span className={styles.webLine} aria-hidden="true" />}
             {card.key === 'assess' && card.current ? (
-              <AssessmentStartLink href="/dashboard" dashboardOnly className={[styles.webNode, styles.webCurrent].join(' ')} aria-current="step" aria-label="Continue your saved VALU assessment">
+              <AssessmentStartLink href="/dashboard" dashboardOnly className={[styles.webNode, styles.webCurrent].join(' ')} aria-current="step" aria-label="Continue your saved VALU Index">
                 <span>{card.icon}</span>
               </AssessmentStartLink>
             ) : (

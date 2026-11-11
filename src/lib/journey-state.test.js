@@ -29,7 +29,7 @@ test('new user is directed to assessment', () => {
   const state = deriveJourneyState({})
   expect(state.next).toBe('assess')
   expect(state.assessment.complete).toBe(false)
-  expect(state.recoveryReason).toMatch(/No completed VALU assessment/)
+  expect(state.recoveryReason).toMatch(/No completed VALU Index/)
 })
 
 test('completed assessment without report is recoverable at report stage', () => {
@@ -118,7 +118,7 @@ test('expired assessment preserves profile completeness but blocks current marke
   expect(state.assessment.current).toBe(false)
   expect(state.profile.complete).toBe(true)
   expect(state.eligibility.complete).toBe(false)
-  expect(state.eligibility.missing).toContain('A current full VALU Index assessment')
+  expect(state.eligibility.missing).toContain('A current full VALU Index')
   expect(state.next).toBe('eligibility')
 })
 
