@@ -450,7 +450,7 @@ export default function ProfileEditPage() {
 
 const S = {
   page: { minHeight:'100vh', background:DARK, fontFamily:"'Raleway','Helvetica Neue',Arial,sans-serif", color:PARCH, paddingBottom:'80px' },
-  header: { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', height:'64px', background:MID, borderBottom:'1px solid rgba(201,168,76,.2)', position:'sticky', top:0, zIndex:100 },
+  header: { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', height:'64px', background:MID, borderBottom:'1px solid rgba(201,168,76,.2)' },
   backLink: { fontSize:'12px', color:'rgba(247,244,238,.5)', textDecoration:'none', width:'140px' },
   headerTitle: { fontSize:'14px', fontWeight:700, letterSpacing:'.08em', color:GOLD },
   container: { maxWidth:'760px', margin:'0 auto', padding:'32px 24px' },
