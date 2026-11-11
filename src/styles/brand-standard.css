@@ -33,10 +33,10 @@ html, body { background: var(--valoria-midnight); color: var(--valoria-parchment
 body { font-family: 'Raleway', sans-serif; }
 h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif; }
 
-/* Manual: sticky header = 80px. Remove the legacy multicolour PRIME stripe. */
-.vi-nav { top: 0 !important; height: 80px !important; background: var(--valoria-midnight) !important; border-bottom-color: rgba(212,201,168,.35) !important; }
+/* In-flow public header. Remove the legacy multicolour PRIME stripe. */
+.vi-nav { height: 80px !important; background: var(--valoria-midnight) !important; border-bottom-color: rgba(212,201,168,.35) !important; }
 [aria-hidden="true"][style*="height: 3px"] { display: none !important; }
-.nav-mobile { top: 80px !important; background: rgba(26,26,46,.98) !important; }
+.nav-mobile { top: 100% !important; background: rgba(26,26,46,.98) !important; }
 .nav-dropdown { background: var(--valoria-midnight) !important; border-color: var(--valoria-brass) !important; border-radius: 8px !important; }
 .nav-cta { background: var(--valoria-gold) !important; color: var(--valoria-midnight) !important; }
 
