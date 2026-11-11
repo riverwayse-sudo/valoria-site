@@ -6,10 +6,14 @@ describe('public sitemap privacy and route contract', () => {
   const sitemap = read('src/app/sitemap.js')
 
   test('dynamic profile URLs come only from the public Marketplace projection', () => {
-    expect(sitemap).toContain(".from('marketplace_public_roster')")
-    expect(sitemap).toContain("select('professional_id,projection_refreshed_at,full_name,atb_id,headline,current_job_title,assessment_access,valu_index,assessment_summary')")
-    expect(sitemap).toContain('filter(isPublicProfileContentReady)')
+    expect(sitemap).toContain('getConsentVerifiedPublicProfileSitemapRows')
+    expect(sitemap).toContain('const profiles = await getConsentVerifiedPublicProfileSitemapRows()')
+    expect(sitemap).not.toContain(".from('marketplace_public_roster')")
     expect(sitemap).not.toContain(".from('professional_profiles')")
+    const projection = read('src/lib/public-profile.js')
+    expect(projection).toContain(".from('marketplace_public_roster')")
+    expect(projection).toContain('professional_profile_acknowledgements')
+    expect(projection).toContain('getConsentVerifiedPublicProfileSitemapRows')
   })
 
   test('sitemap includes the current public pathways and excludes retired/auth routes', () => {
