@@ -6,7 +6,7 @@ import '../pages.css'
 export const metadata = {
   title: 'Development Programmes — Valoria Develop',
   description: 'Explore PRIME-mapped development programmes for teams. Facilitator suitability and programme scope are confirmed for each engagement.',
-  keywords: ['facilitator commissioning Nigeria', 'corporate training Africa', 'PRIME-aligned development', 'team development Lagos', 'Valoria Develop', 'capability development Africa'],
+  keywords: ['facilitator commissioning', 'corporate training', 'PRIME-aligned development', 'team development', 'Valoria Develop', 'professional capability development'],
   openGraph: {
     title: 'Commission Facilitators — Valoria Develop | Valoria Institute',
     description: 'PRIME-mapped development programmes, with facilitator suitability confirmed for each engagement.',
