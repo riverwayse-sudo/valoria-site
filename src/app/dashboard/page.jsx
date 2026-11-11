@@ -125,7 +125,8 @@ export default function DashboardPage() {
       setLoadError(null)
       setIsRefreshing(!!profile)
       try {
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError) throw authError
       if (!user) { window.location.href = '/login'; return }
       setUser(user)
       const { data: { session } } = await supabase.auth.getSession()
@@ -143,11 +144,12 @@ export default function DashboardPage() {
         }
       }
 
-      const { data: proProfile } = await supabase
+      const { data: proProfile, error: professionalProfileError } = await supabase
         .from('professional_profiles')
         .select('*')
         .eq('id', user.id)
         .maybeSingle()
+      if (professionalProfileError) throw professionalProfileError
 
       let prof = proProfile
       let supply = !!proProfile
@@ -157,9 +159,9 @@ export default function DashboardPage() {
           .from('professional_capabilities')
           .select('id,capability,is_active,eligibility_status,eligible_for_listing,missing_requirements')
           .eq('professional_id', user.id)
-        if (capabilityError) console.error('Dashboard capability status load failed:', capabilityError)
+        if (capabilityError) throw capabilityError
         setCapabilities(capabilityRows || [])
-        const { data: assessmentRow } = await supabase
+        const { data: assessmentRow, error: assessmentError } = await supabase
           .from('valu_assessments')
           .select('completed_at,total_score,designation,valu_index:total_score')
           .eq('user_id', user.id)
@@ -167,25 +169,28 @@ export default function DashboardPage() {
           .order('completed_at', { ascending: false })
           .limit(1)
           .maybeSingle()
+        if (assessmentError) throw assessmentError
         setAssessment(assessmentRow || null)
 
         // head:true — only need the count header, not the rows themselves.
         // RLS (see pending-migrations/012_add_profile_views.sql) already
         // restricts this to the signed-in owner's own views, so no
         // additional filtering needed beyond the eq itself.
-        const { count } = await supabase
+        const { count, error: profileViewsError } = await supabase
           .from('profile_views')
           .select('id', { count: 'exact', head: true })
           .eq('professional_profile_id', user.id)
+        if (profileViewsError) throw profileViewsError
         setProfileViewCount(count ?? 0)
       }
 
       if (!prof) {
-        const { data: buyerProfile } = await supabase
+        const { data: buyerProfile, error: buyerProfileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', user.id)
           .maybeSingle()
+        if (buyerProfileError) throw buyerProfileError
         prof = buyerProfile
         supply = false
       }
@@ -211,18 +216,20 @@ export default function DashboardPage() {
       // their own dashboard, despite the notification email/bell already
       // correctly firing.
       if (supply) {
-        const { data: msgs } = await supabase
+        const { data: msgs, error: enquiriesError } = await supabase
           .from('enquiries')
           .select('*')
           .eq('professional_profile_id', user.id)
           .order('created_at', { ascending: false })
+        if (enquiriesError) throw enquiriesError
         setEnquiries((msgs || []).map(m => ({ ...m, recipient_profile_id: m.professional_profile_id })))
       } else {
-        const { data: msgs } = await supabase
+        const { data: msgs, error: enquiriesError } = await supabase
           .from('enquiries')
           .select('*, professional_profiles:professional_profile_id(display_name, headline, photo_url, active_tracks)')
           .eq('buyer_user_id', user.id)
           .order('created_at', { ascending: false })
+        if (enquiriesError) throw enquiriesError
         setRequests((msgs || []).map(m => ({ ...m, recipient_profile_id: m.professional_profile_id })))
       }
       } catch (error) {
@@ -309,7 +316,7 @@ export default function DashboardPage() {
         </>
       ) : assessmentAccess === null ? (
         <>
-          <h1 style={{fontSize:'clamp(26px,4vw,38px)',textAlign:'center',margin:0}}>Continue your VALU Index.</h1>
+          <h1 style={{fontSize:'clamp(26px,4vw,38px)',textAlign:'center',margin:0}}>Continue your VALU assessment.</h1>
           <p style={{maxWidth:560,textAlign:'center',color:DIM,lineHeight:1.7}}>We could not confirm your assessment status yet. You can retry the secure continuation; your saved responses will not be discarded.</p>
           <AssessmentStartLink href="/dashboard" dashboardOnly style={{padding:'14px 24px',background:GOLD,color:DARK,fontSize:12,fontWeight:800,textDecoration:'none',borderRadius:999}}>CONTINUE YOUR ASSESSMENT →</AssessmentStartLink>
         </>
@@ -502,7 +509,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* MARKETPLACE JOURNEY — five milestones; separate from the VALU Index score display */}
+        {/* MARKETPLACE JOURNEY — five milestones; separate from the VALU score display */}
         {isSupply && !assessmentAccess?.can_continue && (
           <div style={{ maxWidth:'1100px', margin:'24px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
             <AccessProgressCard
@@ -610,7 +617,7 @@ export default function DashboardPage() {
                       <p style={{ fontSize:'11px', fontWeight:300, color:DIM, lineHeight:1.65, margin:0 }}>
                         {assessmentAccess?.can_continue
                           ? 'Your taster is saved. Continue your Valoria journey from your dashboard.'
-                          : 'Your official VALU Index and PRIME insights will appear here when you complete the full VALU Index.'}
+                          : 'Your official VALU Index and PRIME insights will appear here when your assessment is complete.'}
                       </p>
                     </div>
                   </>
@@ -877,11 +884,11 @@ export default function DashboardPage() {
 // ── Welcome modal ────────────────────────────────────────────────────────────
 function DashboardAssessmentHandover({ standalone = false }) {
   const content = (
-    <section aria-label="Continue your VALU Index" style={{ width:'100%', padding:'clamp(20px,3vw,30px)', border:'1px solid rgba(201,168,76,.3)', borderRadius:12, background:'linear-gradient(135deg, rgba(46,46,74,.96), rgba(26,26,46,.98))', color:'#F7F4EE' }}>
+    <section aria-label="Continue your VALU journey" style={{ width:'100%', padding:'clamp(20px,3vw,30px)', border:'1px solid rgba(201,168,76,.3)', borderRadius:12, background:'linear-gradient(135deg, rgba(46,46,74,.96), rgba(26,26,46,.98))', color:'#F7F4EE' }}>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap', marginBottom:12 }}>
         <div style={{ flex:'1 1 420px', minWidth:0 }}>
           <div style={{ color:'#C9A84C', fontSize:10, fontWeight:800, letterSpacing:'.2em' }}>YOUR VALORIA JOURNEY</div>
-          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>Your taster is saved. Continue your VALU Index.</h1>
+          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>Your taster is saved. Continue your VALU journey.</h1>
           <p style={{ margin:0, maxWidth:700, color:'rgba(247,244,238,.68)', fontSize:13, lineHeight:1.7 }}>Your taster is saved. Start or resume your VALU Index here; your progress will be restored.</p>
         </div>
         <div style={{ flex:'0 1 220px', minWidth:180 }}>
@@ -890,7 +897,7 @@ function DashboardAssessmentHandover({ standalone = false }) {
       </div>
       <div style={{ display:'flex', justifyContent:'center', marginTop:22 }}>
         <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:10, padding:'14px 26px', background:'#C9A84C', color:'#1A1A2E', borderRadius:999, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.12em' }}>
-          CONTINUE YOUR VALU INDEX <span aria-hidden="true">→</span>
+          CONTINUE YOUR VALU JOURNEY <span aria-hidden="true">→</span>
         </AssessmentStartLink>
       </div>
     </section>
@@ -917,7 +924,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
   const listedReady = eligibilityReady && activeCapabilities.every(c => c.eligibility_status === 'listed')
 
   const steps = [
-    { key:'valu', label:'VALU Index', done:assessmentDone },
+    { key:'valu', label:'VALU assessment', done:assessmentDone },
     { key:'profile', label:'Professional profile', done:profileComplete },
     { key:'capability', label:'Capabilities', done:capabilityReady },
     { key:'eligibility', label:'Eligibility', done:eligibilityReady },
@@ -932,7 +939,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
         : !listedReady ? '/marketplace' : '/opportunities'
 
   const heading = !next ? 'Your Valoria journey is up to date.'
-    : next.key === 'valu' ? 'Complete your VALU Index.'
+    : next.key === 'valu' ? 'Complete your VALU assessment.'
       : next.key === 'profile' ? 'Complete your professional profile.'
         : next.key === 'capability' ? 'Choose how your expertise is represented.'
           : next.key === 'eligibility' ? 'Complete your readiness requirements.'
@@ -950,7 +957,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
   const requirementLabels = {
     capability: 'Confirm this capability',
     profile: 'Complete your professional profile',
-    valu_assessment_score_35_current: 'Complete a current VALU Index with at least 35 points',
+    valu_assessment_score_35_current: 'Complete a current VALU assessment with at least 35 points',
     talent_cv: 'Submit your CV',
     talent_cv_approval: 'Await Valoria CV approval',
     speaker_topics: 'Add speaking topics',
@@ -964,7 +971,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
   const requirementActions = {
     profile: ['/profile/edit', 'Complete profile'],
     capability: ['/profile/edit', 'Review capabilities'],
-    valu_assessment_score_35_current: ['/dashboard', 'Complete VALU Index'],
+    valu_assessment_score_35_current: ['/dashboard', 'Complete VALU assessment'],
     talent_cv: ['/profile/edit', 'Upload CV'],
     speaker_topics: ['/profile/edit', 'Add speaking topics'],
     speaker_formats: ['/profile/edit', 'Select speaking formats'],
@@ -993,7 +1000,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
         <div style={{ display:'flex', alignItems:'center', gap:14, flexWrap:'wrap', marginTop:18 }}>
           {next?.key === 'valu' ? (
             <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
-              CONTINUE YOUR VALU INDEX <span aria-hidden="true">→</span>
+              CONTINUE YOUR VALU JOURNEY <span aria-hidden="true">→</span>
             </AssessmentStartLink>
           ) : (
             <Link href={nextHref} style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
@@ -1063,7 +1070,7 @@ function WelcomeModal({ firstName, isSupply, isOrganiser, completion, onClose })
   const timerRef = useRef(null)
 
   const beats = isSupply ? [
-    { eyebrow:'PROFILE DETAILS', title:`Your profile is taking shape, ${firstName}.`, body:`${completion.filled} of ${completion.total} required profile details are complete. This is separate from your VALU Index and marketplace eligibility.`, icon:'✓' },
+    { eyebrow:'PROFILE DETAILS', title:`Your profile is taking shape, ${firstName}.`, body:`${completion.filled} of ${completion.total} required profile details are complete. This is separate from your VALU assessment and marketplace eligibility.`, icon:'✓' },
     { eyebrow:"YOU'RE IN GOOD COMPANY", title:'Welcome to Valoria.', body:"Your VALU Index helps make your professional capabilities clearer. Build your profile and choose how you want to be discovered.", icon:'◈' },
     { eyebrow:'WHAT HAPPENS NEXT', title:'Your next opportunity could start today.', body:'Stay visible to the right people. We’ll let you know when someone expresses interest in connecting with you.', icon:'→' },
   ] : [
@@ -1274,7 +1281,7 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
   const isListed = listedCapabilities.length > 0
 
   const current = !hasAssessment
-    ? { label:'Continue your VALU Index', text:'Your opening responses are saved. Continue securely from your dashboard.', href:'/dashboard/continue-assessment' }
+    ? { label:'Continue your VALU assessment', text:'Your opening responses are saved. Continue securely from your dashboard.', href:'/dashboard/continue-assessment' }
     : !hasProfile
       ? { label:'Build your profile', text:'Tell us about your work so people can understand you.', href:'/profile/onboarding' }
       : !hasCapability
