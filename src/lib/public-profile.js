@@ -1,5 +1,5 @@
 export const PUBLIC_PROFILE_SELECT = [
-  'professional_id', 'full_name', 'bio', 'location', 'languages', 'headline',
+  'professional_id', 'bio', 'location', 'languages', 'headline',
   'current_job_title', 'capability', 'track', 'capabilities', 'selected_capabilities',
   'atb_id', 'display_initials', 'photo_url', 'industry', 'skills', 'topics',
   'programme_types', 'availability', 'valu_index', 'cluster_scores', 'designation',
@@ -30,7 +30,7 @@ export function toPublicProfile(row) {
 
   return {
     id: row.professional_id,
-    display_name: row.full_name || 'Valoria Professional',
+    display_name: row.atb_id ? String(row.atb_id).normalize('NFKC') : 'Valoria Professional',
     display_initials: row.display_initials || '',
     headline: row.headline || '',
     current_job_title: row.current_job_title || '',
