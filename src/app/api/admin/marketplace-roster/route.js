@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION } from '@/lib/profile-consent-copy'
 
 export const dynamic = 'force-dynamic'
 
