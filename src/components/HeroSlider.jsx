@@ -12,12 +12,12 @@ export default function HeroSlider() {
         <div className="vi-hero-copy">
           <div className="vi-hero-kicker"><span /> AN INSTITUTION FOR PROFESSIONAL CAPABILITY</div>
           <h1 id="valoria-hero-title">Make your<br /><em>capability</em> count.</h1>
-          <p>Understand what you bring. Build what comes next. Be discovered for what you can do.</p>
+          <p>We assess professional capability through PRIME and the VALU Index, connect insight to development, and help organizations discover relevant professional talent.</p>
           <div className="vi-hero-actions">
             <AssessmentStartLink href={BRAND.assessmentUrl} className="vi-hero-primary">Discover your capability <span>↗</span></AssessmentStartLink>
             <Link href="/marketplace" className="vi-hero-secondary">Explore the marketplace <span>→</span></Link>
           </div>
-          <div className="vi-hero-footnote">DESIGNED FOR A GLOBAL PROFESSIONAL LANDSCAPE.</div>
+          <div className="vi-hero-footnote">A CLEARER STANDARD FOR PROFESSIONAL CAPABILITY.</div>
         </div>
         <div className="vi-hero-art" role="group" aria-label="The five PRIME dimensions: Presence, Relationships, Intelligence, Mastery and Enterprise">
           <div className="vi-hero-art-content">
@@ -29,7 +29,7 @@ export default function HeroSlider() {
           <div className="vi-hero-art-photo" role="img" aria-label="Portrait of an African professional. Photograph by Taiye Salawu via Pexels" />
         </div>
       </div>
-      <div className="vi-hero-index"><span>VALORIA INSTITUTE</span><span>LAGOS · AFRICA</span></div>
+      <div className="vi-hero-index"><span>VALORIA INSTITUTE</span><span>GLOBAL OUTLOOK · CLEAR OPERATING BOUNDARIES</span></div>
     </section>
   )
 }
