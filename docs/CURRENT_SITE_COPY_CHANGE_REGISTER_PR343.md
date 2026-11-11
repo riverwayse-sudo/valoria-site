@@ -66,3 +66,15 @@ These additions resolve copy and disclosure issues found while reconciling PR #3
 | `src/app/valu/start/page.jsx` — marketplace pathway explanation | “Basic marketplace consideration”; “Full marketplace eligibility”; “Basic or Full eligibility checks” | Plain-language explanation that publication depends on Valoria's listing requirements and the professional's choice to publish | §8, pp. 7–8; §14 C, p. 15 | Removes internal status labels from public communication while preserving the distinction between eligibility and consent-based visibility. Verify against live publication rules. |
 | `src/app/page.jsx` — assessment CTA navigation | Opens the assessment in a new browser tab | Uses same-tab navigation | §14 F, p. 15 | Technical navigation correction; verify the complete handoff and browser-history behaviour. |
 
+
+
+## Public identity and marketplace language controls
+
+| Location | Existing wording / behaviour | Proposed wording / action | Audit reference | Review status / required evidence |
+|---|---|---|---|---|
+| `src/lib/marketplace-data.js`, `src/lib/public-profile.js` | Personal-name fields were selected and included in public-facing profile projections. | Public roster and profile projections use ATB IDs and professional capability fields; personal names are not selected into browser-facing payloads. ATB ID and headline are the public identity requirements. | §14 I, p. 16; privacy and public-visibility requirements in §8, pp. 7–8 | Implemented in staging. Confirm rendered HTML, page metadata, client payload and profile preview contain no participant names. |
+| `src/components/MarketplaceDirectory.jsx` and `src/app/profile/[id]/ProfileClient.jsx` | Marketplace cards, preview modal and public profile heading displayed participant names. | Display the ATB ID as the public profile identifier; use generic avatar fallback text and generic contact wording. | §14 I, p. 16; public profile visibility requirements | Implemented in staging. Verify card, modal, direct profile route, metadata and mobile rendering. |
+| `src/components/LiveProfilesScroll.jsx` | Public homepage rail exposed “BASIC LISTING” and “BASIC” status labels. | Use “PROFESSIONAL LISTING” / “PUBLIC” without exposing internal assessment-access state. | §14 C–I, pp. 15–16 | Implemented in staging. Verify that VALU Index points remain visible only where authorised. |
+| `src/components/MarketplaceDirectory.jsx` | Public cards and previews exposed “BASIC”, “BASIC PROFESSIONAL LISTING” and “Full VALU Index pending”. | Use “PROFESSIONAL LISTING” and explain only what is publicly available; do not expose internal Basic/Full access labels. | §14 C–I, pp. 15–16 | Implemented in staging. Verify that no score or assessment-derived insight is shown where it is not approved. |
+| `src/components/MarketplaceDirectory.jsx` and `src/components/LiveProfilesScroll.jsx` | “REQUEST SOURCING ACCESS” / “Request sourcing access”. | “SHARE A TALENT BRIEF” / “Share a talent brief”. | §14 A–D, pp. 14–15 | Implemented in staging. This describes the external action rather than internal access arrangements. |
+
