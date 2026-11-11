@@ -54,6 +54,7 @@ describe('Public identity and audience-language contract', () => {
     const consent = read('src/lib/profile-consent-copy.js')
     expect(consent).toContain('public-profile-visibility-v4-2026-11-11')
     expect(consent).toContain('my ATB ID')
+    expect(consent).toContain('profile photo')
     expect(consent).toContain('PRIME cluster insights and development areas')
     expect(consent).not.toContain('my professional name')
   })
