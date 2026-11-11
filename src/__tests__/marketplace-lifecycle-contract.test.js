@@ -648,10 +648,13 @@ describe('VALUI marketplace lifecycle contract', () => {
   test('profile setup and editor forms preserve readable field widths on narrow screens', () => {
     const setup = read('src/app/profile/setup/page.jsx')
     const editor = read('src/app/profile/edit/page.jsx')
+    const dashboard = read('src/app/dashboard/page.jsx')
     expect(setup).toContain("gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))'")
     expect(setup).toContain("gridTemplateColumns:'repeat(auto-fit, minmax(min(100%, 180px), 1fr))'")
     expect(editor).toContain('.profile-edit-container h2 { font-size: 16px !important;')
     expect(editor).toContain('grid-template-columns: minmax(0, 1fr) !important')
+    expect(dashboard).not.toContain("position:'sticky', top:0, zIndex:100")
+    expect(setup).not.toContain("position:'sticky', top:0, zIndex:200")
   })
 
 })
