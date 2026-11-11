@@ -92,7 +92,7 @@ export default function LoginPage() {
         const linkData = await linkRes.json().catch(() => ({}))
         if (!linkRes.ok) {
           // Keep the pending ID so the user can retry after a transient failure.
-          setError(linkData.error || 'Your VALU result could not be linked to this account.')
+          setError(linkData.error || 'Your VALU Index result could not be linked to this account.')
           setLoading(false)
           return
         }
