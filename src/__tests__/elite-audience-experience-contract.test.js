@@ -22,7 +22,7 @@ describe('1% of the 1% audience experience contract', () => {
     expect(connect).toContain('consequential appointments')
     expect(connect).toContain('hiring leaders and institutions')
     expect(connect).toContain('does not replace independent due diligence, credential checks, references or professional judgment')
-    expect(connect).toContain('availability depends on the approved public roster')
+    expect(connect).toContain('Only professionals with approved public profiles are available to explore.')
   })
 
   test('ATB Spotlight speaks to institutional briefs and preserves certification boundaries', () => {
