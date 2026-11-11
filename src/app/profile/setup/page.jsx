@@ -550,7 +550,7 @@ function ProfileSetupForm() {
   return (
     <div style={{ minHeight:'100vh', background:DARK, color:PARCH, fontFamily:'var(--font,Raleway,sans-serif)' }}>
       {/* PRIME stripe */}
-      <div style={{ height:'2px', background:GOLD, position:'sticky', top:0, zIndex:200, opacity:.8 }} />
+      <div style={{ height:'2px', background:GOLD, opacity:.8 }} />
 
       {/* NAV */}
       <header style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 clamp(20px,4vw,40px)', height:'60px', background:MID, borderBottom:`1px solid ${GLINE}` }}>
