@@ -22,8 +22,8 @@ const sections = [
   },
   {
     title: '2. Data we collect',
-    body: `We collect the following categories of personal data:\n\n• Waitlist sign-ups: full name, email address, professional role.\n• Account registration: full name, email address, password (hashed — never stored in plaintext), user type (professional, employer, event organiser, or training buyer), and company name where applicable.\n• VALU taster: your directional responses and related session data. These are handled separately from the formal assessment record and do not determine your official VALU Index.
-• VALU Index formal assessment: your 58 responses, time taken per question, and scoring metadata used to calculate your official VALU Index and PRIME points. We do not collect biometric data.\n• Professional profile: any information you choose to add — headline, bio, photo, location, industry, skills, speaking topics, video links, LinkedIn URL, and availability. This is voluntary.\n• Enquiries: messages sent through the platform between buyers and professionals, including subject and body text.\n• Event registration: name, email address, session selected, consent, and optional role, organisation and WhatsApp details.\n• Technical data: IP address, browser type, and session data collected automatically for security and platform integrity purposes.`,
+    body: `We collect the following categories of personal data:\n\n• Waitlist sign-ups: full name, email address, professional role.\n• Account registration: full name, email address, password (hashed — never stored in plaintext), account type (professional or organization contact), and company name where applicable.\n• VALU taster: your directional responses and related session data. These are handled separately from the formal assessment record and do not determine your official VALU Index.
+• VALU Index formal assessment: your 58 responses, time taken per question, and scoring metadata used to calculate your official VALU Index and PRIME points. We do not collect biometric data.\n• Professional profile: any information you choose to add — headline, bio, photo, location, industry, skills, speaking topics, video links, LinkedIn URL, and availability. This is voluntary.\n• Enquiries: messages sent through the platform between organizations and professionals, including subject and message text.\n• Event registration: name, email address, session selected, consent, and optional role, organisation and WhatsApp details.\n• Technical data: IP address, browser type, and session data collected automatically for security and platform integrity purposes.`,
   },
   {
     title: '3. Why we collect it',
@@ -87,8 +87,28 @@ export default function PrivacyPolicyPage() {
           </p>
         </section>
 
+        {/* Plain-language privacy summary for professionals and organizations. */}
+        <section aria-labelledby="privacy-quick-answers" style={{ maxWidth: '860px', margin: '0 auto', padding: '40px clamp(24px,5vw,80px) 12px' }}>
+          <h2 id="privacy-quick-answers" style={{ fontSize: '22px', fontWeight: 600, color: PARCHMENT, marginBottom: '22px' }}>Your privacy, in plain language.</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '14px' }}>
+            <article style={{ padding: '20px', border: '1px solid rgba(201,168,76,.22)', borderRadius: '14px', background: 'rgba(201,168,76,.045)' }}>
+              <h3 style={{ fontSize: '15px', fontWeight: 700, color: PARCHMENT, margin: '0 0 10px' }}>Does Valoria sell my personal information?</h3>
+              <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.75, margin: 0 }}>No. Valoria does not sell personal data.</p>
+            </article>
+            <article style={{ padding: '20px', border: '1px solid rgba(201,168,76,.22)', borderRadius: '14px', background: 'rgba(201,168,76,.045)' }}>
+              <h3 style={{ fontSize: '15px', fontWeight: 700, color: PARCHMENT, margin: '0 0 10px' }}>Who can see my professional profile?</h3>
+              <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.75, margin: 0 }}>Your profile is public only if you choose public visibility and meet the applicable listing requirements. Completing an assessment does not, by itself, make your profile public.</p>
+            </article>
+            <article style={{ padding: '20px', border: '1px solid rgba(201,168,76,.22)', borderRadius: '14px', background: 'rgba(201,168,76,.045)' }}>
+              <h3 style={{ fontSize: '15px', fontWeight: 700, color: PARCHMENT, margin: '0 0 10px' }}>What is not shown on my public profile?</h3>
+              <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.75, margin: 0 }}>Your email address, phone number, CV file and individual assessment answers are not displayed as public profile fields.</p>
+            </article>
+          </div>
+          <p style={{ fontSize: '12px', color: DIM, lineHeight: 1.7, marginTop: '18px' }}>Valoria facilitates introductions through a request and review process. Personal details shared for an introduction must follow the applicable request and consent process. <a href="#privacy-details" style={{ color: GOLD, textDecoration: 'underline', textUnderlineOffset: '3px' }}>Read the full privacy details below.</a></p>
+        </section>
+
         {/* Sections */}
-        <div style={{ maxWidth: '860px', margin: '0 auto', padding: '48px clamp(24px,5vw,80px) 100px' }}>
+        <div id="privacy-details" style={{ maxWidth: '860px', margin: '0 auto', padding: '48px clamp(24px,5vw,80px) 100px' }}>
           {sections.map((s, i) => (
             <div key={i} style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: i < sections.length - 1 ? '1px solid rgba(201,168,76,.06)' : 'none' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: PARCHMENT, marginBottom: '16px' }}>{s.title}</h2>
