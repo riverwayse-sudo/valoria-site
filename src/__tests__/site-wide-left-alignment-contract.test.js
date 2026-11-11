@@ -59,7 +59,7 @@ describe('main website left-alignment contract', () => {
     const page = read('src/app/page.jsx')
     const profiles = read('src/components/LiveProfilesScroll.jsx')
     expect(page).toContain('See your capability across five PRIME dimensions — and where to focus next.')
-    expect(profiles).toContain('Explore public profiles by capability.')
+    expect(profiles).toContain('Explore public professional profiles by capability.')
     expect(profiles).not.toContain('Basic listings show public profile details')
   })
 
