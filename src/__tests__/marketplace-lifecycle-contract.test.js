@@ -551,6 +551,16 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
 
+  test('marketplace cards and profile modal retain readable metadata sizing', () => {
+    const styles = read('src/components/MarketplaceDirectory.module.css')
+    expect(styles).toContain('Readability baseline: essential marketplace card and profile-modal information.')
+    expect(styles).toContain('.capabilities span')
+    expect(styles).toContain('.modalCapabilitySelected strong')
+    expect(styles).toContain('font-size: 11px !important')
+    expect(styles).toContain('font-size: 12px !important')
+    expect(styles).toContain('@media (max-width: 640px)')
+  })
+
   test('internal capability helpers are not executable by public client roles', () => {
     const migration = read('supabase/migrations/20261110170000_restrict_internal_capability_function_execution.sql')
     expect(migration).toContain('revoke execute on function private.is_basic_public_profile_ready(uuid)')
