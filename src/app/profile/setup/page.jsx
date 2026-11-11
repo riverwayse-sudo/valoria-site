@@ -183,7 +183,7 @@ function ProfileSetupForm() {
     Profile: 'Establish your professional identity. These details help people recognise your experience and understand the context behind your VALU Index.',
     Expertise: 'Describe the work you do in each selected pathway. This information helps Valoria organise your capability profile and assess relevant evidence.',
     Media: 'Add supporting material that helps reviewers and prospective partners understand your professional background. Your CV remains private unless a permitted workflow uses it.',
-    Terms: 'Set practical preferences for matching and introductions. These preferences do not change your VALU points or determine eligibility by themselves.',
+    Terms: 'Set practical preferences for matching and introductions. These preferences do not change your VALU Index points or determine eligibility by themselves.',
     Review: 'Review your details and confirm that the information is accurate before submitting your profile.'
   }
   const currentSectionIndex = sectionNames.indexOf(currentSection)
@@ -391,7 +391,7 @@ function ProfileSetupForm() {
       modality: f.modality,
       notice_period: f.notice_period || null,
       salary_expectation: f.salary_expectation || null, fee_range: f.fee_range || null,
-      // Marketplace eligibility, listing status, VALU scores and assessment timestamps are platform-managed.
+      // Marketplace eligibility, listing status, VALU Index scores and assessment timestamps are platform-managed.
       // They are written by the assessment/governance pipeline, never by profile-owner upserts.
       updated_at: new Date().toISOString(),
     }, { onConflict: 'id' })
