@@ -124,7 +124,7 @@ export default function ProgressiveOnboardingPage() {
         <div style={styles.eyebrow}>YOU'RE IN</div>
         <h1 style={styles.title}>Start with the essentials.<br/><em>Build the rest when you're ready.</em></h1>
         <p style={styles.lead}>
-          Your account and VALU journey are already captured. Save these essentials first, then continue into your full professional profile. You can leave at any point and return without losing the record.
+          Your account and VALU Index journey are already captured. Save these essentials first, then continue into your full professional profile. You can leave at any point and return without losing the record.
         </p>
 
         {valu?.total_score != null && (
