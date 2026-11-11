@@ -84,51 +84,15 @@ export default function HomePage() {
       <Nav />
       <main id="main-content" className="home-redesign-root vi-home-editorial">
         <HeroSlider />
-        <section className="home-market-scope" aria-label="Initial market focus">
-          <div className="container">
-            <span>BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE</span>
-            <p>Valoria Institute is designed for accomplished professionals and institutions making consequential decisions. Its framework, assessment, development pathways and talent discovery services are presented with clear evidence, operating boundaries and respect for professional discretion. Services, listings and institutional relationships are described according to current operating status; no universal accreditation or recognition is implied.</p>
-          </div>
-        </section>
-
-        <section className="home-institutional-case" aria-labelledby="institutional-case-title">
-          <div className="container">
-            <Reveal className="home-section-heading">
-              <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE INFRASTRUCTURE GAP</span></div>
-                <h2 id="institutional-case-title">At consequential levels, reputation is not enough. Capability deserves to be <em>understood with precision.</em></h2>
-              </div>
-              <p>For senior professionals and the organizations that depend on their judgment, a résumé or referral is only part of the picture. Better decisions require a clearer account of capability, experience and context.</p>
-            </Reveal>
-            <Reveal className="home-institutional-proof" as="div">
-              <div className="home-institutional-proof-item">
-                <span>THE CHALLENGE</span>
-                <strong>Signals are often incomplete.</strong>
-                <p>Resumes, biographies and networks reveal fragments; they rarely provide a shared framework for understanding capability.</p>
-              </div>
-              <div className="home-institutional-proof-item">
-                <span>THE OPPORTUNITY</span>
-                <strong>Judgment requires better evidence.</strong>
-                <p>A consistent framework can inform assessment and development without pretending to replace professional judgment.</p>
-              </div>
-              <div className="home-institutional-proof-item">
-                <span>THE VALORIA RESPONSE</span>
-                <strong>One considered institutional system.</strong>
-                <p>PRIME, VALU, development and professional discovery connected by a clear institutional purpose.</p>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
         <section className="home-framework" aria-labelledby="home-framework-title">
           <div className="home-framework-atmosphere" data-parallax-speed="0.035" aria-hidden="true" />
           <div className="container">
             <Reveal className="home-section-heading">
               <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">HOW THE INSTITUTION WORKS</span></div>
-                <h2 id="home-framework-title">A coherent framework for <em>consequential capability.</em></h2>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">A CLEARER STANDARD FOR CAPABILITY</span></div>
+                <h2 id="home-framework-title">Reputation is a signal. Capability deserves <em>to be understood with precision.</em></h2>
               </div>
-              <p>For professionals whose decisions and contributions carry weight, and for institutions accountable for selecting and developing talent, each part of Valoria has a distinct role.</p>
+              <p>For accomplished professionals and the institutions that rely on their judgment, Valoria connects a shared capability framework, structured assessment, development and professional discovery.</p>
             </Reveal>
             <Reveal className="home-framework-grid home-institutional-grid" as="div">
               {institutionalCapabilities.map((item) => (
@@ -191,30 +155,17 @@ export default function HomePage() {
 
         <LiveProfilesScroll />
 
-        <section className="home-partnership-band" aria-labelledby="partnership-band-title">
+        <section className="home-partnership-band home-consolidated-engagement" aria-labelledby="partnership-band-title">
           <div className="container">
             <Reveal className="home-partnership-content">
               <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR ORGANIZATIONS & INSTITUTIONS</span></div>
-                <h2 id="partnership-band-title">The next step is a better <em>capability conversation.</em></h2>
-                <p>Tell us what your organization is trying to solve. We can explore talent access, professional development, event expertise or a wider institutional partnership.</p>
-              </div>
-              <a href="/contact-us" className="btn-gold">START A CONVERSATION <span aria-hidden="true">→</span></a>
-            </Reveal>
-          </div>
-        </section>
-
-        <section className="home-professional-entry valu-section valu-conversion" aria-labelledby="professional-entry-title">
-          <div className="container">
-            <Reveal className="home-professional-entry-content">
-              <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR PROFESSIONALS</span></div>
-                <h2 id="professional-entry-title">Make your capability <em>clearer.</em></h2>
-                <p>Take the taster, complete the separate full assessment, build your professional profile and become discoverable for relevant opportunities. Start with a clearer view of your capability before your next move.</p>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">YOUR NEXT STEP</span></div>
+                <h2 id="partnership-band-title">Make your next capability decision with <em>greater clarity.</em></h2>
+                <p>Professionals can begin with the VALU taster. Employers and institutions can start a conversation about talent access, professional development, event expertise or a wider partnership.</p>
               </div>
               <div className="home-professional-entry-actions">
                 <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">START THE VALU TASTER <span aria-hidden="true">→</span></AssessmentStartLink>
-                <a href="/valu" className="home-professional-secondary">UNDERSTAND THE VALU INDEX <span aria-hidden="true">→</span></a>
+                <a href="/contact-us" className="home-professional-secondary">TALK TO VALORIA <span aria-hidden="true">→</span></a>
               </div>
             </Reveal>
           </div>
