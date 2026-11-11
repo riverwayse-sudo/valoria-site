@@ -17,7 +17,7 @@
   --vi-motion-slow:360ms;
   --vi-motion-ease:cubic-bezier(.22,1,.36,1);
 }
-html{scroll-padding-top:88px}
+html{scroll-padding-top:16px}
 img,svg,video{max-width:100%}
 button,a,input,textarea,select{font-family:var(--font)}
 :where(a,button,input,textarea,select):focus-visible{
