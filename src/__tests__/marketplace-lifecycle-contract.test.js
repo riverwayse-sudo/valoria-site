@@ -551,6 +551,14 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
 
+  test('profile visibility consent remains readable and explicit', () => {
+    const edit = read('src/app/profile/edit/page.jsx')
+    expect(edit).toContain('fontSize:\'13px\', lineHeight:1.6')
+    expect(edit).toContain('fontSize:\'13px\', lineHeight:1.55')
+    expect(edit).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
+    expect(edit).toContain('REGISTERED_PROFILE_CONSENT_TEXT')
+  })
+
   test('marketplace cards and profile modal retain readable metadata sizing', () => {
     const styles = read('src/components/MarketplaceDirectory.module.css')
     expect(styles).toContain('Readability baseline: essential marketplace card and profile-modal information.')
