@@ -389,7 +389,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                 checked isOwnProfile, so a professional viewing their own
                 public listing saw MORE TALENT / REQUEST INTRO (a mailto
                 addressed to their own ATB ID) instead of an edit action.
-                The isOwnProfile branch below is the fix; the buyer-facing
+                The isOwnProfile branch below is the fix; the public-facing
                 branch is unchanged. */}
             <div style={{ display:'flex', gap:'10px', paddingBottom:'16px', flexShrink:0, flexWrap:'wrap' }}>
               <button onClick={copyLink}
@@ -700,7 +700,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                   currentUser={currentUser}
                 />
               ) : (
-                <span style={{fontSize:'10px',letterSpacing:'.1em',color:DIM}}>NO ACTIVE BUYER PATHWAY</span>
+                <span style={{fontSize:'10px',letterSpacing:'.1em',color:DIM}}>INTRODUCTIONS NOT AVAILABLE</span>
               )}
             </div>
           </div>
