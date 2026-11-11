@@ -88,6 +88,15 @@ Understand institutional purpose → review methodology and standards → distin
 
 Navigation should prioritize clear audience intent. Keep About, framework, assessment, development, Registry and organization pathways discoverable, but do not add dead links or present unavailable services as operational.
 
+### Route-specific experience requirements
+
+- **Valoria Develop:** address accomplished professionals, leadership teams and institutions. Begin with the capability or organizational challenge, then explain PRIME-mapped development. Do not present a generic training catalogue. Clearly identify pathways that are still in development; participation must not be described as a completed professional certification.
+- **ATB Connect:** address hiring leaders and institutions making consequential talent decisions. Present profile, experience and assessment information as structured context. VALU is not a hiring recommendation, credential check or substitute for references, due diligence and independent professional judgment. Buyer access and available roster scope must be stated accurately.
+- **ATB Spotlight:** address event and institutional leaders commissioning speakers or facilitators for executive briefings, leadership forums and other consequential gatherings. Suitability and availability are confirmed against each brief. Do not describe a professional as certified while the relevant certification pathway remains in development.
+- **Marketplace / Registry:** show only approved public profile information consistent with visibility choices and listing requirements. Make capability selection distinct from listing eligibility. Keep Talent, Speaker and Facilitator capability lanes visible, while avoiding any implication that a selected capability is automatically approved for listing. Show VALU context only where the completed assessment and public projection permit; never expose private assessment answers or contact details in public previews. State that VALU is not independent credential verification.
+
+These pages should feel composed for senior, discerning audiences through precision, relevance and restraint. Do not use artificial scarcity, unsubstantiated exclusivity or luxury-marketing language to manufacture status.
+
 ## 6. Visual and interaction system
 
 Use the approved Valoria tokens:
@@ -159,8 +168,8 @@ A redesign change is not complete because the source looks correct. Each release
 3. PRIME and VALU methodology pages.
 4. Taster, authentication and full-assessment handoff.
 5. Dashboard and professional profile.
-6. Registry discovery, cards and eligibility communication.
-7. Learning/development and employer/institution journeys.
+6. Registry discovery, cards and eligibility communication (Marketplace directory, Talent, Speaker and Facilitator pathways).
+7. Learning/development and employer/institution journeys (Valoria Develop, ATB Connect and ATB Spotlight).
 8. Legal, privacy, consent and governance content.
 9. Full accessibility, performance, security and regression verification.
 
