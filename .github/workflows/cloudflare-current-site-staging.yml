@@ -119,7 +119,7 @@ jobs:
             exit 1
           fi
 
-          status="$(curl -sS -o /tmp/assessment-api-noauth -w '%{http_code}' "$base/valu/assessment/api/taster-progress")"
+          status="$(curl -sS -o /tmp/assessment-api-noauth -w '%{http_code}' -X POST "$base/valu/assessment/api/taster-progress" -H 'Content-Type: application/json' -d '{"action":"load","resume_token":"invalid"}')"
           [[ "$status" == "401" ]] || { echo "Staging assessment proxy returned HTTP $status without authentication"; cat /tmp/assessment-api-noauth || true; exit 1; }
 
           status="$(curl -sS -o /tmp/valu-handoff-noauth -w '%{http_code}' "$base/api/valu-handoff")"
