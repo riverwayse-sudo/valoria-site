@@ -520,7 +520,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
               ) : (
                 <>
                   <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
-                    This is a Basic snapshot listing. The separate full VALU assessment establishes official points and the assessment-based capability summary.
+                    An official VALU capability summary is available after the full assessment.
                   </p>
                   <a href="/valu"
                     style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
