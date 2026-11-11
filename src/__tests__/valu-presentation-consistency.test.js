@@ -16,6 +16,24 @@ describe('VALU presentation consistency', () => {
     const waitlist = read('src/components/WaitlistModal.jsx')
     expect(waitlist).not.toMatch(/\\b9\\s*QUESTIONS\\b|\\b58\\s*QUESTIONS\\b/i)
   })
+  test('participant-facing surfaces use VALU Index as the product name', () => {
+    const surfaces = [
+      read('src/app/valu/page.jsx'),
+      read('src/app/valu/start/page.jsx'),
+      read('src/app/dashboard/page.jsx'),
+      read('src/app/profile/setup/page.jsx'),
+      read('src/components/MarketplaceDirectory.jsx'),
+      read('src/app/professional-signup/page.jsx'),
+      read('src/app/privacypolicy/page.jsx'),
+    ];
+    for (const surface of surfaces) {
+      expect(surface).not.toMatch(/VALU\\s+assessment/i);
+      expect(surface).not.toMatch(/VALU\\s+taster(?!\\s+index)/i);
+    }
+    expect(read('src/app/valu/page.jsx')).toContain('VALU Index Taster');
+    expect(read('src/app/valu/start/page.jsx')).toContain('full VALU Index');
+  })
+
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
     const hero = read('src/components/HeroSlider.jsx')
     expect(hero).toContain('POINTS-BASED CAPABILITY PROFILE')
