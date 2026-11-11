@@ -45,7 +45,7 @@ export default async function ProfilePage({ params, searchParams }) {
     url: profileUrl,
     mainEntity: {
       '@type': 'Person',
-      name: publicProfile.display_name,
+      identifier: publicProfile.atb_id,
       url: profileUrl,
       jobTitle: publicProfile.headline || publicProfile.current_job_title || undefined,
       description: publicProfile.assessment_summary || publicProfile.bio || publicProfile.headline || undefined,
