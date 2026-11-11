@@ -610,7 +610,7 @@ export default function DashboardPage() {
                       <p style={{ fontSize:'11px', fontWeight:300, color:DIM, lineHeight:1.65, margin:0 }}>
                         {assessmentAccess?.can_continue
                           ? 'Your taster is saved. Continue your Valoria journey from your dashboard.'
-                          : 'Your official VALU Index and PRIME insights will appear here when your assessment is complete.'}
+                          : 'Your official VALU Index and PRIME insights will appear here when you complete the full Index.'}
                       </p>
                     </div>
                   </>
