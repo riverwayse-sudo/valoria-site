@@ -6,10 +6,10 @@ Valoria Institute is an African-founded professional capability institution with
 
 - [Valoria Institute](https://valoriainstitute.com/): Overview of the institution and its professional capability marketplace.
 - [VALU Index](https://valoriainstitute.com/valu): Official overview of the points-based professional capability assessment.
-- [PRIME Framework](https://valoriainstitute.com/prime): The canonical five-cluster, 17-skill capability architecture.
+- [PRIME Framework](https://valoriainstitute.com/prime): The five proprietary capability clusters.
 - [Knowledge Hub](https://valoriainstitute.com/knowledge): Authoritative explanations of Valoria's framework and methodology.
 - [VALU Index explanation](https://valoriainstitute.com/knowledge/valu-index): Meaning, points scale and earned designations.
-- [PRIME Framework explanation](https://valoriainstitute.com/knowledge/prime-framework): Canonical dimensions and skills.
+- [PRIME Framework explanation](https://valoriainstitute.com/knowledge/prime-framework): The five proprietary capability clusters and their public purpose.
 - [Professional capability](https://valoriainstitute.com/knowledge/professional-capability): Capability beyond job title and CV.
 - [Marketplace](https://valoriainstitute.com/marketplace): Public professional discovery, subject to inventory and eligibility.
 - [Talent marketplace](https://valoriainstitute.com/marketplace/talent): Talent discovery for employers.
@@ -23,20 +23,20 @@ Valoria Institute is an African-founded professional capability institution with
 
 ## PRIME Framework
 
-PRIME contains five clusters and 17 skills:
+PRIME is Valoria Institute's proprietary five-cluster capability framework. Its five dimensions provide a shared language for understanding professional capability:
 
-- Presence — Communication; Negotiation; Personal Brand & Executive Presence.
-- Relationships — Emotional Intelligence; Conflict Resolution; People Development; Stakeholder Management.
-- Intelligence — Critical Thinking; Strategic Thinking; Business Acumen; AI Fluency.
-- Mastery — Execution & Accountability; Resilience & Self-Leadership; Adaptability.
-- Enterprise — Commercial Creativity; Influence Without Authority; Human-AI Collaboration.
+- Presence — How you show up.
+- Relationships — How you connect.
+- Intelligence — How you think.
+- Mastery — How you deliver.
+- Enterprise — How you create.
 
-AI Fluency and Human-AI Collaboration are designated Future-Ready skills.
+The detailed skill architecture, assessment criteria and scoring methodology are proprietary to Valoria Institute and are not disclosed in public content.
 
 ## VALU Index
 
 - VALU results are expressed in points, not percentages.
-- The official VALU Index is expressed on a 0–100 point scale.
+- The official VALU Index is expressed in points, not percentages.
 - Official results are valid for 12 months.
 - Earned designations are based on full-assessment points and cannot be purchased.
 - An assessment result is a structured signal; it is not a guarantee of employment, performance or professional success.
