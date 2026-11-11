@@ -279,9 +279,11 @@ describe('VALUI marketplace lifecycle contract', () => {
       expect(source).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
       expect(source).not.toMatch(/9-question|58-question|15-question/i)
     }
-    expect(start).toContain('Register your contact and professional details before the taster')
+    expect(start).toContain('You do not need to create a Valoria account before starting.')
+    expect(start).toContain('Add the basic details needed to save your taster progress.')
+    expect(start).not.toContain('This is not your Valoria account')
     expect(start).toContain('Your official result in points')
-    expect(signup).toContain('VALU Index Taster')
+    expect(signup).toContain('VALU taster')
   })
   test('profile capability selection is reconciled through an authenticated server endpoint', () => {
     const setup = read('src/app/profile/setup/page.jsx')
@@ -438,7 +440,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(dashboard).toContain("talent_cv: ['/profile/edit', 'Upload CV']")
     expect(dashboard).toContain("speaker_evidence_approval: ['/profile/evidence', 'Submit speaker evidence']")
     expect(dashboard).toContain("facilitator_evidence_approval: ['/profile/evidence', 'Submit facilitator evidence']")
-    expect(dashboard).toContain("valu_assessment_score_35_current: ['/dashboard', 'Complete VALU Index']")
+    expect(dashboard).toContain("valu_assessment_score_35_current: ['/dashboard', 'Complete VALU assessment']")
     expect(dashboard).toContain('AssessmentStartLink href="/dashboard" dashboardOnly')
     expect(dashboard).toContain('href ? <Link href={href}')
   })
@@ -487,7 +489,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(route).toContain('Array.isArray(roster.capabilities)&&roster.capabilities.length>0')
     expect(route).toContain('rawHeadline.length>=2')
     expect(route).toContain('counts.roster_projection_professionals')
-    expect(page).toContain('Basic listings require a completed linked taster or a current full VALU Index')
+    expect(page).toContain('Basic listings require a completed linked taster or a current Full assessment')
     expect(page).toContain('BASIC LISTING PATH')
     expect(page).toContain("r.public_roster?'PUBLIC':'NOT PUBLIC'")
     expect(page).toContain("r.public_roster?<Link href={'/profile/'+r.user_id}")
@@ -505,7 +507,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(publicProfile).toContain('hasCurrentFullAssessment')
     expect(homepage).toContain('profiles.slice(0, 13)')
     expect(directory).toContain('BASIC PROFESSIONAL LISTING')
-    expect(directory).not.toContain('completed the VALU Index Taster and has Basic marketplace access')
+    expect(directory).not.toContain('completed the VALU taster and has Basic marketplace access')
   })
 
   test('marketplace profile preview uses the facilitated enquiry workflow', () => {
@@ -548,6 +550,47 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(profileClient).not.toContain('Verified {displayTrack')
   })
 
+
+  test('public metadata targets the United States and international professional market', () => {
+    const layout = read('src/app/layout.jsx')
+    const about = read('src/app/about-us/page.jsx')
+    const programmes = read('src/app/programmes/page.jsx')
+    const facilitators = read('src/app/facilitators/page.jsx')
+    expect(layout).toContain("locale:'en_US'")
+    expect(layout).toContain("name:'United States'")
+    expect(layout).toContain("name:'Nigeria'")
+    expect(layout).toContain("'professional capability institute'")
+    expect(layout).not.toContain("'African talent marketplace'")
+    expect(layout).not.toContain("'Nigeria talent search'")
+    expect(about).toContain('African roots and an international outlook')
+    expect(programmes).not.toContain('professional development Nigeria')
+    expect(facilitators).not.toContain('facilitator commissioning Nigeria')
+  })
+
+  test('profile visibility consent remains readable and explicit', () => {
+    const edit = read('src/app/profile/edit/page.jsx')
+    expect(edit).toContain('fontSize:\'13px\', lineHeight:1.6')
+    expect(edit).toContain('fontSize:\'13px\', lineHeight:1.55')
+    expect(edit).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
+    expect(edit).toContain('REGISTERED_PROFILE_CONSENT_TEXT')
+  })
+
+  test('marketplace cards and profile modal retain readable metadata sizing', () => {
+    const styles = read('src/components/MarketplaceDirectory.module.css')
+    expect(styles).toContain('Readability baseline: essential marketplace card and profile-modal information.')
+    expect(styles).toContain('.capabilities span')
+    expect(styles).toContain('.modalCapabilitySelected strong')
+    expect(styles).toContain('font-size: 11px !important')
+    expect(styles).toContain('font-size: 12px !important')
+    expect(styles).toContain('@media (max-width: 640px)')
+  })
+
+  test('server-side consent and evidence reads have narrow service-role grants', () => {
+    const migration = read('supabase/migrations/20261111083958_grant_service_role_profile_consent_and_evidence_read.sql')
+    expect(migration).toContain('GRANT SELECT, INSERT ON TABLE public.professional_profile_acknowledgements TO service_role')
+    expect(migration).toContain('GRANT SELECT ON TABLE public.professional_document_reviews TO service_role')
+    expect(migration).not.toMatch(/TO anon|TO authenticated/i)
+  })
 
   test('internal capability helpers are not executable by public client roles', () => {
     const migration = read('supabase/migrations/20261110170000_restrict_internal_capability_function_execution.sql')
