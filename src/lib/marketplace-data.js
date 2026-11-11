@@ -1,7 +1,7 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 
-const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
+const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
 const PUBLIC_PROFILE_ACK_VERSION = 'public-profile-visibility-v3-2026-11-07'
 
@@ -59,11 +59,10 @@ function dedupeProfessionals(rows) {
   for (const row of rows || []) {
     if (!row.professional_id) continue
     if (!map.has(row.professional_id)) {
+      const { full_name: _fullName, display_initials: _displayInitials, ...publicRow } = row
       map.set(row.professional_id, {
-        ...row,
+        ...publicRow,
         assessmentAccess: row.assessment_access,
-        full_name: normalizePublicDisplayText(row.full_name),
-        display_initials: normalizePublicDisplayText(row.display_initials),
         headline: normalizePublicDisplayText(row.headline),
         current_job_title: normalizePublicDisplayText(row.current_job_title),
         id: row.professional_id,
@@ -222,7 +221,7 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
     if (row.assessment_access === 'full') return Number(row.valu_index) >= 35 && Number(row.valu_index) === Number(profile.valu_index) && fullReadyIds.has(profile.id)
     return row.assessmentAccess === 'basic'
       && (linkedTasterIds.has(profile.id) || currentBasicAssessmentIds.has(profile.id))
-      && Boolean(profile.display_name?.trim() || row.full_name?.trim())
+      && Boolean(profile.display_name?.trim())
       && Boolean(profile.headline?.trim() || profile.current_job_title?.trim() || row.headline?.trim() || row.current_job_title?.trim())
   }).map(row => row.professional_id))
 }
@@ -235,7 +234,7 @@ export async function getMarketplaceRows(track = 'all') {
     .select(FIELDS)
     .in('assessment_access', ['full', 'basic'])
     .order('valu_index', { ascending: false, nullsFirst: false })
-    .order('full_name', { ascending: true })
+    .order('atb_id', { ascending: true })
 
   if (error) {
     console.error('Marketplace query failed:', error)
