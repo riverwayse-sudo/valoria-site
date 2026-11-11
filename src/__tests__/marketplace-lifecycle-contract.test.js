@@ -440,7 +440,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(dashboard).toContain("talent_cv: ['/profile/edit', 'Upload CV']")
     expect(dashboard).toContain("speaker_evidence_approval: ['/profile/evidence', 'Submit speaker evidence']")
     expect(dashboard).toContain("facilitator_evidence_approval: ['/profile/evidence', 'Submit facilitator evidence']")
-    expect(dashboard).toContain("valu_assessment_score_35_current: ['/dashboard', 'Complete VALU assessment']")
+    expect(dashboard).toContain("valu_assessment_score_35_current: ['/dashboard', 'Complete your full assessment']")
     expect(dashboard).toContain('AssessmentStartLink href="/dashboard" dashboardOnly')
     expect(dashboard).toContain('href ? <Link href={href}')
   })
