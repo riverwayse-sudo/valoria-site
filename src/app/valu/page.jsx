@@ -39,8 +39,8 @@ export default function ValuPage() {
           <div className="valu-kicker"><span /> HOW IT WORKS</div>
           <h2>Start with insight.<br /><em>Continue with evidence.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Begin with the taster</h3><p>Start with nine questions across four Intelligence skills. No Valoria account is required for the taster; it gives you an initial signal and a clear next step.</p></article>
-            <article><b>02</b><h3>Continue with the full assessment</h3><p>Create or confirm your Valoria account, then complete the separate 58-question full assessment: 54 scored questions and four validity checks. Allow 15 to 20 minutes. Your progress is saved so you can return and continue.</p></article>
+            <article><b>01</b><h3>Begin with the taster</h3><p>Begin with a short set of prompts across four Intelligence skills. No Valoria account is required for the taster; it gives you an initial signal and a clear next step.</p></article>
+            <article><b>02</b><h3>Continue with the full assessment</h3><p>Create or confirm your Valoria account, then complete the separate full assessment. Allow 15 to 20 minutes. Your progress is saved so you can return and continue.</p></article>
             <article><b>03</b><h3>Receive your VALU Index</h3><p>Once the full assessment is complete, receive your official points-based VALU Index across all five PRIME clusters, your results and earned designation. Results remain valid for 12 months.</p></article>
           </div>
         </div>
