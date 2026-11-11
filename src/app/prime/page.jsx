@@ -91,7 +91,7 @@ export default function PrimePage() {
             <h2 className="section-title">Take the taster.<br /><em>See your first signal.</em></h2>
             <div className="page-hero-actions eyebrow-center">
               <AssessmentStartLink href="/valu/assessment/" className="btn-gold">TAKE THE VALU INDEX TASTER</AssessmentStartLink>
-              <a href="/valu" className="btn-outline">HOW VALU WORKS</a>
+              <a href="/valu" className="btn-outline">HOW THE VALU INDEX WORKS</a>
             </div>
           </Reveal>
         </section>
