@@ -1,0 +1,125 @@
+name: Validate and deploy current-site audit to isolated Cloudflare staging
+
+on:
+  push:
+    branches:
+      - deploy/staging-current-site-audit-final-20261111
+    paths:
+      - "src/**"
+      - "supabase/migrations/**"
+      - "scripts/**"
+      - ".github/workflows/cloudflare-current-site-staging.yml"
+      - "package.json"
+      - "package-lock.json"
+      - "wrangler.jsonc"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: valoria-current-site-staging
+  cancel-in-progress: true
+
+jobs:
+  deploy-staging:
+    name: Test, build, deploy and smoke-test isolated staging Worker
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Install locked application dependencies
+        run: npm ci
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+      - name: Run unit and contract tests
+        run: npm test -- --runInBand
+      - name: Run opportunity validation tests
+        run: npm run test:opportunity-validation
+      - name: Provide staging-only build configuration
+        run: |
+          cat > .env <<'EOF'
+          NEXT_PUBLIC_SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
+          SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_C3j_CjLgTLDGRu8rH1SXEg_tYpxoYUm
+          SUPABASE_SERVICE_ROLE_KEY=placeholder-service-role-key
+          ANTHROPIC_API_KEY=placeholder-anthropic-key
+          VALU_UPSTREAM_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
+          VALU_PREVIEW_ASSESSMENT_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
+          NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
+          CF_WORKERS_PREVIEW=1
+          VALU_PREVIEW=1
+          NEXT_PUBLIC_VALU_PREVIEW=1
+          VALU_STAGING_API_ENABLED=0
+          NEXT_PUBLIC_VALU_STAGING_API_ENABLED=0
+          EOF
+      - name: Install pinned Cloudflare build tools
+        run: npm install --no-save @opennextjs/cloudflare@1.20.15 wrangler@4.156.1
+      - name: Build OpenNext output
+        run: npx @opennextjs/cloudflare build
+        env:
+          CI: true
+          NEXT_TELEMETRY_DISABLED: 1
+      - name: Deploy only the isolated staging Worker
+        run: npx wrangler deploy --config wrangler.jsonc --env staging
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Smoke-test staging routes and privacy boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://valoria-staging-site.riverwayse.workers.dev"
+          routes=(
+            /
+            /valu
+            /valu/start
+            /valu/assessment
+            /prime
+            /about-us
+            /atb-connect
+            /atb-spotlight
+            /develop
+            /careers
+            /contact-us
+            /login
+            /professional-signup
+            /dashboard
+            /marketplace
+            /marketplace/talent
+            /marketplace/speakers
+            /marketplace/facilitators
+            /events
+            /privacypolicy
+            /terms-of-use
+            /robots.txt
+            /sitemap.xml
+          )
+          for route in "${routes[@]}"; do
+            status="$(curl -sSL --retry 4 --retry-all-errors --max-time 25 -o /tmp/valoria-route-response -w '%{http_code}' "$base$route" || true)"
+            if [[ "$status" != "200" ]]; then
+              echo "Route $route returned HTTP $status"
+              cat /tmp/valoria-route-response || true
+              exit 1
+            fi
+          done
+
+          curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
+          grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
+          curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
+          grep -q 'staging.valoriainstitute.com' /tmp/valoria-sitemap.xml
+          curl -fsS "$base/" -o /tmp/valoria-home.html
+          grep -q 'START THE VALU INDEX TASTER' /tmp/valoria-home.html
+          grep -q 'What brings you' /tmp/valoria-home.html
+          if grep -Eiq '(buyer access|sourcing access|BASIC LISTING|FULL LISTING|1 of 58|1 of 9|54 scored questions|four validity checks|nine questions|58 questions)' /tmp/valoria-home.html; then
+            echo "Homepage exposes internal access or assessment mechanics"
+            exit 1
+          fi
+
+          status="$(curl -sS -o /tmp/valu-handoff-noauth -w '%{http_code}' "$base/api/valu-handoff")"
+          [[ "$status" == "401" ]] || { echo "Unauthenticated VALU handoff returned HTTP $status"; cat /tmp/valu-handoff-noauth || true; exit 1; }
+          status="$(curl -sS -o /tmp/valu-link-taster-noauth -w '%{http_code}' -X POST "$base/api/link-taster" -H 'Content-Type: application/json' -d '{}')"
+          [[ "$status" == "401" ]] || { echo "Unauthenticated taster link returned HTTP $status"; cat /tmp/valu-link-taster-noauth || true; exit 1; }
