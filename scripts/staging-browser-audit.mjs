@@ -142,6 +142,83 @@ try {
       await context.close()
     }
   }
+
+  // Fresh-session participant acceptance: no resume token or pending taster
+  // must lead directly to registration without contacting progress APIs.
+  const freshContext = await browser.newContext({
+    viewport: { width: 1280, height: 900 },
+    deviceScaleFactor: 1,
+  })
+  const freshPage = await freshContext.newPage()
+  const freshPageErrors = []
+  const freshConsoleErrors = []
+  const progressRequests = []
+  const forbiddenFreshRequests = []
+  freshPage.on('pageerror', error => freshPageErrors.push(error.message))
+  freshPage.on('console', message => {
+    if (message.type() === 'error') freshConsoleErrors.push(message.text())
+  })
+  freshPage.on('request', request => {
+    const url = request.url()
+    if (url.includes('/api/taster-progress')) progressRequests.push(url)
+    if (
+      url.includes('sbkgpisgkuhbalsxqkdr.supabase.co') ||
+      url.includes('assessment.valoriainstitute.com') ||
+      url.includes('valoria-assessment.riverwayse.workers.dev') ||
+      url.includes('valoria-platform.riverwayse.workers.dev')
+    ) forbiddenFreshRequests.push(url)
+  })
+  await freshPage.addInitScript(() => {
+    try {
+      localStorage.removeItem('pending_taster_id')
+      localStorage.removeItem('valu_taster_resume_token')
+      localStorage.removeItem('valu_taster_signup_key')
+      sessionStorage.clear()
+    } catch {}
+  })
+
+  let freshStatus = null
+  let freshNavigationError = null
+  let registrationVisible = false
+  let marketingConsentChecked = null
+  let privacyCheckboxRequired = null
+  try {
+    const response = await freshPage.goto(ASSESSMENT, { waitUntil: 'domcontentloaded', timeout: 60000 })
+    freshStatus = response?.status() ?? null
+    await freshPage.getByRole('button', { name: /CONTINUE TO MY VALU TASTER/ }).waitFor({ state: 'visible', timeout: 20000 })
+    registrationVisible = await freshPage.getByPlaceholder('Your full professional name').isVisible()
+    marketingConsentChecked = await freshPage.getByRole('checkbox').nth(1).isChecked()
+    privacyCheckboxRequired = await freshPage.getByRole('checkbox').nth(0).evaluate(element => element.required)
+  } catch (error) {
+    freshNavigationError = error.message
+  }
+
+  const freshScreenshot = 'fresh-taster-registration-desktop.png'
+  await freshPage.screenshot({ path: path.join(OUT, freshScreenshot), fullPage: true })
+  report.results.push({
+    route: 'fresh-taster-registration',
+    url: ASSESSMENT,
+    viewport: 'desktop',
+    status: freshStatus,
+    navigationError: freshNavigationError,
+    registrationVisible,
+    marketingConsentChecked,
+    privacyCheckboxRequired,
+    progressRequests,
+    forbiddenRequests: forbiddenFreshRequests,
+    pageErrors: freshPageErrors,
+    consoleErrors: freshConsoleErrors,
+    screenshot: freshScreenshot,
+  })
+  if (freshNavigationError) report.failures.push(`fresh-taster-registration: ${freshNavigationError}`)
+  if (freshStatus === null || freshStatus >= 400) report.failures.push(`fresh-taster-registration: HTTP ${freshStatus}`)
+  if (!registrationVisible) report.failures.push('fresh-taster-registration: a fresh session did not reach registration')
+  if (marketingConsentChecked !== false) report.failures.push('fresh-taster-registration: optional marketing consent is not unchecked by default')
+  if (privacyCheckboxRequired !== true) report.failures.push('fresh-taster-registration: privacy acknowledgement is not required')
+  if (progressRequests.length) report.failures.push('fresh-taster-registration: fresh session unexpectedly called the progress API')
+  if (forbiddenFreshRequests.length) report.failures.push('fresh-taster-registration: production Supabase/assessment request detected')
+  if (freshPageErrors.length) report.failures.push('fresh-taster-registration: browser page errors detected')
+  await freshContext.close()
 } finally {
   await browser.close()
 }
