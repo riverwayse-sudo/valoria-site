@@ -50,7 +50,6 @@ export default function ValuPage() {
         <div className="valu-wrap">
           <div className="valu-prime-head"><div><div className="valu-kicker"><span /> THE PRIME FRAMEWORK</div><h2>Five dimensions.<br /><em>One professional picture.</em></h2></div><p>PRIME provides the framework through which Valoria interprets professional readiness, capability and development.</p></div>
           <div className="valu-dimensions">{dimensions.map((cluster) => <article key={cluster.letter}><div className="valu-letter">{cluster.letter}</div><h3>{cluster.name}</h3><p>{cluster.letter === 'E' ? 'How you create. Enterprise describes how professional capability contributes to value and sustainable outcomes.' : cluster.subtitle}</p></article>)}</div>
-          <p className="valu-future-note">★ Future-Ready skill — critical for the professional talent market of 2025 to 2035.</p>
         </div>
       </section>
 
