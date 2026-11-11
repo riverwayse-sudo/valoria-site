@@ -15,7 +15,7 @@ export default function HeroSlider() {
           <p>For accomplished professionals and the organizations that rely on their judgment, Valoria brings structure to how capability is assessed, developed and discovered.</p>
           <div className="vi-hero-actions">
             <AssessmentStartLink href={BRAND.assessmentUrl} className="vi-hero-primary">Explore your capability <span>↗</span></AssessmentStartLink>
-            <Link href="/prime" className="vi-hero-secondary">Understand the PRIME framework <span>→</span></Link>
+            <Link href="/prime" className="vi-hero-secondary">Explore the framework <span>→</span></Link>
           </div>
           <div className="vi-hero-footnote">WORTH. BUILT. — CAPABILITY, CONSIDERED WITH INTENT.</div>
         </div>
