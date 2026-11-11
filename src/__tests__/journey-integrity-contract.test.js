@@ -470,7 +470,9 @@ describe('journey integrity contract', () => {
   test('public VALU explanation follows registration, taster, account creation and Full assessment', () => {
     const start = read('src/app/valu/start/page.jsx')
     const signup = read('src/app/professional-signup/page.jsx')
-    expect(start).toContain('Register your contact and professional details before the taster')
+    expect(start).toContain('You do not need to create a Valoria account before starting.')
+    expect(start).toContain('Add the basic details needed to save your taster progress.')
+    expect(start).not.toContain('This is not your Valoria account')
     expect(start).toContain('Your official result in points')
     expect(start).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
     expect(start).not.toMatch(/9-question|58-question/i)
