@@ -41,8 +41,9 @@ describe('public profile source-data privacy contract', () => {
 
   test('public profile visitors do not query the private certificate source table', () => {
     const client = read('src/app/profile/[id]/ProfileClient.jsx')
-    const publicBranch = client.slice(client.indexOf('if (initialProfile)'), client.indexOf('// A missing consent-verified public profile'))
-    expect(publicBranch).toContain('if (user?.id === initialProfile.id)')
-    expect(publicBranch).toContain('setCertificates([])')
+    const certificateLoader = client.slice(client.indexOf('async function loadCertificates'), client.indexOf('async function load()'))
+    expect(certificateLoader).toContain('if (viewer?.id !== professionalId)')
+    expect(certificateLoader).toContain('setCertificates([])')
+    expect(client).toContain('await loadCertificates(initialProfile.id, user)')
   })
 })
