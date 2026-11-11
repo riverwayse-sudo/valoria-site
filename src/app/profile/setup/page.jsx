@@ -87,9 +87,9 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   if (isSpeaker) s.push({ key:'audience_sizes', kind:'multi-chip', section:'Expertise', title:'What audience sizes have you spoken to?', sub:'Select all that apply.', options:AUDIENCE_SIZES, required:true, color:'GOLD' })
   if (isSpeaker) s.push({ key:'past_events', kind:'list', section:'Expertise', title:'Any past speaking engagements?', sub:'Up to 3. These build trust with people viewing your profile.', fields:[{ key:'name', placeholder:'Event name' }, { key:'role', placeholder:'Your role' }], max:3, addLabel:'+ Add event', required:true })
   if (isFacilitator) s.push({ key:'programme_types', kind:'multi-chip', section:'Expertise', title:'What program types do you run?', sub:'Select all that apply.', options:PROGRAMME_TYPES, required:true, color:'GOLD' })
-  if (isFacilitator) s.push({ key:'past_clients', kind:'list', section:'Expertise', title:'Any past clients or programmes?', sub:'Up to 3.', fields:[{ key:'name', placeholder:'Organization' }, { key:'programme', placeholder:'Program delivered' }], max:3, addLabel:'+ Add client', required:true })
+  if (isFacilitator) s.push({ key:'past_clients', kind:'list', section:'Expertise', title:'Any past clients or programs?', sub:'Up to 3.', fields:[{ key:'name', placeholder:'Organization' }, { key:'programme', placeholder:'Program delivered' }], max:3, addLabel:'+ Add client', required:true })
   if (isFacilitator) s.push({ key:'pcp_certified', kind:'boolean', section:'Expertise', title:'Do you hold a Valoria PCP certification?', sub:'PRIME-Certified Practitioner.' })
-  if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Up to 3 roles. Helps people understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organisation' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:true })
+  if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Up to 3 roles. Helps people understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organization' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:true })
   if (isCandidate) s.push({ key:'certifications', kind:'text', section:'Expertise', title:'Any certifications or credentials?', sub:'Comma separated.', placeholder:'PMP, Google Analytics, HubSpot Marketing', required:true })
 
   s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'Optional. Valoria uses a professional default avatar until you choose to upload a photo.', required:false })
@@ -184,7 +184,7 @@ function ProfileSetupForm() {
   const currentSection = screen?.section || 'Review'
   const sectionGuidance = {
     Track: 'Choose the professional pathways that describe how you want to participate. This selection shapes the capability sections and the directories your profile may qualify for.',
-    Profile: 'Establish your professional identity. These details help people recognise your experience and understand the context behind your VALU Index.',
+    Profile: 'Establish your professional identity. These details help people recognize your experience and understand the context behind your VALU Index.',
     Expertise: 'Describe the work you do in each selected pathway. This information helps Valoria organise your capability profile and assess relevant evidence.',
     Media: 'Add supporting material that helps reviewers and prospective partners understand your professional background. Your CV remains private unless a permitted workflow uses it.',
     Terms: 'Set practical preferences for matching and introductions. These preferences do not change your VALU points or determine eligibility by themselves.',
