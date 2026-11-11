@@ -28,6 +28,7 @@ export default function HomePage() {
           <div className="vi-section-intro">
             <span className="vi-section-kicker">TWO CLEAR WAYS IN</span>
             <h2 id="vi-audience-title">Where do you want<br /><em>to go next?</em></h2>
+          <p>Choose the path that matches the decision ahead: understand your own capability or access talent for your organisation.</p>
           </div>
           <div className="vi-audience-grid">
             <Reveal className="vi-audience-panel vi-audience-professional valu-conversion">
