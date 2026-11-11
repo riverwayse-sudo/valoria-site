@@ -16,12 +16,12 @@ export default function ATBConnectPage() {
       <main id="main-content" className="decision-page">
         <section className="page-hero">
           <div className="page-hero-inner">
-            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">ATB CONNECT · FOR EMPLOYERS</span></div>
-            <h1 className="page-title">A more considered view<br /><em>of professional capability.</em></h1>
-            <p className="page-sub">For organizations making consequential appointments, ATB Connect brings structured capability profiles, relevant experience, sector and seniority into one considered view. VALU assessment context may inform discovery; it does not replace independent diligence, credential checks, references or professional judgment.</p>
+            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR EMPLOYERS & ORGANISATIONS</span></div>
+            <h1 className="page-title">Find the right professional<br /><em>for the work ahead.</em></h1>
+            <p className="page-sub">Valoria helps employers and organisations find experienced professionals whose skills and experience fit a role or project. Where a professional chooses to share a VALU Index result, it can provide additional context. It does not replace reference checks, credential checks or your own hiring decision.</p>
             <div className="page-hero-actions">
-              <a href="/contact-us?topic=ATB%20Connect" className="btn-gold">REQUEST BUYER ACCESS</a>
-              <a href="/marketplace/talent" className="btn-outline">EXPLORE TALENT</a>
+              <a href="/contact-us?topic=ATB%20Connect" className="btn-gold">DISCUSS YOUR TALENT NEEDS</a>
+              <a href="/marketplace/talent" className="btn-outline">EXPLORE PROFESSIONALS</a>
             </div>
           </div>
         </section>
@@ -30,13 +30,13 @@ export default function ATBConnectPage() {
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR INSTITUTIONAL AND TALENT DECISION-MAKERS</span></div>
               <h2 className="section-title">Consider more than<br /><em>the résumé.</em></h2>
-              <p className="page-copy">ATB Connect is the employer pathway into the Valoria Marketplace. It is designed for hiring leaders and institutions that need to consider capability alongside experience, context and the requirements of a specific role.</p>
+              <p className="page-copy">ATB Connect helps employers and organisations explore professional experience, skills and suitability alongside the needs of a specific role.</p>
             </Reveal>
             <Reveal>
               <div className="facilitator-diff-list">
-                <div className="facilitator-diff"><div className="facilitator-dot" /><div><div className="facilitator-diff-title">Capability context</div><p className="facilitator-diff-copy">Review the professional's assessment-informed summary and VALU points where a completed assessment and public visibility permit. Treat these as structured context—not a hiring decision or a substitute for due diligence.</p></div></div>
+                <div className="facilitator-diff"><div className="facilitator-dot" /><div><div className="facilitator-diff-title">Capability context</div><p className="facilitator-diff-copy">Where a professional has chosen to share a VALU Index result, use it as additional context—not as a hiring decision or a substitute for due diligence.</p></div></div>
                 <div className="facilitator-diff"><div className="facilitator-dot" /><div><div className="facilitator-diff-title">Relevant experience</div><p className="facilitator-diff-copy">Consider the sector, seniority and professional experience supplied in the public profile.</p></div></div>
-                <div className="facilitator-diff"><div className="facilitator-dot" /><div><div className="facilitator-diff-title">A considered next step</div><p className="facilitator-diff-copy">Request buyer access or explore public talent profiles where relevant profiles are available.</p></div></div>
+                <div className="facilitator-diff"><div className="facilitator-dot" /><div><div className="facilitator-diff-title">A considered next step</div><p className="facilitator-diff-copy">Explore available professional profiles or speak with Valoria about your requirements.</p></div></div>
               </div>
             </Reveal>
           </div>
@@ -44,8 +44,8 @@ export default function ATBConnectPage() {
         <section className="page-section alt">
           <Reveal>
             <h2 className="section-title">Make consequential appointments<br /><em>with better context.</em></h2>
-            <p className="page-sub">Share the mandate, level of responsibility, capability requirements and context for the appointment. Buyer access and search support are discussed directly; availability depends on the approved public roster.</p>
-            <div className="page-hero-actions"><a href="/contact-us?topic=ATB%20Connect" className="btn-gold">REQUEST ACCESS</a></div>
+            <p className="page-sub">Tell us about the role, the experience you need and the kind of support you are looking for. We will discuss suitable next steps based on the professionals currently available.</p>
+            <div className="page-hero-actions"><a href="/contact-us?topic=ATB%20Connect" className="btn-gold">TALK TO VALORIA</a></div>
           </Reveal>
         </section>
       </main>
