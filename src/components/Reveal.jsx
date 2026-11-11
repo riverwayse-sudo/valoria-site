@@ -9,7 +9,7 @@ export default function Reveal({ children, className = '', as: Tag = 'div', dela
     const el = ref.current
     if (!el) return
 
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
     if (reduced || typeof IntersectionObserver === 'undefined') {
       el.classList.add('visible')
       return
@@ -18,9 +18,11 @@ export default function Reveal({ children, className = '', as: Tag = 'div', dela
     let observer = null
     const timer = window.setTimeout(() => {
       if (!el.isConnected) return
+      el.classList.add('is-pending')
       observer = new IntersectionObserver(
         ([entry]) => {
           if (!entry.isIntersecting) return
+          el.classList.remove('is-pending')
           el.classList.add('visible')
           observer?.disconnect()
           observer = null
@@ -33,7 +35,6 @@ export default function Reveal({ children, className = '', as: Tag = 'div', dela
     return () => {
       window.clearTimeout(timer)
       observer?.disconnect()
-      observer = null
     }
   }, [delay])
 
