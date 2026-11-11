@@ -182,7 +182,7 @@ if (fs.existsSync(valuStartPath)) {
   if (/Question\s+\d+\s+of\s+\d+/i.test(valuStart)) {
     violations.push('VALU entry page must not display question-count progress labels');
   }
-  if (!/\b(?:START|TAKE) THE VALU TASTER\b/.test(valuStart) || !/points/i.test(valuStart)) {
+  if (!/\bSTART THE VALU INDEX TASTER\b/.test(valuStart) || !/points/i.test(valuStart)) {
     violations.push('VALU entry page must label the taster CTA and show VALU results in points');
   }
 }
