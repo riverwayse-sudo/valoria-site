@@ -18,7 +18,7 @@ export default function ATBConnectPage() {
           <div className="page-hero-inner">
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR EMPLOYERS & ORGANIZATIONS</span></div>
             <h1 className="page-title">Find the right professional<br /><em>for the work ahead.</em></h1>
-            <p className="page-sub">Valoria helps employers and organizations find experienced professionals whose skills and experience fit a role or project. We support hiring leaders and institutions considering consequential appointments. Where a professional chooses to share a VALU Index result, it provides optional context—not a hiring recommendation. It does not replace independent due diligence, credential checks, references or professional judgment. Availability depends on the approved public roster.</p>
+            <p className="page-sub">Valoria helps employers and organizations find experienced professionals whose skills and experience fit a role or project. We support hiring leaders and institutions considering consequential appointments. Where a professional chooses to share a VALU Index result, it provides optional context—not a hiring recommendation. It does not replace independent due diligence, credential checks, references or professional judgment. Only professionals with approved public profiles are available to explore.</p>
             <div className="page-hero-actions">
               <a href="/contact-us?topic=ATB%20Connect" className="btn-gold">DISCUSS YOUR TALENT NEEDS</a>
               <a href="/marketplace/talent" className="btn-outline">EXPLORE PROFESSIONALS</a>
