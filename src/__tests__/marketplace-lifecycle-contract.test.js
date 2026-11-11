@@ -600,4 +600,28 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(profile).toContain("gridTemplateColumns:'280px minmax(0, 1fr)'")
   })
 
+
+  test('primary navigation stays in document flow and its mobile panel is anchored to the header', () => {
+    const nav = read('src/components/Nav.jsx')
+    const layout = read('src/app/layout.jsx')
+    const navigationStyles = read('src/styles/navigation-flow.css')
+    const publicPages = read('src/app/pages.css')
+    const homepage = read('src/app/home.css')
+
+    expect(nav).toContain('<header className="vi-site-header">')
+    expect(nav).toContain('aria-label="Primary navigation"')
+    expect(nav).toContain('aria-expanded={openMenu === item.label}')
+    expect(nav).toContain('onMouseEnter={() => setOpenMenu(item.label)}')
+    expect(nav).toContain('onMouseLeave={() => setOpenMenu(null)}')
+    expect(layout).toContain("import '../styles/navigation-flow.css'")
+    expect(navigationStyles).toContain('position: relative !important;')
+    expect(navigationStyles).toContain('position: absolute !important;')
+    expect(navigationStyles).toContain('top: 100% !important;')
+    expect(navigationStyles).not.toContain('position: fixed')
+    expect(publicPages).toContain('.page-hero{position:relative;padding:88px')
+    expect(publicPages).toContain('.valu-hero{min-height:82vh;display:flex;align-items:center;padding:84px')
+    expect(publicPages).toContain('.vs-hero{min-height:88vh;display:flex;align-items:center;padding:84px')
+    expect(homepage).toContain('padding-top: 0;')
+  })
+
 })
