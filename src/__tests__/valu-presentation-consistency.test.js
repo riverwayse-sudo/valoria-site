@@ -47,10 +47,13 @@ describe('VALU presentation consistency', () => {
 
   test('VALU Index page explains the taster and separate full assessment without progress mechanics', () => {
     const valu = read('src/app/valu/page.jsx')
-    expect(valu).toContain('Know where you stand,')
+    expect(valu).toContain('Understand your capability.')
     expect(valu).toContain('separate full assessment')
     expect(valu).toContain('official points-based VALU Index')
     expect(valu).toContain('Future-Ready skill — critical for the professional talent market of 2025 to 2035.')
+    expect(valu).toContain('The VALU Index does not independently verify qualifications, work history or professional competence.')
+    expect(valu).not.toContain('four Intelligence skills')
+    expect(valu).not.toContain('12-month validity period')
     expect(valu).toContain('How you create. Enterprise measures the capacity to generate value beyond a task')
     expect(valu).toContain('cannot be purchased or transferred')
     expect(valu).not.toMatch(/1 of 9|1 of 58|(?:9|58)[- ]questions?|54 scored questions|four validity checks/i)
