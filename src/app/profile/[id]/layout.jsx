@@ -22,7 +22,7 @@ export async function generateMetadata({ params }) {
     }
   }
 
-  const name = String(profile.display_name || 'Valoria Professional').normalize('NFKC').replace(/\s+/g, ' ').trim()
+  const name = String(profile.atb_id || 'VALORIA PROFESSIONAL').normalize('NFKC').replace(/\s+/g, ' ').trim()
   const type = (profile.active_tracks || []).includes('speaker') ? 'Speaker' : 'Professional'
   return {
     title: `${name} — ${type} Profile`,
