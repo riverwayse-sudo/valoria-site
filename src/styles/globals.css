@@ -256,3 +256,20 @@ html body .page-hero-actions-centered,
 html body .eyebrow-center {
   justify-content: flex-start !important;
 }
+
+
+/* Staging environment indicator — in document flow, never fixed or sticky. */
+.staging-site-banner {
+  position: relative;
+  z-index: 10001;
+  width: 100%;
+  padding: 10px 16px;
+  background: #C9A84C;
+  color: #1A1A2E;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
