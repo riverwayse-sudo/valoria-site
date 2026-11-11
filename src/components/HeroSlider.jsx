@@ -11,7 +11,7 @@ export default function HeroSlider() {
       <div className="vi-hero-content">
         <div className="vi-hero-copy">
           <div className="vi-hero-kicker"><span /> AN INSTITUTION FOR PROFESSIONAL CAPABILITY</div>
-          <h1 id="valoria-hero-title">Capability deserves<br />a <em>higher standard.</em></h1>
+          <h1 id="valoria-hero-title">Capability deserves <em>a higher standard.</em></h1>
           <p>For accomplished professionals and the organizations that rely on their judgment, Valoria brings structure to how capability is assessed, developed and discovered.</p>
           <div className="vi-hero-actions">
             <AssessmentStartLink href={BRAND.assessmentUrl} className="vi-hero-primary">Explore your capability <span>↗</span></AssessmentStartLink>
@@ -19,14 +19,21 @@ export default function HeroSlider() {
           </div>
           <div className="vi-hero-footnote">WORTH. BUILT. — CAPABILITY, CONSIDERED WITH INTENT.</div>
         </div>
-        <div className="vi-hero-art" role="group" aria-label="The five PRIME dimensions: Presence, Relationships, Intelligence, Mastery and Enterprise">
-          <div className="vi-hero-art-content">
-            <div className="vi-hero-art-top"><span>THE PRIME FRAMEWORK</span><span>01 — 05</span></div>
-            <div className="vi-prime-word" aria-hidden="true"><span>P</span><span>R</span><span>I</span><span>M</span><span>E</span></div>
-            <div className="vi-prime-labels"><span>Presence</span><span>Relationships</span><span>Intelligence</span><span>Mastery</span><span>Enterprise</span></div>
-            <div className="vi-hero-art-bottom"><span>VALU INDEX</span><strong>Capability, made legible.</strong><Link href="/prime">Explore the framework ↗</Link></div>
-          </div>
+        <div className="vi-hero-art" role="group" aria-label="PRIME framework: Presence, Relationships, Intelligence, Mastery and Enterprise">
           <div className="vi-hero-art-photo" role="img" aria-label="Portrait of an African professional. Photograph by Taiye Salawu via Pexels" />
+          <div className="vi-hero-art-index"><span>VALORIA INSTITUTE</span><span>01 / 05</span></div>
+          <div className="vi-hero-art-content">
+            <div className="vi-hero-art-top"><span>THE PRIME FRAMEWORK</span><span>CAPABILITY, CONSIDERED</span></div>
+            <div className="vi-prime-word" aria-hidden="true">PRIME</div>
+            <div className="vi-prime-labels">
+              <span>Presence</span><span>Relationships</span><span>Intelligence</span><span>Mastery</span><span>Enterprise</span>
+            </div>
+            <div className="vi-hero-art-bottom">
+              <div><span>VALU INDEX</span><strong>Capability, made legible.</strong></div>
+              <Link href="/prime" aria-label="Explore the PRIME framework">Explore <span aria-hidden="true">↗</span></Link>
+            </div>
+          </div>
+          <div className="vi-hero-art-stamp" aria-hidden="true">WORTH.<br />BUILT.</div>
         </div>
       </div>
       <div className="vi-hero-index"><span>VALORIA INSTITUTE</span><span>GLOBAL OUTLOOK · CLEAR OPERATING BOUNDARIES</span></div>
