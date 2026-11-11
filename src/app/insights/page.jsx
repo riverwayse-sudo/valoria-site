@@ -47,7 +47,7 @@ export default function InsightsPage() {
               <div className="page-kicker">TURN INSIGHT INTO DIRECTION</div>
               <h2 className="section-title">Know where you stand.</h2>
               <p className="page-sub">Start with VALU and turn a clearer picture of your capability into your next professional move.</p>
-              <a className="btn-gold" href="/valu">START MY VALU SNAPSHOT</a>
+              <a className="btn-gold" href="/valu">START THE VALU INDEX TASTER</a>
             </div>
           </div>
         </section>
