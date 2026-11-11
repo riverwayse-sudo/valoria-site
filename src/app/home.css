@@ -75,8 +75,8 @@
 /* HERO */
 .hero-slider {
   position: relative;
-  min-height: clamp(660px, 88svh, 820px);
-  padding-top: 80px;
+  min-height: clamp(584px, calc(88svh - 76px), 744px);
+  padding-top: 0;
   background: var(--dark);
   overflow: hidden;
 }
@@ -104,7 +104,7 @@
 
 .hero-slider .hero-slides {
   position: relative;
-  min-height: clamp(580px, calc(88svh - 80px), 740px);
+  min-height: clamp(508px, calc(88svh - 156px), 668px);
   width: 100%;
 }
 
@@ -1546,7 +1546,7 @@
 
   .hero-slider {
     min-height: auto;
-    padding-top: 76px;
+    padding-top: 0;
     overflow: visible;
   }
 
