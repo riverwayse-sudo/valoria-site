@@ -55,5 +55,4 @@ describe('1% of the 1% audience experience contract', () => {
     expect(visibility).toContain('I authorise Valoria Institute to display')
     expect(visibility).toContain('I understand I can withdraw this permission at any time.')
   })
-});
 })
