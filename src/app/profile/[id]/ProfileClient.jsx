@@ -486,7 +486,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               ) : (
                 <>
                   <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
-                    {p.assessment_access === 'basic' ? 'This professional is listed at the Basic tier. VALU points and assessment-derived insight are not displayed on this profile.' : 'This professional has not yet received a full VALU Index result.'}
+                    {p.assessment_access === 'basic' ? 'This professional is listed at the Basic tier. VALU Index points and result-derived insight are not displayed on this profile.' : 'This professional has not yet received a full VALU Index result.'}
                   </p>
                   <a href="https://valoriainstitute.com/valu/assessment/"
                     style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
