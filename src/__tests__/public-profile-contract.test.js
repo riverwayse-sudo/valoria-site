@@ -10,7 +10,7 @@ describe('public professional profile privacy and presentation', () => {
     expect(page).toContain('initialProfile={initialProfile}')
     expect(page).not.toContain(".from('marketplace_public_roster')")
     expect(client).not.toContain(".from('marketplace_public_roster')")
-    expect(client).toContain("if (!user || user.id !== id)")
+    expect(client).toContain('if (!user || (isUuid && user.id !== id))')
     expect(client).toContain(".from('professional_profiles')")
     expect(client).toContain(".eq('id', user.id)")
     const marketplace = read('src/lib/marketplace-data.js')
