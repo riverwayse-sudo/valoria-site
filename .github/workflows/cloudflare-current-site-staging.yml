@@ -41,14 +41,13 @@ jobs:
         run: |
           cat > .env <<'EOF'
           NEXT_PUBLIC_SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
-SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
-NEXT_PUBLIC_SITE_URL=https://staging.valoriainstitute.com
           SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
+          NEXT_PUBLIC_SITE_URL=https://staging.valoriainstitute.com
           NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_C3j_CjLgTLDGRu8rH1SXEg_tYpxoYUm
           SUPABASE_SERVICE_ROLE_KEY=placeholder-service-role-key
           ANTHROPIC_API_KEY=placeholder-anthropic-key
+          VALU_ASSESSMENT_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
           VALU_UPSTREAM_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
-VALU_ASSESSMENT_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
           VALU_PREVIEW_ASSESSMENT_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
           NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
           CF_WORKERS_PREVIEW=1
