@@ -171,8 +171,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
       console.error('Full capability indexability verification failed:', capabilityError)
       throw new Error('Full profile capability indexability could not be verified.')
     }
-    capabilitiesReady = (activeCapabilities || []).length > 0
-      && activeCapabilities.every(capability =>
+    capabilitiesReady = (activeCapabilities || []).some(capability =>
         capability.eligible_for_listing === true
         && capability.eligibility_status === 'listed'
         && (!Array.isArray(capability.missing_requirements) || capability.missing_requirements.length === 0)
@@ -281,8 +280,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
       const assessment = latestAssessmentById.get(id)
       const expiry = Date.parse(profile?.assessment_expires_at || '')
       const profileCompletedAt = Date.parse(profile?.assessment_completed_at || '')
-      return active.length > 0
-        && active.every(capability =>
+      return active.some(capability =>
           capability.eligible_for_listing === true
           && capability.eligibility_status === 'listed'
           && (!Array.isArray(capability.missing_requirements) || capability.missing_requirements.length === 0)
