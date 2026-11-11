@@ -115,7 +115,11 @@ export default async function LiveProfilesScroll() {
                         tabIndex={isClone ? -1 : undefined}
                       >
                         <div className="vi-scroll-avatar" aria-hidden="true">
-                          <ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} />
+                          {profile.photo_url ? (
+                            <img className="vi-scroll-photo" src={profile.photo_url} alt="" loading="lazy" decoding="async" />
+                          ) : (
+                            <ValoriaAvatar seed={profile.id || profile.atb_id} size={64} />
+                          )}
                         </div>
                         <div className="vi-scroll-copy">
                           <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>PUBLIC</i></div>
@@ -158,13 +162,6 @@ export default async function LiveProfilesScroll() {
         </div>
       )}
 
-      <div className="live-profiles-professional-cta">
-        <span className="live-profiles-professional-rule" />
-        <div>
-          <small>WANT TO BE DISCOVERED?</small>
-          <strong>Build a professional profile that helps relevant decision-makers understand your capabilities.</strong>
-        </div>
-        <Link href="/valu">START WITH THE VALU TASTER <span>→</span></Link>
-      </div></section>
+</section>
   )
 }
