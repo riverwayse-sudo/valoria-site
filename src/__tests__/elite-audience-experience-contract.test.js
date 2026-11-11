@@ -40,3 +40,20 @@ describe('1% of the 1% audience experience contract', () => {
     expect(directory).toContain('Contact details and individual assessment answers are not displayed')
   })
 })
+
+  test('authenticated profile and dashboard journeys use US conventions and explicit public consent', () => {
+    const dashboard = read('src/app/dashboard/page.jsx')
+    const setup = read('src/app/profile/setup/page.jsx')
+    const visibility = read('src/components/PublicMarketplaceVisibility.jsx')
+    expect(dashboard).toContain("toLocaleDateString('en-US'")
+    expect(dashboard).not.toContain("toLocaleDateString('en-GB'")
+    expect(setup).toContain("visibility: 'registered_only'")
+    expect(setup).toContain('PublicMarketplaceVisibility')
+    expect(setup).toContain('profile completion never grants public-display consent')
+    expect(setup).toContain('What program types do you run?')
+    expect(setup).toContain('Organization')
+    expect(visibility).toContain('Public visibility is optional')
+    expect(visibility).toContain('I authorise Valoria Institute to display')
+    expect(visibility).toContain('I understand I can withdraw this permission at any time.')
+  })
+});
