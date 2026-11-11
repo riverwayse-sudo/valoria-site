@@ -40,3 +40,26 @@ DROP POLICY IF EXISTS certificates_public_verified_read ON public.professional_c
 -- Assessment and account source tables are never anonymously readable.
 REVOKE SELECT ON TABLE public.valu_assessments FROM anon;
 REVOKE SELECT ON TABLE public.users FROM anon;
+
+-- Keep only the authenticated owner/admin reads and writes required by the
+-- application. RLS remains the row-level authorization boundary.
+GRANT SELECT, UPDATE ON TABLE public.profiles TO authenticated;
+GRANT SELECT, INSERT, UPDATE ON TABLE public.professional_profiles TO authenticated;
+GRANT SELECT ON TABLE public.professional_capabilities TO authenticated;
+GRANT SELECT ON TABLE public.valu_assessments TO authenticated;
+GRANT SELECT ON TABLE public.professional_certificates TO authenticated;
+GRANT SELECT ON TABLE public.users TO authenticated;
+GRANT SELECT ON TABLE public.profile_views TO authenticated;
+GRANT INSERT ON TABLE public.profile_views TO anon, authenticated;
+GRANT SELECT, UPDATE ON TABLE public.enquiries TO authenticated;
+GRANT INSERT ON TABLE public.enquiries TO anon, authenticated;
+
+-- These legacy RPCs are not used by the current website. Public Registry
+-- reads now use the server-only consent-verified projection.
+REVOKE EXECUTE ON FUNCTION public.get_homepage_professional_count() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.get_homepage_professional_previews_v2() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.set_marketplace_public_listing_consent(boolean) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.get_homepage_professional_count() TO service_role;
+GRANT EXECUTE ON FUNCTION public.get_homepage_professional_previews_v2() TO service_role;
+GRANT EXECUTE ON FUNCTION public.set_marketplace_public_listing_consent(boolean) TO service_role;
+
