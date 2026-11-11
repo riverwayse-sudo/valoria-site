@@ -15,7 +15,7 @@ describe('Valoria password policy', () => {
   })
 
   test('rejects passwords longer than the server-enforced maximum', () => {
-    const result = validatePassword('A'.repeat(124) + 'a1!x')
+    const result = validatePassword('A'.repeat(125) + 'a1!x')
     expect(result.valid).toBe(false)
     expect(result.errors).toContain('Use no more than 128 characters.')
   })
