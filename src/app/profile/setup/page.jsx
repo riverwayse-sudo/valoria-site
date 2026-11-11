@@ -937,7 +937,7 @@ function ScreenBody(props) {
           {screen.sub && <Sub>{screen.sub}</Sub>}
           <div style={{ marginBottom:'16px' }}>
             {rows.map((row, i) => (
-              <div key={i} style={{ display:'grid', gridTemplateColumns: `repeat(${screen.fields.length}, 1fr)`, gap:'10px', marginBottom:'10px' }}>
+              <div key={i} style={{ display:'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap:'10px', marginBottom:'10px' }}>
                 {screen.fields.map(f => (
                   f.type === 'select' ? (
                     <select key={f.key} style={selectStyle} value={row[f.key] || ''}
@@ -1228,7 +1228,7 @@ function CurrencyRangeInput({ value, onChange, periodLabel }) {
           Currently saved: <span style={{ color:PARCH }}>{parsed.legacy}</span> — update below to replace it.
         </p>
       )}
-      <div style={{ display:'grid', gridTemplateColumns:'110px 1fr 1fr', gap:'10px', marginBottom:'6px' }}>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(min(100%, 140px), 1fr))', gap:'10px', marginBottom:'6px' }}>
         <select value={currency} onChange={e => { setCurrency(e.target.value); commit({ currency:e.target.value }) }} style={selectStyle}>
           {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} {c.symbol}</option>)}
         </select>
