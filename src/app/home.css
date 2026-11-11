@@ -4326,7 +4326,6 @@
   letter-spacing: .12em;
   line-height: 1.4;
   text-decoration: none;
-  transition: color .2s ease, border-color .2s ease, gap .2s ease;
 }
 
 .home-redesign-root .home-journey-link:hover {
@@ -4611,7 +4610,7 @@
   font-weight: 800;
   letter-spacing: .18em;
   line-height: 1.5;
-  text-align: center;
+  text-align: left;
 }
 .vi-editorial-hero .vi-hero-index {
   bottom: 18px;
