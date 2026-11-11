@@ -86,7 +86,7 @@ export default function ValuStartPage() {
             <article><span>02</span><h3>Take your taster</h3><p>Complete the guided directional taster. Your responses are saved against your registration.</p></article>
             <article><span>03</span><h3>Create your account</h3><p>After the taster, create or connect your secure Valoria account and confirm your email.</p></article>
             <article><span>04</span><h3>Complete your full assessment</h3><p>Continue when you are ready to establish your official VALU Index in points and your PRIME capability profile.</p></article>
-            <article><span>05</span><h3>Build and discover</h3><p>Complete your professional profile. Marketplace visibility follows the relevant Basic or Full eligibility checks and your explicit permission.</p></article>
+            <article><span>05</span><h3>Build and discover</h3><p>Complete your professional profile. Your profile is made public only when it meets Valoria's listing requirements and you choose to publish it.</p></article>
           </div>
         </div>
       </section>
@@ -104,7 +104,7 @@ export default function ValuStartPage() {
         <div className="vs-shell">
           <div className="vs-next-grid">
             <div><div className="vs-kicker dark"><span /> AFTER VALU</div><h2>One assessment opens a much bigger professional journey.</h2></div>
-            <div className="vs-copy"><p>After the taster, create or connect your secure account and complete your professional profile for Basic marketplace consideration. The Full VALU Index is a separate assessment that establishes official points and a merit tier for Full marketplace eligibility.</p><div className="vs-next-list"><div><b>01</b><span>Complete your professional profile</span></div><div><b>02</b><span>Make your capabilities discoverable</span></div><div><b>03</b><span>Explore deeper assessment and development pathways</span></div></div></div>
+            <div className="vs-copy"><p>After the taster, create or connect your secure account and complete your professional profile. Your official VALU Index follows the separate full assessment. Your profile is made public only when it meets Valoria's listing requirements and you choose to publish it.</p><div className="vs-next-list"><div><b>01</b><span>Complete your professional profile</span></div><div><b>02</b><span>Make your capabilities discoverable</span></div><div><b>03</b><span>Explore deeper assessment and development pathways</span></div></div></div>
           </div>
         </div>
       </section>
