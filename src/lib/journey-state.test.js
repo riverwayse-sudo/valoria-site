@@ -29,7 +29,7 @@ test('new user is directed to assessment', () => {
   const state = deriveJourneyState({})
   expect(state.next).toBe('assess')
   expect(state.assessment.complete).toBe(false)
-  expect(state.recoveryReason).toMatch(/No completed VALU assessment/)
+  expect(state.recoveryReason).toMatch(/No completed VALU Index/)
 })
 
 test('completed assessment without report is recoverable at report stage', () => {
