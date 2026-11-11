@@ -21,7 +21,7 @@ describe('1% of the 1% audience experience contract', () => {
   test('ATB Connect supports senior decision-making without overstating VALU', () => {
     expect(connect).toContain('consequential appointments')
     expect(connect).toContain('hiring leaders and institutions')
-    expect(connect).toContain('does not replace independent diligence, credential checks, references or professional judgment')
+    expect(connect).toContain('does not replace independent due diligence, credential checks, references or professional judgment')
     expect(connect).toContain('availability depends on the approved public roster')
   })
 
