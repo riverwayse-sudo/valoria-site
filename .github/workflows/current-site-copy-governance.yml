@@ -1,0 +1,28 @@
+name: Current-site copy governance
+# Re-run the gate on every PR update; see scripts/check-copy-governance.js.
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  copy-governance:
+    name: Copy changes require audit register
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out pull request and base history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Enforce copy-change register
+        run: node scripts/check-copy-governance.js
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
