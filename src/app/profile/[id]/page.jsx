@@ -14,6 +14,9 @@ export default async function ProfilePage({ params, searchParams }) {
   const isAtbId = /^ATB-[A-Z0-9-]{4,40}$/i.test(normalizedId)
   if (!isUuid && !isAtbId) notFound()
 
+  const readOnlyPreview = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' && process.env.VALU_STAGING_API_ENABLED !== '1'
+  if (readOnlyPreview) return <ProfileClient id={id} searchParams={resolvedSearchParams} previewUnavailable />
+
   let initialProfile = null
   try {
     initialProfile = await getConsentVerifiedPublicProfile(id, isUuid ? 'id' : 'atb_id')
@@ -22,5 +25,29 @@ export default async function ProfilePage({ params, searchParams }) {
     notFound()
   }
 
-  return <ProfileClient id={id} searchParams={resolvedSearchParams} initialProfile={initialProfile} />
+  const profileUrl = initialProfile?.id ? 'https://valoriainstitute.com/profile/' + initialProfile.id : null
+  const profileSchema = initialProfile ? {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    url: profileUrl,
+    mainEntity: {
+      '@type': 'Person',
+      identifier: initialProfile.atb_id,
+      url: profileUrl,
+      jobTitle: initialProfile.headline || initialProfile.current_job_title || undefined,
+      description: initialProfile.assessment_summary || initialProfile.headline || undefined,
+      image: initialProfile.photo_url || undefined,
+      knowsAbout: initialProfile.skills?.length ? initialProfile.skills : undefined,
+    },
+  } : null
+  const profileSchemaJson = profileSchema
+    ? JSON.stringify(profileSchema).replace(/</g, '\\u003c')
+    : null
+
+  return (
+    <>
+      {profileSchemaJson && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: profileSchemaJson }} />}
+      <ProfileClient id={id} searchParams={resolvedSearchParams} initialProfile={initialProfile} />
+    </>
+  )
 }
