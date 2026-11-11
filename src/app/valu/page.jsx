@@ -64,7 +64,7 @@ export default function ValuPage() {
       <section className="valu-outcome">
         <div className="valu-wrap valu-outcome-grid">
           <div><div className="valu-kicker valu-dark"><span /> WHAT VALU IS — AND IS NOT</div><h2>An assessment result, <em>not a credential.</em></h2></div>
-          <div><p>Your designation is earned through the full assessment. It is not a professional certification, subscription tier or purchasable badge. The VALU Index does not independently verify qualifications, work history or professional competence.</p><p>A result below the listing threshold does not remove access to Valoria. It identifies development as the next step.</p></div>
+          <div><p>Your designation is earned through the full assessment. It is not a professional certification or subscription tier. It cannot be purchased or transferred. The VALU Index does not independently verify qualifications, work history or professional competence.</p><p>A result below the listing threshold does not remove access to Valoria. It identifies development as the next step.</p></div>
         </div>
       </section>
 
