@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { BRAND } from '@/lib/brand'
 import { supabase } from '@/lib/supabase'
-import { AssessmentStartLink } from './Nav'
 
 export default function Footer() {
   const [user, setUser] = useState(null)
