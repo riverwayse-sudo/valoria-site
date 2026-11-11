@@ -255,8 +255,7 @@ export async function getMarketplaceRows(track = 'all') {
   // Public listing, consent, assessment validity and revocation checks are enforced above.
   return rows.filter(row => {
     if (track === 'all') return true
-    const capability = normalizeTrack(track)
-    return row.capabilities.includes(capability)
+    return row.capabilities.includes(normalizeTrack(track))
   })
 }
 
