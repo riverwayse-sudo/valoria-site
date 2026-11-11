@@ -585,4 +585,19 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(profile).not.toContain('<div key={i} onClick={() => setActiveVideo(isActive ? null : i)}')
   })
 
+  test('dashboard and public profile keep grouped navigation and metric rows on one line', () => {
+    const dashboard = read('src/app/dashboard/page.jsx')
+    const profile = read('src/app/profile/[id]/ProfileClient.jsx')
+    expect(dashboard).toContain('className="dv-header"')
+    expect(dashboard).toContain('.dv-nav {')
+    expect(dashboard).toContain('white-space:nowrap;')
+    expect(dashboard).toContain('.dv-stat-strip {')
+    expect(dashboard).toContain('overflow-x:auto;')
+    expect(dashboard).toContain('.dv-stat-strip > *')
+    expect(profile).toContain('.vi-stat-strip {')
+    expect(profile).toContain('flex-wrap: nowrap !important;')
+    expect(profile).toContain('overflow-x: auto;')
+    expect(profile).toContain("gridTemplateColumns:'280px minmax(0, 1fr)'")
+  })
+
 })
