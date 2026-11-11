@@ -27,8 +27,8 @@ describe('VALU presentation consistency', () => {
       read('src/app/privacypolicy/page.jsx'),
     ];
     for (const surface of surfaces) {
-      expect(surface).not.toMatch(/VALU\\s+assessment/i);
-      expect(surface).not.toMatch(/VALU\\s+taster(?!\\s+index)/i);
+      expect(surface).not.toMatch(/VALU\s+assessment/i);
+      expect(surface).not.toMatch(/VALU\s+taster(?!\\s+index)/i);
     }
     expect(read('src/app/valu/page.jsx')).toContain('VALU Index Taster');
     expect(read('src/app/valu/start/page.jsx')).toContain('full VALU Index');
