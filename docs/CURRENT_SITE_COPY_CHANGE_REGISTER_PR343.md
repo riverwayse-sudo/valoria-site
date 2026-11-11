@@ -78,3 +78,15 @@ These additions resolve copy and disclosure issues found while reconciling PR #3
 | `src/components/MarketplaceDirectory.jsx` | Public cards and previews exposed “BASIC”, “BASIC PROFESSIONAL LISTING” and “Full VALU Index pending”. | Use “PROFESSIONAL LISTING” and explain only what is publicly available; do not expose internal Basic/Full access labels. | §14 C–I, pp. 15–16 | Implemented in staging. Verify that no score or assessment-derived insight is shown where it is not approved. |
 | `src/components/MarketplaceDirectory.jsx` and `src/components/LiveProfilesScroll.jsx` | “REQUEST SOURCING ACCESS” / “Request sourcing access”. | “SHARE A TALENT BRIEF” / “Share a talent brief”. | §14 A–D, pp. 14–15 | Implemented in staging. This describes the external action rather than internal access arrangements. |
 
+
+
+## Public marketplace disclosure and identity refinements
+
+| Location | Existing wording / behaviour | Proposed wording / action | Audit reference | Review status / required evidence |
+|---|---|---|---|---|
+| `src/components/MarketplaceDirectory.jsx` — directory guidance | “Basic or Full listing requirements”, “Full VALU Index pending”, “BASIC” and “BASIC PROFESSIONAL LISTING”. | Use “Valoria's listing requirements”, “PROFESSIONAL LISTING” and show VALU Index points only where approved for public display. | §14 C–I, pp. 15–16 | Implemented in staging. Confirm public cards and previews do not reveal internal access states or unauthorised scores. |
+| `src/components/LiveProfilesScroll.jsx` — homepage rail | “BASIC LISTING”, “BASIC” and “ASSESSMENT FOLLOW-UP”. | Use “PROFESSIONAL LISTING” / “PUBLIC” for profiles without publicly displayed VALU Index points. | §14 C–I, pp. 15–16 | Implemented in staging. |
+| `src/components/MarketplaceDirectory.jsx` and `src/components/LiveProfilesScroll.jsx` — organisational action | “REQUEST SOURCING ACCESS” / “Employers can request sourcing access now.” | “SHARE A TALENT BRIEF” / “Employers can share the roles, sectors and capabilities their organisation needs.” | §14 A–D, pp. 14–15 | Implemented in staging. Public copy describes the external task, not internal buyer-access arrangements. |
+| `src/app/profile/[id]/ProfileClient.jsx` — public profile summary | “Basic tier”, “Basic listing” and “Full VALU Index pending” language. | Explain only whether VALU Index points or insight are displayed on the public profile; do not disclose internal access states. | §14 C–I, pp. 15–16 | Implemented in staging. |
+| `src/app/valu/start/page.jsx` — headline | “VALU shows what you can become.” | “The VALU Index shows how you operate.” | §14 D and I, pp. 15–16 | Implemented in staging; avoids an unsubstantiated predictive claim and uses the official product name. |
+
