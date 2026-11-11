@@ -134,9 +134,10 @@ try {
       if (state.analyticsLoaded) report.failures.push(`${route.name}/${viewport.name}: production analytics loaded in staging`)
       if (forbiddenRequests.length) report.failures.push(`${route.name}/${viewport.name}: production Supabase/assessment request detected`)
       if (state.literalNewlineVisible && route.name.startsWith('assessment-')) report.failures.push(`${route.name}/${viewport.name}: literal \\n text is visible in the assessment UI`)
-      if (route.name.startsWith('assessment-') && state.assessmentSiteLinks.some(href => {
+      const productionAssessmentLinks = route.name.startsWith('assessment-') ? state.assessmentSiteLinks.filter(href => {
         try { return ['valoriainstitute.com', 'www.valoriainstitute.com'].includes(new URL(href).hostname) } catch { return false }
-      })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
+      }) : []
+      if (productionAssessmentLinks.length) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site: ${productionAssessmentLinks.join(', ')}`)
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
 
