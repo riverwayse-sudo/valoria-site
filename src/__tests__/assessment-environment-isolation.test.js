@@ -14,6 +14,16 @@ describe('assessment environment isolation', () => {
     expect(config.env.staging.vars.VALU_ASSESSMENT_ORIGIN).toBe('https://valoria-staging-assessment.riverwayse.workers.dev')
   })
 
+  test('canonical assessment route and nested assets share the same isolated Worker proxy', () => {
+    const rootRoute = read('src/app/valu/assessment/route.js')
+    const nestedRoute = read('src/app/valu/assessment/[[...path]]/route.js')
+    const proxy = read('src/lib/assessment-proxy.js')
+    expect(rootRoute).toContain("import { proxyAssessment } from '@/lib/assessment-proxy'")
+    expect(nestedRoute).toContain("import { proxyAssessment } from '@/lib/assessment-proxy'")
+    expect(proxy).toContain("if (!suffix) return '/'")
+    expect(proxy).toContain("if (suffix === 'api' || suffix.startsWith('api/'))")
+  })
+
   test('assessment proxy permits the staging host only in the staging runtime', () => {
     const proxy = read('src/app/valu/assessment/[[...path]]/route.js')
     expect(proxy).toContain("'valoria-staging-assessment.riverwayse.workers.dev'")
