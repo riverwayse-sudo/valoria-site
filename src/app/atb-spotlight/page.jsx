@@ -16,7 +16,7 @@ export default function ATBSpotlightPage() {
       <main id="main-content" className="decision-page">
         <section className="page-hero">
           <div className="page-hero-inner">
-            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">ATB SPOTLIGHT · FOR EVENT AND INSTITUTIONAL LEADERS & TRAINING BUYERS</span></div>
+            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">ATB SPOTLIGHT · FOR EVENT AND INSTITUTIONAL LEADERS</span></div>
             <h1 className="page-title">Bring the right expertise<br /><em>to the moments that matter.</em></h1>
             <p className="page-sub">Identify speakers and facilitators for executive briefings, leadership forums and consequential institutional gatherings. Explore subject expertise and, where supplied and approved for public display, talks, sessions led and relevant experience.</p>
             <div className="page-hero-actions">
@@ -28,7 +28,7 @@ export default function ATBSpotlightPage() {
         <section className="page-section">
           <div className="page-section-inner two-col">
             <Reveal>
-              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR EVENT ORGANISERS</span></div>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR EVENT ORGANIZERS</span></div>
               <h2 className="section-title">Put relevant expertise<br /><em>at the center of the conversation.</em></h2>
               <p className="page-copy">Explore speakers by professional focus, PRIME capability and relevant experience. Public profile information appears according to each professional's visibility choices and Valoria's listing requirements; availability and suitability are confirmed for each brief.</p>
             </Reveal>
