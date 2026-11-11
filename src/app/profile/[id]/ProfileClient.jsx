@@ -129,14 +129,20 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
       setCurrentUser(user)
 
       if (initialProfile) {
-        const { data: certificateRows, error: certificateError } = await supabase
-          .from('professional_certificates')
-          .select('id,certificate_number,title,event_title,event_date,issuer,issued_at,verification_token')
-          .eq('professional_id', initialProfile.id)
-          .is('revoked_at', null)
-          .order('issued_at', { ascending: false })
-        if (certificateError) console.error('professional certificates fetch failed:', certificateError)
-        setCertificates(certificateRows || [])
+        // Certificate records are private to their holder and Valoria admins.
+        // A public profile must not issue a direct browser query to the source table.
+        if (user?.id === initialProfile.id) {
+          const { data: certificateRows, error: certificateError } = await supabase
+            .from('professional_certificates')
+            .select('id,certificate_number,title,event_title,event_date,issuer,issued_at,verification_token')
+            .eq('professional_id', initialProfile.id)
+            .is('revoked_at', null)
+            .order('issued_at', { ascending: false })
+          if (certificateError) console.error('professional certificates fetch failed:', certificateError)
+          setCertificates(certificateRows || [])
+        } else {
+          setCertificates([])
+        }
 
         if (!user || user.id !== initialProfile.id) {
           const dedupeKey = `viewed_${initialProfile.id}`
