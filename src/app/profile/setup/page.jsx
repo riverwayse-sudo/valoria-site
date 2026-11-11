@@ -73,10 +73,9 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   ], required:true })
   s.push({ key:'bio', kind:'textarea', section:'Profile', title:'Write a short bio.', sub:'First person, 3–4 sentences. What you do, who you serve, what makes you distinct.', placeholder:'I\u2019m a fintech growth strategist with 12 years of experience...', maxLength:600, required:true })
   s.push({ key:'languages', kind:'multi-chip', section:'Profile', title:'Which languages do you speak?', sub:'Select all that apply.', options:LANGUAGES, required:true })
-  // Visibility choice removed (1 Aug 2026) — every profile must be
-  // available in the marketplace, so this is no longer a decision the
-  // person makes; visibility is hardcoded to 'registered_only' in
-  // saveProgress below instead.
+  // Public visibility is a separate, explicit opt-in managed by
+  // PublicMarketplaceVisibility. New profiles default to registered-only;
+  // profile completion never grants public-display consent.
 
   // The self-report "What are your core skills?" question was removed here —
   // replaced by the current/preferred industry pair at the top of this
@@ -87,8 +86,8 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   if (isSpeaker) s.push({ key:'format_capabilities', kind:'multi-chip', section:'Expertise', title:'What speaking formats do you offer?', sub:'Select all that apply.', options:FORMAT_CAPS, required:true, color:'GOLD' })
   if (isSpeaker) s.push({ key:'audience_sizes', kind:'multi-chip', section:'Expertise', title:'What audience sizes have you spoken to?', sub:'Select all that apply.', options:AUDIENCE_SIZES, required:true, color:'GOLD' })
   if (isSpeaker) s.push({ key:'past_events', kind:'list', section:'Expertise', title:'Any past speaking engagements?', sub:'Up to 3. These build trust with people viewing your profile.', fields:[{ key:'name', placeholder:'Event name' }, { key:'role', placeholder:'Your role' }], max:3, addLabel:'+ Add event', required:true })
-  if (isFacilitator) s.push({ key:'programme_types', kind:'multi-chip', section:'Expertise', title:'What programme types do you run?', sub:'Select all that apply.', options:PROGRAMME_TYPES, required:true, color:'GOLD' })
-  if (isFacilitator) s.push({ key:'past_clients', kind:'list', section:'Expertise', title:'Any past clients or programmes?', sub:'Up to 3.', fields:[{ key:'name', placeholder:'Organisation' }, { key:'programme', placeholder:'Programme delivered' }], max:3, addLabel:'+ Add client', required:true })
+  if (isFacilitator) s.push({ key:'programme_types', kind:'multi-chip', section:'Expertise', title:'What program types do you run?', sub:'Select all that apply.', options:PROGRAMME_TYPES, required:true, color:'GOLD' })
+  if (isFacilitator) s.push({ key:'past_clients', kind:'list', section:'Expertise', title:'Any past clients or programmes?', sub:'Up to 3.', fields:[{ key:'name', placeholder:'Organization' }, { key:'programme', placeholder:'Program delivered' }], max:3, addLabel:'+ Add client', required:true })
   if (isFacilitator) s.push({ key:'pcp_certified', kind:'boolean', section:'Expertise', title:'Do you hold a Valoria PCP certification?', sub:'PRIME-Certified Practitioner.' })
   if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Up to 3 roles. Helps people understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organisation' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:true })
   if (isCandidate) s.push({ key:'certifications', kind:'text', section:'Expertise', title:'Any certifications or credentials?', sub:'Comma separated.', placeholder:'PMP, Google Analytics, HubSpot Marketing', required:true })
@@ -703,7 +702,7 @@ function ScreenBody(props) {
       const options = [
         { id:'candidate',   label:'Talent',      desc:'I want employers and recruiters to find me through ATB Connect.', color:'GOLD' },
         { id:'speaker',     label:'Speaker',     desc:'I want to be booked for events and conferences through ATB Spotlight.', color:GOLD },
-        { id:'facilitator', label:'Facilitator', desc:'I want to be commissioned for L&D programmes through ATB Develop.', color:'GOLD' },
+        { id:'facilitator', label:'Facilitator', desc:'I want to be considered for learning and development engagements through Valoria Develop.', color:'GOLD' },
       ]
       const selected = form.active_tracks || []
       return (
