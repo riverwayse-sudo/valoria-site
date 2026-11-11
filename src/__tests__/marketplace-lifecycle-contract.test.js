@@ -63,9 +63,11 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).toContain("key:'facilitator'")
     expect(directory).toContain('NOT SELECTED')
     const categoryFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
-    expect(categoryFilter).toContain('p.selectedCapabilities || p.selected_capabilities || p.capabilities || p.tracks || [p.track]')
-    expect(categoryFilter.indexOf('p.selectedCapabilities')).toBeLessThan(categoryFilter.indexOf('p.capabilities'))
-    expect(data).toContain("row.selectedCapabilities.includes(normalizeTrack(track))")
+    expect(categoryFilter).toContain('const listedCapabilities = Array.isArray(p.capabilities)')
+    expect(categoryFilter).toContain('listedCapabilities.map(normalize).includes(activeTrack)')
+    expect(categoryFilter).not.toContain('p.selectedCapabilities || p.selected_capabilities')
+    expect(data).toContain('row.capabilities.includes(normalizeTrack(track))')
+    expect(data).not.toContain('row.selectedCapabilities.includes(normalizeTrack(track))')
     expect(data).toContain('row.selected_capabilities')
   })
 
@@ -481,6 +483,12 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(route).toContain('profile.is_test || profile.revoked_at')
   })
 
+
+  test('category counts use approved capabilities rather than selected capabilities', () => {
+    const data = read('src/lib/marketplace-data.js')
+    expect(data).toContain("Array.isArray(row.capabilities) ? row.capabilities : [row.track]")
+    expect(data).not.toContain("Array.isArray(row.selected_capabilities) ? row.selected_capabilities : []).map(normalizeTrack)")
+  })
 
   test('marketplace cards retain readable typography and expand without clipping on small screens', () => {
     const styles = read('src/components/MarketplaceDirectory.module.css')
