@@ -98,9 +98,13 @@ describe('staging preview safety boundary', () => {
 
   test('staging deployment is opt-in for same-repository deploy branches', () => {
     const workflow = read('.github/workflows/cloudflare-staging-deploy.yml')
-    expect(workflow).toContain('pull_request:')
-    expect(workflow).toContain("startsWith(github.event.pull_request.head.ref, 'deploy/staging-')")
-    expect(workflow).toContain('github.event.pull_request.head.repo.full_name == github.repository')
+    const pullRequestWorkflow = read('.github/workflows/cloudflare-staging-pr-deploy.yml')
+    expect(workflow).not.toContain('pull_request:')
+    expect(workflow).toContain('push:')
+    expect(workflow).toContain('branches: ["experience/staging-redesign-20261106"]')
+    expect(pullRequestWorkflow).toContain('pull_request:')
+    expect(pullRequestWorkflow).toContain("startsWith(github.event.pull_request.head.ref, 'deploy/staging-')")
+    expect(pullRequestWorkflow).toContain('github.event.pull_request.head.repo.full_name == github.repository')
     expect(workflow).toContain('environment: staging')
     expect(workflow).toContain('npx wrangler deploy')
     expect(workflow).toContain('assessment_html="$(curl -fsSL')
