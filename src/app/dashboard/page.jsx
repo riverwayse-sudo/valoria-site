@@ -79,7 +79,7 @@ function completenessFields(tracks) {
 const COMPLETENESS_LABELS = {
   display_name: 'Name', headline: 'Headline', bio: 'Bio',
   username: 'Username', phone: 'Phone number', topics: 'Topics', tier: 'Speaking tier',
-  fee_range: 'Fee range', programme_types: 'Programme types', preferred_industry: 'Preferred industry',
+  fee_range: 'Fee range', programme_types: 'Program types', preferred_industry: 'Preferred industry',
   industry: 'Industry', notice_period: 'Notice period',
 }
 function missingFields(profile, tracks) {
@@ -98,7 +98,7 @@ function computeCompleteness(profile, tracks) {
 }
 function memberSince(dateStr) {
   if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
 }
 
 export default function DashboardPage() {
@@ -473,7 +473,7 @@ export default function DashboardPage() {
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
                 <span style={{ fontSize:'14px', fontWeight:400, color: GOLD, letterSpacing:'.04em' }}>
-                  {p.headline || (isSupply ? (hasTrack ? (isFacilitator && !isSpeaker && !isCandidate ? 'Valoria Facilitator' : isSpeaker && !isFacilitator && !isCandidate ? 'Valoria Speaker' : 'Valoria Professional') : 'Valoria Member') : (isOrganiser ? 'Event Organiser' : 'Employer'))}
+                  {p.headline || (isSupply ? (hasTrack ? (isFacilitator && !isSpeaker && !isCandidate ? 'Valoria Facilitator' : isSpeaker && !isFacilitator && !isCandidate ? 'Valoria Speaker' : 'Valoria Professional') : 'Valoria Member') : (isOrganiser ? 'Event Organizer' : 'Employer'))}
                 </span>
                 {isSupply && tracks.length > 1 && (
                   <div style={{ display:'flex', gap:'6px' }}>
@@ -728,7 +728,7 @@ export default function DashboardPage() {
               </Section>
 
               {isFacilitator && p.programme_types?.length > 0 && (
-                <Section label="Programme Types">
+                <Section label="Program Types">
                   <div style={{ display:'flex', flexWrap:'wrap', gap:'10px' }}>
                     {p.programme_types.map(t => (
                       <span key={t} style={{ padding:'8px 16px', border:`1px solid ${GLINE2}`, fontSize:'12px', fontWeight:400, color: DIM, letterSpacing:'.04em' }}>{t}</span>
@@ -970,7 +970,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
     speaker_audience_size: 'Add audience experience',
     speaker_evidence_approval: 'Submit speaking evidence',
     facilitator_topics: 'Add facilitation topics',
-    facilitator_programme_types: 'Select programme types',
+    facilitator_programme_types: 'Select program types',
     facilitator_evidence_approval: 'Submit facilitation evidence',
   }
   const requirementActions = {
@@ -983,7 +983,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
     speaker_audience_size: ['/profile/edit', 'Add audience experience'],
     speaker_evidence_approval: ['/profile/evidence', 'Submit speaker evidence'],
     facilitator_topics: ['/profile/edit', 'Add facilitation topics'],
-    facilitator_programme_types: ['/profile/edit', 'Select programme types'],
+    facilitator_programme_types: ['/profile/edit', 'Select program types'],
     facilitator_evidence_approval: ['/profile/evidence', 'Submit facilitator evidence'],
   }
 
