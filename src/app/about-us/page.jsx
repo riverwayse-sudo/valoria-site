@@ -28,15 +28,15 @@ const PRINCIPLES = [
 ]
 
 const POSITIONING = [
-  { title: 'Not a recruitment agency', body: 'Valoria does not recruit on behalf of employers. The Marketplace helps buyers discover professional profiles and assessment-led insight; hiring decisions and credential checks remain with the organizations making them.' },
+  { title: 'Not a recruitment agency', body: 'Valoria does not recruit on behalf of employers. The Marketplace helps employers explore approved professional profiles and assessment context; hiring decisions and credential checks remain with each organization.' },
   { title: 'Not a training company', body: 'Valoria Institute provides the capability framework and assessment. Valoria Develop supports PRIME-based development pathways for individuals and organizations.' },
-  { title: 'Not a speaker bureau', body: 'ATB Spotlight helps event organizers and program buyers discover speakers and facilitators through capability-led profiles and relevant experience.' },
+  { title: 'Not a speaker bureau', body: 'ATB Spotlight helps event and program leaders discover speakers and facilitators through capability-led profiles and relevant experience.' },
   { title: 'The VALU Index is not itself a certification', body: 'The VALU Index is an assessment result that informs capability development. It is distinct from a professional certification or credential. Valoria Institute’s institutional standards and any certification pathway must be described separately; no credential should be represented as awarded until the relevant approved process is operational and completed.' },
   { title: 'Not a jobs board', body: 'Valoria connects capability to relevant opportunities. An opportunity is presented as active only when real supply and a working application or enquiry route exist.' },
 ]
 
 const TIMELINE = [
-  { year: 'The challenge', label: 'Across hiring, speaking and training, buyers often make decisions with incomplete signals. Resumes, biographies and referrals describe parts of a person’s experience, but do not always provide a consistent view of capability.' },
+  { year: 'The challenge', label: 'Across hiring, speaking and professional development, leaders often make decisions with incomplete signals. Resumes, biographies and referrals describe parts of a person’s experience, but do not always provide a consistent view of capability.' },
   { year: 'The framework', label: 'PRIME establishes a shared language for professional capability across Presence, Relationships, Intelligence, Mastery and Enterprise.' },
   { year: 'The assessment', label: 'The VALU Index translates assessment into a structured view of capability, expressed in points and used to inform professional development.' },
   { year: 'The connection', label: 'The Valoria Marketplace creates pathways through which employers, event organizers and program teams can discover relevant professional expertise.' },
