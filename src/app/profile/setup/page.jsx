@@ -1228,7 +1228,7 @@ function CurrencyRangeInput({ value, onChange, periodLabel }) {
           Currently saved: <span style={{ color:PARCH }}>{parsed.legacy}</span> — update below to replace it.
         </p>
       )}
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(min(100%, 140px), 1fr))', gap:'10px', marginBottom:'6px' }}>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap:'10px', marginBottom:'6px' }}>
         <select value={currency} onChange={e => { setCurrency(e.target.value); commit({ currency:e.target.value }) }} style={selectStyle}>
           {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} {c.symbol}</option>)}
         </select>
