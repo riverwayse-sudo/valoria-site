@@ -11,6 +11,7 @@ describe('dashboard data integrity', () => {
     expect(source).toContain('if (profileViewsError) throw profileViewsError')
     expect(source).toContain('if (buyerProfileError) throw buyerProfileError')
     expect(source).toContain('if (enquiriesError) throw enquiriesError')
+    expect(source.match(/const { data: msgs, error: enquiriesError }/g)).toHaveLength(2)
   })
 
   test('partial dashboard failures remain visible when a profile was already loaded', () => {
