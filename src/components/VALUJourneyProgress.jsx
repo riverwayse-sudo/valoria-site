@@ -7,9 +7,9 @@ export default function VALUJourneyProgress({ stage = 'taster' }) {
   ]
   const active = Math.max(0, steps.findIndex(step => step.key === stage))
   return (
-    <section aria-label="VALU journey" style={{ margin: '0 0 22px' }}>
+    <section aria-label="VALU Index journey" style={{ margin: '0 0 22px' }}>
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:12, marginBottom:11 }}>
-        <span style={{ color:'#C9A84C', fontSize:9, fontWeight:800, letterSpacing:'.16em' }}>YOUR VALU JOURNEY</span>
+        <span style={{ color:'#C9A84C', fontSize:9, fontWeight:800, letterSpacing:'.16em' }}>YOUR VALU INDEX JOURNEY</span>
         <span style={{ color:'rgba(247,244,238,.48)', fontSize:10 }}>YOUR PROGRESS IS PRESERVED</span>
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(88px,1fr))', gap:8 }}>
