@@ -42,7 +42,7 @@ export default async function LiveProfilesScroll() {
         <div className="live-profiles-copy">
           <div className="live-profiles-kicker">THE VALORIA MARKETPLACE</div>
           <h2 id="marketplace-title" className="live-profiles-title">Find professionals <em>by capability.</em></h2>
-          <p className="live-profiles-subtitle">Explore public profiles by capability. Full listings add VALU Index insight where available; every listing requires explicit visibility consent.</p>
+          <p className="live-profiles-subtitle">Explore public professional profiles by capability. VALU Index insight appears where available for public display. Professionals choose whether their profiles are visible.</p>
           {!dataUnavailable && <div className="live-profiles-proof" aria-label="Public marketplace profile count"><strong>{discoverableCount}</strong><span>public professional profiles</span></div>}
         </div>
 
@@ -55,7 +55,7 @@ export default async function LiveProfilesScroll() {
             {counts.candidate > 0 ? (
               <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent"><span><small>ATB CONNECT</small>Find talent</span><b>→</b></Link>
             ) : (
-              <a href="/contact-us?type=candidate" className="live-profile-action primary"><span><small>ATB CONNECT</small>Request sourcing access</span><b>→</b></a>
+              <a href="/contact-us?type=candidate" className="live-profile-action primary"><span><small>ATB CONNECT</small>Share a talent brief</span><b>→</b></a>
             )}
             {counts.speaker > 0 ? (
               <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker"><span><small>ATB SPOTLIGHT</small>Find a speaker</span><b>→</b></Link>
@@ -99,12 +99,12 @@ export default async function LiveProfilesScroll() {
                           <strong className="vi-scroll-name">{profile.atb_id || 'VALORIA PROFESSIONAL'}</strong>
                           <div className="vi-scroll-headline">{displayText(profile.headline)}</div>
                           <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'NO DECLARED ROLE'}</div>
-                          <div className="vi-scroll-designation">{isBasic ? 'BASIC LISTING' : (tier?.name || 'ASSESSMENT FOLLOW-UP')}</div>
+                          <div className="vi-scroll-designation">{isBasic ? 'PROFESSIONAL LISTING' : (tier?.name || 'ASSESSMENT FOLLOW-UP')}</div>
                           {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div>{development && <div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div>}</>}
                         </div>
-                        <div className="vi-scroll-score" aria-label={isBasic ? 'Basic marketplace listing' : `VALU Index ${profile.valu_index} points`}>
-                          <span className="vi-scroll-score-label">{isBasic ? 'LISTING LEVEL' : 'VALU INDEX'}</span>
-                          <strong>{isBasic ? 'BASIC' : profile.valu_index}</strong>
+                        <div className="vi-scroll-score" aria-label={isBasic ? 'Public professional listing' : `VALU Index ${profile.valu_index} points`}>
+                          <span className="vi-scroll-score-label">{isBasic ? 'PROFILE' : 'VALU INDEX'}</span>
+                          <strong>{isBasic ? 'PUBLIC' : profile.valu_index}</strong>
                           {!isBasic && <span className="vi-scroll-score-max">points</span>}
                         </div>
                         <span className="vi-scroll-card-arrow" aria-hidden="true">↗</span>
