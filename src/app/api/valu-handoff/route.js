@@ -58,14 +58,14 @@ async function getOwnedSnapshot(admin, user) {
     .not('completed_at', 'is', null)
     .limit(1)
     .maybeSingle()
-  if (accountAssessmentError) return { error: 'Could not verify your VALU assessment status.', status: 502 }
+  if (accountAssessmentError) return { error: 'Could not verify your VALU Index status.', status: 502 }
   const { data: completedBySnapshot, error: snapshotAssessmentError } = await admin.from('valu_assessments')
     .select('id')
     .eq('taster_id', taster.id)
     .not('completed_at', 'is', null)
     .limit(1)
     .maybeSingle()
-  if (snapshotAssessmentError) return { error: 'Could not verify your VALU assessment status.', status: 502 }
+  if (snapshotAssessmentError) return { error: 'Could not verify your VALU Index status.', status: 502 }
   return { taster, completed: Boolean(completedByAccount || completedBySnapshot) }
 }
 
@@ -92,7 +92,7 @@ export async function POST(request) {
   if (auth.error) return auth.error
   const snapshot = await getOwnedSnapshot(admin, auth.user)
   if (snapshot.error) return NextResponse.json({ error: snapshot.error }, { status: snapshot.status })
-  if (snapshot.completed) return NextResponse.json({ error: 'Your full VALU assessment is already complete.', already_completed: true }, { status: 409 })
+  if (snapshot.completed) return NextResponse.json({ error: 'Your full VALU Index is already complete.', already_completed: true }, { status: 409 })
 
   const assessmentOrigin = getValuAssessmentOrigin(process.env)
   if (!assessmentOrigin) {
