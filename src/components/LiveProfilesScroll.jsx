@@ -9,7 +9,7 @@ const TRACK_META = {
   facilitator: { label: 'Facilitator', href: '/marketplace/facilitators' },
 }
 
-const displayText = value => String(value ?? '').normalize('NFKC').replace(/[\\uFFFD]/g, '').trim()
+const displayText = value => String(value ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
 
 function developmentArea(scores) {
   if (!scores || typeof scores !== 'object') return null
@@ -151,9 +151,9 @@ export default async function LiveProfilesScroll() {
             <Link href="/marketplace" className="live-profiles-empty-link">EXPLORE THE MARKETPLACE <span aria-hidden="true">→</span></Link>
           </div>
           <div className="live-profiles-empty-grid">
-            <div className="live-profiles-empty-card"><span>01 · TALENT</span><strong>Professional capability</strong><small>For hiring and sourcing.</small></div>
+            <div className="live-profiles-empty-card"><span>01 · TALENT</span><strong>Professional capability</strong><small>For hiring and talent discovery.</small></div>
             <div className="live-profiles-empty-card"><span>02 · SPEAKERS</span><strong>Subject expertise</strong><small>For events and conversations.</small></div>
-            <div className="live-profiles-empty-card"><span>03 · FACILITATORS</span><strong>Learning and change</strong><small>For programmes and workshops.</small></div>
+            <div className="live-profiles-empty-card"><span>03 · FACILITATORS</span><strong>Learning and change</strong><small>For programs and workshops.</small></div>
           </div>
         </div>
       )}
