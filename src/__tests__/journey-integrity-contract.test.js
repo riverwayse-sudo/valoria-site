@@ -479,8 +479,8 @@ describe('journey integrity contract', () => {
     expect(start).toContain('Your official result in points')
     expect(start).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
     expect(start).not.toMatch(/9-question|58-question/i)
-    expect(signup).toContain('VALU taster')
-    expect(signup).toContain('full assessment')
+    expect(signup).toContain('VALU Index Taster')
+    expect(signup).toContain('separate full assessment')
   })
   test('professional account creation remains separate from pre-taster registration', () => {
     const signup = read('src/app/professional-signup/page.jsx')
