@@ -480,6 +480,17 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
 
+  test('marketplace cards retain readable typography and expand without clipping on small screens', () => {
+    const styles = read('src/components/MarketplaceDirectory.module.css')
+    const accessibilityLayer = styles.slice(styles.lastIndexOf('/* Accessibility correction: preserve legibility and let cards grow with content. */'))
+    expect(accessibilityLayer).toContain('.card{height:100%;min-height:450px;max-height:none;overflow:visible;padding:20px}')
+    expect(accessibilityLayer).toContain('.capabilityBadge strong{font-size:8px')
+    expect(accessibilityLayer).toContain('.capabilityBadge small{font-size:8px')
+    expect(accessibilityLayer).toContain('.assessmentSummary{font-size:10px')
+    expect(accessibilityLayer).toContain('@media(max-width:900px){.grid{grid-auto-rows:auto}.card{height:auto;min-height:0;max-height:none}}')
+    expect(accessibilityLayer).toContain('@media(max-width:520px){.card{height:auto;min-height:0;max-height:none;padding:18px}')
+  })
+
   test('marketplace opens an accessible profile preview modal from each public card', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
     const styles = read('src/components/MarketplaceDirectory.module.css')
