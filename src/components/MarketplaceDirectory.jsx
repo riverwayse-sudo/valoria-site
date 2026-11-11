@@ -63,13 +63,13 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
         if (!band || p.assessment_access !== 'full' || !Number.isFinite(points) || points < band.min || points > band.max) return false
       }
       if(!q) return true
-      return [p.full_name,p.headline,p.current_job_title,p.atb_id,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
+      return [p.headline,p.current_job_title,p.atb_id,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
     }).sort((a, b) => {
       const scored = value => value.assessment_access === 'full' && Number.isFinite(Number(value.valu_index))
       const isAvailable = value => /^(available|accepting|open)$/i.test(displayText(value.availability_status))
       return Number(scored(b)) - Number(scored(a)) ||
         Number(isAvailable(b)) - Number(isAvailable(a)) ||
-        displayText(a.full_name).localeCompare(displayText(b.full_name))
+        displayText(a.atb_id).localeCompare(displayText(b.atb_id))
     })
   },[rows,activeTrack,query,sector,cluster,skill,scoreBand])
 
@@ -212,11 +212,11 @@ function Profile({p, onSelect}) {
   return <article className={`${styles.card} ${explicitlyUnavailable ? styles.unavailableCard : ''}`}>
     <header className={styles.cardHeader}>
       <div className={styles.identity}>
-<ValoriaAvatar src={p.photo_url} name={p.full_name} seed={p.professional_id || profileId} size={58} className={styles.avatar}/>
+<ValoriaAvatar src={p.photo_url} name="Valoria Professional" seed={p.professional_id || profileId} size={58} className={styles.avatar}/>
         <div className={styles.identityCopy}>
-          <strong className={styles.profileName}>{displayText(p.full_name) || 'Professional profile'}</strong>
+          <strong className={styles.profileName}>{profileId || 'VALORIA PROFESSIONAL'}</strong>
           {role && <span className={styles.profileRole}>{role}</span>}
-          <span className={styles.cardIdLabel}>{profileId || 'ATB ID PENDING'}</span>
+          <span className={styles.cardIdLabel}>ATB PROFILE ID</span>
         </div>
       </div>
       <div className={styles.scoreDesignation}>
@@ -322,10 +322,10 @@ function ProfilePreviewModal({ profile, onClose }) {
         </div>
         <div className={styles.modalBody}>
           <div className={styles.modalIdentity}>
-            <ValoriaAvatar src={profile.photo_url} name={profile.full_name} seed={profile.professional_id || profile.atb_id} size={96} className={styles.modalAvatar}/>
+            <ValoriaAvatar src={profile.photo_url} name="Valoria Professional" seed={profile.professional_id || profile.atb_id} size={96} className={styles.modalAvatar}/>
             <div className={styles.modalIdentityCopy}>
               <p className={styles.modalEyebrow}>ATB PROFILE ID · {displayText(profile.atb_id || 'PENDING')}</p>
-              <h2 id="profile-preview-title">{displayText(profile.full_name || 'Professional profile')}</h2>
+              <h2 id="profile-preview-title">{displayText(profile.atb_id || 'VALORIA PROFESSIONAL')}</h2>
               <p className={styles.modalHeadline}>{displayText(profile.current_job_title || profile.headline || 'Professional capability')}</p>
               <div className={styles.modalMeta}>
                 {displayText(profile.industry) && <span>{displayText(profile.industry)}</span>}
