@@ -224,7 +224,7 @@ export default function DashboardPage() {
         if (enquiriesError) throw enquiriesError
         setEnquiries((msgs || []).map(m => ({ ...m, recipient_profile_id: m.professional_profile_id })))
       } else {
-        const { data: msgs } = await supabase
+        const { data: msgs, error: enquiriesError } = await supabase
           .from('enquiries')
           .select('*, professional_profiles:professional_profile_id(display_name, headline, photo_url, active_tracks)')
           .eq('buyer_user_id', user.id)
