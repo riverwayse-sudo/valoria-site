@@ -16,10 +16,11 @@ describe('Public identity and audience-language contract', () => {
   const privacy = read('src/app/privacypolicy/page.jsx')
 
   test('public marketplace projections and profile metadata use ATB IDs, not personal names', () => {
-    expect(marketplaceData).not.toMatch(/\\bfull_name\\b/)
+    expect(marketplaceData).not.toContain('full_name')
     expect(publicProfile).not.toMatch(/['"]full_name['"]/)
     expect(publicProfile).toContain('display_name: row.atb_id')
-    expect(directory).not.toMatch(/(?:p|profile)\\.full_name/)
+    expect(directory).not.toContain('p.full_name')
+    expect(directory).not.toContain('profile.full_name')
     expect(directory).toContain('identifier: profile.atb_id')
     expect(profilePage).toContain('identifier: publicProfile.atb_id')
     expect(profileLayout).toContain('profile.atb_id')
@@ -27,11 +28,12 @@ describe('Public identity and audience-language contract', () => {
 
   test('public pages do not expose internal buyer or access-state terminology', () => {
     expect(spotlight).not.toMatch(/training buyers/i)
-    expect(about).not.toMatch(/\\bbuyers?\\b/i)
+    expect(about.toLowerCase()).not.toContain('buyer')
     expect(homepage).not.toMatch(/training buyers/i)
     expect(homepage).toContain("label: 'PROFESSIONAL DISCOVERY'")
     expect(profileClient).not.toMatch(/NO ACTIVE BUYER PATHWAY/i)
-    expect(directory).not.toMatch(/BASIC ACCESS|BASIC \\u00b7 SNAPSHOT/i)
+    expect(directory).not.toContain('BASIC ACCESS')
+    expect(directory).not.toContain('BASIC · SNAPSHOT')
   })
 
   test('the privacy page states the data-sale position and public identity boundary', () => {
