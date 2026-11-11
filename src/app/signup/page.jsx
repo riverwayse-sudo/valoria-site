@@ -65,7 +65,7 @@ export default function SignupPage() {
           data: { display_name: form.name, user_type: userType },
           // Never derive auth redirects from window.location.origin: signups on a
           // Vercel preview would otherwise send confirmation emails to that preview.
-          emailRedirectTo: 'https://valoriainstitute.com/auth/callback',
+          emailRedirectTo: new URL('/auth/callback', process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com').toString(),
         },
       })
       if (signupError) throw signupError
