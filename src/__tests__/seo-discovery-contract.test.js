@@ -68,10 +68,10 @@ describe('Valoria SEO and discovery foundation', () => {
 
   test('machine-readable reference uses current PRIME and VALU decisions', () => {
     const llms = read('public/llms.txt')
-    expect(llms).toContain('17 skills')
     expect(llms).toContain('https://valoriainstitute.com/jobs')
-    expect(llms).toContain('AI Fluency')
-    expect(llms).toContain('Human-AI Collaboration')
+    expect(llms).toContain('The detailed skill architecture, assessment criteria and scoring methodology are proprietary to Valoria Institute and are not disclosed in public content.')
+    expect(llms).not.toContain('AI Fluency')
+    expect(llms).not.toContain('Human-AI Collaboration')
     expect(llms).toContain('points, not percentages')
     expect(llms).not.toMatch(/15[- ]question|54[- ]question/i)
     expect(llms).not.toContain('Composure Under Scrutiny')
