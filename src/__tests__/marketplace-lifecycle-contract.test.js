@@ -536,6 +536,8 @@ describe('VALUI marketplace lifecycle contract', () => {
 
   test('consented public Full profiles remain directly accessible while incomplete profiles stay noindex', () => {
     const publicProfile = read('src/lib/public-profile.js')
+    const data = read('src/lib/marketplace-data.js')
+    const directory = read('src/components/MarketplaceDirectory.jsx')
     const profileLayout = read('src/app/profile/[id]/layout.jsx')
     const profileClient = read('src/app/profile/[id]/ProfileClient.jsx')
     expect(publicProfile).toContain("roster.selected_capabilities")
