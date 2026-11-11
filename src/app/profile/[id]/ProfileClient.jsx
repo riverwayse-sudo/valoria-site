@@ -560,7 +560,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
             <Section label="VALU Index Summary">
               {p.assessment_summary
                 ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
-                : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>{p.assessment_access === 'basic' ? 'A Basic listing presents professional identity and capability information. VALU assessment insight is not displayed at this tier.' : 'Your VALU Index summary will appear here when your assessment and listing requirements are complete.'}</p>}
+                : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>{p.assessment_access === 'basic' ? 'A Basic listing presents professional identity and capability information. VALU Index insight is not displayed at this tier.' : 'Your VALU Index summary will appear here when your assessment and listing requirements are complete.'}</p>}
             </Section>
 
             {/* Key Strengths — rectangular card, gold background per brand,
