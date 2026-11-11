@@ -1137,7 +1137,7 @@ function Section({ label, children }) {
   )
 }
 function EnquiryCard({ msg, isSpeaker }) {
-  const date = new Date(msg.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
+  const date = new Date(msg.created_at).toLocaleDateString('en-US', { day:'numeric', month:'short', year:'numeric' })
   const status = STATUS_COLORS[msg.status] || STATUS_COLORS.pending
   return (
     <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'18px 20px' }}>
@@ -1160,7 +1160,7 @@ function EnquiryCard({ msg, isSpeaker }) {
   )
 }
 function SentRequestCard({ msg }) {
-  const date = new Date(msg.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
+  const date = new Date(msg.created_at).toLocaleDateString('en-US', { day:'numeric', month:'short', year:'numeric' })
   const status = STATUS_COLORS[msg.status] || STATUS_COLORS.pending
   const prof = msg.professional_profiles
   return (
