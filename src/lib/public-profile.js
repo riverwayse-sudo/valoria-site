@@ -86,9 +86,10 @@ async function hasCurrentFullAssessment(admin, profile) {
 }
 
 function hasBasicPublicIdentity(profile, roster = {}) {
-  const verifiedIdentity = roster.full_name?.trim()
+  const atbId = String(profile.atb_id || roster.atb_id || '').normalize('NFKC').trim()
+  const validAtbId = /^ATB-[A-Z0-9-]{4,40}$/i.test(atbId)
   const headline = profile.headline?.trim() || profile.current_job_title?.trim() || roster.headline?.trim() || roster.current_job_title?.trim()
-  return Boolean(verifiedIdentity && headline)
+  return Boolean(validAtbId && headline)
 }
 
 export async function getConsentVerifiedPublicProfile(identifier, field = 'id') {
@@ -100,7 +101,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
   // a linked completed taster or current Full assessment and minimal identity.
   const { data: roster, error: rosterError } = await admin
     .from('marketplace_public_roster')
-    .select('professional_id,atb_id,assessment_access,assessment_summary,capabilities,selected_capabilities,full_name,headline,current_job_title,valu_index')
+    .select('professional_id,atb_id,assessment_access,assessment_summary,capabilities,selected_capabilities,headline,current_job_title,valu_index')
     .eq(lookupField, identifier)
     .in('assessment_access', ['full', 'basic'])
     .maybeSingle()
@@ -209,7 +210,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
   const admin = getAdminClient()
   const { data: roster, error: rosterError } = await admin
     .from('marketplace_public_roster')
-    .select('professional_id,assessment_access,assessment_summary,capabilities,full_name,headline,current_job_title,valu_index')
+    .select('professional_id,atb_id,assessment_access,assessment_summary,capabilities,headline,current_job_title,valu_index')
     .in('assessment_access', ['full', 'basic'])
 
   if (rosterError) {
