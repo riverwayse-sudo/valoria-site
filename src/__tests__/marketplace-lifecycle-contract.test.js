@@ -637,6 +637,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(publicPages).toContain('.page-hero{position:relative;padding:88px')
     expect(publicPages).toContain('.valu-hero{min-height:82vh;display:flex;align-items:center;padding:84px')
     expect(publicPages).toContain('.vs-hero{min-height:88vh;display:flex;align-items:center;padding:84px')
+    expect(publicPages).toContain('.coaching-hero{padding:72px 24px 60px;')
+    expect(publicPages).toContain('.opportunities-hero{background:var(--ink,#1A1A2E);color:var(--parchment,#F7F4EE);padding:84px 0 70px}')
     expect(homepage).toContain('padding-top: 0;')
     expect(typography).toContain('h2 { font-size: var(--vi-type-h2); line-height: 1.16;')
     expect(typography).not.toContain('h2 { font-size: var(--vi-type-h2) !important;')
