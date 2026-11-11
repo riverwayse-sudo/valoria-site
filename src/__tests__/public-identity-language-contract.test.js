@@ -15,6 +15,7 @@ describe('Public identity and audience-language contract', () => {
   const spotlight = read('src/app/atb-spotlight/page.jsx')
   const privacy = read('src/app/privacypolicy/page.jsx')
   const homepageMarketplace = read('src/components/LiveProfilesScroll.jsx')
+  const llms = read('public/llms.txt')
 
   test('public marketplace projections and profile metadata use ATB IDs, not personal names', () => {
     expect(marketplaceData).not.toContain('full_name')
@@ -40,6 +41,10 @@ describe('Public identity and audience-language contract', () => {
     expect(homepageMarketplace.toLowerCase()).not.toContain('buyer')
     expect(homepageMarketplace.toLowerCase()).not.toContain('programme')
     expect(homepageMarketplace.toLowerCase()).not.toContain('organiser')
+    expect(llms.toLowerCase()).not.toContain('buyer')
+    expect(llms).not.toContain('Basic is a marketplace access state')
+    expect(llms).not.toContain('one account')
+    expect(llms).toContain('Public profiles appear only when the professional has chosen visibility')
     expect(homepage).toContain("label: 'PROFESSIONAL DISCOVERY'")
     expect(profileClient).not.toContain('p.display_name')
     expect(profileClient).not.toContain('getInitials(p.display_name)')
