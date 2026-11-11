@@ -88,8 +88,9 @@ describe('VALU presentation consistency', () => {
 
   test('marketplace explains snapshot and full assessment without exposing internal question counts', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
-    expect(directory).toContain('A completed VALU snapshot may support a Basic listing')
-    expect(directory).toContain('Completing the full assessment establishes your official VALU Index in points')
+    expect(directory).toContain('declared capabilities, relevant experience and approved public profile information')
+    expect(directory).toContain('not a credential verification or a substitute for independent professional diligence')
+    expect(directory).toContain('Where available, a completed VALU assessment adds structured context in points and an assessment-informed summary')
     expect(directory).not.toMatch(/(?:9|58)[- ]questions?/i)
   })
 
