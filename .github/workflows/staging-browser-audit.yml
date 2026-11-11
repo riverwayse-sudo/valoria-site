@@ -34,8 +34,11 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Capture staging screenshots and verify UX safeguards
+      - name: Capture current-site staging screenshots and verify UX safeguards
         run: node scripts/staging-browser-audit.mjs
+        env:
+          STAGING_SITE_URL: https://valoria-current-site-audit-staging.riverwayse.workers.dev
+          STAGING_ASSESSMENT_URL: https://valoria-staging-assessment.riverwayse.workers.dev
 
       - name: Upload screenshots and audit report
         if: always()
