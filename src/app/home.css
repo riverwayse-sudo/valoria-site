@@ -3780,3 +3780,27 @@
   .vi-prime-word { font-size: clamp(64px, 9vw, 82px); }
   .vi-prime-labels span { font-size: 9px; }
 }
+
+
+/* Mobile editorial hero: keep the five PRIME labels readable in the compact art panel. */
+@media (max-width: 760px) {
+  .vi-hero-art {
+    min-height: 340px;
+  }
+  .vi-hero-art-content {
+    gap: 10px;
+    padding: 20px 14px;
+  }
+  .vi-prime-labels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px 8px;
+    padding-bottom: 16px;
+  }
+  .vi-prime-labels span {
+    font-size: 7px;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+}
