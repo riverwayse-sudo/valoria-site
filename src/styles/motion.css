@@ -14,7 +14,13 @@
   --motion-distance-large: 32px;
 }
 
+/* Content remains visible by default. JavaScript opts into the reveal state
+   only after the observer is available, so failed/disabled JS never hides content. */
 .reveal {
+  opacity: 1;
+  transform: none;
+}
+.reveal.is-pending {
   opacity: 0;
   transform: translate3d(0,var(--motion-distance),0);
   transition:
@@ -238,7 +244,6 @@ nav.vi-nav.scrolled,
     will-change: auto;
   }
 }
-
 
 /* Reduced-motion support for the editorial homepage. */
 @media (prefers-reduced-motion: reduce) { .vi-hero-image, .vi-hero-art, .vi-audience-panel { transition: none !important; animation: none !important; } }
