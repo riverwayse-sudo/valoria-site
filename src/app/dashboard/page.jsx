@@ -502,7 +502,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* MARKETPLACE JOURNEY — five milestones; separate from the VALU score display */}
+        {/* MARKETPLACE JOURNEY — five milestones; separate from the VALU Index score display */}
         {isSupply && !assessmentAccess?.can_continue && (
           <div style={{ maxWidth:'1100px', margin:'24px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
             <AccessProgressCard
