@@ -109,8 +109,8 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             <option value="">All skills</option>
             {skills.map(value=><option key={value} value={value}>{value}</option>)}
           </select>
-          <select value={scoreBand} onChange={e=>setScoreBand(e.target.value)} aria-label="Filter by VALU points band">
-            <option value="">All assessment scores</option>
+          <select value={scoreBand} onChange={e=>setScoreBand(e.target.value)} aria-label="Filter by VALU Index points band">
+            <option value="">All VALU Index scores</option>
             {SCORE_BANDS.map(value=><option key={value.name} value={value.name}>{value.name} · {value.min}–{value.max} points</option>)}
           </select>
           <select value={sector} onChange={e=>setSector(e.target.value)} aria-label="Filter by sector">
@@ -350,7 +350,7 @@ function ProfilePreviewModal({ profile, onClose }) {
               </p>
               <div className={styles.modalCredential}>
                 <span>{isFull ? 'VALU INDEX INSIGHT' : 'BASIC PROFESSIONAL LISTING'}</span>
-                <strong>{tier ? tier.name : 'VALU SCORE NOT DISPLAYED'}</strong>
+                <strong>{tier ? tier.name : 'VALU INDEX SCORE NOT DISPLAYED'}</strong>
               </div>
             </section>
             <section className={styles.modalPanel}>
