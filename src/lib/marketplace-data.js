@@ -1,7 +1,7 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 
-const FIELDS = 'professional_id,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
+const FIELDS = 'professional_id,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,photo_url,industry,seniority_band,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
 const PUBLIC_PROFILE_ACK_VERSION = 'public-profile-visibility-v3-2026-11-07'
 
@@ -246,14 +246,13 @@ export async function getMarketplaceRows(track = 'all') {
     .map(row => row.assessmentAccess === 'basic'
       ? { ...row, valu_index: null, cluster_scores: null, assessment_summary: null, designation: null }
       : row)
-  // Category membership follows the participant's publicly declared active capability selection.
-  // This is distinct from evidence-approved capability readiness: selection determines the
-  // directory lane, while readiness remains separately governed in the admin workflow.
+  // Category membership follows the published capability projection. Selected-but-unapproved
+  // capabilities remain visible as selections on a card but do not enter a category directory.
   // Public listing, consent, assessment validity and revocation checks are enforced above.
   return rows.filter(row => {
     if (track === 'all') return true
     const capability = normalizeTrack(track)
-    return row.selectedCapabilities.includes(capability)
+    return row.capabilities.includes(capability)
   })
 }
 
@@ -261,9 +260,8 @@ function countMarketplaceRows(rows) {
   const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
 
   for (const row of rows || []) {
-    // Category counts follow publicly declared active selections for both Basic and Full profiles.
-    // Evidence-approved readiness remains a separate admin eligibility state.
-    const visibleCapabilities = row.selectedCapabilities || []
+    // Category counts follow published capability lanes, not merely participant selections.
+    const visibleCapabilities = row.capabilities || []
     for (const capability of new Set(visibleCapabilities)) {
       if (byTrack[capability]) byTrack[capability].add(row.professional_id)
     }
@@ -287,7 +285,7 @@ export async function getMarketplaceDirectoryData(track = 'all') {
   const normalizedTrack = normalizeTrack(track)
   return {
     rows: normalizedTrack === 'all' ? allRows : allRows.filter(row =>
-      row.selectedCapabilities.includes(normalizedTrack)
+      row.capabilities.includes(normalizedTrack)
     ),
     counts: countMarketplaceRows(allRows),
   }
