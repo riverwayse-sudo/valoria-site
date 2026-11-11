@@ -5,7 +5,7 @@ import '../pages.css'
 
 export const metadata = {
   title: 'About Valoria Institute | Professional Capability Institution',
-  description: 'Valoria Institute is a professional capability institution with an international outlook. Its connected system brings together PRIME, the VALU Index, professional development, institutional standards and capability-led talent discovery. Operating availability and credential status are stated transparently.',
+  description: 'Valoria Institute is a professional capability institution for accomplished professionals and organizations making consequential decisions. Its system connects PRIME, the VALU Index, development and capability-led discovery, with operating availability and credential status stated transparently.',
   keywords: ['Valoria Institute', 'professional capability', 'PRIME framework', 'VALU Index', 'professional development', 'talent marketplace'],
   openGraph: {
     title: 'About Valoria Institute',
@@ -16,9 +16,9 @@ export const metadata = {
 }
 
 const FOUNDING_STATEMENTS = [
-  { title: 'Vision', body: 'A professional landscape where capability can be understood, developed, recognized and connected to opportunity.' },
-  { title: 'Mission', body: "To build and operate a trusted professional capability institution: one that assesses capability with structure, supports development with purpose, and helps professionals and organizations connect capability to relevant opportunity." },
-  { title: 'Purpose', body: 'To bridge the gap between latent brilliance and institutional scale. We exist because talent is not the problem. Infrastructure is. For every professional whose career has stalled not for lack of ability, but lack of access. Valoria Institute is the answer.' },
+  { title: 'Vision', body: 'A professional landscape in which consequential capability can be understood with precision, developed with intent and connected to meaningful opportunity.' },
+  { title: 'Mission', body: "To build and operate a trusted professional capability institution: one that applies a consistent framework to assessment, supports purposeful development and helps professionals and institutions make better-informed decisions about capability." },
+  { title: 'Purpose', body: 'To make professional capability more legible to the people and institutions responsible for developing, selecting and engaging it. Access matters; so do substance, evidence, judgment and the systems that allow exceptional work to be recognized.' },
 ]
 
 const PRINCIPLES = [
@@ -60,14 +60,14 @@ export default function AboutPage() {
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE PROBLEM WE ADDRESS</span></div>
               <h2 className="section-title">A great CV and a <em>great decision</em> are not the same thing.</h2>
-              <p className="page-copy">In hiring, speaking and training, buyers often have to make decisions with incomplete signals. A CV or biography can describe experience, but it may not show how a person thinks, works or contributes. Professionals can be overlooked when access and familiarity shape who gets considered.</p>
-              <p className="page-copy page-copy-spaced">Valoria Institute exists to make professional capability easier to understand, develop and present. Its approach connects a shared framework, an assessment-led index, development pathways and a capability-led marketplace.</p>
+              <p className="page-copy">At senior levels, decisions about people carry significant consequences. A résumé, biography or referral can describe experience, but rarely provides a complete or consistent account of how a person thinks, leads, works and contributes. Institutions need stronger context; professionals deserve a more considered way to present capability.</p>
+              <p className="page-copy page-copy-spaced">Valoria connects a shared framework, an assessment-led index, development pathways and a professional Registry. Each has a defined role, with the VALU Index informing—not replacing—professional judgment and independent verification.</p>
             </Reveal>
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE INSTITUTIONAL RESPONSE</span></div>
               <h2 className="section-title">Develop.<br /><em>Surface. Connect.</em></h2>
               <p className="page-copy">PRIME provides the capability framework. The VALU Index provides an assessment-led view of capability. Valoria Develop supports structured growth. The Valoria Marketplace connects employers, event organizers and program teams with relevant professional expertise.</p>
-              <p className="page-copy page-copy-spaced">One institution. One connected system. Distinct pathways for professional merit.</p>
+              <p className="page-copy page-copy-spaced">One institution. A coherent framework. Distinct pathways for capability, development and discovery.</p>
             </Reveal>
           </div>
         </section>
