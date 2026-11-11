@@ -28,9 +28,9 @@ describe('participant-facing assessment clarity', () => {
     expect(valu).toContain('short VALU Taster')
     expect(valu).toContain('separate full assessment')
     expect(valu).toContain('official points-based VALU Index')
-    expect(valu).toContain('nine questions across four Intelligence skills')
-    expect(valu).toContain('separate 58-question full assessment')
-    expect(valu).toContain('54 scored questions and four validity checks')
+    expect(valu).toContain('short set of prompts across four Intelligence skills')
+    expect(valu).toContain('separate full assessment')
+    expect(valu).not.toMatch(/(?:9|58)[- ]questions?|nine questions|54 scored questions|four validity checks/i)
   })
 
   test('public PRIME page and marketplace use the five approved VALU designation bands', () => {
