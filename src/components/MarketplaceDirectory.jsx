@@ -50,8 +50,8 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     const q=query.trim().toLowerCase()
     return rows.filter(p => {
       if (!displayText(p.full_name)) return false
-      const caps=[...(p.selectedCapabilities || p.selected_capabilities || p.capabilities || p.tracks || [p.track])].map(normalize)
-      if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
+      const listedCapabilities = Array.isArray(p.capabilities) ? p.capabilities : (Array.isArray(p.tracks) ? p.tracks : (p.track ? [p.track] : []))
+      if(activeTrack !== 'all' && !listedCapabilities.map(normalize).includes(activeTrack)) return false
       if(industry && displayText(p.industry) !== industry) return false
       if(cluster && getLeadingCluster(p) !== cluster) return false
       if(skill && !labelValues(p.skills).includes(skill)) return false
@@ -186,9 +186,9 @@ function getCapabilitySelection(profile) {
 }
 
 function Profile({p, onSelect}) {
-  // Show the professional's selected capabilities, not only capabilities
-  // that have passed the separate listing-eligibility gate. Category pages
-  // follow declared selections; evidence-based eligibility remains separate.
+  // Keep selected capabilities distinct from approved public listing lanes.
+  // Cards may disclose a selected capability, but category discovery uses only
+  // capabilities that have passed the separate eligibility and publication gate.
   const selectedCaps = getCapabilitySelection(p)
   // Keep all three capability lanes visible on every card. Selection is a
   // profile preference; category listing eligibility remains a separate gate.
