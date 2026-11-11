@@ -47,6 +47,22 @@ describe('1% of the 1% audience experience contract', () => {
     expect(acceptance).toContain('General Registry discoverability and category-specific listing eligibility are separate states.')
   })
 
+  test('authenticated profile surfaces preserve American English conventions', () => {
+    const publicProfile = read('src/app/profile/[id]/ProfileClient.jsx')
+    const edit = read('src/app/profile/edit/page.jsx')
+    const setup = read('src/app/profile/setup/page.jsx')
+    for (const source of [publicProfile, edit, setup]) {
+      expect(source).not.toMatch(/\\bprogramme types\\b/i)
+      expect(source).not.toMatch(/\\borganisation\\b/i)
+      expect(source).not.toMatch(/\\borganise\\b/i)
+    }
+    expect(publicProfile).toContain('Program Types')
+    expect(publicProfile).toContain('for a program?')
+    expect(edit).toContain('Organization')
+    expect(edit).toContain('Program types')
+    expect(setup).toContain('Valoria organize your capability profile')
+  })
+
   test('dashboard only reports published capabilities as listed and treats each listing independently', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
     expect(dashboard).toContain("capabilities.filter(c => c.is_active && c.eligible_for_listing === true && c.eligibility_status === 'listed')")
