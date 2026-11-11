@@ -5,8 +5,8 @@ import { PRIME_CLUSTERS } from '@/lib/brand'
 import '../pages.css'
 
 export const metadata = {
-  title: 'Valoria Develop | PRIME-Based Professional Development',
-  description: 'Explore structured development pathways built around the PRIME framework and the capability areas professionals want to strengthen.',
+  title: 'Valoria Develop | Executive and Institutional Development',
+  description: 'Explore considered, PRIME-based development pathways for accomplished professionals, leadership teams and institutions.',
   alternates: { canonical: 'https://valoriainstitute.com/develop' },
 }
 
@@ -25,8 +25,8 @@ export default function DevelopPage() {
         <section className="page-hero">
           <div className="page-hero-inner">
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">VALORIA DEVELOP</span></div>
-            <h1 className="page-title">Development that closes<br /><em>the gap your assessment found.</em></h1>
-            <p className="page-sub">Valoria Develop translates the PRIME framework into structured learning experiences for individuals and organisations. Each pathway is designed around the capability areas where growth matters most.</p>
+            <h1 className="page-title">Development for<br /><em>work that carries consequence.</em></h1>
+            <p className="page-sub">Valoria Develop translates the PRIME framework into focused development experiences for accomplished professionals, leadership teams and institutions. Each engagement begins with the work, judgment and capability the organization needs to strengthen—not a generic training catalogue.</p>
             <div className="page-hero-actions">
               <a href="/contact-us?topic=Valoria%20Develop" className="btn-gold">ENQUIRE ABOUT DEVELOPMENT</a>
               <a href="/prime" className="btn-outline">EXPLORE PRIME</a>
@@ -38,8 +38,8 @@ export default function DevelopPage() {
           <div className="page-section-inner">
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE DEVELOPMENT FRAMEWORK</span></div>
-              <h2 className="section-title">Five clusters.<br /><em>Clear areas for growth.</em></h2>
-              <p className="page-copy">PRIME provides a shared language for professional development. The focus is agreed around the individual or organisation's needs; programme scope and availability are confirmed during the enquiry process.</p>
+              <h2 className="section-title">Five dimensions.<br /><em>A disciplined basis for growth.</em></h2>
+              <p className="page-copy">PRIME provides a shared language for professional development across Presence, Relationships, Intelligence, Mastery and Enterprise. Development priorities are scoped around the professional or institution's context. Programme scope, faculty and availability are confirmed during the enquiry process.</p>
             </Reveal>
             <div className="programmes-grid">
               {PRIME_CLUSTERS.map(cluster => (
@@ -62,7 +62,7 @@ export default function DevelopPage() {
           <div className="page-section-inner">
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">PROGRAMME FORMATS</span></div>
-              <h2 className="section-title">A format for<br /><em>the work ahead.</em></h2>
+              <h2 className="section-title">Designed around<br /><em>the work that matters.</em></h2>
             </Reveal>
             <div className="programmes-grid">
               {FORMATS.map(format => (
@@ -76,7 +76,7 @@ export default function DevelopPage() {
                 </Reveal>
               ))}
             </div>
-            <p className="page-copy page-copy-spaced">The PRIME Certified Professional pathway is in development. It is not currently offered as a completed certification.</p>
+            <p className="page-copy page-copy-spaced">The PRIME Certified Professional pathway remains in development and is not currently offered as a completed certification. No participant should represent participation in a development programme as a professional certification.</p>
           </div>
         </section>
 
@@ -85,7 +85,7 @@ export default function DevelopPage() {
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">HOW DEVELOPMENT IS DESIGNED</span></div>
               <h2 className="section-title">Learn through<br /><em>application.</em></h2>
-              <p className="page-copy">The proposed learning mix places the greatest emphasis on experiential practice, supported by social learning and focused formal instruction.</p>
+              <p className="page-copy">The proposed learning mix places the greatest emphasis on experiential practice, supported by peer learning and focused instruction. The appropriate design is confirmed against the engagement's objectives and delivery scope.</p>
             </Reveal>
             <Reveal>
               <div className="facilitator-diff-list">
@@ -100,8 +100,8 @@ export default function DevelopPage() {
         <section className="page-section alt">
           <Reveal>
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">START A CONVERSATION</span><div className="eyebrow-line" /></div>
-            <h2 className="section-title">Tell us what needs<br /><em>to move.</em></h2>
-            <p className="page-sub">Share your team, the PRIME cluster or skill you want to strengthen, and your intended timeline. Programme availability, delivery arrangements and commercial terms are confirmed during the enquiry process.</p>
+            <h2 className="section-title">Bring us the<br /><em>real development brief.</em></h2>
+            <p className="page-sub">Share the leadership or capability challenge, the people involved and the outcome that matters. Valoria will discuss whether a PRIME-based engagement is appropriate; scope, faculty, timing and commercial terms are confirmed directly.</p>
             <div className="page-hero-actions">
               <a href="/contact-us?topic=Valoria%20Develop" className="btn-gold">ENQUIRE ABOUT DEVELOPMENT</a>
             </div>
