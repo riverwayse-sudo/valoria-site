@@ -32,7 +32,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     const data = read('src/lib/marketplace-data.js')
     expect(data).toContain('assessment_access')
     expect(directory).toContain("p.assessment_access === 'full'")
-    expect(directory).toContain('BASIC · SNAPSHOT')
+    expect(directory).toContain('VALU TASTER COMPLETE')
     expect(directory).toContain('Complete the full VALU Index assessment to unlock this insight.')
   })
 
@@ -287,7 +287,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(brand).toContain("name: 'At the Starting Point'")
     expect(brand).toContain('min: 0, max: 34')
     expect(directory).toContain('className={styles.valu}')
-    expect(directory).toContain('FULL ASSESSMENT COMPLETE')
+    expect(directory).toContain('FULL VALU INDEX COMPLETE')
     expect(directory).toContain('CAPABILITY SELECTION')
     expect(directory).not.toContain('tier.stars')
     expect(styles).toContain('.building-foundations')
