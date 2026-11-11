@@ -350,7 +350,7 @@ export default function DashboardPage() {
   // Marketplace visibility is capability-level. A multi-capability professional
   // must not be labelled "Not Listed" simply because the legacy profile-level
   // listing_status is stale or represents a different governance layer.
-  const listedCapabilities = capabilities.filter(c => c.is_active && (c.eligibility_status === 'listed' || c.eligible_for_listing === true))
+  const listedCapabilities = capabilities.filter(c => c.is_active && c.eligible_for_listing === true && c.eligibility_status === 'listed')
   const isVisible   = isSupply && listedCapabilities.length > 0
   const listingLabel = listedCapabilities.length
     ? `LISTED IN ${listedCapabilities.length} ${listedCapabilities.length === 1 ? 'PATH' : 'PATHS'}`
@@ -928,7 +928,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
   const capabilityReady = activeCapabilities.length > 0
   const isCapabilityEligible = c => (c.eligible_for_listing === true || c.eligibility_status === 'eligible' || c.eligibility_status === 'listed') && (!Array.isArray(c.missing_requirements) || c.missing_requirements.length === 0)
   const eligibilityReady = capabilityReady && activeCapabilities.every(isCapabilityEligible)
-  const listedReady = eligibilityReady && activeCapabilities.every(c => c.eligibility_status === 'listed')
+  const listedReady = activeCapabilities.some(c => c.eligible_for_listing === true && c.eligibility_status === 'listed')
 
   const steps = [
     { key:'valu', label:'VALU assessment', done:assessmentDone },
