@@ -29,5 +29,32 @@
       "binding": "VALU_ASSESSMENT",
       "service": "valoria-assessment"
     }
-  ]
+  ],
+  "env": {
+    "staging": {
+      "name": "valoria-staging-site",
+      "services": [
+        {
+          "binding": "VALU_ASSESSMENT",
+          "service": "valoria-staging-assessment"
+        }
+      ],
+      "vars": {
+        "CF_WORKERS": "1",
+        "VALU_PREVIEW": "1",
+        "VALU_STAGING_API_ENABLED": "1",
+        "NEXT_PUBLIC_VALU_STAGING_API_ENABLED": "1",
+        "NEXT_PUBLIC_VALU_PREVIEW": "1",
+        "NEXT_PUBLIC_SITE_URL": "https://staging.valoriainstitute.com",
+        "SUPABASE_URL": "https://yccxgjdqworgcbircnvn.supabase.co",
+        "NEXT_PUBLIC_SUPABASE_URL": "https://yccxgjdqworgcbircnvn.supabase.co",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_C3j_CjLgTLDGRu8rH1SXEg_tYpxoYUm",
+        "VALU_ASSESSMENT_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev",
+        "NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev",
+        "VALU_UPSTREAM_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev",
+        "VALU_PREVIEW_SITE_ORIGIN": "https://valoria-staging-site.riverwayse.workers.dev",
+        "VALU_PREVIEW_ASSESSMENT_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev"
+      }
+    }
+  }
 }
