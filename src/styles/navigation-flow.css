@@ -29,10 +29,6 @@
   overflow: visible;
 }
 
-.vi-site-header > nav.vi-nav.scrolled {
-  box-shadow: 0 8px 28px rgba(15, 15, 26, .12);
-}
-
 .vi-site-header .nav-mobile {
   position: absolute !important;
   top: 100% !important;
