@@ -38,7 +38,7 @@ const institutionalCapabilities = [
     number: '03',
     label: 'TALENT ACCESS',
     title: 'Valoria Marketplace',
-    body: 'A straightforward way for employers, event organisers and programme teams to find experienced professionals, speakers and facilitators.',
+    body: 'A straightforward way for employers, event organizers and program teams to find experienced professionals, speakers and facilitators.',
     outcome: 'Relevant expertise, easier to find.',
   },
   {
@@ -64,7 +64,7 @@ const decisionPathways = [
     number: '02',
     label: 'FOR EMPLOYERS',
     title: 'See beyond the résumé.',
-    body: 'Find experienced professionals whose skills and work match the role. A VALU Index result may offer useful context where a professional has chosen to share it; your organisation remains responsible for checking credentials and making hiring decisions.',
+    body: 'Find experienced professionals whose skills and work match the role. A VALU Index result may offer useful context where a professional has chosen to share it; your organization remains responsible for checking credentials and making hiring decisions. The VALU Index informs consideration; it does not replace independent credential checks.',
     href: '/atb-connect',
     cta: 'DISCUSS YOUR TALENT NEEDS',
   },
@@ -72,7 +72,7 @@ const decisionPathways = [
     number: '03',
     label: 'FOR EVENT ORGANIZERS · FOR FACILITATORS & PROGRAM LEADERS',
     title: 'Engage expertise with intention.',
-    body: 'Discover speakers and facilitators whose professional experience and capability align with the purpose, audience and stakes of your event or program.',
+    body: 'Discover speakers and facilitators whose professional experience and skills align with the purpose, audience and goals of your event or program.',
     href: '/atb-spotlight',
     cta: 'FIND A SPEAKER OR FACILITATOR',
   },
@@ -120,7 +120,7 @@ export default function HomePage() {
             <div className="home-journey-grid">
               <article className="home-journey-card"><span>01</span><h3>Take the taster</h3><p>Begin with a short set of prompts for an initial read across four Intelligence skills.</p></article>
               <article className="home-journey-card"><span>02</span><h3>Complete the full assessment</h3><p>Continue to the separate full assessment after creating or confirming your Valoria account.</p></article>
-              <article className="home-journey-card"><span>03</span><h3>Build your profile</h3><p>Use your VALU results and professional information to create a credible profile.</p></article>
+              <article className="home-journey-card"><span>03</span><h3>Build your professional profile</h3><p>Use your VALU results and professional information to create a credible profile.</p></article>
               <article className="home-journey-card"><span>04</span><h3>Become discoverable</h3><p>Present your experience and skills to employers and organisations when your profile is eligible and you choose to be visible.</p></article>
             </div>
             <div className="home-journey-actions">
@@ -155,13 +155,13 @@ export default function HomePage() {
 
         <LiveProfilesScroll />
 
-        <section className="home-partnership-band home-consolidated-engagement" aria-labelledby="partnership-band-title">
+        <section className="home-partnership-band home-consolidated-engagement valu-conversion" aria-labelledby="partnership-band-title">
           <div className="container">
             <Reveal className="home-partnership-content">
               <div>
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">YOUR NEXT STEP</span></div>
                 <h2 id="partnership-band-title">Make your next capability decision with <em>greater clarity.</em></h2>
-                <p>Professionals can begin with the VALU taster. Employers and institutions can speak with Valoria about finding professional expertise, development programmes or event support.</p>
+                <p>Professionals can begin with the VALU taster. Employers and institutions can speak with Valoria about finding professional expertise, development programs or event support.</p>
               </div>
               <div className="home-professional-entry-actions">
                 <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">START THE VALU TASTER <span aria-hidden="true">→</span></AssessmentStartLink>
