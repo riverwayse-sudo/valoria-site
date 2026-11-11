@@ -128,7 +128,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
         </div>
         {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p} onSelect={() => setSelectedProfile(p)}/>)}</div> :
           IS_STAGING_PREVIEW
-            ? <div className={styles.previewUnavailable} role="status"><strong>Approved public profiles are being prepared.</strong><p>Public profiles appear only when the professional has chosen visibility and the profile meets Valoria's listing requirements. Personal contact details and individual assessment answers are not displayed here.</p><p>Completed the VALU Index Taster? Sign in or create an account to continue your professional profile.</p><Link href="/signup" className={styles.view}>SIGN IN OR CREATE ACCOUNT</Link></div>
+            ? <div className={styles.previewUnavailable} role="status"><strong>Approved public profiles are being prepared.</strong><p>Public profiles appear only when the professional has chosen visibility and the profile meets Valoria’s listing requirements. Personal contact details and individual assessment answers are not displayed here.</p><p>Completed the VALU Index Taster? Sign in or create an account to continue your professional profile.</p><Link href="/signup" className={styles.view}>SIGN IN OR CREATE ACCOUNT</Link></div>
             : <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try adjusting your search or selecting another capability. Profile visibility reflects each professional's choices and Valoria's listing requirements.</p></div>}
       </div>
     </section>
