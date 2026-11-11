@@ -410,7 +410,7 @@ export default function DashboardPage() {
         <div style={{ position:'fixed', top:0, left:0, right:0, height:'3px', background:GOLD, opacity:.9, zIndex:201, pointerEvents:'none' }} />
 
         {/* HEADER NAV */}
-        <header style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 clamp(20px,4vw,40px)', height:'64px', background: MID, borderBottom:`1px solid ${GLINE}`, position:'sticky', top:0, zIndex:100 }}>
+        <header className="dv-header" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 clamp(20px,4vw,40px)', height:'64px', background: MID, borderBottom:`1px solid ${GLINE}`, position:'sticky', top:0, zIndex:100 }}>
           <Link href="/" style={{ lineHeight:0 }}>
             <img src="/logo.png" alt="Valoria Institute" style={{ height:'40px', width:'auto' }} />
           </Link>
@@ -855,6 +855,34 @@ export default function DashboardPage() {
         .dv-detail[open] > summary::after { content:'−'; }
         .dv-detail > summary span { margin-left:auto; color:rgba(247,244,238,.48); font-size:10px; font-weight:500; }
         .dv-detail-content { padding:0 17px 16px; }
+        .dv-header { gap:20px; min-width:0; }
+        .dv-header > a { flex:0 0 auto; }
+        .dv-nav {
+          flex:0 1 auto;
+          min-width:0;
+          flex-wrap:nowrap;
+          white-space:nowrap;
+          overflow-x:auto;
+          overscroll-behavior-x:contain;
+          scrollbar-width:none;
+          -webkit-overflow-scrolling:touch;
+        }
+        .dv-nav::-webkit-scrollbar { display:none; }
+        .dv-nav > * { flex:0 0 auto; }
+        .dv-stat-strip {
+          flex-wrap:nowrap !important;
+          min-width:0;
+          overflow-x:auto;
+          overscroll-behavior-x:contain;
+          scrollbar-width:thin;
+          -webkit-overflow-scrolling:touch;
+        }
+        .dv-stat-strip > * {
+          flex:0 0 150px !important;
+          min-width:150px !important;
+          box-sizing:border-box;
+        }
+        .dv-grid > * { min-width:0; }
         .dv-detail-content > div { margin-bottom:0 !important; }
         .dv-overview { max-width:1100px; margin:18px auto 0; }
         .dv-grid { grid-template-columns:260px minmax(0,1fr) !important; gap:28px !important; margin-top:24px !important; }
@@ -877,11 +905,13 @@ export default function DashboardPage() {
           .dv-grid { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 640px) {
-          .dv-stat-strip { flex-wrap: wrap !important; }
-          .dv-header-block { margin-top: 18px !important; gap: 16px !important; align-items: flex-start !important; }
-          .dv-nav { gap: 8px !important; }
-          .dv-nav a, .dv-nav button { font-size: 10px !important; padding: 7px 9px !important; }
-          .dv-header-block > div:last-child { width: 100%; padding-bottom: 0 !important; }
+          .dv-stat-strip { flex-wrap: nowrap !important; }
+          .dv-header { gap:12px; padding-left:14px !important; padding-right:14px !important; }
+          .dv-header > a img { height:32px !important; }
+          .dv-nav { gap:8px !important; flex:1 1 auto; }
+          .dv-nav a, .dv-nav button { font-size:10px !important; padding:7px 9px !important; }
+          .dv-header-block { margin-top:18px !important; gap:16px !important; align-items:flex-start !important; }
+          .dv-header-block > div:last-child { width:100%; padding-bottom:0 !important; }
         }
       `}</style>
     </>
