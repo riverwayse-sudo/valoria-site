@@ -13,9 +13,9 @@ export const revalidate = 0
 
 export const metadata = {
   title: 'Valoria Institute — Worth, Built.',
-  openGraph: { title: 'Valoria Institute — Worth, Built.', description: 'Valoria Institute is Africa-first, with Nigeria as its initial operating jurisdiction. It helps professionals and organisations understand, develop and connect professional capability through PRIME, the VALU Index and the Valoria Marketplace.', url: 'https://valoriainstitute.com/' },
+  openGraph: { title: 'Valoria Institute — Worth, Built.', description: 'Valoria Institute is a professional capability institution. Through PRIME and the VALU Index, it helps professionals understand capability, connect insight to development, and supports employers and institutions with structured talent discovery.', url: 'https://valoriainstitute.com/' },
   twitter: { card: 'summary_large_image', title: 'Valoria Institute — Worth, Built.' },
-  description: 'Valoria Institute is Africa-first, with Nigeria as its initial operating jurisdiction. It helps professionals and organisations understand, develop and connect professional capability through PRIME, the VALU Index and the Valoria Marketplace.',
+  description: 'Valoria Institute is a professional capability institution. Through PRIME and the VALU Index, it helps professionals understand capability, connect insight to development, and supports employers and institutions with structured talent discovery.',
   alternates: { canonical: 'https://valoriainstitute.com/' },
 }
 
@@ -63,14 +63,14 @@ const decisionPathways = [
   {
     number: '02',
     label: 'FOR EMPLOYERS',
-    title: 'Hire by capability, not CV triage.',
-    body: 'Explore professional capability, experience and role context through a more structured talent discovery pathway.',
+    title: 'Make talent decisions with better context.',
+    body: 'Explore professional profiles with assessment-led insight, experience and role context. VALU results inform discovery; they do not replace independent credential checks or your organization’s hiring process.',
     href: '/atb-connect',
     cta: 'REQUEST BUYER ACCESS',
   },
   {
     number: '03',
-    label: 'FOR EVENT ORGANISERS · FOR FACILITATORS & TRAINING BUYERS',
+    label: 'FOR EVENT ORGANIZERS & PROGRAM LEADERS',
     title: 'Find expertise that can hold a room.',
     body: 'Discover speakers and facilitators through capability-led profiles and relevant professional experience.',
     href: '/atb-spotlight',
@@ -86,8 +86,8 @@ export default function HomePage() {
         <HeroSlider />
         <section className="home-market-scope" aria-label="Initial market focus">
           <div className="container">
-            <span>INITIAL MARKET</span>
-            <p>Valoria is Africa-first, with Nigeria as its initial operating jurisdiction. The experience is designed to be clear to international professionals and buyers without implying availability beyond the markets we currently serve.</p>
+            <span>BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE</span>
+            <p>Valoria Institute brings a consistent language for professional capability to professionals, employers and institutions. Service availability, professional listings and institutional relationships are presented according to what is currently operational; the Institute does not imply universal accreditation or recognition.</p>
           </div>
         </section>
 
@@ -98,7 +98,7 @@ export default function HomePage() {
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE INFRASTRUCTURE GAP</span></div>
                 <h2 id="institutional-case-title">Careers still turn on who was in the right room at the right time. Your capability has not changed. <em>The room has.</em></h2>
               </div>
-              <p>Professionals can be overlooked when familiarity shapes who gets considered. Employers, event organisers and training buyers need a more consistent way to understand capability beyond résumés, biographies and referrals.</p>
+              <p>Professionals can be overlooked when familiarity shapes who gets considered. Employers, event organizers and program leaders need a more consistent way to understand capability beyond resumes, biographies and referrals.</p>
             </Reveal>
             <Reveal className="home-institutional-proof" as="div">
               <div className="home-institutional-proof-item">
@@ -173,7 +173,7 @@ export default function HomePage() {
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THREE WAYS TO ENGAGE.</span></div>
                 <h2 id="decision-pathways-title">Start with the outcome your organisation <em>needs.</em></h2>
               </div>
-              <p>Whether you are building your professional future, hiring talent or finding expertise for an event or programme, Valoria provides a clear next step.</p>
+              <p>Whether you are building your professional future, hiring talent or finding expertise for an event or program, Valoria provides a clear next step.</p>
             </Reveal>
             <Reveal className="home-pathway-grid home-decision-grid" as="div">
               {decisionPathways.map((item) => (
@@ -195,9 +195,9 @@ export default function HomePage() {
           <div className="container">
             <Reveal className="home-partnership-content">
               <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR ORGANISATIONS & INSTITUTIONS</span></div>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR ORGANIZATIONS & INSTITUTIONS</span></div>
                 <h2 id="partnership-band-title">The next step is a better <em>capability conversation.</em></h2>
-                <p>Tell us what your organisation is trying to solve. We can explore talent access, professional development, event expertise or a wider institutional partnership.</p>
+                <p>Tell us what your organization is trying to solve. We can explore talent access, professional development, event expertise or a wider institutional partnership.</p>
               </div>
               <a href="/contact-us" className="btn-gold">START A CONVERSATION <span aria-hidden="true">→</span></a>
             </Reveal>
