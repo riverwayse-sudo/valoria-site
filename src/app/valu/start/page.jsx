@@ -18,11 +18,11 @@ const dimensions = [
 
 const faqs = [
   ['How does it work?', 'Start with a directional taster, then complete your full assessment. Your official VALU Index and PRIME points are generated from the completed full assessment.'],
-  ['Do I need an account first?', 'Register your contact and professional details before the taster so your progress has a persistent record. This is not your Valoria account. You create or connect your secure account after the taster, before continuing to the full assessment.'],
+  ['Do I need an account first?', 'You do not need to create a Valoria account before starting. We will ask for a few details to save your taster progress. After you finish, you can create or connect your Valoria account and continue your professional journey.'],
   ['Who is it for?', 'It is designed for professionals across industries and markets—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight, visibility and access to opportunity.'],
   ['Is it free?', 'Yes. The taster and full assessment are free to take. The wider Valoria ecosystem connects insight to development, visibility and opportunity.'],
   ['Does the result define me?', 'No. The taster is directional, not an official score or permanent label. Your official VALU Index is produced after completing your full assessment.'],
-  ['What happens after I finish?', 'After the taster, create or connect your secure Valoria account. You can complete your professional profile for Basic marketplace consideration. The Full VALU Index is a separate assessment for official points, a merit tier and Full marketplace eligibility. Public visibility also requires your permission.'],
+  ['What happens after I finish?', 'After your taster, create or connect your Valoria account. You can then complete your professional profile and continue with the full assessment. Your official VALU Index and PRIME points are based on the completed full assessment. You remain in control of whether your profile is made public.'],
   ['Can I pause part-way through?', 'Yes. Your progress is saved as you go, and you can return to your dashboard to continue without restarting.'],
 ]
 
@@ -81,12 +81,12 @@ export default function ValuStartPage() {
       <section className="vs-light vs-journey">
         <div className="vs-shell">
           <div className="vs-kicker dark"><span /> HOW IT WORKS</div>
-          <h2>Register first. Take your taster.<br /><em>Then build your next step.</em></h2>
+          <h2>Start with your taster.<br /><em>Then build your next step.</em></h2>
           <div className="vs-journey-grid">
-            <article><span>01</span><h3>Register</h3><p>Share your contact and professional details first. This creates a persistent record for your taster; it is not your secure Valoria account.</p></article>
+            <article><span>01</span><h3>Share a few details</h3><p>Add the basic details needed to save your taster progress. You can create your Valoria account after you finish.</p></article>
             <article><span>02</span><h3>Take your taster</h3><p>Complete the guided directional taster. Your responses are saved against your registration.</p></article>
             <article><span>03</span><h3>Create your account</h3><p>After the taster, create or connect your secure Valoria account and confirm your email.</p></article>
-            <article><span>04</span><h3>Continue with Full VALU</h3><p>The separate Full assessment establishes your official VALU Index in points and your PRIME capability profile. It is not required for the Basic taster pathway.</p></article>
+            <article><span>04</span><h3>Complete your full assessment</h3><p>Continue when you are ready to establish your official VALU Index in points and your PRIME capability profile.</p></article>
             <article><span>05</span><h3>Build and discover</h3><p>Complete your professional profile. Marketplace visibility follows the relevant Basic or Full eligibility checks and your explicit permission.</p></article>
           </div>
         </div>
