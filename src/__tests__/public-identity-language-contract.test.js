@@ -22,7 +22,7 @@ describe('Public identity and audience-language contract', () => {
     expect(directory).not.toContain('p.full_name')
     expect(directory).not.toContain('profile.full_name')
     expect(directory).toContain('identifier: profile.atb_id')
-    expect(profilePage).toContain('identifier: publicProfile.atb_id')
+    expect(profilePage).toContain('getConsentVerifiedPublicProfile(id, isUuid ? \'id\' : \'atb_id\')')
     expect(profileLayout).toContain('profile.atb_id')
   })
 
@@ -31,7 +31,8 @@ describe('Public identity and audience-language contract', () => {
     expect(about.toLowerCase()).not.toContain('buyer')
     expect(homepage).not.toMatch(/training buyers/i)
     expect(homepage).toContain("label: 'PROFESSIONAL DISCOVERY'")
-    expect(profileClient).not.toMatch(/NO ACTIVE BUYER PATHWAY/i)
+    expect(profileClient).not.toContain('p.display_name')
+    expect(profileClient).not.toContain('getInitials(p.display_name)')
     expect(directory).not.toContain('BASIC ACCESS')
     expect(directory).not.toContain('BASIC · SNAPSHOT')
   })
