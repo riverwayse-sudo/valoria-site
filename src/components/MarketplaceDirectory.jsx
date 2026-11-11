@@ -348,7 +348,7 @@ function ProfilePreviewModal({ profile, onClose }) {
               <p id="profile-preview-description" className={styles.modalSummary}>
                 {isFull
                   ? (assessmentSummary || 'The Full VALU assessment is complete. The professional insight is being prepared.')
-                  : 'This professional has completed the VALU Index Taster. A public profile is visible only where the professional has chosen visibility and Valoria's listing requirements are met. The separate full VALU Index establishes official points, merit tier and assessment insight.'}
+                  : 'This professional has completed the VALU Index Taster. A public profile is visible only where the professional has chosen visibility and Valoria listing requirements are met. The separate full VALU Index establishes official points, merit tier and assessment insight.'}
               </p>
               <div className={styles.modalCredential}>
                 <span>{isFull ? 'FULL VALU INDEX COMPLETE' : 'VALU TASTER COMPLETE'}</span>
