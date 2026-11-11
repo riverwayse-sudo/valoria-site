@@ -947,14 +947,14 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
 
   const pendingCapabilities = activeCapabilities.filter(capability => !isCapabilityEligible(capability))
   const hasPendingCapabilityReviews = pendingCapabilities.length > 0
-  const heading = !next ? (hasPendingCapabilityReviews ? 'Your first capability is listed.' : 'Your Valoria journey is up to date.') :
+  const heading = !next ? (hasPendingCapabilityReviews ? 'Your first capability is listed.' : 'Your Valoria journey is up to date.')
     : next.key === 'valu' ? 'Complete your VALU assessment.'
       : next.key === 'profile' ? 'Complete your professional profile.'
         : next.key === 'capability' ? 'Choose how your expertise is represented.'
           : next.key === 'eligibility' ? 'Complete your readiness requirements.'
             : 'Publish your Marketplace profile.'
 
-  const explanation = !next ? (hasPendingCapabilityReviews ? 'Your approved listing remains available while additional capability reviews continue.' : 'Explore opportunities and keep your professional presence current.') :
+  const explanation = !next ? (hasPendingCapabilityReviews ? 'Your approved listing remains available while additional capability reviews continue.' : 'Explore opportunities and keep your professional presence current.')
     : next.key === 'valu' ? 'Begin with the VALU taster for a directional starting point. Your official VALU Index is produced after completing your full assessment.'
       : next.key === 'profile' ? 'Add the details that help organisations understand your experience and strengths.'
         : next.key === 'capability' ? 'Select the professional capabilities you want Valoria to represent.'
