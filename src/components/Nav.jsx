@@ -136,7 +136,7 @@ export default function Nav() {
     <nav id="vi-mobile-navigation" className={`nav-mobile${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation">
       <div className="m-label">Professionals</div>
       {NAVIGATION.mobile.explore.map(item => <div key={item.label}>{renderItem(item, 'nav-mobile-link')}</div>)}
-      <div className="m-label">Organisations</div>
+      <div className="m-label">Organizations</div>
       {NAVIGATION.mobile.valu.map(item => <div key={item.label}>{renderItem(item, 'nav-mobile-link')}</div>)}
       <div className="m-label">Explore Valoria</div>
       {NAVIGATION.mobile.about.map(item => <div key={item.label}>{renderItem(item, 'nav-mobile-link')}</div>)}
