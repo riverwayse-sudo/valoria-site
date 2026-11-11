@@ -97,7 +97,7 @@ if (/setInterval|hero-event-slide|hero-slider-controls/.test(hero)) {
 }
 const homepageEvents = existing.find((x) => x.file === 'src/components/HomepageEvents.jsx')?.text || '';
 if (/<iframe\b/i.test(homepageEvents)) add('HomepageEvents: do not embed an unverified video; use the branded replay link');
-if (!page.includes('FOR FACILITATORS') || !page.includes('FOR EVENT ORGANISERS')) {
+if (!page.includes('FOR FACILITATORS') || !page.includes('FOR EVENT ORGANIZERS')) {
   add('src/app/page.jsx: facilitator and event organiser pathways must both be visible');
 }
 const navConfigPath = path.join(root, 'src/config/navigation.js');
