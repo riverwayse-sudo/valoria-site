@@ -146,7 +146,7 @@ export default function SignupPage() {
                 rel="noopener noreferrer"
                 style={{ display: 'inline-block', padding: '10px 20px', background: GOLD, color: MIDNIGHT, fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', borderRadius: '999px', textDecoration: 'none' }}
               >
-                TAKE THE VALU TASTER →
+                START THE VALU INDEX TASTER →
               </a>
             </div>
 
