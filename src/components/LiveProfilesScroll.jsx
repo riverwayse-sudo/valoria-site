@@ -119,10 +119,10 @@ export default async function LiveProfilesScroll() {
                         </div>
                         <div className="vi-scroll-copy">
                           <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>PUBLIC</i></div>
-                          <div className="vi-scroll-headline">{displayText(profile.headline)}</div>
+                          <div className="vi-scroll-headline">{displayText(profile.assessment_summary || profile.headline)}</div>
                           <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'NO DECLARED ROLE'}</div>
                           <div className="vi-scroll-designation">{isBasic ? 'PROFESSIONAL LISTING' : (tier?.name || 'PROFESSIONAL LISTING')}</div>
-                          {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div>{development && <div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div>}</>}
+                          {!isBasic && development && <div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div>}
                         </div>
                         <div className="vi-scroll-score" aria-label={isBasic ? 'Public professional listing' : `VALU Index ${profile.valu_index} points`}>
                           <span className="vi-scroll-score-label">{isBasic ? 'PROFILE' : 'VALU INDEX'}</span>
