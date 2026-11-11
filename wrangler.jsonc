@@ -32,7 +32,7 @@
   ],
   "env": {
     "staging": {
-      "name": "valoria-staging-site",
+      "name": "valoria-current-site-audit-staging",
       "services": [
         {
           "binding": "VALU_ASSESSMENT",
@@ -52,7 +52,7 @@
         "VALU_ASSESSMENT_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev",
         "NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev",
         "VALU_UPSTREAM_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev",
-        "VALU_PREVIEW_SITE_ORIGIN": "https://valoria-staging-site.riverwayse.workers.dev",
+        "VALU_PREVIEW_SITE_ORIGIN": "https://valoria-current-site-audit-staging.riverwayse.workers.dev",
         "VALU_PREVIEW_ASSESSMENT_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev"
       }
     }
