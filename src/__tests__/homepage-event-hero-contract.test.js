@@ -17,4 +17,13 @@ describe('homepage featured event panel', () => {
     expect(css).toContain('font-size: clamp(22px, 2vw, 26px)')
     expect(css).toContain('.hero-slider .hero-event-panel .session-timer')
   })
+
+  test('the featured event card keeps a usable desktop width and responsive countdown tiles', () => {
+    const css = read('src/app/home.css')
+    expect(css).toContain('grid-template-columns: minmax(0, 1fr) minmax(420px, .88fr)')
+    expect(css).toContain('max-width: 460px')
+    expect(css).toContain('grid-template-columns: repeat(4, minmax(0, 1fr))')
+    expect(css).toContain('@media (max-width: 900px)')
+    expect(css).toContain('max-width: 560px')
+  })
 })
