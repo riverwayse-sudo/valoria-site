@@ -8,6 +8,12 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/password-policy'
 
+function getAuthCallbackUrl(tasterId) {
+  const callback = new URL('/auth/callback', process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com')
+  callback.searchParams.set('pending_taster_id', tasterId)
+  return callback.toString()
+}
+
 const GOLD='#C9A84C', DARK='#0F0F1A', PARCH='#F7F4EE', DIM='rgba(247,244,238,.48)'
 function ProfessionalSignupForm(){
   const params=useSearchParams(); const tasterId=params.get('taster_id')||''; const name=params.get('name')||''; const role=params.get('role')||''; const experience=params.get('experience')||''; const capturedEmail=(params.get('email')||'').trim().toLowerCase()
@@ -47,7 +53,7 @@ function ProfessionalSignupForm(){
       const { error } = await supabase.auth.resend({
         type:'signup',
         email:form.email.trim().toLowerCase(),
-        options:{emailRedirectTo:`${window.location.origin}/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`}
+        options:{emailRedirectTo:getAuthCallbackUrl(tasterId)}
       })
       if(error)throw error
       setResendMessage('A fresh confirmation email has been requested. Check your inbox and spam folder.')
@@ -68,7 +74,7 @@ function ProfessionalSignupForm(){
       const {data,error:signupError}=await supabase.auth.signUp({
         email:form.email.trim().toLowerCase(),
         password:form.password,
-        options:{emailRedirectTo:`${window.location.origin}/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`,data:{display_name:name,full_name:name,user_type:'professional',role,pending_taster_id:tasterId}}
+        options:{emailRedirectTo:getAuthCallbackUrl(tasterId),data:{display_name:name,full_name:name,user_type:'professional',role,pending_taster_id:tasterId}}
       })
       if(signupError)throw signupError
       if(!data?.user?.id)throw new Error('Account could not be created.')
