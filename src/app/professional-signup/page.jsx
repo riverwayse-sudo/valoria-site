@@ -95,7 +95,7 @@ function ProfessionalSignupForm(){
           body:JSON.stringify({taster_id:tasterId,name,role})
         })
         const linkData=await linkRes.json().catch(()=>({}))
-        if(!linkRes.ok)throw new Error(linkData.error||'Your VALU result could not be linked to the account.')
+        if(!linkRes.ok)throw new Error(linkData.error||'Your VALU Index result could not be linked to the account.')
         setLinked(true)
         setDone(true)
       } else {
