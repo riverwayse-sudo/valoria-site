@@ -90,3 +90,15 @@ These additions resolve copy and disclosure issues found while reconciling PR #3
 | `src/app/profile/[id]/ProfileClient.jsx` — public profile summary | “Basic tier”, “Basic listing” and “Full VALU Index pending” language. | Explain only whether VALU Index points or insight are displayed on the public profile; do not disclose internal access states. | §14 C–I, pp. 15–16 | Implemented in staging. |
 | `src/app/valu/start/page.jsx` — headline | “VALU shows what you can become.” | “The VALU Index shows how you operate.” | §14 D and I, pp. 15–16 | Implemented in staging; avoids an unsubstantiated predictive claim and uses the official product name. |
 
+
+
+## Journey and product-name consistency
+
+| Location | Existing wording / behaviour | Proposed wording / action | Audit reference | Review status / required evidence |
+|---|---|---|---|---|
+| `src/app/dashboard/page.jsx` | “Continue your VALU assessment”; “Continue your VALU journey”; “VALU assessment”. | Use “Continue your full assessment”, “VALU Index journey” and “VALU Index result” where the product or result is meant. | §14 D–F, pp. 15–16 | Implemented in staging. No question counts or internal assessment mechanics are exposed. |
+| `src/app/login/page.jsx` and `src/app/auth/callback/page.jsx` | “VALU snapshot”, “VALU result” and “VALU assessment” in participant-facing handoff and error messages. | Use “VALU Index Taster”, “VALU Index result” and “full assessment” in the appropriate context. | §14 D–F, pp. 15–16 | Implemented in staging. Confirm email confirmation still returns an authenticated user to the dashboard. |
+| `src/app/professional-signup/page.jsx` and `src/app/signup/page.jsx` | Taster handoff copy did not clearly name the separate full assessment. | State that after the VALU Index Taster and account confirmation, the professional continues to the separate full assessment. | §14 D–F, pp. 15–16 | Implemented in staging. Verify the exact taster → account → email confirmation → dashboard sequence. |
+| `src/app/layout.jsx` — organisation metadata | “Africa is Valoria's first market, with Nigeria as its jurisdiction”; service offer referenced a “current Full assessment”. | “Africa is Valoria's first market. It is beginning in Nigeria”; show VALU Index points/designations only where approved for public display. | §12, pp. 12–13; §18, p. 18 | Implemented in staging. Does not claim US service availability. |
+| `src/app/valu/start/page.jsx` — product explanation | “VALU gives you a different starting point”; “WHAT VALU MEASURES”; “VALU shows what you can become.” | Use “The VALU Index” consistently and describe the measured capability rather than imply prediction. | §14 D and I, pp. 15–16 | Implemented in staging. |
+
