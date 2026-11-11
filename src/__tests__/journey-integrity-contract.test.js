@@ -130,7 +130,7 @@ describe('journey integrity contract', () => {
     expect(login).toContain('window.location.href = target')
     expect(login).not.toContain('/assessment/bridge')
     expect(login).toContain("pending_taster_id")
-    const tasterHandoff = login.slice(login.indexOf("if (pendingTasterId && session?.access_token)"), login.indexOf("// Complete a VALU assessment handoff securely on the server."))
+    const tasterHandoff = login.slice(login.indexOf("if (pendingTasterId && session?.access_token)"), login.indexOf("// Complete a full assessment handoff securely on the server."))
     expect(tasterHandoff).toContain("redirectAfterLogin('/dashboard')")
     expect(tasterHandoff).not.toContain("redirectAfterLogin('/profile/onboarding')")
     expect(login).not.toContain('launchAssessmentIfRequested')
