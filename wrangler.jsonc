@@ -45,7 +45,7 @@
         "VALU_STAGING_API_ENABLED": "1",
         "NEXT_PUBLIC_VALU_STAGING_API_ENABLED": "1",
         "NEXT_PUBLIC_VALU_PREVIEW": "1",
-        "NEXT_PUBLIC_SITE_URL": "https://staging.valoriainstitute.com",
+        "NEXT_PUBLIC_SITE_URL": "https://valoria-current-site-audit-staging.riverwayse.workers.dev",
         "SUPABASE_URL": "https://yccxgjdqworgcbircnvn.supabase.co",
         "NEXT_PUBLIC_SUPABASE_URL": "https://yccxgjdqworgcbircnvn.supabase.co",
         "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_C3j_CjLgTLDGRu8rH1SXEg_tYpxoYUm",
