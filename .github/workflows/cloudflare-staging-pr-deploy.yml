@@ -127,7 +127,11 @@ jobs:
           grep -q '/jobs' /tmp/valoria-sitemap.xml
           curl -fsS "$base/llms.txt" -o /tmp/valoria-llms.txt
           grep -q 'Human-AI Collaboration' /tmp/valoria-llms.txt
-          grep -q 'Basic is a marketplace access state, not a merit tier' /tmp/valoria-llms.txt
+          grep -q 'Public profiles appear only when the professional has chosen visibility' /tmp/valoria-llms.txt
+          if grep -Eiq 'buyer|buyers|Basic is a marketplace access state|one account' /tmp/valoria-llms.txt; then
+            echo 'Internal buyer/access or account-model language leaked into public llms.txt'
+            exit 1
+          fi
           curl -fsS "$base/" -o /tmp/valoria-home.html
           grep -q 'Make your' /tmp/valoria-home.html
           grep -q 'BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE' /tmp/valoria-home.html
