@@ -585,6 +585,13 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(styles).toContain('@media (max-width: 640px)')
   })
 
+  test('server-side consent and evidence reads have narrow service-role grants', () => {
+    const migration = read('supabase/migrations/20261111083958_grant_service_role_profile_consent_and_evidence_read.sql')
+    expect(migration).toContain('GRANT SELECT, INSERT ON TABLE public.professional_profile_acknowledgements TO service_role')
+    expect(migration).toContain('GRANT SELECT ON TABLE public.professional_document_reviews TO service_role')
+    expect(migration).not.toMatch(/TO anon|TO authenticated/i)
+  })
+
   test('internal capability helpers are not executable by public client roles', () => {
     const migration = read('supabase/migrations/20261110170000_restrict_internal_capability_function_execution.sql')
     expect(migration).toContain('revoke execute on function private.is_basic_public_profile_ready(uuid)')
