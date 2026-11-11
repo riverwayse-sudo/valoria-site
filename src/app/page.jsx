@@ -38,19 +38,19 @@ const institutionalCapabilities = [
     number: '03',
     label: 'TALENT ACCESS',
     title: 'Valoria Marketplace',
-    body: 'A capability-led route for employers, event organisers and programme teams to discover professionals, speakers and facilitators.',
+    body: 'A capability-led route for employers, event organizers and program teams to discover professionals, speakers and facilitators.',
     outcome: 'Relevant expertise, easier to find.',
   },
   {
     number: '04',
     label: 'CAPABILITY DEVELOPMENT',
     title: 'Valoria Develop',
-    body: 'Structured learning and development pathways that help individuals and organisations build the capabilities that matter.',
+    body: 'Structured learning and development pathways that help individuals and organizations build the capabilities that matter.',
     outcome: 'Development connected to real needs.',
   },
 ]
 
-// Three audience routes: professionals, employers, and event organisers/training buyers; facilitators are the supply side.
+// Three audience routes: professionals, employers, and event organizers/training buyers; facilitators are the supply side.
 const decisionPathways = [
   {
     number: '01',
@@ -171,7 +171,7 @@ export default function HomePage() {
             <Reveal className="home-section-heading">
               <div>
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THREE WAYS TO ENGAGE.</span></div>
-                <h2 id="decision-pathways-title">Start with the outcome your organisation <em>needs.</em></h2>
+                <h2 id="decision-pathways-title">Start with the outcome your organization <em>needs.</em></h2>
               </div>
               <p>Whether you are building your professional future, hiring talent or finding expertise for an event or program, Valoria provides a clear next step.</p>
             </Reveal>
