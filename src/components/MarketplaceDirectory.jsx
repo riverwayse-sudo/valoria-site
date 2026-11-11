@@ -342,11 +342,11 @@ function ProfilePreviewModal({ profile, onClose }) {
           </div>
           <div className={styles.modalGrid}>
             <section className={styles.modalPanel}>
-              <p className={styles.modalSectionLabel}>VALU INDEX · ASSESSMENT INSIGHT</p>
+              <p className={styles.modalSectionLabel}>VALU INDEX · PROFESSIONAL INSIGHT</p>
               <p id="profile-preview-description" className={styles.modalSummary}>
                 {isFull
                   ? (assessmentSummary || 'The Full VALU Index is complete. The professional insight is being prepared.')
-                  : 'This Basic listing introduces the professional’s public identity, declared capabilities and areas of expertise. Additional assessment insight is displayed only when available.'}
+                  : 'This Basic listing introduces the professional’s public identity, declared capabilities and areas of expertise. Additional VALU Index insight is displayed only when available.'}
               </p>
               <div className={styles.modalCredential}>
                 <span>{isFull ? 'VALU INDEX INSIGHT' : 'BASIC PROFESSIONAL LISTING'}</span>
