@@ -185,10 +185,12 @@ try {
   try {
     const response = await freshPage.goto(ASSESSMENT, { waitUntil: 'domcontentloaded', timeout: 60000 })
     freshStatus = response?.status() ?? null
-    await freshPage.getByRole('button', { name: /CONTINUE TO MY VALU TASTER/ }).waitFor({ state: 'visible', timeout: 20000 })
+    await freshPage.getByRole('button', { name: /CONTINUE TO MY VALU(?: INDEX)? TASTER/i }).waitFor({ state: 'visible', timeout: 20000 })
     registrationVisible = await freshPage.getByPlaceholder('Your full professional name').isVisible()
-    marketingConsentChecked = await freshPage.getByRole('checkbox').nth(1).isChecked()
-    privacyCheckboxRequired = await freshPage.getByRole('checkbox').nth(0).evaluate(element => element.required)
+    const marketingCheckbox = freshPage.locator('label').filter({ hasText: /This is optional/i }).locator('input[type="checkbox"]').first()
+    const privacyCheckbox = freshPage.locator('label').filter({ hasText: /acknowledge.*Privacy Notice/i }).locator('input[type="checkbox"]').first()
+    marketingConsentChecked = await marketingCheckbox.isChecked()
+    privacyCheckboxRequired = await privacyCheckbox.evaluate(element => element.required)
   } catch (error) {
     freshNavigationError = error.message
   }
