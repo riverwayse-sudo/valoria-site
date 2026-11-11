@@ -4701,3 +4701,61 @@
     letter-spacing: .1em;
   }
 }
+
+
+/* Audience decision cards: compact three-across desktop composition. */
+.home-redesign-root .home-decision-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+}
+.home-redesign-root .home-decision-grid .home-pathway-card,
+.home-redesign-root .home-decision-grid .home-pathway-card:nth-child(1),
+.home-redesign-root .home-decision-grid .home-pathway-card:nth-child(2),
+.home-redesign-root .home-decision-grid .home-pathway-card:nth-child(3) {
+  grid-column: auto;
+  min-width: 0;
+  min-height: 285px;
+  padding: 22px;
+  border: 1px solid rgba(212,201,168,.28);
+  border-radius: 18px;
+}
+.home-redesign-root .home-decision-grid .home-pathway-card h3 {
+  margin: 16px 0 10px;
+  font-size: clamp(21px, 1.8vw, 26px);
+  line-height: 1.12;
+}
+.home-redesign-root .home-decision-grid .home-pathway-card > p {
+  margin: 0 0 18px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+.home-redesign-root .home-decision-grid .home-pathway-label {
+  max-width: 100%;
+  font-size: 8px;
+  letter-spacing: .11em;
+  line-height: 1.45;
+}
+.home-redesign-root .home-decision-grid .home-pathway-cta {
+  min-height: 34px;
+  font-size: 8px;
+  letter-spacing: .08em;
+  white-space: normal;
+}
+@media (max-width: 760px) {
+  .home-redesign-root .home-decision-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .home-redesign-root .home-decision-grid .home-pathway-card,
+  .home-redesign-root .home-decision-grid .home-pathway-card:nth-child(1),
+  .home-redesign-root .home-decision-grid .home-pathway-card:nth-child(2),
+  .home-redesign-root .home-decision-grid .home-pathway-card:nth-child(3) {
+    grid-column: 1 / -1;
+    min-height: 0;
+    padding: 22px;
+  }
+}
