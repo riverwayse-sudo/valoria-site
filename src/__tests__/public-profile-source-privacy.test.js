@@ -25,6 +25,14 @@ describe('public profile source-data privacy contract', () => {
       'REVOKE SELECT ON TABLE public.professional_certificates FROM anon',
       'REVOKE SELECT ON TABLE public.valu_assessments FROM anon',
       'REVOKE SELECT ON TABLE public.users FROM anon',
+      'GRANT SELECT, UPDATE ON TABLE public.profiles TO authenticated',
+      'GRANT SELECT, INSERT, UPDATE ON TABLE public.professional_profiles TO authenticated',
+      'GRANT SELECT ON TABLE public.professional_capabilities TO authenticated',
+      'GRANT SELECT ON TABLE public.valu_assessments TO authenticated',
+      'GRANT SELECT ON TABLE public.professional_certificates TO authenticated',
+      'GRANT SELECT, UPDATE ON TABLE public.enquiries TO authenticated',
+      'REVOKE EXECUTE ON FUNCTION public.get_homepage_professional_previews_v2() FROM PUBLIC, anon, authenticated',
+      'REVOKE EXECUTE ON FUNCTION public.set_marketplace_public_listing_consent(boolean) FROM PUBLIC, anon, authenticated',
     ]) expect(migration).toContain(statement)
     expect(migration).toContain('profiles_owner_or_admin_read')
     expect(migration).toContain('professional_capabilities_owner_select')
