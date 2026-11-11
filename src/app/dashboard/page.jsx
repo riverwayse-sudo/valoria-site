@@ -316,7 +316,7 @@ export default function DashboardPage() {
         </>
       ) : assessmentAccess === null ? (
         <>
-          <h1 style={{fontSize:'clamp(26px,4vw,38px)',textAlign:'center',margin:0}}>Continue your VALU assessment.</h1>
+          <h1 style={{fontSize:'clamp(26px,4vw,38px)',textAlign:'center',margin:0}}>Continue your full assessment.</h1>
           <p style={{maxWidth:560,textAlign:'center',color:DIM,lineHeight:1.7}}>We could not confirm your assessment status yet. You can retry the secure continuation; your saved responses will not be discarded.</p>
           <AssessmentStartLink href="/dashboard" dashboardOnly style={{padding:'14px 24px',background:GOLD,color:DARK,fontSize:12,fontWeight:800,textDecoration:'none',borderRadius:999}}>CONTINUE YOUR ASSESSMENT →</AssessmentStartLink>
         </>
@@ -509,7 +509,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* MARKETPLACE JOURNEY — five milestones; separate from the VALU score display */}
+        {/* MARKETPLACE JOURNEY — five milestones; separate from the VALU Index score display */}
         {isSupply && !assessmentAccess?.can_continue && (
           <div style={{ maxWidth:'1100px', margin:'24px auto 0', padding:'0 clamp(20px,4vw,40px)' }}>
             <AccessProgressCard
@@ -884,11 +884,11 @@ export default function DashboardPage() {
 // ── Welcome modal ────────────────────────────────────────────────────────────
 function DashboardAssessmentHandover({ standalone = false }) {
   const content = (
-    <section aria-label="Continue your VALU journey" style={{ width:'100%', padding:'clamp(20px,3vw,30px)', border:'1px solid rgba(201,168,76,.3)', borderRadius:12, background:'linear-gradient(135deg, rgba(46,46,74,.96), rgba(26,26,46,.98))', color:'#F7F4EE' }}>
+    <section aria-label="Continue your VALU Index journey" style={{ width:'100%', padding:'clamp(20px,3vw,30px)', border:'1px solid rgba(201,168,76,.3)', borderRadius:12, background:'linear-gradient(135deg, rgba(46,46,74,.96), rgba(26,26,46,.98))', color:'#F7F4EE' }}>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap', marginBottom:12 }}>
         <div style={{ flex:'1 1 420px', minWidth:0 }}>
           <div style={{ color:'#C9A84C', fontSize:10, fontWeight:800, letterSpacing:'.2em' }}>YOUR VALORIA JOURNEY</div>
-          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>Your taster is saved. Continue your VALU journey.</h1>
+          <h1 style={{ margin:'8px 0 6px', fontSize:'clamp(23px,3vw,34px)', fontWeight:500, lineHeight:1.2 }}>Your taster is saved. Continue your VALU Index journey.</h1>
           <p style={{ margin:0, maxWidth:700, color:'rgba(247,244,238,.68)', fontSize:13, lineHeight:1.7 }}>Your taster is saved. Start or resume your VALU Index here; your progress will be restored.</p>
         </div>
         <div style={{ flex:'0 1 220px', minWidth:180 }}>
@@ -897,7 +897,7 @@ function DashboardAssessmentHandover({ standalone = false }) {
       </div>
       <div style={{ display:'flex', justifyContent:'center', marginTop:22 }}>
         <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:10, padding:'14px 26px', background:'#C9A84C', color:'#1A1A2E', borderRadius:999, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.12em' }}>
-          CONTINUE YOUR VALU JOURNEY <span aria-hidden="true">→</span>
+          CONTINUE YOUR VALU INDEX JOURNEY <span aria-hidden="true">→</span>
         </AssessmentStartLink>
       </div>
     </section>
@@ -924,7 +924,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
   const listedReady = eligibilityReady && activeCapabilities.every(c => c.eligibility_status === 'listed')
 
   const steps = [
-    { key:'valu', label:'VALU assessment', done:assessmentDone },
+    { key:'valu', label:'full assessment', done:assessmentDone },
     { key:'profile', label:'Professional profile', done:profileComplete },
     { key:'capability', label:'Capabilities', done:capabilityReady },
     { key:'eligibility', label:'Eligibility', done:eligibilityReady },
@@ -939,7 +939,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
         : !listedReady ? '/marketplace' : '/opportunities'
 
   const heading = !next ? 'Your Valoria journey is up to date.'
-    : next.key === 'valu' ? 'Complete your VALU assessment.'
+    : next.key === 'valu' ? 'Complete your full assessment.'
       : next.key === 'profile' ? 'Complete your professional profile.'
         : next.key === 'capability' ? 'Choose how your expertise is represented.'
           : next.key === 'eligibility' ? 'Complete your readiness requirements.'
@@ -957,7 +957,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
   const requirementLabels = {
     capability: 'Confirm this capability',
     profile: 'Complete your professional profile',
-    valu_assessment_score_35_current: 'Complete a current VALU assessment with at least 35 points',
+    valu_assessment_score_35_current: 'Maintain a current VALU Index result of at least 35 points',
     talent_cv: 'Submit your CV',
     talent_cv_approval: 'Await Valoria CV approval',
     speaker_topics: 'Add speaking topics',
@@ -971,7 +971,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
   const requirementActions = {
     profile: ['/profile/edit', 'Complete profile'],
     capability: ['/profile/edit', 'Review capabilities'],
-    valu_assessment_score_35_current: ['/dashboard', 'Complete VALU assessment'],
+    valu_assessment_score_35_current: ['/dashboard', 'Complete your full assessment'],
     talent_cv: ['/profile/edit', 'Upload CV'],
     speaker_topics: ['/profile/edit', 'Add speaking topics'],
     speaker_formats: ['/profile/edit', 'Select speaking formats'],
@@ -1000,7 +1000,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
         <div style={{ display:'flex', alignItems:'center', gap:14, flexWrap:'wrap', marginTop:18 }}>
           {next?.key === 'valu' ? (
             <AssessmentStartLink href="/dashboard" dashboardOnly style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
-              CONTINUE YOUR VALU JOURNEY <span aria-hidden="true">→</span>
+              CONTINUE YOUR VALU INDEX JOURNEY <span aria-hidden="true">→</span>
             </AssessmentStartLink>
           ) : (
             <Link href={nextHref} style={{ display:'inline-flex', alignItems:'center', gap:9, padding:'12px 20px', background:GOLD, color:DARK, textDecoration:'none', fontSize:11, fontWeight:800, letterSpacing:'.08em', borderRadius:999 }}>
@@ -1070,7 +1070,7 @@ function WelcomeModal({ firstName, isSupply, isOrganiser, completion, onClose })
   const timerRef = useRef(null)
 
   const beats = isSupply ? [
-    { eyebrow:'PROFILE DETAILS', title:`Your profile is taking shape, ${firstName}.`, body:`${completion.filled} of ${completion.total} required profile details are complete. This is separate from your VALU assessment and marketplace eligibility.`, icon:'✓' },
+    { eyebrow:'PROFILE DETAILS', title:`Your profile is taking shape, ${firstName}.`, body:`${completion.filled} of ${completion.total} required profile details are complete. This is separate from your full assessment and marketplace eligibility.`, icon:'✓' },
     { eyebrow:"YOU'RE IN GOOD COMPANY", title:'Welcome to Valoria.', body:"Your VALU Index helps make your professional capabilities clearer. Build your profile and choose how you want to be discovered.", icon:'◈' },
     { eyebrow:'WHAT HAPPENS NEXT', title:'Your next opportunity could start today.', body:'Stay visible to the right people. We’ll let you know when someone expresses interest in connecting with you.', icon:'→' },
   ] : [
@@ -1281,7 +1281,7 @@ function ProgressiveCompletion({ profile, capabilities, listedCapabilities }) {
   const isListed = listedCapabilities.length > 0
 
   const current = !hasAssessment
-    ? { label:'Continue your VALU assessment', text:'Your opening responses are saved. Continue securely from your dashboard.', href:'/dashboard/continue-assessment' }
+    ? { label:'Continue your full assessment', text:'Your opening responses are saved. Continue securely from your dashboard.', href:'/dashboard/continue-assessment' }
     : !hasProfile
       ? { label:'Build your profile', text:'Tell us about your work so people can understand you.', href:'/profile/onboarding' }
       : !hasCapability
