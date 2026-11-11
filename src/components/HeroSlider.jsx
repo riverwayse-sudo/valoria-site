@@ -12,7 +12,7 @@ export default function HeroSlider() {
         <div className="vi-hero-copy">
           <div className="vi-hero-kicker"><span /> BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE · AN INSTITUTION FOR PROFESSIONAL CAPABILITY</div>
           <h1 id="valoria-hero-title">Capability deserves <em>a higher standard.</em></h1>
-          <p>Valoria Institute is designed for accomplished professionals and institutions making consequential decisions. It brings structure to how capability is assessed, developed and discovered.</p>
+          <p>Valoria Institute is designed for accomplished professionals and institutions making consequential decisions. Valoria brings structure to how capability is assessed, developed and discovered.</p>
           <div className="vi-hero-actions">
             <AssessmentStartLink href={BRAND.assessmentUrl} className="vi-hero-primary">Explore your capability <span>↗</span></AssessmentStartLink>
             <Link href="/prime" className="vi-hero-secondary" aria-label="Explore the framework">Understand the PRIME framework <span>→</span></Link>
