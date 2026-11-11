@@ -1,4 +1,5 @@
 name: Current-site copy governance
+# Re-run the gate on every PR update; see scripts/check-copy-governance.js.
 
 on:
   pull_request:
