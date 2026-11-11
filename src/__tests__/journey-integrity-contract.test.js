@@ -50,11 +50,8 @@ describe('participant-facing assessment clarity', () => {
       expect(prime).toContain(tier.name)
       expect(marketplaceCss).toContain(`.${tier.className}`)
     }
-    expect(prime).toContain('80–100 POINTS')
-    expect(prime).toContain('65–79 POINTS')
-    expect(prime).toContain('50–64 POINTS')
-    expect(prime).toContain('35–49 POINTS')
-    expect(prime).toContain('BELOW 35 POINTS')
+    expect(prime).toContain('The detailed assessment criteria and scoring thresholds are proprietary.')
+    expect(prime).not.toMatch(/(?:80–100|65–79|50–64|35–49|BELOW 35) POINTS/i)
     expect(brand).toContain("unit: 'points'")
   })
 
