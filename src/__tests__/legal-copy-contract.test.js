@@ -19,8 +19,9 @@ describe('Valoria public content and legal-copy controls', () => {
 
   test('future-ready PRIME skills are marked explicitly', () => {
     const prime = read('src/app/prime/page.jsx')
-    expect(prime).toContain("['AI Fluency','Human-AI Collaboration'].includes(s)")
-    expect(prime).toContain('★ Future-Ready skill')
+    expect(prime).toContain('The detailed assessment criteria and scoring thresholds are proprietary.')
+    expect(prime).not.toContain('AI Fluency')
+    expect(prime).not.toContain('Human-AI Collaboration')
   })
 
   test('privacy draft discloses the active processors and avoids unsupported assurances', () => {
