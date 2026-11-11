@@ -122,3 +122,16 @@ footer.vi-footer{padding:38px var(--pad) 22px}
 @media(max-width:980px){footer.vi-footer{padding-top:34px}.vi-footer .uf-grid{gap:22px;margin-bottom:22px}}
 @media(max-width:640px){footer.vi-footer{padding:30px 20px 20px}.vi-footer .uf-grid{gap:20px}.vi-footer .uf-brand{grid-column:auto}}
 a.btn,a[class*="btn-"],button.btn,button[class*="btn-"],.nav-cta,.vi-hero-primary,.vi-hero-secondary,.uf-discovery-button{border-radius:999px}
+
+/* Shared pill geometry for primary action controls across the public site. */
+:where(a,button,input[type="button"],input[type="submit"])[class*="btn"],
+:where(a,button)[class*="button-"],
+:where(a,button)[class*="cta"],
+.valu-btn,
+.home-dual-actions a,
+.home-journey-link,
+.live-profile-action,
+.live-profiles-link,
+.nav-cta {
+  border-radius: 999px !important;
+}
