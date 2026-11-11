@@ -22,7 +22,7 @@ export const NAVIGATION = {
         items: [
           { label: 'Find Talent', href: '/atb-connect', description: 'Discover professionals by capability.' },
           { label: 'Find Speakers & Facilitators', href: '/atb-spotlight', description: 'Find expertise for events and programs.' },
-          { label: 'Work with Valoria', href: '/contact-us', description: 'Discuss partnerships and organisational needs.' },
+          { label: 'Work with Valoria', href: '/contact-us', description: 'Discuss partnerships and organizational needs.' },
         ],
       }],
     },
