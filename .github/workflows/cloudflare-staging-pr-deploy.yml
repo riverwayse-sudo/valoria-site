@@ -18,8 +18,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: valoria-site-staging-pr-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: valoria-site-staging-environment
+  cancel-in-progress: false
 
 jobs:
   deploy-staging:
