@@ -36,7 +36,7 @@ const institutionalCapabilities = [
   },
   {
     number: '03',
-    label: 'TALENT ACCESS',
+    label: 'PROFESSIONAL DISCOVERY',
     title: 'Valoria Marketplace',
     body: 'A straightforward way for employers, event organizers and program teams to find experienced professionals, speakers and facilitators.',
     outcome: 'Relevant expertise, easier to find.',
@@ -50,7 +50,7 @@ const institutionalCapabilities = [
   },
 ]
 
-// Three audience routes: professionals, employers, and event organizers/training buyers; facilitators are the supply side.
+// Three audience routes: professionals, employers, and event and program leaders.
 const decisionPathways = [
   {
     number: '01',
@@ -70,7 +70,7 @@ const decisionPathways = [
   },
   {
     number: '03',
-    label: 'FOR EVENT ORGANIZERS · FOR FACILITATORS & PROGRAM LEADERS',
+    label: 'FOR EVENT & PROGRAM LEADERS',
     title: 'Engage expertise with intention.',
     body: 'Discover speakers and facilitators whose professional experience and skills align with the purpose, audience and goals of your event or program.',
     href: '/atb-spotlight',
