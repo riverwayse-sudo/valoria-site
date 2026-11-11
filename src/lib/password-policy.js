@@ -1,5 +1,6 @@
 const PASSWORD_POLICY = Object.freeze({
   minLength: 12,
+  maxLength: 128,
   requiresUppercase: true,
   requiresLowercase: true,
   requiresNumber: true,
@@ -18,6 +19,9 @@ function validatePassword(password = '') {
 
   if (value.length < PASSWORD_POLICY.minLength) {
     errors.push(`Use at least ${PASSWORD_POLICY.minLength} characters.`)
+  }
+  if (value.length > PASSWORD_POLICY.maxLength) {
+    errors.push(`Use no more than ${PASSWORD_POLICY.maxLength} characters.`)
   }
   if (PASSWORD_POLICY.requiresUppercase && !/[A-Z]/.test(value)) {
     errors.push('Include at least one uppercase letter.')
@@ -39,7 +43,7 @@ function validatePassword(password = '') {
 }
 
 function passwordPolicyMessage() {
-  return 'Use at least 12 characters with uppercase, lowercase, a number, and a symbol. Avoid common passwords.'
+  return 'Use 12–128 characters with uppercase, lowercase, a number, and a symbol. Avoid common passwords.'
 }
 
 module.exports = { PASSWORD_POLICY, validatePassword, passwordPolicyMessage }
