@@ -40,6 +40,13 @@ describe('1% of the 1% audience experience contract', () => {
     expect(directory).toContain('Contact details and individual assessment answers are not displayed')
   })
 
+  test('Registry publication is independent across a professional’s selected capabilities', () => {
+    const acceptance = read('docs/GLOBAL_INSTITUTIONAL_REDESIGN_ACCEPTANCE.md')
+    expect(acceptance).toContain('Evaluate and publish each capability independently.')
+    expect(acceptance).toContain('pending lane must not invalidate or hide the already-approved listing')
+    expect(acceptance).toContain('General Registry discoverability and category-specific listing eligibility are separate states.')
+  })
+
   test('dashboard only reports published capabilities as listed and treats each listing independently', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
     expect(dashboard).toContain("capabilities.filter(c => c.is_active && c.eligible_for_listing === true && c.eligibility_status === 'listed')")
