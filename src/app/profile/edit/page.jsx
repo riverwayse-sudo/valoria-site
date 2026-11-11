@@ -400,7 +400,7 @@ function EditPageInner() {
             }} /></Field>
             <Field label="Past clients">
               <ListEditor rows={form.past_clients || []} addLabel="Add client"
-                fields={[{key:'name',placeholder:'Client / organization'},{key:'programme',placeholder:'Programme delivered'}]}
+                fields={[{key:'name',placeholder:'Client / organization'},{key:'programme',placeholder:'Program delivered'}]}
                 onChange={v => setField('facilitator','past_clients', v)} />
             </Field>
             <Field label="Fee range"><TextInput value={form.fee_range} onChange={v => setField('facilitator','fee_range',v)} /></Field>
