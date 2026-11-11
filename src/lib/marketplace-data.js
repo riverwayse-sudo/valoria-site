@@ -32,7 +32,7 @@ export function isPublicProfileContentReady(row) {
   const assessmentSummary = String(row?.assessment_summary || '').trim()
   const fullAssessmentReady = assessmentAccess !== 'full' || (hasOfficialPoints && assessmentSummary.length >= 12)
   return Boolean(
-    isValidAtbId(row?.atb_id) &&
+    isValidAtbId(row.atb_id) &&
     headline.length >= 3 &&
     !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
     !/[\\u{1D400}-\\u{1D7FF}]/u.test(headline) &&
