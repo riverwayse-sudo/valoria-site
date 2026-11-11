@@ -87,7 +87,7 @@ export default function HomePage() {
         <section className="home-market-scope" aria-label="Initial market focus">
           <div className="container">
             <span>BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE</span>
-            <p>Valoria Institute is designed for accomplished professionals and institutions making consequential decisions. Its framework, assessment, development pathways and talent discovery services are presented with clear evidence, operating boundaries and respect for professional discretion.</p>
+            <p>Valoria Institute is designed for accomplished professionals and institutions making consequential decisions. Its framework, assessment, development pathways and talent discovery services are presented with clear evidence, operating boundaries and respect for professional discretion. Services, listings and institutional relationships are described according to current operating status; no universal accreditation or recognition is implied.</p>
           </div>
         </section>
 
