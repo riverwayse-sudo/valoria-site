@@ -19,7 +19,7 @@ const dimensions = [
 const faqs = [
   ['How does it work?', 'Start with a directional taster, then complete your full assessment. Your official VALU Index and PRIME points are generated from the completed full assessment.'],
   ['Do I need an account first?', 'You do not need to create a Valoria account before starting. We will ask for a few details to save your taster progress. After you finish, you can create or connect your Valoria account and continue your professional journey.'],
-  ['Who is it for?', 'It is designed for professionals across industries and markets—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight, visibility and access to opportunity.'],
+  ['Who is it for?', 'It is designed for professionals across industries—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight into their capabilities and a stronger professional presence.'],
   ['Is it free?', 'Yes. The taster and full assessment are free to take. The wider Valoria ecosystem connects insight to development, visibility and opportunity.'],
   ['Does the result define me?', 'No. The taster is directional, not an official score or permanent label. Your official VALU Index is produced after completing your full assessment.'],
   ['What happens after I finish?', 'After your taster, create or connect your Valoria account. You can then complete your professional profile and continue with the full assessment. Your official VALU Index and PRIME points are based on the completed full assessment. You remain in control of whether your profile is made public.'],
