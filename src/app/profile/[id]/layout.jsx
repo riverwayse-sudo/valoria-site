@@ -1,7 +1,10 @@
 import { getConsentVerifiedPublicProfile } from '@/lib/public-profile'
 
+const IS_STAGING = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'
+
 export async function generateMetadata({ params }) {
   const { id } = await params
+  if (IS_STAGING) return { title: 'Professional Profile | Valoria Institute', robots: { index: false, follow: false } }
   let profile = null
   try {
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)
