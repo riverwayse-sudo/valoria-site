@@ -1,9 +1,10 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
+import { PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION } from '@/lib/profile-consent-copy'
 
 const FIELDS = 'professional_id,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,photo_url,industry,seniority_band,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
-const PUBLIC_PROFILE_ACK_VERSION = 'public-profile-visibility-v4-2026-11-11'
+const PUBLIC_PROFILE_ACK_VERSION = PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION
 const IS_READ_ONLY_PREVIEW = (process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1') && process.env.VALU_STAGING_API_ENABLED !== '1'
 
 function getAdminClient() {
