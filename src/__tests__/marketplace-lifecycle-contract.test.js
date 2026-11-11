@@ -279,7 +279,9 @@ describe('VALUI marketplace lifecycle contract', () => {
       expect(source).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
       expect(source).not.toMatch(/9-question|58-question|15-question/i)
     }
-    expect(start).toContain('Register your contact and professional details before the taster')
+    expect(start).toContain('You do not need to create a Valoria account before starting.')
+    expect(start).toContain('Add the basic details needed to save your taster progress.')
+    expect(start).not.toContain('This is not your Valoria account')
     expect(start).toContain('Your official result in points')
     expect(signup).toContain('VALU taster')
   })
