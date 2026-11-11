@@ -16,9 +16,9 @@ export default function ATBConnectPage() {
       <main id="main-content" className="decision-page">
         <section className="page-hero">
           <div className="page-hero-inner">
-            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR EMPLOYERS & ORGANISATIONS</span></div>
+            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR EMPLOYERS & ORGANIZATIONS</span></div>
             <h1 className="page-title">Find the right professional<br /><em>for the work ahead.</em></h1>
-            <p className="page-sub">Valoria helps employers and organisations find experienced professionals whose skills and experience fit a role or project. Where a professional chooses to share a VALU Index result, it can provide additional context. It does not replace reference checks, credential checks or your own hiring decision.</p>
+            <p className="page-sub">Valoria helps employers and organizations find experienced professionals whose skills and experience fit a role or project. We support hiring leaders and institutions considering consequential appointments. Where a professional chooses to share a VALU Index result, it provides optional context—not a hiring recommendation. It does not replace independent due diligence, credential checks, references or professional judgment. Availability depends on the approved public roster.</p>
             <div className="page-hero-actions">
               <a href="/contact-us?topic=ATB%20Connect" className="btn-gold">DISCUSS YOUR TALENT NEEDS</a>
               <a href="/marketplace/talent" className="btn-outline">EXPLORE PROFESSIONALS</a>
@@ -30,7 +30,7 @@ export default function ATBConnectPage() {
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOR INSTITUTIONAL AND TALENT DECISION-MAKERS</span></div>
               <h2 className="section-title">Consider more than<br /><em>the résumé.</em></h2>
-              <p className="page-copy">ATB Connect helps employers and organisations explore professional experience, skills and suitability alongside the needs of a specific role.</p>
+              <p className="page-copy">ATB Connect helps employers and organizations explore professional experience, skills and suitability alongside the needs of a specific role.</p>
             </Reveal>
             <Reveal>
               <div className="facilitator-diff-list">
