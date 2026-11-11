@@ -20,13 +20,14 @@ function AuthCallbackFlow() {
     async function finishConfirmation() {
       try {
         const code = params.get('code')
-        let { data: { session } } = await supabase.auth.getSession()
-        if (!session?.access_token && code) {
+        // A confirmation code identifies the account being confirmed. Exchange it
+        // before reading any existing browser session so a previously signed-in
+        // account cannot be mistaken for the account behind this email link.
+        if (code) {
           const { error } = await supabase.auth.exchangeCodeForSession(code)
           if (error) throw error
-          const result = await supabase.auth.getSession()
-          session = result.data.session
         }
+        let { data: { session } } = await supabase.auth.getSession()
         if (!session?.access_token) {
           await new Promise(resolve => setTimeout(resolve, 700))
           const result = await supabase.auth.getSession()
@@ -41,7 +42,7 @@ function AuthCallbackFlow() {
         const pendingTasterId = params.get('pending_taster_id') || localStorage.getItem('pending_taster_id')
 
         if (identityHash) {
-          setMessage('Email confirmed. Linking your VALU Index to your account…')
+          setMessage('Email confirmed. Linking your VALU assessment to your account…')
           const linkRes = await fetch('/api/link-assessment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
@@ -50,28 +51,28 @@ function AuthCallbackFlow() {
           const data = await linkRes.json().catch(() => ({}))
           if (!linkRes.ok) throw new Error(data.error || 'Your assessment could not be linked yet.')
           sessionStorage.removeItem('pending_identity_hash')
-          setMessage('Email confirmed. You’re signed in and your VALU Index is connected.')
+          setMessage('Email confirmed. You’re signed in and your VALU assessment is connected.')
           await new Promise(resolve => setTimeout(resolve, 900))
           if (!cancelled) router.replace('/dashboard?welcome=profile')
           return
         }
 
         if (pendingTasterId) {
-          setMessage('Email confirmed. Connecting your saved VALU Index Taster…')
+          setMessage('Email confirmed. Connecting your saved VALU taster…')
           const linkRes = await fetch('/api/link-taster', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
             body: JSON.stringify({ taster_id: pendingTasterId, name: localStorage.getItem('pending_taster_name') || undefined, role: localStorage.getItem('pending_taster_role') || undefined }),
           })
           const data = await linkRes.json().catch(() => ({}))
-          if (!linkRes.ok) throw new Error(data.error || 'Your VALU Index result could not be linked yet.')
+          if (!linkRes.ok) throw new Error(data.error || 'Your VALU result could not be linked yet.')
           // Preserve the exact linked taster until the user chooses to continue
           // from the dashboard. The dashboard is the stable, authenticated landing
           // page; assessment handoff happens only after an explicit user action.
           localStorage.removeItem('pending_taster_id')
           localStorage.removeItem('pending_taster_name')
           localStorage.removeItem('pending_taster_role')
-          setMessage('Email confirmed. You’re signed in and your saved VALU Index Taster is connected. Taking you to your dashboard…')
+          setMessage('Email confirmed. You’re signed in and your saved VALU taster is connected. Taking you to your dashboard…')
           await new Promise(resolve => setTimeout(resolve, 1400))
           if (!cancelled) router.replace('/dashboard?welcome=profile')
           return
