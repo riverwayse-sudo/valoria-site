@@ -33,7 +33,7 @@ export async function generateMetadata({ params }) {
     }
 
     const canonicalId = profile.professional_id
-    const name = String(profile.full_name || 'Valoria Professional').trim()
+    const name = String(profile.atb_id || 'Valoria Professional').normalize('NFKC').trim()
     const capabilities = Array.isArray(profile.capabilities) ? profile.capabilities : []
     const capability = capabilities.includes('speaker')
       ? 'Speaker'
