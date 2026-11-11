@@ -599,7 +599,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
 
             {/* Skills / Topics */}
             {tags.length > 0 && (
-              <Section label={displayTrack === 'facilitator' ? 'Programme Types' : displayTrack === 'speaker' ? 'Speaking Topics' : 'Core Skills'}>
+              <Section label={displayTrack === 'facilitator' ? 'Program Types' : displayTrack === 'speaker' ? 'Speaking Topics' : 'Core Skills'}>
                 <div style={{ display:'flex', flexWrap:'wrap', gap:'10px' }}>
                   {tags.map(t => (
                     <span key={t} style={{ padding:'8px 16px', border:`1px solid ${GLINE2}`, fontSize:'12px', fontWeight:400, color: DIM, letterSpacing:'.04em' }}>
@@ -673,7 +673,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                     : !canRequest
                     ? 'This profile is visible in the Marketplace, but no capability is currently open for enquiries.'
                     : displayTrack === 'facilitator'
-                    ? `Interested in commissioning ${p.display_name} for a programme? Send an enquiry through Valoria.`
+                    ? `Interested in commissioning ${p.display_name} for a program? Send an enquiry through Valoria.`
                     : displayTrack === 'speaker'
                     ? `Interested in engaging ${p.display_name} for your event? Send an enquiry through Valoria.`
                     : `Want to connect with ${p.display_name}? Send an enquiry through Valoria; private contact details are not displayed on this profile.`}
