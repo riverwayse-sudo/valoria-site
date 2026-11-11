@@ -11,20 +11,20 @@ export default function HeroSlider() {
       <div className="vi-hero-content">
         <div className="vi-hero-copy">
           <div className="vi-hero-kicker"><span /> AN INSTITUTION FOR PROFESSIONAL CAPABILITY</div>
-          <h1 id="valoria-hero-title">Make your<br /><em>capability</em> count.</h1>
-          <p>We assess professional capability through PRIME and the VALU Index, connect insight to development, and help organizations discover relevant professional talent.</p>
+          <h1 id="valoria-hero-title">Capability deserves<br />a <em>higher standard.</em></h1>
+          <p>For accomplished professionals and the organizations that rely on their judgment, Valoria brings structure to how capability is assessed, developed and discovered.</p>
           <div className="vi-hero-actions">
-            <AssessmentStartLink href={BRAND.assessmentUrl} className="vi-hero-primary">Discover your capability <span>↗</span></AssessmentStartLink>
-            <Link href="/marketplace" className="vi-hero-secondary">Explore the marketplace <span>→</span></Link>
+            <AssessmentStartLink href={BRAND.assessmentUrl} className="vi-hero-primary">Explore your capability <span>↗</span></AssessmentStartLink>
+            <Link href="/prime" className="vi-hero-secondary">Understand the PRIME framework <span>→</span></Link>
           </div>
-          <div className="vi-hero-footnote">A CLEARER STANDARD FOR PROFESSIONAL CAPABILITY.</div>
+          <div className="vi-hero-footnote">WORTH. BUILT. — CAPABILITY, CONSIDERED WITH INTENT.</div>
         </div>
         <div className="vi-hero-art" role="group" aria-label="The five PRIME dimensions: Presence, Relationships, Intelligence, Mastery and Enterprise">
           <div className="vi-hero-art-content">
             <div className="vi-hero-art-top"><span>THE PRIME FRAMEWORK</span><span>01 — 05</span></div>
             <div className="vi-prime-word" aria-hidden="true"><span>P</span><span>R</span><span>I</span><span>M</span><span>E</span></div>
             <div className="vi-prime-labels"><span>Presence</span><span>Relationships</span><span>Intelligence</span><span>Mastery</span><span>Enterprise</span></div>
-            <div className="vi-hero-art-bottom"><span>VALU INDEX</span><strong>Capability, made legible.</strong><Link href="/prime">Explore the standard ↗</Link></div>
+            <div className="vi-hero-art-bottom"><span>VALU INDEX</span><strong>Capability, made legible.</strong><Link href="/prime">Explore the framework ↗</Link></div>
           </div>
           <div className="vi-hero-art-photo" role="img" aria-label="Portrait of an African professional. Photograph by Taiye Salawu via Pexels" />
         </div>
