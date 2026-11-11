@@ -125,7 +125,8 @@ export default function DashboardPage() {
       setLoadError(null)
       setIsRefreshing(!!profile)
       try {
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError) throw authError
       if (!user) { window.location.href = '/login'; return }
       setUser(user)
       const { data: { session } } = await supabase.auth.getSession()
@@ -143,11 +144,12 @@ export default function DashboardPage() {
         }
       }
 
-      const { data: proProfile } = await supabase
+      const { data: proProfile, error: professionalProfileError } = await supabase
         .from('professional_profiles')
         .select('*')
         .eq('id', user.id)
         .maybeSingle()
+      if (professionalProfileError) throw professionalProfileError
 
       let prof = proProfile
       let supply = !!proProfile
@@ -157,9 +159,9 @@ export default function DashboardPage() {
           .from('professional_capabilities')
           .select('id,capability,is_active,eligibility_status,eligible_for_listing,missing_requirements')
           .eq('professional_id', user.id)
-        if (capabilityError) console.error('Dashboard capability status load failed:', capabilityError)
+        if (capabilityError) throw capabilityError
         setCapabilities(capabilityRows || [])
-        const { data: assessmentRow } = await supabase
+        const { data: assessmentRow, error: assessmentError } = await supabase
           .from('valu_assessments')
           .select('completed_at,total_score,designation,valu_index:total_score')
           .eq('user_id', user.id)
@@ -167,25 +169,28 @@ export default function DashboardPage() {
           .order('completed_at', { ascending: false })
           .limit(1)
           .maybeSingle()
+        if (assessmentError) throw assessmentError
         setAssessment(assessmentRow || null)
 
         // head:true — only need the count header, not the rows themselves.
         // RLS (see pending-migrations/012_add_profile_views.sql) already
         // restricts this to the signed-in owner's own views, so no
         // additional filtering needed beyond the eq itself.
-        const { count } = await supabase
+        const { count, error: profileViewsError } = await supabase
           .from('profile_views')
           .select('id', { count: 'exact', head: true })
           .eq('professional_profile_id', user.id)
+        if (profileViewsError) throw profileViewsError
         setProfileViewCount(count ?? 0)
       }
 
       if (!prof) {
-        const { data: buyerProfile } = await supabase
+        const { data: buyerProfile, error: buyerProfileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', user.id)
           .maybeSingle()
+        if (buyerProfileError) throw buyerProfileError
         prof = buyerProfile
         supply = false
       }
@@ -211,11 +216,12 @@ export default function DashboardPage() {
       // their own dashboard, despite the notification email/bell already
       // correctly firing.
       if (supply) {
-        const { data: msgs } = await supabase
+        const { data: msgs, error: enquiriesError } = await supabase
           .from('enquiries')
           .select('*')
           .eq('professional_profile_id', user.id)
           .order('created_at', { ascending: false })
+        if (enquiriesError) throw enquiriesError
         setEnquiries((msgs || []).map(m => ({ ...m, recipient_profile_id: m.professional_profile_id })))
       } else {
         const { data: msgs } = await supabase
@@ -223,6 +229,7 @@ export default function DashboardPage() {
           .select('*, professional_profiles:professional_profile_id(display_name, headline, photo_url, active_tracks)')
           .eq('buyer_user_id', user.id)
           .order('created_at', { ascending: false })
+        if (enquiriesError) throw enquiriesError
         setRequests((msgs || []).map(m => ({ ...m, recipient_profile_id: m.professional_profile_id })))
       }
       } catch (error) {
