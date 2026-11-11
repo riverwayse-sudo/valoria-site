@@ -509,7 +509,7 @@ function ProfileSetupForm() {
       return
     }
     // Basic listings do not require Full-profile completion. The consent API
-    // checks a linked completed taster or current Full assessment plus minimum
+    // checks a linked completed taster or current Full VALU Index plus minimum
     // public identity for Basic, and applies stricter profile/capability checks to Full.
     let acknowledgementResponse
     try {
@@ -1154,7 +1154,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
             {form.designation ? <> — <strong style={{ color:'GOLD' }}>{form.designation}</strong></> : null}.
           </p>
           <p style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.6, margin:0 }}>
-            A completed taster can support a Basic listing. Full VALU insight and Full-tier benefits require a current full assessment. Public visibility depends on your consent and the applicable identity, eligibility and listing checks.
+            A completed taster can support a Basic listing. Full VALU insight and Full-tier benefits require a current full VALU Index. Public visibility depends on your consent and the applicable identity, eligibility and listing checks.
           </p>
         </div>
       ) : (
@@ -1164,7 +1164,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
             A completed taster linked to your account can support a Basic listing. Continue with the Full VALU Index to receive your official points, PRIME insight and Full-tier benefits. Public display still requires your explicit consent and the applicable identity and listing checks.
           </p>
           <a href="https://valoriainstitute.com/valu/assessment/" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
-            COMPLETE THE FULL VALU ASSESSMENT →
+            COMPLETE THE FULL VALU INDEX →
           </a>
         </div>
       )}
