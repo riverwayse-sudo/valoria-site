@@ -345,7 +345,7 @@ function ProfilePreviewModal({ profile, onClose }) {
               <p className={styles.modalSectionLabel}>VALU INDEX · PROFESSIONAL INSIGHT</p>
               <p id="profile-preview-description" className={styles.modalSummary}>
                 {isFull
-                  ? (assessmentSummary || 'The Full VALU Index is complete. The professional insight is being prepared.')
+                  ? (assessmentSummary || 'The VALU Index is complete. The professional insight is being prepared.')
                   : 'This professional listing presents declared capabilities and areas of expertise. VALU Index insight appears only where it is available for public display.'}
               </p>
               <div className={styles.modalCredential}>
