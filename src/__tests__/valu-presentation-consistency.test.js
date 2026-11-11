@@ -35,6 +35,12 @@ describe('VALU presentation consistency', () => {
       read('src/app/api/valu-handoff/route.js'),
       read('src/app/signup/page.jsx'),
       read('src/components/LiveProfilesScroll.jsx'),
+      read('src/app/profile/[id]/ProfileClient.jsx'),
+      read('src/app/admin/reconciliation/page.jsx'),
+      read('src/components/Nav.jsx'),
+      read('src/components/ValoriaJourneyCards.jsx'),
+      read('src/lib/journey-state.js'),
+      read('src/app/auth/callback/page.jsx'),
     ];
     for (const surface of surfaces) {
       expect(surface).not.toMatch(/VALU\s+assessment/i);
