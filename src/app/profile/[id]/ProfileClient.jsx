@@ -464,8 +464,10 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                 const labels = ['Intro reel','Case study','Keynote clip','Panel talk']
                 const isActive = activeVideo === i
                 return (
-                  <div key={i} onClick={() => setActiveVideo(isActive ? null : i)}
-                    style={{ flexShrink:0, width:'84px', textAlign:'center', cursor:'pointer' }}>
+                  <button key={i} type="button" onClick={() => setActiveVideo(isActive ? null : i)}
+                    aria-label={`${isActive ? 'Close' : 'Play'} ${labels[i] || `Video ${i+1}`}`}
+                    aria-pressed={isActive}
+                    style={{ flexShrink:0, width:'84px', textAlign:'center', cursor:'pointer', border:0, padding:0, color:'inherit', background:'transparent', font: 'inherit' }}>
                     <div style={{ width:'72px', height:'72px', borderRadius:'50%', margin:'0 auto 8px', padding:'2.5px', background: isActive ? `conic-gradient(${GOLD}, rgba(201,168,76,.2) 40%, rgba(201,168,76,.05) 41%)` : 'rgba(201,168,76,.15)', border: isActive ? `none` : `1px solid ${GLINE}` }}>
                       <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: MID, display:'flex', alignItems:'center', justifyContent:'center', color: GOLD, fontSize:'18px', border:`2px solid ${DARK}`, overflow:'hidden' }}>
                         {ytId
@@ -474,7 +476,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                       </div>
                     </div>
                     <div style={{ fontSize:'10px', color: DIM, letterSpacing:'.04em' }}>{labels[i] || `Video ${i+1}`}</div>
-                  </div>
+                  </button>
                 )
               })}
             </div>
@@ -643,11 +645,12 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                   {videos.slice(0,4).map((url, i) => {
                     const ytId = getYouTubeId(url)
                     return (
-                      <div key={i} onClick={() => setActiveVideo(i)}
-                        style={{ aspectRatio:'16/10', position:'relative', background:`linear-gradient(145deg,${MID},${DARK})`, border:`1px solid ${GLINE}`, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', overflow:'hidden' }}>
+                      <button key={i} type="button" onClick={() => setActiveVideo(i)}
+                        aria-label={`Play ${['Intro reel','Case study','Keynote clip','Panel talk'][i] || `Video ${i+1}`}`}
+                        style={{ aspectRatio:'16/10', position:'relative', width:'100%', padding:0, color:'inherit', font:'inherit', background:`linear-gradient(145deg,${MID},${DARK})`, border:`1px solid ${GLINE}`, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', overflow:'hidden' }}>
                         {ytId && <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:.5 }} />}
-                        <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'rgba(201,168,76,.9)', display:'flex', alignItems:'center', justifyContent:'center', color: DARK, fontSize:'15px', position:'relative', zIndex:1 }}>▶</div>
-                      </div>
+                        <span aria-hidden="true" style={{ width:'44px', height:'44px', borderRadius:'50%', background:'rgba(201,168,76,.9)', display:'flex', alignItems:'center', justifyContent:'center', color: DARK, fontSize:'15px', position:'relative', zIndex:1 }}>▶</span>
+                      </button>
                     )
                   })}
                 </div>
