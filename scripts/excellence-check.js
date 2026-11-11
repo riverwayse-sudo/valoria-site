@@ -147,16 +147,19 @@ if (fs.existsSync(nudgePath)) {
 const registryPath = path.join(root, 'src/components/LiveProfilesScroll.jsx');
 if (fs.existsSync(registryPath)) {
   const registry = fs.readFileSync(registryPath, 'utf8');
-  if (!registry.includes('vi-scroll-group') ||
-      !registry.includes('getMarketplaceDirectoryData') ||
-      !registry.includes('[false, true].map((isClone)') ||
-      !registry.includes('tabIndex={isClone ? -1 : undefined}')) {
-    violations.push('LiveProfilesScroll: public profiles must retain the verified roster and an accessible duplicated rail for continuous motion');
+  if (!registry.includes('getMarketplaceDirectoryData') ||
+      !registry.includes('profiles.slice(0, 4)') ||
+      !registry.includes('featuredProfiles.map(profile') ||
+      !registry.includes('aria-label="Featured public professional profiles"') ||
+      !registry.includes('vi-featured-capabilities') ||
+      !registry.includes('vi-featured-score')) {
+    violations.push('LiveProfilesScroll: homepage must show a concise four-profile preview from the consent-verified public roster');
   }
-  const motionPath = path.join(root, 'src/styles/motion.css');
-  const motion = fs.existsSync(motionPath) ? fs.readFileSync(motionPath, 'utf8') : '';
-  if (!motion.includes('.vi-scroll-track { animation: vi-scroll-x var(--motion-registry-loop) linear infinite;')) {
-    violations.push('LiveProfilesScroll: continuous registry animation must use the canonical motion system');
+  const homeStylesPath = path.join(root, 'src/app/home.css');
+  const homeStyles = fs.existsSync(homeStylesPath) ? fs.readFileSync(homeStylesPath, 'utf8') : '';
+  if (!homeStyles.includes('.vi-scroll-track.vi-scroll-featured-grid') ||
+      !homeStyles.includes('grid-template-columns: repeat(4, minmax(0, 1fr))')) {
+    violations.push('LiveProfilesScroll: featured profiles must use the responsive static card grid');
   }
 }
 const navPath = path.join(root, 'src/components/Nav.jsx');
