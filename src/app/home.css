@@ -4169,3 +4169,33 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+
+/* Final desktop calibration from the staging visual review. */
+@media (min-width: 1051px) {
+  .vi-hero-copy h1 {
+    max-width: 650px;
+    font-size: clamp(46px, 4.25vw, 58px);
+    line-height: 1.045;
+    letter-spacing: -.048em;
+  }
+  .vi-hero-art {
+    max-width: 420px;
+  }
+}
+.vi-hero-primary,
+.vi-hero-secondary {
+  white-space: nowrap;
+}
+.vi-audience-panel {
+  min-width: 0;
+}
+.vi-audience-panel h3,
+.vi-section-intro h2,
+.vi-develop-band h2 {
+  text-wrap: balance;
+}
+.vi-audience-panel p,
+.vi-section-intro > p {
+  text-wrap: pretty;
+}
