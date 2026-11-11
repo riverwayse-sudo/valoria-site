@@ -1,0 +1,41 @@
+const fs = require('fs')
+const path = require('path')
+
+const read = file => fs.readFileSync(path.join(process.cwd(), file), 'utf8')
+
+describe('Public identity and audience-language contract', () => {
+  const marketplaceData = read('src/lib/marketplace-data.js')
+  const publicProfile = read('src/lib/public-profile.js')
+  const directory = read('src/components/MarketplaceDirectory.jsx')
+  const profilePage = read('src/app/profile/[id]/page.jsx')
+  const profileLayout = read('src/app/profile/[id]/layout.jsx')
+  const profileClient = read('src/app/profile/[id]/ProfileClient.jsx')
+  const homepage = read('src/app/page.jsx')
+  const about = read('src/app/about-us/page.jsx')
+  const spotlight = read('src/app/atb-spotlight/page.jsx')
+  const privacy = read('src/app/privacypolicy/page.jsx')
+
+  test('public marketplace projections and profile metadata use ATB IDs, not personal names', () => {
+    expect(marketplaceData).not.toMatch(/\\bfull_name\\b/)
+    expect(publicProfile).not.toMatch(/['"]full_name['"]/)
+    expect(publicProfile).toContain('display_name: row.atb_id')
+    expect(directory).not.toMatch(/(?:p|profile)\\.full_name/)
+    expect(directory).toContain('identifier: profile.atb_id')
+    expect(profilePage).toContain('identifier: publicProfile.atb_id')
+    expect(profileLayout).toContain('profile.atb_id')
+  })
+
+  test('public pages do not expose internal buyer or access-state terminology', () => {
+    expect(spotlight).not.toMatch(/training buyers/i)
+    expect(about).not.toMatch(/\\bbuyers?\\b/i)
+    expect(homepage).not.toMatch(/training buyers/i)
+    expect(profileClient).not.toMatch(/NO ACTIVE BUYER PATHWAY/i)
+    expect(directory).not.toMatch(/BASIC ACCESS|BASIC \\u00b7 SNAPSHOT/i)
+  })
+
+  test('the privacy page states the data-sale position and public identity boundary', () => {
+    expect(privacy).toContain('We do not sell personal data.')
+    expect(privacy).toContain('your ATB ID, professional headline')
+    expect(privacy).toContain('Personal names are not displayed on public profile cards or pages.')
+  })
+})
