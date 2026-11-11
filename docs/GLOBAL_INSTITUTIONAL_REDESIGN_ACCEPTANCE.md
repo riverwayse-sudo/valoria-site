@@ -2,12 +2,12 @@
 
 **Product:** Valoria Institute  
 **Positioning:** Worth. Built.  
-**Audience:** Senior professionals, executives, employers, talent decision-makers and institutions in the United States and international markets.  
+**Audience:** The 1% of the 1%: accomplished professionals, senior executives, board and institutional leaders, exceptional specialists, and the organizations entrusted with consequential decisions.  
 **Status:** Implementation specification for the isolated redesign track. This is not evidence of completed testing, accreditation or global service availability.
 
 ## 1. Institutional proposition
 
-Valoria Institute is a professional capability institution. It assesses, develops and supports the recognition and discovery of professional capability through:
+Valoria Institute is a professional capability institution for people and organizations operating where judgment, expertise and execution carry significant consequence. It assesses, develops and supports the recognition and discovery of professional capability through:
 
 - **PRIME:** Presence, Relationships, Intelligence, Mastery and Enterprise.
 - **VALU Index:** an assessment-led, points-based view of capability.
@@ -15,9 +15,37 @@ Valoria Institute is a professional capability institution. It assesses, develop
 - **Professional Registry / Marketplace:** discovery of professionals across Talent, Speaker and Facilitator capabilities.
 - **Institutional engagement:** pathways for employers, organizations and partners.
 
-The website must explain how these parts relate without presenting every capability as equally mature or available in every market.
+The website must explain how these parts relate without presenting every capability as equally mature or available in every market. Valoria is not to be presented as a generic job board, mass-market course catalogue, recruitment agency or personality-quiz product.
 
-## 2. Audience and language standard
+## 2. Audience standard: the 1% of the 1%
+
+This audience designation is a quality and relevance standard, not a claim that Valoria has exclusive membership, a verified top-percentile cohort or a restricted-access institution.
+
+### Primary audiences
+
+- **Senior decision-makers:** C-suite executives, board members, founders, partners and senior public/private institutional leaders.
+- **Exceptional professionals:** established specialists, senior operators, respected practitioners and high-performing professionals whose work carries material responsibility.
+- **Talent and institutional buyers:** employers, boards, executive search and talent leaders, program owners and institutions making consequential people decisions.
+- **Expert contributors:** accomplished speakers, facilitators and subject-matter leaders engaged for high-stakes events, programs and institutional work.
+
+### What this audience expects
+
+1. **Intellectual substance:** explain the framework, assessment purpose, limitations and practical implications. Avoid motivational filler and unsupported superlatives.
+2. **Credibility before persuasion:** make governance, methodology, credential boundaries, operating status and evidence gaps easy to inspect.
+3. **Discretion by default:** collect only necessary information, explain visibility and consent, protect assessment responses and avoid exposing private professional data.
+4. **Executive utility:** make the next action obvious and relevant to the visitor's role; prioritize decision-useful information over feature volume.
+5. **Editorial restraint:** precise language, strong hierarchy, confident whitespace and restrained visual signaling. Do not simulate prestige with gold overload, luxury clichés, fake scarcity or status badges.
+6. **Operational excellence:** fast, accessible, responsive and dependable experiences. High standards must never become an excuse for friction, obscurity or inaccessible design.
+
+### Positioning guardrails
+
+- Speak to accomplished professionals without implying that only wealthy, famous or already-networked people belong.
+- Do not claim exclusivity, selectivity, elite membership, top-percentile status or a distinguished cohort unless a real, governed program and evidence support the claim.
+- Do not confuse a premium audience with luxury consumer marketing.
+- Do not imply that VALU alone establishes professional worth, predicts performance or replaces human judgment and independent verification.
+- Do not use fabricated testimonials, client logos, institutional affiliations, rankings, placement outcomes or market statistics.
+
+## 3. Audience and language standard
 
 - Write in clear American English for a premium US and international audience.
 - Use US spelling and conventions in new public-facing copy (organization, program, recognize, resume).
@@ -25,7 +53,7 @@ The website must explain how these parts relate without presenting every capabil
 - Be explicit about current operating footprint, live services, listing availability and institutional relationships where those facts matter.
 - An international outlook is not a claim that every service is globally available.
 
-## 3. Claims and trust governance
+## 4. Claims and trust governance
 
 Never publish unsupported claims of global accreditation, regulatory recognition, universal acceptance, partnerships, credential verification or guaranteed professional competence.
 
@@ -42,22 +70,25 @@ Keep these distinctions visible and consistent:
 
 PRIME contains five dimensions and 17 skills. Preserve the established taster → account → separate full assessment → official VALU Index journey. Do not expose internal question counts, imply that taster answers are deducted from the full assessment, or lose saved progress.
 
-## 4. Information architecture and audience journeys
+## 5. Information architecture and audience journeys
 
 Use the existing product routes and navigation as the source of truth. Do not expose unfinished products as if they are live.
 
 ### Professionals
+
 Discover the Institute → understand PRIME and VALU → take the taster → create/confirm an account → complete or resume the separate full assessment → receive the official points-based result → manage profile and capabilities → understand Registry eligibility and visibility.
 
 ### Employers and talent decision-makers
+
 Understand the institutional method → explore the Registry and capability categories → understand what assessment information does and does not establish → review available profiles → use the permitted engagement route.
 
 ### Institutions and partners
+
 Understand institutional purpose → review methodology and standards → distinguish operational services from future pathways → make a partnership enquiry.
 
 Navigation should prioritize clear audience intent. Keep About, framework, assessment, development, Registry and organization pathways discoverable, but do not add dead links or present unavailable services as operational.
 
-## 5. Visual and interaction system
+## 6. Visual and interaction system
 
 Use the approved Valoria tokens:
 
@@ -73,9 +104,11 @@ Use the approved Valoria tokens:
 
 Raleway is the only approved typeface. Gold is an accent, not the default for every label or action. Use restrained editorial composition, clear hierarchy, generous spacing and deliberate contrast. Do not copy another institution's visual identity.
 
+For the 1% of the 1%, visual distinction must come from typographic discipline, editorial confidence, meaningful content and interaction quality—not decorative luxury cues, oversized claims, generic SaaS cards or gamified score treatments.
+
 Mobile is a first-class design target, not a compressed desktop layout. Motion must be purposeful and respect `prefers-reduced-motion`.
 
-## 6. Required page states
+## 7. Required page states
 
 Every core route must be designed and tested for:
 
@@ -91,7 +124,7 @@ Every core route must be designed and tested for:
 
 Empty states must explain what is absent and provide a useful next action. A failed data request must never be disguised as an empty account. Partial failures should preserve available content and permit independent retry.
 
-## 7. Accessibility, performance and engineering
+## 8. Accessibility, performance and engineering
 
 - Target WCAG 2.2 AA, subject to formal verification.
 - Keyboard-operable navigation, dialogs, menus and forms; visible focus states.
@@ -104,7 +137,7 @@ Empty states must explain what is absent and provide a useful next action. A fai
 - Keep site presentation separate from assessment/platform logic.
 - Retain the Cloudflare-first deployment architecture; introduce no unnecessary paid dependencies.
 
-## 8. Release gates
+## 9. Release gates
 
 A redesign change is not complete because the source looks correct. Each release candidate must pass:
 
@@ -119,7 +152,7 @@ A redesign change is not complete because the source looks correct. Each release
 9. Cloudflare staging smoke tests and rendered-page verification.
 10. Explicit staging approval before any production release.
 
-## 9. Delivery order
+## 10. Delivery order
 
 1. Institutional positioning, American-English metadata and homepage journeys.
 2. Shared navigation, typography, spacing, color, controls and responsive foundations.
@@ -131,4 +164,4 @@ A redesign change is not complete because the source looks correct. Each release
 8. Legal, privacy, consent and governance content.
 9. Full accessibility, performance, security and regression verification.
 
-**Completion rule:** The redesign is accepted only when the institutional proposition is clear, every live journey is coherent, claims are substantiated, all important interface states are covered, and the implemented staging experience passes functional, responsive, accessibility and regression review.
+**Completion rule:** The redesign is accepted only when the institutional proposition is clear, the 1% of the 1% audience can recognize its relevance without exaggerated status claims, every live journey is coherent, claims are substantiated, all important interface states are covered, and the implemented staging experience passes functional, responsive, accessibility and regression review.
