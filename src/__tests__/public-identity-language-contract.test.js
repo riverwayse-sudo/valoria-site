@@ -14,6 +14,7 @@ describe('Public identity and audience-language contract', () => {
   const about = read('src/app/about-us/page.jsx')
   const spotlight = read('src/app/atb-spotlight/page.jsx')
   const privacy = read('src/app/privacypolicy/page.jsx')
+  const homepageMarketplace = read('src/components/LiveProfilesScroll.jsx')
 
   test('public marketplace projections and profile metadata use ATB IDs, not personal names', () => {
     expect(marketplaceData).not.toContain('full_name')
@@ -36,6 +37,8 @@ describe('Public identity and audience-language contract', () => {
     expect(spotlight).not.toMatch(/training buyers/i)
     expect(about.toLowerCase()).not.toContain('buyer')
     expect(homepage).not.toMatch(/training buyers/i)
+    expect(homepageMarketplace).not.toMatch(/\\bbuyer(s)?\\b/i)
+    expect(homepageMarketplace).not.toMatch(/\\bprogramme(s)?\\b|\\borganiser(s)?\\b/i)
     expect(homepage).toContain("label: 'PROFESSIONAL DISCOVERY'")
     expect(profileClient).not.toContain('p.display_name')
     expect(profileClient).not.toContain('getInitials(p.display_name)')
