@@ -54,7 +54,7 @@ export async function POST(request) {
 
   if (tasterError) return NextResponse.json({ error: 'Could not verify the saved snapshot.' }, { status: 502 })
   if (!taster) return NextResponse.json({ error: 'Snapshot result not found.' }, { status: 404 })
-  if (!user.email_confirmed_at) return NextResponse.json({ error: 'Verify your email before linking a saved VALU snapshot.' }, { status: 403 })
+  if (!user.email_confirmed_at) return NextResponse.json({ error: 'Verify your email before linking a saved VALU Index Taster.' }, { status: 403 })
   const { data: identityCandidate, error: candidateLookupError } = await admin
     .from('taster_identity_candidates')
     .select('candidate_email,candidate_role,linked_user_id,identity_status')
@@ -154,7 +154,7 @@ export async function POST(request) {
     .limit(1)
     .maybeSingle()
   if (byTasterError) {
-    return NextResponse.json({ error: 'Snapshot linked, but the full assessment could not be checked.' }, { status: 502 })
+    return NextResponse.json({ error: 'VALU Index Taster linked, but your full VALU Index could not be checked.' }, { status: 502 })
   }
   assessmentCandidate = byTaster
 
@@ -205,7 +205,7 @@ export async function POST(request) {
         if (!assessmentCandidate.taster_id) assessmentUpdate = assessmentUpdate.is('taster_id', null)
         const { error: assessmentUpdateError } = await assessmentUpdate
         if (assessmentUpdateError) {
-          return NextResponse.json({ error: 'Snapshot linked, but the full assessment could not be attached safely.' }, { status: 502 })
+          return NextResponse.json({ error: 'VALU Index Taster linked, but the full VALU Index could not be attached safely.' }, { status: 502 })
         }
 
         const { data: verifiedAssessment, error: verifyAssessmentError } = await admin
