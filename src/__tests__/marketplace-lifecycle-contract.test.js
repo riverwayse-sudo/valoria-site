@@ -655,7 +655,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(editor).toContain('.profile-edit-container h2 { font-size: 16px !important;')
     expect(editor).toContain('grid-template-columns: minmax(0, 1fr) !important')
     expect(dashboard).not.toContain("position:'sticky', top:0, zIndex:100")
-    expect(profileEditor).not.toContain("position:'sticky', top:0, zIndex:100")
+    expect(editor).not.toContain("position:'sticky', top:0, zIndex:100")
     expect(setup).not.toContain("position:'sticky', top:0, zIndex:200")
   })
 
