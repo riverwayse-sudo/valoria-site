@@ -70,7 +70,7 @@ const decisionPathways = [
   },
   {
     number: '03',
-    label: 'FOR EVENT & PROGRAM LEADERS',
+    label: 'FOR EVENT ORGANIZERS · FOR FACILITATORS & PROGRAM LEADERS',
     title: 'Engage expertise with intention.',
     body: 'Discover speakers and facilitators whose professional experience and skills align with the purpose, audience and goals of your event or program.',
     href: '/atb-spotlight',
