@@ -618,6 +618,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(nav).toContain("aria-current={active ? 'page' : undefined}")
     expect(nav).toContain('onMouseEnter={() => setOpenMenu(item.label)}')
     expect(nav).toContain('onMouseLeave={() => setOpenMenu(null)}')
+    expect(nav).not.toContain('scrolled ?')
+    expect(homepage).not.toContain('.vi-nav.scrolled')
     expect(layout).toContain("import '../styles/navigation-flow.css'")
     expect(navigationStyles).toContain('position: relative !important;')
     expect(navigationStyles).toContain('position: absolute !important;')
