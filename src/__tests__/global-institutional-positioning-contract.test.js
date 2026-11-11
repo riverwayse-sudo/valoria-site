@@ -11,7 +11,7 @@ describe('Global institutional redesign content contract', () => {
   const acceptance = read('docs/GLOBAL_INSTITUTIONAL_REDESIGN_ACCEPTANCE.md')
 
   test('public positioning addresses an international audience without overstating service footprint', () => {
-    expect(homepage).toContain('BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE')
+    expect(hero).toContain('BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE')
     expect(homepage).not.toMatch(/Africa-first|Nigeria as its initial operating jurisdiction/i)
     expect(about).not.toMatch(/Africa-first|Africa's premier professional capability marketplace/i)
     expect(layout).toContain("locale:'en_US'")
@@ -24,7 +24,7 @@ describe('Global institutional redesign content contract', () => {
     expect(acceptance).toContain('Discretion by default')
     expect(acceptance).toContain('Executive utility')
     expect(acceptance).toContain('Do not claim exclusivity')
-    expect(hero).toContain('For accomplished professionals and the organizations')
+    expect(hero).toContain('Valoria Institute is designed for accomplished professionals and institutions making consequential decisions.')
     expect(hero).toContain('Capability deserves')
     expect(hero).not.toMatch(/elite members only|exclusive access|top 1%/i)
   })
@@ -32,7 +32,7 @@ describe('Global institutional redesign content contract', () => {
   test('the homepage states the institutional proposition and employer trust boundary', () => {
     expect(hero).toContain('AN INSTITUTION FOR PROFESSIONAL CAPABILITY')
     expect(hero).toContain('Valoria brings structure to how capability is assessed, developed and discovered')
-    expect(homepage).toContain('VALU informs consideration; it does not replace independent credential checks')
+    expect(homepage).toContain('The VALU Index informs consideration; it does not replace independent credential checks.')
   })
 
   test('the VALU assessment is not represented as an awarded certification', () => {
