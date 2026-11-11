@@ -4534,3 +4534,369 @@
     gap: 10px;
   }
 }
+
+
+/* -------------------------------------------------------------------------
+   VALORIA INSTITUTIONAL SYSTEM — Stratwise-led design direction
+   Editorial hierarchy, measured geometry, restrained surfaces and repeatable
+   spacing. This is the final authority for the redesigned homepage.
+   ------------------------------------------------------------------------- */
+:root {
+  --vi-content: 1200px;
+  --vi-gutter: clamp(22px, 5vw, 72px);
+  --vi-section-space: clamp(64px, 7vw, 96px);
+  --vi-heading-xl: clamp(38px, 4.2vw, 58px);
+  --vi-heading-lg: clamp(32px, 3.2vw, 44px);
+  --vi-body: 14px;
+  --vi-line: 1.68;
+  --vi-rule: rgba(156,123,45,.22);
+  --vi-surface: #FAFAF7;
+  --vi-paper: #F7F4EE;
+  --vi-linen: #EDE8DC;
+  --vi-ink: #1A1A2E;
+  --vi-muted: #5D5D6B;
+  --vi-gold: #C9A84C;
+}
+.vi-home-editorial {
+  color: var(--vi-ink);
+  background: var(--vi-paper);
+}
+.vi-home-editorial > section {
+  scroll-margin-top: 88px;
+}
+.vi-editorial-hero {
+  min-height: min(690px, calc(100svh - 76px));
+  padding: 0;
+  background: var(--vi-ink);
+}
+.vi-hero-image {
+  background:
+    radial-gradient(ellipse at 77% 46%, rgba(201,168,76,.13), transparent 31%),
+    radial-gradient(ellipse at 60% 80%, rgba(86,77,91,.18), transparent 40%),
+    linear-gradient(112deg, #141420 0%, #1A1A2E 54%, #252438 100%);
+}
+.vi-hero-image::before {
+  opacity: .10;
+  background-size: 84px 84px;
+}
+.vi-hero-shade {
+  background: linear-gradient(90deg, rgba(15,15,25,.72), rgba(15,15,25,.38) 58%, rgba(15,15,25,.14));
+}
+.vi-hero-grain { opacity: .035; }
+.vi-hero-content {
+  width: min(var(--vi-content), calc(100% - 2 * var(--vi-gutter)));
+  min-height: min(690px, calc(100svh - 76px));
+  padding: clamp(58px, 7vw, 88px) 0 82px;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, .78fr);
+  gap: clamp(32px, 5vw, 64px);
+}
+.vi-hero-copy {
+  max-width: 600px;
+}
+.vi-hero-kicker,
+.vi-section-kicker {
+  font-size: 8px;
+  letter-spacing: .17em;
+}
+.vi-hero-kicker span { flex-basis: 28px; }
+.vi-hero-copy h1 {
+  max-width: 590px;
+  margin: 22px 0 18px;
+  font-size: clamp(48px, 5.05vw, 68px);
+  font-weight: 400;
+  line-height: 1.015;
+  letter-spacing: -.055em;
+}
+.vi-hero-copy h1 em {
+  font-weight: 300;
+}
+.vi-hero-copy > p {
+  max-width: 440px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.vi-hero-actions {
+  gap: 18px;
+  margin-top: 24px;
+}
+.vi-hero-primary {
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 2px;
+  font-size: 9px;
+  letter-spacing: .10em;
+}
+.vi-hero-secondary {
+  min-height: 42px;
+  font-size: 9px;
+  letter-spacing: .08em;
+}
+.vi-hero-footnote {
+  margin-top: 30px;
+  font-size: 7px;
+  letter-spacing: .17em;
+}
+.vi-hero-art {
+  width: 100%;
+  max-width: 440px;
+  min-height: 0;
+  justify-self: end;
+  padding: 26px 24px 22px;
+  border: 1px solid rgba(201,168,76,.25);
+  border-radius: 2px;
+  background: linear-gradient(145deg, rgba(26,26,46,.92), rgba(37,36,56,.84));
+  box-shadow: 0 22px 64px rgba(0,0,0,.20);
+}
+.vi-hero-art-orbit {
+  opacity: .32;
+}
+.vi-hero-art-top {
+  font-size: 7px;
+  letter-spacing: .16em;
+}
+.vi-prime-word {
+  margin: 34px 0 18px;
+  font-size: clamp(52px, 5.5vw, 74px);
+  letter-spacing: .14em;
+}
+.vi-prime-labels {
+  gap: 7px;
+  padding-bottom: 20px;
+}
+.vi-prime-labels span {
+  font-size: 7px;
+  letter-spacing: .015em;
+  white-space: nowrap;
+}
+.vi-hero-art-bottom {
+  gap: 8px;
+  margin-top: 16px;
+}
+.vi-hero-art-bottom > span {
+  font-size: 7px;
+  letter-spacing: .15em;
+}
+.vi-hero-art-bottom strong {
+  font-size: 13px;
+  font-weight: 400;
+}
+.vi-hero-art-bottom a {
+  font-size: 8px;
+  letter-spacing: .08em;
+}
+.vi-hero-art-index {
+  margin-top: 22px;
+  font-size: 7px;
+  letter-spacing: .2em;
+}
+.vi-hero-index {
+  left: max(var(--vi-gutter), calc((100vw - var(--vi-content)) / 2));
+  right: max(var(--vi-gutter), calc((100vw - var(--vi-content)) / 2));
+  bottom: 16px;
+  font-size: 7px;
+  letter-spacing: .14em;
+}
+
+/* One editorial grid and one spacing rhythm for all opening sections. */
+.vi-audience-section {
+  padding: var(--vi-section-space) max(var(--vi-gutter), calc((100vw - var(--vi-content)) / 2));
+  background: var(--vi-paper);
+}
+.vi-section-intro {
+  align-items: end;
+  gap: clamp(28px, 5vw, 64px);
+  margin-bottom: 34px;
+}
+.vi-section-intro h2 {
+  max-width: 620px;
+  margin-top: 14px;
+  font-size: var(--vi-heading-xl);
+  line-height: 1.04;
+  letter-spacing: -.045em;
+}
+.vi-section-intro > p {
+  max-width: 330px;
+  margin-bottom: 3px;
+  font-size: 13px;
+  line-height: 1.68;
+}
+.vi-audience-grid {
+  gap: 1px;
+  border-radius: 2px;
+  border-color: #D4C9A8;
+}
+.vi-audience-panel {
+  min-height: 340px;
+  padding: clamp(28px, 3.4vw, 44px);
+}
+.vi-audience-panel h3 {
+  max-width: 470px;
+  margin: 32px 0 14px;
+  font-size: clamp(30px, 3.15vw, 43px);
+  line-height: 1.06;
+  letter-spacing: -.04em;
+}
+.vi-audience-panel > p {
+  max-width: 410px;
+  font-size: 13px;
+  line-height: 1.68;
+}
+.vi-audience-link {
+  margin-top: 24px;
+  font-size: 9px;
+  letter-spacing: .10em;
+}
+.vi-audience-secondary-links {
+  gap: 14px 20px;
+  margin-top: 15px;
+}
+.vi-audience-secondary-links a {
+  font-size: 7px;
+  letter-spacing: .10em;
+}
+.vi-standard-strip {
+  grid-template-columns: minmax(200px, 1.2fr) repeat(3, minmax(110px, 1fr)) auto;
+  gap: 20px;
+  padding: 30px max(var(--vi-gutter), calc((100vw - var(--vi-content)) / 2));
+}
+.vi-standard-heading strong {
+  font-size: 15px;
+}
+.vi-standard-step {
+  padding-left: 16px;
+}
+.vi-standard-step span { font-size: 9px; }
+.vi-standard-step small { font-size: 9px; }
+.vi-develop-band {
+  padding: clamp(56px, 6vw, 82px) max(var(--vi-gutter), calc((100vw - var(--vi-content)) / 2));
+}
+.vi-develop-band h2 {
+  max-width: 760px;
+  font-size: clamp(36px, 4.1vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -.045em;
+}
+.vi-develop-band > a {
+  font-size: 9px;
+  letter-spacing: .11em;
+}
+
+/* Shared interaction and focus treatment. */
+.vi-home-editorial a {
+  text-underline-offset: 4px;
+}
+.vi-home-editorial a:focus-visible {
+  outline: 2px solid #9C7B2D;
+  outline-offset: 4px;
+}
+.vi-home-editorial .vi-audience-panel,
+.vi-home-editorial .vi-hero-art {
+  border-radius: 2px;
+}
+.vi-home-editorial .vi-audience-panel::after {
+  opacity: .7;
+}
+
+/* Tablet: keep the composition deliberate before stacking. */
+@media (max-width: 1050px) {
+  .vi-hero-content {
+    width: calc(100% - 64px);
+    grid-template-columns: minmax(0, 1fr) minmax(290px, .82fr);
+    gap: 28px;
+  }
+  .vi-hero-copy h1 {
+    font-size: clamp(44px, 5.2vw, 56px);
+  }
+  .vi-hero-art {
+    padding: 22px 18px 18px;
+  }
+  .vi-prime-word {
+    font-size: clamp(48px, 5.5vw, 62px);
+  }
+  .vi-audience-section {
+    padding-inline: 32px;
+  }
+  .vi-standard-strip {
+    grid-template-columns: repeat(3, minmax(0,1fr));
+  }
+  .vi-standard-heading { grid-column: 1 / -1; }
+  .vi-standard-link { grid-column: 1 / -1; }
+}
+@media (max-width: 760px) {
+  .vi-editorial-hero {
+    min-height: auto;
+  }
+  .vi-hero-content {
+    width: calc(100% - 40px);
+    min-height: auto;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 58px 0 76px;
+  }
+  .vi-hero-copy h1 {
+    max-width: 580px;
+    margin: 20px 0 16px;
+    font-size: clamp(42px, 8.2vw, 58px);
+    line-height: 1.04;
+  }
+  .vi-hero-copy > p { max-width: 520px; }
+  .vi-hero-art {
+    max-width: 540px;
+    justify-self: start;
+  }
+  .vi-audience-section { padding: 58px 20px; }
+  .vi-section-intro {
+    align-items: start;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 26px;
+  }
+  .vi-section-intro h2 {
+    font-size: clamp(38px, 7.5vw, 48px);
+  }
+  .vi-section-intro > p { max-width: 520px; }
+  .vi-audience-grid { grid-template-columns: 1fr; }
+  .vi-audience-panel {
+    min-height: 300px;
+    padding: 28px;
+  }
+  .vi-audience-panel h3 {
+    margin-top: 24px;
+    font-size: clamp(30px, 6vw, 38px);
+  }
+  .vi-standard-strip {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    padding: 28px 20px;
+  }
+  .vi-standard-heading,
+  .vi-standard-link { grid-column: 1 / -1; }
+  .vi-develop-band {
+    padding: 58px 20px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 24px;
+  }
+}
+@media (max-width: 420px) {
+  .vi-hero-content { width: calc(100% - 36px); }
+  .vi-hero-copy h1 { font-size: clamp(38px, 10vw, 44px); }
+  .vi-hero-actions { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .vi-hero-primary { width: 100%; justify-content: center; }
+  .vi-prime-word { font-size: clamp(42px, 12vw, 52px); }
+  .vi-prime-labels { flex-wrap: wrap; }
+  .vi-prime-labels span { font-size: 7px; }
+  .vi-audience-panel { min-height: 0; padding: 24px; }
+  .vi-audience-panel h3 { font-size: 32px; }
+  .vi-standard-strip { grid-template-columns: 1fr; }
+  .vi-standard-step { padding: 12px 0 0; border-left: 0; border-top: 1px solid rgba(201,168,76,.25); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vi-home-editorial *,
+  .vi-home-editorial *::before,
+  .vi-home-editorial *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
