@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,seniority_band,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
+const FIELDS = 'professional_id,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,seniority_band,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
 const IS_READ_ONLY_PREVIEW = (process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1') && process.env.VALU_STAGING_API_ENABLED !== '1'
 
@@ -24,7 +24,6 @@ export function isPublicProfileContentReady(row) {
   const assessmentSummary = String(row.assessment_summary || '').trim()
   const fullAssessmentReady = assessmentAccess !== 'full' || (hasOfficialPoints && assessmentSummary.length >= 12)
   return Boolean(
-    row.full_name &&
     isValidAtbId(row.atb_id) &&
     headline.length >= 3 &&
     !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
@@ -80,7 +79,7 @@ export async function getMarketplaceRows(track = 'all') {
     .from(SOURCE)
     .select(FIELDS)
     .order('valu_index', { ascending: false, nullsFirst: false })
-    .order('full_name', { ascending: true })
+    .order('atb_id', { ascending: true })
 
   if (error) {
     console.error('Marketplace query failed:', error)
@@ -104,7 +103,7 @@ export async function getMarketplaceCounts() {
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
   const { data, error } = await supabase
     .from(SOURCE)
-    .select('professional_id,full_name,atb_id,headline,current_job_title,assessment_access,valu_index,assessment_summary,capability,track,capabilities,selected_capabilities')
+    .select('professional_id,atb_id,headline,current_job_title,assessment_access,valu_index,assessment_summary,capability,track,capabilities,selected_capabilities')
 
   if (error) {
     console.error('Marketplace count query failed:', error)
