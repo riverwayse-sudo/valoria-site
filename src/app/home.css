@@ -4324,3 +4324,213 @@
     letter-spacing: .12em;
   }
 }
+
+
+/* FINAL VISUAL CALIBRATION — restrained institutional scale
+   Applies after the editorial composition so the system remains consistent
+   across the hero, PRIME panel and opening audience section.
+*/
+.vi-editorial-hero {
+  min-height: clamp(560px, calc(100svh - 104px), 680px);
+}
+.vi-hero-image::before {
+  opacity: .12;
+  background-size: 88px 88px;
+}
+.vi-hero-grain {
+  opacity: .035;
+}
+.vi-hero-content {
+  width: min(1200px, calc(100% - 96px));
+  grid-template-columns: minmax(0, 1.02fr) minmax(340px, .78fr);
+  gap: clamp(36px, 4.2vw, 64px);
+  padding: 58px 0 78px;
+}
+.vi-hero-copy {
+  max-width: 560px;
+}
+.vi-hero-kicker {
+  font-size: 8px;
+  letter-spacing: .17em;
+}
+.vi-hero-copy h1 {
+  max-width: 560px;
+  margin: 22px 0 18px;
+  font-size: clamp(48px, 5.1vw, 70px);
+  line-height: 1.01;
+  letter-spacing: -.058em;
+}
+.vi-hero-copy > p {
+  max-width: 430px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.vi-hero-actions {
+  gap: 22px;
+  margin-top: 26px;
+}
+.vi-hero-primary,
+.vi-hero-secondary {
+  min-height: 48px;
+  font-size: 10px;
+}
+.vi-hero-primary {
+  padding-inline: 19px;
+}
+.vi-hero-footnote {
+  margin-top: 34px;
+  font-size: 7px;
+}
+.vi-hero-art {
+  max-width: 470px;
+  padding: 26px 0 22px 28px;
+}
+.vi-prime-word {
+  margin: 36px 0 16px;
+  font-size: clamp(54px, 5.2vw, 72px);
+}
+.vi-prime-labels {
+  gap: 8px;
+  padding-bottom: 24px;
+}
+.vi-prime-labels span {
+  font-size: 8px;
+  overflow-wrap: normal;
+}
+.vi-hero-art-bottom {
+  margin-top: 18px;
+}
+.vi-hero-art-index {
+  margin-top: 28px;
+}
+.vi-hero-index {
+  bottom: 18px;
+  left: max(48px, calc((100vw - 1200px) / 2));
+  right: max(48px, calc((100vw - 1200px) / 2));
+}
+.vi-audience-section {
+  padding: 76px max(48px, calc((100vw - 1200px) / 2));
+}
+.vi-section-intro {
+  gap: 48px;
+  margin-bottom: 34px;
+}
+.vi-section-intro h2 {
+  max-width: 620px;
+  font-size: clamp(42px, 4.2vw, 58px);
+  line-height: 1.02;
+  letter-spacing: -.045em;
+}
+.vi-section-intro > p {
+  max-width: 330px;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.vi-audience-panel {
+  min-height: 340px;
+  padding: 36px;
+}
+.vi-audience-panel h3 {
+  margin: 30px 0 14px;
+  font-size: clamp(30px, 3vw, 42px);
+  line-height: 1.06;
+}
+.vi-audience-panel p {
+  max-width: 420px;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.vi-standard-strip {
+  gap: 20px;
+  padding-block: 30px;
+}
+.vi-develop-band {
+  padding-block: 72px;
+}
+.vi-develop-band h2 {
+  font-size: clamp(38px, 4.2vw, 58px);
+}
+
+@media (max-width: 1050px) {
+  .vi-hero-content {
+    width: calc(100% - 64px);
+    grid-template-columns: minmax(0, 1fr) minmax(300px, .82fr);
+    gap: 30px;
+  }
+  .vi-hero-copy h1 {
+    font-size: clamp(46px, 5.8vw, 60px);
+  }
+  .vi-hero-art {
+    padding-left: 20px;
+  }
+  .vi-prime-word {
+    font-size: clamp(48px, 6vw, 62px);
+  }
+  .vi-audience-section {
+    padding-inline: 32px;
+  }
+  .vi-audience-panel {
+    padding: 30px;
+  }
+  .vi-standard-strip {
+    padding-inline: 32px;
+  }
+  .vi-develop-band {
+    padding-inline: 32px;
+  }
+}
+@media (max-width: 760px) {
+  .vi-editorial-hero {
+    min-height: auto;
+  }
+  .vi-hero-content {
+    width: calc(100% - 40px);
+    gap: 38px;
+    padding: 58px 0 78px;
+  }
+  .vi-hero-copy h1 {
+    max-width: 540px;
+    margin: 20px 0 16px;
+    font-size: clamp(44px, 10.5vw, 62px);
+    line-height: 1.02;
+  }
+  .vi-hero-actions {
+    gap: 14px 18px;
+    margin-top: 22px;
+  }
+  .vi-hero-footnote {
+    margin-top: 26px;
+  }
+  .vi-hero-art {
+    padding: 20px 0 12px 18px;
+  }
+  .vi-prime-word {
+    margin: 28px 0 14px;
+    font-size: clamp(48px, 12vw, 68px);
+  }
+  .vi-audience-section {
+    padding: 58px 20px;
+  }
+  .vi-section-intro {
+    margin-bottom: 26px;
+  }
+  .vi-section-intro h2 {
+    font-size: clamp(38px, 9vw, 50px);
+  }
+  .vi-audience-panel {
+    min-height: 310px;
+    padding: 28px;
+  }
+  .vi-audience-panel h3 {
+    margin-top: 26px;
+    font-size: clamp(30px, 7.5vw, 40px);
+  }
+}
+@media (max-width: 380px) {
+  .vi-hero-copy h1 {
+    font-size: 42px;
+  }
+  .vi-hero-art-bottom {
+    gap: 10px;
+  }
+}
