@@ -4764,3 +4764,16 @@
     padding: 22px;
   }
 }
+
+/* Homepage profile rail: give consented member photography a visible editorial frame. */
+.live-profiles .vi-scroll-card{grid-template-columns:88px minmax(0,1fr) 72px 18px;gap:16px;align-items:center}
+.live-profiles .vi-scroll-avatar{width:88px;height:108px;overflow:hidden;border:1px solid rgba(201,168,76,.34);border-radius:12px;background:var(--dark-mid)}
+.live-profiles .vi-scroll-avatar .vi-scroll-photo{display:block;width:100%;height:100%;object-fit:cover;object-position:center 35%;border-radius:inherit}
+.live-profiles .vi-scroll-avatar>span{width:100%!important;height:100%!important;border-radius:12px!important}
+.live-profiles .vi-scroll-avatar>span img{border-radius:12px!important}
+.live-profiles .live-profile-action,.live-profiles .live-profiles-link,.live-profiles .live-profiles-empty-link{border-radius:999px}
+@media(max-width:640px){
+  .live-profiles .vi-scroll-card{grid-template-columns:64px minmax(0,1fr) 56px 14px;gap:10px}
+  .live-profiles .vi-scroll-avatar{width:64px;height:82px;border-radius:10px}
+  .live-profiles .vi-scroll-avatar>span,.live-profiles .vi-scroll-avatar>span img{border-radius:10px!important}
+}
