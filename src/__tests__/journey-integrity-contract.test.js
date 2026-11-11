@@ -162,8 +162,10 @@ describe('journey integrity contract', () => {
   test('signup and resend confirmation use the current site origin so staging links do not jump to production', () => {
     const source = read('src/app/professional-signup/page.jsx')
     expect(source).toContain('emailRedirectTo:')
-    expect(source).toContain('window.location.origin')
-    expect(source).toContain('/auth/callback?pending_taster_id=')
+    expect(source).toContain('getAuthCallbackUrl(tasterId)')
+    expect(source).toContain("new URL('/auth/callback', process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com')")
+    expect(source).toContain("callback.searchParams.set('pending_taster_id', tasterId)")
+    expect(source).not.toContain('window.location.origin')
     expect(source).not.toContain('https://valoriainstitute.com/auth/callback?pending_taster_id=')
     expect(source).toContain("localStorage.setItem('pending_taster_id',tasterId)")
   })
