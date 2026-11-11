@@ -260,3 +260,22 @@ nav.vi-nav.scrolled,
   .vi-hero-art,
   .vi-hero-art-photo { transition: none !important; }
 }
+
+
+/* Editorial hero interaction timing — canonical motion authority. */
+.vi-editorial-hero .vi-hero-art,
+.vi-editorial-hero .vi-hero-art-photo,
+.vi-editorial-hero .home-journey-link {
+  transition:
+    transform var(--motion-emphasis) var(--motion-ease),
+    box-shadow var(--motion-emphasis) var(--motion-ease),
+    color var(--motion-standard) var(--motion-ease),
+    border-color var(--motion-standard) var(--motion-ease),
+    gap var(--motion-standard) var(--motion-ease),
+    filter var(--motion-section) var(--motion-ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .vi-editorial-hero .vi-hero-art,
+  .vi-editorial-hero .vi-hero-art-photo,
+  .vi-editorial-hero .home-journey-link { transition: none !important; }
+}
