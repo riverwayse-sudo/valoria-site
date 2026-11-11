@@ -1,6 +1,6 @@
 # Valoria Institute
 
-> Valoria Institute is a Nigeria-first professional capability institution and marketplace. It helps professionals understand their capabilities, build a credible professional presence and connect with relevant opportunities through the PRIME Framework, VALU Index and Valoria Marketplace.
+Valoria Institute is an African-founded professional capability institution with an international outlook. It helps professionals understand their capabilities, build a credible professional presence and connect with relevant opportunities through the PRIME Framework and VALU Index. Its promise is to develop, surface and connect professional capability. Worth. Built.
 
 ## Primary sources
 
@@ -13,9 +13,9 @@
 - [Professional capability](https://valoriainstitute.com/knowledge/professional-capability): Capability beyond job title and CV.
 - [Marketplace](https://valoriainstitute.com/marketplace): Public professional discovery, subject to inventory and eligibility.
 - [Talent marketplace](https://valoriainstitute.com/marketplace/talent): Talent discovery for employers.
-- [Speaker marketplace](https://valoriainstitute.com/marketplace/speakers): Speaker discovery for event organisers.
-- [Facilitator marketplace](https://valoriainstitute.com/marketplace/facilitators): Facilitator discovery for programme and learning buyers.
-- [Jobs](https://valoriainstitute.com/jobs): Reviewed job openings from organisations seeking professional capability.
+- [Speaker marketplace](https://valoriainstitute.com/marketplace/speakers): Speaker discovery for event organizers.
+- [Facilitator marketplace](https://valoriainstitute.com/marketplace/facilitators): Facilitator discovery for organizations commissioning learning and development programs.
+- [Jobs](https://valoriainstitute.com/jobs): Reviewed job openings from organizations seeking professional capability.
 - [Opportunities](https://valoriainstitute.com/opportunities): Broader public opportunities when reviewed and published.
 - [ATB Connect](https://valoriainstitute.com/atb-connect): Employer pathway for capability-led talent discovery.
 - [ATB Spotlight](https://valoriainstitute.com/atb-spotlight): Speaker and facilitator discovery pathway.
@@ -41,18 +41,16 @@ AI Fluency and Human-AI Collaboration are designated Future-Ready skills.
 - Earned designations are based on full-assessment points and cannot be purchased.
 - An assessment result is a structured signal; it is not a guarantee of employment, performance or professional success.
 
-## Marketplace model
+## Professional visibility and discovery
 
-- Canonical data model: one account → one professional profile → 1–3+ capabilities across Talent, Speaker and Facilitator.
-- Capability pathways are Talent, Speaker and Facilitator.
-- Capabilities are not separate professional profiles.
-- Basic is a marketplace access state, not a merit tier; capability eligibility and public listing remain separate requirements.
-- Public profile indexing is restricted to profiles present in the eligible, consented public roster.
+- Professionals may be discoverable across more than one capability area, including Talent, Speaker and Facilitator.
+- Public profiles appear only when the professional has chosen visibility and the applicable eligibility and listing requirements have been met.
+- Public profile summaries draw from VALU report insight and approved professional information.
 - Do not infer qualifications, certifications, experience or availability beyond what an individual's public profile explicitly states.
 
 ## Operating context
 
-Nigeria is Valoria's initial operating jurisdiction. Broader African and international reach is a future direction and must not be represented as currently available unless the relevant service or opportunity is explicitly published.
+Nigeria is Valoria's initial operating jurisdiction. The institution is built with an international outlook; do not represent services or opportunities in other markets as active unless the relevant service or opportunity is explicitly published.
 
 ## Trust and accuracy
 
