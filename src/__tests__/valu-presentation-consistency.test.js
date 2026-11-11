@@ -25,6 +25,10 @@ describe('VALU presentation consistency', () => {
       read('src/components/MarketplaceDirectory.jsx'),
       read('src/app/professional-signup/page.jsx'),
       read('src/app/privacypolicy/page.jsx'),
+      read('src/app/profile/onboarding/page.jsx'),
+      read('src/components/VALUJourneyProgress.jsx'),
+      read('src/app/prime/page.jsx'),
+      read('src/app/test/assessment/page.jsx'),
     ];
     for (const surface of surfaces) {
       expect(surface).not.toMatch(/VALU\s+assessment/i);
@@ -32,6 +36,8 @@ describe('VALU presentation consistency', () => {
     }
     expect(read('src/app/valu/page.jsx')).toContain('VALU Index Taster');
     expect(read('src/app/valu/start/page.jsx')).toContain('full VALU Index');
+    expect(read('src/app/page.jsx')).toContain('START THE VALU INDEX TASTER');
+    expect(read('src/app/prime/page.jsx')).toContain('TAKE THE VALU INDEX TASTER');
   })
 
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
