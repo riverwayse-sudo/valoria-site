@@ -17,7 +17,7 @@ const DIM = 'rgba(247,244,238,.55)'
 const sections = [
   {
     title: '1. Who we are',
-    body: `Valoria Institute is an initiative of African Talent Bureau Ltd, registered in Nigeria. We operate the Valoria Institute professional marketplace at valoriainstitute.com and the VALU Index assessment platform at valoriainstitute.com/valu/assessment.\n\nFor questions about this policy, contact us at: privacy@valoriainstitute.com`,
+    body: `Valoria Institute is an initiative of African Talent Bureau Ltd, registered in Nigeria. We operate the Valoria Institute professional marketplace at valoriainstitute.com and the VALU Index platform at valoriainstitute.com/valu/assessment.\n\nFor questions about this policy, contact us at: privacy@valoriainstitute.com`,
   },
   {
     title: '2. Data we collect',
@@ -25,7 +25,7 @@ const sections = [
   },
   {
     title: '3. Why we collect it',
-    body: `We process your personal data for the following purposes:\n\n• To operate the Valoria Institute marketplace — matching assessed professionals with employers, event organisers, and training buyers.\n• To administer the VALU Index assessment — computing your score, generating your AI report, and maintaining your assessment history.\n• To list your profile in the marketplace — if you are a professional who scores 35 or above and consents to listing.\n• To facilitate introductions between buyers and professionals — all contact is mediated by Valoria; contact details are never shared directly.\n• To send transactional communications — account verification, assessment results, and enquiry notifications.\n• To maintain platform security — detecting unusual activity, integrity flags on assessments, and preventing abuse.`,
+    body: `We process your personal data for the following purposes:\n\n• To operate the Valoria Institute marketplace — matching assessed professionals with employers, event organisers, and training buyers.\n• To administer the VALU Index — computing your score, generating your AI report, and maintaining your assessment history.\n• To list your profile in the marketplace — if you are a professional who scores 35 or above and consents to listing.\n• To facilitate introductions between buyers and professionals — all contact is mediated by Valoria; contact details are never shared directly.\n• To send transactional communications — account verification, assessment results, and enquiry notifications.\n• To maintain platform security — detecting unusual activity, integrity flags on assessments, and preventing abuse.`,
   },
   {
     title: '4. Legal basis for processing',
