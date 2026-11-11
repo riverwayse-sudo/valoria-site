@@ -70,7 +70,7 @@ const decisionPathways = [
   },
   {
     number: '03',
-    label: 'FOR EVENT ORGANIZERS & PROGRAM LEADERS',
+    label: 'FOR EVENT ORGANIZERS · FOR FACILITATORS & PROGRAM LEADERS',
     title: 'Find expertise that can hold a room.',
     body: 'Discover speakers and facilitators through capability-led profiles and relevant professional experience.',
     href: '/atb-spotlight',
