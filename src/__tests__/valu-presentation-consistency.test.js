@@ -83,7 +83,17 @@ describe('VALU presentation consistency', () => {
     expect(registry).toContain('const loop = unique')
     expect(registry).not.toContain('unique.slice(0, 4)')
     expect(registry).toContain('profile.assessment_summary || profile.headline')
-    expect(registry).toContain('const isBasicSnapshot = points === null && summary.length === 0 && headline.length >= 3')
+    expect(registry).toContain("const isBasic = profile.assessment_access === 'basic'")
+    expect(registry).toContain("isBasic ? 'PROFILE' : 'VALU INDEX'")
+    expect(registry).toContain("isBasic ? 'PUBLIC' : profile.valu_index")
+    expect(registry).toContain("!isBasic && <span className=\"vi-scroll-score-max\">points</span>")
+    expect(registry).not.toContain("'ACCESS'")
+    expect(registry).not.toContain("'BASIC'")
+    const marketplaceData = read('src/lib/marketplace-data.js')
+    expect(marketplaceData).toContain('isPublicProfileContentReady(row)')
+    expect(marketplaceData).toContain("assessmentAccess === 'basic'")
+    expect(marketplaceData).toContain("assessmentAccess === 'full'")
+    expect(marketplaceData).toContain('fullAssessmentReady')
   })
 
   test('marketplace explains snapshot and full assessment without exposing internal question counts', () => {
@@ -96,7 +106,8 @@ describe('VALU presentation consistency', () => {
 
   test('public registry and professional-facing score cards use points', () => {
     expect(read('src/components/LiveProfilesScroll.jsx')).toContain('className="vi-scroll-score-max"')
-    expect(read('src/components/LiveProfilesScroll.jsx')).toContain("? 'points' : 'ACCESS'")
+    expect(read('src/components/LiveProfilesScroll.jsx')).toContain('>points</span>')
+    expect(read('src/components/LiveProfilesScroll.jsx')).not.toContain("'ACCESS'")
     expect(read('src/app/profile/[id]/ProfileClient.jsx')).toContain('> points</span>')
     expect(read('src/app/profile/onboarding/page.jsx')).toContain('<span> points</span>')
     expect(read('src/app/profile/passport/page.jsx')).toContain(' points</b>')
