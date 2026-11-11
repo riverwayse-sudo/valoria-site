@@ -121,6 +121,13 @@
 }
 
 .hero-slider .hero-slide.is-active {
+  /* Keep the visible slide in document flow so its content contributes to
+     the hero height. The inactive slide remains absolutely positioned. This
+     prevents the hero from collapsing around a slide whose content is taller
+     than the viewport-based minimum. */
+  position: relative;
+  inset: auto;
+  min-height: 100%;
   visibility: visible;
   pointer-events: auto;
   z-index: 2;
