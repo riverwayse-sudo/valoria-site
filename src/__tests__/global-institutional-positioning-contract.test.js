@@ -47,6 +47,8 @@ describe('Global institutional redesign content contract', () => {
     expect(homepage).not.toMatch(/organis(?:ation|er)|programme|recognis/i)
     expect(about).toContain('event organizers')
     expect(about).toContain('organizations')
+    expect(about).toContain('At senior levels, decisions about people carry significant consequences')
+    expect(about).toContain('evidence, judgment')
     expect(about).not.toMatch(/organis(?:ation|er)|programme|recognis/i)
   })
 })
