@@ -601,7 +601,7 @@ function ProfileSetupForm() {
         <button onClick={handleSaveExit} style={{ fontSize:'11px', color:DIM, background:'none', border:'none', cursor:'pointer', fontFamily:'inherit', letterSpacing:'.06em' }}>SAVE &amp; EXIT</button>
       </header>
 
-      {/* THIN PROGRESS BAR — same visual language as the VALU Index assessment */}
+      {/* THIN PROGRESS BAR — same visual language as the VALU Index */}
       <div style={{ height:'2px', background:'rgba(255,255,255,.06)' }}>
         <div style={{ height:'100%', width:`${progress}%`, background:GOLD, transition:'width .4s ease' }} />
       </div>
