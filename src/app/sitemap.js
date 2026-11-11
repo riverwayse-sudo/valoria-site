@@ -1,6 +1,8 @@
 import { getConsentVerifiedPublicProfileSitemapRows } from '@/lib/public-profile'
 
 const IS_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'
+export const dynamic = 'force-dynamic'
+
 const SITE_URL = IS_PREVIEW ? 'https://staging.valoriainstitute.com' : 'https://valoriainstitute.com'
 
 export default async function sitemap() {
