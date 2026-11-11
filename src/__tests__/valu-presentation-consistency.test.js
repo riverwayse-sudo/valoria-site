@@ -8,9 +8,17 @@ function read(relative) {
 describe('VALU presentation consistency', () => {
   test('homepage communicates registration before the VALU taster without exposing question counts', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('Register before your taster')
+    expect(home).toContain('Start with your VALU Index Taster')
     expect(home).toContain('START THE VALU INDEX TASTER')
+    expect(home).not.toContain('FREE ENTRY')
+    expect(home).not.toContain('verified profiles')
+    expect(home).not.toContain('target="_blank"')
+    const tasterPage = read('src/app/valu/start/page.jsx')
+    expect(tasterPage).toContain('VALU INDEX TASTER')
+    expect(tasterPage).not.toContain('VALU TASTER')
+    expect(tasterPage).not.toMatch(/\bFREE\b|Is it free\?/i)
     expect(home).not.toMatch(/9 questions|58 questions|Question\s+\d+\s+of\s+\d+/i)
+    expect(home).not.toContain('Register before your taster')
     expect(home).not.toContain('no account needed')
     expect(home).not.toMatch(/\\b9\\s*QUESTIONS\\b|\\b58\\s*QUESTIONS\\b/i)
     const waitlist = read('src/components/WaitlistModal.jsx')
