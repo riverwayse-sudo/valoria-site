@@ -87,7 +87,7 @@ export default function HomePage() {
         <section className="home-market-scope" aria-label="Initial market focus">
           <div className="container">
             <span>BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE</span>
-            <p>Valoria Institute brings a consistent language for professional capability to professionals, employers and institutions. Service availability, professional listings and institutional relationships are presented according to what is currently operational; the Institute does not imply universal accreditation or recognition.</p>
+            <p>Valoria Institute is designed for accomplished professionals and institutions making consequential decisions. Its framework, assessment, development pathways and talent discovery services are presented with clear evidence, operating boundaries and respect for professional discretion.</p>
           </div>
         </section>
 
@@ -96,25 +96,25 @@ export default function HomePage() {
             <Reveal className="home-section-heading">
               <div>
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE INFRASTRUCTURE GAP</span></div>
-                <h2 id="institutional-case-title">Careers still turn on who was in the right room at the right time. Your capability has not changed. <em>The room has.</em></h2>
+                <h2 id="institutional-case-title">At consequential levels, reputation is not enough. Capability deserves to be <em>understood with precision.</em></h2>
               </div>
-              <p>Professionals can be overlooked when familiarity shapes who gets considered. Employers, event organizers and program leaders need a more consistent way to understand capability beyond resumes, biographies and referrals.</p>
+              <p>For senior professionals and the organizations that depend on their judgment, a résumé or referral is only part of the picture. Better decisions require a clearer account of capability, experience and context.</p>
             </Reveal>
             <Reveal className="home-institutional-proof" as="div">
               <div className="home-institutional-proof-item">
                 <span>THE CHALLENGE</span>
-                <strong>Capability is difficult to compare.</strong>
-                <p>Experience, potential and professional strengths are often presented in disconnected ways.</p>
+                <strong>Signals are often incomplete.</strong>
+                <p>Resumes, biographies and networks reveal fragments; they rarely provide a shared framework for understanding capability.</p>
               </div>
               <div className="home-institutional-proof-item">
                 <span>THE OPPORTUNITY</span>
-                <strong>Better decisions need better context.</strong>
-                <p>Shared language and structured insight can strengthen how people are assessed, developed and discovered.</p>
+                <strong>Judgment requires better evidence.</strong>
+                <p>A consistent framework can inform assessment and development without pretending to replace professional judgment.</p>
               </div>
               <div className="home-institutional-proof-item">
                 <span>THE VALORIA RESPONSE</span>
-                <strong>One connected capability infrastructure.</strong>
-                <p>Framework, assessment, development and talent access working as parts of one institutional system.</p>
+                <strong>One considered institutional system.</strong>
+                <p>PRIME, VALU, development and professional discovery connected by a clear institutional purpose.</p>
               </div>
             </Reveal>
           </div>
@@ -126,9 +126,9 @@ export default function HomePage() {
             <Reveal className="home-section-heading">
               <div>
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">HOW THE INSTITUTION WORKS</span></div>
-                <h2 id="home-framework-title">Four connected capabilities. <em>One institutional system.</em></h2>
+                <h2 id="home-framework-title">A coherent framework for <em>consequential capability.</em></h2>
               </div>
-              <p>Valoria Institute is the parent institution. Each part of its system has a distinct role, from the framework that defines capability to the pathways that help put it to work.</p>
+              <p>For professionals whose decisions and contributions carry weight, and for institutions accountable for selecting and developing talent, each part of Valoria has a distinct role.</p>
             </Reveal>
             <Reveal className="home-framework-grid home-institutional-grid" as="div">
               {institutionalCapabilities.map((item) => (
@@ -149,7 +149,7 @@ export default function HomePage() {
             <Reveal className="home-section-heading">
               <div>
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">HOW IT WORKS</span></div>
-                <h2 id="home-journey-title">Four steps from insight <em>to opportunity.</em></h2>
+                <h2 id="home-journey-title">From professional insight <em>to considered opportunity.</em></h2>
               </div>
               <p>Start with a directional signal, build a fuller professional record, then become discoverable when the relevant eligibility and visibility requirements are met.</p>
             </Reveal>
@@ -173,7 +173,7 @@ export default function HomePage() {
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THREE WAYS TO ENGAGE.</span></div>
                 <h2 id="decision-pathways-title">Start with the outcome your organization <em>needs.</em></h2>
               </div>
-              <p>Whether you are building your professional future, hiring talent or finding expertise for an event or program, Valoria provides a clear next step.</p>
+              <p>Whether you are strengthening an established career, making a senior talent decision or engaging exceptional expertise, begin with the pathway relevant to your responsibility.</p>
             </Reveal>
             <Reveal className="home-pathway-grid home-decision-grid" as="div">
               {decisionPathways.map((item) => (
