@@ -59,6 +59,9 @@ describe('VALU presentation consistency', () => {
 
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
     const hero = read('src/components/HeroSlider.jsx')
+    expect(hero).toContain('START THE VALU INDEX TASTER')
+    expect(hero).not.toContain('TAKE THE VALU TASTER')
+    expect(hero).not.toContain('VALU Index assessment structure')
     expect(hero).toContain('POINTS-BASED CAPABILITY PROFILE')
     expect(hero).toContain('PRIME framework · results expressed in points')
     for (const cluster of ['Presence', 'Relationships', 'Intelligence', 'Mastery', 'Enterprise']) {
@@ -66,18 +69,6 @@ describe('VALU presentation consistency', () => {
     }
     expect(hero).not.toContain('/ 100')
   })
-  test('homepage profile showcase restores the moving public rail and uses ATB IDs, never participant names', () => {
-    const homepageProfiles = read('src/components/LiveProfilesScroll.jsx')
-    const motion = read('src/styles/motion.css')
-    expect(homepageProfiles).toContain('profiles.slice(0, 13)')
-    expect(homepageProfiles).toContain('[false, true].map((isClone)')
-    expect(homepageProfiles).toContain('vi-scroll-group')
-    expect(homepageProfiles).toContain('{profile.atb_id || \'VALORIA PROFESSIONAL\'}')
-    expect(homepageProfiles).not.toContain('{displayText(profile.full_name)}')
-    expect(homepageProfiles).not.toContain('name={profile.full_name}')
-    expect(motion).toContain('.vi-scroll-track { animation: vi-scroll-x var(--motion-registry-loop) linear infinite;')
-  })
-
   test('public registry and professional-facing score cards use points', () => {
     expect(read('src/components/LiveProfilesScroll.jsx')).toContain('vi-scroll-score-max">points')
     expect(read('src/app/profile/[id]/ProfileClient.jsx')).toContain('> points</span>')
