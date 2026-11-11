@@ -2489,7 +2489,6 @@
   border-radius: 12px;
   background: linear-gradient(145deg, rgba(28,30,47,.94), rgba(12,17,30,.94));
   text-decoration: none;
-  transition: border-color .18s ease, background .18s ease, transform .18s ease;
 }
 .vi-scroll-card.vi-featured-card:hover,
 .vi-scroll-card.vi-featured-card:focus-visible {
@@ -2606,7 +2605,4 @@
   .vi-featured-main { grid-template-columns: 48px minmax(0,1fr) 62px; gap: 9px; }
   .vi-featured-main .vi-scroll-avatar { width: 48px; height: 48px; }
   .live-profiles-featured-heading h3 { font-size: 12px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .vi-scroll-card.vi-featured-card { transition: none; }
 }
