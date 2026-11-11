@@ -109,3 +109,16 @@ footer.vi-footer{background:var(--dark-mid);border-top:1px solid rgba(201,168,76
     opacity: 1;
   }
 }
+
+/* Compact institutional footer and consistent rounded action controls. */
+footer.vi-footer{padding:38px var(--pad) 22px}
+.vi-footer .uf-brand>img{height:42px!important;margin-bottom:10px!important}
+.vi-footer .uf-grid{gap:clamp(20px,3vw,38px);margin-bottom:24px}
+.vi-footer .uf-desc{font-size:12px;line-height:1.55;margin-bottom:9px}
+.vi-footer .uf-col-title{margin-bottom:10px}
+.vi-footer .uf-links{gap:7px}
+.vi-footer .uf-links a,.vi-footer .uf-links button{font-size:12px}
+.vi-footer .uf-bottom{padding-top:16px;font-size:10px}
+@media(max-width:980px){footer.vi-footer{padding-top:34px}.vi-footer .uf-grid{gap:22px;margin-bottom:22px}}
+@media(max-width:640px){footer.vi-footer{padding:30px 20px 20px}.vi-footer .uf-grid{gap:20px}.vi-footer .uf-brand{grid-column:auto}}
+a.btn,a[class*="btn-"],button.btn,button[class*="btn-"],.nav-cta,.vi-hero-primary,.vi-hero-secondary,.uf-discovery-button{border-radius:999px}
