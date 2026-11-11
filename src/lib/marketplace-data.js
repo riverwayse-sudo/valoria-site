@@ -58,9 +58,8 @@ function dedupeProfessionals(rows) {
   for (const row of rows || []) {
     if (!row.professional_id) continue
     if (!map.has(row.professional_id)) {
-      const { full_name: _fullName, display_initials: _displayInitials, ...publicRow } = row
       map.set(row.professional_id, {
-        ...publicRow,
+        ...row,
         assessmentAccess: row.assessment_access,
         headline: normalizePublicDisplayText(row.headline),
         current_job_title: normalizePublicDisplayText(row.current_job_title),
