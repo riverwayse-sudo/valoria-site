@@ -9,18 +9,6 @@ import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { getValuTier } from '@/lib/brand'
 
 // ─── helpers ─────────────────────────────────────────────
-function getInitials(name) {
-  if (!name) return '??'
-  const words = name.trim().split(/\s+/).filter(Boolean)
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
-  return words.slice(0, 3).map(w => w[0].toUpperCase()).join('.') + '.'
-}
-function getAvatarLetters(name) {
-  if (!name) return '?'
-  const words = name.trim().split(/\s+/).filter(Boolean)
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
-  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
-}
 function getYouTubeId(url) {
   if (!url) return null
   const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
@@ -175,7 +163,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
 
       const { data: real, error: realError } = await supabase
         .from('professional_profiles')
-        .select('id, display_name, headline, current_job_title, location, industry, experience_years, skills, topics, facilitation_topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, programme_types, format_capabilities, audience_sizes, past_events, past_clients, languages')
+        .select('id, headline, current_job_title, location, industry, experience_years, skills, topics, facilitation_topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, programme_types, format_capabilities, audience_sizes, past_events, past_clients, languages')
         .eq('id', id)
         .maybeSingle()
 
@@ -272,9 +260,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
   const isSpeaker     = tracks.includes('speaker')
   const isFacilitator = tracks.includes('facilitator')
   const isCandidate   = tracks.includes('candidate') || tracks.includes('talent') || tracks.length === 0
-  const initials    = getInitials(p.display_name)
-  const avatarLetters = getAvatarLetters(p.display_name)
-  const atbId       = String(p.atb_id || '—').normalize('NFKC')
+  const atbId       = String(p.atb_id || 'VALORIA PROFESSIONAL').normalize('NFKC')
   const videos      = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
   const compensation = (isSpeaker || isFacilitator) ? (p.fee_range || p.salary_expectation || null) : (p.salary_expectation || p.fee_range || null)
   const compLabel   = (isSpeaker || isFacilitator) ? 'Fee Range' : 'Salary Range'
@@ -345,14 +331,14 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
             <div className="vi-avatar-frame" style={{ width:'148px', height:'148px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
               <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
                 <div style={{ width:'100%', height:'100%', borderRadius:'50%', overflow:'hidden' }}>
-                  <ValoriaAvatar src={p.photo_url} name={p.display_name} seed={p.id || p.atb_id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={136} />
+                  <ValoriaAvatar src={p.photo_url} name="Valoria Professional" seed={p.id || p.atb_id} alt="Professional profile avatar" size={136} />
                 </div>             </div>
             </div>
 
             {/* ID block */}
             <div style={{ paddingBottom:'16px', flex:1, minWidth:'200px' }}>
               <div style={{ fontSize:'clamp(22px,3.5vw,32px)', fontWeight:700, letterSpacing:'-.025em', lineHeight:1.1, marginBottom:'7px', color: PARCH }}>
-                {p.display_name || 'Valoria Professional'}
+                {atbId}
               </div>
               <div style={{ fontSize:'9px', fontWeight:800, letterSpacing:'.12em', color: DIM, marginBottom:'10px', fontVariantNumeric:'tabular-nums' }}>
                 ATB PROFILE ID · {atbId}
@@ -689,10 +675,10 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                   {isOwnProfile
                     ? 'This is what others see when they view your profile. Keep it up to date so the right people can reach you.'
                     : displayTrack === 'facilitator'
-                    ? `Interested in commissioning ${initials} for a programme? Valoria Institute facilitates all introductions.`
+                    ? `Interested in commissioning this professional for a programme? Valoria Institute facilitates all introductions.`
                     : displayTrack === 'speaker'
-                    ? `Interested in booking ${initials} for your event? Valoria Institute facilitates all introductions.`
-                    : `Want to connect with ${initials}? All introductions go through Valoria Institute — your details stay protected.`}
+                    ? `Interested in booking this professional for your event? Valoria Institute facilitates all introductions.`
+                    : `Want to connect with this professional? All introductions go through Valoria Institute — your details stay protected.`}
                 </p>
               </div>
               {p.is_dummy ? (
