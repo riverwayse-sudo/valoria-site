@@ -32,7 +32,7 @@ describe('Global institutional redesign content contract', () => {
   test('the homepage states the institutional proposition and employer trust boundary', () => {
     expect(hero).toContain('AN INSTITUTION FOR PROFESSIONAL CAPABILITY')
     expect(hero).toContain('Valoria brings structure to how capability is assessed, developed and discovered')
-    expect(homepage).toContain('VALU results inform discovery; they do not replace independent credential checks')
+    expect(homepage).toContain('VALU informs consideration; it does not replace independent credential checks')
   })
 
   test('the VALU assessment is not represented as an awarded certification', () => {
