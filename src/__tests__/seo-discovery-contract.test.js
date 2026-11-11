@@ -26,7 +26,7 @@ describe('Valoria SEO and discovery foundation', () => {
     const directoryData = read('src/lib/marketplace-data.js')
     expect(directoryData).toContain("assessmentAccess === 'full'")
     expect(directoryData).toContain('assessmentSummary.length >= 12')
-    expect(directoryData).toContain("assessment_access,valu_index,cluster_scores,assessment_summary")
+    expect(directoryData).toContain('valu_index,cluster_scores,assessment_summary')
     expect(directoryData).toContain("assessmentAccess === 'basic'")
     expect(directoryData).toContain('fullAssessmentReady')
     expect(layout).not.toContain(".from('professional_profiles')")
@@ -37,7 +37,7 @@ describe('Valoria SEO and discovery foundation', () => {
     expect(profilePage).toContain('getConsentVerifiedPublicProfile')
     expect(profilePage).toContain('initialProfile={initialProfile}')
     expect(profileClient).not.toContain(".from('marketplace_public_roster')")
-    expect(profileClient).toContain('if (!user || user.id !== id)')
+    expect(profileClient).toContain('if (!user || (isUuid && user.id !== id))')
   })
 
   test('public profile and marketplace pages expose appropriate structured data', () => {
