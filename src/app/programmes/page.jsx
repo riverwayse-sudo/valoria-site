@@ -7,7 +7,7 @@ import '../pages.css'
 export const metadata = {
   title: 'Development Programmes',
   description: 'Five PRIME-mapped development programmes for individuals and organisations. Each programme targets a specific cluster — so development can address the capability gaps your VALU Index assessment surfaces.',
-  keywords: ['PRIME programmes', 'professional development Nigeria', 'capability training Africa', 'VALU Index development', 'Valoria Develop programmes'],
+  keywords: ['PRIME programmes', 'professional development programmes', 'leadership development', 'capability development', 'VALU Index development', 'Valoria Develop'],
   openGraph: {
     title: 'Development Programmes | Valoria Institute',
     description: 'A programme for every cluster. Development that maps to the same standard you\'re measured against.',
