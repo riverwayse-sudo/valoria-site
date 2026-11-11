@@ -58,14 +58,14 @@ GRANT INSERT ON TABLE public.enquiries TO anon, authenticated;
 -- reads now use the server-only consent-verified projection.
 REVOKE EXECUTE ON FUNCTION public.get_homepage_professional_count() FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.get_homepage_professional_previews_v2() FROM PUBLIC, anon, authenticated;
-DO $
+DO $do$
 BEGIN
   IF to_regprocedure('public.set_marketplace_public_listing_consent(boolean)') IS NOT NULL THEN
     EXECUTE 'REVOKE EXECUTE ON FUNCTION public.set_marketplace_public_listing_consent(boolean) FROM PUBLIC, anon, authenticated';
     EXECUTE 'GRANT EXECUTE ON FUNCTION public.set_marketplace_public_listing_consent(boolean) TO service_role';
   END IF;
 END
-$;
+$do$;
 GRANT EXECUTE ON FUNCTION public.get_homepage_professional_count() TO service_role;
 GRANT EXECUTE ON FUNCTION public.get_homepage_professional_previews_v2() TO service_role;
 
