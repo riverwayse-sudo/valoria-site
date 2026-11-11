@@ -33,8 +33,8 @@ async function getOwnedSnapshot(admin, user) {
     .order('completed_at', { ascending: false })
     .limit(1)
     .maybeSingle()
-  if (error) return { error: 'Could not verify your saved VALU snapshot.', status: 502 }
-  if (!taster) return { error: 'No completed VALU snapshot is linked to this account.', status: 404 }
+  if (error) return { error: 'Could not verify your saved VALU Index Taster.', status: 502 }
+  if (!taster) return { error: 'No completed VALU Index Taster is linked to this account.', status: 404 }
 
   const { data: candidate, error: candidateError } = await admin.from('taster_identity_candidates')
     .select('candidate_email,candidate_role,linked_user_id')
@@ -112,7 +112,7 @@ export async function POST(request) {
     expires_at: expiresAt,
   })
   if (insertError) {
-    console.error('VALU dashboard handoff issuance failed:', insertError.message)
+    console.error('VALU Index dashboard handoff issuance failed:', insertError.message)
     return NextResponse.json({ error: 'Secure assessment access is temporarily unavailable. Please try again.' }, { status: 503 })
   }
 

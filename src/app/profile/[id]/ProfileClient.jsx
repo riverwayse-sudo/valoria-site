@@ -556,7 +556,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               ) : null
             })()}
 
-            {/* The public profile summary is generated from the VALU report, not a self-written bio or CV summary. */}
+            {/* The public profile summary is generated from the VALU Index report, not a self-written bio or CV summary. */}
             <Section label="VALU Index Summary">
               {p.assessment_summary
                 ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>

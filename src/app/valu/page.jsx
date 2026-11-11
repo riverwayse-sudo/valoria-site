@@ -21,7 +21,7 @@ export default function ValuPage() {
           <p className="valu-lede">The VALU Index Taster introduces the PRIME framework and gives you an initial view of your professional capability. Register your details first, complete the guided taster, then create your secure Valoria account when you are ready to continue to the full VALU Index for your official points result and PRIME profile.</p>
           <div className="valu-actions">
             <AssessmentStartLink href={BRAND.assessmentUrl} className="valu-btn valu-btn-gold">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
-            <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW VALU SUPPORTS YOUR GROWTH <span>↓</span></a>
+            <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW THE VALU INDEX SUPPORTS YOUR GROWTH <span>↓</span></a>
           </div>
           <div className="valu-meta"><span>VALU INDEX TASTER</span><i>·</i><span>FULL VALU INDEX</span><i>·</i><span>5 PRIME DIMENSIONS</span></div>
         </div>
@@ -29,7 +29,7 @@ export default function ValuPage() {
 
       <section className="valu-intro" id="how-it-works">
         <div className="valu-wrap valu-two">
-          <div><div className="valu-kicker valu-dark"><span /> WHY VALU</div><h2>Professional capability is bigger than a job title.</h2></div>
+          <div><div className="valu-kicker valu-dark"><span /> WHY THE VALU INDEX</div><h2>Professional capability is bigger than a job title.</h2></div>
           <div><p>Experience tells part of the story. The VALU Index creates a structured way to understand how you currently show up across the professional dimensions that influence development, visibility and opportunity.</p><p>It connects professional assessment to a practical next step: build a credible record, strengthen your capabilities and become discoverable for relevant opportunities.</p></div>
         </div>
       </section>

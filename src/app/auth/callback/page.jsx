@@ -64,7 +64,7 @@ function AuthCallbackFlow() {
             body: JSON.stringify({ taster_id: pendingTasterId, name: localStorage.getItem('pending_taster_name') || undefined, role: localStorage.getItem('pending_taster_role') || undefined }),
           })
           const data = await linkRes.json().catch(() => ({}))
-          if (!linkRes.ok) throw new Error(data.error || 'Your VALU result could not be linked yet.')
+          if (!linkRes.ok) throw new Error(data.error || 'Your VALU Index result could not be linked yet.')
           // Preserve the exact linked taster until the user chooses to continue
           // from the dashboard. The dashboard is the stable, authenticated landing
           // page; assessment handoff happens only after an explicit user action.

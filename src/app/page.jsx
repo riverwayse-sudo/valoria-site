@@ -93,7 +93,7 @@ export default function HomePage() {
             </div>
             <div className="vcc-steps">
               <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>Register before your taster</small></div></div>
-              <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Complete your full assessment</small></div></div>
+              <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Complete the full VALU Index</small></div></div>
               <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Unlock relevant opportunities</small></div></div>
             </div>
             <AssessmentStartLink href={BRAND.assessmentUrl} className="vcc-bottom-cta">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>

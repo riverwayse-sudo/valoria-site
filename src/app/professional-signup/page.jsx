@@ -95,7 +95,7 @@ function ProfessionalSignupForm(){
           body:JSON.stringify({taster_id:tasterId,name,role})
         })
         const linkData=await linkRes.json().catch(()=>({}))
-        if(!linkRes.ok)throw new Error(linkData.error||'Your VALU result could not be linked to the account.')
+        if(!linkRes.ok)throw new Error(linkData.error||'Your VALU Index result could not be linked to the account.')
         setLinked(true)
         setDone(true)
       } else {
@@ -112,7 +112,7 @@ function ProfessionalSignupForm(){
   }
 
   if(redirecting)return <Shell><div style={S.eyebrow}>VALU INDEX</div><h1 style={S.title}>Returning to your <em>dashboard.</em></h1><p style={S.sub}>Your saved taster is being verified and connected to your account…</p></Shell>
-  if(!tasterId||!name||!role)return <Shell><h1 style={S.title}>Your VALU journey needs a starting point.</h1><p style={S.sub}>Begin with the VALU Index Taster. After it is saved, create or connect your account; your full VALU Index is available from your dashboard.</p><a href="/valu/assessment/" style={S.button}>START THE VALU INDEX TASTER →</a></Shell>
+  if(!tasterId||!name||!role)return <Shell><h1 style={S.title}>Your VALU Index journey needs a starting point.</h1><p style={S.sub}>Begin with the VALU Index Taster. After it is saved, create or connect your account; your full VALU Index is available from your dashboard.</p><a href="/valu/assessment/" style={S.button}>START THE VALU INDEX TASTER →</a></Shell>
   if(confirmationRequired)return <Shell><VALUJourneyProgress stage="account" /><div style={S.eyebrow}>ACCOUNT BRIDGE · EMAIL CONFIRMATION</div><h1 style={S.title}>One quick confirmation. <em>Then your VALU Index.</em></h1><p style={S.sub}>We’ve sent a confirmation link to <strong>{form.email.trim().toLowerCase()}</strong>. Confirm your email to sign in and return to your dashboard. Your taster is saved; your full VALU Index will be ready there.</p><div style={S.bridgeSteps}><div><b>✓</b><span><strong>VALU Index Taster saved</strong><small>Your taster is saved.</small></span></div><div><b>02</b><span><strong>Confirm your email</strong><small>Confirm your email.</small></span></div><div><b>03</b><span><strong>Begin your full VALU Index</strong><small>Continue from your dashboard.</small></span></div></div><button type="button" onClick={resendConfirmation} disabled={resending} style={{...S.button,opacity:resending?0.55:1}}>{resending?'REQUESTING A NEW LINK…':'RESEND CONFIRMATION EMAIL'}</button>{resendMessage&&<p role="status" style={S.note}>{resendMessage}</p>}<p style={S.note}>Can’t find the email? Check your spam or promotions folder. Your saved answers remain intact while you confirm your address.</p></Shell>
 
   if(done){return <Shell><VALUJourneyProgress stage="full" /><div style={S.eyebrow}>TASTER SAVED</div><h1 style={S.title}>Your dashboard is <em>ready.</em></h1><p style={S.sub}>Your taster is linked to your account. Go to your dashboard to begin your full VALU Index.</p>{!linked&&<p style={S.error}>Your account was created, but the taster link still needs to be completed before continuing.</p>}<Link href="/dashboard" style={S.button}>GO TO MY DASHBOARD →</Link><p style={S.note}>Your saved answers and progress are preserved.</p></Shell>}

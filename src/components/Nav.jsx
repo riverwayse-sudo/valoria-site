@@ -80,7 +80,7 @@ export default function Nav() {
 
   const close = () => setMenuOpen(false)
   // Keep the primary CTA stable during auth hydration. Previously it changed
-  // from START VALU to MY PROFILE/DASHBOARD after getUser(), causing a visible
+  // from START VALU INDEX to MY PROFILE/DASHBOARD after getUser(), causing a visible
   // header layout shift on every page for signed-in users.
   const cta = { label: 'START VALU INDEX', href: NAVIGATION.assessmentUrl, external: true }
 
@@ -150,7 +150,7 @@ export default function Nav() {
   </>
 }
  
-// Route every signed-in VALU start through the authenticated continuation endpoint.
+// Route every signed-in VALU Index start through the authenticated continuation endpoint.
 // Anonymous visitors still begin at the configured public taster URL.
 export function AssessmentStartLink({ href = '/valu/assessment/', className, style, children, onClick, dashboardOnly = false, ...props }) {
   const [opening, setOpening] = useState(false)

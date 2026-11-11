@@ -38,7 +38,7 @@ export default function ValuStartPage() {
           <div className="vs-kicker"><span /> THE VALU INDEX TASTER</div>
           <div className="vs-hero-grid" style={{ alignItems: "center", gap: "clamp(1.75rem, 4vw, 4rem)" }}>
             <div>
-              <h1 style={{ maxWidth: "12.5ch", fontSize: "clamp(1.85rem, 3.1vw, 3.1rem)", lineHeight: 1.12, letterSpacing: "-0.045em", marginBlock: "0 1.1rem" }}>Your CV tells people what you’ve done.<br /><em>VALU shows what you can become.</em></h1>
+              <h1 style={{ maxWidth: "12.5ch", fontSize: "clamp(1.85rem, 3.1vw, 3.1rem)", lineHeight: 1.12, letterSpacing: "-0.045em", marginBlock: "0 1.1rem" }}>Your CV tells people what you’ve done.<br /><em>The VALU Index shows what you can become.</em></h1>
               <p className="vs-lede">A professional diagnostic built around PRIME to give you a clearer starting point for understanding your capability, direction and professional presence.</p>
               <div className="vs-actions">
                 <AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">START THE VALU INDEX TASTER <b>→</b></AssessmentStartLink>
@@ -60,7 +60,7 @@ export default function ValuStartPage() {
         <div className="vs-shell">
           <div className="vs-split">
             <div><div className="vs-kicker dark"><span /> WHY VALU</div><h2>The professional picture is bigger than your job title.</h2></div>
-            <div className="vs-copy"><p>A CV records experience. A title records position. Neither gives you a structured view of the professional capabilities behind them.</p><p>VALU gives you a different starting point: a directional view of how you currently show up across five dimensions that shape professional growth, visibility and opportunity.</p></div>
+            <div className="vs-copy"><p>A CV records experience. A title records position. Neither gives you a structured view of the professional capabilities behind them.</p><p>The VALU Index gives you a different starting point: a directional view of how you currently show up across five dimensions that shape professional growth, visibility and opportunity.</p></div>
           </div>
           <div className="vs-problems">
             <article><b>01</b><h3>Experience is not the whole story.</h3><p>What you have done matters. So does how you operate, influence, relate and create value.</p></article>
@@ -72,7 +72,7 @@ export default function ValuStartPage() {
 
       <section className="vs-dark-section">
         <div className="vs-shell">
-          <div className="vs-kicker"><span /> WHAT VALU MEASURES</div>
+          <div className="vs-kicker"><span /> WHAT THE VALU INDEX MEASURES</div>
           <div className="vs-heading-row"><h2>Five dimensions.<br /><em>One professional picture.</em></h2><p>PRIME is the capability architecture behind the VALU Index. The assessment turns the framework into a practical starting point for your professional journey.</p></div>
           <div className="vs-prime-line">{dimensions.map(([letter, title]) => <article key={letter}><span>{letter}</span><h3>{title}</h3><i /></article>)}</div>
         </div>

@@ -78,7 +78,7 @@ export default function LoginPage() {
       const { data: { user } } = await supabase.auth.getUser()
       const { data: { session } } = await supabase.auth.getSession()
 
-      // Complete a professional VALU snapshot handoff that was paused for email confirmation.
+      // Complete a professional VALU Index Taster handoff that was paused for email confirmation.
       const pendingTasterId = localStorage.getItem('pending_taster_id')
       if (pendingTasterId && session?.access_token) {
         const linkRes = await fetch('/api/link-taster', {
@@ -92,7 +92,7 @@ export default function LoginPage() {
         const linkData = await linkRes.json().catch(() => ({}))
         if (!linkRes.ok) {
           // Keep the pending ID so the user can retry after a transient failure.
-          setError(linkData.error || 'Your VALU result could not be linked to this account.')
+          setError(linkData.error || 'Your VALU Index result could not be linked to this account.')
           setLoading(false)
           return
         }
