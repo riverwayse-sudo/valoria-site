@@ -455,11 +455,11 @@ function EditPageInner() {
 
         <section style={S.section} aria-labelledby="profile-visibility-title">
           <h2 id="profile-visibility-title" style={S.sectionTitle}>Public visibility & consent</h2>
-          <p style={{ color:'rgba(247,244,238,.62)', fontSize:'12px', lineHeight:1.7, margin:'12px 0 18px' }}>
+          <p style={{ color:'rgba(247,244,238,.62)', fontSize:'13px', lineHeight:1.65, margin:'12px 0 18px' }}>
             Choose whether your professional profile may appear to public visitors. Public visibility is applied only when your assessment, profile, capability, review and listing requirements are met.
           </p>
           <div style={{ display:'grid', gap:'12px' }}>
-            <label style={{ display:'flex', gap:'10px', alignItems:'flex-start', color:PARCH, fontSize:'12px', lineHeight:1.6 }}>
+            <label style={{ display:'flex', gap:'10px', alignItems:'flex-start', color:PARCH, fontSize:'13px', lineHeight:1.55 }}>
               <input type="radio" name="profile-visibility" value="public" checked={visibilityChoice === 'public'} onChange={() => { setVisibilityChoice('public'); setConsentConfirmed(false); setConsentMessage('') }} />
               <span><strong>Public marketplace visibility</strong><br/>Allow your approved public profile fields to be displayed when you meet the listing requirements.</span>
             </label>
@@ -468,7 +468,7 @@ function EditPageInner() {
               <span><strong>Registered-only visibility</strong><br/>Your profile will not appear to public visitors while this setting remains active.</span>
             </label>
           </div>
-          <label style={{ display:'flex', gap:'10px', alignItems:'flex-start', color:'rgba(247,244,238,.72)', fontSize:'11px', lineHeight:1.65, marginTop:'18px' }}>
+          <label style={{ display:'flex', gap:'10px', alignItems:'flex-start', color:'rgba(247,244,238,.72)', fontSize:'13px', lineHeight:1.6, marginTop:'18px' }}>
             <input type="checkbox" checked={consentConfirmed} onChange={e => setConsentConfirmed(e.target.checked)} />
             <span>{visibilityChoice === 'public' ? PUBLIC_PROFILE_CONSENT_TEXT : REGISTERED_PROFILE_CONSENT_TEXT}</span>
           </label>
@@ -478,7 +478,7 @@ function EditPageInner() {
             style={{ ...S.saveBtn, marginTop:'16px', opacity:consentConfirmed && !consentSaving ? 1 : .45, cursor:consentConfirmed && !consentSaving ? 'pointer' : 'not-allowed' }}>
             {consentSaving ? 'SAVING…' : 'SAVE VISIBILITY PREFERENCE'}
           </button>
-          <p style={{ color:'rgba(247,244,238,.4)', fontSize:'10px', lineHeight:1.6, marginTop:'12px' }}>
+          <p style={{ color:'rgba(247,244,238,.4)', fontSize:'12px', lineHeight:1.55, marginTop:'12px' }}>
             Current setting: {form.visibility === 'public' ? 'Public' : 'Registered only'}.
           </p>
         </section>
