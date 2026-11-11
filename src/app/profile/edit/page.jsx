@@ -429,7 +429,7 @@ function EditPageInner() {
           .profile-edit-header > div:last-child { display: none; }
           .profile-edit-container { padding: 22px 16px !important; }
           .profile-edit-container > section { padding: 18px 16px !important; border-radius: 6px !important; }
-          .profile-edit-container h2 { font-size: 14px !important; }
+          .profile-edit-container h2 { font-size: 16px !important; line-height: 1.35 !important; }
            .profile-edit-container .profile-edit-grid2 { grid-template-columns: minmax(0, 1fr) !important; gap: 0 !important; }
           .profile-edit-container input, .profile-edit-container textarea { min-width: 0; }
           .profile-edit-container button { max-width: 100%; }
