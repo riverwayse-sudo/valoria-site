@@ -194,7 +194,8 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
 
       // Public visitors must arrive with a server-side consent-verified profile.
       // Only the authenticated owner may read their own private profile record.
-      if (!user || user.id !== id) {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)
+      if (!user || (isUuid && user.id !== id)) {
         if (!cancelled) {
           setNotFound(true)
           setLoading(false)
@@ -209,7 +210,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
         .maybeSingle()
 
       if (realError) console.error('professional_profiles owner fetch failed:', realError)
-      if (real) {
+      if (real && (!isUuid ? String(real.atb_id || '').normalize('NFKC') === id : real.id === id)) {
         const { data: certificateRows, error: certificateError } = await supabase
           .from('professional_certificates')
           .select('id,certificate_number,title,event_title,event_date,issuer,issued_at,verification_token')
