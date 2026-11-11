@@ -143,7 +143,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             ) : rows.length === 0 && Number(counts?.all || 0) === 0 ? (
               <div className={styles.empty}>
                 <strong>{activeTrack === 'candidate' ? 'ATB Connect is preparing its first public talent listings.' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'ATB Spotlight is preparing its first public event-professional listings.' : 'The public marketplace is being prepared.'}</strong>
-                <p>{activeTrack === 'candidate' ? 'Employers can request sourcing access now. Tell Valoria the roles, sectors and capability requirements your organisation needs.' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'Event organisers can share an event brief, audience, format and facilitation requirements with Valoria.' : 'Employers and event organisers can begin a conversation with Valoria while public profiles and opportunities are being prepared.'}</p>
+                <p>{activeTrack === 'candidate' ? 'Employers can share the roles, sectors and capabilities their organisation needs.' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'Event organisers can share an event brief, audience, format and facilitation requirements with Valoria.' : 'Employers and event organisers can describe their needs to Valoria while the public directory develops.'}</p>
                 <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
                   <Link className={styles.view} href="/contact-us?type=candidate">SHARE A TALENT BRIEF →</Link>
                   <Link className={styles.view} href="/contact-us?type=speaker_booking">DISCUSS AN EVENT BRIEF →</Link>
@@ -195,7 +195,7 @@ function Profile({p, onSelect}) {
   ]
   const isFull = p.assessment_access === 'full' && p.valu_index != null
   const tier = isFull ? getValuTier(p.valu_index, 'full') : null
-  const designation = tier?.name || 'Assessment Follow-up'
+  const designation = tier?.name || 'Professional listing'
   const designationClass = tier ? styles[tier.name.toLowerCase()] || '' : ''
   const profileId = displayText(p.atb_id)
   const skills = labelValues(p.skills).slice(0, 3)
