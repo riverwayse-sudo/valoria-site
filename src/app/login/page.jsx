@@ -125,7 +125,10 @@ export default function LoginPage() {
             return
           }
         } catch (_) {}
-        redirectAfterLogin('/profile/onboarding')
+        // A taster-only account is already authenticated and has a saved snapshot.
+        // The dashboard owns the next step: it presents the verified full-assessment
+        // continuation before profile-completion prompts.
+        redirectAfterLogin('/dashboard')
         return
       }
 
