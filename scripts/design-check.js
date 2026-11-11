@@ -60,8 +60,12 @@ if (fs.existsSync(packagePath)) {
 }
 
 const page = existing.find((x) => x.file === 'src/app/page.jsx')?.text || '';
-for (const section of ['home-pathways', 'valu-conversion', 'LiveProfilesScroll']) {
+for (const section of ['home-pathways', 'LiveProfilesScroll']) {
   if (!page.includes(section)) add(`src/app/page.jsx: required homepage composition missing ${section}`);
+}
+const footer = existing.find((x) => x.file === 'src/components/Footer.jsx')?.text || '';
+if (!footer.includes('uf-discovery-cta') || !footer.includes('START WITH THE VALU TASTER')) {
+  add('src/components/Footer.jsx: the VALU discovery CTA must close the public homepage journey in the footer');
 }
 if (!page.includes("import './home.css'")) add('src/app/page.jsx: canonical homepage stylesheet is not loaded');
 
