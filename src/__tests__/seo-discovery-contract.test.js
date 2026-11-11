@@ -51,7 +51,7 @@ describe('Valoria SEO and discovery foundation', () => {
     const home = read('src/app/page.jsx')
     expect(home).toContain('BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE')
     expect(home).toContain('Valoria Institute is designed for accomplished professionals and institutions making consequential decisions')
-    expect(home).toContain('does not imply universal accreditation or recognition')
+    expect(home).toContain('no universal accreditation or recognition is implied')
     expect(home).toContain('At consequential levels, reputation is not enough.')
     expect(home).not.toMatch(/Africa-first|Nigeria as its initial operating jurisdiction/i)
   })
