@@ -596,7 +596,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                 ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
                 : p.bio
                   ? <><p style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.12em', color:'rgba(201,168,76,.6)', marginBottom:'10px' }}>SELF-REPORTED OVERVIEW</p><p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p></>
-                  : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.45)', lineHeight:1.7 }}>This Basic snapshot profile does not include an official VALU capability summary. That summary is established after the separate full assessment.</p>}
+                  : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.45)', lineHeight:1.7 }}>An official VALU capability summary is available after the full assessment.</p>}
             </Section>
 
             {/* Highest-scoring PRIME clusters are shown as report-backed points, without inferred personality claims. */}
