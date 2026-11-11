@@ -126,7 +126,11 @@ jobs:
           grep -q '/knowledge/prime-framework' /tmp/valoria-sitemap.xml
           grep -q '/jobs' /tmp/valoria-sitemap.xml
           curl -fsS "$base/llms.txt" -o /tmp/valoria-llms.txt
-          grep -q 'Human-AI Collaboration' /tmp/valoria-llms.txt
+          grep -q 'proprietary five-cluster capability framework' /tmp/valoria-llms.txt
+          if grep -Eiq '17 skills|Human-AI Collaboration|AI Fluency|[0-9]+[–-][0-9]+ POINTS|below 35 points|0–100 point scale' /tmp/valoria-llms.txt; then
+            echo 'Proprietary PRIME skill or scoring detail leaked into public llms.txt'
+            exit 1
+          fi
           grep -q 'Public profiles appear only when the professional has chosen visibility' /tmp/valoria-llms.txt
           if grep -Eiq 'buyer|buyers|Basic is a marketplace access state|one account' /tmp/valoria-llms.txt; then
             echo 'Internal buyer/access or account-model language leaked into public llms.txt'
