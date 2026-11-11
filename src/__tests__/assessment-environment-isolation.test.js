@@ -25,7 +25,7 @@ describe('assessment environment isolation', () => {
   })
 
   test('assessment proxy permits the staging host only in the staging runtime', () => {
-    const proxy = read('src/app/valu/assessment/[[...path]]/route.js')
+    const proxy = read('src/lib/assessment-proxy.js')
     expect(proxy).toContain("'valoria-staging-assessment.riverwayse.workers.dev'")
     expect(proxy).toContain("process.env.VALU_STAGING_API_ENABLED === '1'")
     expect(proxy).toContain('if (stagingRuntime !== stagingAssessment) return null')
