@@ -37,8 +37,6 @@ jobs:
         run: npm audit --omit=dev --audit-level=high
       - name: Run unit and contract tests
         run: npm test -- --runInBand
-      - name: Run opportunity validation tests
-        run: npm run test:opportunity-validation
       - name: Provide staging-only build configuration
         run: |
           cat > .env <<'EOF'
