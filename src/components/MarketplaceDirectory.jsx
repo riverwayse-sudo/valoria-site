@@ -91,7 +91,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       <div className={styles.container}>
         <p className={styles.eyebrow}>THE VALORIA MARKETPLACE</p>
         <h1>{activeTrack === 'all' ? <>Find professionals<br/><i>by capability.</i></> : <>{TRACKS.find(t=>t[0]===activeTrack)?.[1]}<br/><i>on Valoria.</i></>}</h1>
-        <p className={styles.lede}>A completed VALU snapshot may support a Basic listing, subject to eligibility and public visibility rules. Completing the full assessment establishes your official VALU Index in points, your earned designation and assessment insight.</p>
+        <p className={styles.lede}>The directory presents professionals through declared capabilities, relevant experience and approved public profile information. Where available, a completed VALU assessment adds structured context in points and an assessment-informed summary. It is one source of insight—not a credential verification or a substitute for independent professional diligence.</p>
         <nav className={styles.tabs}>{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
       </div>
     </section>
@@ -123,13 +123,13 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     <section className={styles.directory}>
       <div className={styles.container}>
         <div className={styles.directoryHead}>
-          <div><p className={styles.eyebrow}>PUBLIC PROFESSIONAL MARKETPLACE</p><h2>{results.length} {results.length===1?'professional':'professionals'}</h2></div>
-          <span>VALU INDEX × PRIME</span>
+          <div><p className={styles.eyebrow}>APPROVED PUBLIC PROFILES</p><h2>{results.length} {results.length===1?'professional':'professionals'}</h2></div>
+          <span>CAPABILITY · EXPERIENCE · PRIME</span>
         </div>
         {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p} onSelect={() => setSelectedProfile(p)}/>)}</div> :
           IS_STAGING_PREVIEW
             ? <div className={styles.previewUnavailable} role="status"><strong>Verified professional profiles are being onboarded.</strong><p>Valoria is adding the approved professional cohort and completed-taster participants as their identities, staging accounts and explicit public-visibility consent are confirmed. New profiles will appear here as each person is cleared. No generated or unverified profiles are displayed.</p><p>Already completed a VALU taster? Sign in or create your Valoria account to claim your saved snapshot and continue your profile.</p><Link href="/signup" className={styles.view}>SIGN IN OR CREATE ACCOUNT</Link></div>
-            : <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try clearing the search or selecting another marketplace category.</p></div>}
+            : <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try adjusting your search or selecting another capability. Profile visibility reflects each professional's choices and Valoria's listing requirements.</p></div>}
       </div>
     </section>
     </main>
