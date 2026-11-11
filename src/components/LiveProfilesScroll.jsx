@@ -42,7 +42,7 @@ export default async function LiveProfilesScroll() {
         <div className="live-profiles-copy">
           <div className="live-profiles-kicker">THE VALORIA MARKETPLACE</div>
           <h2 id="marketplace-title" className="live-profiles-title">Find professionals <em>by capability.</em></h2>
-          <p className="live-profiles-subtitle">Explore public profiles by capability. Full listings add VALU insight where available; every listing requires explicit visibility consent.</p>
+          <p className="live-profiles-subtitle">Explore public profiles by capability. Full listings add VALU Index insight where available; every listing requires explicit visibility consent.</p>
           {!dataUnavailable && <div className="live-profiles-proof" aria-label="Public marketplace profile count"><strong>{discoverableCount}</strong><span>public professional profiles</span></div>}
         </div>
 
