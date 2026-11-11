@@ -8,13 +8,13 @@ describe('Africa-first public positioning contract', () => {
     const layout = read('src/app/layout.jsx')
     expect(layout).toContain("areaServed:[{'@type':'Country',name:'Nigeria'}]")
     expect(layout).not.toContain("{'@type':'Country',name:'United States'}")
-    expect(layout).toContain("Africa is Valoria's first market, with Nigeria as its jurisdiction.")
+    expect(layout).toContain("Africa is Valoria's first market. It is beginning in Nigeria.")
   })
 
   test('homepage hero states the approved geographic scope without implying unlaunched markets', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('AFRICA-FIRST · NIGERIA JURISDICTION')
-    expect(hero).toContain("Africa is its first market, with Nigeria as its jurisdiction.")
+    expect(hero).toContain('ROOTED IN AFRICA. STARTING IN NIGERIA.')
+    expect(hero).toContain("Africa is Valoria's first market. It is beginning in Nigeria.")
     expect(hero).not.toContain('across industries and markets')
   })
 
