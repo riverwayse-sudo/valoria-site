@@ -138,7 +138,7 @@ export default function SignupPage() {
                 TALENT & SPEAKERS
               </div>
               <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.6, margin: '0 0 12px' }}>
-                If you are a professional or speaker, register your contact and professional details before taking the VALU taster. This creates a saved record, not a Valoria account. After the taster, create or connect your secure account to continue with the separate Full VALU assessment.
+                If you are a professional or speaker, register your contact and professional details before taking the VALU Index Taster. This creates a saved record, not a Valoria account. After the taster, create or connect your secure account to continue with the separate Full VALU Index.
               </p>
               <a
                 href="/valu/assessment/"
