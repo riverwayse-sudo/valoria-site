@@ -39,7 +39,6 @@ describe('1% of the 1% audience experience contract', () => {
     expect(directory).toContain('CAPABILITY · EXPERIENCE · PRIME')
     expect(directory).toContain('Contact details and individual assessment answers are not displayed')
   })
-})
 
   test('authenticated profile and dashboard journeys use US conventions and explicit public consent', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
@@ -57,3 +56,4 @@ describe('1% of the 1% audience experience contract', () => {
     expect(visibility).toContain('I understand I can withdraw this permission at any time.')
   })
 });
+})
