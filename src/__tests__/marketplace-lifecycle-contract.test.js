@@ -532,6 +532,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(route).toContain('const capabilitiesReady = activeCapabilities.some(capability =>')
     expect(route).not.toContain('activeCapabilities.every(capability =>')
     expect(route).toContain('at least one active capability must be fully approved')
+    expect(route).toContain('awaiting Valoria eligibility review')
     expect(route).toContain(".filter(capability => !(capability.eligible_for_listing === true && capability.eligibility_status === 'listed'))")
   })
 
