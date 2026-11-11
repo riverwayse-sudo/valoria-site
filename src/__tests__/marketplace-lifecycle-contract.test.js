@@ -607,6 +607,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     const navigationStyles = read('src/styles/navigation-flow.css')
     const publicPages = read('src/app/pages.css')
     const homepage = read('src/app/home.css')
+    const typography = read('src/styles/globals.css')
+    const constitution = read('src/styles/design-constitution.css')
 
     expect(nav).toContain('<header className="vi-site-header">')
     expect(nav).toContain('aria-label="Primary navigation"')
@@ -623,6 +625,9 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(publicPages).toContain('.valu-hero{min-height:82vh;display:flex;align-items:center;padding:84px')
     expect(publicPages).toContain('.vs-hero{min-height:88vh;display:flex;align-items:center;padding:84px')
     expect(homepage).toContain('padding-top: 0;')
+    expect(typography).toContain('h2 { font-size: var(--vi-type-h2); line-height: 1.16;')
+    expect(typography).not.toContain('h2 { font-size: var(--vi-type-h2) !important;')
+    expect(constitution).toContain('html{scroll-padding-top:16px}')
   })
 
 })
