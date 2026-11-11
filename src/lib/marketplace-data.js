@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 
 const FIELDS = 'professional_id,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,photo_url,industry,seniority_band,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
-const PUBLIC_PROFILE_ACK_VERSION = 'public-profile-visibility-v3-2026-11-07'
+const PUBLIC_PROFILE_ACK_VERSION = 'public-profile-visibility-v4-2026-11-11'
 
 function getAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
