@@ -25,7 +25,7 @@ jobs:
   deploy-staging:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository && startsWith(github.event.pull_request.head.ref, 'deploy/staging-') }}
     name: Test, build, deploy and smoke-test isolated staging Worker
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: staging
     steps:
       - uses: actions/checkout@v4
