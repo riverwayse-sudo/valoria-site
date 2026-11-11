@@ -4199,3 +4199,224 @@
 .vi-section-intro > p {
   text-wrap: pretty;
 }
+
+/* HOW IT WORKS — restore the full editorial section layout.
+   This section previously had markup but no dedicated layout contract,
+   allowing its heading, four steps and actions to collapse into a narrow stack. */
+.home-redesign-root .home-journey {
+  position: relative;
+  width: 100%;
+  padding-block: clamp(88px, 9vw, 132px);
+  background: var(--parchment);
+  color: var(--dark-mid);
+  border-top: 1px solid rgba(46,46,74,.12);
+  border-bottom: 1px solid rgba(46,46,74,.12);
+}
+
+.home-redesign-root .home-journey > .container {
+  width: min(100% - 64px, 1200px);
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 0;
+}
+
+.home-redesign-root .home-journey .home-section-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(280px, .88fr);
+  align-items: end;
+  column-gap: clamp(36px, 6vw, 88px);
+  row-gap: 22px;
+  width: 100%;
+  max-width: none;
+  margin: 0 0 clamp(42px, 5vw, 64px);
+}
+
+.home-redesign-root .home-journey .home-section-heading > div {
+  min-width: 0;
+  max-width: 760px;
+}
+
+.home-redesign-root .home-journey .home-section-heading h2 {
+  max-width: 760px;
+  font-size: clamp(42px, 4.8vw, 66px);
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.home-redesign-root .home-journey .home-section-heading > p {
+  max-width: 500px;
+  justify-self: end;
+  padding-bottom: 5px;
+  font-size: clamp(15px, 1.15vw, 17px);
+  line-height: 1.75;
+}
+
+.home-redesign-root .home-journey-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  width: 100%;
+  border-top: 1px solid rgba(46,46,74,.24);
+  border-bottom: 1px solid rgba(46,46,74,.24);
+}
+
+.home-redesign-root .home-journey-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  min-height: 250px;
+  padding: clamp(24px, 2.5vw, 36px) clamp(20px, 2.2vw, 30px);
+  text-align: left;
+  background: transparent;
+}
+
+.home-redesign-root .home-journey-card + .home-journey-card {
+  border-left: 1px solid rgba(46,46,74,.18);
+}
+
+.home-redesign-root .home-journey-card > span {
+  display: block;
+  margin-bottom: clamp(30px, 3.5vw, 48px);
+  color: var(--valoria-gold-deep);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  line-height: 1;
+}
+
+.home-redesign-root .home-journey-card h3 {
+  max-width: 250px;
+  margin: 0 0 12px;
+  color: var(--dark-mid);
+  font-size: clamp(20px, 1.65vw, 25px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -.025em;
+  text-wrap: balance;
+}
+
+.home-redesign-root .home-journey-card p {
+  max-width: 290px;
+  margin: 0;
+  color: #555565;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+
+.home-redesign-root .home-journey-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px 38px;
+  margin-top: 32px;
+}
+
+.home-redesign-root .home-journey-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  color: var(--dark-mid);
+  border-bottom: 1px solid rgba(46,46,74,.32);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  line-height: 1.4;
+  text-decoration: none;
+  transition: color .2s ease, border-color .2s ease, gap .2s ease;
+}
+
+.home-redesign-root .home-journey-link:hover {
+  gap: 17px;
+  color: var(--valoria-gold-deep);
+  border-color: var(--valoria-gold-deep);
+}
+
+.home-redesign-root .home-journey-link:focus-visible {
+  outline: 2px solid var(--valoria-gold-deep);
+  outline-offset: 5px;
+}
+
+@media (max-width: 1024px) {
+  .home-redesign-root .home-journey-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .home-redesign-root .home-journey-card:nth-child(3) {
+    border-left: 0;
+    border-top: 1px solid rgba(46,46,74,.18);
+  }
+  .home-redesign-root .home-journey-card:nth-child(4) {
+    border-top: 1px solid rgba(46,46,74,.18);
+  }
+}
+
+@media (max-width: 760px) {
+  .home-redesign-root .home-journey {
+    padding-block: 72px;
+  }
+  .home-redesign-root .home-journey > .container {
+    width: min(100% - 40px, 1200px);
+  }
+  .home-redesign-root .home-journey .home-section-heading {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    margin-bottom: 34px;
+  }
+  .home-redesign-root .home-journey .home-section-heading > p {
+    justify-self: start;
+    max-width: 620px;
+  }
+  .home-redesign-root .home-journey-card {
+    min-height: 230px;
+    padding: 24px 20px;
+  }
+  .home-redesign-root .home-journey-card > span {
+    margin-bottom: 28px;
+  }
+}
+
+@media (max-width: 560px) {
+  .home-redesign-root .home-journey {
+    padding-block: 60px;
+  }
+  .home-redesign-root .home-journey > .container {
+    width: min(100% - 36px, 1200px);
+  }
+  .home-redesign-root .home-journey .home-section-heading h2 {
+    font-size: clamp(34px, 9vw, 44px);
+  }
+  .home-redesign-root .home-journey-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .home-redesign-root .home-journey-card,
+  .home-redesign-root .home-journey-card:nth-child(3),
+  .home-redesign-root .home-journey-card:nth-child(4) {
+    min-height: 0;
+    padding: 24px 0;
+    border-top: 1px solid rgba(46,46,74,.18);
+    border-left: 0;
+  }
+  .home-redesign-root .home-journey-card:first-child {
+    border-top: 0;
+  }
+  .home-redesign-root .home-journey-card > span {
+    margin-bottom: 18px;
+  }
+  .home-redesign-root .home-journey-card h3 {
+    max-width: none;
+    font-size: 22px;
+  }
+  .home-redesign-root .home-journey-card p {
+    max-width: 520px;
+    font-size: 15px;
+  }
+  .home-redesign-root .home-journey-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 24px;
+  }
+}
