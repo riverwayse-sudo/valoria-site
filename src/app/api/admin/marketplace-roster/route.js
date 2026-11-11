@@ -148,10 +148,12 @@ export async function GET(request) {
       capability_labels: activeCapabilities.map(capability => capability.capability),
       capability_issues: activeCapabilities
         .filter(capability => !(capability.eligible_for_listing === true && capability.eligibility_status === 'listed'))
-        .flatMap(capability =>
-          (Array.isArray(capability.missing_requirements) ? capability.missing_requirements : [])
-            .map(requirement => `${capability.capability}: ${requirement}`)
-        ),
+        .flatMap(capability => {
+          const missing = Array.isArray(capability.missing_requirements) ? capability.missing_requirements : []
+          return missing.length
+            ? missing.map(requirement => `${capability.capability}: ${requirement}`)
+            : [`${capability.capability}: awaiting Valoria eligibility review`]
+        }),
       assessment_access: assessmentAccess,
       valu_points: assessmentAccess === 'full' ? Number(fullAssessment.total_score) : null,
       completed_taster_count: completedTasters,
