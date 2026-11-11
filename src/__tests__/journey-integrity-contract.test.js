@@ -487,7 +487,7 @@ describe('journey integrity contract', () => {
     const callback = read('src/app/auth/callback/page.jsx')
     expect(signup).toContain('ACCOUNT BRIDGE')
     expect(signup).toContain('Confirm your email')
-    expect(signup).toContain('full assessment')
+    expect(signup).toContain('separate full assessment')
     expect(signup).not.toContain('Question 10')
     expect(callback).toContain("router.replace('/dashboard?welcome=profile')")
     expect(callback).not.toContain('Continue at Question 10')
