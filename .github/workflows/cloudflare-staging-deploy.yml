@@ -170,10 +170,18 @@ jobs:
           grep -q 'Basic is a marketplace access state, not a merit tier' /tmp/valoria-llms.txt
 
           curl -fsS "$base/" -o /tmp/valoria-home.html
-          grep -q 'Capability should decide' /tmp/valoria-home.html
+          grep -q 'Make your' /tmp/valoria-home.html
+          grep -q 'AN INSTITUTION FOR PROFESSIONAL CAPABILITY' /tmp/valoria-home.html
           grep -q 'THREE WAYS TO ENGAGE' /tmp/valoria-home.html
           grep -q 'INITIAL MARKET' /tmp/valoria-home.html
           grep -q 'Valoria is Africa-first' /tmp/valoria-home.html
+          grep -q 'Take the taster' /tmp/valoria-home.html
+          grep -q 'Complete the full assessment' /tmp/valoria-home.html
+          grep -q 'Become discoverable' /tmp/valoria-home.html
+          if grep -Eiq '(nine|9|58)-? questions?|54 scored questions|four validity checks' /tmp/valoria-home.html; then
+            echo "Homepage exposes internal assessment question-count mechanics"
+            exit 1
+          fi
 
           : > /tmp/valoria-css-bundle.css
           css_assets="$(grep -oE 'href="[^"]+\.css[^"]*"' /tmp/valoria-home.html | cut -d '"' -f 2)"
