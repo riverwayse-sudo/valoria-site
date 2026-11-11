@@ -82,7 +82,7 @@ export default function HomePage() {
   return (
     <>
       <Nav />
-      <main id="main-content" className="home-redesign-root">
+      <main id="main-content" className="home-redesign-root vi-home-editorial">
         <HeroSlider />
         <section className="home-market-scope" aria-label="Initial market focus">
           <div className="container">
