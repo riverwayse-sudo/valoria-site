@@ -104,7 +104,7 @@ export default function Nav() {
 
       <ul className="nav-links" role="list">
         {NAVIGATION.primary.map((item) => item.groups ? (
-          <li className="vi-nav-menu" key={item.label}>
+          <li className="vi-nav-menu" key={item.label} onMouseEnter={() => setOpenMenu(item.label)} onMouseLeave={() => setOpenMenu(null)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setOpenMenu(null) }}>
             <button className={`nav-link nav-trigger${(openMenu === item.label || (!openMenu && item.groups.some(g => g.items.some(i => isPathActive(pathname, i.href))))) ? ' active' : ''}${openMenu === item.label ? ' is-open' : ''}`} aria-expanded={openMenu === item.label} aria-controls={`vi-dropdown-${item.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} aria-haspopup="true" onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === item.label ? null : item.label) }}>
               {item.label}<span className="nav-chevron">⌄</span>
             </button>
