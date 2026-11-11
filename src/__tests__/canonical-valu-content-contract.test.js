@@ -51,7 +51,10 @@ describe('Canonical Valoria content contract', () => {
       expect(source).not.toContain('1 of 58')
 
     }
-    expect(valu).toContain('short set of prompts across four Intelligence skills')
+    expect(valu).toContain('Begin with the VALU Taster.')
+    expect(valu).not.toContain('four Intelligence skills')
+    expect(valu).not.toContain('15 to 20 minutes')
+    expect(valu).not.toContain('12-month validity period')
     expect(valu).toContain('separate full assessment')
     expect(valu).not.toMatch(/(?:9|58)[- ]questions?|nine questions|54 scored questions|four validity checks/i)
     expect(homepage).not.toMatch(/nine questions|(?:9|58)[- ]questions?/i)
