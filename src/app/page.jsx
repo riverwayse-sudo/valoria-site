@@ -55,24 +55,24 @@ const decisionPathways = [
   {
     number: '01',
     label: 'FOR PROFESSIONALS',
-    title: 'Know where you stand.',
-    body: 'Understand your capability through PRIME and the VALU Index, then take a clear next step in your professional development.',
+    title: 'Make your capability legible.',
+    body: 'For established professionals whose contribution carries weight: understand capability through PRIME and the VALU Index, then connect insight to deliberate development.',
     href: '/valu',
     cta: 'START THE VALU TASTER',
   },
   {
     number: '02',
     label: 'FOR EMPLOYERS',
-    title: 'Make talent decisions with better context.',
-    body: 'Explore professional profiles with assessment-led insight, experience and role context. VALU results inform discovery; they do not replace independent credential checks or your organization’s hiring process.',
+    title: 'See beyond the résumé.',
+    body: 'Bring structured capability insight, professional experience and role context into talent discovery. VALU informs consideration; it does not replace independent credential checks or your organization’s hiring judgment.',
     href: '/atb-connect',
     cta: 'REQUEST BUYER ACCESS',
   },
   {
     number: '03',
     label: 'FOR EVENT ORGANIZERS · FOR FACILITATORS & PROGRAM LEADERS',
-    title: 'Find expertise that can hold a room.',
-    body: 'Discover speakers and facilitators through capability-led profiles and relevant professional experience.',
+    title: 'Engage expertise with intention.',
+    body: 'Discover speakers and facilitators whose professional experience and capability align with the purpose, audience and stakes of your event or program.',
     href: '/atb-spotlight',
     cta: 'FIND A SPEAKER OR FACILITATOR',
   },
@@ -171,9 +171,9 @@ export default function HomePage() {
             <Reveal className="home-section-heading">
               <div>
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THREE WAYS TO ENGAGE.</span></div>
-                <h2 id="decision-pathways-title">Start with the outcome your organization <em>needs.</em></h2>
+                <h2 id="decision-pathways-title">A considered pathway for every <em>decision-maker.</em></h2>
               </div>
-              <p>Whether you are strengthening an established career, making a senior talent decision or engaging exceptional expertise, begin with the pathway relevant to your responsibility.</p>
+              <p>For professionals, employers and institutions, the next step should reflect the responsibility at hand—not a one-size-fits-all funnel.</p>
             </Reveal>
             <Reveal className="home-pathway-grid home-decision-grid" as="div">
               {decisionPathways.map((item) => (
