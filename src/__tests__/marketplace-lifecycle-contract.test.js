@@ -574,4 +574,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain('isValidAtbId(row.atb_id)')
   })
 
+  test('public profile video selectors are keyboard-operable native buttons', () => {
+    const profile = read('src/app/profile/[id]/ProfileClient.jsx')
+    expect(profile).toContain('type="button" onClick={() => setActiveVideo(isActive ? null : i)}')
+    expect(profile).toContain('aria-pressed={isActive}')
+    expect(profile).toContain("aria-label={`${isActive ? 'Close' : 'Play'}")
+    expect(profile).toContain('type="button" onClick={() => setActiveVideo(i)}')
+    expect(profile).toContain('aria-label={`Play ${')
+    expect(profile).not.toContain('<div key={i} onClick={() => setActiveVideo(i)}')
+    expect(profile).not.toContain('<div key={i} onClick={() => setActiveVideo(isActive ? null : i)}')
+  })
+
 })
