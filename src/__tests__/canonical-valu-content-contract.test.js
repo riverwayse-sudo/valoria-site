@@ -53,7 +53,8 @@ describe('Canonical Valoria content contract', () => {
     }
     expect(valu).toContain('short set of prompts across four Intelligence skills')
     expect(valu).toContain('separate full assessment')
-    expect(valu).not.toMatch(/(?:9|58)[- ]questions?|54 scored questions|four validity checks/i)
+    expect(valu).not.toMatch(/(?:9|58)[- ]questions?|nine questions|54 scored questions|four validity checks/i)
+    expect(homepage).not.toMatch(/nine questions|(?:9|58)[- ]questions?/i)
     expect(about).toContain('Professional Capability Institution')
     expect(about).toContain('The VALU Index is not itself a certification')
     expect(homepage).toContain('Take the taster')
