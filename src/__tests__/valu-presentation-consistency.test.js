@@ -60,7 +60,8 @@ describe('VALU presentation consistency', () => {
       expect(surface).not.toMatch(/VALU\s+taster(?!\s+index)/i);
     }
     expect(read('src/app/valu/page.jsx')).toContain('VALU Index Taster');
-    expect(read('src/app/valu/start/page.jsx')).toContain('full VALU Index');
+    expect(read('src/app/valu/start/page.jsx')).toContain('separate full assessment')
+    expect(read('src/app/valu/start/page.jsx')).toContain('official VALU Index');
     expect(read('src/app/page.jsx')).toContain('START THE VALU INDEX TASTER');
     expect(read('src/app/prime/page.jsx')).toContain('TAKE THE VALU INDEX TASTER');
     expect(read('src/app/insights/page.jsx')).toContain('START THE VALU INDEX TASTER');
