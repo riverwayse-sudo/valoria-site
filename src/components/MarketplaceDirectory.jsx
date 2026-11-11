@@ -128,7 +128,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
         </div>
         {results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p} onSelect={() => setSelectedProfile(p)}/>)}</div> :
           IS_STAGING_PREVIEW
-            ? <div className={styles.previewUnavailable} role="status"><strong>Verified professional profiles are being onboarded.</strong><p>Valoria is adding the approved professional cohort and completed-taster participants as their identities, staging accounts and explicit public-visibility consent are confirmed. New profiles will appear here as each person is cleared. No generated or unverified profiles are displayed.</p><p>Already completed a VALU taster? Sign in or create your Valoria account to claim your saved snapshot and continue your profile.</p><Link href="/signup" className={styles.view}>SIGN IN OR CREATE ACCOUNT</Link></div>
+            ? <div className={styles.previewUnavailable} role="status"><strong>Approved public profiles are being prepared.</strong><p>Public profiles appear only when the professional has chosen visibility and the profile meets Valoria's listing requirements. Personal contact details and individual assessment answers are not displayed here.</p><p>Completed the VALU Index Taster? Sign in or create an account to continue your professional profile.</p><Link href="/signup" className={styles.view}>SIGN IN OR CREATE ACCOUNT</Link></div>
             : <div className={styles.empty}><strong>No professionals match this view.</strong><p>Try adjusting your search or selecting another capability. Profile visibility reflects each professional's choices and Valoria's listing requirements.</p></div>}
       </div>
     </section>
