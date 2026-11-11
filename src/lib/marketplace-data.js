@@ -1,7 +1,7 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 
-const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
+const FIELDS = 'professional_id,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
 const PUBLIC_PROFILE_ACK_VERSION = 'public-profile-visibility-v3-2026-11-07'
 
@@ -29,7 +29,6 @@ function isQualifiedPublicProfile(row) {
     !/[\u{1D400}-\u{1D7FF}]/u.test(rawHeadline)
   const hasIdentity = Boolean(
     row?.professional_id &&
-    typeof row.full_name === 'string' && row.full_name.trim() &&
     validHeadline &&
     validAtbId
   )
@@ -91,7 +90,7 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
   const ids = rows.map(row => row.professional_id)
   const { data: profiles, error } = await admin
     .from('professional_profiles')
-    .select('id,display_name,headline,current_job_title,profile_complete,is_test,visibility,listing_status,revoked_at,valu_index,assessment_completed_at,assessment_expires_at')
+    .select('id,atb_id,headline,current_job_title,profile_complete,is_test,visibility,listing_status,revoked_at,valu_index,assessment_completed_at,assessment_expires_at')
     .in('id', ids)
 
   if (error) {
@@ -221,8 +220,8 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
     if (row.assessment_access === 'full') return Number(row.valu_index) >= 35 && Number(row.valu_index) === Number(profile.valu_index) && fullReadyIds.has(profile.id)
     return row.assessmentAccess === 'basic'
       && (linkedTasterIds.has(profile.id) || currentBasicAssessmentIds.has(profile.id))
-      && Boolean(profile.display_name?.trim())
-      && Boolean(profile.headline?.trim() || profile.current_job_title?.trim() || row.headline?.trim() || row.current_job_title?.trim())
+      && /^ATB-[A-Z0-9-]{4,40}$/i.test(String(profile.atb_id || row.atb_id || '').normalize('NFKC').trim())
+      && Boolean(String(profile.headline || profile.current_job_title || row.headline || row.current_job_title || '').trim().length >= 2)
   }).map(row => row.professional_id))
 }
 
