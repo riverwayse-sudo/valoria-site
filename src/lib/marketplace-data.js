@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js'
 const FIELDS = 'professional_id,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,photo_url,industry,seniority_band,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
 const PUBLIC_PROFILE_ACK_VERSION = 'public-profile-visibility-v4-2026-11-11'
+const IS_READ_ONLY_PREVIEW = (process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1') && process.env.VALU_STAGING_API_ENABLED !== '1'
 
 function getAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -19,28 +20,33 @@ const PLACEHOLDER_HEADLINES = new Set([
   'valoria professional',
 ])
 
-function isQualifiedPublicProfile(row) {
-  const rawHeadline = String(row?.headline || row?.current_job_title || '').trim()
-  const headline = normalizePublicDisplayText(rawHeadline)
-  const normalizedAtbId = String(row?.atb_id || '').normalize('NFKC').trim()
-  const validAtbId = /^ATB-[A-Z0-9-]{4,40}$/i.test(normalizedAtbId)
-  const validHeadline = rawHeadline.length >= 2 &&
-    !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
-    !/[\u{1D400}-\u{1D7FF}]/u.test(rawHeadline)
-  const hasIdentity = Boolean(
-    row?.professional_id &&
-    validHeadline &&
-    validAtbId
-  )
-  if (!hasIdentity) return false
+export function isValidAtbId(value) {
+  return /^ATB-[A-Z0-9-]{4,40}$/i.test(String(value || '').normalize('NFKC').trim())
+}
 
-  if (row.assessment_access === 'basic') return true
+export function isPublicProfileContentReady(row) {
+  const headline = String(row?.headline || row?.current_job_title || '').trim()
+  const assessmentAccess = row?.assessment_access ?? row?.assessmentAccess
+  const isValidAssessmentAccess = assessmentAccess === 'basic' || assessmentAccess === 'full'
+  const hasOfficialPoints = row?.valu_index !== null && row?.valu_index !== undefined
+  const assessmentSummary = String(row?.assessment_summary || '').trim()
+  const fullAssessmentReady = assessmentAccess !== 'full' || (hasOfficialPoints && assessmentSummary.length >= 12)
   return Boolean(
-    row.assessment_access === 'full' &&
+    isValidAtbId(row?.atb_id) &&
+    headline.length >= 3 &&
+    !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
+    !/[\\u{1D400}-\\u{1D7FF}]/u.test(headline) &&
+    isValidAssessmentAccess &&
+    fullAssessmentReady
+  )
+}
+
+function isQualifiedPublicProfile(row) {
+  return Boolean(
+    row?.professional_id &&
+    isPublicProfileContentReady(row) &&
     ((Array.isArray(row.capabilities) && row.capabilities.length > 0) || (Array.isArray(row.selected_capabilities) && row.selected_capabilities.length > 0)) &&
-    row.valu_index !== null && row.valu_index !== undefined && Number.isFinite(Number(row.valu_index)) && Number(row.valu_index) >= 35 &&
-    typeof row.assessment_summary === 'string' && row.assessment_summary.trim().length >= 12 &&
-    typeof row.designation === 'string' && row.designation.trim()
+    (row.assessment_access !== 'full' || (typeof row.designation === 'string' && row.designation.trim()))
   )
 }
 
@@ -70,11 +76,8 @@ function dedupeProfessionals(rows) {
       })
     }
     const target = map.get(row.professional_id)
-    const values = [
-      ...(Array.isArray(row.capabilities) ? row.capabilities : []),
-      row.capability,
-      row.track,
-    ].map(normalizeTrack).filter(Boolean)
+    const publishedValues = Array.isArray(row.capabilities) ? row.capabilities : [row.track]
+    const values = [...publishedValues, row.capability].map(normalizeTrack).filter(Boolean)
     const selectedValues = (Array.isArray(row.selected_capabilities) ? row.selected_capabilities : [])
       .map(normalizeTrack).filter(Boolean)
     target.capabilities = [...new Set([...target.capabilities, ...values])]
@@ -225,6 +228,7 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
 }
 
 export async function getMarketplaceRows(track = 'all') {
+  if (IS_READ_ONLY_PREVIEW) return []
   const admin = getAdminClient()
 
   const { data, error } = await admin
@@ -263,7 +267,7 @@ function countMarketplaceRows(rows) {
   for (const row of rows || []) {
     if (row.professional_id) all.add(row.professional_id)
     // Category counts follow published capability lanes, not merely participant selections.
-    const visibleCapabilities = row.capabilities || []
+    const visibleCapabilities = Array.isArray(row.capabilities) ? row.capabilities : [row.track]
     for (const capability of new Set(visibleCapabilities)) {
       if (byTrack[capability]) byTrack[capability].add(row.professional_id)
     }
@@ -278,6 +282,7 @@ function countMarketplaceRows(rows) {
 }
 
 export async function getMarketplaceCounts(existingRows) {
+  if (IS_READ_ONLY_PREVIEW) return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }
   const rows = Array.isArray(existingRows) ? existingRows : await getMarketplaceRows('all')
   return countMarketplaceRows(rows)
 }
