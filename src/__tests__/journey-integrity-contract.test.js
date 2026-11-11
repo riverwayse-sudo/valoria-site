@@ -25,10 +25,11 @@ describe('participant-facing assessment clarity', () => {
 
   test('public VALU information distinguishes the taster from the full assessment', () => {
     const valu = read('src/app/valu/page.jsx')
-    expect(valu).toContain('short VALU Taster')
+    expect(valu).toContain('Begin with the VALU Taster')
     expect(valu).toContain('separate full assessment')
     expect(valu).toContain('official points-based VALU Index')
-    expect(valu).toContain('short set of prompts across four Intelligence skills')
+    expect(valu).toContain('separate full assessment')
+    expect(valu).not.toContain('four Intelligence skills')
     expect(valu).toContain('separate full assessment')
     expect(valu).not.toMatch(/(?:9|58)[- ]questions?|nine questions|54 scored questions|four validity checks/i)
   })
