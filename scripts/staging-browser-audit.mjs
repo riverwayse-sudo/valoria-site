@@ -3,7 +3,8 @@ import path from 'node:path'
 import { chromium } from 'playwright'
 
 const SITE = process.env.STAGING_SITE_URL || 'https://staging.valoriainstitute.com'
-const ASSESSMENT = process.env.STAGING_ASSESSMENT_URL || 'https://assessment-staging.valoriainstitute.com'
+const ASSESSMENT = process.env.STAGING_ASSESSMENT_URL || 'https://valoria-staging-assessment.riverwayse.workers.dev'
+const ASSESSMENT_WITH_SITE = (() => { const url = new URL(ASSESSMENT); url.searchParams.set('site_origin', SITE); return url.toString() })()
 const OUT = path.resolve('artifacts/staging-browser-audit')
 const viewports = [
   { name: 'desktop', width: 1440, height: 960, isMobile: false },
@@ -19,7 +20,7 @@ const routes = [
   { name: 'about', url: `${SITE}/about-us`, site: true },
   { name: 'dashboard-preview', url: `${SITE}/dashboard?preview=1`, site: true },
   { name: 'assessment-proxy', url: `${SITE}/valu/assessment/`, site: true },
-  { name: 'assessment-host', url: `${ASSESSMENT}/`, site: false },
+  { name: 'assessment-host', url: `${ASSESSMENT_WITH_SITE.replace(/\\/$/, '')}/`, site: false },
 ]
 const report = {
   generatedAt: new Date().toISOString(),
@@ -183,7 +184,7 @@ try {
   let marketingConsentChecked = null
   let privacyCheckboxRequired = null
   try {
-    const response = await freshPage.goto(ASSESSMENT, { waitUntil: 'domcontentloaded', timeout: 60000 })
+    const response = await freshPage.goto(ASSESSMENT_WITH_SITE, { waitUntil: 'domcontentloaded', timeout: 60000 })
     freshStatus = response?.status() ?? null
     await freshPage.getByRole('button', { name: /CONTINUE TO MY VALU(?: INDEX)? TASTER/i }).waitFor({ state: 'visible', timeout: 20000 })
     registrationVisible = await freshPage.getByPlaceholder('Your full professional name').isVisible()
@@ -199,7 +200,7 @@ try {
   await freshPage.screenshot({ path: path.join(OUT, freshScreenshot), fullPage: true })
   report.results.push({
     route: 'fresh-taster-registration',
-    url: ASSESSMENT,
+    url: ASSESSMENT_WITH_SITE,
     viewport: 'desktop',
     status: freshStatus,
     navigationError: freshNavigationError,
