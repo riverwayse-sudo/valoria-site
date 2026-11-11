@@ -16,12 +16,12 @@ export const NAVIGATION = {
       }],
     },
     {
-      label: 'Organisations',
+      label: 'Organizations',
       groups: [{
-        label: 'ACCESS CAPABILITY',
+        label: 'ACCESS EXPERTISE',
         items: [
           { label: 'Find Talent', href: '/atb-connect', description: 'Discover professionals by capability.' },
-          { label: 'Find Speakers & Facilitators', href: '/atb-spotlight', description: 'Find expertise for events and programmes.' },
+          { label: 'Find Speakers & Facilitators', href: '/atb-spotlight', description: 'Find expertise for events and programs.' },
           { label: 'Work with Valoria', href: '/contact-us', description: 'Discuss partnerships and organisational needs.' },
         ],
       }],
