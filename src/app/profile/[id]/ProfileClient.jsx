@@ -484,7 +484,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
         )}
 
         {/* MAIN GRID */}
-        <div className="vi-profile-grid" style={{ maxWidth:'1100px', margin:'36px auto 80px', padding:'0 clamp(20px,4vw,40px)', display:'grid', gridTemplateColumns:'280px 1fr', gap:'40px' }}>
+        <div className="vi-profile-grid" style={{ maxWidth:'1100px', margin:'36px auto 80px', padding:'0 clamp(20px,4vw,40px)', display:'grid', gridTemplateColumns:'280px minmax(0, 1fr)', gap:'40px' }}>
 
           {/* SIDEBAR */}
           <div style={{ minWidth:0 }}>
@@ -715,6 +715,20 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
           70%{box-shadow:0 0 0 6px rgba(29,158,117,0);}
           100%{box-shadow:0 0 0 0 rgba(29,158,117,0);}
         }
+        .vi-stat-strip {
+          flex-wrap: nowrap !important;
+          min-width: 0;
+          overflow-x: auto;
+          overscroll-behavior-x: contain;
+          scrollbar-width: thin;
+          -webkit-overflow-scrolling: touch;
+        }
+        .vi-stat-strip > * {
+          flex: 0 0 150px !important;
+          min-width: 150px !important;
+          box-sizing: border-box;
+        }
+        .vi-profile-grid > * { min-width: 0; }
         .vi-stat-strip a:hover, .vi-stat-strip div:hover {
           background: rgba(201,168,76,.04);
         }
@@ -725,8 +739,8 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
           }
         }
         @media (max-width: 640px) {
-          .vi-stat-strip { flex-wrap: wrap !important; }
-          .vi-stat-strip > * { flex: 1 1 42% !important; min-width: 0 !important; }
+          .vi-stat-strip { flex-wrap: nowrap !important; }
+          .vi-stat-strip > * { flex: 0 0 138px !important; min-width: 138px !important; }
           .vi-header-block {
             margin-top: -36px !important;
             align-items: flex-start !important;
