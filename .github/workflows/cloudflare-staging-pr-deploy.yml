@@ -127,6 +127,11 @@ jobs:
           grep -q '/jobs' /tmp/valoria-sitemap.xml
           curl -fsS "$base/llms.txt" -o /tmp/valoria-llms.txt
           grep -q 'proprietary five-cluster capability framework' /tmp/valoria-llms.txt
+          curl -fsS "$base/prime" -o /tmp/valoria-prime.html
+          if grep -Eiq '17 skills|Human-AI Collaboration|AI Fluency|[0-9]+[–-][0-9]+ POINTS|below 35 points' /tmp/valoria-prime.html; then
+            echo 'Proprietary PRIME skill or scoring detail leaked into the public PRIME page'
+            exit 1
+          fi
           if grep -Eiq '17 skills|Human-AI Collaboration|AI Fluency|[0-9]+[–-][0-9]+ POINTS|below 35 points|0–100 point scale' /tmp/valoria-llms.txt; then
             echo 'Proprietary PRIME skill or scoring detail leaked into public llms.txt'
             exit 1
