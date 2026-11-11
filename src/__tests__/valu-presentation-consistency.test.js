@@ -9,7 +9,7 @@ describe('VALU presentation consistency', () => {
   test('homepage communicates registration before the VALU taster without exposing question counts', () => {
     const home = read('src/app/page.jsx')
     expect(home).toContain('Register before your taster')
-    expect(home).toContain('START THE VALU TASTER')
+    expect(home).toContain('START THE VALU INDEX TASTER')
     expect(home).not.toMatch(/9 questions|58 questions|Question\s+\d+\s+of\s+\d+/i)
     expect(home).not.toContain('no account needed')
     expect(home).not.toMatch(/\\b9\\s*QUESTIONS\\b|\\b58\\s*QUESTIONS\\b/i)
@@ -45,7 +45,7 @@ describe('VALU presentation consistency', () => {
   test('email confirmation never exposes internal taster or full-assessment question counts', () => {
     const callback = read('src/app/auth/callback/page.jsx')
     expect(callback).not.toMatch(/opening nine|9-question|58-question|Question\s+\d+\s+of\s+\d+/i)
-    expect(callback).toContain('your saved VALU taster is connected')
+    expect(callback).toContain('your saved VALU Index Taster is connected')
   })
 
   test('public marketplace and homepage merit labels are derived from canonical VALU points, not stored legacy labels', () => {
