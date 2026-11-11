@@ -29,6 +29,7 @@ describe('Public identity and audience-language contract', () => {
     expect(spotlight).not.toMatch(/training buyers/i)
     expect(about).not.toMatch(/\\bbuyers?\\b/i)
     expect(homepage).not.toMatch(/training buyers/i)
+    expect(homepage).toContain("label: 'PROFESSIONAL DISCOVERY'")
     expect(profileClient).not.toMatch(/NO ACTIVE BUYER PATHWAY/i)
     expect(directory).not.toMatch(/BASIC ACCESS|BASIC \\u00b7 SNAPSHOT/i)
   })
