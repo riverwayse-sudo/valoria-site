@@ -257,9 +257,11 @@ export async function getMarketplaceRows(track = 'all') {
 }
 
 function countMarketplaceRows(rows) {
+  const all = new Set()
   const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
 
   for (const row of rows || []) {
+    if (row.professional_id) all.add(row.professional_id)
     // Category counts follow published capability lanes, not merely participant selections.
     const visibleCapabilities = row.capabilities || []
     for (const capability of new Set(visibleCapabilities)) {
@@ -268,7 +270,7 @@ function countMarketplaceRows(rows) {
   }
 
   return {
-    all: (rows || []).length,
+    all: all.size,
     candidate: byTrack.candidate.size,
     speaker: byTrack.speaker.size,
     facilitator: byTrack.facilitator.size,
