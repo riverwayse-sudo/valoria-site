@@ -7,9 +7,9 @@ describe('assessment environment isolation', () => {
   test('staging is bound to the staging assessment Worker and staging Supabase project', () => {
     const config = JSON.parse(read('wrangler.jsonc'))
     expect(config.services).toContainEqual({ binding: 'VALU_ASSESSMENT', service: 'valoria-assessment' })
-    expect(config.env.staging.name).toBe('valoria-current-site-audit-staging')
-    expect(config.env.staging.vars.NEXT_PUBLIC_SITE_URL).toBe('https://valoria-current-site-audit-staging.riverwayse.workers.dev')
-    expect(config.env.staging.vars.VALU_PREVIEW_SITE_ORIGIN).toBe('https://valoria-current-site-audit-staging.riverwayse.workers.dev')
+    expect(config.env.staging.name).toBe('valoria-staging-site')
+    expect(config.env.staging.vars.NEXT_PUBLIC_SITE_URL).toBe('https://valoria-staging-site.riverwayse.workers.dev')
+    expect(config.env.staging.vars.VALU_PREVIEW_SITE_ORIGIN).toBe('https://valoria-staging-site.riverwayse.workers.dev')
     expect(config.env.staging.services).toContainEqual({ binding: 'VALU_ASSESSMENT', service: 'valoria-staging-assessment' })
     expect(config.env.staging.vars.VALU_STAGING_API_ENABLED).toBe('1')
     expect(config.env.staging.vars.SUPABASE_URL).toBe('https://yccxgjdqworgcbircnvn.supabase.co')
