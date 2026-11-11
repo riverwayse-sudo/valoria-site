@@ -49,7 +49,7 @@ describe('Public identity and audience-language contract', () => {
 
   test('the privacy page states the data-sale position and public identity boundary', () => {
     expect(privacy).toContain('We do not sell personal data.')
-    expect(privacy).toContain('your ATB ID, professional headline')
+    expect(privacy).toContain('your ATB ID, profile photo, professional headline')
     expect(privacy).toContain('Personal names are not displayed on public profile cards or pages.')
     const consent = read('src/lib/profile-consent-copy.js')
     expect(consent).toContain('public-profile-visibility-v4-2026-11-11')
