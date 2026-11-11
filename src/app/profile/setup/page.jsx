@@ -185,7 +185,7 @@ function ProfileSetupForm() {
   const sectionGuidance = {
     Track: 'Choose the professional pathways that describe how you want to participate. This selection shapes the capability sections and the directories your profile may qualify for.',
     Profile: 'Establish your professional identity. These details help people recognize your experience and understand the context behind your VALU Index.',
-    Expertise: 'Describe the work you do in each selected pathway. This information helps Valoria organise your capability profile and assess relevant evidence.',
+    Expertise: 'Describe the work you do in each selected pathway. This information helps Valoria organize your capability profile and assess relevant evidence.',
     Media: 'Add supporting material that helps reviewers and prospective partners understand your professional background. Your CV remains private unless a permitted workflow uses it.',
     Terms: 'Set practical preferences for matching and introductions. These preferences do not change your VALU points or determine eligibility by themselves.',
     Review: 'Review your details and confirm that the information is accurate before submitting your profile.'
