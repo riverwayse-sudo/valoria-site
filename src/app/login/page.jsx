@@ -78,7 +78,7 @@ export default function LoginPage() {
       const { data: { user } } = await supabase.auth.getUser()
       const { data: { session } } = await supabase.auth.getSession()
 
-      // Complete a professional VALU snapshot handoff that was paused for email confirmation.
+      // Complete a professional VALU Index Taster handoff that was paused for email confirmation.
       const pendingTasterId = localStorage.getItem('pending_taster_id')
       if (pendingTasterId && session?.access_token) {
         const linkRes = await fetch('/api/link-taster', {
@@ -92,7 +92,7 @@ export default function LoginPage() {
         const linkData = await linkRes.json().catch(() => ({}))
         if (!linkRes.ok) {
           // Keep the pending ID so the user can retry after a transient failure.
-          setError(linkData.error || 'Your VALU result could not be linked to this account.')
+          setError(linkData.error || 'Your VALU Index result could not be linked to this account.')
           setLoading(false)
           return
         }
@@ -100,7 +100,7 @@ export default function LoginPage() {
         localStorage.removeItem('pending_taster_id')
         localStorage.removeItem('pending_taster_name')
         localStorage.removeItem('pending_taster_role')
-        // Restore any completed full VALU assessment attached to the same taster.
+        // Restore any completed full assessment attached to the same taster.
         // A taster-only record is still valid; in that case the claim endpoint
         // simply reports that no completed assessment exists and onboarding continues.
         try {
@@ -132,7 +132,7 @@ export default function LoginPage() {
         return
       }
 
-      // Complete a VALU assessment handoff securely on the server.
+      // Complete a full assessment handoff securely on the server.
       const pendingIdentityHash = sessionStorage.getItem('pending_identity_hash')
       if (pendingIdentityHash && session?.access_token) {
         sessionStorage.removeItem('pending_identity_hash')
@@ -147,7 +147,7 @@ export default function LoginPage() {
           })
           const linkData = await linkRes.json().catch(() => ({}))
           if (!linkRes.ok) {
-            setError(linkData.error || 'Your VALU assessment could not be linked to this account.')
+            setError(linkData.error || 'Your VALU Index could not be linked to this account.')
             setLoading(false)
             return
           }
@@ -155,7 +155,7 @@ export default function LoginPage() {
           return
         } catch (linkErr) {
           console.error('Failed to link assessment to user:', linkErr)
-          setError('Your VALU assessment could not be linked. Please try again.')
+          setError('Your VALU Index could not be linked. Please try again.')
           setLoading(false)
           return
         }
