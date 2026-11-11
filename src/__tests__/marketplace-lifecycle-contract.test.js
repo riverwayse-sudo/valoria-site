@@ -551,6 +551,22 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
 
+  test('public metadata targets the United States and international professional market', () => {
+    const layout = read('src/app/layout.jsx')
+    const about = read('src/app/about-us/page.jsx')
+    const programmes = read('src/app/programmes/page.jsx')
+    const facilitators = read('src/app/facilitators/page.jsx')
+    expect(layout).toContain("locale:'en_US'")
+    expect(layout).toContain("name:'United States'")
+    expect(layout).toContain("name:'Nigeria'")
+    expect(layout).toContain("'professional capability institute'")
+    expect(layout).not.toContain("'African talent marketplace'")
+    expect(layout).not.toContain("'Nigeria talent search'")
+    expect(about).toContain('African roots and an international outlook')
+    expect(programmes).not.toContain('professional development Nigeria')
+    expect(facilitators).not.toContain('facilitator commissioning Nigeria')
+  })
+
   test('profile visibility consent remains readable and explicit', () => {
     const edit = read('src/app/profile/edit/page.jsx')
     expect(edit).toContain('fontSize:\'13px\', lineHeight:1.6')
