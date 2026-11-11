@@ -31,7 +31,7 @@ export default function PrimePage() {
             <p className="page-sub">PRIME describes how professional capability shows up in the work. The VALU Index measures it.</p>
             <div className="page-hero-actions">
               <a href="/valu" className="btn-gold">UNDERSTAND THE VALU INDEX</a>
-              <AssessmentStartLink href="/valu/assessment/" className="btn-outline">TAKE THE VALU TASTER</AssessmentStartLink>
+              <AssessmentStartLink href="/valu/assessment/" className="btn-outline">TAKE THE VALU INDEX TASTER</AssessmentStartLink>
             </div>
           </div>
         </section>
@@ -90,7 +90,7 @@ export default function PrimePage() {
             <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">WORTH, BUILT.</span><div className="eyebrow-line" /></div>
             <h2 className="section-title">Take the taster.<br /><em>See your first signal.</em></h2>
             <div className="page-hero-actions eyebrow-center">
-              <AssessmentStartLink href="/valu/assessment/" className="btn-gold">TAKE THE VALU TASTER</AssessmentStartLink>
+              <AssessmentStartLink href="/valu/assessment/" className="btn-gold">TAKE THE VALU INDEX TASTER</AssessmentStartLink>
               <a href="/valu" className="btn-outline">HOW VALU WORKS</a>
             </div>
           </Reveal>
