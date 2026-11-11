@@ -4,8 +4,6 @@ import { PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION } from '@/lib/profile-consent-co
 
 const PUBLIC_PROFILE_FIELDS = [
   'id',
-  'display_name',
-  'display_initials',
   'headline',
   'current_job_title',
   'location',
@@ -88,9 +86,9 @@ async function hasCurrentFullAssessment(admin, profile) {
 }
 
 function hasBasicPublicIdentity(profile, roster = {}) {
-  const displayName = profile.display_name?.trim() || roster.full_name?.trim()
+  const verifiedIdentity = roster.full_name?.trim()
   const headline = profile.headline?.trim() || profile.current_job_title?.trim() || roster.headline?.trim() || roster.current_job_title?.trim()
-  return Boolean(displayName && headline)
+  return Boolean(verifiedIdentity && headline)
 }
 
 export async function getConsentVerifiedPublicProfile(identifier, field = 'id') {
@@ -188,8 +186,6 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
     ...publicProfile,
     atb_id: profile.atb_id,
     valu_score: profile.valu_index,
-    display_name: normalizePublicDisplayText(profile.display_name),
-    display_initials: normalizePublicDisplayText(profile.display_initials),
     headline: normalizePublicDisplayText(profile.headline),
     current_job_title: normalizePublicDisplayText(profile.current_job_title),
     // Basic listings intentionally do not display an unverified/full VALU score
@@ -231,7 +227,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
 
   const { data: profiles, error: profileError } = await admin
     .from('professional_profiles')
-    .select('id,updated_at,display_name,headline,current_job_title,profile_complete,valu_index,assessment_completed_at,assessment_expires_at')
+    .select('id,updated_at,headline,current_job_title,profile_complete,valu_index,assessment_completed_at,assessment_expires_at')
     .in('id', candidateIds)
     .eq('is_test', false)
     .eq('visibility', 'public')
