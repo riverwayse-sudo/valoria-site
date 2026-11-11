@@ -120,8 +120,8 @@ export default function HomePage() {
             <div className="home-journey-grid">
               <article className="home-journey-card"><span>01</span><h3>Take the taster</h3><p>Begin with a short set of prompts for an initial read across four Intelligence skills.</p></article>
               <article className="home-journey-card"><span>02</span><h3>Complete the full assessment</h3><p>Continue to the separate full assessment after creating or confirming your Valoria account.</p></article>
-              <article className="home-journey-card"><span>03</span><h3>Build your professional profile</h3><p>Use your VALU results and professional information to create a credible profile.</p></article>
-              <article className="home-journey-card"><span>04</span><h3>Become discoverable</h3><p>Present your experience and skills to employers and organisations when your profile is eligible and you choose to be visible.</p></article>
+              <article className="home-journey-card"><span>03</span><h3>Build your profile</h3><p>Use your VALU results and professional information to build your professional profile.</p></article>
+              <article className="home-journey-card"><span>04</span><h3>Become discoverable</h3><p>Present your experience and skills to employers and organizations when your profile is eligible and you choose to be visible.</p></article>
             </div>
             <div className="home-journey-actions">
               <a href="/valu" className="home-journey-link">UNDERSTAND THE VALU JOURNEY <span aria-hidden="true">→</span></a>
