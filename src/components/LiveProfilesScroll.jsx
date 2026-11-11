@@ -35,7 +35,7 @@ export default async function LiveProfilesScroll() {
         <div className="live-profiles-copy">
           <div className="live-profiles-kicker">THE VALORIA MARKETPLACE</div>
           <h2 id="marketplace-title" className="live-profiles-title">Find professionals <em>by capability.</em></h2>
-          <p className="live-profiles-subtitle">Discover professionals by the capabilities they bring.</p>
+          <p className="live-profiles-subtitle">Explore public profiles by capability. Discover professionals by the capabilities they bring.</p>
           {!dataUnavailable && (
             <div className="live-profiles-proof" aria-label="Public marketplace profile count">
               <strong>{counts.all}</strong><span>public professional profiles</span>
@@ -103,7 +103,7 @@ export default async function LiveProfilesScroll() {
                       <div className="vi-featured-score" aria-label={isBasic ? 'Basic listing' : `VALU Index ${profile.valu_index} points`}>
                         <small>{isBasic ? 'LISTING' : 'VALU INDEX'}</small>
                         <strong>{isBasic ? 'BASIC' : profile.valu_index}</strong>
-                        {!isBasic && <span>{tier?.name || 'POINTS'}</span>}
+                        {!isBasic && <><span className="vi-scroll-score-max">points</span><span>{tier?.name || 'PROFICIENT'}</span></>}
                       </div>
                     </div>
                     {capabilityLabels.length > 0 && (
