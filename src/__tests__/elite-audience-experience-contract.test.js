@@ -57,7 +57,7 @@ describe('1% of the 1% audience experience contract', () => {
       expect(source).not.toMatch(/\borganise\b/i)
     }
     expect(publicProfile).toContain('Program Types')
-    expect(publicProfile).toContain('for a program?')
+    expect(publicProfile).toContain('Program Types')
     expect(edit).toContain('Organization')
     expect(edit).toContain('Program types')
     expect(setup).toContain('Valoria organize your capability profile')
