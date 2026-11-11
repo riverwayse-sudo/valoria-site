@@ -304,7 +304,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
     { label:'Location',   value: p.location || '—' },
     { label:'Industry',   value: p.industry || '—' },
     { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
-    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Basic · Snapshot', href: p.valu_score != null ? '#valu-card' : null },
+    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'VALU Taster', href: p.valu_score != null ? '#valu-card' : null },
   ]
 
   return (
@@ -422,7 +422,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                       triggerStyle={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', border:'none', textDecoration:'none' }}
                     />
                   ) : (
-                    <span style={{fontSize:'10px',letterSpacing:'.1em',color:DIM}}>NO ACTIVE BUYER PATHWAY</span>
+                    <span style={{fontSize:'10px',letterSpacing:'.1em',color:DIM}}>INTRODUCTIONS NOT AVAILABLE</span>
                   )}
                 </>
               )}
@@ -668,7 +668,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
             <div id="contact" className="vi-cta-intro" style={{ background:`linear-gradient(135deg, rgba(201,168,76,.06), rgba(26,26,46,.3))`, border:`1px solid ${GLINE2}`, padding:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', flexWrap:'wrap', marginTop:'8px', scrollMarginTop:'96px' }}>
               <div>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'8px' }}>
-                  {isOwnProfile ? 'This Is Your Profile' : !canRequest ? 'No Active Buyer Pathway' : displayTrack === 'facilitator' ? 'Commission This Facilitator' : displayTrack === 'speaker' ? 'Request This Speaker' : 'Get in Touch'}
+                  {isOwnProfile ? 'This Is Your Profile' : !canRequest ? 'Introductions Not Available' : displayTrack === 'facilitator' ? 'Commission This Facilitator' : displayTrack === 'speaker' ? 'Request This Speaker' : 'Get in Touch'}
                 </div>
                 <p style={{ fontSize:'13px', fontWeight:300, color: DIM, maxWidth:'380px', lineHeight:1.7 }}>
                   {isOwnProfile
@@ -676,10 +676,10 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                     : !canRequest
                     ? 'This profile is visible in the Marketplace, but no capability is currently open for enquiries.'
                     : displayTrack === 'facilitator'
-                    ? `Interested in commissioning ${p.display_name} for a program? Send an enquiry through Valoria.`
+                    ? 'Interested in commissioning this facilitator? Send an enquiry through Valoria.'
                     : displayTrack === 'speaker'
-                    ? `Interested in engaging ${p.display_name} for your event? Send an enquiry through Valoria.`
-                    : `Want to connect with ${p.display_name}? Send an enquiry through Valoria; private contact details are not displayed on this profile.`}
+                    ? 'Interested in engaging this speaker for your event? Send an enquiry through Valoria.'
+                    : 'Want to connect with this professional? Send an enquiry through Valoria; private contact details are not displayed on this profile.'}
                 </p>
               </div>
               {p.is_dummy ? (
