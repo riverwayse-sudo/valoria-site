@@ -48,12 +48,13 @@ describe('Valoria SEO and discovery foundation', () => {
   })
 
   test('homepage leads with the global institutional proposition while preserving truthful operating boundaries', () => {
-    const home = read('src/app/page.jsx')
-    expect(home).toContain('BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE')
-    expect(home).toContain('Valoria Institute is designed for accomplished professionals and institutions making consequential decisions')
-    expect(home).toContain('no universal accreditation or recognition is implied')
-    expect(home).toContain('At consequential levels, reputation is not enough.')
-    expect(home).not.toMatch(/Africa-first|Nigeria as its initial operating jurisdiction/i)
+    const hero = read('src/components/HeroSlider.jsx')
+    const about = read('src/app/about-us/page.jsx')
+    expect(hero).toContain('BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE')
+    expect(hero).toContain('Valoria Institute is designed for accomplished professionals and institutions making consequential decisions.')
+    expect(about).toContain('no credential should be represented as awarded')
+    expect(about).toContain('At senior levels, decisions about people carry significant consequences.')
+    expect(hero).not.toMatch(/Africa-first|Nigeria as its initial operating jurisdiction/i)
   })
 
   test('root layout publishes Organization and WebSite entities', () => {
