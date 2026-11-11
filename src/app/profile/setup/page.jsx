@@ -1154,12 +1154,12 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
             {form.designation ? <> — <strong style={{ color:'GOLD' }}>{form.designation}</strong></> : null}.
           </p>
           <p style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.6, margin:0 }}>
-            A completed taster can support a Basic listing. Full VALU insight and Full-tier benefits require a current full VALU Index. Public visibility depends on your consent and the applicable identity, eligibility and listing checks.
+            A completed taster can support a Basic listing. Full VALU Index insight and Full-tier benefits require a current full VALU Index. Public visibility depends on your consent and the applicable identity, eligibility and listing checks.
           </p>
         </div>
       ) : (
         <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
-          <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — VALU INDEX ASSESSMENT</div>
+          <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — COMPLETE YOUR VALU INDEX</div>
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
             A completed taster linked to your account can support a Basic listing. Continue with the Full VALU Index to receive your official points, PRIME insight and Full-tier benefits. Public display still requires your explicit consent and the applicable identity and listing checks.
           </p>
