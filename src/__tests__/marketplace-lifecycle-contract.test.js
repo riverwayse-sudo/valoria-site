@@ -269,7 +269,7 @@ describe('VALUI marketplace lifecycle contract', () => {
       expect(source).not.toContain('15-question')
       expect(source).not.toContain('15 question')
     }
-    expect(prime).toContain('The VALU taster offers a guided introduction to the PRIME framework.')
+    expect(prime).toContain('The VALU Taster introduces the PRIME framework.')
     expect(prime).toContain('establishes your official VALU Index in points')
     expect(prime).not.toMatch(/(?:9|58)[- ]questions?|54 scored|validity anchors|15–20 minutes/i)
     expect(reminders).toContain('RETURN TO YOUR DASHBOARD')
