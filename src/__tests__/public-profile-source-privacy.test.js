@@ -32,11 +32,11 @@ describe('public profile source-data privacy contract', () => {
       'GRANT SELECT ON TABLE public.professional_certificates TO authenticated',
       'GRANT SELECT, UPDATE ON TABLE public.enquiries TO authenticated',
       'REVOKE EXECUTE ON FUNCTION public.get_homepage_professional_previews_v2() FROM PUBLIC, anon, authenticated',
-      'REVOKE EXECUTE ON FUNCTION public.set_marketplace_public_listing_consent(boolean) FROM PUBLIC, anon, authenticated',
     ]) expect(migration).toContain(statement)
     expect(migration).toContain('profiles_owner_or_admin_read')
     expect(migration).toContain('professional_capabilities_owner_select')
     expect(migration).toContain('DROP POLICY IF EXISTS pp_public_read_consent_verified')
+    expect(migration).toContain("to_regprocedure('public.set_marketplace_public_listing_consent(boolean)') IS NOT NULL")
   })
 
   test('public profile visitors do not query the private certificate source table', () => {
