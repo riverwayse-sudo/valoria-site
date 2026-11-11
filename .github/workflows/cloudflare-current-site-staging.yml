@@ -126,3 +126,13 @@ jobs:
           [[ "$status" == "401" ]] || { echo "Unauthenticated VALU handoff returned HTTP $status"; cat /tmp/valu-handoff-noauth || true; exit 1; }
           status="$(curl -sS -o /tmp/valu-link-taster-noauth -w '%{http_code}' -X POST "$base/api/link-taster" -H 'Content-Type: application/json' -d '{}')"
           [[ "$status" == "401" ]] || { echo "Unauthenticated taster link returned HTTP $status"; cat /tmp/valu-link-taster-noauth || true; exit 1; }
+
+      - name: Install Playwright without changing project dependencies
+        run: npm install --no-save --package-lock=false playwright@1.56.1
+      - name: Install Chromium for staging browser acceptance
+        run: npx playwright install --with-deps chromium
+      - name: Run desktop/mobile and fresh-session staging browser audit
+        run: node scripts/staging-browser-audit.mjs
+        env:
+          STAGING_SITE_URL: https://staging.valoriainstitute.com
+          STAGING_ASSESSMENT_URL: https://assessment-staging.valoriainstitute.com
