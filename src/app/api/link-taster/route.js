@@ -33,7 +33,7 @@ export async function POST(request) {
 
   const authorization = request.headers.get('authorization') || ''
   if (!authorization.toLowerCase().startsWith('bearer ')) {
-    return NextResponse.json({ error: 'Sign in is required before linking your VALU result.' }, { status: 401 })
+    return NextResponse.json({ error: 'Sign in is required before linking your VALU Index result.' }, { status: 401 })
   }
 
   const userClient = createClient(SB_URL, SB_ANON, {
