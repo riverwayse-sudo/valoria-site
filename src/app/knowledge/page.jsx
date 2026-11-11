@@ -17,7 +17,7 @@ const ARTICLES = [
   },
   {
     title: 'The PRIME Framework',
-    description: 'Explore the five capability clusters and 17 skills that structure Valoria’s professional capability model.',
+    description: 'Explore the five capability clusters that structure Valoria’s professional capability model.',
     href: '/knowledge/prime-framework',
     label: 'CAPABILITY ARCHITECTURE',
   },
