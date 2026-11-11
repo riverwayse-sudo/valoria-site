@@ -5,15 +5,21 @@ import '../pages.css'
 
 export const metadata = {
   title: 'About Valoria Institute | Professional Capability Institution',
-  description: 'Valoria Institute is an Africa-first professional capability institution, with Nigeria as its initial operating jurisdiction. It connects PRIME, the VALU Index, development and capability-led opportunity.',
+  description: 'Valoria Institute is an Africa-first professional capability institution, with Nigeria as its initial operating jurisdiction. Its connected system brings together PRIME, the VALU Index, professional development, certification pathways and a capability-led marketplace.',
   keywords: ['Valoria Institute', 'professional capability', 'PRIME framework', 'VALU Index', 'professional development', 'talent marketplace'],
   openGraph: {
     title: 'About Valoria Institute',
-    description: 'The institution connecting professional capability to development, visibility and opportunity.',
+    description: 'A professional capability institution connecting standards, assessment, development, certification pathways, visibility and opportunity.',
     url: 'https://valoriainstitute.com/about-us',
   },
   alternates: { canonical: 'https://valoriainstitute.com/about-us' },
 }
+
+const FOUNDING_STATEMENTS = [
+  { title: 'Vision', body: 'An Africa where professional merit always finds its platform.' },
+  { title: 'Mission', body: "To build and operate Africa's premier professional capability marketplace: one that develops professionals with rigour, surfaces talent with merit, and enables precision hiring through a technology platform designed for the seriousness the African professional market has always deserved." },
+  { title: 'Purpose', body: 'To bridge the gap between latent brilliance and institutional scale. We exist because talent is not the problem. Infrastructure is. For every professional whose career has stalled not for lack of ability, but lack of access. Valoria Institute is the answer.' },
+]
 
 const PRINCIPLES = [
   { num: '01', title: 'Merit over familiarity.', body: 'Capability should be developed and assessed against a consistent standard. Visibility should follow merit rather than familiarity, network proximity or a polished presentation.' },
@@ -25,7 +31,7 @@ const POSITIONING = [
   { title: 'Not a recruitment agency', body: 'Valoria does not recruit on behalf of employers. The Marketplace helps buyers discover capability; hiring decisions remain with the organisations making them.' },
   { title: 'Not a training company', body: 'Valoria Institute provides the capability framework and assessment. Valoria Develop supports PRIME-based development pathways for individuals and organisations.' },
   { title: 'Not a speaker bureau', body: 'ATB Spotlight helps event organisers and training buyers discover speakers and facilitators through capability-led profiles and relevant experience.' },
-  { title: 'Not a certification body', body: 'The VALU Index is an assessment result, not a professional certification. Certification pathways remain in development; no professional is described as certified until the relevant process is complete.' },
+  { title: 'The VALU Index is not itself a certification', body: 'The VALU Index is an assessment result that informs capability development. It is distinct from a professional certification or credential. Valoria Institute’s institutional standards and certification role must be described separately; no credential should be represented as awarded until the relevant approved certification process is operational and completed.' },
   { title: 'Not a jobs board', body: 'Valoria connects capability to relevant opportunities. An opportunity is presented as active only when real supply and a working application or enquiry route exist.' },
 ]
 
@@ -63,6 +69,26 @@ export default function AboutPage() {
               <p className="page-copy">PRIME provides the capability framework. The VALU Index provides an assessment-led view of capability. Valoria Develop supports structured growth. The Valoria Marketplace connects employers, event organisers and programme teams with relevant professional expertise.</p>
               <p className="page-copy page-copy-spaced">One institution. One connected system. Distinct pathways for professional merit.</p>
             </Reveal>
+          </div>
+        </section>
+
+        <section className="page-section">
+          <div className="page-section-inner">
+            <Reveal>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">VISION · MISSION · PURPOSE</span></div>
+              <h2 className="section-title">The foundations <em>behind the work.</em></h2>
+            </Reveal>
+            <div className="about-principles-grid">
+              {FOUNDING_STATEMENTS.map((item, i) => (
+                <Reveal key={item.title}>
+                  <div className="card-gold">
+                    <div className="vi-card-num">0{i + 1}</div>
+                    <div className="vi-card-name about-principle-name">{item.title}</div>
+                    <p className="vi-card-body">{item.body}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
           </div>
         </section>
 
