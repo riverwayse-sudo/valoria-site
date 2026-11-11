@@ -8,7 +8,9 @@ import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from
 
 export default function HeroSlider() {
   const [active, setActive] = useState(0)
-  const [paused, setPaused] = useState(false)
+  const [hovered, setHovered] = useState(false)
+  const [focusWithin, setFocusWithin] = useState(false)
+  const [reducedMotion, setReducedMotion] = useState(false)
   const [selectedSession, setSelectedSession] = useState(null)
 
   const upcomingSession = PROFESSIONAL_STANDARD_SERIES.find((session) => getSessionState(session) !== 'ended' && session.id !== '01') || PROFESSIONAL_STANDARD_SERIES[1]
@@ -16,10 +18,18 @@ export default function HeroSlider() {
   const canRegister = upcomingState === 'registration-open'
 
   useEffect(() => {
-    if (paused || selectedSession) return undefined
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const updatePreference = () => setReducedMotion(media.matches)
+    updatePreference()
+    media.addEventListener?.('change', updatePreference)
+    return () => media.removeEventListener?.('change', updatePreference)
+  }, [])
+
+  useEffect(() => {
+    if (hovered || focusWithin || reducedMotion || selectedSession) return undefined
     const timer = window.setInterval(() => setActive((index) => (index + 1) % 2), 9000)
     return () => window.clearInterval(timer)
-  }, [paused, selectedSession])
+  }, [hovered, focusWithin, reducedMotion, selectedSession])
 
   const goTo = (index) => setActive(index)
   const openRegistration = () => {
@@ -27,11 +37,11 @@ export default function HeroSlider() {
   }
 
   return (
-    <section className="hero hero-slider" id="hero" aria-label="Valoria Institute introduction">
+    <section className="hero hero-slider" id="hero" aria-label="Valoria Institute introduction" onFocusCapture={() => setFocusWithin(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocusWithin(false) }}>
       <div className="hero-bg" aria-hidden="true" />
       <div className="hero-grid" aria-hidden="true" />
 
-      <div className="hero-slides" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+      <div className="hero-slides" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
         <div className={`hero-slide ${active === 0 ? 'is-active' : ''}`} aria-hidden={active !== 0}>
           <div className="container hero-inner">
             <div>
