@@ -27,6 +27,9 @@ This register records the user-visible copy and metadata wording changed by PR #
 | `src/app/layout.jsx` — Organization structured data `areaServed` | United States and Nigeria | Nigeria only | §12, pp. 12–13; §18, p. 18 | Removed the United States as an unapproved operating market. Nigeria remains the stated jurisdiction; this structured-data change does not claim broader African service coverage. |
 | `src/app/valu/start/page.jsx` — “Who is it for?” FAQ | “It is designed for professionals across industries and markets—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight, visibility and access to opportunity.” | “It is designed for professionals across industries—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight into their capabilities and a stronger professional presence.” | §3, pp. 2–3; §12, pp. 12–13 | Removed the ambiguous “across markets” wording and avoided implying active opportunity access in this answer. Confirm the page still explains the opportunity proposition elsewhere only where operationally supported. |
 
+
+| `src/app/valu/page.jsx` — guided taster description | “Begin with a free, guided view of your professional capability.” | “Begin with a guided view of your professional capability.” | §18, question 7, p. 18 | Removed an unconfirmed pricing claim; the commercial model remains an owner decision. |
+
 ## Global consistency checks required
 
 1. Confirm the taster is directional and does not issue the official VALU Index; the separate full assessment establishes the official result (§9, pp. 9–10).
@@ -43,7 +46,7 @@ No entry is approved merely because it appears in this register. An entry can be
 
 ## Outstanding evidence gates before approval
 
-- **Commercial model / free-assessment claim:** The existing VALU taster page still says “The taster and full assessment are free to take” and displays a “FREE” marker. PR #343 does not introduce that claim, but the Current Website Audit records the commercial model as requiring clarification (question 7, §18, p. 18). Do not approve this claim for release until the owner confirms the current pricing policy and its scope. Do not infer that all related services are free.
+- **Commercial model / pricing claims:** The Current Website Audit leaves the commercial model unresolved (question 7, §18, p. 18). Unverified statements that the taster or full assessment is free have been removed from the public current-site copy. Do not publish prices, free-access claims or paid-service descriptions until the owner confirms the pricing policy and its scope. This does not imply that the wider Valoria ecosystem is free.
 - **Opportunity supply and application paths:** The revised homepage wording no longer promises active opportunity connections. Any other public claim that opportunities are currently available must be checked against live supply and a functioning application/enquiry path (§5–7, pp. 5–7; §14, p. 15).
 - **Rendered verification:** CI success is not visual or browser acceptance. Verify desktop and mobile rendering, hero geography statement, metadata, CTA destinations and the authenticated assessment journey before approval.
 
