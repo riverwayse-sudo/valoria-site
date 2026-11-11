@@ -47,13 +47,13 @@ describe('Valoria SEO and discovery foundation', () => {
     expect(directory).toContain("'@type': 'ListItem'")
   })
 
-  test('homepage states Nigeria as the initial market without overstating regional availability', () => {
+  test('homepage leads with the global institutional proposition while preserving truthful operating boundaries', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('INITIAL MARKET')
-    expect(home).toContain('Valoria is Africa-first, with Nigeria as its initial operating jurisdiction')
-    expect(home).toContain('clear to international professionals and buyers')
+    expect(home).toContain('BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE')
+    expect(home).toContain('Valoria Institute brings a consistent language for professional capability')
+    expect(home).toContain('does not imply universal accreditation or recognition')
     expect(home).toContain('Careers still turn on who was in the right room at the right time.')
-    expect(home).toContain('INITIAL MARKET')
+    expect(home).not.toMatch(/Africa-first|Nigeria as its initial operating jurisdiction/i)
   })
 
   test('root layout publishes Organization and WebSite entities', () => {
