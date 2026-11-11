@@ -20,7 +20,7 @@ const routes = [
   { name: 'about', url: `${SITE}/about-us`, site: true },
   { name: 'dashboard-preview', url: `${SITE}/dashboard?preview=1`, site: true },
   { name: 'assessment-proxy', url: `${SITE}/valu/assessment/`, site: true },
-  { name: 'assessment-host', url: `${ASSESSMENT_WITH_SITE.replace(/\\/$/, '')}/`, site: false },
+  { name: 'assessment-host', url: ASSESSMENT_WITH_SITE, site: false },
 ]
 const report = {
   generatedAt: new Date().toISOString(),
