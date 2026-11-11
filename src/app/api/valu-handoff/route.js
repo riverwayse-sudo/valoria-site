@@ -112,7 +112,7 @@ export async function POST(request) {
     expires_at: expiresAt,
   })
   if (insertError) {
-    console.error('VALU dashboard handoff issuance failed:', insertError.message)
+    console.error('VALU Index dashboard handoff issuance failed:', insertError.message)
     return NextResponse.json({ error: 'Secure assessment access is temporarily unavailable. Please try again.' }, { status: 503 })
   }
 
