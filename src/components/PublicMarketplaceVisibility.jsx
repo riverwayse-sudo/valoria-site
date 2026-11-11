@@ -97,7 +97,7 @@ export default function PublicMarketplaceVisibility() {
       <label style={{ display:'flex', alignItems:'flex-start', gap:11, cursor:loading || saving ? 'wait' : 'pointer', padding:'15px 14px', border:'1px solid rgba(201,168,76,.2)', background:selected?'rgba(201,168,76,.07)':'rgba(247,244,238,.025)' }}>
         <input type="checkbox" checked={selected} disabled={loading || saving} onChange={event => { setSelected(event.target.checked); setMessage('') }} style={{ width:17, height:17, marginTop:2, flexShrink:0, accentColor:GOLD }}/>
         <span style={{ color:PARCHMENT, fontSize:12, lineHeight:1.75 }}>
-          I authorise Valoria Institute to display my professional name, ATB ID, professional headline, selected capabilities and professional profile summary in its public marketplace. Where applicable, my VALU Index points and merit tier may also be displayed. My email address, phone number, CV file and individual assessment answers will not be displayed publicly. I understand I can withdraw this permission at any time.
+          {PUBLIC_PROFILE_CONSENT_TEXT}
         </span>
       </label>
 
