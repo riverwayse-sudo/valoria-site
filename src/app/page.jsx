@@ -19,7 +19,7 @@ export const metadata = {
 
 const pathwayCards = [
   { label: 'FOR PROFESSIONALS', title: 'Build a verified professional presence.', body: 'Build your profile, understand your strengths and become visible for relevant opportunities.', href: '/valu', cta: 'START WITH THE VALU INDEX' },
-  { label: 'FOR EMPLOYERS', title: 'Find capability with context.', body: 'Find professionals through capability, experience and verified profiles.', href: '/marketplace', cta: 'EXPLORE MARKETPLACE' },
+  { label: 'FOR EMPLOYERS', title: 'Find capability with context.', body: 'Find professionals through capability and experience.', href: '/marketplace', cta: 'EXPLORE MARKETPLACE' },
   { label: 'FOR EVENT ORGANISERS', title: 'Find speakers and facilitators.', body: 'Discover speakers and facilitators for your next event or programme.', href: '/marketplace/speakers', cta: 'FIND PROFESSIONALS' }
 ]
 
@@ -62,10 +62,10 @@ export default function HomePage() {
             <h2 id="home-valu-title" className="valu-title">Before you build your next move, <em>know where you stand.</em></h2>
             <p className="valu-desc">See your capability across five PRIME dimensions — and where to focus next.</p>
             <div className="valu-conversion-proof" aria-label="Assessment details">
-              <span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
+              <span><b>5</b> PRIME DIMENSIONS</span>
             </div>
             <div className="home-dual-actions">
-              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START THE VALU INDEX TASTER <span aria-hidden="true">→</span></a>
+              <a href={BRAND.assessmentUrl} className="btn-gold">START THE VALU INDEX TASTER <span aria-hidden="true">→</span></a>
               <a href="/valu" className="text-link">SEE HOW THE VALU INDEX WORKS <span aria-hidden="true">→</span></a>
             </div>
             <p className="valu-conversion-note">A starting signal, not a final designation.</p>
@@ -92,9 +92,9 @@ export default function HomePage() {
               <div className="vcc-radar-center">VALU INDEX</div>
             </div>
             <div className="vcc-steps">
-              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>Register before your taster</small></div></div>
-              <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Complete the full VALU Index</small></div></div>
-              <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Unlock relevant opportunities</small></div></div>
+              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>Start with your VALU Index Taster</small></div></div>
+              <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Create your account and complete your full assessment</small></div></div>
+              <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Build your profile and explore relevant opportunities</small></div></div>
             </div>
             <AssessmentStartLink href={BRAND.assessmentUrl} className="vcc-bottom-cta">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
           </Reveal>
