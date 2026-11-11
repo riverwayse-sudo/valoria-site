@@ -320,7 +320,9 @@ describe('VALUI marketplace lifecycle contract', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
     expect(dashboard).toContain('missing_requirements')
     expect(dashboard).toContain('CAPABILITY REQUIREMENTS')
-    expect(dashboard).toContain('activeCapabilities.every(isCapabilityEligible)')
+    expect(dashboard).toContain('activeCapabilities.some(isCapabilityEligible)')
+    expect(dashboard).toContain('Your approved listing remains available while additional capability reviews continue.')
+    expect(dashboard).toContain('pendingCapabilities.length > 0')
     expect(dashboard).toContain('talent_cv_approval')
     expect(dashboard).toContain('speaker_evidence_approval')
     expect(dashboard).toContain('facilitator_evidence_approval')
@@ -524,6 +526,14 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(modal).toContain('Contact details and individual assessment answers are not displayed')
   })
 
+
+  test('admin roster public readiness accepts one approved capability while another remains pending', () => {
+    const route = read('src/app/api/admin/marketplace-roster/route.js')
+    expect(route).toContain('const capabilitiesReady = activeCapabilities.some(capability =>')
+    expect(route).not.toContain('activeCapabilities.every(capability =>')
+    expect(route).toContain('at least one active capability must be fully approved')
+    expect(route).toContain(".filter(capability => !(capability.eligible_for_listing === true && capability.eligibility_status === 'listed'))")
+  })
 
   test('admin roster flags shared normalized names across account IDs for manual review', () => {
     const route = read('src/app/api/admin/marketplace-roster/route.js')
