@@ -16,17 +16,17 @@ describe('VALU presentation consistency', () => {
 
   test('homepage hero leads with marketplace value and clear visitor actions', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('Capability should decide')
-    expect(hero).toContain('who gets seen.')
-    expect(hero).toContain("AFRICA'S TALENT MARKETPLACE FOR PROFESSIONALS")
-    expect(hero).toContain('Valoria is the room where professionals')
-    expect(hero).toContain('START THE VALU TASTER')
-    expect(hero).toContain('SEE HOW IT WORKS')
-    expect(hero).toContain('hero-institutional-panel')
+    expect(hero).toContain('Make your')
+    expect(hero).toContain('Understand what you bring. Build what comes next. Be discovered for what you can do.')
+    expect(hero).toContain('AN INSTITUTION FOR PROFESSIONAL CAPABILITY')
+    expect(hero).toContain('DESIGNED FOR A GLOBAL PROFESSIONAL LANDSCAPE.')
+    expect(hero).toContain('Discover your capability')
+    expect(hero).toContain('Explore the marketplace')
+    expect(hero).toContain('vi-hero-art')
     expect(hero).toContain('PRIME')
-    expect(hero).toContain('VALU Index')
-    expect(hero).toContain('Valoria Marketplace')
-    expect(hero).toContain('Valoria Develop')
+    expect(hero).toContain('VALU INDEX')
+    expect(hero).toContain('href="/marketplace"')
+    expect(hero).toContain('Explore the standard')
     expect(hero).not.toContain('HUMAN CAPITAL INSTITUTION')
     expect(hero).not.toContain('Talent is not the problem.')
     expect(hero).not.toMatch(/(?:9|58)[- ]questions?/i)
@@ -60,7 +60,7 @@ describe('VALU presentation consistency', () => {
     const about = read('src/app/about-us/page.jsx')
     expect(about).toContain('Why Valoria')
     expect(about).toContain('The mechanisms that turn talent into opportunity are.')
-    for (const statement of ['Not a recruitment agency', 'Not a training company', 'Not a speaker bureau', 'Not a certification body', 'Not a jobs board']) {
+    for (const statement of ['Not a recruitment agency', 'Not a training company', 'Not a speaker bureau', 'The VALU Index is not itself a certification', 'Not a jobs board']) {
       expect(about).toContain(statement)
     }
     expect(about).toContain('Africa-first')
