@@ -42,7 +42,7 @@ jobs:
           cat > .env <<'EOF'
           NEXT_PUBLIC_SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
           SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
-          NEXT_PUBLIC_SITE_URL=https://staging.valoriainstitute.com
+          NEXT_PUBLIC_SITE_URL=https://valoria-current-site-audit-staging.riverwayse.workers.dev
           NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_C3j_CjLgTLDGRu8rH1SXEg_tYpxoYUm
           SUPABASE_SERVICE_ROLE_KEY=placeholder-service-role-key
           ANTHROPIC_API_KEY=placeholder-anthropic-key
@@ -72,7 +72,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base="https://valoria-staging-site.riverwayse.workers.dev"
+          base="https://valoria-current-site-audit-staging.riverwayse.workers.dev"
           routes=(
             /
             /valu
@@ -110,7 +110,7 @@ jobs:
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
           grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
           curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
-          grep -q 'staging.valoriainstitute.com' /tmp/valoria-sitemap.xml
+          grep -q 'valoria-current-site-audit-staging.riverwayse.workers.dev' /tmp/valoria-sitemap.xml
           curl -fsS "$base/" -o /tmp/valoria-home.html
           grep -q 'START THE VALU INDEX TASTER' /tmp/valoria-home.html
           grep -q 'What brings you' /tmp/valoria-home.html
@@ -134,5 +134,5 @@ jobs:
       - name: Run desktop/mobile and fresh-session staging browser audit
         run: node scripts/staging-browser-audit.mjs
         env:
-          STAGING_SITE_URL: https://staging.valoriainstitute.com
-          STAGING_ASSESSMENT_URL: https://assessment-staging.valoriainstitute.com
+          STAGING_SITE_URL: https://valoria-current-site-audit-staging.riverwayse.workers.dev
+          STAGING_ASSESSMENT_URL: https://valoria-staging-assessment.riverwayse.workers.dev
