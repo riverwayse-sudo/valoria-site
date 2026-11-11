@@ -5,7 +5,7 @@ html, body, button, input, textarea, select, option { font-family: 'Raleway', sa
 h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif !important; }
 
 /* SITE-WIDE TYPOGRAPHY CONTRACT — enforced on every public and account page.
-   Raleway only; fluid type scale; page-level display styles cannot inflate headings.
+   Raleway only; fluid type scale provides a fallback while page components retain their intended typographic hierarchy.
    Keep body copy readable and metadata legible on desktop and mobile. */
 :root {
   --vi-type-h1: clamp(2rem, 4.1vw, 3.5rem);
