@@ -517,7 +517,7 @@ function ProfileSetupForm() {
           </div>
           <Title>You&apos;re in,<br/><Em>{form.display_name?.split(' ')[0] || 'welcome'}.</Em></Title>
           <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.75, marginBottom:'28px' }}>
-            Your profile has been submitted to the founding cohort.
+            Your profile has been submitted for review.
           </p>
 
           <div style={{ background:MID, border:`1px solid ${GLINE}`, padding:'24px', marginBottom:'24px' }}>
@@ -525,7 +525,7 @@ function ProfileSetupForm() {
             {submittedInfo.atb_id ? (
               <div style={{ fontSize:'22px', fontWeight:700, color:GOLD, letterSpacing:'.04em', fontFamily:'monospace' }}>{submittedInfo.atb_id}</div>
             ) : (
-              <div style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.6 }}>Your ID will appear on your dashboard once your profile clears review — usually within 48 hours.</div>
+              <div style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.6 }}>Your ID will appear on your dashboard after the review is complete.</div>
             )}
           </div>
 
