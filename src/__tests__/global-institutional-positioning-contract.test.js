@@ -33,7 +33,9 @@ describe('Global institutional redesign content contract', () => {
   test('American English is used in the redesigned public-facing copy', () => {
     expect(homepage).toContain('event organizers')
     expect(homepage).toContain('organizations')
+    expect(homepage).not.toMatch(/organis(?:ation|er)|programme|recognis/i)
     expect(about).toContain('event organizers')
     expect(about).toContain('organizations')
+    expect(about).not.toMatch(/organis(?:ation|er)|programme|recognis/i)
   })
 })
