@@ -130,7 +130,7 @@ jobs:
           grep -q 'Basic is a marketplace access state, not a merit tier' /tmp/valoria-llms.txt
           curl -fsS "$base/" -o /tmp/valoria-home.html
           grep -q 'Make your' /tmp/valoria-home.html
-          grep -q 'INITIAL MARKET' /tmp/valoria-home.html
+          grep -q 'BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE' /tmp/valoria-home.html
           grep -q 'Take the taster' /tmp/valoria-home.html
           grep -q 'Complete the full assessment' /tmp/valoria-home.html
           grep -q 'Become discoverable' /tmp/valoria-home.html
