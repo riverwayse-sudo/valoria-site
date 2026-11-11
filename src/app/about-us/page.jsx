@@ -66,7 +66,7 @@ export default function AboutPage() {
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE INSTITUTIONAL RESPONSE</span></div>
               <h2 className="section-title">Develop.<br /><em>Surface. Connect.</em></h2>
-              <p className="page-copy">PRIME provides the capability framework. The VALU Index provides an assessment-led view of capability. Valoria Develop supports structured growth. The Valoria Marketplace connects employers, event organisers and programme teams with relevant professional expertise.</p>
+              <p className="page-copy">PRIME provides the capability framework. The VALU Index provides an assessment-led view of capability. Valoria Develop supports structured growth. The Valoria Marketplace connects employers, event organizers and program teams with relevant professional expertise.</p>
               <p className="page-copy page-copy-spaced">One institution. One connected system. Distinct pathways for professional merit.</p>
             </Reveal>
           </div>
