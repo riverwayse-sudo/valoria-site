@@ -487,7 +487,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(route).toContain('Array.isArray(roster.capabilities)&&roster.capabilities.length>0')
     expect(route).toContain('rawHeadline.length>=2')
     expect(route).toContain('counts.roster_projection_professionals')
-    expect(page).toContain('Basic listings require a completed linked taster or a current Full assessment')
+    expect(page).toContain('Basic listings require a completed linked taster or a current full VALU Index')
     expect(page).toContain('BASIC LISTING PATH')
     expect(page).toContain("r.public_roster?'PUBLIC':'NOT PUBLIC'")
     expect(page).toContain("r.public_roster?<Link href={'/profile/'+r.user_id}")
