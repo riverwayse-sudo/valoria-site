@@ -35,7 +35,7 @@ export function isPublicProfileContentReady(row) {
     isValidAtbId(row.atb_id) &&
     headline.length >= 3 &&
     !PLACEHOLDER_HEADLINES.has(headline.toLowerCase()) &&
-    !/[\\u{1D400}-\\u{1D7FF}]/u.test(headline) &&
+    !/[\u{1D400}-\u{1D7FF}]/u.test(headline) &&
     isValidAssessmentAccess &&
     fullAssessmentReady
   )
