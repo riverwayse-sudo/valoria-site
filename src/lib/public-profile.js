@@ -185,6 +185,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
   return {
     ...publicProfile,
     atb_id: profile.atb_id,
+    years_experience: profile.experience_years ?? null,
     valu_score: profile.valu_index,
     headline: normalizePublicDisplayText(profile.headline),
     current_job_title: normalizePublicDisplayText(profile.current_job_title),
