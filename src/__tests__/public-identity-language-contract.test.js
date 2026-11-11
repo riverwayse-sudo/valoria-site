@@ -17,8 +17,9 @@ describe('Public identity and audience-language contract', () => {
 
   test('public marketplace projections and profile metadata use ATB IDs, not personal names', () => {
     expect(marketplaceData).not.toContain('full_name')
-    expect(publicProfile).not.toMatch(/['"]full_name['"]/)
-    expect(publicProfile).toContain('display_name: row.atb_id')
+    expect(publicProfile).not.toMatch(/\\b(full_name|display_name|email|phone|cv_url|salary_expectation)\\b/)
+    expect(publicProfile).toContain('getConsentVerifiedPublicProfile')
+    expect(publicProfile).toContain('validAtbId')
     expect(directory).not.toContain('p.full_name')
     expect(directory).not.toContain('profile.full_name')
     expect(directory).toContain('identifier: profile.atb_id')
