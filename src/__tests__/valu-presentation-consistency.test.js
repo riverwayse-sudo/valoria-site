@@ -146,7 +146,7 @@ describe('VALU presentation consistency', () => {
     expect(alignment).toContain('align-items: flex-start !important')
   })
 
-  test('PRIME uses the canonical future-ready skills and five approved VALU merit designations', () => {
+  test('PRIME preserves canonical clusters and merit designations without publishing proprietary thresholds', () => {
     const brand = read('src/lib/brand.js')
     const prime = read('src/app/prime/page.jsx')
     expect(brand).toContain("name: 'Presence'")
@@ -159,11 +159,8 @@ describe('VALU presentation consistency', () => {
     for (const tier of ['Force to Align With', 'Emerging Force', 'Developing Professional', 'Building Foundations', 'At the Starting Point']) {
       expect(prime).toContain(tier)
     }
-    expect(prime).toContain('80–100 POINTS')
-    expect(prime).toContain('65–79 POINTS')
-    expect(prime).toContain('50–64 POINTS')
-    expect(prime).toContain('35–49 POINTS')
-    expect(prime).toContain('BELOW 35 POINTS')
+    expect(prime).toContain('The detailed assessment criteria and scoring thresholds are proprietary.')
+    expect(prime).not.toMatch(/(?:80–100|65–79|50–64|35–49|BELOW 35) POINTS/i)
     expect(brand).toContain("name: 'Force to Align With'")
     expect(brand).toContain("min: 0, max: 34, name: 'At the Starting Point'")
   })
