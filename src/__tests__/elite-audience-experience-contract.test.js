@@ -52,9 +52,9 @@ describe('1% of the 1% audience experience contract', () => {
     const edit = read('src/app/profile/edit/page.jsx')
     const setup = read('src/app/profile/setup/page.jsx')
     for (const source of [publicProfile, edit, setup]) {
-      expect(source).not.toMatch(/\\bprogramme types\\b/i)
-      expect(source).not.toMatch(/\\borganisation\\b/i)
-      expect(source).not.toMatch(/\\borganise\\b/i)
+      expect(source).not.toMatch(/\bprogramme types\b/i)
+      expect(source).not.toMatch(/\borganisation\b/i)
+      expect(source).not.toMatch(/\borganise\b/i)
     }
     expect(publicProfile).toContain('Program Types')
     expect(publicProfile).toContain('for a program?')
