@@ -8,7 +8,7 @@ import { AssessmentStartLink } from '@/components/Nav'
 const MILESTONES = [
   { key:'connect', title:'Join Valoria', short:'START', description:'Your Valoria account is ready.', href:'/profile/onboarding', icon:'01' },
   { key:'assess', title:'Complete VALU', short:'VALU', description:'Continue your saved assessment and see your professional signal.', href:'/dashboard', icon:'02' },
-  { key:'report', title:'Understand your result', short:'RESULT', description:'Read what your VALU result means.', href:'/report', icon:'03' },
+  { key:'report', title:'Understand your result', short:'RESULT', description:'Read what your VALU Index result means.', href:'/report', icon:'03' },
   { key:'profile', title:'Complete your profile', short:'PROFILE', description:'Add your professional details and unlock enhanced marketplace access.', href:'/profile/setup', icon:'04' },
   { key:'capability', title:'Choose your capability', short:'CAPABILITY', description:'Tell Valoria what you want to be discovered for.', href:'/profile/setup', icon:'05' },
   { key:'eligibility', title:'Finish your capability setup', short:'READY', description:'Complete the remaining requirements for your capability.', href:'/profile/passport', icon:'06' },
@@ -56,7 +56,7 @@ function buildCards(state) {
     let action = complete ? 'VIEW' : current ? 'CONTINUE' : 'LOCKED'
 
     if (m.key === 'assess' && complete) href='/dashboard'
-    // An incomplete VALU milestone must always enter the secure assessment
+    // An incomplete VALU Index milestone must always enter the secure assessment
     // handoff. Never send a participant back to the dashboard as the action.
     if (m.key === 'report' && complete) href='/report'
     if (m.key === 'profile' && complete) href='/profile/edit'
