@@ -59,6 +59,9 @@ describe('VALU presentation consistency', () => {
 
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
     const hero = read('src/components/HeroSlider.jsx')
+    expect(hero).toContain('START THE VALU INDEX TASTER')
+    expect(hero).not.toContain('TAKE THE VALU TASTER')
+    expect(hero).not.toContain('VALU Index assessment structure')
     expect(hero).toContain('POINTS-BASED CAPABILITY PROFILE')
     expect(hero).toContain('PRIME framework · results expressed in points')
     for (const cluster of ['Presence', 'Relationships', 'Intelligence', 'Mastery', 'Enterprise']) {
