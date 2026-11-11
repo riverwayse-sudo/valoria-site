@@ -21,6 +21,14 @@ describe('assessment environment isolation', () => {
     expect(proxy).toContain('if (stagingRuntime !== stagingAssessment) return null')
   })
 
+  test('account confirmation links use the configured site origin in every environment', () => {
+    const signup = read('src/app/signup/page.jsx')
+    const professionalSignup = read('src/app/professional-signup/page.jsx')
+    expect(signup).toContain("process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'")
+    expect(professionalSignup).toContain('getAuthCallbackUrl(tasterId)')
+    expect(professionalSignup).not.toContain('window.location.origin')
+  })
+
   test('staging sitemap uses its own hostname and robots blocks indexing', () => {
     const sitemap = read('src/app/sitemap.js')
     const robots = read('src/app/robots.js')
