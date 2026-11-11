@@ -40,6 +40,14 @@ describe('1% of the 1% audience experience contract', () => {
     expect(directory).toContain('Contact details and individual assessment answers are not displayed')
   })
 
+  test('dashboard only reports published capabilities as listed and treats each listing independently', () => {
+    const dashboard = read('src/app/dashboard/page.jsx')
+    expect(dashboard).toContain("capabilities.filter(c => c.is_active && c.eligible_for_listing === true && c.eligibility_status === 'listed')")
+    expect(dashboard).toContain("activeCapabilities.some(c => c.eligible_for_listing === true && c.eligibility_status === 'listed')")
+    expect(dashboard).not.toContain("c.eligibility_status === 'listed' || c.eligible_for_listing === true")
+    expect(dashboard).not.toContain("eligibilityReady && activeCapabilities.every(c => c.eligibility_status === 'listed')")
+  })
+
   test('authenticated profile and dashboard journeys use US conventions and explicit public consent', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
     const setup = read('src/app/profile/setup/page.jsx')
