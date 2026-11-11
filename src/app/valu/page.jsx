@@ -57,7 +57,7 @@ export default function ValuPage() {
       <section className="valu-outcome">
         <div className="valu-wrap valu-outcome-grid">
           <div><div className="valu-kicker valu-dark"><span /> WHAT THE FULL VALU INDEX ESTABLISHES</div><h2>Move from a directional taster to an official professional record.</h2></div>
-          <div><p>The taster offers an initial perspective on your professional capability. Your official VALU Index is established when you complete the full Index.</p><p>The full VALU Index covers all 17 PRIME skills across Presence, Relationships, Intelligence, Mastery and Enterprise. It establishes your official points result and PRIME profile, with a 12-month validity period. Your professional profile and marketplace access then reflect your completed VALU Index and the applicable eligibility requirements.</p><AssessmentStartLink href={BRAND.assessmentUrl} className="valu-inline">START THE VALU INDEX TASTER →</AssessmentStartLink></div>
+          <div><p>The taster offers an initial perspective on your professional capability. Your official VALU Index is established when you complete the full VALU Index.</p><p>The full VALU Index covers all 17 PRIME skills across Presence, Relationships, Intelligence, Mastery and Enterprise. It establishes your official points result and PRIME profile, with a 12-month validity period. Your professional profile and marketplace access then reflect your completed VALU Index and the applicable eligibility requirements.</p><AssessmentStartLink href={BRAND.assessmentUrl} className="valu-inline">START THE VALU INDEX TASTER →</AssessmentStartLink></div>
         </div>
       </section>
 
