@@ -142,3 +142,22 @@ body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-i
 
 /* Staging-only environment indicator; rendered only by the isolated staging build. */
 .staging-site-banner{position:relative;z-index:1000;padding:7px 16px;background:#C9A84C;color:#1A1A2E;text-align:center;font-size:9px;font-weight:800;letter-spacing:.16em}
+
+
+/* Staging banner sits above the fixed navigation; reserve its row instead of covering the menu control. */
+.staging-site-banner {
+  white-space: nowrap;
+}
+.staging-site-banner + nav.vi-nav {
+  top: 28px;
+}
+@media (max-width: 560px) {
+  .staging-site-banner {
+    padding: 7px 8px;
+    font-size: 8px;
+    letter-spacing: .08em;
+  }
+  .staging-site-banner + nav.vi-nav {
+    top: 28px;
+  }
+}
