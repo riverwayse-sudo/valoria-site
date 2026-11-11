@@ -90,11 +90,11 @@ export default function Nav() {
     const active = isPathActive(pathname, item.href)
     if (item.external) {
       if (item.href === NAVIGATION.assessmentUrl) {
-        return <AssessmentStartLink href={item.href} className={`${className}${active ? ' active' : ''}`} onClick={close}>{item.label}</AssessmentStartLink>
+        return <AssessmentStartLink href={item.href} className={`${className}${active ? ' active' : ''}`} aria-current={active ? 'page' : undefined} onClick={close}>{item.label}</AssessmentStartLink>
       }
-      return <a href={item.href} className={`${className}${active ? ' active' : ''}`} onClick={close}>{item.label}</a>
+      return <a href={item.href} className={`${className}${active ? ' active' : ''}`} aria-current={active ? 'page' : undefined} onClick={close}>{item.label}</a>
     }
-    return <Link href={item.href} className={`${className}${active ? ' active' : ''}`} onClick={close}>{item.label}</Link>
+    return <Link href={item.href} className={`${className}${active ? ' active' : ''}`} aria-current={active ? 'page' : undefined} onClick={close}>{item.label}</Link>
   }
 
   return <>
@@ -119,14 +119,14 @@ export default function Nav() {
           </li>
         ) : (
           <li key={item.label}>{item.href === NAVIGATION.assessmentUrl
-          ? <AssessmentStartLink href={item.href} className={`nav-link${isPathActive(pathname, item.href) ? ' active' : ''}`}>{item.label}</AssessmentStartLink>
+          ? <AssessmentStartLink href={item.href} className={`nav-link${isPathActive(pathname, item.href) ? ' active' : ''}`} aria-current={isPathActive(pathname, item.href) ? 'page' : undefined}>{item.label}</AssessmentStartLink>
           : item.href.startsWith('http')
-            ? <a href={item.href} className={`nav-link${isPathActive(pathname, item.href) ? ' active' : ''}`}>{item.label}</a>
-            : <Link href={item.href} className={`nav-link${isPathActive(pathname, item.href) ? ' active' : ''}`}>{item.label}</Link>}</li>
+            ? <a href={item.href} className={`nav-link${isPathActive(pathname, item.href) ? ' active' : ''}`} aria-current={isPathActive(pathname, item.href) ? 'page' : undefined}>{item.label}</a>
+            : <Link href={item.href} className={`nav-link${isPathActive(pathname, item.href) ? ' active' : ''}`} aria-current={isPathActive(pathname, item.href) ? 'page' : undefined}>{item.label}</Link>}</li>
         ))}
 
-        {authChecked && user && <li className="nav-account"><Link href="/dashboard" className={`nav-link${isPathActive(pathname, '/dashboard') ? ' active' : ''}`}>Dashboard</Link><NotificationBell userId={user.id} /><button onClick={signOut} className="nav-link nav-signout">Sign Out</button></li>}
-        {process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? <li><Link href="/dashboard" className={`nav-link${isPathActive(pathname, '/dashboard') ? ' active' : ''}`}>Dashboard Preview</Link></li> : authChecked && !user && <li><Link href="/login" className={`nav-link${isPathActive(pathname, '/login') ? ' active' : ''}`}>Sign In</Link></li>}
+        {authChecked && user && <li className="nav-account"><Link href="/dashboard" className={`nav-link${isPathActive(pathname, '/dashboard') ? ' active' : ''}`} aria-current={isPathActive(pathname, '/dashboard') ? 'page' : undefined}>Dashboard</Link><NotificationBell userId={user.id} /><button onClick={signOut} className="nav-link nav-signout">Sign Out</button></li>}
+        {process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ? <li><Link href="/dashboard" className={`nav-link${isPathActive(pathname, '/dashboard') ? ' active' : ''}`}>Dashboard Preview</Link></li> : authChecked && !user && <li><Link href="/login" className={`nav-link${isPathActive(pathname, '/login') ? ' active' : ''}`} aria-current={isPathActive(pathname, '/login') ? 'page' : undefined}>Sign In</Link></li>}
         <li><Link href={cta.href} className="nav-cta">{cta.label}</Link></li>
       </ul>
 
