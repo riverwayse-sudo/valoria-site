@@ -49,7 +49,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
   const results = useMemo(() => {
     const q=query.trim().toLowerCase()
     return rows.filter(p => {
-      if (!displayText(p.full_name)) return false
+      if (!/^ATB-[A-Z0-9-]{4,40}$/i.test(displayText(p.atb_id))) return false
       const listedCapabilities = Array.isArray(p.capabilities) ? p.capabilities : (Array.isArray(p.tracks) ? p.tracks : (p.track ? [p.track] : []))
       if(activeTrack !== 'all' && !listedCapabilities.map(normalize).includes(activeTrack)) return false
       if(industry && displayText(p.industry) !== industry) return false
@@ -73,7 +73,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       position: index + 1,
       item: {
         '@type': 'Person',
-        name: profile.full_name,
+        identifier: profile.atb_id,
         url: 'https://valoriainstitute.com/profile/' + profile.id,
         jobTitle: profile.headline || profile.current_job_title || undefined,
       },
@@ -212,16 +212,16 @@ function Profile({p, onSelect}) {
       <div className={styles.identityCopy}>
         <small>ATB PROFILE ID</small>
         <strong>{profileId}</strong>
-        <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'BASIC · SNAPSHOT' : 'FULL ASSESSMENT COMPLETE'}</span>
+        <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'VALU TASTER COMPLETE' : 'FULL VALU INDEX COMPLETE'}</span>
       </div>
       <div className={styles.valu}>
         <small>VALU INDEX</small>
         <b>{isFullAssessment ? p.valu_index : '—'}</b>
-        <span>{isFullAssessment ? 'POINTS' : 'BASIC'}</span>
+        <span>{isFullAssessment ? 'POINTS' : 'TASTER'}</span>
       </div>
     </div>
-    <h3 className={styles.professionalName}>{displayText(p.full_name)}</h3>
-    {displayText(p.headline) && <p className={styles.professionalHeadline}>{displayText(p.headline)}</p>}
+    <h3 className={styles.professionalName}>{displayText(p.headline || p.current_job_title || 'Professional profile')}</h3>
+    {displayText(p.headline) && <p className={styles.professionalHeadline}>{displayText(p.current_job_title || '')}</p>}
     <p className={styles.specialisation} title={specialisation}>{specialisation || 'Professional capability'}</p>
     <div className={styles.assessmentInsight}>
       <small>VALU INDEX ASSESSMENT INSIGHT</small>
@@ -326,7 +326,7 @@ function ProfilePreviewModal({ profile, onClose }) {
             />
             <div className={styles.modalIdentityCopy}>
               <p className={styles.modalEyebrow}>ATB PROFILE ID · {displayText(profile.atb_id || 'PENDING')}</p>
-              <h2 id="profile-preview-title">{displayText(profile.full_name)}</h2>
+              <h2 id="profile-preview-title">{displayText(profile.atb_id || 'Valoria Professional')}</h2>
               <p className={styles.modalHeadline}>{displayText(profile.headline || profile.current_job_title || 'Professional capability')}</p>
               <div className={styles.modalMeta}>
                 {displayText(profile.industry) && <span>{displayText(profile.industry)}</span>}
@@ -337,7 +337,7 @@ function ProfilePreviewModal({ profile, onClose }) {
             <div className={styles.modalIndex}>
               <small>VALU INDEX</small>
               <strong>{isFull ? profile.valu_index : '—'}</strong>
-              <span>{isFull ? 'POINTS' : 'BASIC ACCESS'}</span>
+              <span>{isFull ? 'POINTS' : 'TASTER'}</span>
               {tier && <b>{tier.name}</b>}
             </div>
           </div>
@@ -348,10 +348,10 @@ function ProfilePreviewModal({ profile, onClose }) {
               <p id="profile-preview-description" className={styles.modalSummary}>
                 {isFull
                   ? (assessmentSummary || 'The Full VALU assessment is complete. The professional insight is being prepared.')
-                  : 'This professional has completed the VALU taster and has Basic marketplace access. The Full VALU Index is a separate assessment for official points, merit designation and report insight.'}
+                  : 'This professional has completed the VALU Index Taster. A public profile is visible only where the professional has chosen visibility and Valoria's listing requirements are met. The separate full VALU Index establishes official points, merit tier and assessment insight.'}
               </p>
               <div className={styles.modalCredential}>
-                <span>{isFull ? 'FULL VALU ASSESSMENT' : 'BASIC · VALU SNAPSHOT'}</span>
+                <span>{isFull ? 'FULL VALU INDEX COMPLETE' : 'VALU TASTER COMPLETE'}</span>
                 <strong>{tier ? tier.name : 'OFFICIAL RESULT PENDING'}</strong>
               </div>
               {developmentFocus && <div className={styles.modalCredential}><span>TOP DEVELOPMENT AREA</span><strong>{developmentFocus}</strong></div>}
