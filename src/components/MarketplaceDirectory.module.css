@@ -1062,3 +1062,79 @@
   .card { min-height: 0; padding: 17px; }
   .directory .container { padding: 24px 14px 40px; }
 }
+
+/* Readability baseline: essential marketplace card and profile-modal information. */
+.identity small,
+.identity em,
+.valu small,
+.valu span,
+.cardIdLabel,
+.profileMeta p,
+.career,
+.location,
+.bio,
+.assessmentPending,
+.strongestCapability,
+.specialistCapabilities .capabilitySelected,
+.capabilities span,
+.capabilityBadge strong,
+.capabilityBadge small,
+.capabilityLabel,
+.view,
+.tierBadge {
+  font-size: 11px !important;
+  line-height: 1.45;
+}
+.profileMeta p,
+.career,
+.location,
+.bio,
+.assessmentSummary,
+.assessmentPending,
+.modalSummary,
+.modalSectionCopy,
+.modalFooter p {
+  font-size: 12px !important;
+  line-height: 1.55;
+}
+.modalTopline,
+.modalEyebrow,
+.modalSectionLabel,
+.modalMeta span,
+.modalIndex small,
+.modalIndex span,
+.modalIndex b,
+.modalCredential span,
+.modalCredential strong,
+.modalCapability strong,
+.modalCapabilitySelected strong,
+.modalCapability span,
+.modalCapabilitySelected span,
+.modalChips span,
+.modalPrimary,
+.modalSecondary {
+  font-size: 11px !important;
+  line-height: 1.45;
+}
+@media (max-width: 640px) {
+  .identity small,
+  .identity em,
+  .valu small,
+  .valu span,
+  .cardIdLabel,
+  .profileMeta p,
+  .career,
+  .location,
+  .bio,
+  .assessmentPending,
+  .strongestCapability,
+  .specialistCapabilities .capabilitySelected,
+  .capabilities span,
+  .capabilityBadge strong,
+  .capabilityBadge small,
+  .capabilityLabel,
+  .view,
+  .tierBadge {
+    font-size: 12px !important;
+  }
+}
