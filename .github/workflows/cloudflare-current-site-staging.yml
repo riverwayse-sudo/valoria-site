@@ -17,13 +17,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: valoria-current-site-staging
-  cancel-in-progress: true
+  group: valoria-site-staging-environment
+  cancel-in-progress: false
 
 jobs:
   deploy-staging:
     name: Test, build, deploy and smoke-test isolated staging Worker
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: staging
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +42,7 @@ jobs:
           cat > .env <<'EOF'
           NEXT_PUBLIC_SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
           SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
-          NEXT_PUBLIC_SITE_URL=https://valoria-current-site-audit-staging.riverwayse.workers.dev
+          NEXT_PUBLIC_SITE_URL=https://valoria-staging-site.riverwayse.workers.dev
           NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_C3j_CjLgTLDGRu8rH1SXEg_tYpxoYUm
           SUPABASE_SERVICE_ROLE_KEY=placeholder-service-role-key
           ANTHROPIC_API_KEY=placeholder-anthropic-key
@@ -72,7 +72,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base="https://valoria-current-site-audit-staging.riverwayse.workers.dev"
+          base="https://valoria-staging-site.riverwayse.workers.dev"
           routes=(
             /
             /valu
@@ -134,5 +134,5 @@ jobs:
       - name: Run desktop/mobile and fresh-session staging browser audit
         run: node scripts/staging-browser-audit.mjs
         env:
-          STAGING_SITE_URL: https://valoria-current-site-audit-staging.riverwayse.workers.dev
+          STAGING_SITE_URL: https://valoria-staging-site.riverwayse.workers.dev
           STAGING_ASSESSMENT_URL: https://valoria-staging-assessment.riverwayse.workers.dev
