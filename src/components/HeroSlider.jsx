@@ -35,9 +35,9 @@ export default function HeroSlider() {
         <div className={`hero-slide ${active === 0 ? 'is-active' : ''}`} aria-hidden={active !== 0}>
           <div className="container hero-inner">
             <div>
-              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">NIGERIA'S PROFESSIONAL CAPABILITY MARKETPLACE</span></div>
+              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">A PROFESSIONAL CAPABILITY INSTITUTE</span></div>
               <h1 className="hero-title au d2">Capability should decide<br />who gets seen.<br /><em>Valoria sets the standard.</em></h1>
-              <p className="hero-sub au d3">Valoria assesses Nigerian professionals against one capability standard, develops what matters and connects qualified talent with employers, event organisers and training buyers.</p>
+              <p className="hero-sub au d3">Valoria assesses professional capability across five PRIME dimensions, supports deliberate development and connects professionals with relevant opportunities across industries and markets.</p>
               <div className="hero-actions au d4"><AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">TAKE THE VALU TASTER</AssessmentStartLink><a href="/valu#how-it-works" className="btn-outline">SEE HOW IT WORKS</a></div>
               <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">VALU <small style={{fontSize:10,letterSpacing:'.08em'}}>INDEX</small></div><div className="hmc-right"><div className="hmc-desig">POINTS-BASED CAPABILITY PROFILE</div><div className="hmc-bars"><span>PRIME</span><span>VALU</span></div></div></div></div>
             </div>
