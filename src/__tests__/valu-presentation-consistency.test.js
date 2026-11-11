@@ -66,6 +66,18 @@ describe('VALU presentation consistency', () => {
     }
     expect(hero).not.toContain('/ 100')
   })
+  test('homepage profile showcase restores the moving public rail and uses ATB IDs, never participant names', () => {
+    const homepageProfiles = read('src/components/LiveProfilesScroll.jsx')
+    const motion = read('src/styles/motion.css')
+    expect(homepageProfiles).toContain('profiles.slice(0, 13)')
+    expect(homepageProfiles).toContain('[false, true].map((isClone)')
+    expect(homepageProfiles).toContain('vi-scroll-group')
+    expect(homepageProfiles).toContain('{profile.atb_id || \'VALORIA PROFESSIONAL\'}')
+    expect(homepageProfiles).not.toContain('{displayText(profile.full_name)}')
+    expect(homepageProfiles).not.toContain('name={profile.full_name}')
+    expect(motion).toContain('.vi-scroll-track { animation: vi-scroll-x var(--motion-registry-loop) linear infinite;')
+  })
+
   test('public registry and professional-facing score cards use points', () => {
     expect(read('src/components/LiveProfilesScroll.jsx')).toContain('vi-scroll-score-max">points')
     expect(read('src/app/profile/[id]/ProfileClient.jsx')).toContain('> points</span>')
