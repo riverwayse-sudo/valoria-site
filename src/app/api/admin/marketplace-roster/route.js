@@ -114,7 +114,7 @@ export async function GET(request) {
     if (!assessmentAccess) return []
 
     const acknowledgement = latestAcknowledgementById.get(profile.id)
-    const publicConsent = acknowledgement?.acknowledgement_version === 'public-profile-visibility-v3-2026-11-07'
+    const publicConsent = acknowledgement?.acknowledgement_version === 'public-profile-visibility-v4-2026-11-11'
     const activeCapabilities = capabilitiesById.get(profile.id) || []
     // A professional may be publicly listed in one approved capability while
     // another selected capability remains under review. Match the public roster
