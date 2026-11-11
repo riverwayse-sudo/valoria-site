@@ -357,7 +357,7 @@ function EditPageInner() {
             }} /></Field>
             <Field label="Work history">
               <ListEditor rows={form.work_history || []} addLabel="Add role"
-                fields={[{key:'title',placeholder:'Title'},{key:'org',placeholder:'Organisation'},{key:'duration',placeholder:'Duration'}]}
+                fields={[{key:'title',placeholder:'Title'},{key:'org',placeholder:'Organization'},{key:'duration',placeholder:'Duration'}]}
                 onChange={v => setField('candidate','work_history', v)} />
             </Field>
             <div style={S.grid2}>
@@ -394,13 +394,13 @@ function EditPageInner() {
         {isFacilitator && (
           <Section title="Facilitator Details" dirty={dirty.facilitator} saving={saving.facilitator} saved={saved.facilitator}
             onSave={() => saveSection('facilitator', ['programme_types','past_clients','fee_range','certifications'])}>
-            <Field label="Programme types"><ChipGroup options={PROGRAMME_TYPES} selected={form.programme_types} onToggle={v => {
+            <Field label="Program types"><ChipGroup options={PROGRAMME_TYPES} selected={form.programme_types} onToggle={v => {
               const cur = form.programme_types || []
               setField('facilitator','programme_types', cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v])
             }} /></Field>
             <Field label="Past clients">
               <ListEditor rows={form.past_clients || []} addLabel="Add client"
-                fields={[{key:'name',placeholder:'Client / organisation'},{key:'programme',placeholder:'Programme delivered'}]}
+                fields={[{key:'name',placeholder:'Client / organization'},{key:'programme',placeholder:'Programme delivered'}]}
                 onChange={v => setField('facilitator','past_clients', v)} />
             </Field>
             <Field label="Fee range"><TextInput value={form.fee_range} onChange={v => setField('facilitator','fee_range',v)} /></Field>
