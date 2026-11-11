@@ -5,7 +5,7 @@ import '../pages.css'
 
 export const metadata = {
   title: 'About Valoria Institute | Professional Capability Institution',
-  description: 'Valoria Institute is an Africa-first professional capability institution, with Nigeria as its initial operating jurisdiction. Its connected system brings together PRIME, the VALU Index, professional development, certification pathways and a capability-led marketplace.',
+  description: 'Valoria Institute is a professional capability institution with an international outlook. Its connected system brings together PRIME, the VALU Index, professional development, institutional standards and capability-led talent discovery. Operating availability and credential status are stated transparently.',
   keywords: ['Valoria Institute', 'professional capability', 'PRIME framework', 'VALU Index', 'professional development', 'talent marketplace'],
   openGraph: {
     title: 'About Valoria Institute',
@@ -16,8 +16,8 @@ export const metadata = {
 }
 
 const FOUNDING_STATEMENTS = [
-  { title: 'Vision', body: 'An Africa where professional merit always finds its platform.' },
-  { title: 'Mission', body: "To build and operate Africa's premier professional capability marketplace: one that develops professionals with rigour, surfaces talent with merit, and enables precision hiring through a technology platform designed for the seriousness the African professional market has always deserved." },
+  { title: 'Vision', body: 'A professional landscape where capability can be understood, developed, recognized and connected to opportunity.' },
+  { title: 'Mission', body: "To build and operate a trusted professional capability institution: one that assesses capability with structure, supports development with purpose, and helps professionals and organizations connect capability to relevant opportunity." },
   { title: 'Purpose', body: 'To bridge the gap between latent brilliance and institutional scale. We exist because talent is not the problem. Infrastructure is. For every professional whose career has stalled not for lack of ability, but lack of access. Valoria Institute is the answer.' },
 ]
 
@@ -28,18 +28,18 @@ const PRINCIPLES = [
 ]
 
 const POSITIONING = [
-  { title: 'Not a recruitment agency', body: 'Valoria does not recruit on behalf of employers. The Marketplace helps buyers discover capability; hiring decisions remain with the organisations making them.' },
-  { title: 'Not a training company', body: 'Valoria Institute provides the capability framework and assessment. Valoria Develop supports PRIME-based development pathways for individuals and organisations.' },
-  { title: 'Not a speaker bureau', body: 'ATB Spotlight helps event organisers and training buyers discover speakers and facilitators through capability-led profiles and relevant experience.' },
-  { title: 'The VALU Index is not itself a certification', body: 'The VALU Index is an assessment result that informs capability development. It is distinct from a professional certification or credential. Valoria Institute’s institutional standards and certification role must be described separately; no credential should be represented as awarded until the relevant approved certification process is operational and completed.' },
+  { title: 'Not a recruitment agency', body: 'Valoria does not recruit on behalf of employers. The Marketplace helps buyers discover professional profiles and assessment-led insight; hiring decisions and credential checks remain with the organizations making them.' },
+  { title: 'Not a training company', body: 'Valoria Institute provides the capability framework and assessment. Valoria Develop supports PRIME-based development pathways for individuals and organizations.' },
+  { title: 'Not a speaker bureau', body: 'ATB Spotlight helps event organizers and program buyers discover speakers and facilitators through capability-led profiles and relevant experience.' },
+  { title: 'The VALU Index is not itself a certification', body: 'The VALU Index is an assessment result that informs capability development. It is distinct from a professional certification or credential. Valoria Institute’s institutional standards and any certification pathway must be described separately; no credential should be represented as awarded until the relevant approved process is operational and completed.' },
   { title: 'Not a jobs board', body: 'Valoria connects capability to relevant opportunities. An opportunity is presented as active only when real supply and a working application or enquiry route exist.' },
 ]
 
 const TIMELINE = [
-  { year: 'The challenge', label: 'Across hiring, speaking and training, buyers often make decisions with incomplete signals. CVs, biographies and referrals describe parts of a person’s experience, but do not always provide a consistent view of capability.' },
+  { year: 'The challenge', label: 'Across hiring, speaking and training, buyers often make decisions with incomplete signals. Resumes, biographies and referrals describe parts of a person’s experience, but do not always provide a consistent view of capability.' },
   { year: 'The framework', label: 'PRIME establishes a shared language for professional capability across Presence, Relationships, Intelligence, Mastery and Enterprise.' },
   { year: 'The assessment', label: 'The VALU Index translates assessment into a structured view of capability, expressed in points and used to inform professional development.' },
-  { year: 'The connection', label: 'The Valoria Marketplace creates pathways through which employers, event organisers and programme teams can discover relevant professional expertise.' },
+  { year: 'The connection', label: 'The Valoria Marketplace creates pathways through which employers, event organizers and program teams can discover relevant professional expertise.' },
 ]
 
 export default function AboutPage() {
@@ -156,7 +156,7 @@ export default function AboutPage() {
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WORK WITH VALORIA</span></div>
               <h2 className="section-title">Build a stronger <em>capability infrastructure.</em></h2>
-              <p className="page-sub">Valoria Institute is Africa-first, with Nigeria as its initial operating jurisdiction. Continental expansion is a 2028 priority, guided by institutional readiness and partnerships.</p>
+              <p className="page-sub">Valoria Institute is designed for professionals, employers and institutions navigating an international professional landscape. Its operating footprint, available services and institutional relationships are communicated transparently; no global accreditation or universal recognition is implied.</p>
               <div className="page-hero-actions">
                 <a href="/contact-us" className="btn-gold">DISCUSS A PARTNERSHIP</a>
                 <a href="/valu" className="btn-outline">EXPLORE THE VALU INDEX</a>
