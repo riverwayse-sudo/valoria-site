@@ -9,7 +9,6 @@ import { NAVIGATION, isPathActive } from '@/config/navigation'
 
 export default function Nav() {
   const pathname = usePathname()
-  const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [openMenu, setOpenMenu] = useState(null)
   const [user, setUser] = useState(null)
@@ -17,12 +16,6 @@ export default function Nav() {
   const [accountType, setAccountType] = useState(null)
   const navRootRef = useRef(null)
   const mobileMenuButtonRef = useRef(null)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
@@ -105,9 +98,8 @@ export default function Nav() {
   }
 
   return <>
-    
-
-    <nav ref={navRootRef} className={`vi-nav${scrolled ? ' scrolled' : ''}`} aria-label="Primary navigation">
+    <header className="vi-site-header">
+    <nav ref={navRootRef} className="vi-nav" aria-label="Primary navigation">
       <Link href="/" className="nav-logo" aria-label="Valoria Institute home"><img src="/logo.png" alt="Valoria Institute" /></Link>
 
       <ul className="nav-links" role="list">
@@ -156,6 +148,7 @@ export default function Nav() {
       </> : <div>{renderItem({ label: 'Sign In', href: '/login' }, 'nav-mobile-link')}</div>}
       <Link href={cta.href} className="m-cta" onClick={close}>{cta.label}</Link>
     </nav>
+    </header>
   </>
 }
  
