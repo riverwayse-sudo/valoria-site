@@ -155,22 +155,6 @@ export default function HomePage() {
 
         <LiveProfilesScroll />
 
-        <section className="home-partnership-band home-consolidated-engagement valu-conversion" aria-labelledby="partnership-band-title">
-          <div className="container">
-            <Reveal className="home-partnership-content">
-              <div>
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">YOUR NEXT STEP</span></div>
-                <h2 id="partnership-band-title">Make your next capability decision with <em>greater clarity.</em></h2>
-                <p>Professionals can begin with the VALU taster. Employers and institutions can speak with Valoria about finding professional expertise, development programs or event support.</p>
-              </div>
-              <div className="home-professional-entry-actions">
-                <AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">START THE VALU TASTER <span aria-hidden="true">→</span></AssessmentStartLink>
-                <a href="/contact-us" className="home-professional-secondary">TALK TO VALORIA <span aria-hidden="true">→</span></a>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
         <HomepageEvents />
       </main>
       <Footer />
