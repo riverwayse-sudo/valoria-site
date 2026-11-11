@@ -2065,6 +2065,11 @@
   grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr);
 }
 
+.home-redesign-root .home-events-poster{position:relative;isolation:isolate;overflow:hidden;background:#11111d}
+.home-redesign-root .home-events-poster::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(13,13,24,.91) 0%,rgba(13,13,24,.66) 58%,rgba(13,13,24,.24) 100%),linear-gradient(0deg,rgba(13,13,24,.74),transparent 58%)}
+.home-events-poster-image{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:center}
+.home-events-poster-kicker,.home-events-poster strong,.home-events-poster-action{position:relative;z-index:1}
+.home-events-play-icon{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--gold);color:var(--dark);font-size:9px}
 .home-redesign-root .home-events-poster {
   min-width: 0;
   min-height: 520px;
