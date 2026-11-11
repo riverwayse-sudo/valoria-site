@@ -84,7 +84,7 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
 
   const recoveryReason = journey?.next_action ||
     ({
-      assess: hasAssessment ? 'Continue your VALU journey.' : 'No completed VALU Index yet — start your VALU Index.',
+      assess: hasAssessment ? 'Continue your VALU Index.' : 'No completed VALU Index yet — start your VALU Index.',
       report: reportReady ? 'Activate your Valoria report to continue.' : 'Your VALU report is being prepared.',
       profile: 'Complete your professional profile.',
       capability: 'Add your capability.',
