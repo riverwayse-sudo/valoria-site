@@ -89,6 +89,7 @@ describe('1% of the 1% audience experience contract', () => {
     expect(visibility).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
     const consent = read('src/lib/profile-consent-copy.js')
     expect(consent).toContain('my ATB ID')
+    expect(consent).toContain('Personal names are not displayed on public profile cards or pages.')
     expect(consent).toContain('I can withdraw this permission at any time.')
     expect(consent).not.toContain('my professional name')
   })
