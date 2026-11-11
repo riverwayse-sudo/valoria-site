@@ -615,6 +615,8 @@ describe('VALUI marketplace lifecycle contract', () => {
 
     expect(nav).toContain('<header className="vi-site-header">')
     expect(nav).toContain('aria-label="Primary navigation"')
+    expect(nav).toContain('<div className="m-label">Organizations</div>')
+    expect(nav).not.toContain('Organisations')
     expect(nav).toContain('aria-expanded={openMenu === item.label}')
     expect(nav).toContain("aria-current={active ? 'page' : undefined}")
     expect(nav).toContain('onMouseEnter={() => setOpenMenu(item.label)}')
