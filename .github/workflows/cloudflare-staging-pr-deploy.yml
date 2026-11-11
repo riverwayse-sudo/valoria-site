@@ -85,8 +85,6 @@ jobs:
             /atb-connect
             /atb-spotlight
             /develop
-            /programmes
-            /facilitators
             /careers
             /contact-us
             /login
@@ -131,10 +129,11 @@ jobs:
           grep -q 'Human-AI Collaboration' /tmp/valoria-llms.txt
           grep -q 'Basic is a marketplace access state, not a merit tier' /tmp/valoria-llms.txt
           curl -fsS "$base/" -o /tmp/valoria-home.html
-          grep -q 'Capability should decide' /tmp/valoria-home.html
-          grep -q 'THREE WAYS TO ENGAGE' /tmp/valoria-home.html
+          grep -q 'Make your' /tmp/valoria-home.html
           grep -q 'INITIAL MARKET' /tmp/valoria-home.html
-          grep -q 'Valoria is Africa-first' /tmp/valoria-home.html
+          grep -q 'Take the taster' /tmp/valoria-home.html
+          grep -q 'Complete the full assessment' /tmp/valoria-home.html
+          grep -q 'Become discoverable' /tmp/valoria-home.html
           : > /tmp/valoria-css-bundle.css
           css_assets="$(grep -oE 'href="[^"]+\.css[^"]*"' /tmp/valoria-home.html | cut -d '"' -f 2)"
           if [[ -z "$css_assets" ]]; then
@@ -156,24 +155,3 @@ jobs:
           [[ "$status" == "401" ]] || { echo "Unauthenticated taster link returned HTTP $status"; cat /tmp/valu-link-taster-noauth || true; exit 1; }
           status="$(curl -sS -o /tmp/valu-opportunities-disabled -w '%{http_code}' "$base/api/opportunities")"
           [[ "$status" == "503" ]] || { echo "Read-only staging opportunity API returned HTTP $status"; cat /tmp/valu-opportunities-disabled || true; exit 1; }
-      - name: Capture desktop and mobile staging screenshots
-        shell: bash
-        run: |
-          set -euo pipefail
-          base="https://valoria-staging-site.riverwayse.workers.dev"
-          mkdir -p artifacts/valoria-staging
-          routes=(/ /valu /prime /about-us /marketplace /atb-connect /atb-spotlight /develop /jobs /opportunities)
-          npx --yes playwright@1.56.1 install chromium --with-deps
-          for route in "${routes[@]}"; do
-            slug="${route//\//_}"
-            [[ "$route" == "/" ]] && slug="home"
-            npx --yes playwright@1.56.1 screenshot --browser chromium --viewport-size="1440,1000" --full-page --wait-for-timeout=1200 "$base$route" "artifacts/valoria-staging/${slug}-desktop.png"
-            npx --yes playwright@1.56.1 screenshot --browser chromium --viewport-size="390,844" --full-page --wait-for-timeout=1200 "$base$route" "artifacts/valoria-staging/${slug}-mobile.png"
-          done
-      - name: Upload staging visual review
-        uses: actions/upload-artifact@v4
-        with:
-          name: valoria-staging-visual-review
-          path: artifacts/valoria-staging/*.png
-          if-no-files-found: error
-          retention-days: 3

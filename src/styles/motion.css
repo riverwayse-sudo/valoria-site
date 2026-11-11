@@ -244,3 +244,19 @@ nav.vi-nav.scrolled,
     will-change: auto;
   }
 }
+
+/* Reduced-motion support for the editorial homepage. */
+@media (prefers-reduced-motion: reduce) { .vi-hero-image, .vi-hero-art, .vi-audience-panel { transition: none !important; animation: none !important; } }
+
+
+/* Spatial PRIME hero interaction timing remains centralized in the motion system. */
+.vi-hero-art {
+  transition: transform var(--motion-emphasis) var(--motion-ease), box-shadow var(--motion-emphasis) var(--motion-ease);
+}
+.vi-hero-art-photo {
+  transition: transform var(--motion-section) var(--motion-ease), filter var(--motion-section) var(--motion-ease);
+}
+@media (prefers-reduced-motion:reduce) {
+  .vi-hero-art,
+  .vi-hero-art-photo { transition: none !important; }
+}

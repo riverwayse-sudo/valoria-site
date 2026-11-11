@@ -24,8 +24,9 @@
   "previews": {
     "vars": {
       "CF_WORKERS_PREVIEW": "1",
+      "CF_WORKERS": "1",
       "VALU_PREVIEW": "1",
-        "VALU_STAGING_API_ENABLED": "0",
+      "VALU_STAGING_API_ENABLED": "0",
       "NEXT_PUBLIC_VALU_STAGING_API_ENABLED": "0",
       "NEXT_PUBLIC_VALU_PREVIEW": "1",
       "VALU_PREVIEW_SITE_ORIGIN": "https://valoria-staging-site.riverwayse.workers.dev",
@@ -42,6 +43,7 @@
         { "binding": "VALU_ASSESSMENT", "service": "valoria-staging-assessment" }
       ],
       "vars": {
+        "CF_WORKERS": "1",
         "VALU_PREVIEW": "1",
         "VALU_STAGING_API_ENABLED": "1",
         "NEXT_PUBLIC_VALU_STAGING_API_ENABLED": "1",
