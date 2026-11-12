@@ -17,9 +17,8 @@ describe("Assessment proxy and staging navigation contract", () => {
   ];
 
   test.each(endpoints)("proxies nested %s requests to the Worker root", endpoint => {
-    expect(config).toContain(
-      `{ source: '/valu/assessment/api/${endpoint}', destination: \`${origin}/api/${endpoint}\` }`
-    );
+    const expected = "{ source: '/valu/assessment/api/" + endpoint + "', destination: \`${origin}/api/" + endpoint + "\` }";
+    expect(config).toContain(expected);
   });
 
   test("nested API rewrites are evaluated before the assessment asset catch-all", () => {
