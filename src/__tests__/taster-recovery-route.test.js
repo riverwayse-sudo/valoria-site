@@ -15,6 +15,13 @@ describe('VALU Index Taster recovery entry route', () => {
     expect(page).not.toContain('identity_status')
   })
 
+  test('recovery route is included in staging and production release smoke checks', () => {
+    const productionSmoke = fs.readFileSync(path.join(process.cwd(), 'scripts/production-smoke.mjs'), 'utf8')
+    const stagingAudit = fs.readFileSync(path.join(process.cwd(), 'scripts/staging-browser-audit.mjs'), 'utf8')
+    expect(productionSmoke).toContain("'/professional-signup/recover'")
+    expect(stagingAudit).toContain("${SITE}/professional-signup/recover")
+  })
+
   test('sign-in claims eligible taster records using the verified account session', () => {
     expect(login).toContain("fetch('/api/claim-taster'")
     expect(login).toContain('Authorization: `Bearer ${session.access_token}`')
