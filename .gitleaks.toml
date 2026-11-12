@@ -1,7 +1,7 @@
 [extend]
 useDefault = true
 
-[[allowlists]]
+[allowlist]
 description = "Ignore only the known public Supabase publishable-key line; never ignore other credentials in these files."
 condition = "AND"
 regexTarget = "line"
