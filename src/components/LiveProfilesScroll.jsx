@@ -99,12 +99,12 @@ export default async function LiveProfilesScroll() {
                           <strong className="vi-scroll-name">{profile.atb_id || 'VALORIA PROFESSIONAL'}</strong>
                           <div className="vi-scroll-headline">{displayText(profile.headline)}</div>
                           <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'NO DECLARED ROLE'}</div>
-                          <div className="vi-scroll-designation">{isBasic ? 'BASIC LISTING' : (tier?.name || 'ASSESSMENT FOLLOW-UP')}</div>
+                          <div className="vi-scroll-designation">{isBasic ? 'PUBLIC PROFILE' : (tier?.name || 'VALU INDEX PROFILE')}</div>
                           {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div>{development && <div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div>}</>}
                         </div>
-                        <div className="vi-scroll-score" aria-label={isBasic ? 'Basic marketplace listing' : `VALU Index ${profile.valu_index} points`}>
-                          <span className="vi-scroll-score-label">{isBasic ? 'LISTING LEVEL' : 'VALU INDEX'}</span>
-                          <strong>{isBasic ? 'BASIC' : profile.valu_index}</strong>
+                        <div className="vi-scroll-score" aria-label={isBasic ? 'Public professional profile' : `VALU Index ${profile.valu_index} points`}>
+                          <span className="vi-scroll-score-label">{isBasic ? 'PROFILE' : 'VALU INDEX'}</span>
+                          <strong>{isBasic ? 'PUBLIC' : profile.valu_index}</strong>
                           {!isBasic && <span className="vi-scroll-score-max">points</span>}
                         </div>
                         <span className="vi-scroll-card-arrow" aria-hidden="true">↗</span>
