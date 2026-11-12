@@ -1,6 +1,17 @@
 name: Validate and deploy current-site audit to isolated Cloudflare staging
 
 on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+    paths:
+      - "src/**"
+      - "supabase/migrations/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - "wrangler.jsonc"
   push:
     branches:
       - deploy/staging-current-site-audit-final-20261111
@@ -22,6 +33,7 @@ concurrency:
 
 jobs:
   deploy-staging:
+    if: ${{ github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'deploy/staging-current-site-audit-final-20261111') }}
     name: Test, build, deploy and smoke-test isolated staging Worker
     runs-on: ubuntu-24.04
     environment: staging
@@ -112,10 +124,12 @@ jobs:
           curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
           grep -q 'valoria-staging-site.riverwayse.workers.dev' /tmp/valoria-sitemap.xml
           curl -fsS "$base/" -o /tmp/valoria-home.html
+          grep -q 'Capability should decide' /tmp/valoria-home.html
+          grep -q 'Valoria sets the standard.' /tmp/valoria-home.html
           grep -q 'START THE VALU INDEX TASTER' /tmp/valoria-home.html
-          grep -q 'What brings you' /tmp/valoria-home.html
-          grep -q 'Build a stronger professional presence' /tmp/valoria-home.html
-          if grep -Eiq '(WANT TO BE DISCOVERED|Build a professional profile that helps relevant buyers|buyer access|sourcing access|BASIC LISTING|FULL LISTING|1 of 58|1 of 9|54 scored questions|four validity checks|nine questions|58 questions)' /tmp/valoria-home.html; then
+          grep -q 'Make your capability legible.' /tmp/valoria-home.html
+          grep -q 'POINTS-BASED CAPABILITY PROFILE' /tmp/valoria-home.html
+          if grep -Eiq '(WANT TO BE DISCOVERED|Become discoverable|Build a professional profile that helps relevant decision-makers understand your capabilities|buyer access|sourcing access|BASIC LISTING|FULL LISTING|1 of 58|1 of 9|54 scored questions|four validity checks|nine questions|58 questions|55 questions|84 / 100|vi-scroll-track|live-profiles|[0-9]+[[:space:]]*/[[:space:]]*100)' /tmp/valoria-home.html; then
             echo "Homepage exposes internal access or assessment mechanics"
             exit 1
           fi
