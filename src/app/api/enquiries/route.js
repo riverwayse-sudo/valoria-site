@@ -20,7 +20,7 @@ function escapeHtml(value = '') {
 
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) throw new Error('Supabase server configuration is missing.')
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
 }
@@ -140,6 +140,9 @@ async function notifyProfessional({ supabase, professionalProfileId, enquiryType
 
 export async function POST(request) {
   try {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return Response.json({ error: 'Enquiry service is temporarily unavailable.' }, { status: 503 })
+    }
     const supabase = getSupabase()
     const body = await request.json()
     const {
