@@ -577,6 +577,16 @@ describe('journey integrity contract', () => {
   })
 
 
+  test('public marketplace copy avoids internal listing and sourcing terminology', () => {
+    const registry = read('src/components/LiveProfilesScroll.jsx')
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    for (const source of [registry, directory]) {
+      expect(source).not.toMatch(/BASIC LISTING|FULL LISTING|sourcing access|buyer access|BASIC PROFESSIONAL LISTING/i)
+    }
+    expect(registry).toContain('Discuss your talent needs')
+    expect(directory).toContain('DISCUSS YOUR TALENT NEEDS')
+  })
+
   test('homepage registry uses compact cards without exposing internal listing tiers', () => {
     const registry = read('src/components/LiveProfilesScroll.jsx')
     const homeCss = read('src/app/home.css')
