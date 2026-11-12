@@ -534,3 +534,12 @@
 .events-list-kicker { color: #765719 !important; }
 .events-page .event-editorial-copy > span { color: #765719 !important; }
 .events-page p a[target="_blank"] { color: #765719 !important; }
+
+
+/* WCAG AA contrast corrections for institutional content pages. */
+.vs-kicker.dark { color: #5B5B6A !important; }
+.vs-journey .vs-shell > h2 > em { color: #765719 !important; }
+.vs-journey-grid article > b,
+.vs-journey-grid article > span { color: #765719 !important; }
+.prime-subtitle,
+.about-timeline-label { color: #D4C9A8 !important; }

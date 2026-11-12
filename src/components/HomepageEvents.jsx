@@ -36,7 +36,7 @@ export default function HomepageEvents() {
               href={youtubeUrl}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={'Watch ' + replay.title + ' on YouTube'}
+              aria-label={'Watch the conversation: ' + replay.title + ' on YouTube'}
               style={{ '--video-thumbnail': 'url(https://i.ytimg.com/vi/' + replay.youtubeVideoId + '/hqdefault.jpg)' }}
             >
               <span className="home-events-play" aria-hidden="true">▶</span>

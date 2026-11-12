@@ -2442,3 +2442,12 @@
 .home-events-status > span:nth-child(2) { color: #B9B8C4; }
 .home-events-meta > span { color: #B9B8C4; }
 .home-events-footer > span { color: #B9B8C4; }
+
+
+/* WCAG AA contrast corrections from the 2026-11-12 desktop/mobile audit. */
+.home-events-heading .eyebrow-text,
+.valu-conversion-intro .eyebrow-text { color: #D4C9A8 !important; }
+.live-profiles-proof > span { color: #B8B8C4 !important; }
+.valu-conversion-proof > span,
+.valu-conversion-note { color: #C7C6D1 !important; }
+.vcc-step:not(.is-active) > span { color: #B8B7C3 !important; }
