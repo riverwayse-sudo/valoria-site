@@ -40,6 +40,8 @@ for (const marker of requiredHomepageMarkers) {
 }
 const retiredHomepageMarkers = [
   'WANT TO BE DISCOVERED',
+  'live-profiles',
+  'vi-scroll-track',
   'Become discoverable',
   'Build a professional profile that helps relevant decision-makers understand your capabilities',
   '55 questions',
