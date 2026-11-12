@@ -547,6 +547,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     const migration = read('supabase/migrations/20261112123000_restrict_direct_client_enquiry_inserts.sql')
     expect(migration).toContain('DROP POLICY IF EXISTS buyer_or_guest_insert_enquiry')
     expect(migration).toContain('REVOKE INSERT ON TABLE public.enquiries FROM anon, authenticated')
+    expect(migration).toContain('GRANT INSERT ON TABLE public.enquiries TO service_role')
   })
 
   test('consented public Full profiles remain directly accessible while incomplete profiles stay noindex', () => {
