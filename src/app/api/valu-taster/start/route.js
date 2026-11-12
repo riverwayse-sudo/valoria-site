@@ -43,6 +43,28 @@ export async function POST(request) {
   }
 
   const admin = createClient(url, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } })
+  const consentedAt = new Date().toISOString()
+  const { data: updatedUser, error: metadataError } = await admin.auth.admin.updateUserById(user.id, {
+    app_metadata: {
+      ...(user.app_metadata || {}),
+      valu_taster_signup: true,
+      privacy_acknowledged: true,
+      privacy_acknowledged_at: consentedAt,
+      privacy_notice_version: '2026-11-12',
+      consent_source: 'valu_taster_signup',
+      role,
+      experience,
+    },
+  })
+  if (metadataError || !updatedUser?.user) {
+    console.error('VALU Taster consent snapshot failed:', metadataError?.message || 'Updated user record missing')
+    return responseError('We could not securely record your account acknowledgement. Please try again.', 503)
+  }
+  const accountMetadata = updatedUser.user.app_metadata || {}
+  if (accountMetadata.privacy_acknowledged !== true || accountMetadata.valu_taster_signup !== true) {
+    return responseError('Your account acknowledgement could not be verified. Please try again.', 503)
+  }
+
   const { data: completedTaster, error: completedTasterError } = await admin.from('taster_sessions')
     .select('id')
     .eq('user_id', user.id)
