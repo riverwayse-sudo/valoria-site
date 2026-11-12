@@ -105,6 +105,33 @@ export async function POST(request) {
     return NextResponse.json({ error: 'This saved Taster belongs to different registration details. Valoria support must review it.' }, { status: 409 })
   }
 
+  if (existing?.expires_at && Date.parse(existing.expires_at) <= Date.now()) {
+    return NextResponse.json({ error: 'Your saved Taster session has expired. Contact Valoria support so we can help preserve your previous work.' }, {
+      status: 410, headers: { 'Cache-Control': 'no-store' },
+    })
+  }
+
+  if (existing?.lead_capture_id) {
+    const { data: lead, error: leadError } = await admin
+      .from('lead_captures')
+      .select('id,email,full_name,role,raw_payload')
+      .eq('id', existing.lead_capture_id)
+      .maybeSingle()
+    if (leadError) {
+      return NextResponse.json({ error: 'Your saved Taster identity could not be checked.' }, { status: 502 })
+    }
+    if (!lead ||
+      norm(lead.email) !== norm(email) ||
+      norm(lead.full_name) !== norm(name) ||
+      norm(lead.role) !== norm(role) ||
+      norm(lead.raw_payload?.experience) !== norm(experience)
+    ) {
+      return NextResponse.json({ error: 'Your saved Taster identity needs a manual review before it can be resumed.' }, {
+        status: 409, headers: { 'Cache-Control': 'no-store' },
+      })
+    }
+  }
+
   let leadCaptureId = existing?.lead_capture_id || null
   let progressId = existing?.id || null
   if (!existing || !existing.lead_capture_id) {
