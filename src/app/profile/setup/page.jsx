@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { getValuTier } from '@/lib/brand'
+import { getAvatarExtension } from '@/lib/avatar-upload'
 import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
 import { PUBLIC_PROFILE_CONSENT_TEXT, REGISTERED_PROFILE_CONSENT_TEXT } from '@/lib/profile-consent-copy'
 
@@ -308,9 +309,9 @@ function ProfileSetupForm() {
     setPhotoUploading(true)
     setPhotoError('')
     try {
-      const ext  = file.name.split('.').pop()
+      const ext  = getAvatarExtension(file)
       const path = `profiles/${user.id}/avatar.${ext}`
-      const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
+      const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type })
       if (error) throw error
       const { data } = supabase.storage.from('avatars').getPublicUrl(path)
       set('photo_url', data.publicUrl)
