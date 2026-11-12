@@ -102,6 +102,35 @@ describe('VALU presentation consistency', () => {
     expect(read('src/app/profile/passport/page.jsx')).not.toContain('profile?.designation||')
   })
 
+  test('every remaining designation-bearing journey and server projection derives merit from canonical points', () => {
+    const journeyState = read('src/lib/journey-state.js')
+    expect(journeyState).not.toContain('assessment?.designation')
+    expect(journeyState).not.toContain('profile?.designation')
+
+    const journeyRoute = read('src/app/api/journey/state/route.js')
+    const diagnosticsRoute = read('src/app/api/journey/diagnostics/route.js')
+    for (const route of [journeyRoute, diagnosticsRoute]) {
+      expect(route).toContain("getValuTier(state.assessment.score, 'full')?.name")
+      expect(route).not.toMatch(/total_score,designation/)
+    }
+
+    const profileSetup = read('src/app/profile/setup/page.jsx')
+    expect(profileSetup).not.toContain('designation: assessment.designation')
+    expect(profileSetup).toContain("getValuTier(assessment.total_score, 'full')?.name")
+
+    const adminAnalytics = read('src/app/api/admin/analytics/route.js')
+    expect(adminAnalytics).not.toMatch(/industry, designation, p_score/)
+    expect(adminAnalytics).toContain("getValuTier(a.total_score, 'full')?.name")
+
+    const employerApplications = read('src/app/api/employer/applications/route.js')
+    expect(employerApplications).not.toMatch(/valu_index,designation/)
+    expect(employerApplications).toContain("getValuTier(profile.valu_index, 'full')?.name")
+
+    const publicProfile = read('src/lib/public-profile.js')
+    expect(publicProfile).not.toContain("  'designation',")
+    expect(publicProfile).toContain("getValuTier(profile.valu_index, 'full')?.name")
+  })
+
   test('email confirmation never exposes internal taster or full-assessment question counts', () => {
     const callback = read('src/app/auth/callback/page.jsx')
     expect(callback).not.toMatch(/opening nine|9-question|58-question|Question\s+\d+\s+of\s+\d+/i)
