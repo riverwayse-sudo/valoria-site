@@ -4,6 +4,17 @@ const path = require('path')
 const read = file => fs.readFileSync(path.join(process.cwd(), file), 'utf8')
 
 describe('public webinar feedback security contract', () => {
+  test('enquiry notifications use the configured Resend sender with deterministic idempotency', () => {
+    const api = read('src/app/api/enquiries/route.js')
+    expect(api).toContain('process.env.RESEND_API_KEY')
+    expect(api).toContain('https://api.resend.com/emails')
+    expect(api).toContain("'Idempotency-Key'")
+    expect(api).toContain('valoria-enquiry-${enquiryId}-admin')
+    expect(api).toContain(".select('id').single()")
+    expect(api).not.toContain('BREVO_API_KEY')
+    expect(api).not.toContain('api.brevo.com')
+  })
+
   test('feedback API validates, rate-limits and requires the server credential', () => {
     const api = read('src/app/api/feedback/route.js')
     expect(api).toContain('process.env.SUPABASE_SERVICE_ROLE_KEY')
