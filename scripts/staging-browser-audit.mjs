@@ -84,7 +84,7 @@ try {
         await new Promise(resolve => setTimeout(resolve, 350))
       })
 
-      const state = await page.evaluate(() => {
+      const state = await page.evaluate((routeName) => {
         const robots = document.querySelector('meta[name="robots"]')?.content || ''
         const banner = document.querySelector('.staging-site-banner')?.innerText ||
           (document.body.innerText.includes('STAGING PREVIEW') ? 'STAGING PREVIEW' : '')
@@ -96,7 +96,7 @@ try {
         const retiredPublicCopyPresent = /WANT TO BE DISCOVERED|Become discoverable|relevant buyers understand your capabilities/i.test(document.body.innerText)
         const panel = document.querySelector('.hero-event-panel')
         const hiddenRevealElements = document.querySelectorAll('.reveal:not(.visible)').length
-        const dashboardAuthRedirect = route.name === 'dashboard-preview'
+        const dashboardAuthRedirect = routeName === 'dashboard-preview'
           ? { path: window.location.pathname, returnTo: new URL(window.location.href).searchParams.get('returnTo') }
           : null
         const overflowingCards = [...document.querySelectorAll('[class*="card"]')]
@@ -131,7 +131,7 @@ try {
           literalNewlineVisible,
           assessmentSiteLinks: [navBrand, navDashboard].filter(Boolean),
         }
-      })
+      }, route.name)
 
       const filename = `${route.name}-${viewport.name}.png`
       await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
