@@ -126,8 +126,18 @@ export default function DashboardPage() {
       setIsRefreshing(!!profile)
       try {
       const { data: { user }, error: authError } = await supabase.auth.getUser()
+      // Supabase reports a missing session as an AuthSessionMissingError. Treat
+      // that expected unauthenticated state as a sign-in redirect, not a dashboard
+      // data outage; preserve the requested destination after sign-in.
+      if (!user && authError?.name === 'AuthSessionMissingError') {
+        window.location.replace('/login?returnTo=%2Fdashboard')
+        return
+      }
       if (authError) throw authError
-      if (!user) { window.location.href = '/login'; return }
+      if (!user) {
+        window.location.replace('/login?returnTo=%2Fdashboard')
+        return
+      }
       setUser(user)
       const { data: { session } } = await supabase.auth.getSession()
       if (session?.access_token) {
