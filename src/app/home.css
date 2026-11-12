@@ -1421,12 +1421,34 @@
 }
 
 .vi-scroll-track-label {
-  margin-top: 4px;
-  color: var(--gold);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+.vi-scroll-track-label span {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 5px;
+  border: 1px solid rgba(212,201,168,.5);
+  border-radius: 3px;
+  background: rgba(247,244,238,.08);
+  color: #C7C6D1;
   font-size: 7px;
   font-weight: 800;
-  letter-spacing: .08em;
+  line-height: 1.2;
+  letter-spacing: .06em;
   text-transform: uppercase;
+}
+.vi-scroll-track-label span.is-selected {
+  border-color: #C9A84C;
+  background: #EDE8DC;
+  color: #1A1A2E;
+}
+.vi-scroll-track-label span.is-unselected {
+  border-color: rgba(212,201,168,.5);
+  background: rgba(247,244,238,.08);
+  color: #C7C6D1;
 }
 
 .vi-scroll-score {
