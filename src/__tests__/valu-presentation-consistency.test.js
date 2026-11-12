@@ -187,4 +187,19 @@ describe('VALU presentation consistency', () => {
   })
 
 
+  test('private CV uploads have matching client and Storage size/type limits', () => {
+    const helper = read('src/lib/upload-professional-cv.js')
+    expect(helper).toContain('10 * 1024 * 1024')
+    expect(helper).toContain('file.type !== mimeType')
+    expect(helper).toContain("contentType: mimeType")
+
+    const migration = read('supabase/migrations/20261112121613_restrict_private_cv_upload_size_and_mime_types.sql')
+    expect(migration).toContain('file_size_limit = 10485760')
+    expect(migration).toContain("'application/pdf'")
+    expect(migration).toContain("'application/msword'")
+    expect(migration).toContain("'application/vnd.openxmlformats-officedocument.wordprocessingml.document'")
+    expect(migration).toContain("WHERE id = 'cvs' AND public = false")
+  })
+
+
 })
