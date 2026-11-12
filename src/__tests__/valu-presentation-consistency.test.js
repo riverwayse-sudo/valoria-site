@@ -283,4 +283,15 @@ describe('VALU presentation consistency', () => {
   })
 
 
+  test('photo-less public avatars use deterministic, non-identifying profile motifs', () => {
+    const avatar = read('src/components/ValoriaAvatar.jsx')
+    const homepage = read('src/components/LiveProfilesScroll.jsx')
+    expect(avatar).toContain('function getSeededMotif(seed)')
+    expect(avatar).toContain('Math.imul(hash, 16777619)')
+    expect(avatar).toContain("backgroundImage: showImage ? 'none' : motif.backgroundImage")
+    expect(avatar).toContain('never derives or reveals a name')
+    expect(homepage).toContain('seed={profile.id || profile.atb_id}')
+    expect(homepage).not.toContain('name={profile.full_name}')
+  })
+
 })
