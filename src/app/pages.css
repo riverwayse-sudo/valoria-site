@@ -528,3 +528,9 @@
   .insight-card h2 { margin-top: 28px; }
   .valu-hero { min-height: 0; padding: 112px 0 56px; }
 }
+
+
+/* Editorial gold is reserved for surfaces where it meets WCAG AA contrast. */
+.events-list-kicker { color: #765719 !important; }
+.events-page .event-editorial-copy > span { color: #765719 !important; }
+.events-page p a[target="_blank"] { color: #765719 !important; }
