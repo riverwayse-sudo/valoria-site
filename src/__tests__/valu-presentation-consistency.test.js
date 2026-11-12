@@ -85,6 +85,14 @@ describe('VALU presentation consistency', () => {
     expect(smoke).toContain("'1 of 58'")
   })
 
+  test('homepage omits the profile-image slider and retired discoverability CTA', () => {
+    const home = read('src/app/page.jsx')
+    expect(home).not.toContain('LiveProfilesScroll')
+    expect(home).not.toContain('Become discoverable')
+    expect(home).toContain('Make your capability legible.')
+    expect(home).toContain('Build a considered record of capability, experience and contribution')
+  })
+
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
     const hero = read('src/components/HeroSlider.jsx')
     expect(hero).toContain('START THE VALU INDEX TASTER')
