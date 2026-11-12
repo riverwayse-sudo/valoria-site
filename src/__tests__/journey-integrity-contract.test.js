@@ -577,6 +577,16 @@ describe('journey integrity contract', () => {
   })
 
 
+  test('account-first Taster completion never creates a second account after the Taster', () => {
+    const professionalSignup = read('src/app/professional-signup/page.jsx')
+    expect(professionalSignup).toContain("params.get('account_first')==='1'")
+    expect(professionalSignup).toContain('Sign in to the same confirmed Valoria account')
+    expect(professionalSignup).toContain('No second account is needed.')
+    expect(professionalSignup).toContain('/login?pending_taster_id=')
+    expect(professionalSignup).toContain("if(accountFirst && !redirecting)return")
+    expect(professionalSignup).toContain("window.location.replace('/dashboard?welcome=profile')")
+  })
+
   test('public marketplace copy avoids internal listing and sourcing terminology', () => {
     const registry = read('src/components/LiveProfilesScroll.jsx')
     const directory = read('src/components/MarketplaceDirectory.jsx')
