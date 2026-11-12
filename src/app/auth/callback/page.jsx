@@ -37,6 +37,19 @@ function AuthCallbackFlow() {
         const { data: { user }, error: userError } = await supabase.auth.getUser()
         if (userError || !user) throw userError || new Error('Your account session could not be verified.')
 
+        if (params.get('journey') === 'valu_taster') {
+          if (!user.email_confirmed_at) throw new Error('Confirm your email before starting the VALU Index Taster.')
+          setMessage('Email confirmed. Preparing your VALU Index Taster…')
+          const handoffResponse = await fetch('/api/valu-taster-start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+          })
+          const handoff = await handoffResponse.json().catch(() => ({}))
+          if (!handoffResponse.ok || !handoff.url) throw new Error(handoff.error || 'Your account is ready, but we could not open the taster. Sign in and try again.')
+          if (!cancelled) window.location.replace(handoff.url)
+          return
+        }
+
         const identityHash = params.get('identity_hash') || sessionStorage.getItem('pending_identity_hash')
         const pendingTasterId = params.get('pending_taster_id') || localStorage.getItem('pending_taster_id')
 
