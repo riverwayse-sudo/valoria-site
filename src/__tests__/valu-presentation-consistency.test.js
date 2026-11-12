@@ -124,6 +124,15 @@ describe('VALU presentation consistency', () => {
     expect(progress).not.toContain('YOUR PROGRESS IS PRESERVED')
   })
 
+  test('release smoke checks reject homepage profile sliders and stale score presentation', () => {
+    const smoke = read('scripts/production-smoke.mjs')
+    const browserAudit = read('scripts/staging-browser-audit.mjs')
+    expect(smoke).toContain("'live-profiles'")
+    expect(smoke).toContain("'vi-scroll-track'")
+    expect(browserAudit).toContain('profileSliderPresent')
+    expect(browserAudit).toContain('retiredPublicCopyPresent')
+  })
+
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
     const hero = read('src/components/HeroSlider.jsx')
     expect(hero).toContain('START THE VALU INDEX TASTER')
