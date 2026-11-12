@@ -97,6 +97,8 @@ try {
         }).length
         const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
         const track = document.querySelector('.vi-scroll-track')
+        const pageText = document.body.innerText
+        const retiredPublicCopyPresent = /WANT TO BE DISCOVERED|Become discoverable|55 questions|9 questions|58 questions|1 of 9|1 of 58|\\b\\d+\\s*\\/\\s*100\\b/i.test(pageText)
         const panel = document.querySelector('.hero-event-panel')
         const overflowingCards = [...document.querySelectorAll('[class*="card"]')]
           .filter(el => {
@@ -111,6 +113,8 @@ try {
           viewportWidth: window.innerWidth,
           documentWidth: document.documentElement.scrollWidth,
           horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 2,
+          profileSliderPresent: Boolean(track),
+          retiredPublicCopyPresent,
           scrollAnimation: track ? {
             name: getComputedStyle(track).animationName,
             playState: getComputedStyle(track).animationPlayState,
@@ -209,6 +213,8 @@ try {
       }
       report.results.push(result)
 
+      if (route.name === 'homepage' && state.profileSliderPresent) report.failures.push('homepage: public profile image slider must not render on the homepage')
+      if (route.name === 'homepage' && state.retiredPublicCopyPresent) report.failures.push('homepage: retired discoverability copy, question counts or percentage-style scores remain')
       if (navigationError) report.failures.push(`${route.name}/${viewport.name}: navigation failed: ${navigationError}`)
       if (status === null || status >= 400) report.failures.push(`${route.name}/${viewport.name}: HTTP ${status}`)
       if (state.horizontalOverflow) report.failures.push(`${route.name}/${viewport.name}: horizontal overflow`)
