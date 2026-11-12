@@ -2431,3 +2431,14 @@
     font-size: 21px;
   }
 }
+
+
+/* WCAG AA contrast corrections for the homepage's small editorial labels. */
+.home-section-heading .eyebrow-text,
+.home-redesign-root .eyebrow-text { color: #765719; }
+.home-pathway-number { color: #E2C97E; }
+.home-pathway-card:not(.is-primary) .home-pathway-number { color: #765719; }
+.home-pathway-card:not(.is-primary) .home-pathway-label { color: #555565; }
+.home-events-status > span:nth-child(2) { color: #B9B8C4; }
+.home-events-meta > span { color: #B9B8C4; }
+.home-events-footer > span { color: #B9B8C4; }
