@@ -98,7 +98,7 @@ try {
         const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
         const track = document.querySelector('.vi-scroll-track')
         const pageText = document.body.innerText
-        const retiredPublicCopyPresent = /WANT TO BE DISCOVERED|Become discoverable|55 questions|9 questions|58 questions|1 of 9|1 of 58|\\b\\d+\\s*\\/\\s*100\\b/i.test(pageText)
+        const retiredPublicCopyPresent = /WANT TO BE DISCOVERED|Become discoverable|55 questions|9 questions|58 questions|1 of 9|1 of 58|\b\d+\s*\/\s*100\b/i.test(pageText)
         const panel = document.querySelector('.hero-event-panel')
         const overflowingCards = [...document.querySelectorAll('[class*="card"]')]
           .filter(el => {
