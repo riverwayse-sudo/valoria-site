@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { BRAND } from '@/lib/brand'
 import { AssessmentStartLink } from '@/components/Nav'
 import EventRegistrationModal, { SessionTimer } from './EventRegistrationModal'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
