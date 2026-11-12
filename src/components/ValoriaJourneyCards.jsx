@@ -2,13 +2,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import styles from './ValoriaJourneyCards.module.css'
-import { supabase } from '@/lib/supabase'
-import { AssessmentStartLink } from '@/components/Nav'
 
 const MILESTONES = [
   { key:'connect', title:'Join Valoria', short:'START', description:'Your Valoria account is ready.', href:'/profile/onboarding', icon:'01' },
-  { key:'assess', title:'Complete VALU', short:'VALU', description:'Continue your saved assessment and see your professional signal.', href:'/dashboard', icon:'02' },
-  { key:'report', title:'Understand your result', short:'RESULT', description:'Read what your VALU Index result means.', href:'/report', icon:'03' },
+  { key:'assess', title:'Complete VALU', short:'VALU', description:'See your professional signal.', href:'/dashboard', icon:'02' },
+  { key:'report', title:'Understand your result', short:'RESULT', description:'Read what your VALU result means.', href:'/report', icon:'03' },
   { key:'profile', title:'Complete your profile', short:'PROFILE', description:'Add your professional details and unlock enhanced marketplace access.', href:'/profile/setup', icon:'04' },
   { key:'capability', title:'Choose your capability', short:'CAPABILITY', description:'Tell Valoria what you want to be discovered for.', href:'/profile/setup', icon:'05' },
   { key:'eligibility', title:'Finish your capability setup', short:'READY', description:'Complete the remaining requirements for your capability.', href:'/profile/passport', icon:'06' },
@@ -56,8 +54,6 @@ function buildCards(state) {
     let action = complete ? 'VIEW' : current ? 'CONTINUE' : 'LOCKED'
 
     if (m.key === 'assess' && complete) href='/dashboard'
-    // An incomplete VALU Index milestone must always enter the secure assessment
-    // handoff. Never send a participant back to the dashboard as the action.
     if (m.key === 'report' && complete) href='/report'
     if (m.key === 'profile' && complete) href='/profile/edit'
     if (m.key === 'capability' && complete) href='/profile/passport'
@@ -76,25 +72,17 @@ export default function ValoriaJourneyCards({ compact=false }) {
 
   useEffect(() => {
     let alive = true
-    async function loadJourney() {
-      try {
-        const { data: { session } } = await supabase.auth.getSession()
-        const response = await fetch('/api/journey/state', {
-          cache: 'no-store',
-          headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
-        })
-        const data = response.ok ? await response.json() : null
+    fetch('/api/journey/state', { cache:'no-store' })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
         if (!alive) return
         if (data?.authenticated) {
           setUser({ authenticated:true })
           setState(data.state)
         }
         setLoading(false)
-      } catch {
-        if (alive) setLoading(false)
-      }
-    }
-    loadJourney()
+      })
+      .catch(() => alive && setLoading(false))
     return () => { alive=false }
   }, [])
 
@@ -123,20 +111,14 @@ export default function ValoriaJourneyCards({ compact=false }) {
         {cards.map((card, index) => (
           <div key={card.key} className={styles.webNodeWrap} role="listitem">
             {index > 0 && <span className={styles.webLine} aria-hidden="true" />}
-            {card.key === 'assess' && card.current ? (
-              <AssessmentStartLink href="/dashboard" dashboardOnly className={[styles.webNode, styles.webCurrent].join(' ')} aria-current="step" aria-label="Continue your saved VALU Index">
-                <span>{card.icon}</span>
-              </AssessmentStartLink>
-            ) : (
-              <Link
-                href={card.locked ? '/journey' : card.href}
-                className={[styles.webNode, card.complete ? styles.webComplete : '', card.current ? styles.webCurrent : '', card.locked ? styles.webLocked : ''].join(' ')}
-                aria-current={card.current ? 'step' : undefined}
-                aria-label={`${card.title}: ${card.complete ? 'done' : card.current ? 'your next step' : 'not ready yet'}`}
-              >
-                <span>{card.complete ? '✓' : card.icon}</span>
-              </Link>
-            )}
+            <Link
+              href={card.locked ? '/journey' : card.href}
+              className={[styles.webNode, card.complete ? styles.webComplete : '', card.current ? styles.webCurrent : '', card.locked ? styles.webLocked : ''].join(' ')}
+              aria-current={card.current ? 'step' : undefined}
+              aria-label={`${card.title}: ${card.complete ? 'done' : card.current ? 'your next step' : 'not ready yet'}`}
+            >
+              <span>{card.complete ? '✓' : card.icon}</span>
+            </Link>
             <div className={[styles.webLabel, card.current ? styles.webLabelCurrent : ''].join(' ')}>
               {card.current ? 'YOU ARE HERE' : card.complete ? 'DONE' : card.short}
             </div>
@@ -146,9 +128,7 @@ export default function ValoriaJourneyCards({ compact=false }) {
 
       <div className={styles.next}>
         <span><b>NEXT</b> {state?.journey?.nextAction || current?.title}</span>
-        {current && !current.locked && (current.key === 'assess'
-          ? <AssessmentStartLink href="/dashboard" dashboardOnly className={styles.primaryAction}>CONTINUE →</AssessmentStartLink>
-          : <Link href={current.href} className={styles.primaryAction}>CONTINUE →</Link>)}
+        {current && !current.locked && <Link href={current.href} className={styles.primaryAction}>CONTINUE →</Link>}
       </div>
     </section>
   )

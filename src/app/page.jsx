@@ -1,10 +1,9 @@
-import Nav, { AssessmentStartLink } from '@/components/Nav'
+import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import HomepageEvents from '@/components/HomepageEvents'
-import HomepageEventPopup from '@/components/HomepageEventPopup'
 import { BRAND } from '@/lib/brand'
 import './home.css'
 
@@ -18,15 +17,14 @@ export const metadata = {
 }
 
 const pathwayCards = [
-  { label: 'FOR PROFESSIONALS', title: 'Build a verified professional presence.', body: 'Build your profile, understand your strengths and become visible for relevant opportunities.', href: '/valu', cta: 'START WITH THE VALU INDEX' },
-  { label: 'FOR EMPLOYERS', title: 'Find capability with context.', body: 'Find professionals through capability, experience and verified profiles.', href: '/marketplace', cta: 'EXPLORE MARKETPLACE' },
-  { label: 'FOR EVENT ORGANISERS', title: 'Find speakers and facilitators.', body: 'Discover speakers and facilitators for your next event or programme.', href: '/marketplace/speakers', cta: 'FIND PROFESSIONALS' }
+  { label: 'FOR PROFESSIONALS', title: 'Build a verified professional presence.', body: 'Understand where you stand, complete your profile and become discoverable for the right opportunities.', href: '/valu', cta: 'START WITH THE VALU INDEX' },
+  { label: 'FOR EMPLOYERS', title: 'Find capability with context.', body: 'Discover professionals through structured profiles built around capability, experience and verified pathways.', href: '/marketplace', cta: 'EXPLORE MARKETPLACE' },
+  { label: 'FOR EVENT ORGANISERS', title: 'Find speakers and facilitators.', body: 'Access professionals with relevant expertise for conversations, programmes and organisational moments.', href: '/marketplace/speakers', cta: 'FIND PROFESSIONALS' }
 ]
 
 export default function HomePage() {
   return <>
     <Nav />
-    <HomepageEventPopup />
     <main id="main-content" className="home-redesign-root">
       <HeroSlider />
       <HomepageEvents />
@@ -60,15 +58,15 @@ export default function HomePage() {
           <Reveal className="valu-conversion-intro">
             <div className="eyebrow"><div className="eyebrow-line"/><span className="eyebrow-text">START WITH THE VALU INDEX</span></div>
             <h2 id="home-valu-title" className="valu-title">Before you build your next move, <em>know where you stand.</em></h2>
-            <p className="valu-desc">See your capability across five PRIME dimensions — and where to focus next.</p>
+            <p className="valu-desc">The VALU Index gives you a directional picture of your professional capability across Presence, Relationships, Intelligence, Mastery and Enterprise — so you can see what to strengthen, what to surface and what to build next.</p>
             <div className="valu-conversion-proof" aria-label="Assessment details">
-              <span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
+              <span><b>15</b> QUESTIONS</span><i>·</i><span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
             </div>
             <div className="home-dual-actions">
-              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START THE VALU INDEX TASTER <span aria-hidden="true">→</span></a>
+              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START MY VALU INDEX SNAPSHOT <span aria-hidden="true">→</span></a>
               <a href="/valu" className="text-link">SEE HOW THE VALU INDEX WORKS <span aria-hidden="true">→</span></a>
             </div>
-            <p className="valu-conversion-note">A starting signal, not a final designation.</p>
+            <p className="valu-conversion-note">Your first result is directional. It is the starting signal for the wider Valoria journey — not a label and not the end of the process.</p>
           </Reveal>
 
           <Reveal className="valu-conversion-card">
@@ -92,11 +90,11 @@ export default function HomePage() {
               <div className="vcc-radar-center">VALU INDEX</div>
             </div>
             <div className="vcc-steps">
-              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>Register before your taster</small></div></div>
-              <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Complete the full VALU Index</small></div></div>
-              <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Unlock relevant opportunities</small></div></div>
+              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>First 9 questions, no account needed</small></div></div>
+              <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Full VALU Index assessment + profile</small></div></div>
+              <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Capability, eligibility and marketplace</small></div></div>
             </div>
-            <AssessmentStartLink href={BRAND.assessmentUrl} className="vcc-bottom-cta">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
+            <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="vcc-bottom-cta">BEGIN THE FIRST 9 QUESTIONS <span>→</span></a>
           </Reveal>
         </div>
       </section>

@@ -138,15 +138,15 @@ export default function SignupPage() {
                 TALENT & SPEAKERS
               </div>
               <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.6, margin: '0 0 12px' }}>
-                If you are a professional or speaker, register your contact and professional details before taking the VALU Index Taster. This creates a saved record, not a Valoria account. After the taster, create or connect your secure account to continue with the separate Full VALU Index.
+                If you're a professional or speaker, your account is created through the VALU Index — the assessment is the entry point, not a separate signup.
               </p>
               <a
-                href="/valu/assessment/"
-               
+                href="https://valoriainstitute.com/valu/assessment/"
+                target="_blank"
                 rel="noopener noreferrer"
                 style={{ display: 'inline-block', padding: '10px 20px', background: GOLD, color: MIDNIGHT, fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', borderRadius: '999px', textDecoration: 'none' }}
               >
-                TAKE THE VALU INDEX TASTER →
+                TAKE THE VALU INDEX — FREE →
               </a>
             </div>
 
@@ -252,29 +252,29 @@ export default function SignupPage() {
 }
 
 const S = {
-  page: { minHeight: '100vh', background: DARK, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 20px 56px', fontFamily: "'Raleway','Helvetica Neue',Arial,sans-serif" },
-  card: { width: '100%', maxWidth: '520px', background: 'rgba(26,26,46,.6)', border: '1px solid rgba(201,168,76,.15)', borderRadius: '12px', padding: 'clamp(24px,4vw,40px)' },
-  eyebrow: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px' },
+  page: { minHeight: '100vh', background: DARK, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', fontFamily: "'Raleway','Helvetica Neue',Arial,sans-serif" },
+  card: { width: '100%', maxWidth: '560px', background: 'rgba(26,26,46,.6)', border: '1px solid rgba(201,168,76,.15)', borderRadius: '12px', padding: 'clamp(32px,5vw,56px)' },
+  eyebrow: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' },
   eyebrowLine: { flex: 1, height: '1px', background: 'rgba(201,168,76,.3)' },
   eyebrowText: { fontSize: '10px', fontWeight: 700, letterSpacing: '.16em', color: GOLD },
   title: { fontSize: 'clamp(28px,4vw,42px)', fontWeight: 200, color: PARCHMENT, lineHeight: 1.1, marginBottom: '16px', letterSpacing: '-.02em' },
   sub: { fontSize: '14px', fontWeight: 300, color: DIM, lineHeight: 1.6 },
   noticeBox: { background: 'rgba(201,168,76,.05)', border: '1px solid rgba(201,168,76,.15)', borderRadius: '10px', padding: '20px' },
-  typeGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '18px' },
-  typeCard: { padding: '16px', borderRadius: '8px', border: '1px solid', textAlign: 'left', cursor: 'pointer', transition: 'all .2s', fontFamily: 'Raleway' },
+  typeGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' },
+  typeCard: { padding: '20px', borderRadius: '8px', border: '1px solid', textAlign: 'left', cursor: 'pointer', transition: 'all .2s', fontFamily: 'Raleway' },
   typeIcon: { fontSize: '20px', color: GOLD, display: 'block', marginBottom: '8px' },
   typeLabel: { fontSize: '15px', fontWeight: 700, color: PARCHMENT, marginBottom: '2px' },
   typeSub: { fontSize: '10px', fontWeight: 700, letterSpacing: '.12em', color: GOLD, marginBottom: '8px' },
   typeDesc: { fontSize: '12px', fontWeight: 300, color: DIM, lineHeight: 1.5 },
   selectedBadge: { display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', background: 'rgba(201,168,76,.08)', border: '1px solid rgba(201,168,76,.2)', borderRadius: '6px', marginBottom: '24px', fontSize: '13px', fontWeight: 600, color: GOLD },
   changeBtn: { marginLeft: 'auto', background: 'none', border: 'none', color: DIM, fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline' },
-  form: { display: 'flex', flexDirection: 'column', gap: '12px' },
+  form: { display: 'flex', flexDirection: 'column', gap: '16px' },
   field: { display: 'flex', flexDirection: 'column', gap: '6px' },
   label: { fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: DIM, textTransform: 'uppercase' },
   input: { padding: '12px 14px', background: 'rgba(255,255,255,.04)', border: '1px solid', borderRadius: '6px', color: PARCHMENT, fontSize: '14px', fontFamily: "'Raleway',sans-serif", outline: 'none', width: '100%', boxSizing: 'border-box' },
-  btnGold: { display: 'block', width: '100%', padding: '14px', background: GOLD, color: MIDNIGHT, fontSize: '12px', fontWeight: 700, letterSpacing: '.14em', borderRadius: '999px', textAlign: 'center', textDecoration: 'none', fontFamily: "'Raleway',sans-serif", marginTop: '8px', cursor: 'pointer' },
+  btnGold: { display: 'block', width: '100%', padding: '16px', background: GOLD, color: MIDNIGHT, fontSize: '12px', fontWeight: 700, letterSpacing: '.14em', borderRadius: '999px', textAlign: 'center', textDecoration: 'none', fontFamily: "'Raleway',sans-serif", marginTop: '8px', cursor: 'pointer' },
   errorBox: { padding: '12px 14px', background: 'rgba(216,90,48,.12)', border: '1px solid rgba(216,90,48,.3)', borderRadius: '6px', fontSize: '13px', color: '#F09595' },
   passwordHint: { fontSize: '11px', color: 'rgba(247,244,238,.32)', lineHeight: 1.5, margin: '-8px 0 0' },
   terms: { fontSize: '12px', color: 'rgba(247,244,238,.35)', textAlign: 'center', lineHeight: 1.6 },
-  loginLink: { marginTop: '18px', fontSize: '13px', color: 'rgba(247,244,238,.4)', textAlign: 'center' },
+  loginLink: { marginTop: '24px', fontSize: '13px', color: 'rgba(247,244,238,.4)', textAlign: 'center' },
 }

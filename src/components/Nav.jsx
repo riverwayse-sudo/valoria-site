@@ -35,17 +35,6 @@ export default function Nav() {
     return () => document.removeEventListener('click', closeMenus)
   }, [])
 
-  // Escape dismisses either navigation surface for keyboard users.
-  useEffect(() => {
-    const onKeyDown = (event) => {
-      if (event.key !== 'Escape') return
-      setMenuOpen(false)
-      setOpenMenu(null)
-    }
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [])
-
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user: u } }) => {
       setUser(u)
@@ -80,7 +69,7 @@ export default function Nav() {
 
   const close = () => setMenuOpen(false)
   // Keep the primary CTA stable during auth hydration. Previously it changed
-  // from START VALU INDEX to MY PROFILE/DASHBOARD after getUser(), causing a visible
+  // from START VALU to MY PROFILE/DASHBOARD after getUser(), causing a visible
   // header layout shift on every page for signed-in users.
   const cta = { label: 'START VALU INDEX', href: NAVIGATION.assessmentUrl, external: true }
 
@@ -104,10 +93,10 @@ export default function Nav() {
       <ul className="nav-links" role="list">
         {NAVIGATION.primary.map((item) => item.groups ? (
           <li className="vi-nav-menu" key={item.label}>
-            <button className={`nav-link nav-trigger${item.groups.some(g => g.items.some(i => isPathActive(pathname, i.href))) ? ' active' : ''}`} aria-expanded={openMenu === item.label} aria-controls={`vi-dropdown-${item.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === item.label ? null : item.label) }}>
+            <button className={`nav-link nav-trigger${item.groups.some(g => g.items.some(i => isPathActive(pathname, i.href))) ? ' active' : ''}`} aria-expanded={openMenu === item.label} onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === item.label ? null : item.label) }}>
               {item.label}<span className="nav-chevron">⌄</span>
             </button>
-            <div id={`vi-dropdown-${item.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className={`nav-dropdown${openMenu === item.label ? ' open' : ''}${item.groups.length === 1 ? ' nav-dropdown-single' : ''}`}>
+            <div className={`nav-dropdown${openMenu === item.label ? ' open' : ''}${item.groups.length === 1 ? ' nav-dropdown-single' : ''}`}>
               <div className={`nav-dropdown-grid${item.groups.length === 1 ? ' nav-dropdown-single' : ''}`}>
                 {item.groups.map((group) => <div key={group.label}>
                   <div className="nav-dropdown-label">{group.label}</div>
@@ -129,10 +118,10 @@ export default function Nav() {
         <li><AssessmentStartLink href={cta.href} className="nav-cta">{cta.label}</AssessmentStartLink></li>
       </ul>
 
-      <button className={`nav-burger${menuOpen ? ' open' : ''}`} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} aria-controls="vi-mobile-navigation" onClick={() => setMenuOpen(!menuOpen)}><span/><span/><span/></button>
+      <button className={`nav-burger${menuOpen ? ' open' : ''}`} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span/><span/><span/></button>
     </nav>
 
-    <nav id="vi-mobile-navigation" className={`nav-mobile${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation" aria-hidden={!menuOpen}>
+    <nav className={`nav-mobile${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation">
       <div className="m-label">Explore</div>
       {NAVIGATION.mobile.explore.map(item => <div key={item.label}>{renderItem(item, 'nav-mobile-link')}</div>)}
       <div className="m-label">VALU Index</div>
@@ -150,7 +139,7 @@ export default function Nav() {
   </>
 }
  
-// Route every signed-in VALU Index start through the authenticated continuation endpoint.
+// Route every signed-in VALU start through the authenticated continuation endpoint.
 // Anonymous visitors still begin at the configured public taster URL.
 export function AssessmentStartLink({ href = '/valu/assessment/', className, style, children, onClick, dashboardOnly = false, ...props }) {
   const [opening, setOpening] = useState(false)
@@ -165,67 +154,29 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
     setError('')
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      // Every signed-in assessment CTA must issue the secure continuation
-      // handoff and navigate directly to the dedicated /remaining route.
-      // Returning to /dashboard here caused the public header CTA to loop
-      // participants back to the page they were already on.
-      if (session?.access_token) {
-        // Verify the participant's saved journey before requesting a full-assessment
-        // handoff. Accounts without a completed, verified taster must still be able
-        // to reach the public taster instead of receiving a dead-end 404.
-        const accessResponse = await fetch('/api/valu-handoff', {
-          method: 'GET',
-          headers: { Authorization: `Bearer ${session.access_token}` },
-          cache: 'no-store',
-        })
-        const access = await accessResponse.json().catch(() => ({}))
-        if (!accessResponse.ok) {
-          throw new Error(access.error || 'We could not verify your VALU Index access.')
-        }
-        if (access.assessment_completed) {
-          window.location.assign('/dashboard')
-          return
-        }
-        if (!access.can_continue) {
-          window.location.assign(href)
-          return
-        }
-
-        const response = await fetch('/api/valu-handoff', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${session.access_token}` },
-          cache: 'no-store',
-        })
-        const data = await response.json().catch(() => ({}))
-        if (!response.ok || !data.url) {
-          if (data.already_completed) {
-            window.location.assign('/dashboard')
-            return
-          }
-          throw new Error(data.error || 'We could not securely open your saved assessment.')
-        }
-        window.location.assign(data.url)
-        return
-      }
       if (dashboardOnly) {
-        window.location.assign('/login?returnTo=%2Fdashboard')
+        if (!session?.access_token) {
+          window.location.assign('/login?returnTo=%2Fdashboard')
+          return
+        }
+        window.location.assign('/assessment/bridge')
         return
       }
-      // Anonymous visitors start the public nine-question taster.
+      // Public navigation is for starting the opening snapshot only. An
+      // authenticated participant must return to the dashboard to resume.
+      if (session?.access_token) {
+        window.location.assign('/dashboard')
+        return
+      }
       window.location.assign(href)
     } catch (err) {
-      setError(err?.message || 'We could not open your VALU Index. Please try again.')
+      setError(err?.message || 'We could not open your VALU assessment. Please try again.')
       setOpening(false)
     }
   }
 
-  // The anchor must advertise the actual assessment destination. Normal clicks
-  // still obtain a fresh, short-lived handoff code before navigating, so this
-  // canonical URL is never used as a substitute for the authenticated token.
-  const linkHref = dashboardOnly ? 'https://assessment.valoriainstitute.com/remaining' : href
-
   return <>
-    <a href={linkHref} className={className} style={style} onClick={handleClick} aria-busy={opening} {...props}>
+    <a href={href} className={className} style={style} onClick={handleClick} aria-busy={opening} {...props}>
       {opening ? 'Opening VALU…' : children}
     </a>
     {error && <span role="alert" style={{ display: 'block', color: '#F09595', fontSize: '12px', marginTop: '6px' }}>{error}</span>}

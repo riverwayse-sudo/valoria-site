@@ -19,7 +19,7 @@ export async function GET(request) {
   }
 
   const retryableSessionIds = Object.values(EVENT_SESSIONS)
-    .filter(session => session.dateApproved === true && Date.parse(session.start) > Date.now())
+    .filter(session => Date.parse(session.start) > Date.now())
     .map(session => session.id)
   if (!retryableSessionIds.length) return Response.json({ ok: true, attempted: 0, synced: 0 })
 

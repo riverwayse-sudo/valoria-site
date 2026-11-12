@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { BRAND } from '@/lib/brand'
-import { AssessmentStartLink } from '@/components/Nav'
+import MarketplaceCTA from './MarketplaceCTA'
 import EventRegistrationModal, { SessionTimer } from './EventRegistrationModal'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
 
 export default function HeroSlider() {
+  const bars = [88, 90, 82, 80, 75]
+  const scores = [['P', 88], ['R', 90], ['I', 82], ['M', 80], ['E', 75]]
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
   const [selectedSession, setSelectedSession] = useState(null)
@@ -35,18 +37,16 @@ export default function HeroSlider() {
         <div className={`hero-slide ${active === 0 ? 'is-active' : ''}`} aria-hidden={active !== 0}>
           <div className="container hero-inner">
             <div>
-              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">NIGERIA'S PROFESSIONAL CAPABILITY MARKETPLACE</span></div>
-              <h1 className="hero-title au d2">Capability should decide<br />who gets seen.<br /><em>Valoria sets the standard.</em></h1>
-              <p className="hero-sub au d3">Valoria assesses Nigerian professionals against one capability standard, develops what matters and connects qualified talent with employers, event organisers and training buyers.</p>
-              <div className="hero-actions au d4"><AssessmentStartLink href={BRAND.assessmentUrl} className="btn-gold">START THE VALU INDEX TASTER</AssessmentStartLink><a href="/valu#how-it-works" className="btn-outline">SEE HOW IT WORKS</a></div>
-              <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">VALU <small style={{fontSize:10,letterSpacing:'.08em'}}>INDEX</small></div><div className="hmc-right"><div className="hmc-desig">POINTS-BASED CAPABILITY PROFILE</div><div className="hmc-bars"><span>PRIME</span><span>VALU</span></div></div></div></div>
+              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">AFRICA'S HUMAN CAPITAL INSTITUTION</span></div>
+              <h1 className="hero-title au d2">Talent is not<br />the problem.<br /><em>Infrastructure is.</em></h1>
+              <p className="hero-sub au d3">Valoria Institute builds the infrastructure through which African professional merit is developed, surfaced and connected to opportunity with precision.</p>
+              <div className="hero-actions au d4"><a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START THE VALU INDEX</a><MarketplaceCTA className="btn-outline">EXPLORE THE BUREAU</MarketplaceCTA></div>
+              <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">84</div><div className="hmc-right"><div className="hmc-desig">DISTINGUISHED · ✦✦</div><div className="hmc-bars">{bars.map((w, i) => <div key={i} className={`hmc-bar score-${w}`} />)}</div></div></div></div>
             </div>
-            <div className="valu-card au d4" aria-label="The VALU Index structure">
-              <div className="vc-label">THE VALU INDEX</div>
-              <div className="vc-score"><span className="vc-num">VALU</span><span className="vc-denom">INDEX</span></div>
-              <div className="vc-desig">POINTS-BASED CAPABILITY PROFILE</div>
-              <div className="vc-cluster-list"><span>Presence</span><span>Relationships</span><span>Intelligence</span><span>Mastery</span><span>Enterprise</span></div>
-              <div className="vc-foot">PRIME framework · results expressed in points</div>
+            <div className="valu-card au d4" aria-label="Illustrative VALU profile">
+              <div className="vc-label">VALU INDEX · ILLUSTRATIVE PROFILE</div><div className="vc-score"><span className="vc-num">84</span><span className="vc-denom">/ 100</span></div><div className="vc-desig">DISTINGUISHED · ✦✦</div>
+              <div className="vc-modalities"><span className="mod-pill" >CANDIDATE</span><span className="mod-pill" >SPEAKER</span></div>
+              <div className="vc-bars">{scores.map(([l, s]) => <div className="vb" key={l}><span className="vb-l">{l}</span><div className="vb-bg"><div className={`vb-fill score-${s}`} /></div><span className="vb-s">{s}</span></div>)}</div><div className="vc-foot">illustrative profile · merit made visible</div>
             </div>
           </div>
         </div>
@@ -57,7 +57,7 @@ export default function HeroSlider() {
               <div className="hero-event-kicker">UPCOMING AT VALORIA</div>
               <h1 className="hero-title">The next conversation<br />on the <em>professional standard.</em></h1>
               <p className="hero-event-copy">The Professional Standard Series brings practical conversations on the capabilities that turn professional performance into recognised opportunity.</p>
-              <div className="hero-event-meta">{formatSessionDate(upcomingSession)} · 10:00 AM WAT</div>
+              <div className="hero-event-meta">{formatSessionDate(upcomingSession)} · 10:00 AM WAT · VIRTUAL · 90 MINUTES</div>
               <div className="hero-actions">
                 <button type="button" className="btn-gold hero-register-cta" onClick={openRegistration} disabled={!canRegister}>REGISTER FOR THIS CONVERSATION →</button>
                 <a href="/events" className="btn-outline">VIEW ALL EVENTS →</a>

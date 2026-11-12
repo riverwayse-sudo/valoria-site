@@ -77,20 +77,13 @@ describe("computeWeightedIndex", () => {
 
 describe("getDesignation", () => {
   const cases = [[100,"Elite"],[90,"Elite"],[89,"Distinguished"],[75,"Distinguished"],[74,"Proficient"],[55,"Proficient"],[54,"Standard"],[35,"Standard"]];
-  test.each(cases)("score %i points → %s", (score, expected) => expect(getDesignation(score).name).toBe(expected));
-  test("scores below 35 points have no merit designation", () => {
-    expect(getDesignation(34)).toBeNull();
-    expect(getDesignation(0)).toBeNull();
-  });
+  test.each(cases)("score %i → %s", (score, expectedName) => expect(getDesignation(score).name).toBe(expectedName));
   test("official merit band boundaries are applied", () => {
-    expect(getDesignation(90).name).toBe("Elite");
-    expect(getDesignation(89).name).toBe("Distinguished");
-    expect(getDesignation(75).name).toBe("Distinguished");
-    expect(getDesignation(74).name).toBe("Proficient");
-    expect(getDesignation(55).name).toBe("Proficient");
-    expect(getDesignation(54).name).toBe("Standard");
-    expect(getDesignation(35).name).toBe("Standard");
+    expect(getDesignation(90).name).toBe("Elite"); expect(getDesignation(89).name).toBe("Distinguished");
+    expect(getDesignation(75).name).toBe("Distinguished"); expect(getDesignation(74).name).toBe("Proficient");
+    expect(getDesignation(55).name).toBe("Proficient"); expect(getDesignation(54).name).toBe("Standard");
   });
+  test("returns object with min property", () => expect(getDesignation(72)).toEqual(expect.objectContaining({ min: expect.any(Number), name: expect.any(String) })));
 });
 
 describe("getPathway", () => {

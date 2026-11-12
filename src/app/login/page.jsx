@@ -23,12 +23,7 @@ export default function LoginPage() {
     const params = new URLSearchParams(window.location.search)
     const identityHash = params.get('identity_hash')
     const requestedReturnTo = params.get('returnTo') || ''
-    try {
-      const requestedTarget = new URL(requestedReturnTo, window.location.origin)
-      if (requestedTarget.origin === window.location.origin) {
-        setReturnTo(`${requestedTarget.pathname}${requestedTarget.search}${requestedTarget.hash}`)
-      }
-    } catch { /* Ignore malformed or external return destinations. */ }
+    if (requestedReturnTo.startsWith('/')) setReturnTo(requestedReturnTo)
     const pendingTasterId = params.get('pending_taster_id')
     if (pendingTasterId) localStorage.setItem('pending_taster_id', pendingTasterId)
 
@@ -49,17 +44,33 @@ export default function LoginPage() {
       }).catch(() => {})
     }
 
-
+    // A valid browser session must return to the dashboard first. The user
+    // chooses when to continue; the dashboard CTA then issues the signed handoff.
+    const isAssessmentReturn = (() => {
+      try {
+        const target = new URL(requestedReturnTo, window.location.origin)
+        return target.origin === window.location.origin
+          && target.pathname === '/journey/continue'
+          && target.searchParams.get('stage') === 'assess'
+      } catch { return false }
+    })()
+    if (isAssessmentReturn) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!session?.access_token) return
+        window.location.replace('/dashboard')
+      }).catch(() => {})
+    }
   }, [])
 
   function redirectAfterLogin(defaultPath) {
-    let target = defaultPath
+    const target = returnTo && returnTo.startsWith('/') ? returnTo : defaultPath
     try {
-      const parsed = new URL(returnTo || defaultPath, window.location.origin)
-      if (parsed.origin === window.location.origin) {
-        target = `${parsed.pathname}${parsed.search}${parsed.hash}`
+      const parsed = new URL(target, window.location.origin)
+      if (parsed.pathname === '/journey/continue' && parsed.searchParams.get('stage') === 'assess') {
+        window.location.replace('/dashboard')
+        return
       }
-    } catch { /* Fall back to the known internal destination. */ }
+    } catch {}
     window.location.href = target
   }
 
@@ -78,7 +89,7 @@ export default function LoginPage() {
       const { data: { user } } = await supabase.auth.getUser()
       const { data: { session } } = await supabase.auth.getSession()
 
-      // Complete a professional VALU Index Taster handoff that was paused for email confirmation.
+      // Complete a professional VALU snapshot handoff that was paused for email confirmation.
       const pendingTasterId = localStorage.getItem('pending_taster_id')
       if (pendingTasterId && session?.access_token) {
         const linkRes = await fetch('/api/link-taster', {
@@ -92,7 +103,7 @@ export default function LoginPage() {
         const linkData = await linkRes.json().catch(() => ({}))
         if (!linkRes.ok) {
           // Keep the pending ID so the user can retry after a transient failure.
-          setError(linkData.error || 'Your VALU Index result could not be linked to this account.')
+          setError(linkData.error || 'Your VALU result could not be linked to this account.')
           setLoading(false)
           return
         }
@@ -100,7 +111,7 @@ export default function LoginPage() {
         localStorage.removeItem('pending_taster_id')
         localStorage.removeItem('pending_taster_name')
         localStorage.removeItem('pending_taster_role')
-        // Restore any completed full VALU Index attached to the same taster.
+        // Restore any completed full VALU assessment attached to the same taster.
         // A taster-only record is still valid; in that case the claim endpoint
         // simply reports that no completed assessment exists and onboarding continues.
         try {
@@ -129,7 +140,7 @@ export default function LoginPage() {
         return
       }
 
-      // Complete a VALU Index handoff securely on the server.
+      // Complete a VALU assessment handoff securely on the server.
       const pendingIdentityHash = sessionStorage.getItem('pending_identity_hash')
       if (pendingIdentityHash && session?.access_token) {
         sessionStorage.removeItem('pending_identity_hash')
@@ -144,7 +155,7 @@ export default function LoginPage() {
           })
           const linkData = await linkRes.json().catch(() => ({}))
           if (!linkRes.ok) {
-            setError(linkData.error || 'Your VALU Index could not be linked to this account.')
+            setError(linkData.error || 'Your VALU assessment could not be linked to this account.')
             setLoading(false)
             return
           }
@@ -152,7 +163,7 @@ export default function LoginPage() {
           return
         } catch (linkErr) {
           console.error('Failed to link assessment to user:', linkErr)
-          setError('Your VALU Index could not be linked. Please try again.')
+          setError('Your VALU assessment could not be linked. Please try again.')
           setLoading(false)
           return
         }
@@ -209,7 +220,7 @@ export default function LoginPage() {
         redirectAfterLogin('/profile/onboarding')
       } else {
         // Returning user — go to dashboard
-        redirectAfterLogin('/dashboard')
+        window.location.href = '/dashboard'
       }
     } catch (err) {
       setError(
@@ -295,7 +306,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div style={{ marginTop: '18px', fontSize: '12px', color: 'rgba(247,244,238,.4)', textAlign: 'center', lineHeight: 1.8 }}>
+        <div style={{ marginTop: '24px', fontSize: '13px', color: 'rgba(247,244,238,.4)', textAlign: 'center', lineHeight: 1.8 }}>
           <p style={{ margin: '0 0 4px' }}>
             Employer or organiser?{' '}
             <Link href="/signup" style={{ color: GOLD }}>Create account</Link>
@@ -318,7 +329,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '48px 20px 56px',
+    padding: '80px 20px',
     fontFamily: "'Raleway', 'Helvetica Neue', Arial, sans-serif",
   },
   card: {
@@ -327,18 +338,18 @@ const styles = {
     background: 'rgba(26,26,46,.6)',
     border: '1px solid rgba(201,168,76,.15)',
     borderRadius: '12px',
-    padding: 'clamp(24px, 4vw, 40px)',
+    padding: 'clamp(32px, 5vw, 56px)',
   },
-  eyebrow: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px' },
+  eyebrow: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' },
   eyebrowLine: { flex: 1, height: '1px', background: 'rgba(201,168,76,.3)' },
   eyebrowText: { fontSize: '10px', fontWeight: 700, letterSpacing: '.16em', color: GOLD },
   title: { fontSize: 'clamp(28px,4vw,42px)', fontWeight: 200, color: PARCHMENT, lineHeight: 1.1, marginBottom: '12px', letterSpacing: '-.02em' },
-  sub: { fontSize: '14px', fontWeight: 300, color: 'rgba(247,244,238,.5)', marginBottom: '22px', lineHeight: 1.6 },
-  form: { display: 'flex', flexDirection: 'column', gap: '12px' },
+  sub: { fontSize: '14px', fontWeight: 300, color: 'rgba(247,244,238,.5)', marginBottom: '28px', lineHeight: 1.6 },
+  form: { display: 'flex', flexDirection: 'column', gap: '16px' },
   field: { display: 'flex', flexDirection: 'column', gap: '6px' },
   label: { fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(247,244,238,.5)', textTransform: 'uppercase' },
   input: { padding: '12px 14px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.2)', borderRadius: '6px', color: PARCHMENT, fontSize: '14px', fontFamily: "'Raleway', sans-serif", outline: 'none' },
-  btnGold: { display: 'block', width: '100%', padding: '14px', background: GOLD, color: MIDNIGHT, fontSize: '12px', fontWeight: 700, letterSpacing: '.14em', borderRadius: '999px', border: 'none', cursor: 'pointer', textAlign: 'center', textDecoration: 'none', fontFamily: "'Raleway', sans-serif", marginTop: '8px' },
+  btnGold: { display: 'block', width: '100%', padding: '16px', background: GOLD, color: MIDNIGHT, fontSize: '12px', fontWeight: 700, letterSpacing: '.14em', borderRadius: '999px', border: 'none', cursor: 'pointer', textAlign: 'center', textDecoration: 'none', fontFamily: "'Raleway', sans-serif", marginTop: '8px' },
   forgotBtn: { background: 'none', border: 'none', color: 'rgba(247,244,238,.4)', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline', textAlign: 'center', padding: '4px' },
   errorBox: { padding: '12px 14px', background: 'rgba(216,90,48,.12)', border: '1px solid rgba(216,90,48,.3)', borderRadius: '6px', fontSize: '13px', color: '#F09595' },
   successBox: { padding: '12px 14px', background: 'rgba(29,158,117,.12)', border: '1px solid rgba(29,158,117,.3)', borderRadius: '6px', fontSize: '13px', color: '#7FD9B8' },

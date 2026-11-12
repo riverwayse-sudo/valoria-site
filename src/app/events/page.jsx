@@ -24,7 +24,7 @@ function SessionCard({ session, state }) {
       <div className="event-editorial-footer">
         <div className="event-editorial-copy">
           <span>{isEnded ? 'COMPLETED' : isComingSoon ? 'COMING SOON' : state === 'live' ? 'LIVE NOW' : 'REGISTRATION OPEN'}</span>
-          {session.description && <p>{session.description}</p>}
+          <p>{session.description}</p>
         </div>
         {!isEnded && !isComingSoon && <div className="event-editorial-actions"><EventRegistrationTrigger session={session} />{session.id === '03' && <a className="btn-gold" href="#webinar">WATCH ON VALORIA →</a>}</div>}
       </div>
@@ -46,12 +46,10 @@ export default function EventsPage() {
     return getSessionState(session) === 'ended'
   })
 
-  // Provisional calendar entries stay private until they are explicitly approved for public announcement.
-  const comingSoon = PROFESSIONAL_STANDARD_SERIES.filter(session =>
-    !session.replay
-    && session.publiclyAnnounced === true
-    && getSessionState(session) === 'coming-soon'
-  )
+  const comingSoon = PROFESSIONAL_STANDARD_SERIES.filter(session => {
+    if (session.replay) return false
+    return getSessionState(session) === 'coming-soon'
+  })
 
   return (
     <>

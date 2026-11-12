@@ -16,8 +16,8 @@ export default function ValueActivationCard(){
   <p style={{color:'rgba(247,244,238,.65)',lineHeight:1.7,maxWidth:680}}>Your score is not the endpoint. This plan translates the assessment into strengths to use, gaps to develop and the next assets to build.</p>
   {plan.priority_cluster&&<div style={{margin:'20px 0',fontSize:12,color:'#C9A84C',fontWeight:800,letterSpacing:'.08em'}}>DEVELOPMENT PRIORITY · {plan.priority_cluster.toUpperCase()}</div>}
   <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(210px,1fr))',gap:14}}>
-   {(plan.strengths||[]).map(x=><div key={'s'+x.cluster} style={{padding:16,background:'rgba(255,255,255,.035)',borderRadius:8}}><b>Strength · {x.cluster}</b><div style={{fontSize:13,opacity:.65,marginTop:6}}>VALU {x.score} points</div></div>)}
-   {(plan.development_priorities||[]).map(x=><div key={'d'+x.cluster} style={{padding:16,background:'rgba(255,255,255,.035)',borderRadius:8}}><b>Develop · {x.cluster}</b><div style={{fontSize:13,opacity:.65,marginTop:6}}>Current signal {x.score} points</div></div>)}
+   {(plan.strengths||[]).map(x=><div key={'s'+x.cluster} style={{padding:16,background:'rgba(255,255,255,.035)',borderRadius:8}}><b>Strength · {x.cluster}</b><div style={{fontSize:13,opacity:.65,marginTop:6}}>VALU {x.score}/100</div></div>)}
+   {(plan.development_priorities||[]).map(x=><div key={'d'+x.cluster} style={{padding:16,background:'rgba(255,255,255,.035)',borderRadius:8}}><b>Develop · {x.cluster}</b><div style={{fontSize:13,opacity:.65,marginTop:6}}>Current signal {x.score}/100</div></div>)}
   </div>
   <div style={{marginTop:20,display:'flex',gap:10,flexWrap:'wrap'}}>
    {(plan.next_actions||[]).slice(0,3).map(x=><Link key={x.title} href={x.href} style={{padding:'11px 14px',border:'1px solid rgba(201,168,76,.25)',color:'#C9A84C',textDecoration:'none',fontSize:11,fontWeight:800}}>{x.title} →</Link>)}

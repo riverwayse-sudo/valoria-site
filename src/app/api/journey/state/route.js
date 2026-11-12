@@ -12,35 +12,18 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Journey service is not configured.' }, { status: 503 })
   }
 
-  // Prefer the explicit access token supplied by authenticated dashboard
-  // requests. Cloudflare/OpenNext cookie adapters can differ from the browser
-  // storage adapter; relying on cookies alone caused valid sessions to appear
-  // anonymous during journey-state reads.
-  const bearer = (request.headers.get('authorization') || '').match(/^Bearer\s+(.+)$/i)?.[1]?.trim()
-  let user = null
+  const supabase = createServerClient(SB_URL, SB_ANON, {
+    cookies: { getAll: () => request.cookies.getAll(), setAll: () => {} },
+  })
 
-  if (bearer) {
-    const verifier = createClient(SB_URL, SB_ANON, {
-      auth: { persistSession: false, autoRefreshToken: false },
-    })
-    const { data, error } = await verifier.auth.getUser(bearer)
-    if (error || !data?.user) {
-      return NextResponse.json({ error: 'Authentication could not be verified.' }, { status: 401 })
-    }
-    user = data.user
-  } else {
-    const supabase = createServerClient(SB_URL, SB_ANON, {
-      cookies: { getAll: () => request.cookies.getAll(), setAll: () => {} },
-    })
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-    if (sessionError) return NextResponse.json({ error: 'Authentication could not be verified.' }, { status: 401 })
-    if (!session) return NextResponse.json({ authenticated: false, state: null })
-    const { data, error } = await supabase.auth.getUser()
-    if (error || !data?.user) {
-      return NextResponse.json({ error: 'Authentication could not be verified.' }, { status: 401 })
-    }
-    user = data.user
-  }
+  // Detect a genuinely absent session before verifying any presented session.
+  // getSession() is used only for presence; getUser() remains the authority for identity.
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+  if (sessionError) return NextResponse.json({ error: 'Authentication could not be verified.' }, { status: 401 })
+  if (!session) return NextResponse.json({ authenticated: false, state: null })
+
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) return NextResponse.json({ error: 'Authentication could not be verified.' }, { status: 401 })
 
   const admin = createClient(SB_URL, SERVICE, {
     auth: { persistSession: false, autoRefreshToken: false },

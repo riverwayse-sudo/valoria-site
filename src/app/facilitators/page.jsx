@@ -5,11 +5,11 @@ import '../pages.css'
 
 export const metadata = {
   title: 'Development Programmes — Valoria Develop',
-  description: 'Explore PRIME-mapped development programmes for teams. Facilitator suitability and programme scope are confirmed for each engagement.',
-  keywords: ['facilitator commissioning Nigeria', 'corporate training Africa', 'PRIME-aligned development', 'team development Lagos', 'Valoria Develop', 'capability development Africa'],
+  description: 'Explore PRIME-mapped development to run development programmes for your teams. Every programme maps to the same five clusters your team\'s VALU Index is measured against.',
+  keywords: ['commission facilitators Nigeria', 'corporate training Africa', 'PRIME certified trainers', 'team development Lagos', 'Valoria Develop', 'capability development Africa'],
   openGraph: {
     title: 'Commission Facilitators — Valoria Develop | Valoria Institute',
-    description: 'PRIME-mapped development programmes, with facilitator suitability confirmed for each engagement.',
+    description: 'PRIME-certified facilitators. Programmes mapped to the same clusters the VALU Index measures against.',
     url: 'https://valoriainstitute.com/facilitators',
   },
   alternates: { canonical: 'https://valoriainstitute.com/facilitators' },
@@ -17,13 +17,13 @@ export const metadata = {
 
 const HOW_IT_WORKS = [
   { step: '01', title: 'Tell us what you need.', body: 'Submit an enquiry through the platform or contact us directly. Tell us which cluster your team needs to close — Presence, Relationships, Intelligence, Mastery, or Enterprise — and the context: team size, delivery format, timeline.' },
-  { step: '02', title: 'We identify a suitable facilitator.', body: 'We review available facilitator experience and declared capabilities against your programme requirements. Relevant qualifications and assessment status are confirmed before an engagement is agreed.' },
+  { step: '02', title: 'We match you with a certified facilitator.', body: 'Every facilitator in Valoria Develop is PRIME-certified and has taken the VALU Index themselves. We match based on the cluster you need, the facilitator\'s specialisation, and the commercial context.' },
   { step: '03', title: 'The programme runs against the standard.', body: 'Programmes are built directly on the PRIME framework — the same architecture the VALU Index measures against. So development closes the exact gaps the assessment surfaced, not generic training content.' },
-  { step: '04', title: 'Review progress against the standard.', body: 'Where included in the agreed scope, a follow-up VALU Index can provide a structured view of progress. Timing and reporting are agreed before delivery.' },
+  { step: '04', title: 'Measure movement on the same standard.', body: 'Teams can re-take the VALU Index after 90 days to see cluster score movement. Development that doesn\'t produce measurable shift is not development — it\'s content delivery.' },
 ]
 
 const DIFF = [
-  { label: 'PRIME-aligned programme design', desc: 'Programme design follows the PRIME clusters. Facilitator experience and relevant qualifications are reviewed for each engagement.' },
+  { label: 'Certified against PRIME', desc: 'Not just experienced trainers — facilitators who know the framework from the inside, because they\'ve been assessed against it themselves.' },
   { label: 'Mapped to your VALU gaps', desc: 'If your team\'s Intelligence cluster scores are pulling the total down, that\'s where the programme targets. Not a generic leadership module.' },
   { label: 'Measurable by design', desc: 'Because development and assessment run on the same framework, before-and-after VALU Index scores tell you what actually moved.' },
   { label: 'One team, or a full cohort', desc: 'Commission for a single senior team, a graduate cohort, or a multi-site org. The framework scales — the delivery doesn\'t change.' },
@@ -45,7 +45,7 @@ export default function FacilitatorsPage() {
             </p>
             <div className="page-hero-actions">
               <a href="/contact-us" className="btn-gold">COMMISSION A PROGRAMME</a>
-              <a href="/programmes" className="btn-outline">VIEW DEVELOPMENT PROGRAMMES</a>
+              <a href="/valoria-develop" className="btn-outline">BROWSE CERTIFIED FACILITATORS</a>
             </div>
           </div>
         </section>
@@ -60,13 +60,13 @@ export default function FacilitatorsPage() {
                 Most corporate training programmes fail the same way: they run on generic content, delivered by trainers who weren&apos;t assessed against the same standard being taught, and measured by attendance sheets rather than capability movement. Six weeks later, nothing has changed except the training budget.
               </p>
               <p className="page-copy page-copy-spaced">
-                Facilitators are selected based on relevant experience and programme fit. Programme design follows the same five PRIME clusters used by the VALU Index, with any assessment and follow-up measurement agreed as part of the engagement.
+                Valoria-certified facilitators teach to the same five PRIME clusters the VALU Index measures your team against. Development closes the exact gaps the assessment surfaced. And because before-and-after scores run on the same framework, you can see what actually moved.
               </p>
             </Reveal>
             <Reveal>
               <ul className="checklist" role="list">
                 {[
-                  'Facilitator experience and relevant qualifications are reviewed before an engagement is confirmed',
+                  'Facilitators certified directly against the PRIME framework — assessed themselves',
                   'Programmes mapped to the same five clusters as the VALU Index',
                   'Commission for a single team or a full organisational cohort',
                   'Measure capability movement with before-and-after VALU Index scores',
@@ -86,15 +86,15 @@ export default function FacilitatorsPage() {
         <section className="page-section alt">
           <div className="page-section-inner">
             <Reveal>
-              <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">HOW COMMISSIONING WORKS</span><div className="eyebrow-line" /></div>
-              <h2 className="section-title section-title-centered">From gap identification<br /><em>to measurable outcome.</em></h2>
+              <div className="eyebrow" className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">HOW COMMISSIONING WORKS</span><div className="eyebrow-line" /></div>
+              <h2 className="section-title" className="section-title section-title-centered">From gap identification<br /><em>to measurable outcome.</em></h2>
             </Reveal>
             <div className="facilitator-grid">
               {HOW_IT_WORKS.map(s => (
                 <Reveal key={s.step}>
                   <div className="card-gold">
                     <div className="facilitator-step">{s.step}</div>
-                    <div className="cluster-name cluster-name-spaced">{s.title}</div>
+                    <div className="cluster-name" className="cluster-name cluster-name-spaced">{s.title}</div>
                     <p className="cluster-desc">{s.body}</p>
                   </div>
                 </Reveal>
@@ -132,10 +132,10 @@ export default function FacilitatorsPage() {
         {/* CTA */}
         <section className="page-section alt cta-banner">
           <Reveal>
-            <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">FOR TRAINING BUYERS</span><div className="eyebrow-line" /></div>
+            <div className="eyebrow" className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">FOR TRAINING BUYERS</span><div className="eyebrow-line" /></div>
             <h2 className="section-title">Commission a programme<br /><em>against the standard.</em></h2>
             <p className="page-sub">Valoria Develop runs through a direct conversation for now — tell us the cluster, the team, and the context, and we&apos;ll match you with the right facilitator.</p>
-            <div className="page-hero-actions">
+            <div className="page-hero-actions" className="eyebrow eyebrow-center">
               <a href="/contact-us" className="btn-gold">COMMISSION A PROGRAMME</a>
               <a href="/programmes" className="btn-outline">SEE PROGRAMMES BY CLUSTER</a>
             </div>

@@ -1,19 +1,17 @@
 import { PROFESSIONAL_STANDARD_SERIES } from '@/lib/professionalStandardSeries'
-import { renderEventRegistrationEmail } from '@/lib/valoriaEmailDesign'
 
 const MASTER_LIST_ID = process.env.BREVO_WEBINAR_LIST_ID || process.env.BREVO_LIST_ID
 const FROM_EMAIL = process.env.BREVO_FROM_EMAIL || 'info@valoriainstitute.com'
 const FROM_NAME = process.env.BREVO_FROM_NAME || 'Valoria Institute'
 
-function sessionListId(sessionId) {
-  return process.env[`BREVO_SESSION_${sessionId}_LIST_ID`] || MASTER_LIST_ID
-}
+function sessionListId(sessionId) { return process.env[`BREVO_SESSION_${sessionId}_LIST_ID`] || MASTER_LIST_ID }
+function escapeHtml(value = '') { return value.replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char])) }
 
 export async function syncEventRegistrationToBrevo({ email, fullName, role, organisation, whatsapp, session, journeyUrl }) {
   const key = process.env.BREVO_API_KEY
   if (!key) return { synced: false, emailSent: false, errorCode: 'BREVO_NOT_CONFIGURED' }
 
-  const [firstName, ...rest] = String(fullName || '').trim().split(/\s+/)
+  const [firstName, ...rest] = fullName.split(/\s+/)
   const attributes = { FIRSTNAME: firstName || '', LASTNAME: rest.join(' ') }
   if (process.env.BREVO_CUSTOM_ATTRIBUTES_ENABLED === 'true') {
     Object.assign(attributes, {
@@ -39,26 +37,23 @@ export async function syncEventRegistrationToBrevo({ email, fullName, role, orga
   })
   if (!contactResponse.ok) throw new Error(`BREVO_CONTACT_${contactResponse.status}`)
 
-  const message = renderEventRegistrationEmail({ fullName, session, journeyUrl })
+  const first = escapeHtml(firstName || 'there')
+  const title = escapeHtml(session.title)
+  const fullNameSafe = escapeHtml(fullName)
   const emailResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
     headers: { 'api-key': key, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       sender: { name: FROM_NAME, email: FROM_EMAIL },
-      to: [{ email, name: String(fullName || firstName || 'Valoria participant') }],
+      to: [{ email, name: fullNameSafe }],
       replyTo: { email: FROM_EMAIL, name: FROM_NAME },
-      subject: message.subject,
-      htmlContent: message.html,
-      textContent: message.text,
-      tags: ['professional-standard-series', 'event-registration', `session-${session.id}`],
+      subject: `You're registered: ${session.title}`,
+      htmlContent: `<div style="font-family:Arial,sans-serif;background:#0F0F1A;color:#F7F4EE;padding:40px"><div style="max-width:560px;margin:auto;background:#1A1A2E;border:1px solid rgba(201,168,76,.25);padding:40px"><p style="color:#C9A84C;letter-spacing:.16em;font-size:11px;font-weight:700">VALORIA INSTITUTE</p><h1 style="font-weight:400">You're registered.</h1><p>Hi ${first},</p><p>Your registration for <strong>${title}</strong> is confirmed.</p><p style="color:#C9A84C">Virtual · 90 minutes</p>${session.id === '03' ? '<div style="margin:24px 0;padding:20px;border:1px solid rgba(201,168,76,.35);background:rgba(201,168,76,.07)"><p style="margin:0 0 8px;color:#C9A84C;font-weight:700;letter-spacing:.08em;font-size:11px">EVENT ACCESS · SATURDAY, 17 OCTOBER</p><p style="margin:0 0 8px">10:00–11:30 AM WAT · Virtual</p><p style="margin:0 0 16px">Join <strong>Execution Without Burnout: Why High Performers Plateau</strong> on Google Meet.</p><a href="https://meet.google.com/fmo-wxgs-cir" style="display:inline-block;background:#C9A84C;color:#1A1A2E;padding:13px 18px;text-decoration:none;font-weight:700">JOIN THE GOOGLE MEET →</a><p style="font-size:12px;color:rgba(247,244,238,.65);margin:14px 0 0">Meeting link: meet.google.com/fmo-wxgs-cir</p></div>' : '<p>We\'ll send the access details and important updates to this email address.</p>'}<p style="margin-top:28px"><a href="${journeyUrl || '#'}" style="display:inline-block;background:#C9A84C;color:#1A1A2E;padding:14px 20px;text-decoration:none;font-weight:700">CONTINUE YOUR VALORIA JOURNEY →</a></p></div></div>`,
+      tags: ['professional-standard-series', 'event-registration'],
     }),
   })
 
-  return {
-    synced: true,
-    emailSent: emailResponse.ok,
-    errorCode: emailResponse.ok ? null : `BREVO_EMAIL_${emailResponse.status}`,
-  }
+  return { synced: true, emailSent: emailResponse.ok, errorCode: emailResponse.ok ? null : `BREVO_EMAIL_${emailResponse.status}` }
 }
 
 export const EVENT_SESSIONS = Object.fromEntries(

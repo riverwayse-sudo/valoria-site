@@ -1,7 +1,3 @@
-import { getConsentVerifiedPublicProfileSitemapRows } from '@/lib/public-profile'
-
-export const dynamic = 'force-dynamic'
-
 const SITE_URL = 'https://valoriainstitute.com'
 
 export default async function sitemap() {
@@ -13,12 +9,9 @@ export default async function sitemap() {
     { path: '/marketplace/speakers', priority: 0.9, changeFrequency: 'daily' },
     { path: '/marketplace/facilitators', priority: 0.9, changeFrequency: 'daily' },
     { path: '/facilitators', priority: 0.7, changeFrequency: 'monthly' },
+    { path: '/develop', priority: 0.7, changeFrequency: 'monthly' },
     { path: '/prime', priority: 0.7, changeFrequency: 'monthly' },
     { path: '/programmes', priority: 0.6, changeFrequency: 'monthly' },
-    { path: '/events', priority: 0.8, changeFrequency: 'weekly' },
-    { path: '/insights', priority: 0.6, changeFrequency: 'weekly' },
-    { path: '/valu', priority: 0.8, changeFrequency: 'monthly' },
-    { path: '/valu/start', priority: 0.7, changeFrequency: 'monthly' },
     { path: '/about-us', priority: 0.6, changeFrequency: 'monthly' },
     { path: '/contact-us', priority: 0.5, changeFrequency: 'yearly' },
     { path: '/careers', priority: 0.8, changeFrequency: 'weekly' },
@@ -27,25 +20,22 @@ export default async function sitemap() {
     { path: '/privacypolicy', priority: 0.3, changeFrequency: 'yearly' },
     { path: '/terms-of-use', priority: 0.3, changeFrequency: 'yearly' },
   ]
-  const staticEntries = pages.map(page => ({
-    url: `${SITE_URL}${page.path}`,
-    lastModified: now,
-    changeFrequency: page.changeFrequency,
-    priority: page.priority,
-  }))
-
+  const staticEntries = pages.map(p => ({ url: `${SITE_URL}${p.path}`, lastModified: now, changeFrequency: p.changeFrequency, priority: p.priority }))
   let profileEntries = []
   try {
-    const profiles = await getConsentVerifiedPublicProfileSitemapRows()
-    profileEntries = profiles.map(profile => ({
-      url: `${SITE_URL}/profile/${profile.id}`,
-      lastModified: profile.updated_at ? new Date(profile.updated_at) : now,
-      changeFrequency: 'weekly',
-      priority: 0.6,
-    }))
-  } catch (error) {
-    console.error('Sitemap public profile verification failed:', error)
-  }
-
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (supabaseUrl && supabaseKey) {
+      const { createClient } = await import('@supabase/supabase-js')
+      const client = createClient(supabaseUrl, supabaseKey)
+      const { data, error } = await client
+        .from('professional_profiles')
+        .select('id,updated_at')
+        .eq('listing_status', 'listed')
+        .neq('visibility', 'private')
+      if (error) console.error('sitemap: profile fetch failed:', error)
+      profileEntries = (data || []).map(p => ({ url: `${SITE_URL}/profile/${p.id}`, lastModified: p.updated_at ? new Date(p.updated_at) : now, changeFrequency: 'weekly', priority: .6 }))
+    }
+  } catch { /* Build-time Supabase failure must not break sitemap generation. */ }
   return [...staticEntries, ...profileEntries]
 }

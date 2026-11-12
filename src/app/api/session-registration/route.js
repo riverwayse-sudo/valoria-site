@@ -30,20 +30,11 @@ export async function POST(request) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return Response.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     if (!consent) return Response.json({ error: 'Please accept the communication consent to register.' }, { status: 400 })
 
-    // Cloudflare provides the client address in CF-Connecting-IP. Do not trust
-    // an arbitrary first X-Forwarded-For value when the request is behind Cloudflare.
-    const ip = request.headers.get('cf-connecting-ip')
-      || request.headers.get('x-real-ip')
-      || request.headers.get('x-forwarded-for')?.split(',')[0].trim()
-      || 'unknown'
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || request.headers.get('x-real-ip') || 'unknown'
     const { data: allowed, error: rateLimitError } = await supabase.rpc('check_rate_limit', {
       p_key: `session-registration:${ip}`, p_max_count: 10, p_window_seconds: 3600,
     })
-    if (rateLimitError) {
-      console.error('Session registration rate-limit check failed:', rateLimitError)
-      return Response.json({ error: 'Registration is temporarily unavailable. Please try again shortly.' }, { status: 503 })
-    }
-    if (!allowed) return Response.json({ error: 'Too many registration attempts. Please try again later.' }, { status: 429 })
+    if (!rateLimitError && !allowed) return Response.json({ error: 'Too many registration attempts. Please try again later.' }, { status: 429 })
 
     const registration = {
       session_id: sessionId, full_name: fullName, email,

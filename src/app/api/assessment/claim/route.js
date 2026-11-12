@@ -22,7 +22,7 @@ export async function POST(request){
    if(assessmentError)return Response.json({error:assessmentError.message},{status:500})
    candidate=byTaster
 
-   // Legacy full VALU Indexs may already belong to this authenticated account
+   // Legacy full assessments may already belong to this authenticated account
    // but predate persisted taster_id. Recover only through the immutable user_id,
    // never through name-only or date-only matching.
    if(!candidate){
@@ -42,7 +42,7 @@ export async function POST(request){
    if(error)return Response.json({error:error.message},{status:500})
    candidate=(a||[]).find(x=>!x.user_id||x.user_id===user.id)
  }
- if(!candidate)return Response.json({error:'No previous completed VALU Index could be securely matched to this account.'},{status:404})
+ if(!candidate)return Response.json({error:'No previous completed VALU assessment could be securely matched to this account.'},{status:404})
  if(candidate.user_id&&candidate.user_id!==user.id)return Response.json({error:'This assessment is already connected to another account.'},{status:409})
  if(!candidate.user_id || (requestedTaster && !candidate.taster_id)){
    const patch={user_id:user.id}

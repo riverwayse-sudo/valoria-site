@@ -8,12 +8,6 @@ const TYPES=[['portfolio','Portfolio / work sample'],['certification','Certifica
 export default function ProfessionalEvidence(){
  const [caps,setCaps]=useState([]),[docs,setDocs]=useState([]),[latest,setLatest]=useState({}),[capabilityId,setCapabilityId]=useState(''),[type,setType]=useState('portfolio'),[file,setFile]=useState(null),[busy,setBusy]=useState(false),[loading,setLoading]=useState(true),[error,setError]=useState(''),[success,setSuccess]=useState('')
  const fileRef=useRef(null)
- const selectedCapability=caps.find(c=>c.id===capabilityId)
- const allowedTypes=selectedCapability?.capability==='speaker'
-  ? TYPES.filter(([value])=>['portfolio','certification','speaking_sample'].includes(value))
-  : selectedCapability?.capability==='facilitator'
-   ? TYPES.filter(([value])=>['portfolio','certification','facilitation_record'].includes(value))
-   : []
  const load=useCallback(async()=>{
   const {data:{session}}=await supabase.auth.getSession()
   if(!session){location.href='/login';return}
@@ -33,7 +27,6 @@ export default function ProfessionalEvidence(){
   e.preventDefault();setError('');setSuccess('')
   if(!file){setError('Choose a file to submit.');return}
   if(!capabilityId){setError('Choose an active capability.');return}
-  if(!allowedTypes.some(([value])=>value===type)){setError('This evidence type does not support the selected capability. Choose the matching evidence type or update your capability.');return}
   setBusy(true)
   const {data:{session}}=await supabase.auth.getSession()
   const body=new FormData();body.append('file',file);body.append('document_type',type);body.append('capability_id',capabilityId)
@@ -47,10 +40,10 @@ export default function ProfessionalEvidence(){
  return <main style={s.root}><header style={s.header}><Link href="/dashboard" style={{color:G}}>← Dashboard</Link><b>PROFESSIONAL EVIDENCE</b></header><section style={s.wrap}>
  <h1 style={s.title}>Capability evidence</h1><p style={s.muted}>Submit evidence against the capability it supports. Files remain private and are visible only to you and authorised Valoria reviewers.</p>
  {error&&<p style={s.error}>{error}</p>}{success&&<p style={s.success}>{success}</p>}
- <form onSubmit={submit} style={s.panel}><label style={s.label}>Capability</label><select required value={capabilityId} onChange={e=>{const id=e.target.value;setCapabilityId(id);const cap=caps.find(item=>item.id===id);const next=cap?.capability==='speaker'?'speaking_sample':cap?.capability==='facilitator'?'facilitation_record':'portfolio';setType(next)}} style={s.input}><option value="">Select capability</option>{caps.map(c=><option key={c.id} value={c.id}>{c.capability}</option>)}</select>
- {allowedTypes.length>0?<><label style={s.label}>Evidence type</label><select value={type} onChange={e=>setType(e.target.value)} style={s.input}>{allowedTypes.map(([v,l])=><option key={v} value={v}>{l}</option>)}</select>
- <label style={s.label}>File (maximum 10MB)</label><input ref={fileRef} type="file" onChange={e=>setFile(e.target.files?.[0]||null)} style={s.input}/></>:<p style={s.muted}>Talent capability is verified through your profile-wide CV. <Link href="/profile/edit" style={{color:G}}>Upload or update your CV in profile settings →</Link></p>}
- <button disabled={busy||!allowedTypes.length} style={s.button}>{busy?'Submitting…':'Submit evidence'}</button>
+ <form onSubmit={submit} style={s.panel}><label style={s.label}>Capability</label><select required value={capabilityId} onChange={e=>setCapabilityId(e.target.value)} style={s.input}><option value="">Select capability</option>{caps.map(c=><option key={c.id} value={c.id}>{c.capability}</option>)}</select>
+ <label style={s.label}>Evidence type</label><select value={type} onChange={e=>setType(e.target.value)} style={s.input}>{TYPES.map(([v,l])=><option key={v} value={v}>{l}</option>)}</select>
+ <label style={s.label}>File (maximum 10MB)</label><input ref={fileRef} type="file" onChange={e=>setFile(e.target.files?.[0]||null)} style={s.input}/>
+ <button disabled={busy||!caps.length} style={s.button}>{busy?'Submitting…':'Submit evidence'}</button>
  {!caps.length&&<p style={s.muted}>Select and save at least one capability in your profile before submitting capability-specific evidence.</p>}
  </form>
  <h2 style={s.h2}>Your submissions</h2><div style={s.list}>{docs.map(d=>{const r=latest[d.id];return <article key={d.id} style={s.item}><b>{d.original_filename}</b><div style={s.muted}>{d.professional_capabilities?.capability||'Profile-wide'} · {d.document_type.replaceAll('_',' ')} · {new Date(d.created_at).toLocaleDateString()}</div><span style={s.status}>{d.verification_status==='verified'?'Approved':r?.decision==='changes_requested'?'Changes requested':d.verification_status==='rejected'?'Not approved':'Under review'}</span>{r&&<div style={s.review}><b>Reviewer update</b><p>{r.notes}</p><small>{new Date(r.reviewed_at).toLocaleString()}</small></div>}</article>})}{!docs.length&&<p style={s.muted}>No evidence submitted yet.</p>}</div>

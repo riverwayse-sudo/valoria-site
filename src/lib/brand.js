@@ -34,7 +34,7 @@ export const PRIME_CLUSTERS = [
 export const VALU_SCORE = {
   unit: 'points',
   maximum: 100,
-  displaySuffix: 'points',
+  displaySuffix: '/100',
 }
 
 export const MARKETPLACE_ACCESS_LEVELS = {
@@ -59,12 +59,12 @@ export const MARKETPLACE_ACCESS_LEVELS = {
 // Merit tiers are credentials earned through the full VALU Index assessment.
 // Do not assign a merit tier to a taster-only/basic listing.
 export const TIER_DESIGNATIONS = [
-  // Canonical merit bands aligned with the VALU v4 assessment contract.
-  // Scores below 35 do not receive a public merit designation.
-  { level: 4, min: 90, max: 100, name: 'Elite', stars: '✦✦✦', badgeClass: 'elite' },
-  { level: 3, min: 75, max: 89, name: 'Distinguished', stars: '✦✦', badgeClass: 'distinguished' },
-  { level: 2, min: 55, max: 74, name: 'Proficient', stars: '✦', badgeClass: 'proficient' },
-  { level: 1, min: 35, max: 54, name: 'Standard', stars: '', badgeClass: 'standard' },
+  // Canonical five-designation system from the 9 October 2026 founder-approved content brief.
+  // Scores below 35 are not marketplace-listable and therefore receive no public card designation.
+  { level: 4, min: 80, max: 100, name: 'Force to Align With', stars: '✦✦', badgeClass: 'forceToAlignWith' },
+  { level: 3, min: 65, max: 79, name: 'Emerging Force', stars: '', badgeClass: 'emergingForce' },
+  { level: 2, min: 50, max: 64, name: 'Developing Professional', stars: '', badgeClass: 'developingProfessional' },
+  { level: 1, min: 35, max: 49, name: 'Building Foundations', stars: '', badgeClass: 'buildingFoundations' },
 ]
 
 export function getValuTier(points, assessmentLevel = 'full') {

@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server'
-import { normalizeSupabaseProjectUrl } from '@/lib/supabase-url'
 import { createClient } from '@supabase/supabase-js'
 
-const configuredSBUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const SB_URL = configuredSBUrl ? normalizeSupabaseProjectUrl(configuredSBUrl) : null
+const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY
 function getAdmin() {
@@ -19,7 +17,7 @@ export async function POST(request) {
 
   const authorization = request.headers.get('authorization') || ''
   if (!authorization.toLowerCase().startsWith('bearer ')) {
-    return NextResponse.json({ error: 'Sign in is required before linking your VALU Index.' }, { status: 401 })
+    return NextResponse.json({ error: 'Sign in is required before linking your VALU assessment.' }, { status: 401 })
   }
 
   let body
@@ -55,15 +53,15 @@ export async function POST(request) {
     .maybeSingle()
 
   if (assessmentError || !assessment) {
-    return NextResponse.json({ error: 'VALU Index not found.' }, { status: 404 })
+    return NextResponse.json({ error: 'VALU assessment not found.' }, { status: 404 })
   }
 
   if (!assessment.completed_at) {
-    return NextResponse.json({ error: 'This VALU Index is not complete yet.' }, { status: 409 })
+    return NextResponse.json({ error: 'This VALU assessment is not complete yet.' }, { status: 409 })
   }
 
   if (assessment.user_id && assessment.user_id !== user.id) {
-    return NextResponse.json({ error: 'This VALU Index is already linked to another account.' }, { status: 409 })
+    return NextResponse.json({ error: 'This VALU assessment is already linked to another account.' }, { status: 409 })
   }
 
   if (String(assessment.email || '').trim().toLowerCase() !== userEmail) {
@@ -78,11 +76,11 @@ export async function POST(request) {
       .is('user_id', null)
 
     if (linkError) {
-      return NextResponse.json({ error: 'Could not link the VALU Index.' }, { status: 502 })
+      return NextResponse.json({ error: 'Could not link the VALU assessment.' }, { status: 502 })
     }
     const { data: linked, error: verifyError } = await admin.from('valu_assessments').select('id,user_id').eq('id', assessment.id).maybeSingle()
     if (verifyError || linked?.user_id !== user.id) {
-      return NextResponse.json({ error: 'The VALU Index link could not be verified. Please retry.' }, { status: 502 })
+      return NextResponse.json({ error: 'The VALU assessment link could not be verified. Please retry.' }, { status: 502 })
     }
   }
 

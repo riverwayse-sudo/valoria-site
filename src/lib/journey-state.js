@@ -23,7 +23,7 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
   if (!Array.isArray(profile?.languages) || profile.languages.length === 0) profileMissing.push('At least one language')
 
   // Profile completeness is a profile-data state. It must not be coupled to
-  // assessment freshness, VALU Index points, or marketplace eligibility.
+  // assessment freshness, VALU points, or marketplace eligibility.
   const profileReady = profile?.profile_complete === true && profileMissing.length === 0
   const activeCapabilities = capabilities.filter(c => c.is_active)
   const eligibleCapabilities = activeCapabilities.filter(c =>
@@ -39,8 +39,8 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
   const eligibilityMissing = [...new Set([...profileMissing, ...capabilityMissing])]
   if (!capabilitySelected) eligibilityMissing.push('At least one professional capability')
   if (!profile?.cv_url?.trim()) eligibilityMissing.push('Your CV')
-  if (!hasAssessment) eligibilityMissing.push('A completed full VALU Index')
-  else if (!assessmentCurrent) eligibilityMissing.push('A current full VALU Index')
+  if (!hasAssessment) eligibilityMissing.push('A completed full VALU Index assessment')
+  else if (!assessmentCurrent) eligibilityMissing.push('A current full VALU Index assessment')
   else if (!assessmentEligible) eligibilityMissing.push('At least 35 VALU Index points')
   // Full marketplace eligibility must satisfy the same evidence and capability requirements
   // exposed to the participant below. Do not let stale eligible flags bypass either gate.
@@ -84,8 +84,8 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
 
   const recoveryReason = journey?.next_action ||
     ({
-      assess: hasAssessment ? 'Continue your VALU Index.' : 'No completed VALU Index yet — start your VALU Index.',
-      report: reportReady ? 'Activate your Valoria report to continue.' : 'Your VALU Index report is being prepared.',
+      assess: hasAssessment ? 'Continue your VALU journey.' : 'No completed VALU assessment yet — start your VALU assessment.',
+      report: reportReady ? 'Activate your Valoria report to continue.' : 'Your VALU report is being prepared.',
       profile: 'Complete your professional profile.',
       capability: 'Add your capability.',
       eligibility: 'Complete your capability eligibility.',

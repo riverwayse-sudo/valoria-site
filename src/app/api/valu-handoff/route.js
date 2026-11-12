@@ -1,9 +1,24 @@
 import { NextResponse } from 'next/server'
 import { createHash, randomBytes } from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
-import { getValuAssessmentOrigin } from '@/lib/valu-origin'
 
 const HANDOFF_TTL_SECONDS = 60
+
+function getAssessmentOrigin() {
+  const configured = process.env.VALU_UPSTREAM_ORIGIN?.trim()
+  const productionOrigin = 'https://assessment.valoriainstitute.com'
+  if (process.env.VERCEL_ENV === 'production') return configured || productionOrigin
+  if (!configured) return null
+  try {
+    const url = new URL(configured)
+    if (!['http:', 'https:'].includes(url.protocol)) return null
+    // Preview deployments must never silently send participants to production.
+    if (url.hostname === 'assessment.valoriainstitute.com') return null
+    return url.origin
+  } catch {
+    return null
+  }
+}
 
 function getAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -12,14 +27,10 @@ function getAdmin() {
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
 }
 
-async function getAccount(request) {
+async function getAccount(request, admin) {
   const token = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '').trim()
   if (!token) return { error: NextResponse.json({ error: 'Authentication required.' }, { status: 401 }) }
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !anonKey) return { error: NextResponse.json({ error: 'Authentication service is not configured.' }, { status: 503 }) }
-  const verifier = createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false } })
-  const { data, error } = await verifier.auth.getUser(token)
+  const { data, error } = await admin.auth.getUser(token)
   if (error || !data?.user) return { error: NextResponse.json({ error: 'Your session is invalid. Sign in again.' }, { status: 401 }) }
   if (!data.user.email_confirmed_at) return { error: NextResponse.json({ error: 'Confirm your email before continuing.' }, { status: 403 }) }
   return { user: data.user }
@@ -33,8 +44,8 @@ async function getOwnedSnapshot(admin, user) {
     .order('completed_at', { ascending: false })
     .limit(1)
     .maybeSingle()
-  if (error) return { error: 'Could not verify your saved VALU Index Taster.', status: 502 }
-  if (!taster) return { error: 'No completed VALU Index Taster is linked to this account.', status: 404 }
+  if (error) return { error: 'Could not verify your saved VALU snapshot.', status: 502 }
+  if (!taster) return { error: 'No completed VALU snapshot is linked to this account.', status: 404 }
 
   const { data: candidate, error: candidateError } = await admin.from('taster_identity_candidates')
     .select('candidate_email,candidate_role,linked_user_id')
@@ -58,21 +69,21 @@ async function getOwnedSnapshot(admin, user) {
     .not('completed_at', 'is', null)
     .limit(1)
     .maybeSingle()
-  if (accountAssessmentError) return { error: 'Could not verify your VALU Index status.', status: 502 }
+  if (accountAssessmentError) return { error: 'Could not verify your VALU assessment status.', status: 502 }
   const { data: completedBySnapshot, error: snapshotAssessmentError } = await admin.from('valu_assessments')
     .select('id')
     .eq('taster_id', taster.id)
     .not('completed_at', 'is', null)
     .limit(1)
     .maybeSingle()
-  if (snapshotAssessmentError) return { error: 'Could not verify your VALU Index status.', status: 502 }
+  if (snapshotAssessmentError) return { error: 'Could not verify your VALU assessment status.', status: 502 }
   return { taster, completed: Boolean(completedByAccount || completedBySnapshot) }
 }
 
 export async function GET(request) {
   let admin
   try { admin = getAdmin() } catch { return NextResponse.json({ error: 'Server misconfigured.' }, { status: 503 }) }
-  const auth = await getAccount(request)
+  const auth = await getAccount(request, admin)
   if (auth.error) return auth.error
   const snapshot = await getOwnedSnapshot(admin, auth.user)
   if (snapshot.error) {
@@ -88,13 +99,13 @@ export async function GET(request) {
 export async function POST(request) {
   let admin
   try { admin = getAdmin() } catch { return NextResponse.json({ error: 'Server misconfigured.' }, { status: 503 }) }
-  const auth = await getAccount(request)
+  const auth = await getAccount(request, admin)
   if (auth.error) return auth.error
   const snapshot = await getOwnedSnapshot(admin, auth.user)
   if (snapshot.error) return NextResponse.json({ error: snapshot.error }, { status: snapshot.status })
-  if (snapshot.completed) return NextResponse.json({ error: 'Your full VALU Index is already complete.', already_completed: true }, { status: 409 })
+  if (snapshot.completed) return NextResponse.json({ error: 'Your full VALU assessment is already complete.', already_completed: true }, { status: 409 })
 
-  const assessmentOrigin = getValuAssessmentOrigin(process.env)
+  const assessmentOrigin = getAssessmentOrigin()
   if (!assessmentOrigin) {
     return NextResponse.json({ error: 'The assessment preview origin is not configured for this environment.' }, { status: 503 })
   }
@@ -112,19 +123,12 @@ export async function POST(request) {
     expires_at: expiresAt,
   })
   if (insertError) {
-    console.error('VALU Index dashboard handoff issuance failed:', insertError.message)
+    console.error('VALU dashboard handoff issuance failed:', insertError.message)
     return NextResponse.json({ error: 'Secure assessment access is temporarily unavailable. Please try again.' }, { status: 503 })
   }
 
-  const destination = new URL('/remaining', assessmentOrigin)
-  // Preserve the exact production host that issued the handoff. Supabase
-  // browser cookies are host-scoped, so switching between apex and www
-  // can make a valid dashboard session appear to be signed out.
-  const requestOrigin = new URL(request.url).origin
-  const siteOrigin = ['https://valoriainstitute.com', 'https://www.valoriainstitute.com'].includes(requestOrigin)
-    ? requestOrigin
-    : 'https://valoriainstitute.com'
-  destination.search = new URLSearchParams({ full: '1', site_origin: siteOrigin }).toString()
+  const destination = new URL('/', assessmentOrigin)
+  destination.search = new URLSearchParams({ full: '1' }).toString()
   destination.hash = new URLSearchParams({ handoff_code: handoffCode }).toString()
   return NextResponse.json({ url: destination.toString(), expires_in: HANDOFF_TTL_SECONDS }, {
     headers: { 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' },

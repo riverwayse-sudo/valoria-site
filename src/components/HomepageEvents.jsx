@@ -31,20 +31,14 @@ export default function HomepageEvents() {
 
         <div className="home-events-feature">
           <div className="home-events-video">
-            <a
-              className="home-events-video-link"
-              href={youtubeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={'Watch ' + replay.title + ' on YouTube'}
-              style={{ '--video-thumbnail': 'url(https://i.ytimg.com/vi/' + replay.youtubeVideoId + '/hqdefault.jpg)' }}
-            >
-              <span className="home-events-play" aria-hidden="true">▶</span>
-              <span className="home-events-video-label">
-                <strong>WATCH THE CONVERSATION</strong>
-                <span>Opens on YouTube</span>
-              </span>
-            </a>
+            <iframe
+              src={'https://www.youtube-nocookie.com/embed/' + replay.youtubeVideoId + '?rel=0'}
+              title={replay.title + ' — Valoria Institute with Temi Adetokunbo'}
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
           </div>
 
           <div className="home-events-slider">

@@ -15,22 +15,6 @@ const INQUIRY_TYPES = [
 export default function ContactForm() {
   const [currentUser, setCurrentUser] = useState(null)
   const [form, setForm] = useState({ name: '', email: '', organisation: '', inquiryType: 'general', message: '' })
-
-  useEffect(() => {
-    const requestedType = new URLSearchParams(window.location.search).get('type')
-    const typeMap = {
-      candidate: 'hiring',
-      hiring: 'hiring',
-      speaker: 'speaker',
-      speaker_booking: 'speaker',
-      facilitator: 'training',
-      facilitator_commission: 'training',
-      training: 'training',
-      general: 'general',
-    }
-    const inquiryType = typeMap[requestedType]
-    if (inquiryType) setForm(current => ({ ...current, inquiryType }))
-  }, [])
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [formError, setFormError] = useState('')

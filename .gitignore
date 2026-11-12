@@ -8,7 +8,4 @@ deploy*.bat
 install_feedback*.bat
 *.pptx
 !public/*.png
-".vercel"
-.open-next/
-.wrangler/
-.wrangler-dry-run/
+".vercel" 

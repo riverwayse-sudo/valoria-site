@@ -22,35 +22,29 @@ export const PROFESSIONAL_STANDARD_SERIES = [
     speaker: 'Temi Adetokunbo', flyerPosition: 'right', youtubeVideoId: 'm2ElTyJy6dg',
   },
   {
-    id: '04', cluster: 'ENTERPRISE',
-    title: 'Influence Without Authority: The Real Currency of Organisational Power',
-    description: 'A practical conversation about building influence, earning trust and shaping decisions across an organisation — even when you do not hold formal authority.',
-    start: '2026-11-14T10:00:00+01:00', dateApproved: true, // No approved end time; session remains live until explicitly ended.
-    speaker: 'Yinlayefa Thompson, SPHRi', host: 'Temitayo Adetokunbo',
+    id: '04', cluster: 'RELATIONSHIPS',
+    title: 'Emotional Intelligence Is Not About Being Nice',
+    description: 'Treat emotional intelligence as a precision instrument for perception, regulation and strategic application.',
+    start: '2026-11-14T10:00:00+01:00', end: '2026-11-14T11:30:00+01:00', dateApproved: false,
   },
   {
     id: '05', cluster: 'ENTERPRISE',
     title: 'Influence Without Authority: The Real Currency of Organisational Power',
     description: 'Understand authority versus influence and build a 90-day stakeholder influence map.',
-    start: '2026-12-05T10:00:00+01:00', end: '2026-12-05T11:30:00+01:00', dateApproved: false, publiclyAnnounced: false,
+    start: '2026-12-05T10:00:00+01:00', end: '2026-12-05T11:30:00+01:00', dateApproved: false,
   },
 ]
 
 export function getSessionState(session, now = Date.now()) {
   if (!session.dateApproved) return 'coming-soon'
   const start = new Date(session.start).getTime()
+  const end = new Date(session.end).getTime()
   const index = PROFESSIONAL_STANDARD_SERIES.findIndex((item) => item.id === session.id)
   const previous = index > 0 ? PROFESSIONAL_STANDARD_SERIES[index - 1] : null
-
-  // If a previous approved session has no confirmed end time, keep the next
-  // session locked until the previous one is explicitly marked ended.
-  if (previous && !previous.end && !previous.manuallyEnded) return 'locked'
-  const previousEnd = previous?.end ? new Date(previous.end).getTime() : 0
+  const previousEnd = previous ? new Date(previous.end).getTime() : 0
   if (now < previousEnd) return 'locked'
   if (now < start) return 'registration-open'
-  if (session.manuallyEnded) return 'ended'
-  if (!session.end) return 'live'
-  if (now < new Date(session.end).getTime()) return 'live'
+  if (now < end) return 'live'
   return 'ended'
 }
 
@@ -63,7 +57,7 @@ export function getCountdownTarget(session, now = Date.now()) {
     return new Date(previous.end).getTime()
   }
   if (state === 'registration-open') return new Date(session.start).getTime()
-  if (state === 'live') return session.end ? new Date(session.end).getTime() : null
+  if (state === 'live') return new Date(session.end).getTime()
   return null
 }
 

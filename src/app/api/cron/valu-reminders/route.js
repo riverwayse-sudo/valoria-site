@@ -67,8 +67,8 @@ export async function GET(request) {
     if (!profile || profile.profile_complete) continue
 
     // A linked professional can be in one of two incomplete states:
-    // 1) no authoritative full VALU Index yet -> assessment reminder
-    // 2) full VALU Index complete but profile incomplete -> profile reminder (handled below)
+    // 1) no authoritative full assessment yet -> assessment reminder
+    // 2) full assessment complete but profile incomplete -> profile reminder (handled below)
     if (profile.assessment_completed_at) continue
     const count = Number(row.reminder_count || 0)
     if (!dueForReminder(row.linked_at, count)) continue
@@ -78,7 +78,7 @@ export async function GET(request) {
     if (!email || !userData?.user?.email_confirmed_at) continue
     const firstName = String(row.name || 'there').trim().split(/\s+/)[0] || 'there'
     const dashboardUrl = 'https://valoriainstitute.com/login?returnTo=%2Fdashboard'
-    const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#1A1A2E;line-height:1.65"><p style="font-size:11px;font-weight:700;letter-spacing:.14em;color:#C9A84C">VALORIA INSTITUTE</p><h2 style="font-weight:400">Your VALU Index is waiting.</h2><p>Hi ${escapeHtml(firstName)}, your opening nine answers are saved to your Valoria account.</p><p>Sign in to your account to see your progress and continue the VALU Index from your dashboard.</p><a href="${dashboardUrl}" style="display:inline-block;padding:13px 22px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-weight:700;font-size:12px;letter-spacing:.08em">RETURN TO YOUR DASHBOARD →</a><p style="font-size:11px;color:#8A8578;margin-top:26px">Your saved responses remain part of your Valoria journey.</p></div>`
+    const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#1A1A2E;line-height:1.65"><p style="font-size:11px;font-weight:700;letter-spacing:.14em;color:#C9A84C">VALORIA INSTITUTE</p><h2 style="font-weight:400">Your VALU journey is waiting.</h2><p>Hi ${escapeHtml(firstName)}, your opening nine answers are saved to your Valoria account.</p><p>Sign in to your account to see your progress and continue your assessment from your dashboard.</p><a href="${dashboardUrl}" style="display:inline-block;padding:13px 22px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-weight:700;font-size:12px;letter-spacing:.08em">RETURN TO YOUR DASHBOARD →</a><p style="font-size:11px;color:#8A8578;margin-top:26px">Your saved responses remain part of your Valoria journey.</p></div>`
     try {
       const send = await fetch('https://api.brevo.com/v3/smtp/email', { method:'POST', headers:{'api-key':BREVO_KEY,'Content-Type':'application/json'}, body:JSON.stringify({sender:{name:FROM_NAME,email:FROM_EMAIL},to:[{email,name:row.name}],subject:'Complete your VALU Index',htmlContent:html,tags:['valu-reminder','assessment-completion']}) })
       if (!send.ok) {

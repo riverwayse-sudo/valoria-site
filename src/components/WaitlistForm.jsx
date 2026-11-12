@@ -185,14 +185,14 @@ export default function WaitlistForm() {
               </div>
               <div className="wl-done-section">
                 <div className="wl-done-label">WHAT&apos;S COMING</div>
-                <p className="wl-done-body">A marketplace where professional capabilities are presented with clear assessment context. Employers can explore talent by capability, event organisers can discover speakers by expertise, and development buyers can enquire about PRIME-mapped programmes.</p>
+                <p className="wl-done-body">A marketplace where every profile is verified by the VALU Index. Where employers search by capability, not connection. Where speakers get booked on merit. Where facilitators earn trust before they walk into the room.</p>
               </div>
               <div className="wl-done-three">
                 <div className="wl-done-label">THREE WAYS IN</div>
                 {[
-                  { color:'#378ADD', label:'ATB CONNECT',   desc:'For employers and recruiters — explore professionals by capability and sector, with VALU points shown where a current Full assessment is available.' },
-                  { color:'#C9A84C', label:'ATB SPOTLIGHT', desc:'For event planners — explore speaker profiles by expertise and declared professional capability.' },
-                  { color:'#1D9E75', label:'ATB DEVELOP',   desc:'For L&D leaders — enquire about PRIME-mapped development programmes, with facilitator suitability confirmed for each engagement.' },
+                  { color:'#378ADD', label:'ATB CONNECT',   desc:'For employers and recruiters — search pre-assessed candidates by score, strength, and sector.' },
+                  { color:'#C9A84C', label:'ATB SPOTLIGHT', desc:'For event planners — discover and book speakers whose capability you can actually verify.' },
+                  { color:'#1D9E75', label:'ATB DEVELOP',   desc:'For L&D leaders — commission PRIME-certified facilitators with an assessed track record.' },
                 ].map((t,i) => (
                   <div key={i} className="wl-done-track">
                     <div className="wl-track-bar" style={{ background: t.color }} />

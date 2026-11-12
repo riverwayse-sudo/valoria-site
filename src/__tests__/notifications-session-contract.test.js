@@ -32,13 +32,12 @@ describe('authenticated VALU continuation entry points', () => {
     expect(dashboard).not.toContain("? '/valu/start'")
   })
 
-  test('sitewide assessment nudge resumes an in-progress assessment', () => {
+  test('sitewide assessment nudge returns participants to the dashboard', () => {
     const nudge = fs.readFileSync(
       path.join(process.cwd(), 'src/components/ValuCompletionNudge.jsx'),
       'utf8'
     )
-    expect(nudge).toContain('AssessmentStartLink href="/dashboard" dashboardOnly')
-    expect(nudge).toContain('href={assessed?"/profile/setup":"/valu/start"}')
-    expect(nudge).toContain('CONTINUE MY ASSESSMENT')
+    expect(nudge).toContain('assessmentStarted?"/dashboard":"/valu/start"')
+    expect(nudge).toContain('OPEN MY DASHBOARD')
   })
 })

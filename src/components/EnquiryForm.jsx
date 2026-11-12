@@ -1,6 +1,5 @@
 'use client'
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
 import styles from './PremiumInteractions.module.css'
 
 const GOLD  = '#C9A84C'
@@ -34,12 +33,9 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
     setSending(true)
     setError('')
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      const headers = { 'Content-Type': 'application/json' }
-      if (session?.access_token) headers.Authorization = `Bearer ${session.access_token}`
       const res = await fetch('/api/enquiries', {
         method: 'POST',
-        headers,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           professional_profile_id: professionalProfileId,
           atb_id: atbId,
@@ -48,6 +44,7 @@ export default function EnquiryForm({ professionalProfileId, atbId, enquiryType,
           buyer_email: form.buyer_email,
           buyer_company: form.buyer_company,
           message: form.message,
+          buyer_user_id: currentUser?.id || null,
         }),
       })
       const data = await res.json().catch(() => ({}))

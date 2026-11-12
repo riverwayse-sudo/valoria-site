@@ -1,9 +1,10 @@
-// LEGACY TEST HARNESS ONLY — not used by the production assessment flow.
-// The production scoring source of truth is valoria-platform/valoria-final/src/
-// scoringEngine.js together with valuV4Contract.js. Keep this module aligned
-// only with the site-side unit-test fixtures; never use it to calculate live
-// participant scores. Production scoring changes must be made in the platform
-// contract and validated against the canonical question bank.
+// scoringEngine.js — Single source of truth for all VALU Index scoring.
+// This file must stay byte-identical (content, not necessarily extension)
+// between valoria-platform (src/scoringEngine.cjs) and valoria-site
+// (src/scoringEngine.js). It drifted once already (designation color/bg
+// fields existed in one repo but not the other) — if you change scoring
+// logic, copy the whole file to the other repo in the same commit/PR.
+// Long-term fix: extract to a shared npm package so this can't happen again.
 
 "use strict";
 
@@ -16,10 +17,10 @@ const CLUSTERS = [
 ];
 
 const DESIGNATIONS = [
-  { min: 90, name: "Elite", stars: "✦✦✦", color: "#1A1A2E", bg: "#C9A84C" },
-  { min: 75, name: "Distinguished", stars: "✦✦", color: "#C9A84C", bg: "#1A1A2E" },
-  { min: 55, name: "Proficient", stars: "✦", color: "#2E2E4A", bg: "#EDE8DC" },
-  { min: 35, name: "Standard", stars: "", color: "#2E2E4A", bg: "#F7F4EE" },
+  { min: 90, name: "Elite",         stars: "✦✦✦", color: "#1A1A2E", bg: "#C9A84C" },
+  { min: 75, name: "Distinguished", stars: "✦✦",  color: "#C9A84C", bg: "#1A1A2E" },
+  { min: 55, name: "Proficient",    stars: "✦",   color: "#2E2E4A", bg: "#EDE8DC" },
+  { min: 35, name: "Standard",      stars: "",    color: "#2E2E4A", bg: "#F7F4EE" },
 ];
 
 const SKILL_MAX_RAW = 12;
@@ -181,7 +182,7 @@ function computeWeightedIndex(clusterScores) {
 }
 
 function getDesignation(valuIndex) {
-  return DESIGNATIONS.find(d => valuIndex >= d.min) || null;
+  return DESIGNATIONS.find(d => valuIndex >= d.min) || DESIGNATIONS[DESIGNATIONS.length - 1];
 }
 
 function getPathway(valuIndex) {

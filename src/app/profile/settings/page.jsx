@@ -143,7 +143,7 @@ export default function ProfileSettingsPage() {
           <div style={S.identityBar}>
             <div><span>PROFILE ID</span><strong>{profile?.atb_id || 'Not assigned'}</strong></div>
             <div><span>ACTIVE PATHS</span><strong>{activeCount}</strong></div>
-            {profile?.valu_index != null && <div><span>VALU</span><strong>{profile.valu_index} points</strong></div>}
+            {profile?.valu_index != null && <div><span>VALU</span><strong>{profile.valu_index}/100</strong></div>}
           </div>
         </section>
 
@@ -229,7 +229,7 @@ const S = {
   pathName: { fontSize:20, fontWeight:600 },
   pathStatus: { marginLeft:'auto', color:T.faint, fontSize:9, letterSpacing:'.08em', textTransform:'uppercase', textAlign:'right' },
   bureau: { color:T.gold, fontSize:10, fontWeight:700, letterSpacing:'.16em', marginTop:18 },
-
+  path: { textAlign:'left', border:'1px solid rgba(247,244,238,.10)', background:'rgba(247,244,238,.025)', color:T.parchment, padding:20, minHeight:230, cursor:'pointer', fontFamily:'inherit', transition:'transform .2s,border-color .2s,background .2s' },
   pathFooter: { marginTop:20, paddingTop:14, borderTop:'1px solid rgba(247,244,238,.08)', color:T.gold, fontSize:9, fontWeight:700, letterSpacing:'.15em', display:'flex', justifyContent:'space-between' },
   success: { marginTop:18, padding:12, border:'1px solid rgba(29,158,117,.35)', background:'rgba(29,158,117,.08)', color:'#7FD7B8', fontSize:12 },
   error: { marginTop:18, padding:12, border:'1px solid rgba(216,90,48,.35)', background:'rgba(216,90,48,.08)', color:'#F09595', fontSize:12 },
@@ -237,7 +237,7 @@ const S = {
   save: { background:T.gold, color:T.dark, border:0, padding:'13px 20px', fontSize:10, fontWeight:800, letterSpacing:'.13em', cursor:'pointer', fontFamily:'inherit' },
   note: { color:T.faint, fontSize:11, lineHeight:1.5 },
   requirements: { display:'grid', gridTemplateColumns:'repeat(3,minmax(0,1fr))', gap:12, marginTop:20 },
-
+  requirements: { display:'grid', gridTemplateColumns:'repeat(3,minmax(0,1fr))', gap:12, marginTop:20 },
   footerCard: { display:'flex', justifyContent:'space-between', alignItems:'center', gap:24, padding:'24px 28px', border:`1px solid ${T.line}`, background:'rgba(201,168,76,.04)' },
   secondary: { color:T.gold, textDecoration:'none', fontSize:10, fontWeight:700, letterSpacing:'.14em', whiteSpace:'nowrap' },
   loading: { minHeight:'100vh', display:'grid', placeItems:'center', color:T.muted, fontSize:13 },

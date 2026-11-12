@@ -12,80 +12,40 @@ describe('VALUI marketplace lifecycle contract', () => {
     const facilitators = read('src/app/marketplace/facilitators/page.jsx')
 
     expect(rootSource).toContain("import MarketplaceDirectory from '@/components/MarketplaceDirectory'")
-    expect(rootSource).toContain("getMarketplaceDirectoryData('all')")
-    expect(rootSource).toContain('getMarketplaceDirectoryData')
+    expect(rootSource).toContain("getMarketplaceRows('all')")
+    expect(rootSource).toContain('getMarketplaceCounts')
     expect(rootSource).toContain('activeTrack="all"')
 
     for (const source of [talent, speakers, facilitators]) {
       expect(source).toContain("import MarketplaceDirectory from '@/components/MarketplaceDirectory'")
-      expect(source).toContain('getMarketplaceDirectoryData')
-      expect(source).toContain('getMarketplaceDirectoryData')
+      expect(source).toContain('getMarketplaceRows')
+      expect(source).toContain('getMarketplaceCounts')
       expect(source).toContain('activeTrack=')
     }
-    expect(talent).toContain("getMarketplaceDirectoryData('candidate')")
-    expect(speakers).toContain("getMarketplaceDirectoryData('speaker')")
-    expect(facilitators).toContain("getMarketplaceDirectoryData('facilitator')")
+    expect(talent).toContain("getMarketplaceRows('candidate')")
+    expect(speakers).toContain("getMarketplaceRows('speaker')")
+    expect(facilitators).toContain("getMarketplaceRows('facilitator')")
   })
 
-  test('marketplace preserves Basic and Full data without repeating Basic tier labels on cards', () => {
+  test('marketplace distinguishes Basic snapshot access from Full VALU assessment', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
     const data = read('src/lib/marketplace-data.js')
-    expect(data).toContain("assessmentAccess === 'basic'")
-    expect(data).toContain("assessment_access === 'full'")
+    expect(data).toContain('assessment_access')
     expect(directory).toContain("p.assessment_access === 'full'")
-    expect(directory).toContain("p.assessment_access === 'full' && p.valu_index != null")
-    expect(directory).not.toContain('BASIC LISTING')
-    expect(directory).toContain('applicable Basic or Full listing requirements')
-  })
-  test('marketplace accepts canonically equivalent Unicode ATB identifiers without changing the stored ID', () => {
-    const source = read('src/lib/marketplace-data.js')
-    expect(source).toContain("String(row?.atb_id || '').normalize('NFKC').trim()")
-    expect(source).toContain('/^ATB-[A-Z0-9-]{4,40}$/i.test(normalizedAtbId)')
+    expect(directory).toContain('BASIC · SNAPSHOT')
+    expect(directory).toContain('official points, merit tier and assessment insight')
   })
 
   test('marketplace data is professional-first and deduplicates capabilities', () => {
     const source = read('src/lib/marketplace-data.js')
     expect(source).toContain('professional_id')
     expect(source).toContain('new Set')
-    expect(source).toContain('all: (rows || []).length')
+    expect(source).toContain('all: all.size')
     expect(source).toContain('candidate: byTrack.candidate.size')
     expect(source).toContain('speaker: byTrack.speaker.size')
     expect(source).toContain('facilitator: byTrack.facilitator.size')
   })
 
-  test('marketplace cards display selected capability roles and category filters apply to every assessment tier', () => {
-    const data = read('src/lib/marketplace-data.js')
-    const directory = read('src/components/MarketplaceDirectory.jsx')
-    expect(data).toContain('selected_capabilities')
-    expect(data).toContain('selectedCapabilities')
-    expect(directory).toContain('getCapabilitySelection(p)')
-    expect(directory).toContain('selectedCaps.has(key)')
-    expect(directory).toContain("['speaker','Speaker']")
-    expect(directory).toContain("['facilitator','Facilitator']")
-    const cardComponent = directory.slice(directory.indexOf('function Profile({p, onSelect})'), directory.indexOf('// The public preview'))
-    expect(cardComponent).not.toContain('NOT SELECTED')
-    expect(cardComponent).not.toContain('Selection is distinct from capability-specific listing eligibility.')
-    const categoryFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
-    expect(categoryFilter).toContain('p.selectedCapabilities || p.selected_capabilities')
-    expect(categoryFilter).toContain('p.capabilities || p.tracks || [p.track]')
-  })
-
-  test('public profile routes validate canonically equivalent Unicode ATB identifiers', () => {
-    const page = read('src/app/profile/[id]/page.jsx')
-    const layout = read('src/app/profile/[id]/layout.jsx')
-    expect(page).toContain("String(id || '').normalize('NFKC')")
-    expect(layout).toContain("String(id || '').normalize('NFKC')")
-    expect(page).toContain("getConsentVerifiedPublicProfile(id, isUuid ? 'id' : 'atb_id')")
-  })
-
-  test('public profile metadata and direct URLs use consent-verified lookup', () => {
-    const layout = read('src/app/profile/[id]/layout.jsx')
-    const page = read('src/app/profile/[id]/page.jsx')
-    expect(layout).toContain('getConsentVerifiedPublicProfile')
-    expect(page).toContain('getConsentVerifiedPublicProfile')
-    expect(page).toContain('const isAtbId =')
-    expect(page).toContain('initialProfile={initialProfile}')
-  })
   test('open marketplace directories refresh server-rendered counts automatically', () => {
     const source = read('src/components/MarketplaceDirectory.jsx')
     expect(source).toContain('useRouter')
@@ -133,22 +93,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).not.toContain("update({ profile_complete: true")
   })
 
-  test('profile setup and edit collect explicit consent while preserving the Basic listing path', () => {
-    const setup = read('src/app/profile/setup/page.jsx')
-    const edit = read('src/app/profile/edit/page.jsx')
-    const route = read('src/app/api/profile/acknowledgements/route.js')
-    const copy = read('src/lib/profile-consent-copy.js')
-    expect(setup).toContain("visibility: 'registered_only'")
-    expect(setup).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
-    expect(setup).toContain('REGISTERED_PROFILE_CONSENT_TEXT')
-    expect(setup).toContain("fetch('/api/profile/acknowledgements'")
-    expect(setup).not.toContain('if (!row.profile_complete)')
-    expect(edit).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
-    expect(edit).toContain('REGISTERED_PROFILE_CONSENT_TEXT')
-    expect(route).toContain("const basicEligible = roster?.assessment_access === 'basic' && (Boolean(taster) || currentAssessmentEligible)")
-    expect(route).toContain("const fullEligible = roster?.assessment_access === 'full' && currentProfile?.profile_complete === true")
-    expect(copy).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
+  test('profile setup matches database readiness requirements and verifies completion read-back', () => {
+    const source = read('src/app/profile/setup/page.jsx')
+    expect(source).toContain("key:'photo_url', kind:'photo'")
+    expect(source).toContain('sub:\'Optional. Valoria uses a professional default avatar')
+    expect(source).toContain('required:false })')
+    expect(source).toContain(".select('atb_id, listing_status, profile_complete')")
+    expect(source).toContain('if (!row?.profile_complete)')
   })
+
   test('database keeps profile completeness separate from full-assessment and listing eligibility', () => {
     const migration = read('supabase/migrations/20261008140000_default_avatar_photo_optional.sql')
     const profileTriggerStart = migration.indexOf('create or replace function public.enforce_valu_profile_lifecycle()')
@@ -270,19 +223,18 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(start).not.toContain("'Motivation & Stamina'")
   })
 
-  test('public VALU copy follows registration-first taster and points-based Full assessment', () => {
+  test('public copy describes the two-session VALU assessment, not the retired fifteen-question snapshot', () => {
     const prime = read('src/app/prime/page.jsx')
-    const valu = read('src/app/valu/page.jsx')
-    const start = read('src/app/valu/start/page.jsx')
-    const signup = read('src/app/signup/page.jsx')
-    for (const source of [prime, valu, start, signup]) {
-      expect(source).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
-      expect(source).not.toMatch(/9-question|58-question|15-question/i)
+    const reminders = read('src/app/api/cron/valu-reminders/route.js')
+    for (const source of [prime, reminders]) {
+      expect(source).not.toContain('15-question')
+      expect(source).not.toContain('15 question')
     }
-    expect(start).toContain('Register your contact and professional details before the taster')
-    expect(start).toContain('Your official result in points')
-    expect(signup).toContain('VALU Index Taster')
+    expect(prime).toContain('completed in two sessions')
+    expect(reminders).toContain('RETURN TO YOUR DASHBOARD')
+    expect(reminders).not.toContain('CONTINUE TO QUESTION 10')
   })
+
   test('profile capability selection is reconciled through an authenticated server endpoint', () => {
     const setup = read('src/app/profile/setup/page.jsx')
     const route = read('src/app/api/profile/capabilities/route.js')
@@ -391,23 +343,23 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
 
-  test('marketplace category membership follows selected active capabilities for Full and Basic profiles', () => {
-    const data = read('src/lib/marketplace-data.js')
-    const directory = read('src/components/MarketplaceDirectory.jsx')
-    const projection = data.slice(data.indexOf('return rows.filter(row => {'), data.indexOf('function countMarketplaceRows'))
-    const counts = data.slice(data.indexOf('function countMarketplaceRows'), data.indexOf('export async function getMarketplaceCounts'))
-    const directoryData = data.slice(data.indexOf('export async function getMarketplaceDirectoryData'))
-    const clientFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
+  test('full-assessment roster projects only selected, active, eligible capabilities while preserving Basic taster listings', () => {
+    const migration = read('supabase/migrations/20261030122017_marketplace_roster_capability_eligibility_20261030100000.sql')
+    const fullBranch = migration.slice(
+      migration.indexOf("if assessment_ok and p.visibility = 'public'"),
+      migration.indexOf("select * into t", migration.indexOf("if assessment_ok and p.visibility = 'public'"))
+    )
+    const tasterBranch = migration.slice(migration.indexOf("select * into t"))
 
-    // Basic and Full public category membership follows declared active selections.
-    expect(projection).toContain('return row.selectedCapabilities.includes(capability)')
-    expect(projection).not.toContain("row.assessmentAccess === 'full' && row.capabilities.includes(capability)")
-    expect(counts).toContain('const visibleCapabilities = row.selectedCapabilities || []')
-    expect(counts).not.toContain('row.capabilities || []')
-    expect(directoryData).toContain('row.selectedCapabilities.includes(normalizedTrack)')
-    expect(directoryData).not.toContain('row.capabilities.includes(normalizedTrack)')
-    expect(clientFilter).toContain('p.selectedCapabilities || p.selected_capabilities || p.capabilities')
-    expect(clientFilter).not.toContain("p.assessment_access === 'basic' ?")
+    expect(fullBranch).toContain('public.professional_capabilities')
+    expect(fullBranch).toContain('pc.is_active = true')
+    expect(fullBranch).toContain('pc.eligible_for_listing = true')
+    expect(fullBranch).toContain("pc.eligibility_status = 'listed'")
+    expect(fullBranch).toContain("caps := '{}'::text[]")
+    expect(fullBranch).toContain('General marketplace presence is independent of capability readiness')
+    expect(fullBranch).not.toContain("if cardinality(caps) = 0 then caps := array['talent']")
+    expect(tasterBranch).toContain("array['talent']::text[]")
+    expect(tasterBranch).toContain("'basic'")
   })
 
   test('existing capability eligibility is reconciled after historical evidence is marked pending', () => {
@@ -432,129 +384,4 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(migration).toContain('foreach roster_professional_id in array professional_ids')
   })
 
-  test('marketplace readiness blockers provide direct next actions for each missing requirement', () => {
-    const dashboard = read('src/app/dashboard/page.jsx')
-    expect(dashboard).toContain("profile: ['/profile/edit', 'Complete profile']")
-    expect(dashboard).toContain("talent_cv: ['/profile/edit', 'Upload CV']")
-    expect(dashboard).toContain("speaker_evidence_approval: ['/profile/evidence', 'Submit speaker evidence']")
-    expect(dashboard).toContain("facilitator_evidence_approval: ['/profile/evidence', 'Submit facilitator evidence']")
-    expect(dashboard).toContain("valu_assessment_score_35_current: ['/dashboard', 'Complete VALU Index']")
-    expect(dashboard).toContain('AssessmentStartLink href="/dashboard" dashboardOnly')
-    expect(dashboard).toContain('href ? <Link href={href}')
-  })
-
-  test('evidence submission only offers evidence types that can satisfy the selected capability', () => {
-    const page = read('src/app/profile/evidence/page.jsx')
-    expect(page).toContain("['portfolio','certification','speaking_sample']")
-    expect(page).toContain("['portfolio','certification','facilitation_record']")
-    expect(page).toContain('allowedTypes.some(([value])=>value===type)')
-    expect(page).toContain('Talent capability is verified through your profile-wide CV')
-    expect(page).toContain('Upload or update your CV in profile settings')
-  })
-
-
-  test('profile work history requires complete roles and exposes actionable save diagnostics', () => {
-    const source = read('src/app/profile/setup/page.jsx')
-    expect(source).toContain("screen?.key === 'work_history'")
-    expect(source).toContain("row.title?.trim() && row.org?.trim() && row.duration?.trim()")
-    expect(source).toContain('Add at least one complete role: job title, organisation and duration.')
-    expect(source).toContain("String(error.message || '').replace(/[\\r\\n]+/g, ' ').slice(0, 180)")
-    expect(source).toContain("style={{ background:'#1A1A2E', color:'#F7F4EE' }}")
-  })
-
-  test('public profile sitemap resolves consent-verified profiles at request time', () => {
-    const sitemap = read('src/app/sitemap.js')
-    expect(sitemap).toContain("export const dynamic = 'force-dynamic'")
-    expect(sitemap).toContain('getConsentVerifiedPublicProfileSitemapRows')
-  })
-
-  test('admin reconciliation reads the installed professional journey table', () => {
-    const source = read('src/app/api/admin/reconciliation/route.js')
-    expect(source).toContain("from('professional_journey').select('*')")
-    expect(source).not.toContain("from('professional_journey_directory')")
-    expect(source).toContain("from('professional_profile_acknowledgements')")
-    expect(source).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
-    expect(source).toContain("from('users').select('id,email,full_name')")
-    expect(source).toContain("const assessmentAccess=roster?.assessment_access==='basic'?'basic':a?'full':completedTasterUserIds.has(j.user_id)?'basic':'none'")
-    expect(source).toContain('atb_id:p.atb_id||null')
-  })
-
-  test('admin marketplace readiness keeps Basic taster listings separate from Full capability gates', () => {
-    const route = read('src/app/api/admin/reconciliation/route.js')
-    const page = read('src/app/admin/reconciliation/page.jsx')
-    expect(route).toContain("assessmentAccess==='basic'&&(completedTaster||fullAssessmentCurrent)&&identityReady&&roster?.assessment_access==='basic'")
-    expect(route).toContain('publicReady=Boolean(roster&&visibilityReady&&identityReady')
-    expect(route).toContain('Array.isArray(roster.capabilities)&&roster.capabilities.length>0')
-    expect(route).toContain('rawHeadline.length>=2')
-    expect(route).toContain('counts.roster_projection_professionals')
-    expect(page).toContain('Basic listings require a completed linked taster or a current full VALU Index')
-    expect(page).toContain('BASIC LISTING PATH')
-    expect(page).toContain("r.public_roster?'PUBLIC':'NOT PUBLIC'")
-    expect(page).toContain("r.public_roster?<Link href={'/profile/'+r.user_id}")
-    expect(page).toContain('PRIVATE')
-  })
-
-  test('Basic directory includes consented current Full-assessment profiles without exposing VALU results', () => {
-    const data = read('src/lib/marketplace-data.js')
-    const publicProfile = read('src/lib/public-profile.js')
-    const homepage = read('src/components/LiveProfilesScroll.jsx')
-    const directory = read('src/components/MarketplaceDirectory.jsx')
-    expect(data).toContain('currentBasicAssessmentIds')
-    expect(data).toContain('linkedTasterIds.has(profile.id) || currentBasicAssessmentIds.has(profile.id)')
-    expect(data).toContain('rawHeadline.length >= 2')
-    expect(publicProfile).toContain('hasCurrentFullAssessment')
-    expect(homepage).toContain('profiles.slice(0, 13)')
-    expect(directory).toContain('BASIC PROFESSIONAL LISTING')
-    expect(directory).not.toContain('completed the VALU Index Taster and has Basic marketplace access')
-  })
-
-  test('marketplace profile preview uses the facilitated enquiry workflow', () => {
-    const directory = read('src/components/MarketplaceDirectory.jsx')
-    expect(directory).toContain("import EnquiryForm from '@/components/EnquiryForm'")
-    expect(directory).toContain("enquiryType: 'candidate'")
-    expect(directory).toContain("enquiryType: 'speaker_booking'")
-    expect(directory).toContain("enquiryType: 'facilitator_commission'")
-    expect(directory).toContain('professionalProfileId={profile.professional_id || profile.id}')
-    expect(directory).toContain('COMMISSION FACILITATOR')
-  })
-
-  test('empty capability directories guide buyers to a relevant brief', () => {
-    const directory = read('src/components/MarketplaceDirectory.jsx')
-    expect(directory).toContain('Share the role, sector and capability requirements you need.')
-    expect(directory).toContain('Share the event, audience and subject you need covered.')
-    expect(directory).toContain('Share your programme goals, audience and delivery format.')
-    expect(directory).not.toContain('Public profiles appear only after participants meet the relevant listing requirements')
-  })
-
-  test('marketplace enquiries notify the professional through the request client', () => {
-    const api = read('src/app/api/enquiries/route.js')
-    expect(api).toContain('async function notifyProfessional({ supabase, professionalProfileId')
-    expect(api).toContain('notifyProfessional({ supabase, professionalProfileId: targetProfile.id')
-  })
-
-  test('consented public Full profiles remain directly accessible while incomplete profiles stay noindex', () => {
-    const publicProfile = read('src/lib/public-profile.js')
-    const profileLayout = read('src/app/profile/[id]/layout.jsx')
-    const profileClient = read('src/app/profile/[id]/ProfileClient.jsx')
-    expect(publicProfile).toContain("roster.selected_capabilities")
-    expect(publicProfile).toContain('hasCurrentFullAssessment(admin, profile)')
-    expect(publicProfile).toContain('const indexable = profile.profile_complete === true')
-    expect(publicProfile).toContain("&& profile.profile_complete === true")
-    expect(profileLayout).toContain('profile.indexable ? { index: true, follow: true } : { index: false, follow: true }')
-    expect(publicProfile).toContain('atb_id: profile.atb_id')
-    expect(publicProfile).toContain('valu_score: profile.valu_index')
-    expect(profileClient).toContain("p.display_name || 'Valoria Professional'")
-    expect(profileClient).toContain('PUBLIC PROFILE')
-    expect(profileClient).not.toContain('Verified {displayTrack')
-  })
-
-
-  test('internal capability helpers are not executable by public client roles', () => {
-    const migration = read('supabase/migrations/20261110170000_restrict_internal_capability_function_execution.sql')
-    expect(migration).toContain('revoke execute on function private.is_basic_public_profile_ready(uuid)')
-    expect(migration).toContain('revoke execute on function private.refresh_existing_professional_capability(uuid, text)')
-    expect(migration).toContain('revoke execute on function private.sync_capability_eligibility_from_document()')
-    expect(migration).toContain('from public, anon, authenticated')
-    expect(migration).toContain('The public roster projection implementation is intentionally not changed')
-  })
 })

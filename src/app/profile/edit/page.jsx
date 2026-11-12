@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
-import { PUBLIC_PROFILE_CONSENT_TEXT, REGISTERED_PROFILE_CONSENT_TEXT } from '@/lib/profile-consent-copy'
 import {
   GOLD, DARK, MID, PARCH, DIM, GLINE,
   INDUSTRIES, SKILLS_POOL, TOPICS_POOL, PROGRAMME_TYPES, LANGUAGES,
@@ -123,11 +122,6 @@ function EditPageInner() {
   // values per section so we know what's actually dirty and what to send.
   const [form, setForm] = useState(null)
   const [original, setOriginal] = useState(null)
-  const [visibilityChoice, setVisibilityChoice] = useState('registered_only')
-  const [consentConfirmed, setConsentConfirmed] = useState(false)
-  const [consentSaving, setConsentSaving] = useState(false)
-  const [consentMessage, setConsentMessage] = useState('')
-  const [consentError, setConsentError] = useState('')
 
   useEffect(() => {
     (async () => {
@@ -149,7 +143,6 @@ function EditPageInner() {
       }
       setForm(normalised)
       setOriginal(normalised)
-      setVisibilityChoice(normalised.visibility === 'public' ? 'public' : 'registered_only')
       setLoading(false)
     })()
   }, [router])
@@ -225,7 +218,6 @@ function EditPageInner() {
       )
       return
     }
-    window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'professional_profile_updated', params: { section } } }))
     setDirty(d => ({ ...d, [section]: false }))
     setSaved(s => ({ ...s, [section]: true }))
     setOriginal(o => ({ ...o, ...payload }))
@@ -268,36 +260,6 @@ function EditPageInner() {
       setErrorMsg(err?.message || 'CV upload failed.')
     } finally {
       setCvUploading(false)
-    }
-  }
-
-  async function saveVisibilityConsent() {
-    setConsentSaving(true)
-    setConsentError('')
-    setConsentMessage('')
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.access_token) throw new Error('Your session expired. Sign in again to update profile visibility.')
-      const response = await fetch('/api/profile/acknowledgements', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ consent: true, visibility: visibilityChoice, source: 'profile_edit' }),
-      })
-      const result = await response.json().catch(() => ({}))
-      if (!response.ok) throw new Error(result.error || 'Your visibility preference could not be saved.')
-      setForm(current => ({ ...current, visibility: visibilityChoice }))
-      setConsentConfirmed(false)
-      window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: visibilityChoice === 'public' ? 'public_visibility_consent_granted' : 'registered_only_visibility_selected', params: { source: 'profile_edit' } } }))
-      setConsentMessage(visibilityChoice === 'public'
-        ? 'Your consent is recorded. Your profile will be publicly visible only when all listing requirements are met.'
-        : 'Your profile is now set to registered-only visibility.')
-    } catch (error) {
-      setConsentError(error?.message || 'Your visibility preference could not be saved.')
-    } finally {
-      setConsentSaving(false)
     }
   }
 
@@ -345,7 +307,7 @@ function EditPageInner() {
 
         <Section title="About & Languages" dirty={dirty.about} saving={saving.about} saved={saved.about}
           onSave={() => saveSection('about', ['bio','languages'])}>
-          <Field label="Background notes (not shown as your public summary)"><TextArea value={form.bio} onChange={v => setField('about','bio',v)} /></Field>
+          <Field label="Bio"><TextArea value={form.bio} onChange={v => setField('about','bio',v)} /></Field>
           <Field label="Languages"><ChipGroup options={LANGUAGES} selected={form.languages} onToggle={v => {
             const cur = form.languages || []
             setField('about','languages', cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v])
@@ -452,36 +414,6 @@ function EditPageInner() {
             }} />
           </Field>
         </Section>
-
-        <section style={S.section} aria-labelledby="profile-visibility-title">
-          <h2 id="profile-visibility-title" style={S.sectionTitle}>Public visibility & consent</h2>
-          <p style={{ color:'rgba(247,244,238,.62)', fontSize:'12px', lineHeight:1.7, margin:'12px 0 18px' }}>
-            Choose whether your professional profile may appear to public visitors. Public visibility is applied only when your assessment, profile, capability, review and listing requirements are met.
-          </p>
-          <div style={{ display:'grid', gap:'12px' }}>
-            <label style={{ display:'flex', gap:'10px', alignItems:'flex-start', color:PARCH, fontSize:'12px', lineHeight:1.6 }}>
-              <input type="radio" name="profile-visibility" value="public" checked={visibilityChoice === 'public'} onChange={() => { setVisibilityChoice('public'); setConsentConfirmed(false); setConsentMessage('') }} />
-              <span><strong>Public marketplace visibility</strong><br/>Allow your approved public profile fields to be displayed when you meet the listing requirements.</span>
-            </label>
-            <label style={{ display:'flex', gap:'10px', alignItems:'flex-start', color:PARCH, fontSize:'12px', lineHeight:1.6 }}>
-              <input type="radio" name="profile-visibility" value="registered_only" checked={visibilityChoice === 'registered_only'} onChange={() => { setVisibilityChoice('registered_only'); setConsentConfirmed(false); setConsentMessage('') }} />
-              <span><strong>Registered-only visibility</strong><br/>Your profile will not appear to public visitors while this setting remains active.</span>
-            </label>
-          </div>
-          <label style={{ display:'flex', gap:'10px', alignItems:'flex-start', color:'rgba(247,244,238,.72)', fontSize:'11px', lineHeight:1.65, marginTop:'18px' }}>
-            <input type="checkbox" checked={consentConfirmed} onChange={e => setConsentConfirmed(e.target.checked)} />
-            <span>{visibilityChoice === 'public' ? PUBLIC_PROFILE_CONSENT_TEXT : REGISTERED_PROFILE_CONSENT_TEXT}</span>
-          </label>
-          {consentError && <p role="alert" style={{ color:'#F09595', fontSize:'12px', marginTop:'12px' }}>{consentError}</p>}
-          {consentMessage && <p role="status" style={{ color:GOLD, fontSize:'12px', marginTop:'12px' }}>{consentMessage}</p>}
-          <button type="button" onClick={saveVisibilityConsent} disabled={!consentConfirmed || consentSaving}
-            style={{ ...S.saveBtn, marginTop:'16px', opacity:consentConfirmed && !consentSaving ? 1 : .45, cursor:consentConfirmed && !consentSaving ? 'pointer' : 'not-allowed' }}>
-            {consentSaving ? 'SAVING…' : 'SAVE VISIBILITY PREFERENCE'}
-          </button>
-          <p style={{ color:'rgba(247,244,238,.4)', fontSize:'10px', lineHeight:1.6, marginTop:'12px' }}>
-            Current setting: {form.visibility === 'public' ? 'Public' : 'Registered only'}.
-          </p>
-        </section>
       </div>
       <style>{`
         .profile-edit-header { gap: 16px; }

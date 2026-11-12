@@ -1,47 +1,47 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
-function getInitials(name) {
-  const parts = String(name || '').normalize('NFKC').trim().split(/\s+/).filter(Boolean)
-  if (!parts.length) return 'V'
-  return parts.length === 1
-    ? parts[0].slice(0, 1).toUpperCase()
-    : (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+const DEFAULT_AVATARS = [
+  '/avatars/valoria-01.svg',
+  '/avatars/valoria-02.svg',
+  '/avatars/valoria-03.svg',
+  '/avatars/valoria-04.svg',
+  '/avatars/valoria-05.svg',
+  '/avatars/valoria-06.svg',
+]
+
+function stableIndex(seed) {
+  const value = String(seed || 'valoria')
+  let hash = 0
+  for (let i = 0; i < value.length; i += 1) hash = ((hash << 5) - hash + value.charCodeAt(i)) | 0
+  return Math.abs(hash) % DEFAULT_AVATARS.length
 }
 
-export default function ValoriaAvatar({ src, name, alt = '', className = '', size = 64 }) {
-  const [imageFailed, setImageFailed] = useState(false)
-  const initials = useMemo(() => getInitials(name), [name])
-  const showImage = Boolean(src && !imageFailed)
+export default function ValoriaAvatar({ src, seed, alt = '', className = '', size = 64 }) {
+  const fallback = useMemo(() => DEFAULT_AVATARS[stableIndex(seed)], [seed])
+  const source = src || fallback
 
   return (
     <span
       className={className}
-      style={{
-        display:'flex', alignItems:'center', justifyContent:'center',
-        width:size, height:size, overflow:'hidden', borderRadius:'50%',
-        flexShrink:0, background:'#1A1A2E', color:'#C9A84C',
-        border:'1px solid #C9A84C', fontWeight:800, letterSpacing:'-.04em',
-        fontSize:Math.max(14, Math.round(size * 0.34)), lineHeight:1,
-      }}
-      role={alt ? 'img' : undefined}
-      aria-label={alt || undefined}
+      style={{ display:'block', width:size, height:size, overflow:'hidden', borderRadius:'50%', flexShrink:0, background:'#EDE8DC' }}
       aria-hidden={!alt}
     >
-      {showImage ? (
-        <img
-          src={src}
-          alt=""
-          width={size}
-          height={size}
-          loading="lazy"
-          decoding="async"
-          referrerPolicy="no-referrer"
-          style={{ display:'block', width:'100%', height:'100%', objectFit:'cover' }}
-          onError={() => setImageFailed(true)}
-        />
-      ) : initials}
+      <img
+        src={source}
+        alt={alt}
+        width={size}
+        height={size}
+        loading="lazy"
+        decoding="async"
+        referrerPolicy="no-referrer"
+        style={{ display:'block', width:'100%', height:'100%', objectFit:'cover' }}
+        onError={(event) => {
+          if (event.currentTarget.src.endsWith(fallback)) return
+          event.currentTarget.src = fallback
+        }}
+      />
     </span>
   )
 }

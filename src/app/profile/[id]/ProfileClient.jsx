@@ -164,18 +164,9 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
         return
       }
 
-      // A missing consent-verified public profile must never fall through to a
-      // broad anonymous profile lookup. Only the authenticated owner may load
-      // their own private profile preview.
-      if (!user || user.id !== id) {
-        setNotFound(true)
-        setLoading(false)
-        return
-      }
-
       const { data: real, error: realError } = await supabase
         .from('professional_profiles')
-        .select('id, display_name, headline, current_job_title, location, industry, experience_years, skills, topics, facilitation_topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, programme_types, format_capabilities, audience_sizes, past_events, past_clients, languages')
+        .select('id, display_name, headline, current_job_title, location, industry, experience_years, bio, skills, topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, cv_summary, programme_types')
         .eq('id', id)
         .maybeSingle()
 
@@ -271,10 +262,10 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
   const tracks        = p.active_tracks || (p.user_type ? [p.user_type] : [])
   const isSpeaker     = tracks.includes('speaker')
   const isFacilitator = tracks.includes('facilitator')
-  const isCandidate   = tracks.includes('candidate') || tracks.includes('talent') || tracks.length === 0
+  const isCandidate   = tracks.includes('candidate') || tracks.length === 0
   const initials    = getInitials(p.display_name)
   const avatarLetters = getAvatarLetters(p.display_name)
-  const atbId       = String(p.atb_id || '—').normalize('NFKC')
+  const atbId       = p.atb_id || '—'
   const videos      = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
   const compensation = (isSpeaker || isFacilitator) ? (p.fee_range || p.salary_expectation || null) : (p.salary_expectation || p.fee_range || null)
   const compLabel   = (isSpeaker || isFacilitator) ? 'Fee Range' : 'Salary Range'
@@ -296,7 +287,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
     { label:'Location',   value: p.location || '—' },
     { label:'Industry',   value: p.industry || '—' },
     { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
-    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Basic listing', href: p.valu_score != null ? '#valu-card' : null },
+    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Basic · Snapshot', href: p.valu_score != null ? '#valu-card' : null },
   ]
 
   return (
@@ -345,24 +336,21 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
             <div className="vi-avatar-frame" style={{ width:'148px', height:'148px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
               <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
                 <div style={{ width:'100%', height:'100%', borderRadius:'50%', overflow:'hidden' }}>
-                  <ValoriaAvatar src={p.photo_url} name={p.display_name} seed={p.id || p.atb_id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={136} />
+                  <ValoriaAvatar src={p.photo_url} seed={p.id || p.atb_id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={136} />
                 </div>             </div>
             </div>
 
             {/* ID block */}
             <div style={{ paddingBottom:'16px', flex:1, minWidth:'200px' }}>
-              <div style={{ fontSize:'clamp(22px,3.5vw,32px)', fontWeight:700, letterSpacing:'-.025em', lineHeight:1.1, marginBottom:'7px', color: PARCH }}>
-                {p.display_name || 'Valoria Professional'}
-              </div>
-              <div style={{ fontSize:'9px', fontWeight:800, letterSpacing:'.12em', color: DIM, marginBottom:'10px', fontVariantNumeric:'tabular-nums' }}>
-                ATB PROFILE ID · {atbId}
+              <div style={{ fontSize:'clamp(22px,3.5vw,32px)', fontWeight:700, letterSpacing:'.04em', lineHeight:1.1, marginBottom:'10px', color: PARCH, fontVariantNumeric:'tabular-nums' }}>
+                {atbId}
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
                 <span style={{ fontSize:'14px', fontWeight:400, color: GOLD, letterSpacing:'.04em' }}>
-                  {p.headline || (displayTrack === 'facilitator' ? 'Facilitator profile' : displayTrack === 'speaker' ? 'Speaker profile' : 'Professional profile')}
+                  {p.headline || (displayTrack === 'facilitator' ? 'Valoria Facilitator' : displayTrack === 'speaker' ? 'Valoria Speaker' : 'Valoria Professional')}
                 </span>
-                <span style={{ fontSize:'9px', letterSpacing:'.1em', background: MID, border:`1px solid ${GLINE2}`, padding:'5px 10px', borderRadius:'4px', color: DIM, fontWeight:800 }}>
-                  PUBLIC PROFILE
+                <span style={{ fontSize:'11px', letterSpacing:'.06em', background: MID, border:`1px solid ${GLINE2}`, padding:'4px 10px', borderRadius:'4px', color: DIM }}>
+                  {initials} · Verified {displayTrack === 'facilitator' ? 'Facilitator' : displayTrack === 'speaker' ? 'Speaker' : 'Professional'}
                 </span>
               </div>
               {p.current_job_title && (
@@ -475,8 +463,8 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'14px' }}>VALU Index</div>
               {p.valu_score != null ? (
                 <>
-                  <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_score}<span style={{ fontSize:'16px', color: DIM, fontWeight:400 }}> points</span></div>
-                  {getValuTier(p.valu_score, 'full') && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{getValuTier(p.valu_score, 'full').name} · {getValuTier(p.valu_score, 'full').stars}</div>}
+                  <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_score}<span style={{ fontSize:'20px', color: DIM, fontWeight:400 }}>/100</span></div>
+                  {p.designation && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{p.designation.replace(/_/g,' ')}</div>}
                   {p.cluster_scores && (
                     <div style={{ marginTop:'8px' }}>
                       <PrimeRadarChart scores={p.cluster_scores} />
@@ -486,9 +474,9 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               ) : (
                 <>
                   <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
-                    {p.assessment_access === 'basic' ? 'This professional is listed at the Basic tier. VALU Index points and result-derived insight are not displayed on this profile.' : 'This professional has not yet received a full VALU Index result.'}
+                    This professional has not yet completed their VALU Index assessment.
                   </p>
-                  <a href="https://valoriainstitute.com/valu/assessment/"
+                  <a href="https://valoriainstitute.com/valu/assessment/" target="_blank" rel="noopener noreferrer"
                     style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
                     ABOUT THE VALU INDEX
                   </a>
@@ -556,11 +544,16 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               ) : null
             })()}
 
-            {/* The public profile summary is generated from the VALU Index report, not a self-written bio or CV summary. */}
-            <Section label="VALU Index Summary">
-              {p.assessment_summary
-                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
-                : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>{p.assessment_access === 'basic' ? 'A Basic listing presents professional identity and capability information. VALU Index insight is not displayed at this tier.' : 'Your VALU Index summary will appear here when your VALU Index and listing requirements are complete.'}</p>}
+            {/* About — a brief introduction in the professional's own words.
+                The VALU Index summary used to live here, but that's now
+                covered by the Key Strengths card below, so this section
+                is free to just be the bio. */}
+            <Section label="About">
+              {p.bio
+                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p>
+                : p.cv_summary
+                  ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.cv_summary}</p>
+                  : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>No bio added yet.</p>}
             </Section>
 
             {/* Key Strengths — rectangular card, gold background per brand,
@@ -579,7 +572,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                       </div>
                       <div>
                         <div style={{ fontSize:'13px', fontWeight:600, color: DARK, marginBottom:'4px' }}>
-                          {name} <span style={{ color:'rgba(15,15,26,.6)', fontWeight:400 }}>· {score} points</span>
+                          {name} <span style={{ color:'rgba(15,15,26,.6)', fontWeight:400 }}>· {score}/100</span>
                         </div>
                         <p style={{ fontSize:'13px', fontWeight:400, color:'rgba(15,15,26,.75)', lineHeight:1.7, margin:0 }}>{blurb}</p>
                       </div>
@@ -602,32 +595,6 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               </Section>
             )}
 
-            {displayTrack === 'speaker' && p.past_events?.length > 0 && (
-              <Section label="Speaking Engagements">
-                <div style={{ display:'grid', gap:'10px' }}>
-                  {p.past_events.filter(event => event?.name).map((event, index) => (
-                    <article key={`${event.name}-${index}`} style={{ background:MID, border:`1px solid ${GLINE}`, padding:'16px 18px' }}>
-                      <h3 style={{ fontSize:'14px', fontWeight:600, color:PARCH, margin:0 }}>{event.name}</h3>
-                      {event.role && <p style={{ fontSize:'11px', color:DIM, margin:'6px 0 0' }}>{event.role}</p>}
-                    </article>
-                  ))}
-                </div>
-              </Section>
-            )}
-
-            {displayTrack === 'facilitator' && p.past_clients?.length > 0 && (
-              <Section label="Clients & Programmes">
-                <div style={{ display:'grid', gap:'10px' }}>
-                  {p.past_clients.filter(client => client?.name).map((client, index) => (
-                    <article key={`${client.name}-${index}`} style={{ background:MID, border:`1px solid ${GLINE}`, padding:'16px 18px' }}>
-                      <h3 style={{ fontSize:'14px', fontWeight:600, color:PARCH, margin:0 }}>{client.name}</h3>
-                      {client.programme && <p style={{ fontSize:'11px', color:DIM, margin:'6px 0 0' }}>{client.programme}</p>}
-                    </article>
-                  ))}
-                </div>
-              </Section>
-            )}
-
             {/* Verified participation — certificates are issued only from verified attendance.
                 They are intentionally part of the professional record, not a temporary event page. */}
             {certificates.length > 0 && (
@@ -645,7 +612,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                         <div style={{ fontSize:'11px', color:DIM, lineHeight:1.7 }}>{eventDate} · {cert.issuer}</div>
                         <div style={{ marginTop:'16px', paddingTop:'12px', borderTop:`1px solid ${GLINE}`, display:'flex', justifyContent:'space-between', alignItems:'center', gap:'12px' }}>
                           <span style={{ fontSize:'9px', color:'rgba(247,244,238,.38)', letterSpacing:'.06em', fontVariantNumeric:'tabular-nums' }}>{cert.certificate_number}</span>
-                          <Link href={`/certificate/${cert.verification_token}`} style={{ color:GOLD, fontSize:'9px', fontWeight:700, letterSpacing:'.1em', textDecoration:'none', whiteSpace:'nowrap' }}>VERIFY →</Link>
+                          <Link href={`/certificate/${cert.verification_token}`} target="_blank" style={{ color:GOLD, fontSize:'9px', fontWeight:700, letterSpacing:'.1em', textDecoration:'none', whiteSpace:'nowrap' }}>VERIFY →</Link>
                         </div>
                       </article>
                     )

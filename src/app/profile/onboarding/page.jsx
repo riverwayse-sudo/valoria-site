@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
-import { getValuTier } from '@/lib/brand'
 
 const GOLD = '#C9A84C'
 const DARK = '#0F0F1A'
@@ -124,13 +123,13 @@ export default function ProgressiveOnboardingPage() {
         <div style={styles.eyebrow}>YOU'RE IN</div>
         <h1 style={styles.title}>Start with the essentials.<br/><em>Build the rest when you're ready.</em></h1>
         <p style={styles.lead}>
-          Your account and VALU Index journey are already captured. Save these essentials first, then continue into your full professional profile. You can leave at any point and return without losing the record.
+          Your account and VALU journey are already captured. Save these essentials first, then continue into your full professional profile. You can leave at any point and return without losing the record.
         </p>
 
         {valu?.total_score != null && (
           <div style={styles.valuCard}>
-            <div><div style={styles.label}>OFFICIAL VALU INDEX</div><div style={styles.score}>{valu.total_score}<span> points</span></div></div>
-            <div style={styles.designation}>{getValuTier(valu.total_score, 'full')?.name || (valu.total_score != null ? 'VALU INDEX RECORDED' : 'ASSESSED PROFESSIONAL')}</div>
+            <div><div style={styles.label}>OFFICIAL VALU INDEX</div><div style={styles.score}>{valu.total_score}<span>/100</span></div></div>
+            <div style={styles.designation}>{valu.designation || 'ASSESSED PROFESSIONAL'}</div>
           </div>
         )}
 
@@ -175,25 +174,25 @@ function Field({label,children}) { return <label style={styles.field}><span styl
 const styles = {
   page:{minHeight:'100vh',background:DARK,color:PARCH,fontFamily:"'Raleway',sans-serif",padding:'26px 20px 70px'},
   loading:{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',color:DIM,fontSize:13},
-  topline:{maxWidth:980,margin:'0 auto 26px',display:'flex',justifyContent:'space-between',gap:20,fontSize:9,fontWeight:700,letterSpacing:'.16em',color:'rgba(201,168,76,.55)'},
+  topline:{maxWidth:980,margin:'0 auto 50px',display:'flex',justifyContent:'space-between',gap:20,fontSize:9,fontWeight:700,letterSpacing:'.16em',color:'rgba(201,168,76,.55)'},
   shell:{maxWidth:760,margin:'0 auto'},
   eyebrow:{fontSize:10,fontWeight:700,letterSpacing:'.2em',color:GOLD,marginBottom:16},
-  title:{fontSize:'clamp(32px,5.5vw,52px)',fontWeight:300,lineHeight:1.03,letterSpacing:'-.035em',margin:'0 0 18px'},
-  lead:{maxWidth:650,fontSize:13,lineHeight:1.65,color:DIM,margin:'0 0 22px'},
-  valuCard:{display:'flex',alignItems:'center',justifyContent:'space-between',gap:20,padding:'16px 18px',background:'rgba(201,168,76,.06)',border:`1px solid ${LINE}`,marginBottom:18},
+  title:{fontSize:'clamp(38px,6vw,68px)',fontWeight:300,lineHeight:1.03,letterSpacing:'-.035em',margin:'0 0 18px'},
+  lead:{maxWidth:650,fontSize:14,lineHeight:1.8,color:DIM,margin:'0 0 30px'},
+  valuCard:{display:'flex',alignItems:'center',justifyContent:'space-between',gap:20,padding:'20px 22px',background:'rgba(201,168,76,.06)',border:`1px solid ${LINE}`,marginBottom:24},
   label:{fontSize:9,fontWeight:700,letterSpacing:'.17em',color:'rgba(201,168,76,.6)',display:'block',marginBottom:8},
   score:{fontSize:38,fontWeight:300,color:GOLD},
   scoreSpan:{fontSize:12,color:DIM},
   designation:{fontSize:10,fontWeight:700,letterSpacing:'.12em',color:PARCH,textAlign:'right'},
-  form:{display:'grid',gap:12},
+  form:{display:'grid',gap:15},
   field:{display:'grid',gap:7},
-  input:{width:'100%',boxSizing:'border-box',padding:'12px 14px',background:'rgba(255,255,255,.04)',border:`1px solid ${LINE}`,borderRadius:7,color:PARCH,fontSize:14,fontFamily:'inherit',outline:'none'},
+  input:{width:'100%',boxSizing:'border-box',padding:'14px 15px',background:'rgba(255,255,255,.04)',border:`1px solid ${LINE}`,borderRadius:7,color:PARCH,fontSize:14,fontFamily:'inherit',outline:'none'},
   grid:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14},
-  button:{border:0,borderRadius:999,padding:'14px 20px',background:GOLD,color:DARK,fontSize:11,fontWeight:700,letterSpacing:'.14em',cursor:'pointer',fontFamily:'inherit',marginTop:4},
+  button:{border:0,borderRadius:999,padding:'16px 22px',background:GOLD,color:DARK,fontSize:11,fontWeight:700,letterSpacing:'.14em',cursor:'pointer',fontFamily:'inherit',marginTop:4},
   error:{padding:13,border:'1px solid rgba(216,90,48,.3)',background:'rgba(216,90,48,.08)',color:'#F09595',fontSize:12},
-  promise:{marginTop:24,padding:18,background:MID,border:`1px solid ${LINE}`},
+  promise:{marginTop:34,padding:22,background:MID,border:`1px solid ${LINE}`},
   promiseTitle:{fontSize:9,fontWeight:700,letterSpacing:'.17em',color:'rgba(201,168,76,.55)',marginBottom:14},
-  items:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px 14px'},
+  items:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px 18px'},
   item:{fontSize:12,color:DIM},
-  footer:{display:'flex',justifyContent:'space-between',gap:20,marginTop:16,fontSize:11,color:'rgba(247,244,238,.3)'},
+  footer:{display:'flex',justifyContent:'space-between',gap:20,marginTop:20,fontSize:11,color:'rgba(247,244,238,.3)'},
 }

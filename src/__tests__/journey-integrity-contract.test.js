@@ -44,7 +44,7 @@ describe('journey integrity contract', () => {
     expect(state.assessment.current).toBe(false)
     expect(state.eligibility.complete).toBe(false)
     expect(state.eligibility.missing).toContain('Your CV')
-    expect(state.eligibility.missing).toContain('A current full VALU Index')
+    expect(state.eligibility.missing).toContain('A current full VALU Index assessment')
     expect(state.marketplace.capabilities).toEqual([])
   })
 
@@ -125,10 +125,10 @@ describe('journey integrity contract', () => {
     expect(continuation).toContain('hasLegacyAssessmentParams')
   })
 
-  test('login returns authenticated participants to the dashboard without a bridge interstitial', () => {
+  test('assessment return from login always lands on dashboard before the user chooses to continue', () => {
     const login = read('src/app/login/page.jsx')
-    expect(login).toContain('window.location.href = target')
-    expect(login).not.toContain('/assessment/bridge')
+    expect(login).toContain("target.pathname === '/journey/continue'")
+    expect(login).toContain("window.location.replace('/dashboard')")
     expect(login).toContain("pending_taster_id")
     expect(login).not.toContain('launchAssessmentIfRequested')
     expect(login).not.toContain("fetch('/api/valu-handoff'")
@@ -146,16 +146,19 @@ describe('journey integrity contract', () => {
     expect(source).toContain('email_confirmed_at')
   })
 
-  test('professional account creation links the saved taster and returns signed-in users to the dashboard', () => {
+  test('professional signup preserves the snapshot but sends authenticated users to the dashboard before full assessment', () => {
     const source = read('src/app/professional-signup/page.jsx')
+    expect(source).not.toContain('https://valoriainstitute.com/journey/continue?stage=assess&taster_id=')
+    expect(source).toContain('GO TO MY DASHBOARD')
+    expect(source).toContain('Sign in to connect your saved VALU snapshot.')
     expect(source).toContain('continueSignedInUser')
     expect(source).toContain("window.location.replace('/dashboard?welcome=profile')")
     expect(source).toContain("localStorage.removeItem('pending_taster_id')")
-    expect(source).toContain('TASTER SAVED')
-    expect(source).toContain('CREATE ACCOUNT')
-    expect(source).not.toContain('Question 10')
+    expect(source).not.toContain("fetch(`/api/valu-handoff?taster_id=")
+    expect(source).not.toContain('COMPLETE MY PROFESSIONAL PROFILE')
     expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
   })
+
   test('signup and resend confirmation use the current site origin so staging links do not jump to production', () => {
     const source = read('src/app/professional-signup/page.jsx')
     expect(source).toContain('emailRedirectTo:')
@@ -165,41 +168,43 @@ describe('journey integrity contract', () => {
     expect(source).toContain("localStorage.setItem('pending_taster_id',tasterId)")
   })
 
-  test('email confirmation links the saved taster and returns the participant to the dashboard', () => {
+  test('email confirmation returns participants to dashboard before assessment continuation', () => {
     const callback = read('src/app/auth/callback/page.jsx')
     const dashboard = read('src/app/dashboard/page.jsx')
+    const continuation = read('src/app/journey/continue/route.js')
     const handoff = read('src/app/api/valu-handoff/route.js')
-    expect(callback).toContain('/api/link-taster')
-    expect(callback).toContain("router.replace('/dashboard?welcome=profile')")
-    expect(dashboard).toContain('DashboardAssessmentHandover')
-    expect(dashboard).toContain('assessmentAccess?.can_continue')
-    expect(dashboard).toContain('AssessmentStartLink')
-    expect(dashboard).not.toMatch(/Question\s+\d+|58-question/i)
+    expect(callback).toContain('/dashboard')
+    expect(callback).not.toContain('pending_taster_id=')
+    expect(dashboard).toContain('CONTINUE TO QUESTION 10')
+    expect(dashboard).toContain('Required Profile Details')
+    expect(dashboard).toContain('This is separate from your VALU assessment and marketplace eligibility.')
+    expect(dashboard).toContain('five milestones; not a profile or VALU percentage')
+    expect(dashboard).toContain('dashboardOnly')
+    expect(dashboard).not.toContain('pending_taster_id')
+    expect(dashboard).not.toContain('/journey/continue?stage=assess')
+    expect(continuation).toContain("stage === 'assess'")
     expect(handoff).toContain("entry_point: 'dashboard_assessment'")
     expect(handoff).toContain(".eq('user_id', user.id)")
   })
+
   test('assessment origin is environment-specific and preview never silently falls back to production', () => {
     const handoff = read('src/app/api/valu-handoff/route.js')
     const config = read('next.config.js')
     const reportTrigger = read('src/app/api/trigger-report/route.js')
-    const origin = read('src/lib/valu-origin.js')
     const signup = read('src/app/professional-signup/page.jsx')
-    expect(handoff).toContain("from '@/lib/valu-origin'")
-    expect(handoff).toContain('getValuAssessmentOrigin(process.env)')
+    expect(handoff).toContain('VALU_UPSTREAM_ORIGIN')
+    expect(handoff).toContain("process.env.VERCEL_ENV === 'production'")
+    expect(handoff).toContain("url.hostname === 'assessment.valoriainstitute.com'")
     expect(handoff).toContain('if (!assessmentOrigin)')
     expect(handoff.indexOf('if (!assessmentOrigin)')).toBeLessThan(handoff.indexOf("admin.from('valoria_reentry_links').insert"));
     expect(config).toContain("process.env.VERCEL_ENV === 'preview'")
     expect(config).toContain('if (!valuOrigin) return []')
-    expect(reportTrigger).toContain("from '@/lib/valu-origin'")
-    expect(reportTrigger).toContain('getValuAssessmentOrigin(process.env)')
-    expect(origin).toContain("env.CF_WORKERS === '1'")
-    expect(origin).toContain("env.CF_WORKERS_PREVIEW === '1'")
-    expect(origin).toContain('VALU_PREVIEW_ASSESSMENT_ORIGIN')
-    expect(origin).toContain("url.hostname === 'assessment.valoriainstitute.com'")
+    expect(reportTrigger).toContain('VALU_UPSTREAM_ORIGIN')
+    expect(reportTrigger).toContain("process.env.VERCEL_ENV === 'production'")
+    expect(reportTrigger).toContain('if (!assessmentOrigin)')
     expect(signup).toContain('href="/valu/assessment/"')
     expect(signup).not.toContain('href="https://assessment.valoriainstitute.com/"')
   })
-
 
   test('assessment continuation never accepts email resume tokens or public identity query parameters', () => {
     const continuation = read('src/app/journey/continue/route.js')
@@ -296,15 +301,15 @@ describe('journey integrity contract', () => {
     expect(source).toContain("supabase.auth.getSession()")
   })
 
-  test('marketplace pages use the canonical capability vocabulary through the verified directory loader', () => {
+  test('marketplace pages use the canonical capability vocabulary', () => {
     const pages = [
       read('src/app/marketplace/talent/page.jsx'),
       read('src/app/marketplace/speakers/page.jsx'),
       read('src/app/marketplace/facilitators/page.jsx'),
     ].join('\n')
-    expect(pages).toContain("getMarketplaceDirectoryData('candidate')")
-    expect(pages).toContain("getMarketplaceDirectoryData('speaker')")
-    expect(pages).toContain("getMarketplaceDirectoryData('facilitator')")
+    expect(pages).toContain("getMarketplaceRows('candidate')")
+    expect(pages).toContain("getMarketplaceRows('speaker')")
+    expect(pages).toContain("getMarketplaceRows('facilitator')")
   })
   test('password recovery waits for the asynchronous Supabase recovery session and surfaces link errors', () => {
     const source = read('src/app/reset-password/page.jsx')
@@ -378,26 +383,6 @@ describe('journey integrity contract', () => {
     expect(config).toContain('/api/cron/reconciliation-health')
   })
   
-  test('every incomplete VALU dashboard milestone opens the secure direct assessment handoff', () => {
-    const cards = read('src/components/ValoriaJourneyCards.jsx')
-    const dashboard = read('src/app/dashboard/page.jsx')
-    const nudge = read('src/components/ValuCompletionNudge.jsx')
-    expect(cards).toContain("href:'/dashboard'")
-    expect(cards).toContain('Authorization: `Bearer ${session.access_token}`')
-    expect(dashboard).toContain('CONTINUE YOUR ASSESSMENT')
-    expect(dashboard).toContain('dashboardOnly')
-    expect(nudge).toContain('CONTINUE MY ASSESSMENT')
-    expect(nudge).toContain('AssessmentStartLink')
-    expect(nudge).toContain('dashboardOnly')
-  })
-
-  test('journey-state API accepts a verified bearer session as well as the SSR cookie session', () => {
-    const route = read('src/app/api/journey/state/route.js')
-    expect(route).toContain("request.headers.get('authorization')")
-    expect(route).toContain('verifier.auth.getUser(bearer)')
-    expect(route).toContain('createServerClient')
-  })
-
   test('dashboard is the only authenticated continuation entry point', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
     const nav = read('src/components/Nav.jsx')
@@ -406,57 +391,49 @@ describe('journey integrity contract', () => {
     const journeyCards = read('src/components/ValoriaJourneyCards.jsx')
     const nudge = read('src/components/ValuCompletionNudge.jsx')
     const continuation = read('src/app/journey/continue/route.js')
-    const legacyBridge = read('src/app/assessment/bridge/page.jsx')
-    expect(legacyBridge).toContain("redirect('/dashboard')")
     expect(dashboard).toContain('AssessmentStartLink')
     expect(dashboard).toContain('dashboardOnly')
     expect(nav).toContain('export function AssessmentStartLink')
-    expect(nav).toContain("fetch('/api/valu-handoff'")
-    expect(nav).toContain('window.location.assign(data.url)')
-    expect(nav).toContain("const linkHref = dashboardOnly ? 'https://assessment.valoriainstitute.com/remaining' : href")
-    expect(nav).toContain('<a href={linkHref}')
-    expect(nav).not.toContain("window.location.assign('/assessment/bridge')")
+    expect(nav).toContain("window.location.assign('/assessment/bridge')")
+    expect(nav).not.toContain("fetch('/api/valu-handoff'")
     expect(nav).not.toContain('pending_taster_id')
     expect(nav).not.toContain("continuation.searchParams.set('stage', 'assess')")
     expect(start).toContain('AssessmentStartLink')
     expect(journey).toContain("assess: '/dashboard'")
     expect(journeyCards).toContain("href:'/dashboard'")
-    expect(journeyCards).toContain('AssessmentStartLink')
-    expect(nudge).toContain('AssessmentStartLink')
-    expect(nudge).toContain('dashboardOnly')
-    expect(nudge).toContain('href={assessed?"/profile/setup":"/valu/start"}')
+    expect(nudge).toContain('assessmentStarted?"/dashboard":"/valu/start"')
     expect(continuation).toContain("stage === 'assess'")
     expect(continuation).toContain("return NextResponse.redirect(new URL('/dashboard', request.url))")
     expect(continuation).not.toContain('assessment.valoriainstitute.com')
   })
 
 
-  test('the VALU journey presents registration, taster, account creation and Full assessment without question counts', () => {
+  test('the VALU opening, confirmation bridge, and Question 10 continuation read as one journey', () => {
     const progress = read('src/components/VALUJourneyProgress.jsx')
     const signup = read('src/app/professional-signup/page.jsx')
     const dashboard = read('src/app/dashboard/page.jsx')
-    for (const step of ["title: 'Register'", "title: 'Taster'", "title: 'Account'", "title: 'Assessment'"]) {
-      expect(progress).toContain(step)
-    }
-    expect(progress).not.toMatch(/Questions?\s+\d|\d+\s+of\s+\d+/i)
-    expect(signup).toContain('VALUJourneyProgress stage="account"')
-    expect(dashboard).toContain('AssessmentStartLink')
-  })
-  test('signed-in assessment CTA returns participants without a linked taster to the public taster', () => {
-    const nav = read('src/components/Nav.jsx')
-    expect(nav).toContain("method: 'GET'")
-    expect(nav).toContain('if (!access.can_continue)')
-    expect(nav).toContain('window.location.assign(href)')
-    expect(nav.indexOf("method: 'GET'")).toBeLessThan(nav.indexOf("method: 'POST'"))
+    expect(progress).toContain('Questions 1–9')
+    expect(progress).toContain('Save & confirm')
+    expect(progress).toContain('Questions 10–58')
+    expect(signup).toContain('VALUJourneyProgress stage="bridge"')
+    expect(dashboard).toContain('VALUJourneyProgress stage="continuation"')
+    expect(signup).not.toContain('9-QUESTION VALU INDEX COMPLETE')
+    expect(signup).toContain('Opening 9 of 58 · Saved')
+    expect(dashboard).toContain('CONTINUE TO QUESTION 10')
   })
 
-  test('dashboard shows the Full assessment continuation only when access is verified', () => {
+
+  test('dashboard makes the next milestone visible and previews what follows without inventing saved progress', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
-    expect(dashboard).toContain('DashboardAssessmentHandover')
-    expect(dashboard).toContain('assessmentAccess?.can_continue')
-    expect(dashboard).toContain('AssessmentStartLink')
-    expect(dashboard).not.toMatch(/Question\s+\d+|58-question|Questions 10/i)
+    expect(dashboard).toContain('COMING UP AFTER THIS')
+    expect(dashboard).toContain('You’ll unlock:')
+    expect(dashboard).toContain('hasSavedOpening={!!assessmentAccess?.can_continue}')
+    expect(dashboard).toContain('Your first answers are saved. Ready for the next 49?')
+    expect(dashboard).toContain('Start or continue your 58-question VALU assessment.')
+    expect(dashboard).not.toContain('Your opening nine answers are saved. Your account is confirmed.')
   })
+
+
   test('the completed VALU report creates anticipation for profile building and the next marketplace stages', () => {
     const report = read('src/app/report/page.jsx')
     expect(report).toContain('VALU COMPLETE · YOUR NEXT CHAPTER')
@@ -467,42 +444,54 @@ describe('journey integrity contract', () => {
     expect(report).toContain(' points</span>')
   })
 
-  test('public VALU explanation follows registration, taster, account creation and Full assessment', () => {
+  test('public VALU explanation describes one continuous 58-question journey with an account bridge', () => {
     const start = read('src/app/valu/start/page.jsx')
-    const signup = read('src/app/professional-signup/page.jsx')
-    expect(start).toContain('Register your contact and professional details before the taster')
+    expect(start).toContain('one continuous journey of 58 questions')
+    expect(start).toContain('Questions 10–58')
+    expect(start).toContain('One continuous journey.')
+    expect(start).not.toContain('Two sessions. One result.')
     expect(start).toContain('Your official result in points')
-    expect(start).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
-    expect(start).not.toMatch(/9-question|58-question/i)
-    expect(signup).toContain('VALU Index Taster')
-    expect(signup).toContain('full VALU Index')
   })
-  test('professional account creation remains separate from pre-taster registration', () => {
+
+
+  test('the account bridge explains email confirmation, signed-in return and Question 10 as the next action', () => {
     const signup = read('src/app/professional-signup/page.jsx')
     const callback = read('src/app/auth/callback/page.jsx')
-    expect(signup).toContain('ACCOUNT BRIDGE')
-    expect(signup).toContain('Confirm your email')
-    expect(signup).toContain('full VALU Index')
-    expect(signup).not.toContain('Question 10')
+    expect(signup).toContain('ACCOUNT BRIDGE · STEP 2 OF 3')
+    expect(signup).toContain('ACCOUNT BRIDGE · EMAIL CONFIRMATION')
+    expect(signup).toContain('One quick confirmation.')
+    expect(signup).toContain('Then Question 10.')
+    expect(signup).toContain('Continue at Question 10')
+    expect(signup).toContain('Opening nine saved')
     expect(callback).toContain("router.replace('/dashboard?welcome=profile')")
+    expect(callback).not.toContain('VALUJourneyProgress')
+    expect(callback).not.toContain('Your next steps')
     expect(callback).not.toContain('Continue at Question 10')
   })
-  test('dashboard launches the secure assessment handoff directly without an interstitial', () => {
+
+  test('dashboard-to-assessment bridge introduces Valoria while the secure handoff opens', () => {
     const nav = read('src/components/Nav.jsx')
+    const bridge = read('src/components/ValoriaAssessmentBridge.jsx')
+    const cards = read('src/components/ValoriaHandoverCards.jsx')
+    const page = read('src/app/assessment/bridge/page.jsx')
+    const styles = read('src/components/ValoriaHandoverCards.module.css')
     const events = read('src/lib/professionalStandardSeries.js')
-    expect(nav).toContain("fetch('/api/valu-handoff'")
-    expect(nav).toContain('window.location.assign(data.url)')
+    expect(nav).toContain("window.location.assign('/assessment/bridge')")
+    expect(bridge).toContain("fetch('/api/valu-handoff'")
+    expect(bridge).toContain('window.location.assign(data.url)')
+    expect(page).toContain('ValoriaAssessmentBridge')
+    expect(cards).toContain('THE INSTITUTE')
+    expect(cards).toContain('VALU INDEX')
+    expect(cards).toContain('PRIME FRAMEWORK')
+    expect(cards).toContain('PROFESSIONAL REGISTRY')
+    expect(cards).toContain('EVENTS & CONVERSATIONS')
+    expect(cards).toContain('session.dateApproved')
+    expect(styles).toContain('@keyframes cardIn')
+    expect(styles).toContain('prefers-reduced-motion:reduce')
     expect(events).toContain('dateApproved: false')
     expect(read('src/app/auth/callback/page.jsx')).not.toContain('ValoriaHandoverCards')
   })
 
-  test('saved VALU handover is available to eligible dashboard accounts without exposing internal progress counts', () => {
-    const dashboard = read('src/app/dashboard/page.jsx')
-    expect(dashboard).toContain('if (!profile && assessmentAccess?.can_continue) return <DashboardAssessmentHandover standalone />')
-    expect(dashboard).toContain('assessmentAccess?.can_continue')
-    expect(dashboard).toContain('AssessmentStartLink')
-    expect(dashboard).not.toMatch(/Question\s+\d+|58-question|Questions 10/i)
-  })
   test('dashboard presents one primary assessment action and keeps the VALU Index card informational', () => {
     const dashboard = read('src/app/dashboard/page.jsx')
     const sidebar = dashboard.split('{/* VALU Index */}')[1].split('{/* Profile completeness */}')[0]
