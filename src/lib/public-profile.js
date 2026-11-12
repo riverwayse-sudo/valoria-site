@@ -1,4 +1,5 @@
 import 'server-only'
+import { getValuTier } from '@/lib/brand'
 import { createClient } from '@supabase/supabase-js'
 import { PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION } from '@/lib/profile-consent-copy'
 
@@ -195,13 +196,12 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
     valu_index: roster.assessment_access === 'full' ? profile.valu_index : null,
     valu_score: roster.assessment_access === 'full' ? profile.valu_index : null,
     cluster_scores: roster.assessment_access === 'full' ? profile.cluster_scores : null,
-    designation: roster.assessment_access === 'full' ? profile.designation : null,
+    designation: roster.assessment_access === 'full' ? (getValuTier(profile.valu_index, 'full')?.name || null) : null,
     capabilities: roster.capabilities || [],
     selected_capabilities: roster.selected_capabilities || [],
     active_tracks: roster.selected_capabilities?.length
       ? roster.selected_capabilities
       : (profile.active_tracks || []),
-    assessment_access: roster.assessment_access,
     indexable,
   }
 }
