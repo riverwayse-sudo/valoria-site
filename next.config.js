@@ -64,12 +64,10 @@ const nextConfig = {
     if (!valuOrigin) return []
     const origin = valuOrigin
     return [
-      { source: '/valu/assessment', destination: `${origin}/` },
-      // Preserve the platform's Vite base path so its JS/CSS assets resolve.
-      { source: '/valu/assessment/:path*', destination: `${origin}/valu/assessment/:path*` },
-
-      // The assessment bundle calls root-level platform APIs. Keep these
-      // explicit so the site's own unrelated /api routes remain local.
+      // /valu/assessment is handled by the filesystem catch-all route. That
+      // route uses the VALU_ASSESSMENT service binding, preserving same-origin
+      // requests and avoiding an external rewrite that bypasses the proxy.
+      // Keep only the legacy root-level API aliases here.
       { source: '/api/taster-progress', destination: `${origin}/api/taster-progress` },
       { source: '/api/submit-taster', destination: `${origin}/api/submit-taster` },
       { source: '/api/assessment-progress', destination: `${origin}/api/assessment-progress` },

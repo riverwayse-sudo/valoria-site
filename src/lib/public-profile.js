@@ -1,11 +1,10 @@
 import 'server-only'
+import { getValuTier } from '@/lib/brand'
 import { createClient } from '@supabase/supabase-js'
 import { PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION } from '@/lib/profile-consent-copy'
 
 const PUBLIC_PROFILE_FIELDS = [
   'id',
-  'display_name',
-  'display_initials',
   'headline',
   'current_job_title',
   'location',
@@ -19,7 +18,6 @@ const PUBLIC_PROFILE_FIELDS = [
   'assessment_completed_at',
   'assessment_expires_at',
   'cluster_scores',
-  'designation',
   'youtube_links',
   'atb_id',
   'availability',
@@ -88,9 +86,10 @@ async function hasCurrentFullAssessment(admin, profile) {
 }
 
 function hasBasicPublicIdentity(profile, roster = {}) {
-  const displayName = profile.display_name?.trim() || roster.full_name?.trim()
+  const atbId = String(profile.atb_id || roster.atb_id || '').normalize('NFKC').trim()
+  const validAtbId = /^ATB-[A-Z0-9-]{4,40}$/i.test(atbId)
   const headline = profile.headline?.trim() || profile.current_job_title?.trim() || roster.headline?.trim() || roster.current_job_title?.trim()
-  return Boolean(displayName && headline)
+  return Boolean(validAtbId && headline)
 }
 
 export async function getConsentVerifiedPublicProfile(identifier, field = 'id') {
@@ -102,7 +101,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
   // a linked completed taster or current Full assessment and minimal identity.
   const { data: roster, error: rosterError } = await admin
     .from('marketplace_public_roster')
-    .select('professional_id,atb_id,assessment_access,assessment_summary,capabilities,selected_capabilities,full_name,headline,current_job_title,valu_index')
+    .select('professional_id,atb_id,assessment_access,assessment_summary,capabilities,selected_capabilities,headline,current_job_title,valu_index')
     .eq(lookupField, identifier)
     .in('assessment_access', ['full', 'basic'])
     .maybeSingle()
@@ -188,8 +187,6 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
     ...publicProfile,
     atb_id: profile.atb_id,
     valu_score: profile.valu_index,
-    display_name: normalizePublicDisplayText(profile.display_name),
-    display_initials: normalizePublicDisplayText(profile.display_initials),
     headline: normalizePublicDisplayText(profile.headline),
     current_job_title: normalizePublicDisplayText(profile.current_job_title),
     // Basic listings intentionally do not display an unverified/full VALU score
@@ -198,13 +195,12 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
     valu_index: roster.assessment_access === 'full' ? profile.valu_index : null,
     valu_score: roster.assessment_access === 'full' ? profile.valu_index : null,
     cluster_scores: roster.assessment_access === 'full' ? profile.cluster_scores : null,
-    designation: roster.assessment_access === 'full' ? profile.designation : null,
+    designation: roster.assessment_access === 'full' ? (getValuTier(profile.valu_index, 'full')?.name || null) : null,
     capabilities: roster.capabilities || [],
     selected_capabilities: roster.selected_capabilities || [],
     active_tracks: roster.selected_capabilities?.length
       ? roster.selected_capabilities
       : (profile.active_tracks || []),
-    assessment_access: roster.assessment_access,
     indexable,
   }
 }
@@ -213,7 +209,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
   const admin = getAdminClient()
   const { data: roster, error: rosterError } = await admin
     .from('marketplace_public_roster')
-    .select('professional_id,assessment_access,assessment_summary,capabilities,full_name,headline,current_job_title,valu_index')
+    .select('professional_id,atb_id,assessment_access,assessment_summary,capabilities,headline,current_job_title,valu_index')
     .in('assessment_access', ['full', 'basic'])
 
   if (rosterError) {
@@ -231,7 +227,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
 
   const { data: profiles, error: profileError } = await admin
     .from('professional_profiles')
-    .select('id,updated_at,display_name,headline,current_job_title,profile_complete,valu_index,assessment_completed_at,assessment_expires_at')
+    .select('id,updated_at,headline,current_job_title,profile_complete,valu_index,assessment_completed_at,assessment_expires_at')
     .in('id', candidateIds)
     .eq('is_test', false)
     .eq('visibility', 'public')

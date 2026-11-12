@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
+import { getValuTier } from '@/lib/brand'
 const { deriveJourneyState } = require('@/lib/journey-state')
 
 const URL = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -15,8 +16,8 @@ export async function GET(request) {
 
   const admin = createClient(URL, SERVICE, { auth: { persistSession: false, autoRefreshToken: false } })
   const [profileRes, assessmentRes, capabilitiesRes, activationRes, documentsRes, opportunityRes] = await Promise.all([
-    admin.from('professional_profiles').select('*').eq('id', user.id).maybeSingle(),
-    admin.from('valu_assessments').select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,designation,created_at,expires_at').eq('user_id', user.id).order('completed_at', { ascending: false }).limit(1).maybeSingle(),
+    admin.from('professional_profiles').select('id,display_name,current_job_title,headline,bio,active_tracks,industry,username,phone,location,languages,profile_complete,cv_url,valu_index,assessment_completed_at,assessment_expires_at').eq('id', user.id).maybeSingle(),
+    admin.from('valu_assessments').select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,created_at,expires_at').eq('user_id', user.id).order('completed_at', { ascending: false }).limit(1).maybeSingle(),
     admin.from('professional_capabilities').select('id,capability,is_active,eligibility_status,eligible_for_listing,listed_at,missing_requirements').eq('professional_id', user.id).eq('is_active', true),
     admin.from('professional_value_activation').select('*').eq('professional_id', user.id).maybeSingle(),
     admin.from('professional_documents').select('id,document_type,verification_status,verified_at').eq('professional_id', user.id).order('created_at', { ascending: false }),
@@ -34,7 +35,7 @@ export async function GET(request) {
   let assessment = assessmentRes.data
   if (!assessment && user.email) {
     const { data, error } = await admin.from('valu_assessments')
-      .select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,designation,created_at,expires_at')
+      .select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,created_at,expires_at')
       .eq('email', user.email.toLowerCase()).order('completed_at', { ascending: false }).limit(1).maybeSingle()
     if (error) return NextResponse.json({ ok: false, error: 'Historical assessment lookup failed.' }, { status: 502 })
     assessment = data
@@ -48,6 +49,7 @@ export async function GET(request) {
     documents: documentsRes.data || [],
     opportunity: opportunityRes.data,
   })
+  state.assessment.designation = getValuTier(state.assessment.score, 'full')?.name || null
 
   const checks = [
     { key: 'assessment', pass: state.assessment.complete, status: state.assessment.complete ? 'pass' : 'pending', detail: state.assessment.complete ? 'Completed VALU is linked.' : 'No completed VALU is linked.' },

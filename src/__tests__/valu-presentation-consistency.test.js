@@ -8,10 +8,24 @@ function read(relative) {
 describe('VALU presentation consistency', () => {
   test('homepage communicates registration before the VALU taster without exposing question counts', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('Register before your taster')
+    expect(home).toContain('Start with your VALU Index Taster')
     expect(home).toContain('START THE VALU INDEX TASTER')
+    expect(home).not.toContain('FREE ENTRY')
+    expect(home).not.toContain('verified profiles')
+    expect(home).not.toContain('target="_blank"')
+    const tasterPage = read('src/app/valu/start/page.jsx')
+    expect(tasterPage).toContain('VALU INDEX TASTER')
+    expect(tasterPage).not.toContain('VALU TASTER')
+    expect(tasterPage).not.toMatch(/\bFREE\b|Is it free\?/i)
+    expect(tasterPage).not.toMatch(/Basic marketplace consideration|Full marketplace eligibility|buyer access/i)
+    expect(read('src/app/signup/page.jsx')).toContain('START THE VALU INDEX TASTER')
+    expect(read('src/app/signup/page.jsx')).not.toContain('TAKE THE VALU TASTER')
     expect(home).not.toMatch(/9 questions|58 questions|Question\s+\d+\s+of\s+\d+/i)
+    expect(home).not.toContain('Register before your taster')
     expect(home).not.toContain('no account needed')
+    expect(home).toContain('Make your capability legible.')
+    expect(home).toContain('Build a considered record of capability, experience and contribution')
+    expect(home).not.toContain('Build a verified professional presence.')
     expect(home).not.toMatch(/\\b9\\s*QUESTIONS\\b|\\b58\\s*QUESTIONS\\b/i)
     const waitlist = read('src/components/WaitlistModal.jsx')
     expect(waitlist).not.toMatch(/\\b9\\s*QUESTIONS\\b|\\b58\\s*QUESTIONS\\b/i)
@@ -49,12 +63,74 @@ describe('VALU presentation consistency', () => {
       expect(surface).not.toMatch(/VALU\s+taster(?!\s+index)/i);
     }
     expect(read('src/app/valu/page.jsx')).toContain('VALU Index Taster');
-    expect(read('src/app/valu/start/page.jsx')).toContain('full VALU Index');
+    expect(read('src/app/valu/start/page.jsx')).toContain('separate full assessment')
+    expect(read('src/app/valu/start/page.jsx')).toContain('official VALU Index');
     expect(read('src/app/page.jsx')).toContain('START THE VALU INDEX TASTER');
     expect(read('src/app/prime/page.jsx')).toContain('TAKE THE VALU INDEX TASTER');
     expect(read('src/app/insights/page.jsx')).toContain('START THE VALU INDEX TASTER');
-    expect(read('src/app/signup/page.jsx')).toContain('TAKE THE VALU INDEX TASTER');
-    expect(read('src/components/LiveProfilesScroll.jsx')).toContain('TAKE THE VALU INDEX TASTER');
+    expect(read('src/app/signup/page.jsx')).toContain('START THE VALU INDEX TASTER');
+    const homepageRail = read('src/components/LiveProfilesScroll.jsx')
+    expect(homepageRail).not.toContain('WANT TO BE DISCOVERED')
+    expect(homepageRail).not.toContain('relevant buyers understand your capabilities');
+  })
+
+  test('production smoke enforces approved homepage language and rejects retired public claims', () => {
+    const smoke = read('scripts/production-smoke.mjs')
+    expect(smoke).toContain("'Capability should decide'")
+    expect(smoke).toContain("'Valoria sets the standard.'")
+    expect(smoke).toContain("'START THE VALU INDEX TASTER'")
+    expect(smoke).toContain("'WANT TO BE DISCOVERED'")
+    expect(smoke).toContain("'Become discoverable'")
+    expect(smoke).toContain("'55 questions'")
+    expect(smoke).toContain("'84 / 100'")
+    expect(smoke).toContain("'1 of 58'")
+  })
+
+  test('homepage omits the profile-image slider and retired discoverability CTA', () => {
+    const home = read('src/app/page.jsx')
+    expect(home).not.toContain('LiveProfilesScroll')
+    expect(home).not.toContain('Become discoverable')
+    expect(home).toContain('Make your capability legible.')
+    expect(home).toContain('Build a considered record of capability, experience and contribution')
+  })
+
+  test('primary navigation is a centered, non-sticky pill', () => {
+    const styles = read('src/styles/component-system.css')
+    const navRule = styles.match(/nav\.vi-nav\s*\{([^}]*)\}/)?.[1] || ''
+    expect(navRule).toContain('position:absolute')
+    expect(navRule).toContain('left:50%')
+    expect(navRule).toContain('border-radius:999px')
+    expect(navRule).not.toContain('position:fixed')
+  })
+
+  test('Cloudflare production deployment requires explicit authorization and runs the content smoke gate', () => {
+    const workflow = read('.github/workflows/cloudflare-site-worker-deploy.yml')
+    expect(workflow).toContain('confirm_production')
+    expect(workflow).toContain("inputs.confirm_production == 'DEPLOY'")
+    expect(workflow).toContain("[deploy-production]")
+    expect(workflow).toContain('environment: production')
+    expect(workflow).toContain('node scripts/production-smoke.mjs')
+  })
+
+  test('signup handoff uses compact, plain-language account and confirmation screens', () => {
+    const page = read('src/app/professional-signup/page.jsx')
+    const progress = read('src/components/VALUJourneyProgress.jsx')
+    expect(page).toContain('Check your inbox.')
+    expect(page).toContain('Create your account.')
+    expect(page).toContain('Use the email linked to your taster.')
+    expect(page).not.toContain('One quick confirmation.')
+    expect(page).not.toContain('TASTER STATUS')
+    expect(progress).toContain('repeat(4,minmax(0,1fr))')
+    expect(progress).not.toContain('YOUR PROGRESS IS PRESERVED')
+  })
+
+  test('release smoke checks reject homepage profile sliders and stale score presentation', () => {
+    const smoke = read('scripts/production-smoke.mjs')
+    const browserAudit = read('scripts/staging-browser-audit.mjs')
+    expect(smoke).toContain("'live-profiles'")
+    expect(smoke).toContain("'vi-scroll-track'")
+    expect(browserAudit).toContain('profileSliderPresent')
+    expect(browserAudit).toContain('retiredPublicCopyPresent')
   })
 
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
@@ -84,6 +160,35 @@ describe('VALU presentation consistency', () => {
     expect(read('src/app/profile/[id]/ProfileClient.jsx')).not.toContain('p.designation.replace')
     expect(read('src/app/profile/onboarding/page.jsx')).not.toContain('valu.designation ||')
     expect(read('src/app/profile/passport/page.jsx')).not.toContain('profile?.designation||')
+  })
+
+  test('every remaining designation-bearing journey and server projection derives merit from canonical points', () => {
+    const journeyState = read('src/lib/journey-state.js')
+    expect(journeyState).not.toContain('assessment?.designation')
+    expect(journeyState).not.toContain('profile?.designation')
+
+    const journeyRoute = read('src/app/api/journey/state/route.js')
+    const diagnosticsRoute = read('src/app/api/journey/diagnostics/route.js')
+    for (const route of [journeyRoute, diagnosticsRoute]) {
+      expect(route).toContain("getValuTier(state.assessment.score, 'full')?.name")
+      expect(route).not.toMatch(/total_score,designation/)
+    }
+
+    const profileSetup = read('src/app/profile/setup/page.jsx')
+    expect(profileSetup).not.toContain('designation: assessment.designation')
+    expect(profileSetup).toContain("getValuTier(assessment.total_score, 'full')?.name")
+
+    const adminAnalytics = read('src/app/api/admin/analytics/route.js')
+    expect(adminAnalytics).not.toMatch(/industry, designation, p_score/)
+    expect(adminAnalytics).toContain("getValuTier(a.total_score, 'full')?.name")
+
+    const employerApplications = read('src/app/api/employer/applications/route.js')
+    expect(employerApplications).not.toMatch(/valu_index,designation/)
+    expect(employerApplications).toContain("getValuTier(profile.valu_index, 'full')?.name")
+
+    const publicProfile = read('src/lib/public-profile.js')
+    expect(publicProfile).not.toContain("  'designation',")
+    expect(publicProfile).toContain("getValuTier(profile.valu_index, 'full')?.name")
   })
 
   test('email confirmation never exposes internal taster or full-assessment question counts', () => {
@@ -119,4 +224,56 @@ describe('VALU presentation consistency', () => {
     expect(prototype).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
     expect(prototype).not.toMatch(/9 opening questions|remaining 49 questions|58 in total/i)
   })
+  test('avatar upload types and size are restricted in the client and storage bucket', () => {
+    const helper = read('src/lib/avatar-upload.js')
+    expect(helper).toContain("'image/jpeg': 'jpg'")
+    expect(helper).toContain("'image/png': 'png'")
+    expect(helper).toContain("'image/webp': 'webp'")
+    expect(helper).toContain('5 * 1024 * 1024')
+    expect(helper).toContain('file.size > AVATAR_MAX_BYTES')
+
+    for (const version of ['20261112121343', '20261112121356']) {
+      const migration = read(`supabase/migrations/${version}_restrict_avatar_upload_size_and_mime_types.sql`)
+      expect(migration).toContain('file_size_limit = 5242880')
+      expect(migration).toContain("ARRAY['image/jpeg', 'image/png', 'image/webp']")
+      expect(migration).toContain("WHERE id = 'avatars' AND public = true")
+      expect(migration).not.toContain('SET public')
+    }
+
+    for (const path of ['src/app/profile/edit/page.jsx', 'src/app/profile/setup/page.jsx']) {
+      const page = read(path)
+      expect(page).toContain('getAvatarExtension(file)')
+      expect(page).toContain('contentType: file.type')
+      expect(page).not.toContain("file.name.split('.').pop()")
+    }
+  })
+
+
+  test('private CV uploads have matching client and Storage size/type limits', () => {
+    const helper = read('src/lib/upload-professional-cv.js')
+    expect(helper).toContain('10 * 1024 * 1024')
+    expect(helper).toContain('file.type !== mimeType')
+    expect(helper).toContain("contentType: mimeType")
+
+    for (const version of ['20261112121608', '20261112121613']) {
+      const migration = read(`supabase/migrations/${version}_restrict_private_cv_upload_size_and_mime_types.sql`)
+      expect(migration).toContain('file_size_limit = 10485760')
+      expect(migration).toContain("'application/pdf'")
+      expect(migration).toContain("'application/msword'")
+      expect(migration).toContain("'application/vnd.openxmlformats-officedocument.wordprocessingml.document'")
+      expect(migration).toContain("WHERE id = 'cvs' AND public = false")
+    }
+  })
+
+
+  test('legacy archive security migration is versioned for both environments and idempotent', () => {
+    for (const version of ['20261112120605', '20261112120621']) {
+      const migration = read(`supabase/migrations/${version}_revoke_public_legacy_marketplace_archive_access.sql`)
+      expect(migration).toContain('DROP POLICY IF EXISTS marketplace_profiles_public_read')
+      expect(migration).toContain('REVOKE ALL PRIVILEGES')
+      expect(migration).not.toMatch(/\\b(DROP TABLE|TRUNCATE|DELETE FROM)\\b/i)
+    }
+  })
+
+
 })

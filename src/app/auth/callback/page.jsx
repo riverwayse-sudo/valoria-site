@@ -20,13 +20,14 @@ function AuthCallbackFlow() {
     async function finishConfirmation() {
       try {
         const code = params.get('code')
-        let { data: { session } } = await supabase.auth.getSession()
-        if (!session?.access_token && code) {
+        // A confirmation code identifies the account being confirmed. Exchange it
+        // before reading any existing browser session so a previously signed-in
+        // account cannot be mistaken for the account behind this email link.
+        if (code) {
           const { error } = await supabase.auth.exchangeCodeForSession(code)
           if (error) throw error
-          const result = await supabase.auth.getSession()
-          session = result.data.session
         }
+        let { data: { session } } = await supabase.auth.getSession()
         if (!session?.access_token) {
           await new Promise(resolve => setTimeout(resolve, 700))
           const result = await supabase.auth.getSession()

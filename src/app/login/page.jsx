@@ -100,7 +100,7 @@ export default function LoginPage() {
         localStorage.removeItem('pending_taster_id')
         localStorage.removeItem('pending_taster_name')
         localStorage.removeItem('pending_taster_role')
-        // Restore any completed full VALU Index attached to the same taster.
+        // Restore any completed full assessment attached to the same taster.
         // A taster-only record is still valid; in that case the claim endpoint
         // simply reports that no completed assessment exists and onboarding continues.
         try {
@@ -125,11 +125,14 @@ export default function LoginPage() {
             return
           }
         } catch (_) {}
-        redirectAfterLogin('/profile/onboarding')
+        // A taster-only account is already authenticated and has a saved snapshot.
+        // The dashboard owns the next step: it presents the verified full-assessment
+        // continuation before profile-completion prompts.
+        redirectAfterLogin('/dashboard')
         return
       }
 
-      // Complete a VALU Index handoff securely on the server.
+      // Complete a full assessment handoff securely on the server.
       const pendingIdentityHash = sessionStorage.getItem('pending_identity_hash')
       if (pendingIdentityHash && session?.access_token) {
         sessionStorage.removeItem('pending_identity_hash')

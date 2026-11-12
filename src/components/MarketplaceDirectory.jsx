@@ -20,6 +20,7 @@ const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Ma
 const SCORE_BANDS = TIER_DESIGNATIONS.filter(tier => tier.min >= 35).map(tier => ({ name:tier.name, min:tier.min, max:tier.max }))
 
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
+const hasPublicValuIndex = profile => profile?.valu_index !== null && profile?.valu_index !== undefined && Number.isFinite(Number(profile.valu_index)) && Number(profile.valu_index) >= 35
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
 const titleCase = v => String(v || '').replace(/[_-]+/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase())
 const cleanSkill = v => displayText(v).replace(/\s*★$/, '')
@@ -60,16 +61,16 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       if(scoreBand) {
         const band = SCORE_BANDS.find(item => item.name === scoreBand)
         const points = Number(p.valu_index)
-        if (!band || p.assessment_access !== 'full' || !Number.isFinite(points) || points < band.min || points > band.max) return false
+        if (!band || !hasPublicValuIndex(p) || !Number.isFinite(points) || points < band.min || points > band.max) return false
       }
       if(!q) return true
-      return [p.full_name,p.headline,p.current_job_title,p.atb_id,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
+      return [p.headline,p.current_job_title,p.atb_id,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
     }).sort((a, b) => {
-      const scored = value => value.assessment_access === 'full' && Number.isFinite(Number(value.valu_index))
+      const scored = value => hasPublicValuIndex(value)
       const isAvailable = value => /^(available|accepting|open)$/i.test(displayText(value.availability_status))
       return Number(scored(b)) - Number(scored(a)) ||
         Number(isAvailable(b)) - Number(isAvailable(a)) ||
-        displayText(a.full_name).localeCompare(displayText(b.full_name))
+        displayText(a.atb_id).localeCompare(displayText(b.atb_id))
     })
   },[rows,activeTrack,query,sector,cluster,skill,scoreBand])
 
@@ -137,15 +138,15 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             rows.length === 0 && activeTrack === 'all' ? (
               <div className={styles.empty}>
                 <strong>No public professional profiles are currently available.</strong>
-                <p>Public listings appear when a professional meets the applicable Basic or Full listing requirements, chooses public visibility and records consent.</p>
+                <p>Public listings appear when a professional meets Valoria's listing requirements and chooses to make the profile visible.</p>
                 <Link className={styles.view} href="/login?returnTo=%2Fprofile%2Fsetup">EXISTING PROFESSIONAL? REVIEW YOUR PROFILE →</Link>
               </div>
             ) : rows.length === 0 && Number(counts?.all || 0) === 0 ? (
               <div className={styles.empty}>
                 <strong>{activeTrack === 'candidate' ? 'ATB Connect is preparing its first public talent listings.' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'ATB Spotlight is preparing its first public event-professional listings.' : 'The public marketplace is being prepared.'}</strong>
-                <p>{activeTrack === 'candidate' ? 'Employers can request sourcing access now. Tell Valoria the roles, sectors and capability requirements your organisation needs.' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'Event organisers can share an event brief, audience, format and facilitation requirements with Valoria.' : 'Employers and event organisers can begin a conversation with Valoria while public profiles and opportunities are being prepared.'}</p>
+                <p>{activeTrack === 'candidate' ? 'Employers can share the roles, sectors and capabilities their organisation needs.' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'Event organisers can share an event brief, audience, format and facilitation requirements with Valoria.' : 'Employers and event organisers can describe their needs to Valoria while the public directory develops.'}</p>
                 <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
-                  <Link className={styles.view} href="/contact-us?type=candidate">REQUEST SOURCING ACCESS →</Link>
+                  <Link className={styles.view} href="/contact-us?type=candidate">SHARE A TALENT BRIEF →</Link>
                   <Link className={styles.view} href="/contact-us?type=speaker_booking">DISCUSS AN EVENT BRIEF →</Link>
                 </div>
                 <Link className={styles.view} href="/login?returnTo=%2Fprofile%2Fsetup">EXISTING PROFESSIONAL? REVIEW YOUR PROFILE →</Link>
@@ -193,9 +194,9 @@ function Profile({p, onSelect}) {
     ['speaker','Speaker'],
     ['facilitator','Facilitator'],
   ]
-  const isFull = p.assessment_access === 'full' && p.valu_index != null
-  const tier = isFull ? getValuTier(p.valu_index, 'full') : null
-  const designation = tier?.name || 'Assessment Follow-up'
+  const hasValuIndex = hasPublicValuIndex(p)
+  const tier = hasValuIndex ? getValuTier(p.valu_index, 'full') : null
+  const designation = tier?.name || 'Professional profile'
   const designationClass = tier ? styles[tier.name.toLowerCase()] || '' : ''
   const profileId = displayText(p.atb_id)
   const skills = labelValues(p.skills).slice(0, 3)
@@ -212,20 +213,20 @@ function Profile({p, onSelect}) {
   return <article className={`${styles.card} ${explicitlyUnavailable ? styles.unavailableCard : ''}`}>
     <header className={styles.cardHeader}>
       <div className={styles.identity}>
-<ValoriaAvatar src={p.photo_url} name={p.full_name} seed={p.professional_id || profileId} size={58} className={styles.avatar}/>
+<ValoriaAvatar src={p.photo_url} name="Valoria Professional" seed={p.professional_id || profileId} size={58} className={styles.avatar}/>
         <div className={styles.identityCopy}>
-          <strong className={styles.profileName}>{displayText(p.full_name) || 'Professional profile'}</strong>
+          <strong className={styles.profileName}>{profileId || 'VALORIA PROFESSIONAL'}</strong>
           {role && <span className={styles.profileRole}>{role}</span>}
-          <span className={styles.cardIdLabel}>{profileId || 'ATB ID PENDING'}</span>
+          <span className={styles.cardIdLabel}>ATB PROFILE ID</span>
         </div>
       </div>
       <div className={styles.scoreDesignation}>
-        {isFull ? <>
+        {hasValuIndex ? <>
           <div className={styles.valu} aria-label={`VALU Index ${p.valu_index} points`}>
             <small>VALU INDEX</small><b>{p.valu_index}</b><span>POINTS</span>
           </div>
           <span className={`${styles.tierBadge} ${designationClass}`}>{designation}</span>
-        </> : <span className={styles.assessmentPending}>Full VALU Index pending</span>}
+        </> : <span className={styles.assessmentPending}>PROFESSIONAL PROFILE</span>}
       </div>
     </header>
 
@@ -295,8 +296,8 @@ function ProfilePreviewModal({ profile, onClose }) {
 
   if (!profile) return null
 
-  const isFull = profile.assessment_access === 'full' && profile.valu_index != null
-  const tier = isFull ? getValuTier(profile.valu_index, 'full') : null
+  const hasValuIndex = hasPublicValuIndex(profile)
+  const tier = hasValuIndex ? getValuTier(profile.valu_index, 'full') : null
   const capabilities = getCapabilitySelection(profile)
   const capabilityBadges = [
     { key: 'candidate', title: 'TALENT' },
@@ -305,7 +306,7 @@ function ProfilePreviewModal({ profile, onClose }) {
   ]
   const skills = labelValues(profile.skills).slice(0, 4)
   const topics = labelValues(profile.topics).slice(0, 3)
-  const assessmentSummary = isFull ? displayText(profile.assessment_summary || '') : ''
+  const assessmentSummary = hasValuIndex ? displayText(profile.assessment_summary || '') : ''
   const profileHref = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
   const enquiryActions = [
     { key: 'candidate', enquiryType: 'candidate', ctaLabel: 'REQUEST TALENT INTRO' },
@@ -322,10 +323,10 @@ function ProfilePreviewModal({ profile, onClose }) {
         </div>
         <div className={styles.modalBody}>
           <div className={styles.modalIdentity}>
-            <ValoriaAvatar src={profile.photo_url} name={profile.full_name} seed={profile.professional_id || profile.atb_id} size={96} className={styles.modalAvatar}/>
+            <ValoriaAvatar src={profile.photo_url} name="Valoria Professional" seed={profile.professional_id || profile.atb_id} size={96} className={styles.modalAvatar}/>
             <div className={styles.modalIdentityCopy}>
               <p className={styles.modalEyebrow}>ATB PROFILE ID · {displayText(profile.atb_id || 'PENDING')}</p>
-              <h2 id="profile-preview-title">{displayText(profile.full_name || 'Professional profile')}</h2>
+              <h2 id="profile-preview-title">{displayText(profile.atb_id || 'VALORIA PROFESSIONAL')}</h2>
               <p className={styles.modalHeadline}>{displayText(profile.current_job_title || profile.headline || 'Professional capability')}</p>
               <div className={styles.modalMeta}>
                 {displayText(profile.industry) && <span>{displayText(profile.industry)}</span>}
@@ -334,9 +335,9 @@ function ProfilePreviewModal({ profile, onClose }) {
               </div>
             </div>
             <div className={styles.modalIndex}>
-              <small>{isFull ? 'VALU INDEX' : 'LISTING LEVEL'}</small>
-              <strong>{isFull ? profile.valu_index : 'BASIC'}</strong>
-              <span>{isFull ? 'POINTS' : 'PUBLIC LISTING'}</span>
+              <small>{hasValuIndex ? 'VALU INDEX' : 'PROFESSIONAL PROFILE'}</small>
+              <strong>{hasValuIndex ? profile.valu_index : '—'}</strong>
+              <span>{hasValuIndex ? 'POINTS' : 'CAPABILITY PROFILE'}</span>
               {tier && <b>{tier.name}</b>}
             </div>
           </div>
@@ -344,18 +345,18 @@ function ProfilePreviewModal({ profile, onClose }) {
             <section className={styles.modalPanel}>
               <p className={styles.modalSectionLabel}>VALU INDEX · PROFESSIONAL INSIGHT</p>
               <p id="profile-preview-description" className={styles.modalSummary}>
-                {isFull
-                  ? (assessmentSummary || 'The Full VALU Index is complete. The professional insight is being prepared.')
-                  : 'This Basic listing introduces the professional’s public identity, declared capabilities and areas of expertise. Additional VALU Index insight is displayed only when available.'}
+                {hasValuIndex
+                  ? (assessmentSummary || 'The VALU Index is complete. The professional insight is being prepared.')
+                  : 'This profile presents professional capabilities and experience.'}
               </p>
               <div className={styles.modalCredential}>
-                <span>{isFull ? 'VALU INDEX INSIGHT' : 'BASIC PROFESSIONAL LISTING'}</span>
-                <strong>{tier ? tier.name : 'VALU INDEX SCORE NOT DISPLAYED'}</strong>
+                <span>{hasValuIndex ? 'VALU INDEX INSIGHT' : 'PROFESSIONAL CAPABILITIES'}</span>
+                <strong>{tier ? tier.name : 'Capability-led profile'}</strong>
               </div>
             </section>
             <section className={styles.modalPanel}>
               <p className={styles.modalSectionLabel}>CAPABILITY SELECTION</p>
-              <p className={styles.modalSectionCopy}>The three capability lanes are shown consistently. Selection is distinct from capability-specific listing eligibility.</p>
+              <p className={styles.modalSectionCopy}>Profiles can indicate the services a professional offers. Public capability listings follow Valoria's requirements.</p>
               <div className={styles.modalCapabilities}>
                 {capabilityBadges.map(item => (
                   <div key={item.key} className={capabilities.has(item.key) ? styles.modalCapabilitySelected : styles.modalCapability}>

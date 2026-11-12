@@ -2,6 +2,7 @@
 // Career-type and training-priority analytics for the admin Reports tab.
 
 import { createClient } from '@supabase/supabase-js'
+import { getValuTier } from '@/lib/brand'
 
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -39,7 +40,7 @@ export async function GET(request) {
 
   const { data: assessments, error: assessmentsError } = await supabase
     .from('valu_assessments')
-    .select('user_id, name, email, role, industry, designation, p_score, r_score, i_score, m_score, e_score, total_score, completed_at')
+    .select('user_id, name, email, role, industry, p_score, r_score, i_score, m_score, e_score, total_score, completed_at')
     .not('completed_at', 'is', null)
     .order('completed_at', { ascending: false })
 
@@ -71,7 +72,7 @@ export async function GET(request) {
   if (withAccounts.length) {
     const { data: profiles } = await supabase.from('professional_profiles').select('id, profile_complete').in('id', withAccounts.map(a => a.user_id))
     const completeIds = new Set((profiles || []).filter(p => p.profile_complete).map(p => p.id))
-    incompleteProfiles = withAccounts.filter(a => !completeIds.has(a.user_id)).map(a => ({ name: a.name, email: a.email, designation: a.designation, totalScore: a.total_score, completedAt: a.completed_at }))
+    incompleteProfiles = withAccounts.filter(a => !completeIds.has(a.user_id)).map(a => ({ name: a.name, email: a.email, designation: getValuTier(a.total_score, 'full')?.name || null, totalScore: a.total_score, completedAt: a.completed_at }))
   }
 
   const { count: waitlistSignups } = await supabase.from('waitlist').select('id', { count: 'exact', head: true })

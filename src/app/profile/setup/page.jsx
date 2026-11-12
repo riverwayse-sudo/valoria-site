@@ -3,6 +3,8 @@ import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { getValuTier } from '@/lib/brand'
+import { getAvatarExtension } from '@/lib/avatar-upload'
 import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
 import { PUBLIC_PROFILE_CONSENT_TEXT, REGISTERED_PROFILE_CONSENT_TEXT } from '@/lib/profile-consent-copy'
 
@@ -248,7 +250,7 @@ function ProfileSetupForm() {
       if (existing?.valu_index == null) {
         const { data: assessment } = await supabase
           .from('valu_assessments')
-          .select('total_score, cluster_scores, designation, completed_at, expires_at')
+          .select('total_score, cluster_scores, completed_at, expires_at')
           .or(`user_id.eq.${user.id},email.eq.${user.email}`)
           .order('completed_at', { ascending: false })
           .limit(1)
@@ -259,7 +261,7 @@ function ProfileSetupForm() {
             ...f,
             valu_index: assessment.total_score,
             cluster_scores: assessment.cluster_scores,
-            designation: assessment.designation,
+            designation: getValuTier(assessment.total_score, 'full')?.name || null,
             assessment_completed_at: assessment.completed_at,
             assessment_expires_at: assessment.expires_at,
           }))
@@ -307,9 +309,9 @@ function ProfileSetupForm() {
     setPhotoUploading(true)
     setPhotoError('')
     try {
-      const ext  = file.name.split('.').pop()
+      const ext  = getAvatarExtension(file)
       const path = `profiles/${user.id}/avatar.${ext}`
-      const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
+      const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type })
       if (error) throw error
       const { data } = supabase.storage.from('avatars').getPublicUrl(path)
       set('photo_url', data.publicUrl)

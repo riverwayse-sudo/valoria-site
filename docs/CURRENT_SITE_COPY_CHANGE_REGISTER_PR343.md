@@ -1,0 +1,115 @@
+# Copy change register — PR #343
+
+**Repository:** `riverwayse-sudo/valoria-site`  
+**Scope:** Existing website only  
+**Authority:** *Valoria Institute Website review.pdf*, updated 4 November 2026  
+**Review status:** Open — entries below are documented for review, not approved for production.
+
+This register records the user-visible copy and metadata wording changed by PR #343. Technical-only changes are excluded. Search/SEO metadata is included because it is published language and can make geographic or institutional claims.
+
+| Location | Existing wording | Proposed wording in PR #343 | Audit reference | Review status / required evidence |
+|---|---|---|---|---|
+| `src/app/page.jsx` — homepage journey step 1 | “Register before your taster” | “Start with your VALU taster” | §10, pp. 10–11; §11, p. 11 | Directionally supported. Confirm taster CTA opens the distinct taster journey. |
+| `src/app/page.jsx` — homepage journey step 2 | “Complete your full assessment” | “Create your account and complete your full assessment” | §10, pp. 10–11 | Directionally supported. Verify account creation occurs at this stage and the full assessment is separate. |
+| `src/app/page.jsx` — homepage journey step 3 | “Unlock relevant opportunities” | “Build your profile and explore relevant opportunities” | §8, pp. 7–8; §10, pp. 10–11 | Verify that wording does not imply profile completion guarantees listing, eligibility or discoverability. |
+| `src/app/valu/start/page.jsx` — account FAQ | “Register your contact and professional details before the taster so your progress has a persistent record. This is not your Valoria account. You create or connect your secure account after the taster, before continuing to the full assessment.” | “You do not need to create a Valoria account before starting. We will ask for a few details to save your taster progress. After you finish, you can create or connect your Valoria account and continue your professional journey.” | §10, pp. 10–11; §9, pp. 9–10 | Directionally supported. Verify persistence, required fields and account handoff against live behaviour. |
+| `src/app/valu/start/page.jsx` — journey heading | “Register first. Take your taster. Then build your next step.” | “Start with your taster. Then build your next step.” | §10, pp. 10–11 | Supported in direction; verify the CTA and actual journey order. |
+| `src/app/valu/start/page.jsx` — journey step 1 | “Register. Share your contact and professional details first. This creates a persistent record for your taster; it is not your secure Valoria account.” | “Share a few details. Add the basic details needed to save your taster progress. You can create your Valoria account after you finish.” | §10, pp. 10–11 | Verify actual data collection, persistence and account sequence. |
+| `src/app/valu/start/page.jsx` — journey step 4 | “Continue with Full VALU. The separate Full assessment establishes your official VALU Index in points and your PRIME capability profile. It is not required for the Basic taster pathway.” | “Complete your full assessment. Continue when you are ready to establish your official VALU Index in points and your PRIME capability profile.” | §9, pp. 9–10; §10, pp. 10–11 | Supported in direction. Ensure no implication that taster produces the official Index; confirm the current eligibility model before retaining references to Basic pathways elsewhere. |
+| `src/app/signup/page.jsx` — talent/speaker signup explanation | “If you are a professional or speaker, register your contact and professional details before taking the VALU taster. This creates a saved record, not a Valoria account. After the taster, create or connect your secure account to continue with the separate Full VALU assessment.” | “If you are a professional or speaker, start with the VALU taster. We will ask for a few details to save your progress. After you finish, you can create or connect your Valoria account and continue your professional journey.” | §9, pp. 9–10; §10, pp. 10–11 | Verify actual save and handoff behaviour; ensure this does not conflict with other signup routes. |
+| `src/app/about-us/page.jsx` — metadata description | “Valoria Institute builds the infrastructure that develops, surfaces and connects African professional talent through a merit-based standard.” | “Valoria Institute develops, assesses and connects professional capability through the PRIME framework, with African roots and an international outlook.” | §1–3, pp. 1–3; §12, pp. 12–13 | “African roots and an international outlook” is consistent with the stated direction. Verify that the broader description does not imply geographic operation beyond the current Africa-first/Nigeria jurisdiction. |
+| `src/app/about-us/page.jsx` — metadata keywords | `African talent bureau`, `professional assessment Africa`, `Lagos talent marketplace` | `professional capability institute`, `PRIME framework`, `professional assessment`, `professional development`, `talent discovery` | §3, pp. 2–3; §12, pp. 12–13 | Review search metadata for accurate geographic scope; do not remove jurisdictional clarity merely to appear globally available. |
+| `src/app/programmes/page.jsx` — metadata keywords | `professional development Nigeria`, `capability training Africa` | `professional development programmes`, `leadership development`, `capability development` | §5–6, pp. 5–6; §12, pp. 12–13 | SEO-only change still requires geographic-scope review. Ensure visible copy transparently states actual service availability. |
+| `src/app/facilitators/page.jsx` — metadata keywords | `facilitator commissioning Nigeria`, `corporate training Africa`, `team development Lagos`, `capability development Africa` | `facilitator commissioning`, `corporate training`, `team development`, `professional capability development` | §5, p. 5; §12, pp. 12–13 | SEO-only change still requires geographic-scope review. Confirm facilitator commissioning is an operationally available service and geographic scope is not overstated. |
+| `src/components/HeroSlider.jsx` — hero eyebrow | “NIGERIA'S PROFESSIONAL CAPABILITY MARKETPLACE” | “AFRICA-FIRST · NIGERIA JURISDICTION” | §3, pp. 2–3; §12, pp. 12–13; §18, p. 18 | Revised to state the approved first-market and jurisdiction position without implying US or other unlaunched operations. Rendered-site verification remains outstanding. |
+| `src/components/HeroSlider.jsx` — hero supporting copy | “Valoria assesses Nigerian professionals against one capability standard, develops what matters and connects qualified talent with employers, event organisers and training buyers.” | “Valoria assesses professional capability across five PRIME dimensions and supports deliberate development. Africa is its first market, with Nigeria as its jurisdiction.” | §3, pp. 2–3; §9, pp. 9–10; §12, pp. 12–13; §18, p. 18 | Revised to state geographic scope explicitly and remove unverified claims of connection across markets. Confirm the rendered hero and mobile layout before approval. |
+| `src/app/layout.jsx` — site metadata description | “Valoria Institute assesses and develops professional capability through the PRIME framework, helping professionals build credible profiles and connect with relevant opportunities across industries and markets.” | “Valoria Institute assesses and develops professional capability through the PRIME framework, helping professionals build credible profiles. Africa is Valoria's first market, with Nigeria as its jurisdiction.” | §3, pp. 2–3; §12, pp. 12–13; §18, p. 18 | Geographic scope is now explicit; metadata still requires final source and rendered metadata verification. |
+| `src/app/layout.jsx` — Organization structured data `areaServed` | United States and Nigeria | Nigeria only | §12, pp. 12–13; §18, p. 18 | Removed the United States as an unapproved operating market. Nigeria remains the stated jurisdiction; this structured-data change does not claim broader African service coverage. |
+| `src/app/valu/start/page.jsx` — “Who is it for?” FAQ | “It is designed for professionals across industries and markets—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight, visibility and access to opportunity.” | “It is designed for professionals across industries—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight into their capabilities and a stronger professional presence.” | §3, pp. 2–3; §12, pp. 12–13 | Removed the ambiguous “across markets” wording and avoided implying active opportunity access in this answer. Confirm the page still explains the opportunity proposition elsewhere only where operationally supported. |
+
+
+| `src/app/valu/page.jsx` — guided taster description | “Begin with a free, guided view of your professional capability.” | “Begin with a guided view of your professional capability.” | §18, question 7, p. 18 | Removed an unconfirmed pricing claim; the commercial model remains an owner decision. |
+
+## Global consistency checks required
+
+1. Confirm the taster is directional and does not issue the official VALU Index; the separate full assessment establishes the official result (§9, pp. 9–10).
+2. Confirm all score references use points, not percentages (§9, pp. 9–10).
+3. Confirm listing eligibility and public discoverability are not conflated (§8, pp. 7–8).
+4. Confirm opportunities are described as active only where real supply and functioning application/enquiry routes exist (§5–7, pp. 5–7).
+5. Confirm the site does not imply operating access outside Africa before such access exists (§12, pp. 12–13).
+6. Verify every CTA against its actual destination and supported user action (§14, p. 15).
+
+## Approval rule
+
+No entry is approved merely because it appears in this register. An entry can be marked approved only after the product/evidence check and rendered-site verification are recorded. Wording that cannot be substantiated must be revised or held for explicit owner approval. Do not merge or deploy this PR on the strength of this register alone.
+
+
+## Outstanding evidence gates before approval
+
+- **Commercial model / pricing claims:** The Current Website Audit leaves the commercial model unresolved (question 7, §18, p. 18). Unverified statements that the taster or full assessment is free have been removed from the public current-site copy. Do not publish prices, free-access claims or paid-service descriptions until the owner confirms the pricing policy and its scope. This does not imply that the wider Valoria ecosystem is free.
+- **Opportunity supply and application paths:** The revised homepage wording no longer promises active opportunity connections. Any other public claim that opportunities are currently available must be checked against live supply and a functioning application/enquiry path (§5–7, pp. 5–7; §14, p. 15).
+- **Rendered verification:** CI success is not visual or browser acceptance. Verify desktop and mobile rendering, hero geography statement, metadata, CTA destinations and the authenticated assessment journey before approval.
+
+
+## Additional corrections applied in the staging candidate
+
+These additions resolve copy and disclosure issues found while reconciling PR #343 with the current production naming and the Current Website Audit. They remain **staging-only and unapproved for production** until product/evidence and rendered-site checks pass.
+
+| Location | Existing wording | Proposed wording / action | Audit reference | Review status / required evidence |
+|---|---|---|---|---|
+| `src/components/HeroSlider.jsx` — hero eyebrow | “AFRICA-FIRST · NIGERIA JURISDICTION” | “ROOTED IN AFRICA. STARTING IN NIGERIA.” | §12, pp. 12–13; §18, p. 18 | Plain-language expression of the established first market and current jurisdiction. Verify desktop/mobile rendering. |
+| `src/components/HeroSlider.jsx` — supporting copy | “Africa is its first market, with Nigeria as its jurisdiction.” | “Africa is Valoria's first market. It is beginning in Nigeria.” | §12, pp. 12–13; §18, p. 18 | Makes operating scope understandable without suggesting US or other unlaunched operations. |
+| `src/components/HeroSlider.jsx` — primary CTA | “TAKE THE VALU TASTER” | “START THE VALU INDEX TASTER” | §14 D, p. 15; established product terminology | Aligns the CTA with the approved product name and the actual taster action. Verify destination. |
+| `src/app/page.jsx` — homepage primary CTA | “START MY VALU INDEX SNAPSHOT” | “START THE VALU INDEX TASTER” | §14 D, p. 15; established product terminology | Removes legacy snapshot wording. Verify destination and end-to-end taster entry. |
+| `src/app/page.jsx` — homepage journey step 1 and secondary CTA | “Start with your VALU taster”; “START THE VALU TASTER” | “Start with your VALU Index Taster”; “START THE VALU INDEX TASTER” | §14 D, p. 15 | Uses the approved product name consistently. |
+| `src/app/page.jsx` — assessment proof strip | “FREE ENTRY” | Removed; no price claim displayed | §14 I, p. 16; §18, p. 18, commercial-model decision | The audit records the commercial model as unresolved. Pricing must not be asserted until the owner confirms it. |
+| `src/app/valu/start/page.jsx` — pricing FAQ and proof marker | “The taster and full assessment are free to take”; “FREE” | Removed pending an explicit pricing decision | §14 I, p. 16; §18, p. 18, commercial-model decision | Removal prevents an unsupported public pricing claim. This does not imply that the wider ecosystem or services are free. |
+| `src/app/page.jsx` — employer pathway | “Find professionals through capability, experience and verified profiles.” | “Find professionals through capability and experience.” | §14 I, p. 16 | Removes a blanket verification claim that must not be made without evidence for every represented profile. |
+| `src/app/valu/start/page.jsx` and `src/app/signup/page.jsx` — taster product references | “VALU Taster” / “VALU taster” | “VALU Index Taster” | §14 D, p. 15; established product terminology | Standardises the public product name across entry pages and signup. |
+| `src/app/valu/start/page.jsx` — marketplace pathway explanation | “Basic marketplace consideration”; “Full marketplace eligibility”; “Basic or Full eligibility checks” | Plain-language explanation that publication depends on Valoria's listing requirements and the professional's choice to publish | §8, pp. 7–8; §14 C, p. 15 | Removes internal status labels from public communication while preserving the distinction between eligibility and consent-based visibility. Verify against live publication rules. |
+| `src/app/page.jsx` — assessment CTA navigation | Opens the assessment in a new browser tab | Uses same-tab navigation | §14 F, p. 15 | Technical navigation correction; verify the complete handoff and browser-history behaviour. |
+
+
+
+## Public identity and marketplace language controls
+
+| Location | Existing wording / behaviour | Proposed wording / action | Audit reference | Review status / required evidence |
+|---|---|---|---|---|
+| `src/lib/marketplace-data.js`, `src/lib/public-profile.js` | Personal-name fields were selected and included in public-facing profile projections. | Public roster and profile projections use ATB IDs and professional capability fields; personal names are not selected into browser-facing payloads. ATB ID and headline are the public identity requirements. | §14 I, p. 16; privacy and public-visibility requirements in §8, pp. 7–8 | Implemented in staging. Confirm rendered HTML, page metadata, client payload and profile preview contain no participant names. |
+| `src/components/MarketplaceDirectory.jsx` and `src/app/profile/[id]/ProfileClient.jsx` | Marketplace cards, preview modal and public profile heading displayed participant names. | Display the ATB ID as the public profile identifier; use generic avatar fallback text and generic contact wording. | §14 I, p. 16; public profile visibility requirements | Implemented in staging. Verify card, modal, direct profile route, metadata and mobile rendering. |
+| `src/components/LiveProfilesScroll.jsx` | Public homepage rail exposed “BASIC LISTING” and “BASIC” status labels. | Use “PROFESSIONAL LISTING” / “PUBLIC” without exposing internal assessment-access state. | §14 C–I, pp. 15–16 | Implemented in staging. Verify that VALU Index points remain visible only where authorised. |
+| `src/components/MarketplaceDirectory.jsx` | Public cards and previews exposed “BASIC”, “BASIC PROFESSIONAL LISTING” and “Full VALU Index pending”. | Use “PROFESSIONAL LISTING” and explain only what is publicly available; do not expose internal Basic/Full access labels. | §14 C–I, pp. 15–16 | Implemented in staging. Verify that no score or assessment-derived insight is shown where it is not approved. |
+| `src/components/MarketplaceDirectory.jsx` and `src/components/LiveProfilesScroll.jsx` | “REQUEST SOURCING ACCESS” / “Request sourcing access”. | “SHARE A TALENT BRIEF” / “Share a talent brief”. | §14 A–D, pp. 14–15 | Implemented in staging. This describes the external action rather than internal access arrangements. |
+
+
+
+## Public marketplace disclosure and identity refinements
+
+| Location | Existing wording / behaviour | Proposed wording / action | Audit reference | Review status / required evidence |
+|---|---|---|---|---|
+| `src/components/MarketplaceDirectory.jsx` — directory guidance | “Basic or Full listing requirements”, “Full VALU Index pending”, “BASIC” and “BASIC PROFESSIONAL LISTING”. | Use “Valoria's listing requirements”, “PROFESSIONAL LISTING” and show VALU Index points only where approved for public display. | §14 C–I, pp. 15–16 | Implemented in staging. Confirm public cards and previews do not reveal internal access states or unauthorised scores. |
+| `src/components/LiveProfilesScroll.jsx` — homepage rail | “BASIC LISTING”, “BASIC” and “ASSESSMENT FOLLOW-UP”. | Use “PROFESSIONAL LISTING” / “PUBLIC” for profiles without publicly displayed VALU Index points. | §14 C–I, pp. 15–16 | Implemented in staging. |
+| `src/components/MarketplaceDirectory.jsx` and `src/components/LiveProfilesScroll.jsx` — organisational action | “REQUEST SOURCING ACCESS” / “Employers can request sourcing access now.” | “SHARE A TALENT BRIEF” / “Employers can share the roles, sectors and capabilities their organisation needs.” | §14 A–D, pp. 14–15 | Implemented in staging. Public copy describes the external task, not internal buyer-access arrangements. |
+| `src/app/profile/[id]/ProfileClient.jsx` — public profile summary | “Basic tier”, “Basic listing” and “Full VALU Index pending” language. | Explain only whether VALU Index points or insight are displayed on the public profile; do not disclose internal access states. | §14 C–I, pp. 15–16 | Implemented in staging. |
+| `src/app/valu/start/page.jsx` — headline | “VALU shows what you can become.” | “The VALU Index shows how you operate.” | §14 D and I, pp. 15–16 | Implemented in staging; avoids an unsubstantiated predictive claim and uses the official product name. |
+
+
+
+## Journey and product-name consistency
+
+| Location | Existing wording / behaviour | Proposed wording / action | Audit reference | Review status / required evidence |
+|---|---|---|---|---|
+| `src/app/dashboard/page.jsx` | “Continue your VALU assessment”; “Continue your VALU journey”; “VALU assessment”. | Use “Continue your full assessment”, “VALU Index journey” and “VALU Index result” where the product or result is meant. | §14 D–F, pp. 15–16 | Implemented in staging. No question counts or internal assessment mechanics are exposed. |
+| `src/app/login/page.jsx` and `src/app/auth/callback/page.jsx` | “VALU snapshot”, “VALU result” and “VALU assessment” in participant-facing handoff and error messages. | Use “VALU Index Taster”, “VALU Index result” and “full assessment” in the appropriate context. | §14 D–F, pp. 15–16 | Implemented in staging. Confirm email confirmation still returns an authenticated user to the dashboard. |
+| `src/app/professional-signup/page.jsx` and `src/app/signup/page.jsx` | Taster handoff copy did not clearly name the separate full assessment. | State that after the VALU Index Taster and account confirmation, the professional continues to the separate full assessment. | §14 D–F, pp. 15–16 | Implemented in staging. Verify the exact taster → account → email confirmation → dashboard sequence. |
+| `src/app/layout.jsx` — organisation metadata | “Africa is Valoria's first market, with Nigeria as its jurisdiction”; service offer referenced a “current Full assessment”. | “Africa is Valoria's first market. It is beginning in Nigeria”; show VALU Index points/designations only where approved for public display. | §12, pp. 12–13; §18, p. 18 | Implemented in staging. Does not claim US service availability. |
+| `src/app/valu/start/page.jsx` — product explanation | “VALU gives you a different starting point”; “WHAT VALU MEASURES”; “VALU shows what you can become.” | Use “The VALU Index” consistently and describe the measured capability rather than imply prediction. | §14 D and I, pp. 15–16 | Implemented in staging. |
+
+
+
+## Additional owner-approved copy corrections — 12 November 2026
+
+| Location | Existing wording / behaviour | Proposed wording / action | Audit reference / approval | Review status / required evidence |
+|---|---|---|---|---|
+| `src/app/page.jsx` — homepage professional pathway card | “Build a verified professional presence.” | “Build a stronger professional presence.” | Current Website Audit §6, p. 6 (professional value proposition); §14 I, p. 16 (remove unsupported claims). | Replaces an unsubstantiated verification claim with the audit's approved professional-value language. Confirm the rendered card uses the revised wording. |
+| `src/components/LiveProfilesScroll.jsx` — homepage professional CTA below the public profile rail | “WANT TO BE DISCOVERED? Build a professional profile that helps relevant buyers understand your capabilities. TAKE THE VALU INDEX TASTER.” | Remove the entire CTA block; no replacement copy. | Explicit owner instruction, 12 November 2026. | Owner-approved removal. Confirm the block is absent from desktop and mobile homepage renders. |

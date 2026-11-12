@@ -9,18 +9,6 @@ import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { getValuTier } from '@/lib/brand'
 
 // ─── helpers ─────────────────────────────────────────────
-function getInitials(name) {
-  if (!name) return '??'
-  const words = name.trim().split(/\s+/).filter(Boolean)
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
-  return words.slice(0, 3).map(w => w[0].toUpperCase()).join('.') + '.'
-}
-function getAvatarLetters(name) {
-  if (!name) return '?'
-  const words = name.trim().split(/\s+/).filter(Boolean)
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
-  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
-}
 function getYouTubeId(url) {
   if (!url) return null
   const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
@@ -141,14 +129,20 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
       setCurrentUser(user)
 
       if (initialProfile) {
-        const { data: certificateRows, error: certificateError } = await supabase
-          .from('professional_certificates')
-          .select('id,certificate_number,title,event_title,event_date,issuer,issued_at,verification_token')
-          .eq('professional_id', initialProfile.id)
-          .is('revoked_at', null)
-          .order('issued_at', { ascending: false })
-        if (certificateError) console.error('professional certificates fetch failed:', certificateError)
-        setCertificates(certificateRows || [])
+        // Certificate records are private to their holder and Valoria admins.
+        // A public profile must not issue a direct browser query to the source table.
+        if (user?.id === initialProfile.id) {
+          const { data: certificateRows, error: certificateError } = await supabase
+            .from('professional_certificates')
+            .select('id,certificate_number,title,event_title,event_date,issuer,issued_at,verification_token')
+            .eq('professional_id', initialProfile.id)
+            .is('revoked_at', null)
+            .order('issued_at', { ascending: false })
+          if (certificateError) console.error('professional certificates fetch failed:', certificateError)
+          setCertificates(certificateRows || [])
+        } else {
+          setCertificates([])
+        }
 
         if (!user || user.id !== initialProfile.id) {
           const dedupeKey = `viewed_${initialProfile.id}`
@@ -175,7 +169,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
 
       const { data: real, error: realError } = await supabase
         .from('professional_profiles')
-        .select('id, display_name, headline, current_job_title, location, industry, experience_years, skills, topics, facilitation_topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, programme_types, format_capabilities, audience_sizes, past_events, past_clients, languages')
+        .select('id, headline, current_job_title, location, industry, experience_years, skills, topics, facilitation_topics, active_tracks, valu_index, cluster_scores, designation, linkedin_url, website_url, youtube_links, fee_range, salary_expectation, atb_id, availability, photo_url, username, phone, programme_types, format_capabilities, audience_sizes, past_events, past_clients, languages')
         .eq('id', id)
         .maybeSingle()
 
@@ -272,9 +266,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
   const isSpeaker     = tracks.includes('speaker')
   const isFacilitator = tracks.includes('facilitator')
   const isCandidate   = tracks.includes('candidate') || tracks.includes('talent') || tracks.length === 0
-  const initials    = getInitials(p.display_name)
-  const avatarLetters = getAvatarLetters(p.display_name)
-  const atbId       = String(p.atb_id || '—').normalize('NFKC')
+  const atbId       = String(p.atb_id || 'VALORIA PROFESSIONAL').normalize('NFKC')
   const videos      = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
   const compensation = (isSpeaker || isFacilitator) ? (p.fee_range || p.salary_expectation || null) : (p.salary_expectation || p.fee_range || null)
   const compLabel   = (isSpeaker || isFacilitator) ? 'Fee Range' : 'Salary Range'
@@ -296,7 +288,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
     { label:'Location',   value: p.location || '—' },
     { label:'Industry',   value: p.industry || '—' },
     { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
-    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Basic listing', href: p.valu_score != null ? '#valu-card' : null },
+    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Professional listing', href: p.valu_score != null ? '#valu-card' : null },
   ]
 
   return (
@@ -345,14 +337,14 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
             <div className="vi-avatar-frame" style={{ width:'148px', height:'148px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
               <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
                 <div style={{ width:'100%', height:'100%', borderRadius:'50%', overflow:'hidden' }}>
-                  <ValoriaAvatar src={p.photo_url} name={p.display_name} seed={p.id || p.atb_id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={136} />
+                  <ValoriaAvatar src={p.photo_url} name="Valoria Professional" seed={p.id || p.atb_id} alt="Professional profile avatar" size={136} />
                 </div>             </div>
             </div>
 
             {/* ID block */}
             <div style={{ paddingBottom:'16px', flex:1, minWidth:'200px' }}>
               <div style={{ fontSize:'clamp(22px,3.5vw,32px)', fontWeight:700, letterSpacing:'-.025em', lineHeight:1.1, marginBottom:'7px', color: PARCH }}>
-                {p.display_name || 'Valoria Professional'}
+                {atbId}
               </div>
               <div style={{ fontSize:'9px', fontWeight:800, letterSpacing:'.12em', color: DIM, marginBottom:'10px', fontVariantNumeric:'tabular-nums' }}>
                 ATB PROFILE ID · {atbId}
@@ -486,7 +478,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               ) : (
                 <>
                   <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
-                    {p.assessment_access === 'basic' ? 'This professional is listed at the Basic tier. VALU Index points and result-derived insight are not displayed on this profile.' : 'This professional has not yet received a full VALU Index result.'}
+                    {'Professional capabilities and experience are presented here. VALU Index points and insight appear when available for public display.'}
                   </p>
                   <a href="https://valoriainstitute.com/valu/assessment/"
                     style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
@@ -560,7 +552,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
             <Section label="VALU Index Summary">
               {p.assessment_summary
                 ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
-                : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>{p.assessment_access === 'basic' ? 'A Basic listing presents professional identity and capability information. VALU Index insight is not displayed at this tier.' : 'Your VALU Index summary will appear here when your VALU Index and listing requirements are complete.'}</p>}
+                : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>{'Professional capabilities and experience are presented here. VALU Index insight appears when available for public display.'}</p>}
             </Section>
 
             {/* Key Strengths — rectangular card, gold background per brand,
@@ -689,10 +681,10 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                   {isOwnProfile
                     ? 'This is what others see when they view your profile. Keep it up to date so the right people can reach you.'
                     : displayTrack === 'facilitator'
-                    ? `Interested in commissioning ${initials} for a programme? Valoria Institute facilitates all introductions.`
+                    ? `Interested in commissioning this professional for a programme? Valoria Institute facilitates all introductions.`
                     : displayTrack === 'speaker'
-                    ? `Interested in booking ${initials} for your event? Valoria Institute facilitates all introductions.`
-                    : `Want to connect with ${initials}? All introductions go through Valoria Institute — your details stay protected.`}
+                    ? `Interested in booking this professional for your event? Valoria Institute facilitates all introductions.`
+                    : `Want to connect with this professional? All introductions go through Valoria Institute — your details stay protected.`}
                 </p>
               </div>
               {p.is_dummy ? (

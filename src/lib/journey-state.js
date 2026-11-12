@@ -108,7 +108,6 @@ function deriveJourneyState({ journey = null, assessment, profile, capabilities 
       reportReady,
       reportDelivered,
       score: assessmentScore,
-      designation: assessment?.designation || profile?.designation || null,
     },
     report: {
       complete: reportReady && !!activation?.status && activation.status === 'activated',
