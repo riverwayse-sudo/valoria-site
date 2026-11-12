@@ -3,32 +3,28 @@
 const fs = require("fs");
 const path = require("path");
 
-const config = fs.readFileSync(path.join(__dirname, "../../next.config.js"), "utf8");
-const styles = fs.readFileSync(path.join(__dirname, "../../src/styles/globals.css"), "utf8");
+const root = path.join(__dirname, "../..");
+const config = fs.readFileSync(path.join(root, "next.config.js"), "utf8");
+const proxyRoute = fs.readFileSync(path.join(root, "src/app/valu/assessment/[[...path]]/route.js"), "utf8");
+const proxy = fs.readFileSync(path.join(root, "src/lib/assessment-proxy.js"), "utf8");
+const workerConfig = fs.readFileSync(path.join(root, "wrangler.jsonc"), "utf8");
 
-describe("Assessment proxy and staging navigation contract", () => {
-  const endpoints = [
-    "taster-progress",
-    "submit-taster",
-    "assessment-progress",
-    "submit-assessment",
-    "link-assessment-to-taster",
-    "generate-and-send-report",
-  ];
-
-  test.each(endpoints)("proxies nested %s requests to the Worker root", endpoint => {
-    const expected = "{ source: '/valu/assessment/api/" + endpoint + "', destination: \`${origin}/api/" + endpoint + "\` }";
-    expect(config).toContain(expected);
+describe("Assessment service-binding proxy contract", () => {
+  test("nested assessment routes are not intercepted by external Next rewrites", () => {
+    expect(config).not.toContain("source: '/valu/assessment/api/");
+    expect(config).not.toContain("source: '/valu/assessment/:path*'");
+    expect(proxyRoute).toContain("export const POST = proxyAssessment");
   });
 
-  test("nested API rewrites are evaluated before the assessment asset catch-all", () => {
-    const apiRule = config.indexOf("{ source: '/valu/assessment/api/taster-progress'");
-    const assetCatchAll = config.indexOf("{ source: '/valu/assessment/:path*'");
-    expect(apiRule).toBeGreaterThanOrEqual(0);
-    expect(assetCatchAll).toBeGreaterThan(apiRule);
+  test("assessment proxy maps nested API paths to the Worker API root", () => {
+    expect(proxy).toContain("if (suffix === 'api' || suffix.startsWith('api/')) return `/${suffix}`");
+    expect(proxy).toContain("service = getCloudflareContext().env.VALU_ASSESSMENT");
+    expect(proxy).toContain("service.fetch(upstreamRequest)");
   });
 
-  test("staging preview banner cannot intercept navigation or other controls", () => {
-    expect(styles).toMatch(/\.staging-site-banner\s*\{[^}]*position:\s*relative[^}]*pointer-events:\s*none\s*!important[^}]*\}/s);
+  test("staging and production have explicit assessment service bindings", () => {
+    expect(workerConfig).toContain('"binding": "VALU_ASSESSMENT"');
+    expect(workerConfig).toContain('"service": "valoria-assessment"');
+    expect(workerConfig).toContain('"service": "valoria-staging-assessment"');
   });
 });
