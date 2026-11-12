@@ -12,6 +12,7 @@ on:
       - "package.json"
       - "package-lock.json"
       - "wrangler.jsonc"
+      - ".github/workflows/cloudflare-current-site-staging.yml"
 
 permissions:
   contents: read
