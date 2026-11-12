@@ -35,7 +35,7 @@ export async function GET(request) {
   let assessment = assessmentRes.data
   if (!assessment && user.email) {
     const { data, error } = await admin.from('valu_assessments')
-      .select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,designation,created_at,expires_at')
+      .select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,created_at,expires_at')
       .eq('email', user.email.toLowerCase()).order('completed_at', { ascending: false }).limit(1).maybeSingle()
     if (error) return NextResponse.json({ ok: false, error: 'Historical assessment lookup failed.' }, { status: 502 })
     assessment = data
