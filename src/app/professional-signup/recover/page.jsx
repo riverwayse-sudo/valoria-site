@@ -23,7 +23,7 @@ export default function RecoverTasterPage() {
         <Link href="/login?returnTo=%2Fdashboard" style={{ display: 'block', padding: '14px 18px', background: GOLD, color: DARK, borderRadius: 999, textAlign: 'center', textDecoration: 'none', fontWeight: 800, fontSize: 11, letterSpacing: '.1em' }}>
           SIGN IN AND RECOVER MY TASTER →
         </Link>
-        <p style={{ color: 'rgba(247,244,238,.42)', fontSize: 11, lineHeight: 1.65, margin: '18px 0 0' }}>
+        <p style={{ color: 'rgba(247,244,238,.68)', fontSize: 11, lineHeight: 1.65, margin: '18px 0 0' }}>
           Need an account first? <Link href="/signup" style={{ color: GOLD, textDecoration: 'underline' }}>Create an account</Link>. For assistance, email <a href="mailto:info@valoriainstitute.com" style={{ color: GOLD }}>Valoria support</a>.
         </p>
       </section>
