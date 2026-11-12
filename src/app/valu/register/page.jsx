@@ -197,7 +197,7 @@ export default function ValuRegisterPage() {
             <p style={S.copy}>Create and confirm your Valoria account before starting the VALU Index Taster. Your Taster remains separate from the full VALU Index, which you can continue from your dashboard.</p>
             <form onSubmit={submit} style={S.form}>
               <label style={S.label}>FULL NAME<input required maxLength={200} autoComplete="name" value={form.name} onChange={e=>update('name',e.target.value)} style={S.input} placeholder="Your full professional name"/></label>
-              <label style={S.label}>EMAIL ADDRESS<input required type="email" maxLength={254} autoComplete="email" value={form.email} onChange={e=>update('email',e.target.value)} style={S.input} placeholder="you@example.com"/></label>
+              <label style={S.label}>EMAIL ADDRESS<input required type="email" maxLength={254} autoComplete="email" value={form.email} disabled={mode==='complete'} onChange={e=>update('email',e.target.value)} style={S.input} placeholder="you@example.com"/></label>
               <label style={S.label}>CURRENT ROLE<input required maxLength={160} autoComplete="organization-title" value={form.role} onChange={e=>update('role',e.target.value)} style={S.input} placeholder="e.g. Managing Director"/></label>
               <label style={S.label}>PROFESSIONAL EXPERIENCE<select required value={form.experience} onChange={e=>update('experience',e.target.value)} style={S.input}><option value="">Select your experience</option>{EXPERIENCE.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
               <details style={S.optional}><summary>Optional professional details</summary>
