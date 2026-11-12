@@ -537,6 +537,8 @@ describe('VALUI marketplace lifecycle contract', () => {
 
   test('public enquiry inserts are rate-limited at the API and blocked at the database boundary', () => {
     const api = read('src/app/api/enquiries/route.js')
+    expect(api).toContain('process.env.SUPABASE_SERVICE_ROLE_KEY')
+    expect(api).not.toContain('NEXT_PUBLIC_SUPABASE_ANON_KEY')
     expect(api).toContain("request.headers.get('cf-connecting-ip')")
     expect(api).toContain("request.headers.get('x-real-ip')")
     expect(api).not.toContain("request.headers.get('x-forwarded-for')")
