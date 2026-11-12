@@ -48,7 +48,7 @@
         "NEXT_PUBLIC_SITE_URL": "https://staging.valoriainstitute.com",
         "SUPABASE_URL": "https://yccxgjdqworgcbircnvn.supabase.co",
         "NEXT_PUBLIC_SUPABASE_URL": "https://yccxgjdqworgcbircnvn.supabase.co",
-        "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_C3j_CjLgTLDGRu8rH1SXEg_tYpxoYUm",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_C3j_CjLgTLDGRu8rH1SXEg_tYpxoYUm", // gitleaks:allow — public Supabase publishable key
         "VALU_ASSESSMENT_ORIGIN": "https://assessment-staging.valoriainstitute.com",
         "NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN": "https://assessment-staging.valoriainstitute.com",
         "VALU_UPSTREAM_ORIGIN": "https://assessment-staging.valoriainstitute.com",
