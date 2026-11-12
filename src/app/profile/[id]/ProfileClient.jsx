@@ -319,7 +319,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
     { label:'Location',   value: p.location || '—' },
     { label:'Industry',   value: p.industry || '—' },
     { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
-    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'VALU Taster', href: p.valu_score != null ? '#valu-card' : null },
+    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Professional profile', href: p.valu_score != null ? '#valu-card' : null },
   ]
 
   return (
@@ -520,7 +520,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
               ) : (
                 <>
                   <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
-                    An official VALU capability summary is available after the full assessment.
+                    Professional capabilities and experience are presented here. VALU Index insight appears when available for public display.
                   </p>
                   <a href="/valu"
                     style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
@@ -596,7 +596,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                 ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
                 : p.bio
                   ? <><p style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.12em', color:'rgba(201,168,76,.6)', marginBottom:'10px' }}>SELF-REPORTED OVERVIEW</p><p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p></>
-                  : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.45)', lineHeight:1.7 }}>An official VALU capability summary is available after the full assessment.</p>}
+                  : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.45)', lineHeight:1.7 }}>Professional capabilities and experience are presented here. VALU Index insight appears when available for public display.</p>}
             </Section>
 
             {/* Highest-scoring PRIME clusters are shown as report-backed points, without inferred personality claims. */}
