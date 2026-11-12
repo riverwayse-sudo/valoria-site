@@ -8,12 +8,12 @@ describe('assessment environment isolation', () => {
     const config = JSON.parse(read('wrangler.jsonc'))
     expect(config.services).toContainEqual({ binding: 'VALU_ASSESSMENT', service: 'valoria-assessment' })
     expect(config.env.staging.name).toBe('valoria-staging-site')
-    expect(config.env.staging.vars.NEXT_PUBLIC_SITE_URL).toBe('https://valoria-staging-site.riverwayse.workers.dev')
-    expect(config.env.staging.vars.VALU_PREVIEW_SITE_ORIGIN).toBe('https://valoria-staging-site.riverwayse.workers.dev')
+    expect(config.env.staging.vars.NEXT_PUBLIC_SITE_URL).toBe('https://staging.valoriainstitute.com')
+    expect(config.env.staging.vars.VALU_PREVIEW_SITE_ORIGIN).toBe('https://staging.valoriainstitute.com')
     expect(config.env.staging.services).toContainEqual({ binding: 'VALU_ASSESSMENT', service: 'valoria-staging-assessment' })
     expect(config.env.staging.vars.VALU_STAGING_API_ENABLED).toBe('1')
     expect(config.env.staging.vars.SUPABASE_URL).toBe('https://yccxgjdqworgcbircnvn.supabase.co')
-    expect(config.env.staging.vars.VALU_ASSESSMENT_ORIGIN).toBe('https://valoria-staging-assessment.riverwayse.workers.dev')
+    expect(config.env.staging.vars.VALU_ASSESSMENT_ORIGIN).toBe('https://assessment-staging.valoriainstitute.com')
   })
 
   test('canonical assessment route and nested assets share the same isolated Worker proxy', () => {
@@ -37,8 +37,11 @@ describe('assessment environment isolation', () => {
     const signup = read('src/app/signup/page.jsx')
     const professionalSignup = read('src/app/professional-signup/page.jsx')
     expect(signup).toContain("process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'")
-    expect(professionalSignup).toContain('getAuthCallbackUrl(tasterId)')
-    expect(professionalSignup).not.toContain('window.location.origin')
+    expect(professionalSignup).toContain('getProfessionalAuthCallbackUrl(window.location.origin, tasterId)')
+    expect(professionalSignup).not.toContain('getAuthCallbackUrl(tasterId)')
+    const callbackHelper = read('src/lib/auth-callback-url.js')
+    expect(callbackHelper).toContain('https://staging.valoriainstitute.com')
+    expect(callbackHelper).toContain('return null')
   })
 
   test('staging sitemap uses its own hostname and robots blocks indexing', () => {
