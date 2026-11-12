@@ -285,7 +285,7 @@ export async function POST(request) {
     const enquiryId = savedEnquiry.id
     notifyAdmin({ enquiryId, enquiryType: enquiry_type, atbId, buyerName: normalizedName, buyerEmail: normalizedEmail, buyerCompany: normalizedCompany, subject: normalizedSubject, body: normalizedMessage }).catch(e => console.error('notifyAdmin error:', e))
     confirmToBuyer({ enquiryId, enquiryType: enquiry_type, atbId, buyerName: normalizedName, buyerEmail: normalizedEmail }).catch(e => console.error('confirmToBuyer error:', e))
-    notifyProfessional({ supabase, enquiryId, professionalProfileId: targetProfile.id, enquiryType: enquiry_type, atbId, buyerName: normalizedName, buyerCompany: normalizedCompany, actionUrl: `/profile/${targetProfile.id}` }).catch(e => console.error('notifyProfessional error:', e))
+    notifyProfessional({ supabase, professionalProfileId: targetProfile.id, enquiryId, enquiryType: enquiry_type, atbId, buyerName: normalizedName, buyerCompany: normalizedCompany, actionUrl: `/profile/${targetProfile.id}` }).catch(e => console.error('notifyProfessional error:', e))
 
     return Response.json({ message: 'Enquiry sent.' }, { status: 200 })
   } catch (err) {
