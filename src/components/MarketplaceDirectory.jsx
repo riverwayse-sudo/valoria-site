@@ -336,7 +336,7 @@ function ProfilePreviewModal({ profile, onClose }) {
             <div className={styles.modalIndex}>
               <small>VALU INDEX</small>
               <strong>{hasValuIndex ? profile.valu_index : '—'}</strong>
-              <span>{hasValuIndex ? 'POINTS' : 'TASTER'}</span>
+              <span>{hasValuIndex ? 'POINTS'  : 'CAPABILITY PROFILE'}</span>
               {tier && <b>{tier.name}</b>}
             </div>
           </div>
@@ -345,7 +345,7 @@ function ProfilePreviewModal({ profile, onClose }) {
             <section className={styles.modalPanel}>
               <p className={styles.modalSectionLabel}>VALU INDEX · ASSESSMENT INSIGHT</p>
               <p id="profile-preview-description" className={styles.modalSummary}>
-                {isFull
+                {hasValuIndex
                   ? (assessmentSummary || 'The VALU Index insight is being prepared.')
                   : 'This profile presents professional capabilities and experience.'}
               </p>
