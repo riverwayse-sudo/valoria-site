@@ -530,6 +530,8 @@ describe('journey integrity contract', () => {
     expect(tasterStart).toContain("entry_point: 'taster_start'")
     expect(tasterStart).toContain("target_stage: 'taster'")
     expect(tasterStart).toContain("randomBytes(32).toString('base64url')")
+    expect(tasterStart).toContain('const HANDOFF_TTL_SECONDS = 60')
+    expect(tasterStart).toContain("destination.hash = new URLSearchParams({ taster_start_code: handoffCode }).toString()")
     expect(tasterStart).toContain('completedTaster')
     expect(tasterStart).toContain("new URL('/dashboard?welcome=profile', request.url)")
     expect(tasterStart).toContain("headers: { 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' }")
