@@ -20,12 +20,15 @@ describe('public webinar feedback security contract', () => {
   })
 
   test('feedback table rejects direct client writes and enforces data bounds', () => {
-    const migration = read('supabase/migrations/20261112124000_secure_webinar_feedback_intake.sql')
-    expect(migration).toContain('DROP POLICY IF EXISTS "public can insert feedback"')
-    expect(migration).toContain('REVOKE INSERT ON TABLE public.webinar_feedback FROM anon, authenticated')
-    expect(migration).toContain('GRANT INSERT ON TABLE public.webinar_feedback TO service_role')
-    expect(migration).toContain('webinar_feedback_rating_range')
-    expect(migration).toContain('webinar_feedback_attendance_allowed')
-    expect(migration).toContain('webinar_feedback_text_lengths')
+    for (const version of ['20261112130551', '20261112130555']) {
+      const migration = read(`supabase/migrations/${version}_secure_webinar_feedback_intake.sql`)
+      expect(migration).toContain('DROP POLICY IF EXISTS "public can insert feedback"')
+      expect(migration).toContain('REVOKE INSERT ON TABLE public.webinar_feedback FROM anon, authenticated')
+      expect(migration).toContain('GRANT INSERT ON TABLE public.webinar_feedback TO service_role')
+      expect(migration).toContain('webinar_feedback_rating_range')
+      expect(migration).toContain('webinar_feedback_attendance_allowed')
+      expect(migration).toContain('webinar_feedback_text_lengths')
+      expect(migration).toContain('IF NOT EXISTS (SELECT 1 FROM pg_constraint')
+    }
   })
 })
