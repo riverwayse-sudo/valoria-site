@@ -117,7 +117,7 @@ export async function GET(request) {
   // was linked by email before user_id was populated.
   if (!assessment && user.email) {
     const { data: byEmail, error } = await admin.from('valu_assessments')
-      .select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,designation,created_at,expires_at,user_id')
+      .select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,created_at,expires_at,user_id')
       .eq('email', user.email.toLowerCase())
       .order('completed_at', { ascending: false, nullsLast: true })
       .limit(1)
