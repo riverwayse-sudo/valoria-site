@@ -298,7 +298,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div style={{ marginTop: '18px', fontSize: '12px', color: 'rgba(247,244,238,.4)', textAlign: 'center', lineHeight: 1.8 }}>
+        <div style={{ marginTop: '18px', fontSize: '12px', color: 'rgba(247,244,238,.72)', textAlign: 'center', lineHeight: 1.8 }}>
           <p style={{ margin: '0 0 4px' }}>
             Employer or organiser?{' '}
             <Link href="/signup" style={{ color: GOLD }}>Create account</Link>
@@ -342,8 +342,8 @@ const styles = {
   label: { fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(247,244,238,.5)', textTransform: 'uppercase' },
   input: { padding: '12px 14px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.2)', borderRadius: '6px', color: PARCHMENT, fontSize: '14px', fontFamily: "'Raleway', sans-serif", outline: 'none' },
   btnGold: { display: 'block', width: '100%', padding: '14px', background: GOLD, color: MIDNIGHT, fontSize: '12px', fontWeight: 700, letterSpacing: '.14em', borderRadius: '999px', border: 'none', cursor: 'pointer', textAlign: 'center', textDecoration: 'none', fontFamily: "'Raleway', sans-serif", marginTop: '8px' },
-  forgotBtn: { background: 'none', border: 'none', color: 'rgba(247,244,238,.4)', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline', textAlign: 'center', padding: '4px' },
+  forgotBtn: { background: 'none', border: 'none', color: 'rgba(247,244,238,.72)', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline', textAlign: 'center', padding: '4px' },
   errorBox: { padding: '12px 14px', background: 'rgba(216,90,48,.12)', border: '1px solid rgba(216,90,48,.3)', borderRadius: '6px', fontSize: '13px', color: '#F09595' },
   successBox: { padding: '12px 14px', background: 'rgba(29,158,117,.12)', border: '1px solid rgba(29,158,117,.3)', borderRadius: '6px', fontSize: '13px', color: '#7FD9B8' },
-  loginLink: { marginTop: '24px', fontSize: '13px', color: 'rgba(247,244,238,.4)', textAlign: 'center' },
+  loginLink: { marginTop: '24px', fontSize: '13px', color: 'rgba(247,244,238,.72)', textAlign: 'center' },
 }
