@@ -100,6 +100,7 @@ jobs:
             /login
             /professional-signup
             /professional-signup/recover
+            /professional-signup/recover
             /dashboard
             /marketplace
             /marketplace/talent
