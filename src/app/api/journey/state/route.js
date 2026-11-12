@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
-const { deriveJourneyState } = require('@/lib/journey-state')
 import { getValuTier } from '@/lib/brand'
+const { deriveJourneyState } = require('@/lib/journey-state')
 
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
