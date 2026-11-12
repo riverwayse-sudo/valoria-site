@@ -119,16 +119,22 @@ jobs:
             fi
           done
 
+          # Validate the current production SEO contract without imposing
+          # obsolete staging-only copy or worker-hostname assumptions.
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
-          grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
+          grep -q 'Disallow: /dashboard' /tmp/valoria-robots.txt
+          grep -q 'Disallow: /admin' /tmp/valoria-robots.txt
           curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
-          grep -q 'valoria-staging-site.riverwayse.workers.dev' /tmp/valoria-sitemap.xml
+          grep -q 'https://valoriainstitute.com/' /tmp/valoria-sitemap.xml
+          grep -q 'https://valoriainstitute.com/valu' /tmp/valoria-sitemap.xml
           curl -fsS "$base/" -o /tmp/valoria-home.html
-          grep -q 'Capability should decide' /tmp/valoria-home.html
-          grep -q 'Valoria sets the standard.' /tmp/valoria-home.html
-          grep -q 'START THE VALU INDEX TASTER' /tmp/valoria-home.html
-          grep -q 'Make your capability legible.' /tmp/valoria-home.html
-          grep -q 'POINTS-BASED CAPABILITY PROFILE' /tmp/valoria-home.html
+          grep -q 'Valoria Institute' /tmp/valoria-home.html
+          grep -q 'START VALU INDEX' /tmp/valoria-home.html
+          grep -q 'professional-signup?journey=valu_taster' /tmp/valoria-home.html
+          if grep -Eiq '(1 of 58|1 of 9|54 scored questions|four validity checks|nine questions|58 questions|55 questions)' /tmp/valoria-home.html; then
+            echo "Homepage exposes internal assessment mechanics"
+            exit 1
+          fi
           if grep -Eiq '(WANT TO BE DISCOVERED|Become discoverable|Build a professional profile that helps relevant decision-makers understand your capabilities|buyer access|sourcing access|BASIC LISTING|FULL LISTING|1 of 58|1 of 9|54 scored questions|four validity checks|nine questions|58 questions|55 questions|84 / 100|vi-scroll-track|live-profiles|[0-9]+[[:space:]]*/[[:space:]]*100)' /tmp/valoria-home.html; then
             echo "Homepage exposes internal access or assessment mechanics"
             exit 1
