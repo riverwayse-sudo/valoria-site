@@ -18,7 +18,7 @@ export const metadata = {
 }
 
 const pathwayCards = [
-  { label: 'FOR PROFESSIONALS', title: 'Build a verified professional presence.', body: 'Build your profile, understand your strengths and become visible for relevant opportunities.', href: '/valu', cta: 'START WITH THE VALU INDEX' },
+  { label: 'FOR PROFESSIONALS', title: 'Build a stronger professional presence.', body: 'Build your profile, understand your strengths and become visible for relevant opportunities.', href: '/valu', cta: 'START WITH THE VALU INDEX' },
   { label: 'FOR EMPLOYERS', title: 'Find capability with context.', body: 'Find professionals through capability and experience.', href: '/marketplace', cta: 'EXPLORE MARKETPLACE' },
   { label: 'FOR EVENT ORGANISERS', title: 'Find speakers and facilitators.', body: 'Discover speakers and facilitators for your next event or programme.', href: '/marketplace/speakers', cta: 'FIND PROFESSIONALS' }
 ]
