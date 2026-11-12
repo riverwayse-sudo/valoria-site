@@ -35,7 +35,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).toContain("p.assessment_access === 'full'")
     expect(directory).toContain("p.assessment_access === 'full' && p.valu_index != null")
     expect(directory).not.toContain('BASIC LISTING')
-    expect(directory).toContain('applicable Basic or Full listing requirements')
+    expect(directory).toContain('Public profiles appear when a professional meets the relevant requirements')
   })
   test('marketplace accepts canonically equivalent Unicode ATB identifiers without changing the stored ID', () => {
     const source = read('src/lib/marketplace-data.js')
@@ -504,7 +504,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain('rawHeadline.length >= 2')
     expect(publicProfile).toContain('hasCurrentFullAssessment')
     expect(homepage).toContain('profiles.slice(0, 13)')
-    expect(directory).toContain('BASIC PROFESSIONAL LISTING')
+    expect(directory).toContain('PROFILE OVERVIEW')
+    expect(directory).not.toContain('BASIC PROFESSIONAL LISTING')
     expect(directory).not.toContain('completed the VALU Index Taster and has Basic marketplace access')
   })
 
