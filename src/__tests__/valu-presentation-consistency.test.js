@@ -176,7 +176,7 @@ describe('VALU presentation consistency', () => {
     expect(migration).toContain('file_size_limit = 5242880')
     expect(migration).toContain("ARRAY['image/jpeg', 'image/png', 'image/webp']")
     expect(migration).toContain("WHERE id = 'avatars' AND public = true")
-    expect(migration).not.toMatch(/public\s*=/i)
+    expect(migration).not.toContain('SET public')
 
     for (const path of ['src/app/profile/edit/page.jsx', 'src/app/profile/setup/page.jsx']) {
       const page = read(path)
