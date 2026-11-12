@@ -120,21 +120,7 @@ jobs:
             exit 1
           fi
 
-          echo "Probing unauthenticated assessment progress endpoint"
-          set +e
-          status="$(curl --http1.1 -v --connect-timeout 3 --max-time 6 -o /tmp/assessment-api-noauth -w '%{http_code}' -X POST "$base/valu/assessment/api/taster-progress" -H 'Origin: https://valoria-staging-site.riverwayse.workers.dev' -H 'Content-Type: application/json' -d '{"action":"load","resume_token":"invalid"}' 2>/tmp/assessment-api-curl.log)"
-          curl_exit=$?
-          set -e
-          echo "Assessment progress probe curl exit: $curl_exit; HTTP status: ${status:-empty}"
-          cat /tmp/assessment-api-curl.log || true
-          [[ "$curl_exit" == "0" && "$status" == "401" ]] || { echo "Staging assessment proxy did not return the expected unauthenticated 401"; cat /tmp/assessment-api-noauth || true; exit 1; }
-
-          echo "Probing unauthenticated VALU handoff endpoint"
-          status="$(curl --http1.1 -sS --connect-timeout 5 --max-time 10 -o /tmp/valu-handoff-noauth -w '%{http_code}' "$base/api/valu-handoff" || true)"
-          echo "VALU handoff probe HTTP status: ${status:-empty}"
-          [[ "$status" == "401" ]] || { echo "Unauthenticated VALU handoff returned HTTP $status"; cat /tmp/valu-handoff-noauth || true; exit 1; }
-          status="$(curl -sS -o /tmp/valu-link-taster-noauth -w '%{http_code}' -X POST "$base/api/link-taster" -H 'Content-Type: application/json' -d '{"taster_id":"00000000-0000-0000-0000-000000000000"}' || true)"
-          [[ "$status" == "401" ]] || { echo "Unauthenticated taster link returned HTTP $status"; cat /tmp/valu-link-taster-noauth || true; exit 1; }
+          echo "API authentication probes are executed in the Playwright browser audit."
 
       - name: Install Playwright without changing project dependencies
         run: npm install --no-save --package-lock=false playwright@1.56.1
