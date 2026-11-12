@@ -535,6 +535,20 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(api).toContain('notifyProfessional({ supabase, professionalProfileId: targetProfile.id')
   })
 
+  test('public enquiry inserts are rate-limited at the API and blocked at the database boundary', () => {
+    const api = read('src/app/api/enquiries/route.js')
+    expect(api).toContain("request.headers.get('cf-connecting-ip')")
+    expect(api).toContain("request.headers.get('x-real-ip')")
+    expect(api).not.toContain("request.headers.get('x-forwarded-for')")
+    expect(api).toContain("if (rateLimitError)")
+    expect(api).toContain("status: 503")
+    expect(api).toContain("status: 429")
+
+    const migration = read('supabase/migrations/20261112123000_restrict_direct_client_enquiry_inserts.sql')
+    expect(migration).toContain('DROP POLICY IF EXISTS buyer_or_guest_insert_enquiry')
+    expect(migration).toContain('REVOKE INSERT ON TABLE public.enquiries FROM anon, authenticated')
+  })
+
   test('consented public Full profiles remain directly accessible while incomplete profiles stay noindex', () => {
     const publicProfile = read('src/lib/public-profile.js')
     const data = read('src/lib/marketplace-data.js')
