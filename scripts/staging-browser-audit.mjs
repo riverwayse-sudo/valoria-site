@@ -77,6 +77,15 @@ try {
           (document.body.innerText.includes('STAGING PREVIEW') ? 'STAGING PREVIEW' : '')
         const navBrand = document.querySelector('a[aria-label="Valoria Institute home"]')?.href || ''
         const navDashboard = [...document.querySelectorAll('a')].find(a => /return to dashboard/i.test(a.innerText))?.href || ''
+        const tasterEntryLinks = [...document.querySelectorAll('a')]
+          .filter(a => /START THE VALU INDEX TASTER/i.test(a.innerText))
+          .map(a => a.getAttribute('href'))
+        const registrationForm = {
+          email: Boolean(document.querySelector('input[type="email"]')),
+          password: Boolean(document.querySelector('input[type="password"]')),
+          privacyAcknowledgement: [...document.querySelectorAll('label')].some(label => /Privacy Notice/i.test(label.innerText)),
+          heading: document.querySelector('h1')?.innerText || '',
+        }
         const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
         const track = document.querySelector('.vi-scroll-track')
         const panel = document.querySelector('.hero-event-panel')
@@ -107,6 +116,8 @@ try {
           analyticsLoaded: Boolean(window.gtag || window.fbq),
           literalNewlineVisible,
           assessmentSiteLinks: [navBrand, navDashboard].filter(Boolean),
+          tasterEntryLinks,
+          registrationForm,
         }
       })
 
@@ -139,6 +150,14 @@ try {
       })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
+      if (['homepage', 'valu', 'valu-start'].includes(route.name) &&
+          (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => href !== '/valu/register/'))) {
+        report.failures.push(route.name + '/' + viewport.name + ': public Taster entry does not route through account-first registration')
+      }
+      if (route.name === 'valu-register' &&
+          (!state.registrationForm.email || !state.registrationForm.password || !state.registrationForm.privacyAcknowledgement)) {
+        report.failures.push(route.name + '/' + viewport.name + ': account registration is missing email, password or privacy acknowledgement controls')
+      }
 
       await context.close()
     }
