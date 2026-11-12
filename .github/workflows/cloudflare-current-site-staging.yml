@@ -122,15 +122,15 @@ jobs:
           # Validate the current production SEO contract without imposing
           # obsolete staging-only copy or worker-hostname assumptions.
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
-          grep -q 'Disallow: /dashboard' /tmp/valoria-robots.txt
-          grep -q 'Disallow: /admin' /tmp/valoria-robots.txt
+          grep -q 'Disallow: /dashboard' /tmp/valoria-robots.txt || { echo 'Missing expected robots exclusion: /dashboard'; exit 1; }
+          grep -q 'Disallow: /admin' /tmp/valoria-robots.txt || { echo 'Missing expected robots exclusion: /admin'; exit 1; }
           curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
-          grep -q 'https://valoriainstitute.com/' /tmp/valoria-sitemap.xml
-          grep -q 'https://valoriainstitute.com/valu' /tmp/valoria-sitemap.xml
+          grep -q 'https://valoriainstitute.com/' /tmp/valoria-sitemap.xml || { echo 'Sitemap missing canonical homepage URL'; exit 1; }
+          grep -q 'https://valoriainstitute.com/valu' /tmp/valoria-sitemap.xml || { echo 'Sitemap missing canonical VALU URL'; exit 1; }
           curl -fsS "$base/" -o /tmp/valoria-home.html
-          grep -q 'Valoria Institute' /tmp/valoria-home.html
-          grep -q 'START VALU INDEX' /tmp/valoria-home.html
-          grep -q 'professional-signup?journey=valu_taster' /tmp/valoria-home.html
+          grep -q 'Valoria Institute' /tmp/valoria-home.html || { echo 'Homepage missing Valoria Institute brand text'; exit 1; }
+          grep -q 'START VALU INDEX' /tmp/valoria-home.html || { echo 'Homepage missing primary VALU CTA text'; exit 1; }
+          grep -q 'professional-signup?journey=valu_taster' /tmp/valoria-home.html || { echo 'Homepage CTA does not point to account-first signup'; exit 1; }
           if grep -Eiq '(1 of 58|1 of 9|54 scored questions|four validity checks|nine questions|58 questions|55 questions)' /tmp/valoria-home.html; then
             echo "Homepage exposes internal assessment mechanics"
             exit 1
