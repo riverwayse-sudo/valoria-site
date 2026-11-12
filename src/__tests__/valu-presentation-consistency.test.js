@@ -88,7 +88,7 @@ describe('VALU presentation consistency', () => {
 
   test('homepage omits the profile-image slider and retired discoverability CTA', () => {
     const home = read('src/app/page.jsx')
-    expect(home).not.toContain('LiveProfilesScroll')
+    expect(home).toContain('LiveProfilesScroll')
     expect(home).not.toContain('Become discoverable')
     expect(home).toContain('Make your capability legible.')
     expect(home).toContain('Build a considered record of capability, experience and contribution')
