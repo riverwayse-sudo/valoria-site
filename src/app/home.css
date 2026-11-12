@@ -2473,3 +2473,89 @@
 .valu-conversion-proof > span,
 .valu-conversion-note { color: #C7C6D1 !important; }
 .vcc-step:not(.is-active) > span { color: #B8B7C3 !important; }
+
+
+/* Compact editorial profile rail — isolated homepage presentation adjustment. */
+.live-profiles {
+  padding-block: clamp(54px, 5.5vw, 76px) 0;
+}
+.live-profiles-shell {
+  padding-bottom: 28px;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+  gap: clamp(28px, 4vw, 56px);
+}
+.live-profiles-title {
+  max-width: 680px;
+  font-size: clamp(32px, 3.8vw, 48px);
+}
+.live-profiles-subtitle {
+  max-width: 570px;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.live-profiles-proof { margin-top: 16px; }
+.live-profiles-proof strong { font-size: 28px; }
+.live-profiles-actions { border-radius: 16px; }
+.live-profile-action {
+  min-height: 76px;
+  padding: 16px 18px;
+}
+.vi-scroll-mask { padding: 8px 0 20px; }
+.vi-scroll-track { gap: 10px; }
+.vi-scroll-card {
+  grid-template-columns: 42px minmax(0, 1fr) 54px 16px;
+  width: min(340px, 82vw);
+  gap: 10px;
+  padding: 11px 12px;
+  border-radius: 14px;
+}
+.vi-scroll-avatar { width: 42px; height: 42px; }
+.vi-scroll-topline { font-size: 7px; }
+.vi-scroll-headline {
+  font-size: 11px;
+  line-height: 1.35;
+}
+.vi-scroll-track-label { gap: 3px; margin-top: 5px; }
+.vi-scroll-track-label span {
+  padding: 3px 4px;
+  font-size: 7px;
+}
+.vi-scroll-designation {
+  margin: 5px 0 0;
+  font-size: 8px;
+}
+.vi-scroll-summary {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 9px;
+  line-height: 1.4;
+}
+.vi-scroll-development {
+  overflow: hidden;
+  font-size: 7px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vi-scroll-score { padding-left: 7px; }
+.vi-scroll-score strong { font-size: 20px; }
+.vi-scroll-score-label { font-size: 5px; }
+.vi-scroll-card-arrow { font-size: 14px; }
+.live-profiles-bottom { padding-bottom: 20px; }
+
+@media (max-width: 760px) {
+  .live-profiles { padding-top: 52px; }
+  .live-profiles-shell {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+    padding-bottom: 22px;
+  }
+  .live-profiles-title { font-size: clamp(30px, 8vw, 40px); }
+  .live-profiles-subtitle { font-size: 13px; }
+  .live-profiles-actions { grid-template-columns: 1fr; }
+  .live-profile-action { min-height: 68px; padding: 14px 16px; }
+  .vi-scroll-card { width: min(320px, 86vw); }
+  .live-profiles-bottom { padding-bottom: 16px; }
+}
