@@ -36,14 +36,26 @@ export default function ValuRegisterPage() {
     let active = true
     async function resumeConfirmedAccount() {
       try {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!active || !user || !user.email_confirmed_at) return
+        const { data: { session } } = await supabase.auth.getSession()
+        const user = session?.user
+        if (!active || !session?.access_token || !user || !user.email_confirmed_at) return
         const metadata = user.user_metadata || {}
         const name = metadata.full_name || metadata.display_name || ''
         const role = metadata.role || ''
         const experience = metadata.experience || ''
         if (metadata.valu_taster_signup === true && name && role && experience && metadata.privacy_acknowledged === true) {
-          window.location.replace('/valu/assessment/')
+          const response = await fetch('/api/valu-taster/start', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          })
+          const handoff = await response.json().catch(() => ({}))
+          if (!response.ok || !handoff.url) throw new Error(handoff.error || 'Your Valoria account could not open the Taster.')
+          const destination = new URL(handoff.url, window.location.origin)
+          if (destination.origin !== window.location.origin ||
+              !(destination.pathname.startsWith('/valu/assessment/') || destination.pathname === '/dashboard')) {
+            throw new Error('The Taster handoff destination could not be verified.')
+          }
+          if (active) window.location.replace(destination.toString())
           return
         }
         setForm(current => ({
