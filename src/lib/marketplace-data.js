@@ -54,7 +54,11 @@ function normalizePublicDisplayText(value) {
 }
 
 function toPublicMarketplaceRow(row) {
-  const { assessment_access, assessmentAccess, full_name, display_initials, ...publicRow } = row
+  const publicRow = { ...row }
+  delete publicRow.assessment_access
+  delete publicRow.assessmentAccess
+  delete publicRow.full_name
+  delete publicRow.display_initials
   const score = publicRow.valu_index
   const hasOfficialPoints = score !== null && score !== undefined && Number.isFinite(Number(score)) && Number(score) >= 35
   const tier = hasOfficialPoints ? getValuTier(Number(score), 'full') : null
