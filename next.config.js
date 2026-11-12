@@ -65,6 +65,14 @@ const nextConfig = {
     const origin = valuOrigin
     return [
       { source: '/valu/assessment', destination: `${origin}/` },
+      // The embedded assessment bundle retains /valu/assessment as its API base.
+      // Route its explicit API paths to the Worker root before the asset catch-all.
+      { source: '/valu/assessment/api/taster-progress', destination: `${origin}/api/taster-progress` },
+      { source: '/valu/assessment/api/submit-taster', destination: `${origin}/api/submit-taster` },
+      { source: '/valu/assessment/api/assessment-progress', destination: `${origin}/api/assessment-progress` },
+      { source: '/valu/assessment/api/submit-assessment', destination: `${origin}/api/submit-assessment` },
+      { source: '/valu/assessment/api/link-assessment-to-taster', destination: `${origin}/api/link-assessment-to-taster` },
+      { source: '/valu/assessment/api/generate-and-send-report', destination: `${origin}/api/generate-and-send-report` },
       // Preserve the platform's Vite base path so its JS/CSS assets resolve.
       { source: '/valu/assessment/:path*', destination: `${origin}/valu/assessment/:path*` },
 
