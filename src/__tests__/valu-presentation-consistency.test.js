@@ -172,11 +172,13 @@ describe('VALU presentation consistency', () => {
     expect(helper).toContain('5 * 1024 * 1024')
     expect(helper).toContain('file.size > AVATAR_MAX_BYTES')
 
-    const migration = read('supabase/migrations/20261112121356_restrict_avatar_upload_size_and_mime_types.sql')
-    expect(migration).toContain('file_size_limit = 5242880')
-    expect(migration).toContain("ARRAY['image/jpeg', 'image/png', 'image/webp']")
-    expect(migration).toContain("WHERE id = 'avatars' AND public = true")
-    expect(migration).not.toContain('SET public')
+    for (const version of ['20261112121343', '20261112121356']) {
+      const migration = read(`supabase/migrations/${version}_restrict_avatar_upload_size_and_mime_types.sql`)
+      expect(migration).toContain('file_size_limit = 5242880')
+      expect(migration).toContain("ARRAY['image/jpeg', 'image/png', 'image/webp']")
+      expect(migration).toContain("WHERE id = 'avatars' AND public = true")
+      expect(migration).not.toContain('SET public')
+    }
 
     for (const path of ['src/app/profile/edit/page.jsx', 'src/app/profile/setup/page.jsx']) {
       const page = read(path)
@@ -193,12 +195,24 @@ describe('VALU presentation consistency', () => {
     expect(helper).toContain('file.type !== mimeType')
     expect(helper).toContain("contentType: mimeType")
 
-    const migration = read('supabase/migrations/20261112121613_restrict_private_cv_upload_size_and_mime_types.sql')
-    expect(migration).toContain('file_size_limit = 10485760')
-    expect(migration).toContain("'application/pdf'")
-    expect(migration).toContain("'application/msword'")
-    expect(migration).toContain("'application/vnd.openxmlformats-officedocument.wordprocessingml.document'")
-    expect(migration).toContain("WHERE id = 'cvs' AND public = false")
+    for (const version of ['20261112121608', '20261112121613']) {
+      const migration = read(`supabase/migrations/${version}_restrict_private_cv_upload_size_and_mime_types.sql`)
+      expect(migration).toContain('file_size_limit = 10485760')
+      expect(migration).toContain("'application/pdf'")
+      expect(migration).toContain("'application/msword'")
+      expect(migration).toContain("'application/vnd.openxmlformats-officedocument.wordprocessingml.document'")
+      expect(migration).toContain("WHERE id = 'cvs' AND public = false")
+    }
+  })
+
+
+  test('legacy archive security migration is versioned for both environments and idempotent', () => {
+    for (const version of ['20261112120605', '20261112120621']) {
+      const migration = read(`supabase/migrations/${version}_revoke_public_legacy_marketplace_archive_access.sql`)
+      expect(migration).toContain('DROP POLICY IF EXISTS marketplace_profiles_public_read')
+      expect(migration).toContain('REVOKE ALL PRIVILEGES')
+      expect(migration).not.toMatch(/\\b(DROP TABLE|TRUNCATE|DELETE FROM)\\b/i)
+    }
   })
 
 
