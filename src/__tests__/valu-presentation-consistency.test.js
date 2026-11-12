@@ -93,6 +93,15 @@ describe('VALU presentation consistency', () => {
     expect(home).toContain('Build a considered record of capability, experience and contribution')
   })
 
+  test('primary navigation is a centered, non-sticky pill', () => {
+    const styles = read('src/styles/component-system.css')
+    const navRule = styles.match(/nav\\.vi-nav\\s*\\{([^}]*)\\}/)?.[1] || ''
+    expect(navRule).toContain('position:absolute')
+    expect(navRule).toContain('left:50%')
+    expect(navRule).toContain('border-radius:999px')
+    expect(navRule).not.toContain('position:fixed')
+  })
+
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
     const hero = read('src/components/HeroSlider.jsx')
     expect(hero).toContain('START THE VALU INDEX TASTER')
