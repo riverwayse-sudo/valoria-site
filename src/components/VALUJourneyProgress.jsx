@@ -7,7 +7,7 @@ export default function VALUJourneyProgress({ stage = 'taster' }) {
   ]
   const active = Math.max(0, steps.findIndex(step => step.key === stage))
   return (
-    <nav aria-label="VALU journey" style={{ margin: '0 0 16px' }}>
+    <nav aria-label="Assessment journey" style={{ margin: '0 0 16px' }}>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(4,minmax(0,1fr))', gap:8 }}>
         {steps.map((step,index) => {
           const done = index < active
