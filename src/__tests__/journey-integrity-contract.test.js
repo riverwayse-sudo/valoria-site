@@ -598,6 +598,14 @@ describe('journey integrity contract', () => {
     expect(professionalSignup).toContain("window.location.replace('/dashboard?welcome=profile')")
   })
 
+  test('staging browser audit detects participant-facing assessment counts correctly', () => {
+    const audit = read('scripts/staging-browser-audit.mjs')
+    expect(audit).toContain(String.raw`\\b1 of 58\\b`.replaceAll('\\\\', '\\'))
+    expect(audit).toContain(String.raw`\\b1 of 9\\b`.replaceAll('\\\\', '\\'))
+    expect(audit).toContain('9[- ]questions?')
+    expect(audit).not.toContain(String.raw`\\\\b1 of 58\\\\b`)
+  })
+
   test('public marketplace copy avoids internal listing and sourcing terminology', () => {
     const registry = read('src/components/LiveProfilesScroll.jsx')
     const directory = read('src/components/MarketplaceDirectory.jsx')
