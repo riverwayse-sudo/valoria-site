@@ -87,6 +87,7 @@ try {
           heading: document.querySelector('h1')?.innerText || '',
         }
         const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
+        const visibleInternalCopy = /(WANT TO BE DISCOVERED|Become discoverable|buyer access|sourcing access|BASIC LISTING|FULL LISTING|\\b1 of 58\\b|\\b1 of 9\\b|54 scored questions|four validity checks|nine[- ]questions?|58[- ]questions?|55[- ]questions?|84 \/ 100|\\b[0-9]+\\s*\/\\s*100\\b)/i.test(document.body.innerText)
         const track = document.querySelector('.vi-scroll-track')
         const panel = document.querySelector('.hero-event-panel')
         const overflowingCards = [...document.querySelectorAll('[class*="card"]')]
@@ -115,6 +116,7 @@ try {
           overflowingCards,
           analyticsLoaded: Boolean(window.gtag || window.fbq),
           literalNewlineVisible,
+          visibleInternalCopy,
           assessmentSiteLinks: [navBrand, navDashboard].filter(Boolean),
           tasterEntryLinks,
           registrationForm,
@@ -145,6 +147,7 @@ try {
       if (state.analyticsLoaded) report.failures.push(`${route.name}/${viewport.name}: production analytics loaded in staging`)
       if (forbiddenRequests.length) report.failures.push(`${route.name}/${viewport.name}: production Supabase/assessment request detected`)
       if (state.literalNewlineVisible && route.name.startsWith('assessment-')) report.failures.push(`${route.name}/${viewport.name}: literal \\n text is visible in the assessment UI`)
+      if (state.visibleInternalCopy) report.failures.push(`${route.name}/${viewport.name}: internal assessment or marketplace mechanics are visible to participants`)
       if (route.name.startsWith('assessment-') && state.assessmentSiteLinks.some(href => {
         try { return ['valoriainstitute.com', 'www.valoriainstitute.com'].includes(new URL(href).hostname) } catch { return false }
       })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
