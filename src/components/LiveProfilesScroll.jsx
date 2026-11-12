@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { AssessmentStartLink } from '@/components/Nav'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { BRAND, getValuTier, PRIME_CLUSTERS } from '@/lib/brand'
+import { getValuTier, PRIME_CLUSTERS } from '@/lib/brand'
 import { getMarketplaceDirectoryData } from '@/lib/marketplace-data'
 
 const TRACK_META = {
