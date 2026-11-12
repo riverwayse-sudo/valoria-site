@@ -134,6 +134,9 @@ describe('VALU presentation consistency', () => {
     expect(browserAudit).toContain('window.scrollTo(0, y)')
     expect(browserAudit).toContain('hiddenRevealElements')
     expect(browserAudit).toContain('dashboardAuthRedirect')
+    expect(browserAudit).toContain("require('axe-core')")
+    expect(browserAudit).toContain('wcag22aa')
+    expect(browserAudit).toContain('accessibility,')
     expect(browserAudit).toContain("state.dashboardAuthRedirect?.path !== '/login'")
   })
 
