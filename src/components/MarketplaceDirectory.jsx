@@ -243,10 +243,10 @@ function Profile({p, onSelect}) {
 
     {skills.length > 0 && <div className={styles.profileSkills} aria-label="Professional skills">{skills.map(value=><span key={value}>{value}</span>)}</div>}
 
-    <div className={styles.specialistCapabilities} aria-label="Capability selections">
+    <div className={styles.specialistCapabilities} role="group" aria-label="Capability selections">
       {capabilityBadges.map(([key,label]) => {
         const selected = selectedCaps.has(key)
-        return <span key={key} className={selected ? styles.capabilitySelected : styles.capabilityUnselected} aria-label={label + ': ' + (selected ? 'selected' : 'not selected')}>{label}</span>
+        return <span key={key} role="img" className={selected ? styles.capabilitySelected : styles.capabilityUnselected} aria-label={label + ': ' + (selected ? 'selected' : 'not selected')}>{label}</span>
       })}
     </div>
 
