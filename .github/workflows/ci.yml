@@ -42,19 +42,15 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Create CI build environment
-        run: |
-          cat > .env <<'EOF'
-          NEXT_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder_key
-          SUPABASE_SERVICE_ROLE_KEY=placeholder_service_role_key
-          ANTHROPIC_API_KEY=placeholder_anthropic_key
-          EOF
       - name: Run production build
         run: npm run build
         env:
           CI: true
           NEXT_TELEMETRY_DISABLED: 1
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder_key
+          SUPABASE_SERVICE_ROLE_KEY: placeholder_service_role_key
+          ANTHROPIC_API_KEY: placeholder_anthropic_key
 
   secret-scan:
     name: Secret Scan

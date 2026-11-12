@@ -73,10 +73,10 @@ if (motion.includes('transition: all') || motion.includes('animation: all')) add
 
 const homepage = existing.filter(({ file }) => homepageFiles.includes(file));
 for (const { file, text } of homepage) {
-  if (file !== 'src/styles/motion.css' && /<style(?:\\s|>)/i.test(text)) {
+  if (file !== 'src/styles/motion.css' && /<style(?:\s|>)/i.test(text)) {
     add(`${file}: homepage component contains an inline <style> block; move presentation/motion to canonical stylesheets`);
   }
-  if (/style=\\{\\{[^}]*\\b(?:background|color|border|borderRadius|boxShadow)\\b/i.test(text)) {
+  if (/style=\{\{[^}]*\b(?:background|color|border|borderRadius|boxShadow)\b/i.test(text)) {
     add(`${file}: homepage component contains inline visual styling; move colors, borders, radii and shadows to canonical stylesheets`);
   }
 }
@@ -92,7 +92,7 @@ for (const token of spacingTokens) if (!homeCss.includes(token)) add(`src/app/ho
 if (!/\.home-redesign-root\s*>\s*section:not\(\.hero\)/.test(homeCss)) add('src/app/home.css: major homepage sections must inherit the canonical section-spacing rule');
 if (!/\.home-redesign-root\s+\.container\s*\{/.test(homeCss)) add('src/app/home.css: homepage container contract is missing');
 
-const negativeMargin = existing.filter(({ file, text }) => homepageFiles.includes(file) && /margin(?:-(?:top|right|bottom|left))?\s*:\s*-\\d/.test(text));
+const negativeMargin = existing.filter(({ file, text }) => homepageFiles.includes(file) && /margin(?:-(?:top|right|bottom|left))?\s*:\s*-\d/.test(text));
 for (const { file } of negativeMargin) add(`${file}: negative margin detected; justify or remove before production`);
 
 if (violations.length) {
