@@ -89,6 +89,7 @@ jobs:
             /
             /valu
             /valu/start
+            /valu/register
             /valu/assessment
             /prime
             /about-us
@@ -122,7 +123,11 @@ jobs:
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
           grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
           curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
-          grep -q 'valoria-staging-site.riverwayse.workers.dev' /tmp/valoria-sitemap.xml
+          grep -q '<loc>https://staging.valoriainstitute.com/' /tmp/valoria-sitemap.xml
+          if grep -Eq '<loc>https://(www\.)?valoriainstitute\.com/' /tmp/valoria-sitemap.xml; then
+            echo "Staging sitemap must not publish production canonical URLs"
+            exit 1
+          fi
           curl -fsS "$base/" -o /tmp/valoria-home.html
           grep -q 'Capability should decide' /tmp/valoria-home.html
           grep -q 'Valoria sets the standard.' /tmp/valoria-home.html
@@ -134,7 +139,15 @@ jobs:
             exit 1
           fi
 
-          echo "API authentication probes are executed in the Playwright browser audit."
+          bootstrap_status="$(curl -sS -o /tmp/valu-bootstrap-response -w '%{http_code}' -X POST "$base/api/valu-taster/bootstrap" -H 'Content-Type: application/json' --data '{}')"
+          if [[ "$bootstrap_status" != "401" ]]; then
+            echo "Unauthenticated Taster bootstrap returned HTTP $bootstrap_status; expected 401."
+            cat /tmp/valu-bootstrap-response || true
+            exit 1
+          fi
+          grep -q 'Create or sign in to your Valoria account' /tmp/valu-bootstrap-response
+
+          echo "Unauthenticated Taster bootstrap correctly rejects access; browser audit covers the public entry surfaces."
 
       - name: Install Playwright without changing project dependencies
         run: npm install --no-save --package-lock=false playwright@1.65.0

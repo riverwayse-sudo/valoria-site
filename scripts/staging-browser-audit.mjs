@@ -15,6 +15,7 @@ const routes = [
   { name: 'events', url: `${SITE}/events`, site: true },
   { name: 'valu', url: `${SITE}/valu`, site: true },
   { name: 'valu-start', url: `${SITE}/valu/start`, site: true },
+  { name: 'valu-register', url: `${SITE}/valu/register`, site: true },
   { name: 'prime', url: `${SITE}/prime`, site: true },
   { name: 'about', url: `${SITE}/about-us`, site: true },
   { name: 'dashboard-preview', url: `${SITE}/dashboard?preview=1`, site: true },

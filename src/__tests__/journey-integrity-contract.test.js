@@ -470,14 +470,14 @@ describe('journey integrity contract', () => {
   test('public VALU explanation follows registration, taster, account creation and Full assessment', () => {
     const start = read('src/app/valu/start/page.jsx')
     const signup = read('src/app/professional-signup/page.jsx')
-    expect(start).toContain('Register your contact and professional details before the taster')
+    expect(start).toContain('Create your Valoria account and confirm your email before beginning the Taster')
     expect(start).toContain('Your official result in points')
     expect(start).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
     expect(start).not.toMatch(/9-question|58-question/i)
     expect(signup).toContain('VALU Index Taster')
     expect(signup).toContain('full VALU Index')
   })
-  test('professional account creation remains separate from pre-taster registration', () => {
+  test('legacy post-taster account linking remains available without changing the account-first entry flow', () => {
     const signup = read('src/app/professional-signup/page.jsx')
     const callback = read('src/app/auth/callback/page.jsx')
     expect(signup).toContain('ACCOUNT BRIDGE')
@@ -511,6 +511,57 @@ describe('journey integrity contract', () => {
     expect(sidebar).not.toContain('AssessmentStartLink')
     expect(sidebar).not.toContain('CONTINUE YOUR VALU ASSESSMENT')
     expect(sidebar).toContain('Your official VALU Index and PRIME insights will appear here')
+  })
+
+
+  test('professional account signup and email confirmation happen before the Taster', () => {
+    const register = read('src/app/valu/register/page.jsx')
+    const bootstrap = read('src/app/api/valu-taster/bootstrap/route.js')
+    const callback = read('src/app/auth/callback/page.jsx')
+    const publicSignup = read('src/app/signup/page.jsx')
+    expect(register).toContain('valu_taster_signup: true')
+    expect(register).toContain('emailRedirectTo: emailRedirect()')
+    expect(register).toContain('CREATE ACCOUNT & CONTINUE')
+    expect(register).toContain('supabase.auth.getUser()')
+    expect(register).toContain("window.location.replace('/valu/assessment/')")
+    expect(bootstrap).toContain('user.email_confirmed_at')
+    expect(bootstrap).toContain("metadata.valu_taster_signup !== true")
+    expect(bootstrap).toContain("begin_valu_taster_signup")
+    expect(bootstrap).toContain("p_signup_key: user.id")
+    expect(bootstrap).toContain('stableResumeToken')
+    expect(bootstrap).toContain('client cannot create unlimited parallel Taster records')
+    expect(callback).toContain("params.get('valu_taster') === '1'")
+    expect(callback).toContain("router.replace('/valu/assessment/')")
+    expect(publicSignup).toContain('href="/valu/register/"')
+    expect(publicSignup).toContain('create and confirm your Valoria account before taking the VALU Index Taster')
+  })
+
+  test('the assessment app cannot create a new Taster without the confirmed-account bootstrap', () => {
+    const source = read('src/app/api/valu-taster/bootstrap/route.js')
+    const gate = read('src/app/valu/register/page.jsx')
+    expect(source).toContain('createServerClient')
+    expect(source).toContain('user.email_confirmed_at')
+    expect(source).toContain('createHmac')
+    expect(source).toContain('begin_valu_taster_signup')
+    expect(gate).toContain('supabase.auth.signUp')
+    expect(gate).toContain('supabase.auth.signInWithPassword')
+  })
+
+
+  test('staging robots and sitemap never advertise production as the canonical host', () => {
+    const robots = read('src/app/robots.js')
+    const sitemap = read('src/app/sitemap.js')
+    const workflow = read('.github/workflows/cloudflare-current-site-staging.yml')
+    const layout = read('src/app/layout.jsx')
+    expect(robots).toContain('process.env.NEXT_PUBLIC_SITE_URL')
+    expect(robots).toContain("SITE_URL.includes('staging.')")
+    expect(robots).toContain("disallow: ['/']")
+    expect(sitemap).toContain("process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'")
+    expect(workflow).toContain('<loc>https://staging.valoriainstitute.com/')
+    expect(workflow).toContain('Staging sitemap must not publish production canonical URLs')
+    expect(layout).toContain('staging-site-banner')
+    expect(layout).toContain('robots:IS_STAGING?{index:false,follow:false')
+    expect(layout).toContain('const GA_MEASUREMENT_ID = IS_STAGING ? null')
   })
 
 
