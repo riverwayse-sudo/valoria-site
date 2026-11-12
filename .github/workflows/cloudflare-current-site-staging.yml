@@ -54,14 +54,14 @@ jobs:
           cat > .env <<'EOF'
           NEXT_PUBLIC_SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
           SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
-          NEXT_PUBLIC_SITE_URL=https://valoria-staging-site.riverwayse.workers.dev
+          NEXT_PUBLIC_SITE_URL=https://staging.valoriainstitute.com
           NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_C3j_CjLgTLDGRu8rH1SXEg_tYpxoYUm
           SUPABASE_SERVICE_ROLE_KEY=placeholder-service-role-key
           ANTHROPIC_API_KEY=placeholder-anthropic-key
-          VALU_ASSESSMENT_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
-          VALU_UPSTREAM_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
-          VALU_PREVIEW_ASSESSMENT_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
-          NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
+          VALU_ASSESSMENT_ORIGIN=https://assessment-staging.valoriainstitute.com
+          VALU_UPSTREAM_ORIGIN=https://assessment-staging.valoriainstitute.com
+          VALU_PREVIEW_ASSESSMENT_ORIGIN=https://assessment-staging.valoriainstitute.com
+          NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN=https://assessment-staging.valoriainstitute.com
           CF_WORKERS_PREVIEW=1
           VALU_PREVIEW=1
           NEXT_PUBLIC_VALU_PREVIEW=1
@@ -84,7 +84,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base="https://valoria-staging-site.riverwayse.workers.dev"
+          base="https://staging.valoriainstitute.com"
           routes=(
             /
             /valu
@@ -142,6 +142,14 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run desktop/mobile and fresh-session staging browser audit
         run: node scripts/staging-browser-audit.mjs
+      - name: Upload staging browser audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: valoria-staging-browser-audit
+          path: artifacts/staging-browser-audit/
+          if-no-files-found: warn
+          retention-days: 7
         env:
-          STAGING_SITE_URL: https://valoria-staging-site.riverwayse.workers.dev
-          STAGING_ASSESSMENT_URL: https://valoria-staging-assessment.riverwayse.workers.dev
+          STAGING_SITE_URL: https://staging.valoriainstitute.com
+          STAGING_ASSESSMENT_URL: https://assessment-staging.valoriainstitute.com
