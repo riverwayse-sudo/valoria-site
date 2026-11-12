@@ -2,10 +2,12 @@
 useDefault = true
 
 [[allowlists]]
-description = "Supabase publishable keys are intentionally public client configuration, not service-role credentials."
+description = "The Supabase sb_publishable key is intended for public client use; this narrowly scopes the exception to the staging workflow."
+regexTarget = "match"
 paths = [
   '''^\.github/workflows/cloudflare-current-site-staging\.yml$''',
 ]
 regexes = [
-  '''sb_publishable_[A-Za-z0-9_-]+''',
+  '''NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_[A-Za-z0-9_-]+''',
 ]
+stopwords = ["sb_publishable"]
