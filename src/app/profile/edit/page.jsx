@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { getAvatarExtension } from '@/lib/avatar-upload'
 import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
 import { PUBLIC_PROFILE_CONSENT_TEXT, REGISTERED_PROFILE_CONSENT_TEXT } from '@/lib/profile-consent-copy'
 import {
@@ -235,9 +236,9 @@ function EditPageInner() {
     if (!file || !user) return
     setPhotoUploading(true)
     try {
-      const ext = file.name.split('.').pop()
+      const ext = getAvatarExtension(file)
       const path = `profiles/${user.id}/avatar.${ext}`
-      const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
+      const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type })
       if (error) throw error
       const { data } = supabase.storage.from('avatars').getPublicUrl(path)
       setField('media', 'photo_url', data.publicUrl)
