@@ -84,8 +84,8 @@ export default async function LiveProfilesScroll() {
                       : Array.isArray(profile.selected_capabilities) && profile.selected_capabilities.length
                         ? profile.selected_capabilities
                         : (Array.isArray(profile.capabilities) ? profile.capabilities : [])
-                    const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
-                    const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
+                    const normalizedTracks = tracks.map(track => String(track || '').trim().toLowerCase() === 'talent' ? 'candidate' : String(track || '').trim().toLowerCase())
+                    const selectedTracks = new Set(normalizedTracks.filter(track => Object.hasOwn(TRACK_META, track)))
                     const profileHref = profile.atb_id ? `/profile/${encodeURIComponent(profile.atb_id)}` : '/marketplace'
                     const development = developmentArea(profile.cluster_scores)
                     const isBasic = profile.assessment_access === 'basic'
@@ -97,7 +97,7 @@ export default async function LiveProfilesScroll() {
                           <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>PUBLIC</i></div>
                           <strong className="vi-scroll-name">{profile.atb_id || 'VALORIA PROFESSIONAL'}</strong>
                           <div className="vi-scroll-headline">{displayText(profile.headline)}</div>
-                          <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'NO DECLARED ROLE'}</div>
+                          <div className="vi-scroll-track-label" aria-label="Capability selections">{Object.entries(TRACK_META).map(([key, meta]) => <span key={key} className={selectedTracks.has(key) ? 'is-selected' : 'is-unselected'} aria-label={meta.label + ': ' + (selectedTracks.has(key) ? 'selected' : 'not selected')}>{meta.label}</span>)}</div>
                           <div className="vi-scroll-designation">{isBasic ? 'PROFESSIONAL LISTING' : (tier?.name || 'PROFESSIONAL LISTING')}</div>
                           {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div>{development && <div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div>}</>}
                         </div>
