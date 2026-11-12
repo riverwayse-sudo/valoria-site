@@ -2,9 +2,13 @@
 useDefault = true
 
 [[allowlists]]
-description = "Supabase publishable keys with the sb_publishable_ prefix are designed for public client exposure and are not secret credentials."
-regexTarget = "secret"
-regexes = [
-  '''^sb_publishable_[A-Za-z0-9_-]+$''',
+description = "Ignore only the known public Supabase publishable-key line; never ignore other credentials in these files."
+condition = "AND"
+regexTarget = "line"
+paths = [
+  '''^wrangler\.jsonc$''',
+  '''^\.github/workflows/cloudflare-current-site-staging\.yml$''',
 ]
-stopwords = ["sb_publishable"]
+regexes = [
+  '''NEXT_PUBLIC_SUPABASE_ANON_KEY.*sb_publishable_.*''',
+]
