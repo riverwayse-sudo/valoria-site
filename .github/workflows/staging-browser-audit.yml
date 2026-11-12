@@ -1,15 +1,7 @@
 name: Staging browser screenshots and UX audit
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/staging-browser-audit.yml'
-      - 'scripts/staging-browser-audit.mjs'
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/staging-browser-audit.yml'
-      - 'scripts/staging-browser-audit.mjs'
+  # Full browser audits run after the isolated staging deploy; manual dispatch remains available.
   workflow_dispatch:
 
 permissions:
