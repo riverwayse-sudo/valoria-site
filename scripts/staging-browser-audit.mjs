@@ -123,7 +123,12 @@ try {
         const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
         const track = document.querySelector('.vi-scroll-track')
         const profileSliderPresent = Boolean(document.querySelector('.vi-scroll-track, #live-profiles, [data-profile-slider]'))
-        const profileShowcaseEmptyStatePresent = Boolean(document.querySelector('.live-profiles-public-state'))
+        const profileShowcaseEmptyState = document.querySelector('.live-profiles-public-state')
+        const profileShowcaseEmptyStateText = profileShowcaseEmptyState?.innerText || ''
+        const profileShowcaseEmptyStatePresent = Boolean(
+          profileShowcaseEmptyState &&
+          !/Public profile data could not be verified|Listings temporarily unavailable/i.test(profileShowcaseEmptyStateText)
+        )
         const profileShowcasePresent = profileSliderPresent || profileShowcaseEmptyStatePresent
         const retiredPublicCopyPresent = /WANT TO BE DISCOVERED|Become discoverable|relevant buyers understand your capabilities/i.test(document.body.innerText)
         const panel = document.querySelector('.hero-event-panel')
