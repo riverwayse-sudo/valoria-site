@@ -2,7 +2,6 @@ import Nav, { AssessmentStartLink } from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
-import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import HomepageEvents from '@/components/HomepageEvents'
 import HomepageEventPopup from '@/components/HomepageEventPopup'
 import { BRAND } from '@/lib/brand'
@@ -18,7 +17,7 @@ export const metadata = {
 }
 
 const pathwayCards = [
-  { label: 'FOR PROFESSIONALS', title: 'Build a stronger professional presence.', body: 'Build your profile, understand your strengths and become visible for relevant opportunities.', href: '/valu', cta: 'START WITH THE VALU INDEX' },
+  { label: 'FOR PROFESSIONALS', title: 'Make your capability legible.', body: 'Build a considered record of capability, experience and contribution through the VALU Index.', href: '/valu', cta: 'START WITH THE VALU INDEX' },
   { label: 'FOR EMPLOYERS', title: 'Find capability with context.', body: 'Find professionals through capability and experience.', href: '/marketplace', cta: 'EXPLORE MARKETPLACE' },
   { label: 'FOR EVENT ORGANISERS', title: 'Find speakers and facilitators.', body: 'Discover speakers and facilitators for your next event or programme.', href: '/marketplace/speakers', cta: 'FIND PROFESSIONALS' }
 ]
@@ -94,14 +93,13 @@ export default function HomePage() {
             <div className="vcc-steps">
               <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>Start with your VALU Index Taster</small></div></div>
               <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Create your account and complete your full assessment</small></div></div>
-              <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Build your profile and explore relevant opportunities</small></div></div>
+              <div className="vcc-step"><span>03</span><div><b>Make your capability legible</b><small>Build your profile and explore relevant opportunities</small></div></div>
             </div>
             <AssessmentStartLink href={BRAND.assessmentUrl} className="vcc-bottom-cta">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
           </Reveal>
         </div>
       </section>
 
-      <LiveProfilesScroll />
     </main>
     <Footer />
   </>
