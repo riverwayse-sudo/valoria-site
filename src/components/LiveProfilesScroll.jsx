@@ -1,7 +1,6 @@
 import Link from 'next/link'
-import { AssessmentStartLink } from '@/components/Nav'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { BRAND, getValuTier, PRIME_CLUSTERS } from '@/lib/brand'
+import { getValuTier, PRIME_CLUSTERS } from '@/lib/brand'
 import { getMarketplaceDirectoryData } from '@/lib/marketplace-data'
 
 const TRACK_META = {
@@ -129,11 +128,6 @@ export default async function LiveProfilesScroll() {
         </div>
       )}
 
-      <div className="live-profiles-professional-cta">
-        <span className="live-profiles-professional-rule" />
-        <div><small>WANT TO BE DISCOVERED?</small><strong>Build a professional profile that helps relevant buyers understand your capabilities.</strong></div>
-        <AssessmentStartLink href={BRAND.assessmentUrl}>TAKE THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
-      </div>
     </section>
   )
 }
