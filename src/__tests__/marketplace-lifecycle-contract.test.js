@@ -53,7 +53,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('facilitator: byTrack.facilitator.size')
   })
 
-  test('marketplace cards display selected capability roles and category filters apply to every assessment tier', () => {
+  test('marketplace cards show all three capability roles with selected state and category filters apply to every assessment tier', () => {
     const data = read('src/lib/marketplace-data.js')
     const directory = read('src/components/MarketplaceDirectory.jsx')
     expect(data).toContain('selected_capabilities')
@@ -63,8 +63,12 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).toContain("['speaker','Speaker']")
     expect(directory).toContain("['facilitator','Facilitator']")
     const cardComponent = directory.slice(directory.indexOf('function Profile({p, onSelect})'), directory.indexOf('// The public preview'))
-    expect(cardComponent).not.toContain('NOT SELECTED')
-    expect(cardComponent).not.toContain('Selection is distinct from capability-specific listing eligibility.')
+    expect(cardComponent).toContain('capabilityBadges.map')
+    expect(cardComponent).toContain('styles.capabilityUnselected')
+    expect(cardComponent).toContain("aria-label={label + ': ' + (selected ? 'selected' : 'not selected')}")
+    const homepage = read('src/components/LiveProfilesScroll.jsx')
+    expect(homepage).toContain('Object.entries(TRACK_META)')
+    expect(homepage).toContain("'is-selected' : 'is-unselected'")
     const categoryFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
     expect(categoryFilter).toContain('p.selectedCapabilities || p.selected_capabilities')
     expect(categoryFilter).toContain('p.capabilities || p.tracks || [p.track]')
