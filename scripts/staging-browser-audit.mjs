@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { chromium } from 'playwright'
 
-const SITE = process.env.STAGING_SITE_URL || 'https://staging.valoriainstitute.com'
+const SITE = process.env.STAGING_SITE_URL || 'https://valoria-staging-site.riverwayse.workers.dev'
 const ASSESSMENT = process.env.STAGING_ASSESSMENT_URL || 'https://valoria-staging-assessment.riverwayse.workers.dev'
 const ASSESSMENT_WITH_SITE = (() => { const url = new URL(ASSESSMENT); url.searchParams.set('site_origin', SITE); return url.toString() })()
 const OUT = path.resolve('artifacts/staging-browser-audit')
@@ -67,6 +67,18 @@ try {
         const response = await page.goto(route.url, { waitUntil: 'domcontentloaded', timeout: 60000 })
         status = response?.status() ?? null
         await page.waitForTimeout(1800)
+        // Trigger every IntersectionObserver-based reveal before taking a full-page
+        // screenshot; otherwise off-screen sections remain intentionally hidden.
+        await page.evaluate(async () => {
+          const step = Math.max(320, Math.floor(window.innerHeight * 0.72))
+          const pageHeight = document.documentElement.scrollHeight
+          for (let y = 0; y <= pageHeight; y += step) {
+            window.scrollTo(0, y)
+            await new Promise(resolve => setTimeout(resolve, 140))
+          }
+          window.scrollTo(0, 0)
+          await new Promise(resolve => setTimeout(resolve, 450))
+        })
       } catch (error) {
         navigationError = error.message
       }
@@ -77,6 +89,12 @@ try {
           (document.body.innerText.includes('STAGING PREVIEW') ? 'STAGING PREVIEW' : '')
         const navBrand = document.querySelector('a[aria-label="Valoria Institute home"]')?.href || ''
         const navDashboard = [...document.querySelectorAll('a')].find(a => /return to dashboard/i.test(a.innerText))?.href || ''
+        const nav = document.querySelector('.vi-site-header > nav.vi-nav')
+        const navStyle = nav ? getComputedStyle(nav) : null
+        const hiddenRevealCount = [...document.querySelectorAll('.reveal')].filter(el => {
+          const rect = el.getBoundingClientRect()
+          return rect.width > 0 && rect.height > 0 && !el.classList.contains('visible') && Number(getComputedStyle(el).opacity) < 0.98
+        }).length
         const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
         const track = document.querySelector('.vi-scroll-track')
         const panel = document.querySelector('.hero-event-panel')
@@ -107,8 +125,71 @@ try {
           analyticsLoaded: Boolean(window.gtag || window.fbq),
           literalNewlineVisible,
           assessmentSiteLinks: [navBrand, navDashboard].filter(Boolean),
+          navPosition: navStyle?.position || '',
+          navBorderRadius: navStyle?.borderRadius || '',
+          hiddenRevealCount,
         }
       })
+
+      let navigationChecks = null
+      if (route.name === 'homepage') {
+        try {
+          if (viewport.isMobile) {
+            const burger = page.locator('.nav-burger')
+            await burger.click()
+            const opened = await burger.getAttribute('aria-expanded') === 'true'
+            const menuVisible = await page.locator('#vi-mobile-navigation').evaluate(el => el.classList.contains('open'))
+            await page.keyboard.press('Escape')
+            const closed = await burger.getAttribute('aria-expanded') === 'false'
+            const focusRestored = await burger.evaluate(el => document.activeElement === el)
+            navigationChecks = { opened, menuVisible, closed, focusRestored }
+            if (!opened || !menuVisible || !closed || !focusRestored) report.failures.push('homepage/mobile: keyboard-operable mobile navigation failed')
+          } else {
+            const trigger = page.locator('.nav-trigger').first()
+            await trigger.focus()
+            await page.keyboard.press('Enter')
+            const opened = await trigger.getAttribute('aria-expanded') === 'true'
+            await page.keyboard.press('Escape')
+            const closed = await trigger.getAttribute('aria-expanded') === 'false'
+            const focusRestored = await trigger.evaluate(el => document.activeElement === el)
+            navigationChecks = { opened, closed, focusRestored }
+            if (!opened || !closed || !focusRestored) report.failures.push('homepage/desktop: keyboard-operable dropdown or Escape focus restoration failed')
+          }
+        } catch (error) {
+          report.failures.push(`homepage/${viewport.name}: navigation keyboard test failed: ${error.message}`)
+        }
+      }
+
+      let apiProbes = null
+      if (route.name === 'homepage' && viewport.name === 'desktop') {
+        apiProbes = await page.evaluate(async () => {
+          const checks = [
+            { name: 'taster-progress', path: '/valu/assessment/api/taster-progress', method: 'POST', body: { action: 'load', resume_token: 'invalid' } },
+            { name: 'valu-handoff', path: '/api/valu-handoff', method: 'GET' },
+            { name: 'link-taster', path: '/api/link-taster', method: 'POST', body: { taster_id: '00000000-0000-0000-0000-000000000000' } },
+          ]
+          const results = []
+          for (const check of checks) {
+            try {
+              const response = await fetch(check.path, {
+                method: check.method,
+                headers: check.body ? { 'content-type': 'application/json' } : undefined,
+                body: check.body ? JSON.stringify(check.body) : undefined,
+                signal: AbortSignal.timeout(8000),
+              })
+              results.push({ name: check.name, status: response.status, body: (await response.text()).slice(0, 200) })
+            } catch (error) {
+              results.push({ name: check.name, error: error.message })
+            }
+          }
+          return results
+        })
+        for (const probe of apiProbes) {
+          if (probe.status !== 401) {
+            report.failures.push(`homepage/desktop: ${probe.name} expected HTTP 401, got ${probe.status ?? probe.error}`)
+          }
+        }
+      }
 
       const filename = `${route.name}-${viewport.name}.png`
       await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
@@ -123,21 +204,25 @@ try {
         consoleErrors,
         forbiddenRequests,
         screenshot: filename,
+        navigationChecks,
+        apiProbes,
       }
       report.results.push(result)
 
       if (navigationError) report.failures.push(`${route.name}/${viewport.name}: navigation failed: ${navigationError}`)
       if (status === null || status >= 400) report.failures.push(`${route.name}/${viewport.name}: HTTP ${status}`)
       if (state.horizontalOverflow) report.failures.push(`${route.name}/${viewport.name}: horizontal overflow`)
+      if (state.hiddenRevealCount > 0) report.failures.push(`${route.name}/${viewport.name}: ${state.hiddenRevealCount} reveal sections remain hidden after scroll review`)
+      if (route.name === 'homepage' && ['fixed', 'sticky'].includes(state.navPosition)) report.failures.push(`${route.name}/${viewport.name}: navigation is fixed or sticky`)
+      if (route.name === 'homepage' && Number.parseFloat(state.navBorderRadius) < 30) report.failures.push(`${route.name}/${viewport.name}: navigation is not rendered as an oval capsule`)
       if (!state.robots.toLowerCase().includes('noindex')) report.failures.push(`${route.name}/${viewport.name}: staging page is missing noindex robots metadata`)
       if (route.site && !route.name.startsWith('assessment-') && !state.banner.includes('STAGING PREVIEW')) report.failures.push(`${route.name}/${viewport.name}: staging banner is missing`)
       if (state.analyticsLoaded) report.failures.push(`${route.name}/${viewport.name}: production analytics loaded in staging`)
       if (forbiddenRequests.length) report.failures.push(`${route.name}/${viewport.name}: production Supabase/assessment request detected`)
       if (state.literalNewlineVisible && route.name.startsWith('assessment-')) report.failures.push(`${route.name}/${viewport.name}: literal \\n text is visible in the assessment UI`)
-      const productionAssessmentLinks = route.name.startsWith('assessment-') ? state.assessmentSiteLinks.filter(href => {
+      if (route.name.startsWith('assessment-') && state.assessmentSiteLinks.some(href => {
         try { return ['valoriainstitute.com', 'www.valoriainstitute.com'].includes(new URL(href).hostname) } catch { return false }
-      }) : []
-      if (productionAssessmentLinks.length) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site: ${productionAssessmentLinks.join(', ')}`)
+      })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
 
