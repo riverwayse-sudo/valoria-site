@@ -131,6 +131,8 @@ describe('VALU presentation consistency', () => {
     expect(smoke).toContain("'vi-scroll-track'")
     expect(browserAudit).toContain('profileSliderPresent')
     expect(browserAudit).toContain('retiredPublicCopyPresent')
+    expect(browserAudit).toContain('window.scrollTo(0, y)')
+    expect(browserAudit).toContain('hiddenRevealElements')
   })
 
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
