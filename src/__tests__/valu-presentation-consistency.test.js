@@ -73,6 +73,18 @@ describe('VALU presentation consistency', () => {
     expect(homepageRail).not.toContain('relevant buyers understand your capabilities');
   })
 
+  test('production smoke enforces approved homepage language and rejects retired public claims', () => {
+    const smoke = read('scripts/production-smoke.mjs')
+    expect(smoke).toContain("'Capability should decide'")
+    expect(smoke).toContain("'Valoria sets the standard.'")
+    expect(smoke).toContain("'START THE VALU INDEX TASTER'")
+    expect(smoke).toContain("'WANT TO BE DISCOVERED'")
+    expect(smoke).toContain("'Become discoverable'")
+    expect(smoke).toContain("'55 questions'")
+    expect(smoke).toContain("'84 / 100'")
+    expect(smoke).toContain("'1 of 58'")
+  })
+
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
     const hero = read('src/components/HeroSlider.jsx')
     expect(hero).toContain('START THE VALU INDEX TASTER')
