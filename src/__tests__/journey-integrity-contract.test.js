@@ -530,6 +530,8 @@ describe('journey integrity contract', () => {
     expect(bootstrap).toContain("p_signup_key: user.id")
     expect(bootstrap).toContain('stableResumeToken')
     expect(bootstrap).toContain('client cannot create unlimited parallel Taster records')
+    expect(bootstrap).toContain("from('lead_captures')")
+    expect(bootstrap).toContain('Your saved Taster session has expired')
     expect(callback).toContain("params.get('valu_taster') === '1'")
     expect(callback).toContain("router.replace('/valu/assessment/')")
     expect(publicSignup).toContain('href="/valu/register/"')
