@@ -74,7 +74,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base="https://valoria-staging-site.riverwayse.workers.dev"
+          base="https://valoria-redesign-staging-site.riverwayse.workers.dev"
           routes=(
             /
             /valu
