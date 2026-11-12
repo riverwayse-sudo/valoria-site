@@ -544,14 +544,21 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(api).toContain("status: 503")
     expect(api).toContain("status: 429")
 
-    const migration = read('supabase/migrations/20261112123000_restrict_direct_client_enquiry_inserts.sql')
-    expect(migration).toContain('DROP POLICY IF EXISTS buyer_or_guest_insert_enquiry')
-    expect(migration).toContain('REVOKE INSERT ON TABLE public.enquiries FROM anon, authenticated')
-    expect(migration).toContain('GRANT INSERT ON TABLE public.enquiries TO service_role')
-    const opportunityMigration = read('supabase/migrations/20261112123100_restrict_direct_opportunity_submission_inserts.sql')
-    expect(opportunityMigration).toContain('DROP POLICY IF EXISTS opportunity_submission_insert')
-    expect(opportunityMigration).toContain('REVOKE INSERT ON TABLE public.opportunity_submissions FROM anon, authenticated')
-    expect(opportunityMigration).toContain('GRANT INSERT ON TABLE public.opportunity_submissions TO service_role')
+    for (const version of ['20261112130015', '20261112130017']) {
+      const migration = read(`supabase/migrations/${version}_restrict_direct_client_enquiry_inserts.sql`)
+      expect(migration).toContain('DROP POLICY IF EXISTS buyer_or_guest_insert_enquiry')
+      expect(migration).toContain('REVOKE INSERT ON TABLE public.enquiries FROM anon, authenticated')
+    }
+    for (const version of ['20261112130110', '20261112130112']) {
+      const migration = read(`supabase/migrations/${version}_grant_service_role_enquiry_insert.sql`)
+      expect(migration).toContain('GRANT INSERT ON TABLE public.enquiries TO service_role')
+    }
+    for (const version of ['20261112130300', '20261112130302']) {
+      const migration = read(`supabase/migrations/${version}_restrict_direct_opportunity_submission_inserts.sql`)
+      expect(migration).toContain('DROP POLICY IF EXISTS opportunity_submission_insert')
+      expect(migration).toContain('REVOKE INSERT ON TABLE public.opportunity_submissions FROM anon, authenticated')
+      expect(migration).toContain('GRANT INSERT ON TABLE public.opportunity_submissions TO service_role')
+    }
   })
 
   test('consented public Full profiles remain directly accessible while incomplete profiles stay noindex', () => {
