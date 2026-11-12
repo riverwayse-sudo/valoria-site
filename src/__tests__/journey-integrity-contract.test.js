@@ -196,7 +196,7 @@ describe('journey integrity contract', () => {
     expect(origin).toContain("env.CF_WORKERS_PREVIEW === '1'")
     expect(origin).toContain('VALU_PREVIEW_ASSESSMENT_ORIGIN')
     expect(origin).toContain("url.hostname === 'assessment.valoriainstitute.com'")
-    expect(signup).toContain('href="/valu/assessment/"')
+    expect(signup).toContain('href="/valu/register/"')
     expect(signup).not.toContain('href="https://assessment.valoriainstitute.com/"')
   })
 
@@ -467,7 +467,7 @@ describe('journey integrity contract', () => {
     expect(report).toContain(' points</span>')
   })
 
-  test('public VALU explanation follows registration, taster, account creation and Full assessment', () => {
+  test('public VALU explanation follows account confirmation, separate Taster and Full assessment', () => {
     const start = read('src/app/valu/start/page.jsx')
     const signup = read('src/app/professional-signup/page.jsx')
     expect(start).toContain('Create your Valoria account and confirm your email before beginning the Taster')
@@ -562,6 +562,24 @@ describe('journey integrity contract', () => {
     expect(layout).toContain('staging-site-banner')
     expect(layout).toContain('robots:IS_STAGING?{index:false,follow:false')
     expect(layout).toContain('const GA_MEASUREMENT_ID = IS_STAGING ? null')
+  })
+
+
+  test('public VALU entry points route through account-first registration while preserving signed-in handoff', () => {
+    const navigation = read('src/config/navigation.js')
+    const nav = read('src/components/Nav.jsx')
+    const home = read('src/app/page.jsx')
+    const valu = read('src/app/valu/page.jsx')
+    const hero = read('src/components/HeroSlider.jsx')
+    const footer = read('src/components/Footer.jsx')
+    expect(navigation).toContain("assessmentUrl: '/valu/register/'")
+    expect(nav).toContain("href = '/valu/register/'")
+    expect(home).toContain('href="/valu/register/"')
+    expect(valu).toContain('Create and confirm your Valoria account first')
+    expect(hero).toContain('href="/valu/register/"')
+    expect(footer).toContain('<AssessmentStartLink href="/valu/register/">')
+    expect(nav).toContain("fetch('/api/valu-handoff'")
+    expect(nav).toContain('window.location.assign(data.url)')
   })
 
 
