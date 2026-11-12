@@ -112,6 +112,18 @@ describe('VALU presentation consistency', () => {
     expect(workflow).toContain('node scripts/production-smoke.mjs')
   })
 
+  test('signup handoff uses compact, plain-language account and confirmation screens', () => {
+    const page = read('src/app/professional-signup/page.jsx')
+    const progress = read('src/components/VALUJourneyProgress.jsx')
+    expect(page).toContain('Check your inbox.')
+    expect(page).toContain('Create your account.')
+    expect(page).toContain('Use the email linked to your taster.')
+    expect(page).not.toContain('One quick confirmation.')
+    expect(page).not.toContain('TASTER STATUS')
+    expect(progress).toContain('repeat(4,minmax(0,1fr))')
+    expect(progress).not.toContain('YOUR PROGRESS IS PRESERVED')
+  })
+
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
     const hero = read('src/components/HeroSlider.jsx')
     expect(hero).toContain('START THE VALU INDEX TASTER')
