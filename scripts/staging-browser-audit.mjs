@@ -16,6 +16,7 @@ const routes = [
   { name: 'valu', url: `${SITE}/valu`, site: true },
   { name: 'valu-start', url: `${SITE}/valu/start`, site: true },
   { name: 'valu-register', url: `${SITE}/valu/register`, site: true },
+  { name: 'professional-signup-account-first', url: `${SITE}/professional-signup/?taster_id=55555555-5555-4555-8555-555555555555&name=Staging%20Participant&role=Staging%20QA&account_first=1`, site: true },
   { name: 'prime', url: `${SITE}/prime`, site: true },
   { name: 'about', url: `${SITE}/about-us`, site: true },
   { name: 'dashboard-preview', url: `${SITE}/dashboard?preview=1`, site: true },
@@ -86,6 +87,8 @@ try {
           privacyAcknowledgement: [...document.querySelectorAll('label')].some(label => /Privacy Notice/i.test(label.innerText)),
           heading: document.querySelector('h1')?.innerText || '',
         }
+        const signInLink = [...document.querySelectorAll('a')].find(a => /SIGN IN TO CONNECT YOUR TASTER/i.test(a.innerText))?.href || ''
+        const accountCreationAction = /CREATE ACCOUNT|ACCOUNT CREATION/i.test(document.body.innerText)
         const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
         const visibleInternalPattern = /(WANT TO BE DISCOVERED|Become discoverable|buyer access|sourcing access|BASIC LISTING|FULL LISTING|\\b1 of 58\\b|\\b1 of 9\\b|54 scored questions|four validity checks|nine[- ]questions?|58[- ]questions?|55[- ]questions?|84 \/ 100|\\b[0-9]+\\s*\/\\s*100\\b)/gi
         const visibleInternalTerms = [...document.body.innerText.matchAll(visibleInternalPattern)].map(match => match[0])
@@ -121,6 +124,8 @@ try {
           assessmentSiteLinks: [navBrand, navDashboard].filter(Boolean),
           tasterEntryLinks,
           registrationForm,
+          signInLink,
+          accountCreationAction,
         }
       })
 
@@ -161,6 +166,10 @@ try {
       if (route.name === 'valu-register' &&
           (!state.registrationForm.email || !state.registrationForm.password || !state.registrationForm.privacyAcknowledgement)) {
         report.failures.push(route.name + '/' + viewport.name + ': account registration is missing email, password or privacy acknowledgement controls')
+      }
+      if (route.name === 'professional-signup-account-first' &&
+          (!state.signInLink.includes('/login?pending_taster_id=') || state.accountCreationAction)) {
+        report.failures.push(route.name + '/' + viewport.name + ': completed account-first Taster must offer sign-in, never duplicate account creation')
       }
 
       await context.close()
