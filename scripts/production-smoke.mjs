@@ -54,7 +54,7 @@ for (const marker of retiredHomepageMarkers) {
   console.log(`${ok ? 'PASS' : 'FAIL'} retired homepage marker absent: ${marker}`)
   if (!ok) failed++
 }
-if (/\\b\\d+\\s*\\/\\s*100\\b/.test(home)) {
+if (/\b\d+\s*\/\s*100\b/.test(home)) {
   console.log('FAIL homepage contains a percentage-style score')
   failed++
 }
