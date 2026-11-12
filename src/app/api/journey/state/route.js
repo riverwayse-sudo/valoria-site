@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
 const { deriveJourneyState } = require('@/lib/journey-state')
+import { getValuTier } from '@/lib/brand'
 
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SB_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -71,7 +72,7 @@ export async function GET(request) {
 
   const results = await Promise.all([
     admin.from('professional_profiles')
-      .select('*')
+      .select('id,display_name,current_job_title,headline,bio,active_tracks,industry,username,phone,location,languages,profile_complete,cv_url,valu_index,assessment_completed_at,assessment_expires_at')
       .eq('id', user.id)
       .maybeSingle(),
     admin.from('professional_capabilities')
@@ -80,7 +81,7 @@ export async function GET(request) {
       .eq('is_active', true),
     currentAssessmentId
       ? admin.from('valu_assessments')
-          .select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,designation,created_at,expires_at,user_id')
+          .select('id,completed_at,report_status,ai_report,report_email_sent_at,total_score,created_at,expires_at,user_id')
           .eq('id', currentAssessmentId)
           .maybeSingle()
       : Promise.resolve({ data: null, error: null }),
@@ -140,6 +141,7 @@ export async function GET(request) {
     documents: documentsRes.data || [],
     opportunity: opportunityRes.data || null,
   })
+  state.assessment.designation = getValuTier(state.assessment.score, 'full')?.name || null
 
   return NextResponse.json({
     authenticated: true,
