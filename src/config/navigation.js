@@ -1,5 +1,3 @@
-import { BRAND } from '@/lib/brand'
-
 export const NAVIGATION = {
   assessmentUrl: '/valu/register/',
   primary: [
