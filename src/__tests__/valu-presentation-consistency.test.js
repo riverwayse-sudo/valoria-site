@@ -164,4 +164,27 @@ describe('VALU presentation consistency', () => {
     expect(prototype).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
     expect(prototype).not.toMatch(/9 opening questions|remaining 49 questions|58 in total/i)
   })
+  test('avatar upload types and size are restricted in the client and storage bucket', () => {
+    const helper = read('src/lib/avatar-upload.js')
+    expect(helper).toContain("'image/jpeg': 'jpg'")
+    expect(helper).toContain("'image/png': 'png'")
+    expect(helper).toContain("'image/webp': 'webp'")
+    expect(helper).toContain('5 * 1024 * 1024')
+    expect(helper).toContain('file.size > AVATAR_MAX_BYTES')
+
+    const migration = read('supabase/migrations/20261112121356_restrict_avatar_upload_size_and_mime_types.sql')
+    expect(migration).toContain('file_size_limit = 5242880')
+    expect(migration).toContain("ARRAY['image/jpeg', 'image/png', 'image/webp']")
+    expect(migration).toContain("WHERE id = 'avatars' AND public = true")
+    expect(migration).not.toMatch(/public\s*=/i)
+
+    for (const path of ['src/app/profile/edit/page.jsx', 'src/app/profile/setup/page.jsx']) {
+      const page = read(path)
+      expect(page).toContain('getAvatarExtension(file)')
+      expect(page).toContain('contentType: file.type')
+      expect(page).not.toContain("file.name.split('.').pop()")
+    }
+  })
+
+
 })
