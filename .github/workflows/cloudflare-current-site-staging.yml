@@ -114,7 +114,8 @@ jobs:
           curl -fsS "$base/" -o /tmp/valoria-home.html
           grep -q 'START THE VALU INDEX TASTER' /tmp/valoria-home.html
           grep -q 'What brings you' /tmp/valoria-home.html
-          if grep -Eiq '(buyer access|sourcing access|BASIC LISTING|FULL LISTING|1 of 58|1 of 9|54 scored questions|four validity checks|nine questions|58 questions)' /tmp/valoria-home.html; then
+          grep -q 'Build a stronger professional presence' /tmp/valoria-home.html
+          if grep -Eiq '(WANT TO BE DISCOVERED|Build a professional profile that helps relevant buyers|buyer access|sourcing access|BASIC LISTING|FULL LISTING|1 of 58|1 of 9|54 scored questions|four validity checks|nine questions|58 questions)' /tmp/valoria-home.html; then
             echo "Homepage exposes internal access or assessment mechanics"
             exit 1
           fi
@@ -124,7 +125,7 @@ jobs:
 
           status="$(curl -sS -o /tmp/valu-handoff-noauth -w '%{http_code}' "$base/api/valu-handoff")"
           [[ "$status" == "401" ]] || { echo "Unauthenticated VALU handoff returned HTTP $status"; cat /tmp/valu-handoff-noauth || true; exit 1; }
-          status="$(curl -sS -o /tmp/valu-link-taster-noauth -w '%{http_code}' -X POST "$base/api/link-taster" -H 'Content-Type: application/json' -d '{}')"
+          status="$(curl -sS -o /tmp/valu-link-taster-noauth -w '%{http_code}' -X POST "$base/api/link-taster" -H 'Content-Type: application/json' -d '{"taster_id":"00000000-0000-0000-0000-000000000000"}' || true)"
           [[ "$status" == "401" ]] || { echo "Unauthenticated taster link returned HTTP $status"; cat /tmp/valu-link-taster-noauth || true; exit 1; }
 
       - name: Install Playwright without changing project dependencies
