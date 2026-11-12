@@ -215,6 +215,9 @@ try {
         try { return ['valoriainstitute.com', 'www.valoriainstitute.com'].includes(new URL(href).hostname) } catch { return false }
       })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
+      if (consoleErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser console errors detected`)
+      if (accessibility.violations.length) report.failures.push(`${route.name}/${viewport.name}: ${accessibility.violations.length} WCAG accessibility violation(s)`)
+      if (state.overflowingCards > 0) report.failures.push(`${route.name}/${viewport.name}: ${state.overflowingCards} clipped/overflowing cards detected`)
       if (route.name === 'homepage' && !state.profileShowcasePresent) report.failures.push(`${route.name}/${viewport.name}: profile showcase and its explicit empty state are both missing`)
       if (route.name === 'homepage' && state.retiredPublicCopyPresent) report.failures.push(`${route.name}/${viewport.name}: retired discoverability copy is present on the homepage`)
       if (state.hiddenRevealElements > 0) report.failures.push(`${route.name}/${viewport.name}: ${state.hiddenRevealElements} reveal sections remained hidden after scrolling`)
