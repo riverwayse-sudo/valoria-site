@@ -4,3 +4,4 @@
 -- protections and are not used by either application repository.
 DROP POLICY IF EXISTS buyer_or_guest_insert_enquiry ON public.enquiries;
 REVOKE INSERT ON TABLE public.enquiries FROM anon, authenticated;
+GRANT INSERT ON TABLE public.enquiries TO service_role;
