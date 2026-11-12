@@ -3,6 +3,7 @@ import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
 import HomepageEvents from '@/components/HomepageEvents'
+import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import HomepageEventPopup from '@/components/HomepageEventPopup'
 import { BRAND } from '@/lib/brand'
 import './home.css'
@@ -53,6 +54,8 @@ export default function HomePage() {
           </Reveal>
         </div>
       </section>
+
+      <LiveProfilesScroll />
 
       <section className="valu-section valu-conversion" id="valu" aria-labelledby="home-valu-title">
         <div className="container valu-conversion-shell">
