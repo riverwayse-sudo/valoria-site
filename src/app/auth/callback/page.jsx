@@ -48,9 +48,20 @@ function AuthCallbackFlow() {
           if (user.user_metadata?.valu_taster_signup !== true) {
             throw new Error('Your professional Taster registration could not be verified. Please sign in and complete your details.')
           }
-          setMessage('Email confirmed. Your Valoria account is ready. Opening your VALU Index Taster…')
-          await new Promise(resolve => setTimeout(resolve, 500))
-          if (!cancelled) router.replace('/valu/assessment/')
+          setMessage('Email confirmed. Your Valoria account is ready. Securely opening your VALU Index Taster…')
+          const handoffResponse = await fetch('/api/valu-taster/start', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          })
+          const handoff = await handoffResponse.json().catch(() => ({}))
+          if (!handoffResponse.ok || !handoff.url) {
+            throw new Error(handoff.error || 'We could not securely open your Taster. Please return to your Valoria account and try again.')
+          }
+          const destination = new URL(handoff.url, window.location.origin)
+          if (destination.origin !== window.location.origin || !destination.pathname.startsWith('/valu/assessment/')) {
+            throw new Error('The Taster handoff destination could not be verified.')
+          }
+          if (!cancelled) window.location.replace(destination.toString())
           return
         }
 
