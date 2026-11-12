@@ -16,7 +16,6 @@ const routes = [
   { name: 'valu', url: `${SITE}/valu`, site: true },
   { name: 'valu-start', url: `${SITE}/valu/start`, site: true },
   { name: 'taster-recovery', url: `${SITE}/professional-signup/recover`, site: true },
-  { name: 'taster-recovery', url: `${SITE}/professional-signup/recover`, site: true },
   { name: 'prime', url: `${SITE}/prime`, site: true },
   { name: 'about', url: `${SITE}/about-us`, site: true },
   { name: 'dashboard-preview', url: `${SITE}/dashboard?preview=1`, site: true },
@@ -80,6 +79,8 @@ try {
         const navDashboard = [...document.querySelectorAll('a')].find(a => /return to dashboard/i.test(a.innerText))?.href || ''
         const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
         const track = document.querySelector('.vi-scroll-track')
+        const profileSliderPresent = Boolean(document.querySelector('.vi-scroll-track, #live-profiles, [data-profile-slider]'))
+        const retiredPublicCopyPresent = /WANT TO BE DISCOVERED|Become discoverable|relevant buyers understand your capabilities/i.test(document.body.innerText)
         const panel = document.querySelector('.hero-event-panel')
         const overflowingCards = [...document.querySelectorAll('[class*="card"]')]
           .filter(el => {
@@ -94,6 +95,8 @@ try {
           viewportWidth: window.innerWidth,
           documentWidth: document.documentElement.scrollWidth,
           horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 2,
+          profileSliderPresent,
+          retiredPublicCopyPresent,
           scrollAnimation: track ? {
             name: getComputedStyle(track).animationName,
             playState: getComputedStyle(track).animationPlayState,
@@ -139,6 +142,8 @@ try {
         try { return ['valoriainstitute.com', 'www.valoriainstitute.com'].includes(new URL(href).hostname) } catch { return false }
       })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
+      if (route.name === 'homepage' && state.profileSliderPresent) report.failures.push(`${route.name}/${viewport.name}: profile slider is present on the homepage`)
+      if (route.name === 'homepage' && state.retiredPublicCopyPresent) report.failures.push(`${route.name}/${viewport.name}: retired discoverability copy is present on the homepage`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
 
       await context.close()
