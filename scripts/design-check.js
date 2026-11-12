@@ -62,8 +62,8 @@ const page = existing.find((x) => x.file === 'src/app/page.jsx')?.text || '';
 for (const section of ['home-pathways', 'valu-conversion']) {
   if (!page.includes(section)) add(`src/app/page.jsx: required homepage composition missing ${section}`);
 }
-if (page.includes('LiveProfilesScroll')) {
-  add('src/app/page.jsx: homepage must not render the professional profile image slider');
+if (!page.includes('LiveProfilesScroll')) {
+  add('src/app/page.jsx: the professional profile image slider must be present on the homepage');
 }
 if (!page.includes("import './home.css'")) add('src/app/page.jsx: canonical homepage stylesheet is not loaded');
 
