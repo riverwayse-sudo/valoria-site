@@ -115,7 +115,7 @@ describe('main website left-alignment contract', () => {
 
   test('primary navigation is a centered non-sticky pill and footer content stays on the public-page grid', () => {
     const components = read('src/styles/component-system.css')
-    const navRule = components.match(/nav\\.vi-nav\\s*\\{([^}]*)\\}/)?.[1] || ''
+    const navRule = components.match(/nav\.vi-nav\s*\{([^}]*)\}/)?.[1] || ''
     expect(navRule).toContain('position:absolute')
     expect(navRule).toContain('left:50%')
     expect(navRule).toContain('border-radius:999px')
