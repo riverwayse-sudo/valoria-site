@@ -77,16 +77,30 @@ try {
 
       // Trigger viewport-based reveal animations before capturing a full-page screenshot.
       // Without this pass, off-screen sections remain intentionally hidden in the artifact.
-      await page.evaluate(async () => {
-        const step = Math.max(320, Math.floor(window.innerHeight * 0.65))
-        const pageHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight)
-        for (let y = 0; y < pageHeight; y += step) {
-          window.scrollTo(0, y)
-          await new Promise(resolve => setTimeout(resolve, 120))
+      const revealPage = async () => {
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+          try {
+            await page.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => {})
+            await page.evaluate(async () => {
+              const step = Math.max(320, Math.floor(window.innerHeight * 0.65))
+              const pageHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight)
+              for (let y = 0; y < pageHeight; y += step) {
+                window.scrollTo(0, y)
+                await new Promise(resolve => setTimeout(resolve, 120))
+              }
+              window.scrollTo(0, 0)
+              await new Promise(resolve => setTimeout(resolve, 350))
+            })
+            return
+          } catch (error) {
+            const navigationRace = /Execution context was destroyed|most likely because of a navigation/.test(error.message || '')
+            if (!navigationRace || attempt === 2) throw error
+            await page.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => {})
+            await page.waitForTimeout(500)
+          }
         }
-        window.scrollTo(0, 0)
-        await new Promise(resolve => setTimeout(resolve, 350))
-      })
+      }
+      await revealPage()
 
       await page.addScriptTag({ content: axe.source })
       const accessibility = await page.evaluate(async () => {
