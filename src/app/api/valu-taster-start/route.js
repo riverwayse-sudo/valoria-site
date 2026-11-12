@@ -19,7 +19,7 @@ export async function POST(request) {
   if (!url || !anon || !service) return json({ error: 'Authentication service is not configured.' }, 503)
 
   const authorization = request.headers.get('authorization') || ''
-  const accessToken = authorization.replace(/^Bearer\\s+/i, '').trim()
+  const accessToken = authorization.replace(/^Bearer\s+/i, '').trim()
   if (!accessToken) return json({ error: 'Sign in to your confirmed Valoria account first.' }, 401)
 
   const verifier = createClient(url, anon, { auth: { persistSession: false, autoRefreshToken: false } })
