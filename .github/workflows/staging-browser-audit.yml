@@ -1,14 +1,11 @@
 name: Staging browser screenshots and UX audit
 
 on:
+  # Full browser audits run after the isolated staging deploy; manual dispatch remains available.
   workflow_dispatch:
 
 permissions:
   contents: read
-
-concurrency:
-  group: valoria-site-staging-environment
-  cancel-in-progress: false
 
 jobs:
   staging-browser-audit:
@@ -17,19 +14,21 @@ jobs:
     steps:
       - name: Check out audit script
         uses: actions/checkout@v4
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
+
       - name: Install Playwright without changing project dependencies
         run: npm install --no-save --package-lock=false playwright@1.56.1
+
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
+
       - name: Capture staging screenshots and verify UX safeguards
         run: node scripts/staging-browser-audit.mjs
-        env:
-          STAGING_SITE_URL: https://valoria-staging-site.riverwayse.workers.dev
-          STAGING_ASSESSMENT_URL: https://valoria-staging-assessment.riverwayse.workers.dev
+
       - name: Upload screenshots and audit report
         if: always()
         uses: actions/upload-artifact@v4
