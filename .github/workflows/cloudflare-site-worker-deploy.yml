@@ -1,4 +1,4 @@
-# Re-run the Cloudflare production build for the merged marketplace card update (#310).
+# Production deployment is explicitly authorized and content-smoke-tested.
 name: Deploy Valoria site to Cloudflare production
 
 on:
@@ -11,8 +11,14 @@ on:
       - "wrangler.jsonc"
       - "package.json"
       - "package-lock.json"
+      - "scripts/production-smoke.mjs"
       - ".github/workflows/cloudflare-site-worker-deploy.yml"
   workflow_dispatch:
+    inputs:
+      confirm_production:
+        description: "Type DEPLOY to authorize the production site release after staging acceptance."
+        required: true
+        type: string
 
 permissions:
   contents: read
