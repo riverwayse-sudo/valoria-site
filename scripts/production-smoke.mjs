@@ -4,6 +4,7 @@ const checks = [
   ['assessment', '/test/assessment', 200],
   ['opportunities page', '/opportunities', 200],
   ['marketplace', '/marketplace', 200],
+  ['VALU Index Taster recovery', '/professional-signup/recover', 200],
   ['employer dashboard', '/employer/dashboard', 200],
   ['opportunities API', '/api/opportunities', 200],
   ['journey state unauthenticated', '/api/journey/state', 200],
