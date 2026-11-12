@@ -413,7 +413,7 @@ describe('journey integrity contract', () => {
     expect(nav).toContain('export function AssessmentStartLink')
     expect(nav).toContain("fetch('/api/valu-handoff'")
     expect(nav).toContain('window.location.assign(data.url)')
-    expect(nav).toContain("const linkHref = dashboardOnly ? 'https://assessment.valoriainstitute.com/remaining' : href")
+    expect(nav).toContain("const linkHref = dashboardOnly ? 'https://assessment.valoriainstitute.com/remaining' : '/professional-signup?journey=valu_taster'")
     expect(nav).toContain('<a href={linkHref}')
     expect(nav).not.toContain("window.location.assign('/assessment/bridge')")
     expect(nav).not.toContain('pending_taster_id')
@@ -446,7 +446,7 @@ describe('journey integrity contract', () => {
     const nav = read('src/components/Nav.jsx')
     expect(nav).toContain("method: 'GET'")
     expect(nav).toContain('if (!access.can_continue)')
-    expect(nav).toContain('window.location.assign(href)')
+    expect(nav).toContain("window.location.assign('/valu/taster-start')")
     expect(nav.indexOf("method: 'GET'")).toBeLessThan(nav.indexOf("method: 'POST'"))
   })
 
