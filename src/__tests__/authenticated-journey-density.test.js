@@ -24,8 +24,8 @@ describe('authenticated journey visual density', () => {
 
   test('account confirmation removes repeated handoff explanation', () => {
     const signup = read('src/app/professional-signup/page.jsx')
-    expect(signup).toContain('Confirm your email to sign in and return to your dashboard.')
-    expect(signup).toContain('Your taster is saved; your separate full assessment will be ready there.')
+    expect(signup).toContain('Confirm your email to return to your dashboard.')
+    expect(signup).toContain('Your taster is saved. Confirm your email to continue.')
     expect(signup).not.toContain('returned to your dashboard automatically')
   })
 
