@@ -133,6 +133,8 @@ describe('VALU presentation consistency', () => {
     expect(browserAudit).toContain('retiredPublicCopyPresent')
     expect(browserAudit).toContain('window.scrollTo(0, y)')
     expect(browserAudit).toContain('hiddenRevealElements')
+    expect(browserAudit).toContain('dashboardAuthRedirect')
+    expect(browserAudit).toContain("state.dashboardAuthRedirect?.path !== '/login'")
   })
 
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
