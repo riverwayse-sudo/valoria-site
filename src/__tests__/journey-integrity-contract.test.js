@@ -574,6 +574,8 @@ describe('journey integrity contract', () => {
     expect(registry).toContain("isBasic ? 'PROFILE' : 'VALU INDEX'")
     expect(registry).not.toContain('BASIC LISTING')
     expect(registry).not.toContain('FULL LISTING')
+    expect(registry).not.toContain('WANT TO BE DISCOVERED')
+    expect(registry).toContain('YOUR PROFESSIONAL PRESENCE')
     expect(homeCss).toContain('width: min(350px, 82vw)')
     expect(homeCss).toContain('min-height: 142px')
     expect(homeCss).toContain('grid-template-columns: 40px minmax(0,1fr) 54px 12px')
