@@ -113,9 +113,13 @@ describe('main website left-alignment contract', () => {
   })
 
 
-  test('fixed navigation and footer container share the public-page content grid', () => {
+  test('primary navigation is a centered non-sticky pill and footer content stays on the public-page grid', () => {
     const components = read('src/styles/component-system.css')
-    expect(components).toContain('padding-inline:max(var(--pad),calc((100vw - var(--vi-content,1160px))/2))')
+    const navRule = components.match(/nav\\.vi-nav\\s*\\{([^}]*)\\}/)?.[1] || ''
+    expect(navRule).toContain('position:absolute')
+    expect(navRule).toContain('left:50%')
+    expect(navRule).toContain('border-radius:999px')
+    expect(navRule).not.toContain('position:fixed')
     expect(components).toContain('.vi-footer > .container{')
     expect(components).toContain('max-width:none;')
     expect(components).toContain('.uf-bottom{align-items:flex-start;text-align:left}')
