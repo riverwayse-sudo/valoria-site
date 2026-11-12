@@ -543,3 +543,9 @@
 .vs-journey-grid article > span { color: #765719 !important; }
 .prime-subtitle,
 .about-timeline-label { color: #D4C9A8 !important; }
+
+/* Final WCAG AA corrections from the desktop/mobile staging audit. */
+.vs-problems b,
+.vs-journey-grid span,
+.vs-next-list b { color: #765719 !important; }
+.vs-result-copy li span { color: rgba(247,244,238,.72) !important; }
