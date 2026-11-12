@@ -5,7 +5,6 @@ import HeroSlider from '@/components/HeroSlider'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import HomepageEvents from '@/components/HomepageEvents'
 import HomepageEventPopup from '@/components/HomepageEventPopup'
-import { BRAND } from '@/lib/brand'
 import './home.css'
 
 export const dynamic = 'force-dynamic'
