@@ -95,7 +95,7 @@ describe('VALU presentation consistency', () => {
 
   test('primary navigation is a centered, non-sticky pill', () => {
     const styles = read('src/styles/component-system.css')
-    const navRule = styles.match(/nav\\.vi-nav\\s*\\{([^}]*)\\}/)?.[1] || ''
+    const navRule = styles.match(/nav\.vi-nav\s*\{([^}]*)\}/)?.[1] || ''
     expect(navRule).toContain('position:absolute')
     expect(navRule).toContain('left:50%')
     expect(navRule).toContain('border-radius:999px')
