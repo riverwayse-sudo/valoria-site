@@ -1,0 +1,11 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Supabase publishable keys are intentionally public client configuration, not service-role credentials."
+paths = [
+  '''^\.github/workflows/cloudflare-current-site-staging\.yml$''',
+]
+regexes = [
+  '''sb_publishable_[A-Za-z0-9_-]+''',
+]
