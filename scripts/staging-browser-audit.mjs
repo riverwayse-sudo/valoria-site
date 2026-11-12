@@ -96,6 +96,9 @@ try {
         const retiredPublicCopyPresent = /WANT TO BE DISCOVERED|Become discoverable|relevant buyers understand your capabilities/i.test(document.body.innerText)
         const panel = document.querySelector('.hero-event-panel')
         const hiddenRevealElements = document.querySelectorAll('.reveal:not(.visible)').length
+        const dashboardAuthRedirect = route.name === 'dashboard-preview'
+          ? { path: window.location.pathname, returnTo: new URL(window.location.href).searchParams.get('returnTo') }
+          : null
         const overflowingCards = [...document.querySelectorAll('[class*="card"]')]
           .filter(el => {
             const style = getComputedStyle(el)
@@ -112,6 +115,7 @@ try {
           profileSliderPresent,
           retiredPublicCopyPresent,
           hiddenRevealElements,
+          dashboardAuthRedirect,
           scrollAnimation: track ? {
             name: getComputedStyle(track).animationName,
             playState: getComputedStyle(track).animationPlayState,
@@ -160,6 +164,7 @@ try {
       if (route.name === 'homepage' && state.profileSliderPresent) report.failures.push(`${route.name}/${viewport.name}: profile slider is present on the homepage`)
       if (route.name === 'homepage' && state.retiredPublicCopyPresent) report.failures.push(`${route.name}/${viewport.name}: retired discoverability copy is present on the homepage`)
       if (state.hiddenRevealElements > 0) report.failures.push(`${route.name}/${viewport.name}: ${state.hiddenRevealElements} reveal sections remained hidden after scrolling`)
+      if (route.name === 'dashboard-preview' && (state.dashboardAuthRedirect?.path !== '/login' || state.dashboardAuthRedirect?.returnTo !== '/dashboard')) report.failures.push(`${route.name}/${viewport.name}: unauthenticated dashboard did not return to sign-in with a dashboard destination`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
 
       await context.close()
