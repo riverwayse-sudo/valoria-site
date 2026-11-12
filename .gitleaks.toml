@@ -1,0 +1,10 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Supabase publishable keys with the sb_publishable_ prefix are designed for public client exposure and are not secret credentials."
+regexTarget = "secret"
+regexes = [
+  '''^sb_publishable_[A-Za-z0-9_-]+$''',
+]
+stopwords = ["sb_publishable"]
