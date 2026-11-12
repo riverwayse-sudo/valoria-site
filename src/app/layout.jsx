@@ -11,9 +11,9 @@ import Script from 'next/script'
 import ValuCompletionNudge from '../components/ValuCompletionNudge'
 import MarketingInstrumentation from '../components/MarketingInstrumentation'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'
+const IS_STAGING = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || (process.env.NEXT_PUBLIC_SITE_URL || '').includes('staging.')
+const SITE_URL = IS_STAGING ? (process.env.NEXT_PUBLIC_SITE_URL || 'https://staging.valoriainstitute.com') : 'https://valoriainstitute.com'
 const SITE_NAME = 'Valoria Institute'
-const IS_STAGING = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || SITE_URL.includes('staging.')
 const META_PIXEL_ID = IS_STAGING ? null : process.env.NEXT_PUBLIC_META_PIXEL_ID
 const GA_MEASUREMENT_ID = IS_STAGING ? null : (process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-63M4SRXQKM')
 const DESCRIPTION = "Valoria helps professionals understand their capabilities, build a credible professional presence and discover opportunities aligned with what they can contribute."
