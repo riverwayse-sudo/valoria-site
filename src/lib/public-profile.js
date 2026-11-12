@@ -18,7 +18,6 @@ const PUBLIC_PROFILE_FIELDS = [
   'assessment_completed_at',
   'assessment_expires_at',
   'cluster_scores',
-  'designation',
   'youtube_links',
   'atb_id',
   'availability',
