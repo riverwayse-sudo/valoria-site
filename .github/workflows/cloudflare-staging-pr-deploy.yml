@@ -195,7 +195,7 @@ jobs:
           [[ "$status" == "503" ]] || { echo "Read-only staging opportunity API returned HTTP $status"; cat /tmp/valu-opportunities-disabled || true; exit 1; }
 
       - name: Install Playwright without changing project dependencies
-        run: npm install --no-save --package-lock=false playwright@1.56.1
+        run: npm install --no-save --package-lock=false playwright@1.65.0
       - name: Install Chromium for staging browser acceptance
         run: npx playwright install --with-deps chromium
       - name: Run desktop and mobile staging browser UX audit
