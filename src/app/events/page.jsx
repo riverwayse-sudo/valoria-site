@@ -169,8 +169,3 @@ export default function EventsPage() {
   )
 }
 
-
-/* Editorial gold is reserved for surfaces where it meets WCAG AA contrast. */
-.events-list-kicker { color: #765719 !important; }
-.events-page .event-editorial-copy > span { color: #765719 !important; }
-.events-page p a[target="_blank"] { color: #765719 !important; }
