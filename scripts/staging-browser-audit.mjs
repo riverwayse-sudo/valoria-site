@@ -123,6 +123,8 @@ try {
         const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
         const track = document.querySelector('.vi-scroll-track')
         const profileSliderPresent = Boolean(document.querySelector('.vi-scroll-track, #live-profiles, [data-profile-slider]'))
+        const profileShowcaseEmptyStatePresent = Boolean(document.querySelector('.live-profiles-public-state'))
+        const profileShowcasePresent = profileSliderPresent || profileShowcaseEmptyStatePresent
         const retiredPublicCopyPresent = /WANT TO BE DISCOVERED|Become discoverable|relevant buyers understand your capabilities/i.test(document.body.innerText)
         const panel = document.querySelector('.hero-event-panel')
         const hiddenRevealElements = document.querySelectorAll('.reveal:not(.visible)').length
@@ -143,6 +145,8 @@ try {
           documentWidth: document.documentElement.scrollWidth,
           horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 2,
           profileSliderPresent,
+          profileShowcaseEmptyStatePresent,
+          profileShowcasePresent,
           retiredPublicCopyPresent,
           hiddenRevealElements,
           dashboardAuthRedirect,
@@ -192,7 +196,7 @@ try {
         try { return ['valoriainstitute.com', 'www.valoriainstitute.com'].includes(new URL(href).hostname) } catch { return false }
       })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
-      if (route.name === 'homepage' && !state.profileSliderPresent) report.failures.push(`${route.name}/${viewport.name}: profile slider is missing from the homepage`)
+      if (route.name === 'homepage' && !state.profileShowcasePresent) report.failures.push(`${route.name}/${viewport.name}: profile showcase and its explicit empty state are both missing`)
       if (route.name === 'homepage' && state.retiredPublicCopyPresent) report.failures.push(`${route.name}/${viewport.name}: retired discoverability copy is present on the homepage`)
       if (state.hiddenRevealElements > 0) report.failures.push(`${route.name}/${viewport.name}: ${state.hiddenRevealElements} reveal sections remained hidden after scrolling`)
       if (route.name === 'dashboard-preview' && (state.dashboardAuthRedirect?.path !== '/login' || state.dashboardAuthRedirect?.returnTo !== '/dashboard')) report.failures.push(`${route.name}/${viewport.name}: unauthenticated dashboard did not return to sign-in with a dashboard destination`)
