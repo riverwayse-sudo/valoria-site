@@ -12,17 +12,6 @@ on:
       - "package.json"
       - "package-lock.json"
       - "wrangler.jsonc"
-  push:
-    branches:
-      - 'deploy/staging-*'
-    paths:
-      - "src/**"
-      - "supabase/migrations/**"
-      - "scripts/**"
-      - ".github/workflows/cloudflare-current-site-staging.yml"
-      - "package.json"
-      - "package-lock.json"
-      - "wrangler.jsonc"
 
 permissions:
   contents: read
