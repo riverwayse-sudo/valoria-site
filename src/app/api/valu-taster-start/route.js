@@ -30,8 +30,19 @@ export async function POST(request) {
     return json({ error: 'Confirm your Valoria account email before starting the taster.' }, 403)
   }
 
+  const siteOrigin = new URL(request.url).origin
   const assessmentOrigin = getValuAssessmentOrigin(process.env)
   if (!assessmentOrigin) return json({ error: 'The assessment environment is not configured for this site.' }, 503)
+  // A staging signup must never be handed to the production assessment Worker,
+  // even if a Cloudflare environment variable is misclassified.
+  if (siteOrigin === 'https://staging.valoriainstitute.com'
+    && assessmentOrigin === 'https://assessment.valoriainstitute.com') {
+    return json({ error: 'The staging assessment environment is not configured safely.' }, 503)
+  }
+  if (['https://valoriainstitute.com', 'https://www.valoriainstitute.com'].includes(siteOrigin)
+    && assessmentOrigin !== 'https://assessment.valoriainstitute.com') {
+    return json({ error: 'The production assessment environment is not configured safely.' }, 503)
+  }
 
   const handoffCode = randomBytes(32).toString('base64url')
   const tokenHash = createHash('sha256').update(handoffCode).digest('hex')
@@ -52,7 +63,7 @@ export async function POST(request) {
   }
 
   const destination = new URL('/', assessmentOrigin)
-  destination.search = new URLSearchParams({ site_origin: new URL(request.url).origin }).toString()
+  destination.search = new URLSearchParams({ site_origin: siteOrigin }).toString()
   destination.hash = new URLSearchParams({ taster_start_code: handoffCode }).toString()
   return json({ url: destination.toString(), expires_in: HANDOFF_TTL_SECONDS })
 }
