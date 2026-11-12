@@ -14,6 +14,15 @@ describe('dashboard data integrity', () => {
     expect(source.match(/const { data: msgs, error: enquiriesError }/g)).toHaveLength(2)
   })
 
+  test('an expected missing auth session redirects to sign-in before treating errors as dashboard outages', () => {
+    const source = fs.readFileSync(path.join(process.cwd(), 'src/app/dashboard/page.jsx'), 'utf8')
+    const missingSessionRedirect = source.indexOf("if (!user && authError?.name === 'AuthSessionMissingError')")
+    const authErrorThrow = source.indexOf('if (authError) throw authError')
+    expect(missingSessionRedirect).toBeGreaterThanOrEqual(0)
+    expect(missingSessionRedirect).toBeLessThan(authErrorThrow)
+    expect(source).toContain("window.location.replace('/login?returnTo=%2Fdashboard')")
+  })
+
   test('partial dashboard failures remain visible when a profile was already loaded', () => {
     const source = fs.readFileSync(path.join(process.cwd(), 'src/app/dashboard/page.jsx'), 'utf8')
     expect(source).toContain('{loadError && profile && (')
