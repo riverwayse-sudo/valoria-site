@@ -4,6 +4,7 @@ const ALLOWED_ASSESSMENT_HOSTS = new Set([
   'assessment.valoriainstitute.com',
   'valoria-platform.riverwayse.workers.dev',
   'valoria-staging-assessment.riverwayse.workers.dev',
+  'assessment-staging.valoriainstitute.com',
 ])
 
 function getAssessmentOrigin() {
@@ -19,7 +20,7 @@ function getAssessmentOrigin() {
     // Enforce environment isolation in both directions: staging may call only
     // the staging assessment Worker; production may never call staging.
     const stagingRuntime = process.env.VALU_STAGING_API_ENABLED === '1'
-    const stagingAssessment = origin.hostname === 'valoria-staging-assessment.riverwayse.workers.dev'
+    const stagingAssessment = ['valoria-staging-assessment.riverwayse.workers.dev', 'assessment-staging.valoriainstitute.com'].includes(origin.hostname)
     if (stagingRuntime !== stagingAssessment) return null
 
     return origin
