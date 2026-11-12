@@ -177,16 +177,21 @@ export async function POST(request) {
     // submit an enquiry without an account), and had zero abuse protection
     // until now. Keyed by IP, not email, since buyer_email is
     // self-reported and trivially spoofable per-request.
-    const forwardedFor = request.headers.get('x-forwarded-for')
-    const ip = request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip') || forwardedFor?.split(',').pop()?.trim() || 'unknown'
+    // Trust only headers set by the hosting edge. Do not fall back to
+    // caller-controlled X-Forwarded-For values, which can be spoofed to
+    // rotate rate-limit keys.
+    const ip = request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip') || 'unknown'
     const { data: allowed, error: rateLimitError } = await supabase.rpc('check_rate_limit', {
       p_key: `enquiry:${ip}`, p_max_count: 5, p_window_seconds: 3600,
     })
     if (rateLimitError) {
-      // Fail open — a broken rate limiter should never be the reason a
-      // real buyer's enquiry gets silently dropped.
+      // Do not bypass abuse controls when the limiter is unavailable.
+      // Return an explicit retryable error rather than silently accepting
+      // an unthrottled public enquiry.
       console.error('Rate limit check failed:', rateLimitError)
-    } else if (!allowed) {
+      return Response.json({ error: 'Enquiry service is temporarily unavailable. Please try again shortly.' }, { status: 503 })
+    }
+    if (!allowed) {
       return Response.json({ error: 'Too many requests from this connection — please try again later.' }, { status: 429 })
     }
 
