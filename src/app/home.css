@@ -2606,8 +2606,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .vi-scroll-card {
-    }
   .vi-scroll-card:hover,
   .vi-scroll-card:focus-visible {
     transform: none;
