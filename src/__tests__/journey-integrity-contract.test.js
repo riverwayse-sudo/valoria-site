@@ -567,6 +567,14 @@ describe('journey integrity contract', () => {
   })
 
 
+  test('homepage registry uses compact cards without exposing internal listing tiers', () => {
+    const registry = read('src/components/LiveProfilesScroll.jsx')
+    expect(registry).toContain("isBasic ? 'PUBLIC PROFILE'")
+    expect(registry).toContain("isBasic ? 'PROFILE' : 'VALU INDEX'")
+    expect(registry).not.toContain('BASIC LISTING')
+    expect(registry).not.toContain('FULL LISTING')
+  })
+
   test('public VALU entry points route through account-first registration while preserving signed-in handoff', () => {
     const navigation = read('src/config/navigation.js')
     const nav = read('src/components/Nav.jsx')
