@@ -71,6 +71,19 @@ try {
         navigationError = error.message
       }
 
+      // Trigger viewport-based reveal animations before capturing a full-page screenshot.
+      // Without this pass, off-screen sections remain intentionally hidden in the artifact.
+      await page.evaluate(async () => {
+        const step = Math.max(320, Math.floor(window.innerHeight * 0.65))
+        const pageHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight)
+        for (let y = 0; y < pageHeight; y += step) {
+          window.scrollTo(0, y)
+          await new Promise(resolve => setTimeout(resolve, 120))
+        }
+        window.scrollTo(0, 0)
+        await new Promise(resolve => setTimeout(resolve, 350))
+      })
+
       const state = await page.evaluate(() => {
         const robots = document.querySelector('meta[name="robots"]')?.content || ''
         const banner = document.querySelector('.staging-site-banner')?.innerText ||
@@ -82,6 +95,7 @@ try {
         const profileSliderPresent = Boolean(document.querySelector('.vi-scroll-track, #live-profiles, [data-profile-slider]'))
         const retiredPublicCopyPresent = /WANT TO BE DISCOVERED|Become discoverable|relevant buyers understand your capabilities/i.test(document.body.innerText)
         const panel = document.querySelector('.hero-event-panel')
+        const hiddenRevealElements = document.querySelectorAll('.reveal:not(.visible)').length
         const overflowingCards = [...document.querySelectorAll('[class*="card"]')]
           .filter(el => {
             const style = getComputedStyle(el)
@@ -97,6 +111,7 @@ try {
           horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 2,
           profileSliderPresent,
           retiredPublicCopyPresent,
+          hiddenRevealElements,
           scrollAnimation: track ? {
             name: getComputedStyle(track).animationName,
             playState: getComputedStyle(track).animationPlayState,
@@ -144,6 +159,7 @@ try {
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (route.name === 'homepage' && state.profileSliderPresent) report.failures.push(`${route.name}/${viewport.name}: profile slider is present on the homepage`)
       if (route.name === 'homepage' && state.retiredPublicCopyPresent) report.failures.push(`${route.name}/${viewport.name}: retired discoverability copy is present on the homepage`)
+      if (state.hiddenRevealElements > 0) report.failures.push(`${route.name}/${viewport.name}: ${state.hiddenRevealElements} reveal sections remained hidden after scrolling`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
 
       await context.close()
