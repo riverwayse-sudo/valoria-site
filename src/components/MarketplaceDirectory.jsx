@@ -350,7 +350,7 @@ function ProfilePreviewModal({ profile, onClose }) {
                   : 'This profile presents professional capabilities and experience.'}
               </p>
               <div className={styles.modalCredential}>
-                <span>{hasValuIndex ? 'VALU INDEX INSIGHT' : 'PROFESSIONAL LISTING'}</span>
+                <span>{hasValuIndex ? 'VALU INDEX INSIGHT' : 'PROFESSIONAL CAPABILITIES'}</span>
                 <strong>{tier ? tier.name : 'Capability-led profile'}</strong>
               </div>
             </section>
