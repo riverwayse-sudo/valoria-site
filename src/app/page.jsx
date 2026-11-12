@@ -64,7 +64,7 @@ export default function HomePage() {
               <span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
             </div>
             <div className="home-dual-actions">
-              <a href="/valu/register/" className="btn-gold">START THE VALU INDEX TASTER <span aria-hidden="true">→</span></a>
+              <AssessmentStartLink href="/valu/register/" className="btn-gold">START THE VALU INDEX TASTER <span aria-hidden="true">→</span></AssessmentStartLink>
               <a href="/valu" className="text-link">SEE HOW THE VALU INDEX WORKS <span aria-hidden="true">→</span></a>
             </div>
             <p className="valu-conversion-note">A starting signal, not a final designation.</p>
