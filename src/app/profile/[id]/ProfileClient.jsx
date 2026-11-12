@@ -478,7 +478,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               ) : (
                 <>
                   <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
-                    {p.assessment_access === 'basic' ? 'This professional profile does not display VALU Index points or result-derived insight.' : 'This professional has not yet received an official VALU Index result.'}
+                    {'Professional capabilities and experience are presented here. VALU Index points and insight appear when available for public display.'}
                   </p>
                   <a href="https://valoriainstitute.com/valu/assessment/"
                     style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
@@ -552,7 +552,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
             <Section label="VALU Index Summary">
               {p.assessment_summary
                 ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
-                : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>{p.assessment_access === 'basic' ? 'This profile presents declared professional capabilities and experience. VALU Index insight is not displayed here.' : 'A VALU Index summary appears here when it is available for public display.'}</p>}
+                : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>{'Professional capabilities and experience are presented here. VALU Index insight appears when available for public display.'}</p>}
             </Section>
 
             {/* Key Strengths — rectangular card, gold background per brand,
