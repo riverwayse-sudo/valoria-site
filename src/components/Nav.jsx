@@ -9,18 +9,11 @@ import { NAVIGATION, isPathActive } from '@/config/navigation'
 
 export default function Nav() {
   const pathname = usePathname()
-  const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [openMenu, setOpenMenu] = useState(null)
   const [user, setUser] = useState(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [accountType, setAccountType] = useState(null)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
@@ -98,7 +91,7 @@ export default function Nav() {
   return <>
     
 
-    <nav className={`vi-nav${scrolled ? ' scrolled' : ''}`} aria-label="Primary navigation">
+    <nav className="vi-nav" aria-label="Primary navigation">
       <Link href="/" className="nav-logo" aria-label="Valoria Institute home"><img src="/logo.png" alt="Valoria Institute" /></Link>
 
       <ul className="nav-links" role="list">
