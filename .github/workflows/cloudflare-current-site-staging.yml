@@ -58,7 +58,6 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
           SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
           NEXT_PUBLIC_SITE_URL=https://staging.valoriainstitute.com
-          NEXT_PUBLIC_SUPABASE_ANON_KEY=$PUBLIC_ANON_KEY
           SUPABASE_SERVICE_ROLE_KEY=placeholder-service-role-key
           ANTHROPIC_API_KEY=placeholder-anthropic-key
           VALU_ASSESSMENT_ORIGIN=https://assessment-staging.valoriainstitute.com
@@ -71,6 +70,7 @@ jobs:
           VALU_STAGING_API_ENABLED=1
           NEXT_PUBLIC_VALU_STAGING_API_ENABLED=1
           EOF
+          printf '%s=%s\n' 'NEXT_PUBLIC_SUPABASE_ANON_KEY' "$PUBLIC_ANON_KEY" >> .env
       - name: Install pinned Cloudflare build tools
         run: npm install --no-save @opennextjs/cloudflare@1.20.15 wrangler@4.156.1
       - name: Build OpenNext output
