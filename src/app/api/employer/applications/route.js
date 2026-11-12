@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
+import { getValuTier } from '@/lib/brand'
 
 const URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -45,7 +46,7 @@ export async function GET(request) {
 
   const professionalIds = [...new Set((applications || []).map(a => a.professional_id).filter(Boolean))]
   const { data: profiles, error: profileError } = professionalIds.length
-    ? await admin.from('professional_profiles').select('id,display_name,headline,current_job_title,photo_url,valu_index,designation,active_tracks').in('id', professionalIds)
+    ? await admin.from('professional_profiles').select('id,display_name,headline,current_job_title,photo_url,valu_index,active_tracks').in('id', professionalIds)
     : { data: [], error: null }
   if (profileError) return NextResponse.json({ error: profileError.message }, { status: 502 })
 
@@ -55,7 +56,10 @@ export async function GET(request) {
     applications: (applications || []).map(a => ({
       ...a,
       opportunities: opportunityMap.get(a.opportunity_id) || null,
-      professional_profiles: profileMap.get(a.professional_id) || null,
+      professional_profiles: (() => {
+        const profile = profileMap.get(a.professional_id) || null
+        return profile ? { ...profile, designation: getValuTier(profile.valu_index, 'full')?.name || null } : null
+      })(),
     })),
   })
 }
