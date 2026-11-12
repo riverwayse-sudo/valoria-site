@@ -1,6 +1,10 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { chromium } from 'playwright'
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+const axe = require('axe-core')
 
 const SITE = process.env.STAGING_SITE_URL || 'https://staging.valoriainstitute.com'
 const ASSESSMENT = process.env.STAGING_ASSESSMENT_URL || 'https://assessment-staging.valoriainstitute.com'
@@ -84,6 +88,32 @@ try {
         await new Promise(resolve => setTimeout(resolve, 350))
       })
 
+      await page.addScriptTag({ content: axe.source })
+      const accessibility = await page.evaluate(async () => {
+        const results = await window.axe.run(document, {
+          runOnly: {
+            type: 'tag',
+            values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'],
+          },
+        })
+        return {
+          passes: results.passes.length,
+          incomplete: results.incomplete.length,
+          violations: results.violations.map(violation => ({
+            id: violation.id,
+            impact: violation.impact,
+            help: violation.help,
+            helpUrl: violation.helpUrl,
+            totalNodes: violation.nodes.length,
+            nodes: violation.nodes.slice(0, 8).map(node => ({
+              target: node.target,
+              html: node.html.slice(0, 220),
+              summary: node.failureSummary?.slice(0, 500) || '',
+            })),
+          })),
+        }
+      })
+
       const state = await page.evaluate((routeName) => {
         const robots = document.querySelector('meta[name="robots"]')?.content || ''
         const banner = document.querySelector('.staging-site-banner')?.innerText ||
@@ -142,6 +172,7 @@ try {
         status,
         navigationError,
         ...state,
+        accessibility,
         pageErrors,
         consoleErrors,
         forbiddenRequests,
