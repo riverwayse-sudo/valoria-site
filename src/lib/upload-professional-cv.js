@@ -17,6 +17,7 @@ export async function uploadProfessionalCv(supabase, professionalId, file) {
   const extension = String(file.name || '').split('.').pop().toLowerCase()
   const mimeType = CV_TYPES[extension]
   if (!mimeType) throw new Error('Upload a PDF or Word document (.pdf, .doc or .docx).')
+  if (file.type && file.type !== mimeType) throw new Error('The file content type does not match its extension.')
   if (!Number.isFinite(file.size) || file.size <= 0 || file.size > MAX_CV_BYTES) {
     throw new Error('Your CV must be larger than 0 bytes and no more than 10MB.')
   }
