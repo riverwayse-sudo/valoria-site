@@ -17,6 +17,7 @@ const TRACKS = [
 ]
 
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
+const hasPublicValuIndex = profile => profile?.valu_index !== null && profile?.valu_index !== undefined && Number.isFinite(Number(profile.valu_index)) && Number(profile.valu_index) >= 35
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
 const IS_STAGING_PREVIEW = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1'
 
@@ -199,44 +200,42 @@ function Profile({p, onSelect}) {
   ]
   const specialisation=displayText(p.industry || '')
   // Fail closed: only an explicitly full assessment can expose an official score/designation.
-  const isFullAssessment = p.assessment_access === 'full' && p.valu_index != null
-  const isBasic = !isFullAssessment
-  const tier = isFullAssessment ? getValuTier(p.valu_index, 'full') : null
+  const hasValuIndex = hasPublicValuIndex(p)
+  const tier = hasValuIndex ? getValuTier(p.valu_index, 'full') : null
   const profileId = displayText(p.atb_id || 'PROFILE ID PENDING')
   // This text is sourced from the canonical VALU Index report projection, never the member's bio/headline.
-  const assessmentSummary = isFullAssessment ? displayText(p.assessment_summary || '') : ''
-  const developmentFocus = isFullAssessment ? getDevelopmentFocus(p) : ''
+  const assessmentSummary = hasValuIndex ? displayText(p.assessment_summary || '') : ''
+  const developmentFocus = hasValuIndex ? getDevelopmentFocus(p) : ''
   return <article className={styles.card}>
     <div className={styles.identity}>
       <ValoriaAvatar src={p.photo_url} seed={p.professional_id || p.atb_id} size={64} className={styles.avatar} />
       <div className={styles.identityCopy}>
         <small>ATB PROFILE ID</small>
         <strong>{profileId}</strong>
-        <span className={isBasic ? styles.snapshotStatus : styles.assessedStatus}>{isBasic ? 'VALU TASTER COMPLETE' : 'FULL VALU INDEX COMPLETE'}</span>
       </div>
       <div className={styles.valu}>
         <small>VALU INDEX</small>
-        <b>{isFullAssessment ? p.valu_index : '—'}</b>
-        <span>{isFullAssessment ? 'POINTS' : 'TASTER'}</span>
+        <b>{hasValuIndex ? p.valu_index : '—'}</b>
+        <span>{hasValuIndex ? 'POINTS' : 'CAPABILITY PROFILE'}</span>
       </div>
     </div>
     <h3 className={styles.professionalName}>{displayText(p.headline || p.current_job_title || 'Professional profile')}</h3>
     {displayText(p.headline) && <p className={styles.professionalHeadline}>{displayText(p.current_job_title || '')}</p>}
     <p className={styles.specialisation} title={specialisation}>{specialisation || 'Professional capability'}</p>
     <div className={styles.assessmentInsight}>
-      <small>VALU INDEX ASSESSMENT INSIGHT</small>
-      {isFullAssessment
+      <small>VALU INDEX INSIGHT</small>
+      {hasValuIndex
         ? (assessmentSummary
           ? <p className={styles.assessmentSummary} title={assessmentSummary}>{developmentFocus ? `Top development area: ${developmentFocus}. ` : ''}{assessmentSummary}</p>
           : <p className={styles.assessmentPending}>Assessment insight is being prepared.</p>)
-        : <p className={styles.assessmentPending}>Complete the full VALU Index assessment to unlock this insight.</p>}
+        : <p className={styles.assessmentPending}>Professional capabilities and experience are presented here.</p>}
     </div>
     <div className={styles.signalRow}>
-      {isFullAssessment && tier
+      {hasValuIndex && tier
         ? <span className={`${styles.tierBadge} ${styles[tier.badgeClass] || ''}`}>{tier.name}</span>
-        : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>OFFICIAL VALU RESULT<br/>PENDING</span>}
+        : <span className={`${styles.tierBadge} ${styles.snapshotTier}`}>PROFESSIONAL PROFILE</span>}
     </div>
-    <div className={styles.capabilities} aria-label={`Capability selection: ${capabilityBadges.filter(b=>b.selected).map(b=>b.title).join(', ') || 'none selected'}`} title="Selection status only; category listing eligibility is assessed separately"><small className={styles.capabilityLabel}>CAPABILITY SELECTION</small>{capabilityBadges.map(badge=><span className={`${styles.capabilityBadge} ${badge.selected ? styles.capabilitySelected : styles.capabilityUnselected}`} key={badge.key}><strong>{badge.title}</strong><small>{badge.selected ? 'SELECTED' : 'NOT SELECTED'}</small></span>)}</div>
+    <div className={styles.capabilities} aria-label={`Capability selection: ${capabilityBadges.filter(b=>b.selected).map(b=>b.title).join(', ') || 'none selected'}`}><small className={styles.capabilityLabel}>CAPABILITY SELECTION</small>{capabilityBadges.map(badge=><span className={`${styles.capabilityBadge} ${badge.selected ? styles.capabilitySelected : styles.capabilityUnselected}`} key={badge.key}><strong>{badge.title}</strong><small>{badge.selected ? 'SELECTED' : 'NOT SELECTED'}</small></span>)}</div>
     <button type="button" onClick={onSelect} className={`${styles.view} ${styles.viewButton}`} aria-haspopup="dialog">VIEW PROFILE</button>
   </article>
 }
@@ -282,8 +281,8 @@ function ProfilePreviewModal({ profile, onClose }) {
 
   if (!profile) return null
 
-  const isFull = profile.assessment_access === 'full' && profile.valu_index != null
-  const tier = isFull ? getValuTier(profile.valu_index, 'full') : null
+  const hasValuIndex = hasPublicValuIndex(profile)
+  const tier = hasValuIndex ? getValuTier(profile.valu_index, 'full') : null
   const capabilities = getCapabilitySelection(profile)
   const capabilityBadges = [
     { key: 'candidate', title: 'TALENT' },
@@ -292,8 +291,8 @@ function ProfilePreviewModal({ profile, onClose }) {
   ]
   const skills = labelValues(profile.skills).slice(0, 8)
   const topics = labelValues(profile.topics).slice(0, 6)
-  const assessmentSummary = isFull ? displayText(profile.assessment_summary || '') : ''
-  const developmentFocus = isFull ? getDevelopmentFocus(profile) : ''
+  const assessmentSummary = hasValuIndex ? displayText(profile.assessment_summary || '') : ''
+  const developmentFocus = hasValuIndex ? getDevelopmentFocus(profile) : ''
   const profileHref = `/profile/${encodeURIComponent(displayText(profile.id || profile.atb_id))}`
 
   return (
@@ -336,8 +335,8 @@ function ProfilePreviewModal({ profile, onClose }) {
             </div>
             <div className={styles.modalIndex}>
               <small>VALU INDEX</small>
-              <strong>{isFull ? profile.valu_index : '—'}</strong>
-              <span>{isFull ? 'POINTS' : 'TASTER'}</span>
+              <strong>{hasValuIndex ? profile.valu_index : '—'}</strong>
+              <span>{hasValuIndex ? 'POINTS' : 'TASTER'}</span>
               {tier && <b>{tier.name}</b>}
             </div>
           </div>
@@ -347,12 +346,12 @@ function ProfilePreviewModal({ profile, onClose }) {
               <p className={styles.modalSectionLabel}>VALU INDEX · ASSESSMENT INSIGHT</p>
               <p id="profile-preview-description" className={styles.modalSummary}>
                 {isFull
-                  ? (assessmentSummary || 'The Full VALU assessment is complete. The professional insight is being prepared.')
-                  : 'This professional has completed the VALU Index Taster. A public profile is visible only where the professional has chosen visibility and Valoria listing requirements are met. The separate full VALU Index establishes official points, merit tier and assessment insight.'}
+                  ? (assessmentSummary || 'The VALU Index insight is being prepared.')
+                  : 'This profile presents professional capabilities and experience.'}
               </p>
               <div className={styles.modalCredential}>
-                <span>{isFull ? 'FULL VALU INDEX COMPLETE' : 'VALU TASTER COMPLETE'}</span>
-                <strong>{tier ? tier.name : 'OFFICIAL RESULT PENDING'}</strong>
+                <span>{hasValuIndex ? 'VALU INDEX MERIT' : 'PROFESSIONAL CAPABILITIES'}</span>
+                <strong>{tier ? tier.name : 'Capability-led profile'}</strong>
               </div>
               {developmentFocus && <div className={styles.modalCredential}><span>TOP DEVELOPMENT AREA</span><strong>{developmentFocus}</strong></div>}
             </section>
