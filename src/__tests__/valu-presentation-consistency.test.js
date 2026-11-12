@@ -103,6 +103,15 @@ describe('VALU presentation consistency', () => {
     expect(navRule).not.toContain('position:fixed')
   })
 
+  test('Cloudflare production deployment requires explicit authorization and runs the content smoke gate', () => {
+    const workflow = read('.github/workflows/cloudflare-site-worker-deploy.yml')
+    expect(workflow).toContain('confirm_production')
+    expect(workflow).toContain("inputs.confirm_production == 'DEPLOY'")
+    expect(workflow).toContain("[deploy-production]")
+    expect(workflow).toContain('environment: production')
+    expect(workflow).toContain('node scripts/production-smoke.mjs')
+  })
+
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
     const hero = read('src/components/HeroSlider.jsx')
     expect(hero).toContain('START THE VALU INDEX TASTER')
