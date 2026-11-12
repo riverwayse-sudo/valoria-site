@@ -89,7 +89,7 @@ jobs:
         run: |
           set -euo pipefail
           base="https://valoriainstitute.com"
-          routes=(/ /valu /valu/start /signup /prime /about-us /marketplace /marketplace/talent /marketplace/speakers /marketplace/facilitators /profile/ATB-C-TAA-00177 /careers /events /privacypolicy /terms-of-use /robots.txt /sitemap.xml)
+          routes=(/ /valu /valu/start /signup /professional-signup /professional-signup/recover /prime /about-us /marketplace /marketplace/talent /marketplace/speakers /marketplace/facilitators /profile/ATB-C-TAA-00177 /careers /events /privacypolicy /terms-of-use /robots.txt /sitemap.xml)
           for route in "${routes[@]}"; do
             status="$(curl -sSL --retry 4 --retry-all-errors --max-time 25 -o /tmp/valoria-production-response -w '%{http_code}' "$base$route" || true)"
             if [[ "$status" != "200" ]]; then
