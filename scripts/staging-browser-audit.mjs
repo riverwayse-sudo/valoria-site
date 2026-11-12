@@ -160,6 +160,37 @@ try {
         }
       }
 
+      let apiProbes = null
+      if (route.name === 'homepage' && viewport.name === 'desktop') {
+        apiProbes = await page.evaluate(async () => {
+          const checks = [
+            { name: 'taster-progress', path: '/valu/assessment/api/taster-progress', method: 'POST', body: { action: 'load', resume_token: 'invalid' } },
+            { name: 'valu-handoff', path: '/api/valu-handoff', method: 'GET' },
+            { name: 'link-taster', path: '/api/link-taster', method: 'POST', body: { taster_id: '00000000-0000-0000-0000-000000000000' } },
+          ]
+          const results = []
+          for (const check of checks) {
+            try {
+              const response = await fetch(check.path, {
+                method: check.method,
+                headers: check.body ? { 'content-type': 'application/json' } : undefined,
+                body: check.body ? JSON.stringify(check.body) : undefined,
+                signal: AbortSignal.timeout(8000),
+              })
+              results.push({ name: check.name, status: response.status, body: (await response.text()).slice(0, 200) })
+            } catch (error) {
+              results.push({ name: check.name, error: error.message })
+            }
+          }
+          return results
+        })
+        for (const probe of apiProbes) {
+          if (probe.status !== 401) {
+            report.failures.push(`homepage/desktop: ${probe.name} expected HTTP 401, got ${probe.status ?? probe.error}`)
+          }
+        }
+      }
+
       const filename = `${route.name}-${viewport.name}.png`
       await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
       const result = {
@@ -174,6 +205,7 @@ try {
         forbiddenRequests,
         screenshot: filename,
         navigationChecks,
+        apiProbes,
       }
       report.results.push(result)
 
