@@ -138,8 +138,8 @@ jobs:
 
           echo "API authentication probes are executed in the Playwright browser audit."
 
-      - name: Install Playwright without changing project dependencies
-        run: npm install --no-save --package-lock=false playwright@1.65.0
+      - name: Install Playwright and axe-core without changing project dependencies
+        run: npm install --no-save --package-lock=false --no-audit --no-fund playwright@1.65.0 axe-core@4.14.0
       - name: Install Chromium for staging browser acceptance
         run: npx playwright install --with-deps chromium
       - name: Run desktop/mobile and fresh-session staging browser audit
