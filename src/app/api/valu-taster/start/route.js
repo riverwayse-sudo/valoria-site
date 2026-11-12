@@ -43,6 +43,23 @@ export async function POST(request) {
   }
 
   const admin = createClient(url, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } })
+  const { data: completedTaster, error: completedTasterError } = await admin.from('taster_sessions')
+    .select('id')
+    .eq('user_id', user.id)
+    .not('completed_at', 'is', null)
+    .limit(1)
+    .maybeSingle()
+  if (completedTasterError) {
+    console.error('VALU Taster completion lookup failed:', completedTasterError.message)
+    return responseError('We could not verify your existing VALU journey. Please return to your dashboard and try again.', 503)
+  }
+  if (completedTaster) {
+    const dashboard = new URL('/dashboard?welcome=profile', request.url)
+    return NextResponse.json({ url: dashboard.toString(), already_completed: true }, {
+      headers: { 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' },
+    })
+  }
+
   const handoffCode = randomBytes(32).toString('base64url')
   const tokenHash = createHash('sha256').update(handoffCode).digest('hex')
   const expiresAt = new Date(Date.now() + HANDOFF_TTL_SECONDS * 1000).toISOString()
