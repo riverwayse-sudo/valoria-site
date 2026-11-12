@@ -76,7 +76,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base="https://valoria-staging-site.riverwayse.workers.dev"
+          base="https://valoria-redesign-staging-site.riverwayse.workers.dev"
           routes=(
             /
             /valu
@@ -178,7 +178,7 @@ jobs:
       - name: Run desktop and mobile staging browser UX audit
         run: node scripts/staging-browser-audit.mjs
         env:
-          STAGING_SITE_URL: https://valoria-staging-site.riverwayse.workers.dev
+          STAGING_SITE_URL: https://valoria-redesign-staging-site.riverwayse.workers.dev
           STAGING_ASSESSMENT_URL: https://valoria-staging-assessment.riverwayse.workers.dev
       - name: Upload staging browser screenshots and audit report
         if: always()
