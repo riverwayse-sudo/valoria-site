@@ -30,7 +30,7 @@ export default function ValuPage() {
       <section className="valu-intro" id="how-it-works">
         <div className="valu-wrap valu-two">
           <div><div className="valu-kicker valu-dark"><span /> WHY THE VALU INDEX</div><h2>Professional capability is bigger than a job title.</h2></div>
-          <div><p>Experience tells part of the story. The VALU Index creates a structured way to understand how you currently show up across the professional dimensions that influence development, visibility and opportunity.</p><p>It connects professional assessment to a practical next step: build a credible record, strengthen your capabilities and become discoverable for relevant opportunities.</p></div>
+          <div><p>Experience tells part of the story. The VALU Index creates a structured way to understand how you currently show up across the professional dimensions that influence development, visibility and opportunity.</p><p>It connects professional assessment to a practical next step: build a credible record, strengthen your capabilities and make them easier to match to relevant opportunities.</p></div>
         </div>
       </section>
 
