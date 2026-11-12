@@ -1,5 +1,6 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
+import { getValuTier } from '@/lib/brand'
 import { PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION } from '@/lib/profile-consent-copy'
 
 const FIELDS = 'professional_id,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,photo_url,industry,seniority_band,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
@@ -46,8 +47,7 @@ function isQualifiedPublicProfile(row) {
   return Boolean(
     row?.professional_id &&
     isPublicProfileContentReady(row) &&
-    ((Array.isArray(row.capabilities) && row.capabilities.length > 0) || (Array.isArray(row.selected_capabilities) && row.selected_capabilities.length > 0)) &&
-    (row.assessment_access !== 'full' || (typeof row.designation === 'string' && row.designation.trim()))
+    ((Array.isArray(row.capabilities) && row.capabilities.length > 0) || (Array.isArray(row.selected_capabilities) && row.selected_capabilities.length > 0))
   )
 }
 
@@ -58,6 +58,14 @@ function normalizeTrack(value) {
 
 function normalizePublicDisplayText(value) {
   return typeof value === 'string' ? value.normalize('NFKC').replace(/\s+/g, ' ').trim() : value
+}
+
+function toPublicMarketplaceRow(row) {
+  const { assessment_access, assessmentAccess, full_name, display_initials, ...publicRow } = row
+  const score = publicRow.valu_index
+  const hasOfficialPoints = score !== null && score !== undefined && Number.isFinite(Number(score)) && Number(score) >= 35
+  const tier = hasOfficialPoints ? getValuTier(Number(score), 'full') : null
+  return { ...publicRow, designation: tier?.name || null }
 }
 
 function dedupeProfessionals(rows) {
@@ -254,7 +262,8 @@ export async function getMarketplaceRows(track = 'all') {
   // Category membership follows the published capability projection. Selected-but-unapproved
   // capabilities remain visible as selections on a card but do not enter a category directory.
   // Public listing, consent, assessment validity and revocation checks are enforced above.
-  return rows.filter(row => {
+  const publicRows = rows.map(toPublicMarketplaceRow)
+  return publicRows.filter(row => {
     if (track === 'all') return true
     return row.capabilities.includes(normalizeTrack(track))
   })
