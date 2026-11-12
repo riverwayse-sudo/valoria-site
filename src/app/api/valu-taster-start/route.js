@@ -52,6 +52,7 @@ export async function POST(request) {
   }
 
   const destination = new URL('/', assessmentOrigin)
+  destination.search = new URLSearchParams({ site_origin: new URL(request.url).origin }).toString()
   destination.hash = new URLSearchParams({ taster_start_code: handoffCode }).toString()
   return json({ url: destination.toString(), expires_in: HANDOFF_TTL_SECONDS })
 }
