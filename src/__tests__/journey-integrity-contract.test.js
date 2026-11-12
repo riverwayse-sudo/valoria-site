@@ -577,6 +577,12 @@ describe('journey integrity contract', () => {
   })
 
 
+  test('VALU explainer uses participant-facing language without discoverability jargon', () => {
+    const valu = read('src/app/valu/page.jsx')
+    expect(valu).toContain('make them easier to match to relevant opportunities')
+    expect(valu).not.toMatch(/become discoverable|discoverability/i)
+  })
+
   test('account-first Taster completion never creates a second account after the Taster', () => {
     const professionalSignup = read('src/app/professional-signup/page.jsx')
     expect(professionalSignup).toContain("params.get('account_first')==='1'")
