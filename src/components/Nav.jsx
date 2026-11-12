@@ -82,7 +82,7 @@ export default function Nav() {
   // Keep the primary CTA stable during auth hydration. Previously it changed
   // from START VALU INDEX to MY PROFILE/DASHBOARD after getUser(), causing a visible
   // header layout shift on every page for signed-in users.
-  const cta = { label: 'START VALU INDEX', href: NAVIGATION.assessmentUrl, external: true }
+  const cta = { label: 'START VALU INDEX', href: NAVIGATION.assessmentUrl }
 
   const renderItem = (item, className = 'nav-dropdown-link') => {
     const active = isPathActive(pathname, item.href)
