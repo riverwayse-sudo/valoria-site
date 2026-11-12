@@ -15,6 +15,7 @@ const routes = [
   { name: 'events', url: `${SITE}/events`, site: true },
   { name: 'valu', url: `${SITE}/valu`, site: true },
   { name: 'valu-start', url: `${SITE}/valu/start`, site: true },
+  { name: 'signup-taster', url: `${SITE}/professional-signup?journey=valu_taster`, site: true },
   { name: 'prime', url: `${SITE}/prime`, site: true },
   { name: 'about', url: `${SITE}/about-us`, site: true },
   { name: 'dashboard-preview', url: `${SITE}/dashboard?preview=1`, site: true },
@@ -76,6 +77,20 @@ try {
           (document.body.innerText.includes('STAGING PREVIEW') ? 'STAGING PREVIEW' : '')
         const navBrand = document.querySelector('a[aria-label="Valoria Institute home"]')?.href || ''
         const navDashboard = [...document.querySelectorAll('a')].find(a => /return to dashboard/i.test(a.innerText))?.href || ''
+        const signupJourneyLink = [...document.querySelectorAll('a[href]')].some(a => {
+          try {
+            const url = new URL(a.href)
+            return url.pathname === '/professional-signup' && url.searchParams.get('journey') === 'valu_taster'
+          } catch { return false }
+        })
+        const signupForm = {
+          heading: document.body.innerText.includes('Create your Valoria account.'),
+          name: Boolean(document.querySelector('input[autocomplete="name"]')),
+          email: Boolean(document.querySelector('input[autocomplete="email"]')),
+          password: Boolean(document.querySelector('input[autocomplete="new-password"]')),
+          confirmPassword: document.querySelectorAll('input[type="password"][autocomplete="new-password"]').length >= 2,
+        }
+        const tasterQuestionVisible = Boolean(document.querySelector('.valu-option'))
         const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
         const track = document.querySelector('.vi-scroll-track')
         const panel = document.querySelector('.hero-event-panel')
@@ -106,6 +121,9 @@ try {
           analyticsLoaded: Boolean(window.gtag || window.fbq),
           literalNewlineVisible,
           assessmentSiteLinks: [navBrand, navDashboard].filter(Boolean),
+          signupJourneyLink,
+          signupForm,
+          tasterQuestionVisible,
         }
       })
 
@@ -136,6 +154,13 @@ try {
       if (route.name.startsWith('assessment-') && state.assessmentSiteLinks.some(href => {
         try { return ['valoriainstitute.com', 'www.valoriainstitute.com'].includes(new URL(href).hostname) } catch { return false }
       })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
+      if (route.name === 'homepage' && !state.signupJourneyLink) report.failures.push(`${route.name}/${viewport.name}: public VALU CTA does not lead to confirmed-account signup`)
+      if (route.name === 'signup-taster') {
+        if (!state.signupForm.heading || !state.signupForm.name || !state.signupForm.email || !state.signupForm.password || !state.signupForm.confirmPassword) {
+          report.failures.push(`${route.name}/${viewport.name}: account-first signup form is incomplete`)
+        }
+        if (state.tasterQuestionVisible) report.failures.push(`${route.name}/${viewport.name}: taster questions are visible before account confirmation`)
+      }
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
 
