@@ -23,6 +23,8 @@ describe('VALU presentation consistency', () => {
     expect(home).not.toMatch(/9 questions|58 questions|Question\s+\d+\s+of\s+\d+/i)
     expect(home).not.toContain('Register before your taster')
     expect(home).not.toContain('no account needed')
+    expect(home).toContain('Build a stronger professional presence.')
+    expect(home).not.toContain('Build a verified professional presence.')
     expect(home).not.toMatch(/\\b9\\s*QUESTIONS\\b|\\b58\\s*QUESTIONS\\b/i)
     const waitlist = read('src/components/WaitlistModal.jsx')
     expect(waitlist).not.toMatch(/\\b9\\s*QUESTIONS\\b|\\b58\\s*QUESTIONS\\b/i)
@@ -66,7 +68,9 @@ describe('VALU presentation consistency', () => {
     expect(read('src/app/prime/page.jsx')).toContain('TAKE THE VALU INDEX TASTER');
     expect(read('src/app/insights/page.jsx')).toContain('START THE VALU INDEX TASTER');
     expect(read('src/app/signup/page.jsx')).toContain('START THE VALU INDEX TASTER');
-    expect(read('src/components/LiveProfilesScroll.jsx')).toContain('TAKE THE VALU INDEX TASTER');
+    const homepageRail = read('src/components/LiveProfilesScroll.jsx')
+    expect(homepageRail).not.toContain('WANT TO BE DISCOVERED')
+    expect(homepageRail).not.toContain('relevant buyers understand your capabilities');
   })
 
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
