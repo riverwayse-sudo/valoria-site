@@ -20,6 +20,7 @@ const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Ma
 const SCORE_BANDS = TIER_DESIGNATIONS.filter(tier => tier.min >= 35).map(tier => ({ name:tier.name, min:tier.min, max:tier.max }))
 
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
+const hasPublicValuIndex = profile => profile?.valu_index !== null && profile?.valu_index !== undefined && Number.isFinite(Number(profile.valu_index)) && Number(profile.valu_index) >= 35
 const displayText = v => String(v ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
 const titleCase = v => String(v || '').replace(/[_-]+/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase())
 const cleanSkill = v => displayText(v).replace(/\s*★$/, '')
@@ -60,12 +61,12 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       if(scoreBand) {
         const band = SCORE_BANDS.find(item => item.name === scoreBand)
         const points = Number(p.valu_index)
-        if (!band || p.assessment_access !== 'full' || !Number.isFinite(points) || points < band.min || points > band.max) return false
+        if (!band || !hasPublicValuIndex(p) || !Number.isFinite(points) || points < band.min || points > band.max) return false
       }
       if(!q) return true
       return [p.headline,p.current_job_title,p.atb_id,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
     }).sort((a, b) => {
-      const scored = value => value.assessment_access === 'full' && Number.isFinite(Number(value.valu_index))
+      const scored = value => hasPublicValuIndex(value)
       const isAvailable = value => /^(available|accepting|open)$/i.test(displayText(value.availability_status))
       return Number(scored(b)) - Number(scored(a)) ||
         Number(isAvailable(b)) - Number(isAvailable(a)) ||
@@ -193,9 +194,9 @@ function Profile({p, onSelect}) {
     ['speaker','Speaker'],
     ['facilitator','Facilitator'],
   ]
-  const isFull = p.assessment_access === 'full' && p.valu_index != null
-  const tier = isFull ? getValuTier(p.valu_index, 'full') : null
-  const designation = tier?.name || 'Professional listing'
+  const hasValuIndex = hasPublicValuIndex(p)
+  const tier = hasValuIndex ? getValuTier(p.valu_index, 'full') : null
+  const designation = tier?.name || 'Professional profile'
   const designationClass = tier ? styles[tier.name.toLowerCase()] || '' : ''
   const profileId = displayText(p.atb_id)
   const skills = labelValues(p.skills).slice(0, 3)
@@ -220,12 +221,12 @@ function Profile({p, onSelect}) {
         </div>
       </div>
       <div className={styles.scoreDesignation}>
-        {isFull ? <>
+        {hasValuIndex ? <>
           <div className={styles.valu} aria-label={`VALU Index ${p.valu_index} points`}>
             <small>VALU INDEX</small><b>{p.valu_index}</b><span>POINTS</span>
           </div>
           <span className={`${styles.tierBadge} ${designationClass}`}>{designation}</span>
-        </> : <span className={styles.assessmentPending}>PROFESSIONAL LISTING</span>}
+        </> : <span className={styles.assessmentPending}>PROFESSIONAL PROFILE</span>}
       </div>
     </header>
 
@@ -295,8 +296,8 @@ function ProfilePreviewModal({ profile, onClose }) {
 
   if (!profile) return null
 
-  const isFull = profile.assessment_access === 'full' && profile.valu_index != null
-  const tier = isFull ? getValuTier(profile.valu_index, 'full') : null
+  const hasValuIndex = hasPublicValuIndex(profile)
+  const tier = hasValuIndex ? getValuTier(profile.valu_index, 'full') : null
   const capabilities = getCapabilitySelection(profile)
   const capabilityBadges = [
     { key: 'candidate', title: 'TALENT' },
@@ -305,7 +306,7 @@ function ProfilePreviewModal({ profile, onClose }) {
   ]
   const skills = labelValues(profile.skills).slice(0, 4)
   const topics = labelValues(profile.topics).slice(0, 3)
-  const assessmentSummary = isFull ? displayText(profile.assessment_summary || '') : ''
+  const assessmentSummary = hasValuIndex ? displayText(profile.assessment_summary || '') : ''
   const profileHref = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
   const enquiryActions = [
     { key: 'candidate', enquiryType: 'candidate', ctaLabel: 'REQUEST TALENT INTRO' },
@@ -334,9 +335,9 @@ function ProfilePreviewModal({ profile, onClose }) {
               </div>
             </div>
             <div className={styles.modalIndex}>
-              <small>{isFull ? 'VALU INDEX' : 'LISTING LEVEL'}</small>
-              <strong>{isFull ? profile.valu_index : 'PROFESSIONAL'}</strong>
-              <span>{isFull ? 'POINTS' : 'PUBLIC LISTING'}</span>
+              <small>{hasValuIndex ? 'VALU INDEX' : 'PROFESSIONAL PROFILE'}</small>
+              <strong>{hasValuIndex ? profile.valu_index : '—'}</strong>
+              <span>{hasValuIndex ? 'POINTS' : 'CAPABILITY PROFILE'}</span>
               {tier && <b>{tier.name}</b>}
             </div>
           </div>
@@ -344,13 +345,13 @@ function ProfilePreviewModal({ profile, onClose }) {
             <section className={styles.modalPanel}>
               <p className={styles.modalSectionLabel}>VALU INDEX · PROFESSIONAL INSIGHT</p>
               <p id="profile-preview-description" className={styles.modalSummary}>
-                {isFull
+                {hasValuIndex
                   ? (assessmentSummary || 'The VALU Index is complete. The professional insight is being prepared.')
-                  : 'This professional listing presents declared capabilities and areas of expertise. VALU Index insight appears only where it is available for public display.'}
+                  : 'This profile presents professional capabilities and experience.'}
               </p>
               <div className={styles.modalCredential}>
-                <span>{isFull ? 'VALU INDEX INSIGHT' : 'PROFESSIONAL LISTING'}</span>
-                <strong>{tier ? tier.name : 'VALU INDEX SCORE NOT DISPLAYED'}</strong>
+                <span>{hasValuIndex ? 'VALU INDEX INSIGHT' : 'PROFESSIONAL LISTING'}</span>
+                <strong>{tier ? tier.name : 'Capability-led profile'}</strong>
               </div>
             </section>
             <section className={styles.modalPanel}>
