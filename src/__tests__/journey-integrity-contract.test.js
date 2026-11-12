@@ -196,7 +196,7 @@ describe('journey integrity contract', () => {
     expect(origin).toContain("env.CF_WORKERS_PREVIEW === '1'")
     expect(origin).toContain('VALU_PREVIEW_ASSESSMENT_ORIGIN')
     expect(origin).toContain("url.hostname === 'assessment.valoriainstitute.com'")
-    expect(signup).toContain('href="/valu/register/"')
+    expect(signup).toContain('href="/valu/assessment/"')
     expect(signup).not.toContain('href="https://assessment.valoriainstitute.com/"')
   })
 
