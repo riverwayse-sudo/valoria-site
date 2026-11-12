@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { BRAND } from '@/lib/brand'
+import { AssessmentStartLink } from '@/components/Nav'
 import EventRegistrationModal, { SessionTimer } from '@/components/EventRegistrationModal'
 import FlyerLightbox from '@/components/FlyerLightbox'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
@@ -19,7 +19,7 @@ export default function SessionSeriesGrid() {
         {session.flyerPosition && <FlyerLightbox src={EVENT_FLYER_SPRITE} position={session.flyerPosition} alt={`${session.title} flyer`} />}
         <div className="session-series-top"><div className="session-series-number">{session.cluster}</div><div className="session-series-status">{state === 'registration-open' ? 'REGISTRATION OPEN' : state === 'locked' ? 'OPENS AFTER PREVIOUS CONVERSATION' : state.replace('-', ' ')}</div></div>
         <div className="session-series-cluster">{session.cluster}</div><h3>{session.title}</h3><p className="session-series-description">{session.description}</p>
-        <div className="session-series-bottom"><div className="session-series-date">{formatSessionDate(session)} · 10:00 AM WAT · VIRTUAL · 90 MINUTES{session.speaker ? ` · ${session.speaker}` : ''}</div><SessionTimer session={session}/><div className="session-series-actions"><button className="session-series-primary" type="button" disabled={state !== 'registration-open'} onClick={() => state === 'registration-open' && setSelectedSession(session)}>{actionLabel} {state === 'registration-open' && <span aria-hidden="true">&nbsp;→</span>}</button><a className="session-series-secondary" href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer">ASSESSMENT <span aria-hidden="true">&nbsp;→</span></a></div></div>
+        <div className="session-series-bottom"><div className="session-series-date">{formatSessionDate(session)} · 10:00 AM WAT · VIRTUAL · 90 MINUTES{session.speaker ? ` · ${session.speaker}` : ''}</div><SessionTimer session={session}/><div className="session-series-actions"><button className="session-series-primary" type="button" disabled={state !== 'registration-open'} onClick={() => state === 'registration-open' && setSelectedSession(session)}>{actionLabel} {state === 'registration-open' && <span aria-hidden="true">&nbsp;→</span>}</button><AssessmentStartLink href="/valu/register/" className="session-series-secondary">ASSESSMENT <span aria-hidden="true">&nbsp;→</span></AssessmentStartLink></div></div>
       </article> })}</div>
       <div className="session-series-footer">Each conversation has its own registration window. The next registration form automatically unlocks when the previous 90-minute conversation ends.</div>
     </div>
