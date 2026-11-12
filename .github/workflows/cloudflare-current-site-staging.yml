@@ -121,9 +121,13 @@ jobs:
           fi
 
           echo "Probing unauthenticated assessment progress endpoint"
-          status="$(curl --http1.1 -sS --connect-timeout 5 --max-time 10 -o /tmp/assessment-api-noauth -w '%{http_code}' -X POST "$base/valu/assessment/api/taster-progress" -H 'Origin: https://valoria-staging-site.riverwayse.workers.dev' -H 'Content-Type: application/json' -d '{"action":"load","resume_token":"invalid"}' || true)"
-          echo "Assessment progress probe HTTP status: ${status:-empty}"
-          [[ "$status" == "401" ]] || { echo "Staging assessment proxy returned HTTP $status without authentication"; cat /tmp/assessment-api-noauth || true; exit 1; }
+          set +e
+          status="$(curl --http1.1 -v --connect-timeout 3 --max-time 6 -o /tmp/assessment-api-noauth -w '%{http_code}' -X POST "$base/valu/assessment/api/taster-progress" -H 'Origin: https://valoria-staging-site.riverwayse.workers.dev' -H 'Content-Type: application/json' -d '{"action":"load","resume_token":"invalid"}' 2>/tmp/assessment-api-curl.log)"
+          curl_exit=$?
+          set -e
+          echo "Assessment progress probe curl exit: $curl_exit; HTTP status: ${status:-empty}"
+          cat /tmp/assessment-api-curl.log || true
+          [[ "$curl_exit" == "0" && "$status" == "401" ]] || { echo "Staging assessment proxy did not return the expected unauthenticated 401"; cat /tmp/assessment-api-noauth || true; exit 1; }
 
           echo "Probing unauthenticated VALU handoff endpoint"
           status="$(curl --http1.1 -sS --connect-timeout 5 --max-time 10 -o /tmp/valu-handoff-noauth -w '%{http_code}' "$base/api/valu-handoff" || true)"
