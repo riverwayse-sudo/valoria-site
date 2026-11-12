@@ -24,11 +24,12 @@
   "previews": {
     "vars": {
       "CF_WORKERS_PREVIEW": "1",
+      "CF_WORKERS": "1",
       "VALU_PREVIEW": "1",
-        "VALU_STAGING_API_ENABLED": "0",
+      "VALU_STAGING_API_ENABLED": "0",
       "NEXT_PUBLIC_VALU_STAGING_API_ENABLED": "0",
       "NEXT_PUBLIC_VALU_PREVIEW": "1",
-      "VALU_PREVIEW_SITE_ORIGIN": "https://valoria-staging-site.riverwayse.workers.dev",
+      "VALU_PREVIEW_SITE_ORIGIN": "https://valoria-redesign-staging-site.riverwayse.workers.dev",
       "VALU_PREVIEW_ASSESSMENT_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev",
       "NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev",
       "NEXT_PUBLIC_SUPABASE_URL": "https://preview-disabled.invalid",
@@ -37,16 +38,17 @@
   },
   "env": {
     "staging": {
-      "name": "valoria-staging-site",
+      "name": "valoria-redesign-staging-site",
       "services": [
         { "binding": "VALU_ASSESSMENT", "service": "valoria-staging-assessment" }
       ],
       "vars": {
+        "CF_WORKERS": "1",
         "VALU_PREVIEW": "1",
         "VALU_STAGING_API_ENABLED": "1",
         "NEXT_PUBLIC_VALU_STAGING_API_ENABLED": "1",
         "NEXT_PUBLIC_VALU_PREVIEW": "1",
-        "VALU_PREVIEW_SITE_ORIGIN": "https://valoria-staging-site.riverwayse.workers.dev",
+        "VALU_PREVIEW_SITE_ORIGIN": "https://valoria-redesign-staging-site.riverwayse.workers.dev",
         "VALU_PREVIEW_ASSESSMENT_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev",
         "NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev",
         "VALU_UPSTREAM_ORIGIN": "https://valoria-staging-assessment.riverwayse.workers.dev",

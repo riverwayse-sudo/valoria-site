@@ -21,21 +21,23 @@ describe('Valoria SEO and discovery foundation', () => {
 
   test('profile indexing and metadata use only the consented public roster', () => {
     const layout = read('src/app/profile/[id]/layout.jsx')
-    expect(layout).toContain(".from('marketplace_public_roster')")
-    expect(layout).toContain('isPublicProfileContentReady(profile)')
+    expect(layout).toContain('getConsentVerifiedPublicProfile')
+    expect(layout).toContain('if (IS_STAGING) return')
     const directoryData = read('src/lib/marketplace-data.js')
     expect(directoryData).toContain("assessmentAccess === 'full'")
     expect(directoryData).toContain('assessmentSummary.length >= 12')
-    expect(directoryData).toContain("assessment_access,valu_index,assessment_summary")
+    expect(directoryData).toContain('valu_index,cluster_scores,assessment_summary')
     expect(directoryData).toContain("assessmentAccess === 'basic'")
     expect(directoryData).toContain('fullAssessmentReady')
     expect(layout).not.toContain(".from('professional_profiles')")
-    expect(layout).toContain('robots: { index: false, follow: true }')
+    expect(layout).toContain('robots: { index: false, follow: false }')
     expect(layout).toContain('openGraph:')
     const profilePage = read('src/app/profile/[id]/page.jsx')
     const profileClient = read('src/app/profile/[id]/ProfileClient.jsx')
-    expect(profilePage).toContain('profileContentNotReady={profileContentNotReady}')
-    expect(profileClient).toContain('if (profileContentNotReady)')
+    expect(profilePage).toContain('getConsentVerifiedPublicProfile')
+    expect(profilePage).toContain('initialProfile={initialProfile}')
+    expect(profileClient).not.toContain(".from('marketplace_public_roster')")
+    expect(profileClient).toContain('if (!user || (isUuid && user.id !== id))')
   })
 
   test('public profile and marketplace pages expose appropriate structured data', () => {
@@ -47,13 +49,14 @@ describe('Valoria SEO and discovery foundation', () => {
     expect(directory).toContain("'@type': 'ListItem'")
   })
 
-  test('homepage states Nigeria as the initial market without overstating regional availability', () => {
-    const home = read('src/app/page.jsx')
-    expect(home).toContain('INITIAL MARKET')
-    expect(home).toContain('Valoria is Africa-first, with Nigeria as its initial operating jurisdiction')
-    expect(home).toContain('clear to international professionals and buyers')
-    expect(home).toContain('Careers still turn on who was in the right room at the right time.')
-    expect(home).toContain('INITIAL MARKET')
+  test('homepage leads with the global institutional proposition while preserving truthful operating boundaries', () => {
+    const hero = read('src/components/HeroSlider.jsx')
+    const about = read('src/app/about-us/page.jsx')
+    expect(hero).toContain('BUILT FOR A GLOBAL PROFESSIONAL LANDSCAPE')
+    expect(hero).toContain('Valoria Institute is designed for accomplished professionals and institutions making consequential decisions.')
+    expect(about).toContain('no credential should be represented as awarded')
+    expect(about).toContain('At senior levels, decisions about people carry significant consequences.')
+    expect(hero).not.toMatch(/Africa-first|Nigeria as its initial operating jurisdiction/i)
   })
 
   test('root layout publishes Organization and WebSite entities', () => {
@@ -65,10 +68,10 @@ describe('Valoria SEO and discovery foundation', () => {
 
   test('machine-readable reference uses current PRIME and VALU decisions', () => {
     const llms = read('public/llms.txt')
-    expect(llms).toContain('17 skills')
     expect(llms).toContain('https://valoriainstitute.com/jobs')
-    expect(llms).toContain('AI Fluency')
-    expect(llms).toContain('Human-AI Collaboration')
+    expect(llms).toContain('The detailed skill architecture, assessment criteria and scoring methodology are proprietary to Valoria Institute and are not disclosed in public content.')
+    expect(llms).not.toContain('AI Fluency')
+    expect(llms).not.toContain('Human-AI Collaboration')
     expect(llms).toContain('points, not percentages')
     expect(llms).not.toMatch(/15[- ]question|54[- ]question/i)
     expect(llms).not.toContain('Composure Under Scrutiny')

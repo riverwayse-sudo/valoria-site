@@ -28,10 +28,11 @@ export default function HomepageEvents() {
         </div>
 
         <div className="home-events-feature">
-          <a className="home-events-poster" href={youtubeUrl}>
+          <a className="home-events-poster" href={youtubeUrl} target="_blank" rel="noopener noreferrer" aria-label={`Watch ${replay.title} on YouTube`}>
+            <img className="home-events-poster-image" src={`https://img.youtube.com/vi/${replay.youtubeVideoId}/hqdefault.jpg`} alt="" loading="lazy" />
             <span className="home-events-poster-kicker">VALORIA INSTITUTE · SESSION {replay.id}</span>
             <strong>{replay.title}</strong>
-            <span className="home-events-poster-action">WATCH THE FULL REPLAY <span aria-hidden="true">→</span></span>
+            <span className="home-events-poster-action"><span className="home-events-play-icon" aria-hidden="true">▶</span> WATCH THE FULL REPLAY <span aria-hidden="true">→</span></span>
           </a>
 
           <div className="home-events-slider">

@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION } from '@/lib/profile-consent-copy'
 
 export const dynamic = 'force-dynamic'
 
@@ -114,9 +115,12 @@ export async function GET(request) {
     if (!assessmentAccess) return []
 
     const acknowledgement = latestAcknowledgementById.get(profile.id)
-    const publicConsent = acknowledgement?.acknowledgement_version === 'public-profile-visibility-v3-2026-11-07'
+    const publicConsent = acknowledgement?.acknowledgement_version === PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION
     const activeCapabilities = capabilitiesById.get(profile.id) || []
-    const capabilitiesReady = activeCapabilities.length > 0 && activeCapabilities.every(capability =>
+    // A professional may be publicly listed in one approved capability while
+    // another selected capability remains under review. Match the public roster
+    // projection: at least one active capability must be fully approved.
+    const capabilitiesReady = activeCapabilities.some(capability =>
       capability.eligible_for_listing === true &&
       capability.eligibility_status === 'listed' &&
       (!Array.isArray(capability.missing_requirements) || capability.missing_requirements.length === 0)
@@ -143,10 +147,14 @@ export async function GET(request) {
       headline: profile.headline,
       active_tracks: profile.active_tracks || [],
       capability_labels: activeCapabilities.map(capability => capability.capability),
-      capability_issues: activeCapabilities.flatMap(capability =>
-        (Array.isArray(capability.missing_requirements) ? capability.missing_requirements : [])
-          .map(requirement => `${capability.capability}: ${requirement}`)
-      ),
+      capability_issues: activeCapabilities
+        .filter(capability => !(capability.eligible_for_listing === true && capability.eligibility_status === 'listed'))
+        .flatMap(capability => {
+          const missing = Array.isArray(capability.missing_requirements) ? capability.missing_requirements : []
+          return missing.length
+            ? missing.map(requirement => `${capability.capability}: ${requirement}`)
+            : [`${capability.capability}: awaiting Valoria eligibility review`]
+        }),
       assessment_access: assessmentAccess,
       valu_points: assessmentAccess === 'full' ? Number(fullAssessment.total_score) : null,
       completed_taster_count: completedTasters,

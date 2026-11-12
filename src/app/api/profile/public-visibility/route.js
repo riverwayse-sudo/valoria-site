@@ -1,10 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
+import { PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION, PUBLIC_PROFILE_CONSENT_TEXT } from '@/lib/profile-consent-copy'
 
 export const dynamic = 'force-dynamic'
 
-const CONSENT_VERSION = 'public-profile-visibility-v3-2026-11-07'
+const CONSENT_VERSION = PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION
 const WITHDRAWAL_VERSION = 'public-profile-visibility-withdrawn-v1-2026-11-07'
-const ACKNOWLEDGEMENT_TEXT = 'I give Valoria Institute permission to display my professional name, ATB ID, professional headline, selected capabilities and professional profile summary in its public marketplace. Where applicable, my VALU Index points and merit tier may also be displayed. My email address, phone number, CV file and individual assessment answers will not be displayed publicly. I understand I can withdraw this permission at any time.'
+const ACKNOWLEDGEMENT_TEXT = PUBLIC_PROFILE_CONSENT_TEXT
 const WITHDRAWAL_TEXT = 'I withdraw my permission for Valoria Institute to display my professional profile in the public marketplace. I understand my profile may remain available to me and to authorised users according to the platform access rules.'
 
 function getSupabase() {

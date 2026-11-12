@@ -5,7 +5,7 @@ html, body, button, input, textarea, select, option { font-family: 'Raleway', sa
 h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif !important; }
 
 /* SITE-WIDE TYPOGRAPHY CONTRACT — enforced on every public and account page.
-   Raleway only; fluid type scale; page-level display styles cannot inflate headings.
+   Raleway only; fluid type scale provides a fallback while page components retain their intended typographic hierarchy.
    Keep body copy readable and metadata legible on desktop and mobile. */
 :root {
   --vi-type-h1: clamp(2rem, 4.1vw, 3.5rem);
@@ -16,12 +16,12 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif !important; }
   --vi-type-small: .875rem;
   --vi-type-label: .8125rem;
 }
-h1 { font-size: var(--vi-type-h1) !important; line-height: 1.12 !important; letter-spacing: -.035em; }
-h2 { font-size: var(--vi-type-h2) !important; line-height: 1.16 !important; letter-spacing: -.025em; }
-h3 { font-size: var(--vi-type-h3) !important; line-height: 1.25 !important; letter-spacing: -.015em; }
-h4 { font-size: var(--vi-type-h4) !important; line-height: 1.3 !important; }
-h5 { font-size: 1rem !important; line-height: 1.35 !important; }
-h6 { font-size: .875rem !important; line-height: 1.4 !important; }
+h1 { font-size: var(--vi-type-h1); line-height: 1.12; letter-spacing: -.035em; }
+h2 { font-size: var(--vi-type-h2); line-height: 1.16; letter-spacing: -.025em; }
+h3 { font-size: var(--vi-type-h3); line-height: 1.25; letter-spacing: -.015em; }
+h4 { font-size: var(--vi-type-h4); line-height: 1.3; }
+h5 { font-size: 1rem; line-height: 1.35; }
+h6 { font-size: .875rem; line-height: 1.4; }
 body { font-size: var(--vi-type-body); }
 p, li { line-height: 1.7; }
 button, [role="button"], input[type="submit"], input[type="button"] { font-family: 'Raleway', sans-serif !important; }
@@ -35,9 +35,9 @@ button, [role="button"], input[type="submit"], input[type="button"] { font-famil
     --vi-type-small: .875rem;
     --vi-type-label: .8125rem;
   }
-  h1 { line-height: 1.14 !important; letter-spacing: -.025em; }
-  h2 { line-height: 1.2 !important; letter-spacing: -.02em; }
-  h3 { line-height: 1.28 !important; }
+  h1 { line-height: 1.14; letter-spacing: -.025em; }
+  h2 { line-height: 1.2; letter-spacing: -.02em; }
+  h3 { line-height: 1.28; }
 }
 
 /* Webflow badge suppression */
@@ -142,3 +142,17 @@ body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-i
 
 /* Staging-only environment indicator; rendered only by the isolated staging build. */
 .staging-site-banner{position:relative;z-index:1000;padding:7px 16px;background:#C9A84C;color:#1A1A2E;text-align:center;font-size:9px;font-weight:800;letter-spacing:.16em}
+
+
+/* Staging indicator remains in normal flow above the shared in-flow header. */
+.staging-site-banner {
+  white-space: normal;
+  line-height: 1.4;
+}
+@media (max-width: 560px) {
+  .staging-site-banner {
+    padding: 7px 10px;
+    font-size: 8px;
+    letter-spacing: .08em;
+  }
+}

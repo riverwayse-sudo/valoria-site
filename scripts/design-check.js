@@ -60,8 +60,15 @@ if (fs.existsSync(packagePath)) {
 }
 
 const page = existing.find((x) => x.file === 'src/app/page.jsx')?.text || '';
-for (const section of ['home-pathways', 'valu-conversion', 'LiveProfilesScroll']) {
+for (const section of ['home-pathways', 'LiveProfilesScroll']) {
   if (!page.includes(section)) add(`src/app/page.jsx: required homepage composition missing ${section}`);
+}
+const footer = existing.find((x) => x.file === 'src/components/Footer.jsx')?.text || '';
+if (footer.includes('uf-discovery-cta') || footer.includes('WANT TO BE DISCOVERED?') || footer.includes('START WITH THE VALU TASTER')) {
+  add('src/components/Footer.jsx: redundant professional-discovery CTA must remain absent from the compact footer');
+}
+if (!footer.includes('uf-grid') || !footer.includes('uf-bottom')) {
+  add('src/components/Footer.jsx: essential footer navigation and legal links must remain present');
 }
 if (!page.includes("import './home.css'")) add('src/app/page.jsx: canonical homepage stylesheet is not loaded');
 
@@ -97,7 +104,7 @@ if (/setInterval|hero-event-slide|hero-slider-controls/.test(hero)) {
 }
 const homepageEvents = existing.find((x) => x.file === 'src/components/HomepageEvents.jsx')?.text || '';
 if (/<iframe\b/i.test(homepageEvents)) add('HomepageEvents: do not embed an unverified video; use the branded replay link');
-if (!page.includes('FOR FACILITATORS') || !page.includes('FOR EVENT ORGANISERS')) {
+if (!page.includes('FOR FACILITATORS') || !page.includes('FOR EVENT ORGANIZERS')) {
   add('src/app/page.jsx: facilitator and event organiser pathways must both be visible');
 }
 const navConfigPath = path.join(root, 'src/config/navigation.js');

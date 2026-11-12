@@ -17,10 +17,9 @@ const dimensions = [
 ]
 
 const faqs = [
-  ['How does it work?', 'Start with a directional taster, then complete your full assessment. Your official VALU Index and PRIME points are generated from the completed full assessment.'],
-  ['Do I need an account first?', 'Register your contact and professional details before the taster so your progress has a persistent record. This is not your Valoria account. You create or connect your secure account after the taster, before continuing to the full assessment.'],
+  ['How does it work?', 'Start with a directional taster. Create or sign in to your Valoria account, then complete the full assessment to receive your official VALU Index and PRIME points.'],
+  ['Do I need an account first?', 'You can begin with the VALU Taster. After your initial result, create or sign in to your Valoria account to continue to the full assessment.'],
   ['Who is it for?', 'It is designed for professionals across industries and markets—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight, visibility and access to opportunity.'],
-  ['Is it free?', 'Yes. The taster and full assessment are free to take. The wider Valoria ecosystem connects insight to development, visibility and opportunity.'],
   ['Does the result define me?', 'No. The taster is directional, not an official score or permanent label. Your official VALU Index is produced after completing your full assessment.'],
   ['What happens after I finish?', 'After the taster, create or connect your secure Valoria account. You can complete your professional profile for Basic marketplace consideration. The Full VALU Index is a separate assessment for official points, a merit tier and Full marketplace eligibility. Public visibility also requires your permission.'],
   ['Can I pause part-way through?', 'Yes. Your progress is saved as you go, and you can return to your dashboard to continue without restarting.'],
@@ -44,7 +43,7 @@ export default function ValuStartPage() {
                 <AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">START THE VALU TASTER <b>→</b></AssessmentStartLink>
                 <a href="#how" className="vs-btn vs-secondary">SEE HOW IT WORKS <b>↓</b></a>
               </div>
-              <div className="vs-proof"><span>A QUICK START</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
+              <div className="vs-proof"><span>A GUIDED START</span><i>·</i><span>BUILT AROUND PRIME</span></div>
             </div>
             <div className="vs-score" style={{ borderRadius: "22px", overflow: "hidden", minWidth: 0 }} aria-label="Illustrative VALU taster directional preview">
               <div className="vs-score-top"><span>VALU TASTER</span><span>DIRECTIONAL</span></div>

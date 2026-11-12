@@ -242,3 +242,25 @@
 .developing-professional{background:#EDE8DC;color:#2E2E4A;border:1px solid #D4C9A8}
 .building-foundations{background:#F7F4EE;color:#2E2E4A;border:1px solid #D4C9A8}
 .starting-point{background:#FAFAF7;color:#6F6A60;border:1px solid #D4C9A8}
+
+
+/* Accessibility correction: preserve legibility and let cards grow with content. */
+.grid{grid-auto-rows:1fr;align-items:stretch}
+.card{height:100%;min-height:450px;max-height:none;overflow:visible;padding:20px}
+.identity{height:auto;min-height:66px;max-height:none;overflow:visible}
+.identity small,.valu small,.valu span{font-size:9px}
+.identity strong{font-size:11px;line-height:1.5}
+.assessedStatus,.snapshotStatus{font-size:9px!important;line-height:1.45}
+.assessmentInsight{flex:0 0 auto;height:auto;min-height:112px;max-height:none;overflow:visible}
+.assessmentInsight>small{font-size:9px;white-space:normal}
+.assessmentSummary{font-size:10px;line-height:1.6;-webkit-line-clamp:5;overflow:visible}
+.assessmentPending{font-size:10px;line-height:1.55;-webkit-line-clamp:4}
+.signalRow{flex:0 0 auto;height:auto;min-height:64px;max-height:none;overflow:visible}
+.capabilities{flex:0 0 auto;height:auto;min-height:54px;max-height:none;overflow:visible;gap:6px}
+.capabilities .capabilityLabel{font-size:9px;line-height:1.3}
+.capabilities .capabilityBadge{min-height:40px;padding:7px 6px;gap:4px;overflow:visible}
+.capabilityBadge strong{font-size:9px;letter-spacing:.025em;white-space:normal;overflow-wrap:anywhere}
+.capabilityBadge small{font-size:9px;line-height:1.3;letter-spacing:0;white-space:normal;overflow-wrap:anywhere}
+.view{flex:0 0 auto;height:auto;min-height:40px;max-height:none;overflow:visible;padding-top:13px}
+@media(max-width:900px){.grid{grid-auto-rows:auto}.card{height:auto;min-height:0;max-height:none}}
+@media(max-width:520px){.card{height:auto;min-height:0;max-height:none;padding:18px}.capabilities{grid-template-columns:repeat(3,minmax(0,1fr))}}

@@ -8,6 +8,7 @@ import '../styles/navigation-awakening.css'
 import '../styles/design-constitution.css'
 import './pages.css'
 import '../styles/left-alignment.css'
+import '../styles/navigation-flow.css'
 import Script from 'next/script'
 import ValuCompletionNudge from '../components/ValuCompletionNudge'
 import MarketingInstrumentation from '../components/MarketingInstrumentation'
@@ -18,24 +19,24 @@ const SITE_NAME = 'Valoria Institute'
 const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID
 const IS_STAGING = process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.VALU_PREVIEW === '1' || process.env.VERCEL_ENV === 'preview' || process.env.CF_WORKERS_PREVIEW === '1'
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-63M4SRXQKM'
-const DESCRIPTION = "Valoria Institute helps professionals understand their capabilities, build a stronger professional presence and connect with opportunity through the VALU Index, PRIME framework and Valoria Marketplace."
+const DESCRIPTION = "Valoria Institute is a professional capability institution. Through PRIME and the VALU Index, it helps professionals understand capability, connect insight to development, and supports employers and institutions with structured talent discovery."
 
-export const metadata = { metadataBase:new URL(SITE_URL), title:{default:'Valoria Institute — Worth. Built.',template:'%s | Valoria Institute'}, description:DESCRIPTION, keywords:['professional capability marketplace','professional capability assessment','VALU Index','PRIME framework','professional development','talent discovery','speaker discovery','facilitator discovery','Nigeria','Africa'], authors:[{name:'Valoria Institute'}], applicationName:SITE_NAME, category:'Business', robots:IS_STAGING?{index:false,follow:false}:{index:true,follow:true,googleBot:{index:true,follow:true,'max-image-preview':'large','max-snippet':-1}}, openGraph:{type:'website',siteName:SITE_NAME,locale:'en_NG',title:'Valoria Institute — Worth. Built.',description:DESCRIPTION,images:[{url:'/logo.png?v=20260922-2',width:1200,height:630,alt:'Valoria Institute — Worth. Built.'}]}, twitter:{card:'summary_large_image',title:'Valoria Institute — Worth. Built.',description:DESCRIPTION,images:['/logo.png?v=20260922-2']}, icons:{icon:'/logo.png',shortcut:'/logo.png',apple:'/logo.png'} }
+export const metadata = { metadataBase:new URL(SITE_URL), title:{default:'Valoria Institute — Worth. Built.',template:'%s | Valoria Institute'}, description:DESCRIPTION, keywords:['professional capability institution','professional capability assessment','VALU Index','PRIME framework','executive professional development','talent discovery','speaker discovery','facilitator discovery','United States','international professionals'], authors:[{name:'Valoria Institute'}], applicationName:SITE_NAME, category:'Business', robots:IS_STAGING?{index:false,follow:false}:{index:true,follow:true,googleBot:{index:true,follow:true,'max-image-preview':'large','max-snippet':-1}}, openGraph:{type:'website',siteName:SITE_NAME,locale:'en_US',title:'Valoria Institute — Worth. Built.',description:DESCRIPTION,images:[{url:'/logo.png?v=20260922-2',width:1200,height:630,alt:'Valoria Institute — Worth. Built.'}]}, twitter:{card:'summary_large_image',title:'Valoria Institute — Worth. Built.',description:DESCRIPTION,images:['/logo.png?v=20260922-2']}, icons:{icon:'/logo.png',shortcut:'/logo.png',apple:'/logo.png'} }
 
-const organizationSchema = {'@context':'https://schema.org','@type':'Organization',name:'Valoria Institute',url:SITE_URL,logo:`${SITE_URL}/logo.png`,description:DESCRIPTION,slogan:'Worth. Built.',areaServed:[{'@type':'Country',name:'Nigeria'}],address:{'@type':'PostalAddress',addressLocality:'Lagos',addressCountry:'NG'},sameAs:[],makesOffer:[{'@type':'Offer',name:'ATB Connect — Capability-Led Talent Discovery',description:'Employer pathway for exploring professional profiles and requesting buyer access. Search availability depends on the public Marketplace inventory.',url:`${SITE_URL}/atb-connect`},{'@type':'Offer',name:'ATB Spotlight — Speaker and Facilitator Discovery',description:'Event organiser and training buyer pathway for discovering speakers and facilitators through capability-led profiles, where available.',url:`${SITE_URL}/atb-spotlight`},{'@type':'Offer',name:'Valoria Develop — PRIME-Based Professional Development',description:'Professional development pathways structured around the PRIME framework. Programme availability and certification status are confirmed on the service page.',url:`${SITE_URL}/develop`}]}
+const organizationSchema = {'@context':'https://schema.org','@type':'Organization',name:'Valoria Institute',url:SITE_URL,logo:`${SITE_URL}/logo.png`,description:DESCRIPTION,slogan:'Worth. Built.',areaServed:[{'@type':'Country',name:'Nigeria'}],address:{'@type':'PostalAddress',addressLocality:'Lagos',addressCountry:'NG'},sameAs:[],makesOffer:[{'@type':'Offer',name:'ATB Connect — Capability-Led Talent Discovery',description:'Employer pathway for exploring professional profiles and requesting buyer access. Search availability depends on the public Marketplace inventory.',url:`${SITE_URL}/atb-connect`},{'@type':'Offer',name:'ATB Spotlight — Speaker and Facilitator Discovery',description:'Event organizer and training buyer pathway for discovering speakers and facilitators through capability-led profiles, where available.',url:`${SITE_URL}/atb-spotlight`},{'@type':'Offer',name:'Valoria Develop — PRIME-Based Professional Development',description:'Professional development pathways structured around the PRIME framework. Programme availability and certification status are confirmed on the service page.',url:`${SITE_URL}/develop`}]}
 
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: SITE_NAME,
   url: SITE_URL,
-  inLanguage: 'en-NG',
+  inLanguage: 'en-US',
   publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
 }
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en-US">
       <head><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(organizationSchema)}} /><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(websiteSchema)}} /></head>
       <body>
         {IS_STAGING ? <div className="staging-site-banner" role="status">STAGING PREVIEW · NOT PRODUCTION · ISOLATED TEST ENVIRONMENT</div> : <MarketingInstrumentation />}

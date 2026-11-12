@@ -25,12 +25,13 @@ describe('participant-facing assessment clarity', () => {
 
   test('public VALU information distinguishes the taster from the full assessment', () => {
     const valu = read('src/app/valu/page.jsx')
-    expect(valu).toContain('short VALU Taster')
+    expect(valu).toContain('Begin with the VALU Taster')
     expect(valu).toContain('separate full assessment')
     expect(valu).toContain('official points-based VALU Index')
-    expect(valu).toContain('nine questions across four Intelligence skills')
-    expect(valu).toContain('separate 58-question full assessment')
-    expect(valu).toContain('54 scored questions and four validity checks')
+    expect(valu).toContain('separate full assessment')
+    expect(valu).not.toContain('four Intelligence skills')
+    expect(valu).toContain('separate full assessment')
+    expect(valu).not.toMatch(/(?:9|58)[- ]questions?|nine questions|54 scored questions|four validity checks/i)
   })
 
   test('public PRIME page and marketplace use the five approved VALU designation bands', () => {
@@ -49,11 +50,8 @@ describe('participant-facing assessment clarity', () => {
       expect(prime).toContain(tier.name)
       expect(marketplaceCss).toContain(`.${tier.className}`)
     }
-    expect(prime).toContain('80–100 POINTS')
-    expect(prime).toContain('65–79 POINTS')
-    expect(prime).toContain('50–64 POINTS')
-    expect(prime).toContain('35–49 POINTS')
-    expect(prime).toContain('BELOW 35 POINTS')
+    expect(prime).toContain('The detailed assessment criteria and scoring thresholds are proprietary.')
+    expect(prime).not.toMatch(/(?:80–100|65–79|50–64|35–49|BELOW 35) POINTS/i)
     expect(brand).toContain("unit: 'points'")
   })
 

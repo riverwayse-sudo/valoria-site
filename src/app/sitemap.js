@@ -1,6 +1,8 @@
-import { isPublicProfileContentReady } from '@/lib/marketplace-data'
+import { getConsentVerifiedPublicProfileSitemapRows } from '@/lib/public-profile'
 
 const IS_PREVIEW = process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1'
+export const dynamic = 'force-dynamic'
+
 const SITE_URL = IS_PREVIEW ? 'https://staging.valoriainstitute.com' : 'https://valoriainstitute.com'
 
 export default async function sitemap() {
@@ -41,29 +43,19 @@ export default async function sitemap() {
   // A staging preview must never enumerate live member profiles.
   if (IS_PREVIEW) return staticEntries
 
-  // Only enumerate the consented public projection. The underlying
-  // professional_profiles table is intentionally not readable by anon.
+  // Public profile URLs are enumerated only after server-side consent,
+  // listing, assessment and revocation checks have all passed.
   let profileEntries = []
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    if (supabaseUrl && supabaseKey) {
-      const { createClient } = await import('@supabase/supabase-js')
-      const client = createClient(supabaseUrl, supabaseKey)
-      const { data, error } = await client
-        .from('marketplace_public_roster')
-        .select('professional_id,projection_refreshed_at,full_name,atb_id,headline,current_job_title,assessment_access,valu_index,assessment_summary')
-        .not('professional_id', 'is', null)
-      if (error) console.error('sitemap: public roster fetch failed:', error)
-      profileEntries = (data || []).filter(isPublicProfileContentReady).map(p => ({
-        url: `${SITE_URL}/profile/${p.professional_id}`,
-        lastModified: p.projection_refreshed_at ? new Date(p.projection_refreshed_at) : now,
-        changeFrequency: 'weekly',
-        priority: 0.6,
-      }))
-    }
-  } catch {
-    // Build-time Supabase failure must not break sitemap generation.
+    const profiles = await getConsentVerifiedPublicProfileSitemapRows()
+    profileEntries = profiles.map(profile => ({
+      url: `${SITE_URL}/profile/${profile.id}`,
+      lastModified: profile.updated_at ? new Date(profile.updated_at) : now,
+      changeFrequency: 'weekly',
+      priority: 0.6,
+    }))
+  } catch (error) {
+    console.error('Sitemap public profile verification failed:', error)
   }
 
   return [...staticEntries, ...profileEntries]

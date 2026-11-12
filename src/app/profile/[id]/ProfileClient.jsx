@@ -6,7 +6,6 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import EnquiryForm from '@/components/EnquiryForm'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { toPublicProfile, PUBLIC_PROFILE_SELECT } from '@/lib/public-profile'
 import { getValuTier } from '@/lib/brand'
 
 // ─── helpers ─────────────────────────────────────────────
@@ -141,7 +140,11 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
       }
     }
 
-    async function loadCertificates(professionalId) {
+    async function loadCertificates(professionalId, viewer) {
+      if (viewer?.id !== professionalId) {
+        if (!cancelled) setCertificates([])
+        return
+      }
       const { data, error } = await supabase
         .from('professional_certificates')
         .select('id,certificate_number,title,event_title,event_date,issuer,issued_at,verification_token')
@@ -182,41 +185,55 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
       }
 
       if (initialProfile) {
-        await loadCertificates(initialProfile.id)
+        await loadCertificates(initialProfile.id, user)
         if (cancelled) return
         if (!user || user.id !== initialProfile.id) await recordView(initialProfile.id, user)
         if (!cancelled) setLoading(false)
         return
       }
 
+      // Public visitors must arrive with a server-side consent-verified profile.
+      // Only the authenticated owner may read their own private profile record.
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)
-      const { data: row, error } = await supabase
-        .from('marketplace_public_roster')
-        .select(PUBLIC_PROFILE_SELECT)
-        .eq(isUuid ? 'professional_id' : 'atb_id', id)
+      if (!user || (isUuid && user.id !== id)) {
+        if (!cancelled) {
+          setNotFound(true)
+          setLoading(false)
+        }
+        return
+      }
+
+      const { data: real, error: realError } = await supabase
+        .from('professional_profiles')
+        .select('id,headline,current_job_title,location,industry,experience_years,skills,topics,facilitation_topics,active_tracks,valu_index,cluster_scores,designation,linkedin_url,website_url,youtube_links,fee_range,salary_expectation,atb_id,availability,photo_url,username,phone,programme_types,format_capabilities,audience_sizes,past_events,past_clients,languages')
+        .eq('id', user.id)
         .maybeSingle()
 
-      if (error) console.error('public Marketplace profile fetch failed:', error)
-      const real = toPublicProfile(row)
-
-      if (real) {
-        if (cancelled) return
-        setProfile(real)
-        await loadCertificates(real.id)
-        if (!user || user.id !== real.id) await recordView(real.id, user)
+      if (realError) console.error('professional_profiles owner fetch failed:', realError)
+      if (real && (!isUuid ? String(real.atb_id || '').normalize('NFKC') === id : real.id === id)) {
+        const { data: certificateRows, error: certificateError } = await supabase
+          .from('professional_certificates')
+          .select('id,certificate_number,title,event_title,event_date,issuer,issued_at,verification_token')
+          .eq('professional_id', real.id)
+          .is('revoked_at', null)
+          .order('issued_at', { ascending: false })
+        if (certificateError) console.error('professional certificates fetch failed:', certificateError)
+        if (!cancelled) setCertificates(certificateRows || [])
+        setProfile({
+          ...real,
+          years_experience: real.experience_years,
+          availability: Array.isArray(real.availability) ? (real.availability[0] || null) : real.availability,
+          valu_score: real.valu_index,
+          active_tracks: real.active_tracks || [],
+          _source: 'owner_private',
+        })
         if (!cancelled) setLoading(false)
         return
       }
 
-      if (user && user.id === id) {
-        window.location.href = '/profile/setup'
-        return
-      }
+      window.location.href = '/profile/setup'
+      return
 
-      if (!cancelled) {
-        setNotFound(true)
-        setLoading(false)
-      }
     }
 
     load().catch(error => {
@@ -276,9 +293,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
   const isSpeaker     = tracks.includes('speaker')
   const isFacilitator = tracks.includes('facilitator')
   const isCandidate   = tracks.includes('candidate')
-  const initials    = getInitials(p.display_name)
-  const avatarLetters = getAvatarLetters(p.display_name)
-  const atbId       = p.atb_id || '—'
+  const atbId       = String(p.atb_id || 'VALORIA PROFESSIONAL').normalize('NFKC')
   const videos      = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
   const compensation = (isSpeaker || isFacilitator) ? (p.fee_range || p.salary_expectation || null) : (p.salary_expectation || p.fee_range || null)
   const compLabel   = (isSpeaker || isFacilitator) ? 'Fee Range' : 'Salary Range'
@@ -304,7 +319,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
     { label:'Location',   value: p.location || '—' },
     { label:'Industry',   value: p.industry || '—' },
     { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
-    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Basic · Snapshot', href: p.valu_score != null ? '#valu-card' : null },
+    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Professional profile', href: p.valu_score != null ? '#valu-card' : null },
   ]
 
   return (
@@ -353,14 +368,14 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
             <div className="vi-avatar-frame" style={{ width:'148px', height:'148px', borderRadius:'50%', padding:'3px', background:`conic-gradient(from 180deg, ${GOLD}, #8a6420, ${GOLD})`, flexShrink:0, boxShadow:'0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.08)' }}>
               <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: DARK, padding:'3px' }}>
                 <div style={{ width:'100%', height:'100%', borderRadius:'50%', overflow:'hidden' }}>
-                  <ValoriaAvatar src={p.photo_url} seed={p.id || p.atb_id || p.display_name} alt={p.display_name ? `${p.display_name}'s profile avatar` : 'Profile avatar'} size={136} />
+                  <ValoriaAvatar src={p.photo_url} seed={p.id || p.atb_id} alt="Professional profile avatar" size={136} />
                 </div>             </div>
             </div>
 
             {/* ID block */}
             <div style={{ paddingBottom:'16px', flex:1, minWidth:'200px' }}>
               <div style={{ fontSize:'clamp(22px,3.5vw,32px)', fontWeight:700, letterSpacing:'.02em', lineHeight:1.1, marginBottom:'7px', color: PARCH }}>
-                {p.display_name}
+                {atbId}
               </div>
               <div style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.12em', color: DIM, marginBottom:'10px', fontVariantNumeric:'tabular-nums' }}>
                 ATB PROFILE ID · {atbId}
@@ -389,7 +404,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                 checked isOwnProfile, so a professional viewing their own
                 public listing saw MORE TALENT / REQUEST INTRO (a mailto
                 addressed to their own ATB ID) instead of an edit action.
-                The isOwnProfile branch below is the fix; the buyer-facing
+                The isOwnProfile branch below is the fix; the public-facing
                 branch is unchanged. */}
             <div style={{ display:'flex', gap:'10px', paddingBottom:'16px', flexShrink:0, flexWrap:'wrap' }}>
               <button onClick={copyLink}
@@ -422,7 +437,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                       triggerStyle={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', border:'none', textDecoration:'none' }}
                     />
                   ) : (
-                    <span style={{fontSize:'10px',letterSpacing:'.1em',color:DIM}}>NO ACTIVE BUYER PATHWAY</span>
+                    <span style={{fontSize:'10px',letterSpacing:'.1em',color:DIM}}>INTRODUCTIONS NOT AVAILABLE</span>
                   )}
                 </>
               )}
@@ -464,8 +479,10 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                 const labels = ['Intro reel','Case study','Keynote clip','Panel talk']
                 const isActive = activeVideo === i
                 return (
-                  <div key={i} onClick={() => setActiveVideo(isActive ? null : i)}
-                    style={{ flexShrink:0, width:'84px', textAlign:'center', cursor:'pointer' }}>
+                  <button key={i} type="button" onClick={() => setActiveVideo(isActive ? null : i)}
+                    aria-label={`${isActive ? 'Close' : 'Play'} ${labels[i] || `Video ${i+1}`}`}
+                    aria-pressed={isActive}
+                    style={{ flexShrink:0, width:'84px', textAlign:'center', cursor:'pointer', border:0, padding:0, color:'inherit', background:'transparent', font: 'inherit' }}>
                     <div style={{ width:'72px', height:'72px', borderRadius:'50%', margin:'0 auto 8px', padding:'2.5px', background: isActive ? `conic-gradient(${GOLD}, rgba(201,168,76,.2) 40%, rgba(201,168,76,.05) 41%)` : 'rgba(201,168,76,.15)', border: isActive ? `none` : `1px solid ${GLINE}` }}>
                       <div style={{ width:'100%', height:'100%', borderRadius:'50%', background: MID, display:'flex', alignItems:'center', justifyContent:'center', color: GOLD, fontSize:'18px', border:`2px solid ${DARK}`, overflow:'hidden' }}>
                         {ytId
@@ -474,7 +491,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                       </div>
                     </div>
                     <div style={{ fontSize:'10px', color: DIM, letterSpacing:'.04em' }}>{labels[i] || `Video ${i+1}`}</div>
-                  </div>
+                  </button>
                 )
               })}
             </div>
@@ -482,7 +499,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
         )}
 
         {/* MAIN GRID */}
-        <div className="vi-profile-grid" style={{ maxWidth:'1100px', margin:'36px auto 80px', padding:'0 clamp(20px,4vw,40px)', display:'grid', gridTemplateColumns:'280px 1fr', gap:'40px' }}>
+        <div className="vi-profile-grid" style={{ maxWidth:'1100px', margin:'36px auto 80px', padding:'0 clamp(20px,4vw,40px)', display:'grid', gridTemplateColumns:'280px minmax(0, 1fr)', gap:'40px' }}>
 
           {/* SIDEBAR */}
           <div style={{ minWidth:0 }}>
@@ -503,7 +520,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
               ) : (
                 <>
                   <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
-                    This is a Basic snapshot listing. The separate full VALU assessment establishes official points and the assessment-based capability summary.
+                    Professional capabilities and experience are presented here. VALU Index insight appears when available for public display.
                   </p>
                   <a href="/valu"
                     style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
@@ -579,7 +596,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                 ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
                 : p.bio
                   ? <><p style={{ fontSize:'10px', fontWeight:700, letterSpacing:'.12em', color:'rgba(201,168,76,.6)', marginBottom:'10px' }}>SELF-REPORTED OVERVIEW</p><p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.bio}</p></>
-                  : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.45)', lineHeight:1.7 }}>This Basic snapshot profile does not include an official VALU capability summary. That summary is established after the separate full assessment.</p>}
+                  : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.45)', lineHeight:1.7 }}>Professional capabilities and experience are presented here. VALU Index insight appears when available for public display.</p>}
             </Section>
 
             {/* Highest-scoring PRIME clusters are shown as report-backed points, without inferred personality claims. */}
@@ -599,7 +616,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
 
             {/* Skills / Topics */}
             {tags.length > 0 && (
-              <Section label={displayTrack === 'facilitator' ? 'Programme Types' : displayTrack === 'speaker' ? 'Speaking Topics' : 'Core Skills'}>
+              <Section label={displayTrack === 'facilitator' ? 'Program Types' : displayTrack === 'speaker' ? 'Speaking Topics' : 'Core Skills'}>
                 <div style={{ display:'flex', flexWrap:'wrap', gap:'10px' }}>
                   {tags.map(t => (
                     <span key={t} style={{ padding:'8px 16px', border:`1px solid ${GLINE2}`, fontSize:'12px', fontWeight:400, color: DIM, letterSpacing:'.04em' }}>
@@ -643,11 +660,12 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                   {videos.slice(0,4).map((url, i) => {
                     const ytId = getYouTubeId(url)
                     return (
-                      <div key={i} onClick={() => setActiveVideo(i)}
-                        style={{ aspectRatio:'16/10', position:'relative', background:`linear-gradient(145deg,${MID},${DARK})`, border:`1px solid ${GLINE}`, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', overflow:'hidden' }}>
+                      <button key={i} type="button" onClick={() => setActiveVideo(i)}
+                        aria-label={`Play ${['Intro reel','Case study','Keynote clip','Panel talk'][i] || `Video ${i+1}`}`}
+                        style={{ aspectRatio:'16/10', position:'relative', width:'100%', padding:0, color:'inherit', font:'inherit', background:`linear-gradient(145deg,${MID},${DARK})`, border:`1px solid ${GLINE}`, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', overflow:'hidden' }}>
                         {ytId && <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:.5 }} />}
-                        <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'rgba(201,168,76,.9)', display:'flex', alignItems:'center', justifyContent:'center', color: DARK, fontSize:'15px', position:'relative', zIndex:1 }}>▶</div>
-                      </div>
+                        <span aria-hidden="true" style={{ width:'44px', height:'44px', borderRadius:'50%', background:'rgba(201,168,76,.9)', display:'flex', alignItems:'center', justifyContent:'center', color: DARK, fontSize:'15px', position:'relative', zIndex:1 }}>▶</span>
+                      </button>
                     )
                   })}
                 </div>
@@ -665,7 +683,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
             <div id="contact" className="vi-cta-intro" style={{ background:`linear-gradient(135deg, rgba(201,168,76,.06), rgba(26,26,46,.3))`, border:`1px solid ${GLINE2}`, padding:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'24px', flexWrap:'wrap', marginTop:'8px', scrollMarginTop:'96px' }}>
               <div>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'8px' }}>
-                  {isOwnProfile ? 'This Is Your Profile' : !canRequest ? 'No Active Buyer Pathway' : displayTrack === 'facilitator' ? 'Commission This Facilitator' : displayTrack === 'speaker' ? 'Request This Speaker' : 'Get in Touch'}
+                  {isOwnProfile ? 'This Is Your Profile' : !canRequest ? 'Introductions Not Available' : displayTrack === 'facilitator' ? 'Commission This Facilitator' : displayTrack === 'speaker' ? 'Request This Speaker' : 'Get in Touch'}
                 </div>
                 <p style={{ fontSize:'13px', fontWeight:300, color: DIM, maxWidth:'380px', lineHeight:1.7 }}>
                   {isOwnProfile
@@ -673,10 +691,10 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                     : !canRequest
                     ? 'This profile is visible in the Marketplace, but no capability is currently open for enquiries.'
                     : displayTrack === 'facilitator'
-                    ? `Interested in commissioning ${p.display_name} for a programme? Send an enquiry through Valoria.`
+                    ? 'Interested in commissioning this facilitator? Send an enquiry through Valoria.'
                     : displayTrack === 'speaker'
-                    ? `Interested in engaging ${p.display_name} for your event? Send an enquiry through Valoria.`
-                    : `Want to connect with ${p.display_name}? Send an enquiry through Valoria; private contact details are not displayed on this profile.`}
+                    ? 'Interested in engaging this speaker for your event? Send an enquiry through Valoria.'
+                    : 'Want to connect with this professional? Send an enquiry through Valoria; private contact details are not displayed on this profile.'}
                 </p>
               </div>
               {p.is_dummy ? (
@@ -697,7 +715,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
                   currentUser={currentUser}
                 />
               ) : (
-                <span style={{fontSize:'10px',letterSpacing:'.1em',color:DIM}}>NO ACTIVE BUYER PATHWAY</span>
+                <span style={{fontSize:'10px',letterSpacing:'.1em',color:DIM}}>INTRODUCTIONS NOT AVAILABLE</span>
               )}
             </div>
           </div>
@@ -712,6 +730,20 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
           70%{box-shadow:0 0 0 6px rgba(29,158,117,0);}
           100%{box-shadow:0 0 0 0 rgba(29,158,117,0);}
         }
+        .vi-stat-strip {
+          flex-wrap: nowrap !important;
+          min-width: 0;
+          overflow-x: auto;
+          overscroll-behavior-x: contain;
+          scrollbar-width: thin;
+          -webkit-overflow-scrolling: touch;
+        }
+        .vi-stat-strip > * {
+          flex: 0 0 150px !important;
+          min-width: 150px !important;
+          box-sizing: border-box;
+        }
+        .vi-profile-grid > * { min-width: 0; }
         .vi-stat-strip a:hover, .vi-stat-strip div:hover {
           background: rgba(201,168,76,.04);
         }
@@ -722,8 +754,8 @@ export default function ProfileClient({ id, searchParams, initialProfile = null,
           }
         }
         @media (max-width: 640px) {
-          .vi-stat-strip { flex-wrap: wrap !important; }
-          .vi-stat-strip > * { flex: 1 1 42% !important; min-width: 0 !important; }
+          .vi-stat-strip { flex-wrap: nowrap !important; }
+          .vi-stat-strip > * { flex: 0 0 138px !important; min-width: 138px !important; }
           .vi-header-block {
             margin-top: -36px !important;
             align-items: flex-start !important;

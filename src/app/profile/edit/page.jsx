@@ -357,7 +357,7 @@ function EditPageInner() {
             }} /></Field>
             <Field label="Work history">
               <ListEditor rows={form.work_history || []} addLabel="Add role"
-                fields={[{key:'title',placeholder:'Title'},{key:'org',placeholder:'Organisation'},{key:'duration',placeholder:'Duration'}]}
+                fields={[{key:'title',placeholder:'Title'},{key:'org',placeholder:'Organization'},{key:'duration',placeholder:'Duration'}]}
                 onChange={v => setField('candidate','work_history', v)} />
             </Field>
             <div style={S.grid2}>
@@ -394,13 +394,13 @@ function EditPageInner() {
         {isFacilitator && (
           <Section title="Facilitator Details" dirty={dirty.facilitator} saving={saving.facilitator} saved={saved.facilitator}
             onSave={() => saveSection('facilitator', ['programme_types','past_clients','fee_range','certifications'])}>
-            <Field label="Programme types"><ChipGroup options={PROGRAMME_TYPES} selected={form.programme_types} onToggle={v => {
+            <Field label="Program types"><ChipGroup options={PROGRAMME_TYPES} selected={form.programme_types} onToggle={v => {
               const cur = form.programme_types || []
               setField('facilitator','programme_types', cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v])
             }} /></Field>
             <Field label="Past clients">
               <ListEditor rows={form.past_clients || []} addLabel="Add client"
-                fields={[{key:'name',placeholder:'Client / organisation'},{key:'programme',placeholder:'Programme delivered'}]}
+                fields={[{key:'name',placeholder:'Client / organization'},{key:'programme',placeholder:'Program delivered'}]}
                 onChange={v => setField('facilitator','past_clients', v)} />
             </Field>
             <Field label="Fee range"><TextInput value={form.fee_range} onChange={v => setField('facilitator','fee_range',v)} /></Field>
@@ -429,7 +429,7 @@ function EditPageInner() {
           .profile-edit-header > div:last-child { display: none; }
           .profile-edit-container { padding: 22px 16px !important; }
           .profile-edit-container > section { padding: 18px 16px !important; border-radius: 6px !important; }
-          .profile-edit-container h2 { font-size: 14px !important; }
+          .profile-edit-container h2 { font-size: 16px !important; line-height: 1.35 !important; }
            .profile-edit-container .profile-edit-grid2 { grid-template-columns: minmax(0, 1fr) !important; gap: 0 !important; }
           .profile-edit-container input, .profile-edit-container textarea { min-width: 0; }
           .profile-edit-container button { max-width: 100%; }
@@ -450,7 +450,7 @@ export default function ProfileEditPage() {
 
 const S = {
   page: { minHeight:'100vh', background:DARK, fontFamily:"'Raleway','Helvetica Neue',Arial,sans-serif", color:PARCH, paddingBottom:'80px' },
-  header: { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', height:'64px', background:MID, borderBottom:'1px solid rgba(201,168,76,.2)', position:'sticky', top:0, zIndex:100 },
+  header: { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', height:'64px', background:MID, borderBottom:'1px solid rgba(201,168,76,.2)' },
   backLink: { fontSize:'12px', color:'rgba(247,244,238,.5)', textDecoration:'none', width:'140px' },
   headerTitle: { fontSize:'14px', fontWeight:700, letterSpacing:'.08em', color:GOLD },
   container: { maxWidth:'760px', margin:'0 auto', padding:'32px 24px' },

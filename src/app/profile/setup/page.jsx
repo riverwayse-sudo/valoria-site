@@ -62,7 +62,7 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   // since a bare "which industry do you know best" reads as ambiguous next
   // to the preferred-industry question right after it.
   s.push({ key:'industry', kind:'industry-pair', section:'Profile', title:'Which industry are you in?', options:INDUSTRIES, required:true })
-  s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your professional name is displayed according to your marketplace visibility choice. Your contact details remain private and are shared only through Valoria-facilitated introductions.', placeholder:'Your full professional name', required:true })
+  s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your ATB ID and selected professional information may appear publicly only if you opt in to marketplace visibility. Your contact details remain private and are shared only through Valoria-facilitated introductions.', placeholder:'Your full professional name', required:true })
   s.push({ key:'username', kind:'text', section:'Profile', title:'Choose a username.', sub:'This is how you\u2019ll be identified on Valoria. Letters, numbers, dots, underscores or hyphens — no spaces.', placeholder:'e.g. chioma_adeyemi', required:true, validator:'username' })
   s.push({ key:'phone', kind:'text', section:'Profile', inputType:'tel', title:'What\u2019s your phone number?', sub:'Kept private — only shared once Valoria facilitates an introduction.', placeholder:'+234 801 234 5678', required:true, validator:'phone' })
   s.push({ key:'current_job_title', kind:'text', section:'Profile', title:'What\u2019s your current job title?', sub:'Your actual title — this stays factual and separate from your headline below.', placeholder:'e.g. Senior Product Manager', required:true })
@@ -73,10 +73,9 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   ], required:true })
   s.push({ key:'bio', kind:'textarea', section:'Profile', title:'Write a short bio.', sub:'First person, 3–4 sentences. What you do, who you serve, what makes you distinct.', placeholder:'I\u2019m a fintech growth strategist with 12 years of experience...', maxLength:600, required:true })
   s.push({ key:'languages', kind:'multi-chip', section:'Profile', title:'Which languages do you speak?', sub:'Select all that apply.', options:LANGUAGES, required:true })
-  // Visibility choice removed (1 Aug 2026) — every profile must be
-  // available in the marketplace, so this is no longer a decision the
-  // person makes; visibility is hardcoded to 'registered_only' in
-  // saveProgress below instead.
+  // Public visibility is a separate, explicit opt-in managed by
+  // PublicMarketplaceVisibility. New profiles default to registered-only;
+  // profile completion never grants public-display consent.
 
   // The self-report "What are your core skills?" question was removed here —
   // replaced by the current/preferred industry pair at the top of this
@@ -87,10 +86,10 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   if (isSpeaker) s.push({ key:'format_capabilities', kind:'multi-chip', section:'Expertise', title:'What speaking formats do you offer?', sub:'Select all that apply.', options:FORMAT_CAPS, required:true, color:'GOLD' })
   if (isSpeaker) s.push({ key:'audience_sizes', kind:'multi-chip', section:'Expertise', title:'What audience sizes have you spoken to?', sub:'Select all that apply.', options:AUDIENCE_SIZES, required:true, color:'GOLD' })
   if (isSpeaker) s.push({ key:'past_events', kind:'list', section:'Expertise', title:'Any past speaking engagements?', sub:'Up to 3. These build trust with people viewing your profile.', fields:[{ key:'name', placeholder:'Event name' }, { key:'role', placeholder:'Your role' }], max:3, addLabel:'+ Add event', required:true })
-  if (isFacilitator) s.push({ key:'programme_types', kind:'multi-chip', section:'Expertise', title:'What programme types do you run?', sub:'Select all that apply.', options:PROGRAMME_TYPES, required:true, color:'GOLD' })
-  if (isFacilitator) s.push({ key:'past_clients', kind:'list', section:'Expertise', title:'Any past clients or programmes?', sub:'Up to 3.', fields:[{ key:'name', placeholder:'Organisation' }, { key:'programme', placeholder:'Programme delivered' }], max:3, addLabel:'+ Add client', required:true })
+  if (isFacilitator) s.push({ key:'programme_types', kind:'multi-chip', section:'Expertise', title:'What program types do you run?', sub:'Select all that apply.', options:PROGRAMME_TYPES, required:true, color:'GOLD' })
+  if (isFacilitator) s.push({ key:'past_clients', kind:'list', section:'Expertise', title:'Any past clients or programs?', sub:'Up to 3.', fields:[{ key:'name', placeholder:'Organization' }, { key:'programme', placeholder:'Program delivered' }], max:3, addLabel:'+ Add client', required:true })
   if (isFacilitator) s.push({ key:'pcp_certified', kind:'boolean', section:'Expertise', title:'Do you hold a Valoria PCP certification?', sub:'PRIME-Certified Practitioner.' })
-  if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Up to 3 roles. Helps people understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organisation' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:true })
+  if (isCandidate) s.push({ key:'work_history', kind:'list', section:'Expertise', title:'Add your work history.', sub:'Up to 3 roles. Helps people understand your track record.', fields:[{ key:'title', placeholder:'Job title' }, { key:'org', placeholder:'Organization' }, { key:'duration', type:'select', options:WORK_DURATIONS, placeholder:'Duration' }], max:3, addLabel:'+ Add role', required:true })
   if (isCandidate) s.push({ key:'certifications', kind:'text', section:'Expertise', title:'Any certifications or credentials?', sub:'Comma separated.', placeholder:'PMP, Google Analytics, HubSpot Marketing', required:true })
 
   s.push({ key:'photo_url', kind:'photo', section:'Media', title:'Add a profile photo.', sub:'Optional. Valoria uses a professional default avatar until you choose to upload a photo.', required:false })
@@ -185,8 +184,8 @@ function ProfileSetupForm() {
   const currentSection = screen?.section || 'Review'
   const sectionGuidance = {
     Track: 'Choose the professional pathways that describe how you want to participate. This selection shapes the capability sections and the directories your profile may qualify for.',
-    Profile: 'Establish your professional identity. These details help people recognise your experience and understand the context behind your VALU Index.',
-    Expertise: 'Describe the work you do in each selected pathway. This information helps Valoria organise your capability profile and assess relevant evidence.',
+    Profile: 'Establish your professional identity. These details help people recognize your experience and understand the context behind your VALU Index.',
+    Expertise: 'Describe the work you do in each selected pathway. This information helps Valoria organize your capability profile and assess relevant evidence.',
     Media: 'Add supporting material that helps reviewers and prospective partners understand your professional background. Your CV remains private unless a permitted workflow uses it.',
     Terms: 'Set practical preferences for matching and introductions. These preferences do not change your VALU points or determine eligibility by themselves.',
     Review: 'Review your details and confirm that the information is accurate before submitting your profile.'
@@ -518,7 +517,7 @@ function ProfileSetupForm() {
           </div>
           <Title>You&apos;re in,<br/><Em>{form.display_name?.split(' ')[0] || 'welcome'}.</Em></Title>
           <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.75, marginBottom:'28px' }}>
-            Your profile has been submitted to the founding cohort.
+            Your profile has been submitted for review.
           </p>
 
           <div style={{ background:MID, border:`1px solid ${GLINE}`, padding:'24px', marginBottom:'24px' }}>
@@ -526,7 +525,7 @@ function ProfileSetupForm() {
             {submittedInfo.atb_id ? (
               <div style={{ fontSize:'22px', fontWeight:700, color:GOLD, letterSpacing:'.04em', fontFamily:'monospace' }}>{submittedInfo.atb_id}</div>
             ) : (
-              <div style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.6 }}>Your ID will appear on your dashboard once your profile clears review — usually within 48 hours.</div>
+              <div style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.6 }}>Your ID will appear on your dashboard after the review is complete.</div>
             )}
           </div>
 
@@ -551,7 +550,7 @@ function ProfileSetupForm() {
   return (
     <div style={{ minHeight:'100vh', background:DARK, color:PARCH, fontFamily:'var(--font,Raleway,sans-serif)' }}>
       {/* PRIME stripe */}
-      <div style={{ height:'2px', background:GOLD, position:'sticky', top:0, zIndex:200, opacity:.8 }} />
+      <div style={{ height:'2px', background:GOLD, opacity:.8 }} />
 
       {/* NAV */}
       <header style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 clamp(20px,4vw,40px)', height:'60px', background:MID, borderBottom:`1px solid ${GLINE}` }}>
@@ -703,7 +702,7 @@ function ScreenBody(props) {
       const options = [
         { id:'candidate',   label:'Talent',      desc:'I want employers and recruiters to find me through ATB Connect.', color:'GOLD' },
         { id:'speaker',     label:'Speaker',     desc:'I want to be booked for events and conferences through ATB Spotlight.', color:GOLD },
-        { id:'facilitator', label:'Facilitator', desc:'I want to be commissioned for L&D programmes through ATB Develop.', color:'GOLD' },
+        { id:'facilitator', label:'Facilitator', desc:'I want to be considered for learning and development engagements through Valoria Develop.', color:'GOLD' },
       ]
       const selected = form.active_tracks || []
       return (
@@ -938,7 +937,7 @@ function ScreenBody(props) {
           {screen.sub && <Sub>{screen.sub}</Sub>}
           <div style={{ marginBottom:'16px' }}>
             {rows.map((row, i) => (
-              <div key={i} style={{ display:'grid', gridTemplateColumns: `repeat(${screen.fields.length}, 1fr)`, gap:'10px', marginBottom:'10px' }}>
+              <div key={i} style={{ display:'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap:'10px', marginBottom:'10px' }}>
                 {screen.fields.map(f => (
                   f.type === 'select' ? (
                     <select key={f.key} style={selectStyle} value={row[f.key] || ''}
@@ -1229,7 +1228,7 @@ function CurrencyRangeInput({ value, onChange, periodLabel }) {
           Currently saved: <span style={{ color:PARCH }}>{parsed.legacy}</span> — update below to replace it.
         </p>
       )}
-      <div style={{ display:'grid', gridTemplateColumns:'110px 1fr 1fr', gap:'10px', marginBottom:'6px' }}>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap:'10px', marginBottom:'6px' }}>
         <select value={currency} onChange={e => { setCurrency(e.target.value); commit({ currency:e.target.value }) }} style={selectStyle}>
           {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} {c.symbol}</option>)}
         </select>

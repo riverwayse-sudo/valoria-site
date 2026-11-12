@@ -52,25 +52,35 @@ if (fs.existsSync(profileRoutePath)) {
   if (!/const\s+resolvedSearchParams\s*=\s*await\s+searchParams\b/.test(route)) {
     violations.push('public profile route must await Next.js 15 async searchParams');
   }
-  if (!route.includes(".from('marketplace_public_roster')")) {
-    violations.push('public profile route must read from the restricted Marketplace roster projection');
+  if (!route.includes('getConsentVerifiedPublicProfile')) {
+    violations.push('public profile route must delegate to the consent-verified server projection');
+  }
+  if (route.includes(".from('marketplace_public_roster')")) {
+    violations.push('public profile route must not query the public roster directly');
   }
   if (route.includes(".from('professional_profiles')")) {
     violations.push('public profile route must not query the private professional_profiles table');
   }
-  if (!route.includes('toPublicProfile')) {
-    violations.push('public profile route must map the safe roster projection before rendering');
+  if (!route.includes('initialProfile')) {
+    violations.push('public profile route must provide its consent-verified profile to ProfileClient');
   }
   if (/\.eq\(\s*['"]profile_complete['"]/.test(route)) {
     violations.push('public profile route must not confuse profile completion with public listing eligibility');
   }
-  const passesServerFetchedProfile =
-    route.includes('initialProfile={toPublicProfile(row)}') ||
-    (route.includes('initialProfile={publicProfile}') && route.includes('toPublicProfile(row)'));
+  const passesServerFetchedProfile = route.includes('initialProfile={initialProfile}');
   if (!/<ProfileClient\b/.test(route) || !passesServerFetchedProfile) {
     violations.push('public profile route must pass its server-fetched profile into ProfileClient');
   }
 }
+const profileProjectionPath = path.join(root, 'src/lib/public-profile.js');
+if (fs.existsSync(profileProjectionPath)) {
+  const projection = fs.readFileSync(profileProjectionPath, 'utf8');
+  if (!projection.startsWith("import 'server-only'")) violations.push('public profile projection must be server-only');
+  for (const invariant of ["professional_profile_acknowledgements", "PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION", "listing_status", "revoked_at"]) {
+    if (!projection.includes(invariant)) violations.push('public profile projection is missing consent/listing invariant: ' + invariant);
+  }
+}
+
 if (fs.existsSync(profileClientPath)) {
   const client = fs.readFileSync(profileClientPath, 'utf8');
   // Helpers invoked by the profile client must remain declared in this module.

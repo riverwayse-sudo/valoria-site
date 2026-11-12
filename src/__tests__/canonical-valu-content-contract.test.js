@@ -4,7 +4,7 @@ const path = require('path')
 const read = file => fs.readFileSync(path.join(process.cwd(), file), 'utf8')
 
 describe('Canonical Valoria content contract', () => {
-  test('PRIME exposes the approved seventeen skills across five clusters', () => {
+  test('PRIME retains its internal canonical skill map without publishing proprietary detail', () => {
     const brand = read('src/lib/brand.js')
     const skills = [
       'Communication', 'Negotiation', 'Personal Brand & Executive Presence',
@@ -18,6 +18,22 @@ describe('Canonical Valoria content contract', () => {
     expect(brand).toContain("subtitle: 'How you create'")
     expect(brand).toContain("displaySuffix: 'points'")
     expect(brand).not.toContain("displaySuffix: '/100'")
+    const publicPrime = read('src/app/prime/page.jsx')
+    const knowledgePrime = read('src/app/knowledge/prime-framework/page.jsx')
+    const llms = read('public/llms.txt')
+    expect(publicPrime).not.toContain('17 skills')
+    expect(publicPrime).not.toContain('c.skills.map')
+    expect(publicPrime).not.toContain('80–100 POINTS')
+    expect(knowledgePrime).not.toContain('17 skills')
+    expect(knowledgePrime).not.toContain('cluster.skills.map')
+    const publicValu = read('src/app/valu/page.jsx')
+    expect(publicValu).not.toContain('17 PRIME skills')
+    expect(publicValu).not.toContain('listing threshold')
+    expect(publicValu).not.toContain('cluster.skills.map')
+    expect(llms).toContain('proprietary five-cluster capability framework')
+    expect(llms).not.toContain('17 skills')
+    expect(llms).not.toContain('Human-AI Collaboration')
+    expect(llms).not.toContain('0–100 point scale')
   })
 
   test('the full assessment uses the canonical five designations', () => {
@@ -44,6 +60,7 @@ describe('Canonical Valoria content contract', () => {
     const homepage = read('src/app/page.jsx')
     const about = read('src/app/about-us/page.jsx')
     const homepageProfiles = read('src/components/LiveProfilesScroll.jsx')
+    const marketplaceData = read('src/lib/marketplace-data.js')
     for (const source of [valu, start, homepage]) {
       expect(source).not.toContain('Question 1 of 9')
       expect(source).not.toContain('Question 1 of 58')
@@ -51,16 +68,23 @@ describe('Canonical Valoria content contract', () => {
       expect(source).not.toContain('1 of 58')
 
     }
-    expect(valu).toContain('nine questions across four Intelligence skills')
-    expect(valu).toContain('separate 58-question full assessment')
-    expect(valu).toContain('54 scored questions and four validity checks')
-    expect(about).toContain('Professional Capability Marketplace')
+    expect(valu).toContain('Begin with the VALU Taster.')
+    expect(valu).not.toContain('four Intelligence skills')
+    expect(valu).not.toContain('15 to 20 minutes')
+    expect(valu).not.toContain('12-month validity period')
+    expect(valu).toContain('separate full assessment')
+    expect(valu).not.toMatch(/(?:9|58)[- ]questions?|nine questions|54 scored questions|four validity checks|17 skills|listing threshold/i)
+    expect(valu).not.toContain('cluster.skills.map')
+    expect(homepage).not.toMatch(/nine questions|(?:9|58)[- ]questions?/i)
+    expect(about).toContain('Professional Capability Institution')
+    expect(about).toContain('The VALU Index is not itself a certification')
     expect(homepage).toContain('Take the taster')
     expect(homepage).toContain('Complete the full assessment')
     expect(homepage).toContain('Build your profile')
     expect(homepage).toContain('Become discoverable')
-    expect(homepageProfiles).toContain('profile.headline')
-    expect(homepageProfiles).toContain('PLACEHOLDER_HEADLINES')
+    expect(homepageProfiles).toContain('profile.assessment_summary || profile.headline')
+    expect(marketplaceData).toContain('PLACEHOLDER_HEADLINES')
+    expect(marketplaceData).toContain('isPublicProfileContentReady(row)')
     expect(homepageProfiles).not.toContain('assessed, positioned and discoverable')
     expect(start).toContain('separate assessment')
   })

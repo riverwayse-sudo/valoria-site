@@ -79,7 +79,7 @@ function completenessFields(tracks) {
 const COMPLETENESS_LABELS = {
   display_name: 'Name', headline: 'Headline', bio: 'Bio',
   username: 'Username', phone: 'Phone number', topics: 'Topics', tier: 'Speaking tier',
-  fee_range: 'Fee range', programme_types: 'Programme types', preferred_industry: 'Preferred industry',
+  fee_range: 'Fee range', programme_types: 'Program types', preferred_industry: 'Preferred industry',
   industry: 'Industry', notice_period: 'Notice period',
 }
 function missingFields(profile, tracks) {
@@ -98,7 +98,7 @@ function computeCompleteness(profile, tracks) {
 }
 function memberSince(dateStr) {
   if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
 }
 
 export default function DashboardPage() {
@@ -350,7 +350,7 @@ export default function DashboardPage() {
   // Marketplace visibility is capability-level. A multi-capability professional
   // must not be labelled "Not Listed" simply because the legacy profile-level
   // listing_status is stale or represents a different governance layer.
-  const listedCapabilities = capabilities.filter(c => c.is_active && (c.eligibility_status === 'listed' || c.eligible_for_listing === true))
+  const listedCapabilities = capabilities.filter(c => c.is_active && c.eligible_for_listing === true && c.eligibility_status === 'listed')
   const isVisible   = isSupply && listedCapabilities.length > 0
   const listingLabel = listedCapabilities.length
     ? `LISTED IN ${listedCapabilities.length} ${listedCapabilities.length === 1 ? 'PATH' : 'PATHS'}`
@@ -407,10 +407,10 @@ export default function DashboardPage() {
         )}
 
         {/* Valoria brand line */}
-        <div style={{ position:'fixed', top:0, left:0, right:0, height:'3px', background:GOLD, opacity:.9, zIndex:201, pointerEvents:'none' }} />
+        <div style={{ height:'3px', background:GOLD, opacity:.9, zIndex:201, pointerEvents:'none' }} />
 
         {/* HEADER NAV */}
-        <header style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 clamp(20px,4vw,40px)', height:'64px', background: MID, borderBottom:`1px solid ${GLINE}`, position:'sticky', top:0, zIndex:100 }}>
+        <header className="dv-header" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 clamp(20px,4vw,40px)', height:'64px', background: MID, borderBottom:`1px solid ${GLINE}` }}>
           <Link href="/" style={{ lineHeight:0 }}>
             <img src="/logo.png" alt="Valoria Institute" style={{ height:'40px', width:'auto' }} />
           </Link>
@@ -473,7 +473,7 @@ export default function DashboardPage() {
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
                 <span style={{ fontSize:'14px', fontWeight:400, color: GOLD, letterSpacing:'.04em' }}>
-                  {p.headline || (isSupply ? (hasTrack ? (isFacilitator && !isSpeaker && !isCandidate ? 'Valoria Facilitator' : isSpeaker && !isFacilitator && !isCandidate ? 'Valoria Speaker' : 'Valoria Professional') : 'Valoria Member') : (isOrganiser ? 'Event Organiser' : 'Employer'))}
+                  {p.headline || (isSupply ? (hasTrack ? (isFacilitator && !isSpeaker && !isCandidate ? 'Valoria Facilitator' : isSpeaker && !isFacilitator && !isCandidate ? 'Valoria Speaker' : 'Valoria Professional') : 'Valoria Member') : (isOrganiser ? 'Event Organizer' : 'Employer'))}
                 </span>
                 {isSupply && tracks.length > 1 && (
                   <div style={{ display:'flex', gap:'6px' }}>
@@ -728,7 +728,7 @@ export default function DashboardPage() {
               </Section>
 
               {isFacilitator && p.programme_types?.length > 0 && (
-                <Section label="Programme Types">
+                <Section label="Program Types">
                   <div style={{ display:'flex', flexWrap:'wrap', gap:'10px' }}>
                     {p.programme_types.map(t => (
                       <span key={t} style={{ padding:'8px 16px', border:`1px solid ${GLINE2}`, fontSize:'12px', fontWeight:400, color: DIM, letterSpacing:'.04em' }}>{t}</span>
@@ -855,6 +855,34 @@ export default function DashboardPage() {
         .dv-detail[open] > summary::after { content:'−'; }
         .dv-detail > summary span { margin-left:auto; color:rgba(247,244,238,.48); font-size:10px; font-weight:500; }
         .dv-detail-content { padding:0 17px 16px; }
+        .dv-header { gap:20px; min-width:0; }
+        .dv-header > a { flex:0 0 auto; }
+        .dv-nav {
+          flex:0 1 auto;
+          min-width:0;
+          flex-wrap:nowrap;
+          white-space:nowrap;
+          overflow-x:auto;
+          overscroll-behavior-x:contain;
+          scrollbar-width:none;
+          -webkit-overflow-scrolling:touch;
+        }
+        .dv-nav::-webkit-scrollbar { display:none; }
+        .dv-nav > * { flex:0 0 auto; }
+        .dv-stat-strip {
+          flex-wrap:nowrap !important;
+          min-width:0;
+          overflow-x:auto;
+          overscroll-behavior-x:contain;
+          scrollbar-width:thin;
+          -webkit-overflow-scrolling:touch;
+        }
+        .dv-stat-strip > * {
+          flex:0 0 150px !important;
+          min-width:150px !important;
+          box-sizing:border-box;
+        }
+        .dv-grid > * { min-width:0; }
         .dv-detail-content > div { margin-bottom:0 !important; }
         .dv-overview { max-width:1100px; margin:18px auto 0; }
         .dv-grid { grid-template-columns:260px minmax(0,1fr) !important; gap:28px !important; margin-top:24px !important; }
@@ -877,11 +905,13 @@ export default function DashboardPage() {
           .dv-grid { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 640px) {
-          .dv-stat-strip { flex-wrap: wrap !important; }
-          .dv-header-block { margin-top: 18px !important; gap: 16px !important; align-items: flex-start !important; }
-          .dv-nav { gap: 8px !important; }
-          .dv-nav a, .dv-nav button { font-size: 10px !important; padding: 7px 9px !important; }
-          .dv-header-block > div:last-child { width: 100%; padding-bottom: 0 !important; }
+          .dv-stat-strip { flex-wrap: nowrap !important; }
+          .dv-header { gap:12px; padding-left:14px !important; padding-right:14px !important; }
+          .dv-header > a img { height:32px !important; }
+          .dv-nav { gap:8px !important; flex:1 1 auto; }
+          .dv-nav a, .dv-nav button { font-size:10px !important; padding:7px 9px !important; }
+          .dv-header-block { margin-top:18px !important; gap:16px !important; align-items:flex-start !important; }
+          .dv-header-block > div:last-child { width:100%; padding-bottom:0 !important; }
         }
       `}</style>
     </>
@@ -927,8 +957,8 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
   const activeCapabilities = capabilities.filter(c => c.is_active)
   const capabilityReady = activeCapabilities.length > 0
   const isCapabilityEligible = c => (c.eligible_for_listing === true || c.eligibility_status === 'eligible' || c.eligibility_status === 'listed') && (!Array.isArray(c.missing_requirements) || c.missing_requirements.length === 0)
-  const eligibilityReady = capabilityReady && activeCapabilities.every(isCapabilityEligible)
-  const listedReady = eligibilityReady && activeCapabilities.every(c => c.eligibility_status === 'listed')
+  const eligibilityReady = capabilityReady && activeCapabilities.some(isCapabilityEligible)
+  const listedReady = activeCapabilities.some(c => c.eligible_for_listing === true && c.eligibility_status === 'listed')
 
   const steps = [
     { key:'valu', label:'VALU assessment', done:assessmentDone },
@@ -945,14 +975,16 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
       : !eligibilityReady ? '/profile/passport'
         : !listedReady ? '/marketplace' : '/opportunities'
 
-  const heading = !next ? 'Your Valoria journey is up to date.'
+  const pendingCapabilities = activeCapabilities.filter(capability => !isCapabilityEligible(capability))
+  const hasPendingCapabilityReviews = pendingCapabilities.length > 0
+  const heading = !next ? (hasPendingCapabilityReviews ? 'Your first capability is listed.' : 'Your Valoria journey is up to date.')
     : next.key === 'valu' ? 'Complete your VALU assessment.'
       : next.key === 'profile' ? 'Complete your professional profile.'
         : next.key === 'capability' ? 'Choose how your expertise is represented.'
           : next.key === 'eligibility' ? 'Complete your readiness requirements.'
             : 'Publish your Marketplace profile.'
 
-  const explanation = !next ? 'Explore opportunities and keep your professional presence current.'
+  const explanation = !next ? (hasPendingCapabilityReviews ? 'Your approved listing remains available while additional capability reviews continue.' : 'Explore opportunities and keep your professional presence current.')
     : next.key === 'valu' ? 'Begin with the VALU taster for a directional starting point. Your official VALU Index is produced after completing your full assessment.'
       : next.key === 'profile' ? 'Add the details that help organisations understand your experience and strengths.'
         : next.key === 'capability' ? 'Select the professional capabilities you want Valoria to represent.'
@@ -970,7 +1002,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
     speaker_audience_size: 'Add audience experience',
     speaker_evidence_approval: 'Submit speaking evidence',
     facilitator_topics: 'Add facilitation topics',
-    facilitator_programme_types: 'Select programme types',
+    facilitator_programme_types: 'Select program types',
     facilitator_evidence_approval: 'Submit facilitation evidence',
   }
   const requirementActions = {
@@ -983,7 +1015,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
     speaker_audience_size: ['/profile/edit', 'Add audience experience'],
     speaker_evidence_approval: ['/profile/evidence', 'Submit speaker evidence'],
     facilitator_topics: ['/profile/edit', 'Add facilitation topics'],
-    facilitator_programme_types: ['/profile/edit', 'Select programme types'],
+    facilitator_programme_types: ['/profile/edit', 'Select program types'],
     facilitator_evidence_approval: ['/profile/evidence', 'Submit facilitator evidence'],
   }
 
@@ -1010,7 +1042,7 @@ function AccessProgressCard({ profile, assessment, assessmentAccess, capabilitie
           <span style={{ fontSize:11, color:'rgba(247,244,238,.48)' }}>{next ? `${steps.filter(step => step.done).length} of 5 milestones complete` : 'Your core milestones are complete'}</span>
         </div>
 
-        {next?.key === 'eligibility' && activeCapabilities.length > 0 && (
+        {activeCapabilities.length > 0 && pendingCapabilities.length > 0 && (
           <details style={{ marginTop:18, borderTop:`1px solid ${GLINE}`, paddingTop:12 }}>
             <summary style={{ cursor:'pointer', color:GOLD, fontSize:11, fontWeight:700 }}>CAPABILITY REQUIREMENTS · View details</summary>
             <div style={{ display:'grid', gap:12, marginTop:12 }}>
@@ -1137,7 +1169,7 @@ function Section({ label, children }) {
   )
 }
 function EnquiryCard({ msg, isSpeaker }) {
-  const date = new Date(msg.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
+  const date = new Date(msg.created_at).toLocaleDateString('en-US', { day:'numeric', month:'short', year:'numeric' })
   const status = STATUS_COLORS[msg.status] || STATUS_COLORS.pending
   return (
     <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'18px 20px' }}>
@@ -1160,7 +1192,7 @@ function EnquiryCard({ msg, isSpeaker }) {
   )
 }
 function SentRequestCard({ msg }) {
-  const date = new Date(msg.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
+  const date = new Date(msg.created_at).toLocaleDateString('en-US', { day:'numeric', month:'short', year:'numeric' })
   const status = STATUS_COLORS[msg.status] || STATUS_COLORS.pending
   const prof = msg.professional_profiles
   return (

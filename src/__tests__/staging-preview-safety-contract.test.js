@@ -72,11 +72,13 @@ describe('staging preview safety boundary', () => {
     expect(marketplace).toContain("const IS_READ_ONLY_PREVIEW = (process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || process.env.CF_WORKERS_PREVIEW === '1') && process.env.VALU_STAGING_API_ENABLED !== '1'")
     expect(marketplace).toContain('if (IS_READ_ONLY_PREVIEW) return []')
     expect(marketplace).toContain('if (IS_READ_ONLY_PREVIEW) return { all: 0, candidate: 0, speaker: 0, facilitator: 0 }')
-    expect(marketplace.indexOf('if (IS_READ_ONLY_PREVIEW) return []')).toBeLessThan(marketplace.indexOf('createClient(url, key'))
+    const rowsStart = marketplace.indexOf('export async function getMarketplaceRows')
+    expect(marketplace.indexOf('if (IS_READ_ONLY_PREVIEW) return []')).toBeLessThan(marketplace.indexOf('const admin = getAdminClient()', rowsStart))
 
     const sitemap = read('src/app/sitemap.js')
     expect(sitemap).toContain('if (IS_PREVIEW) return staticEntries')
-    expect(sitemap.indexOf('if (IS_PREVIEW) return staticEntries')).toBeLessThan(sitemap.indexOf("await import('@supabase/supabase-js')"))
+    expect(sitemap).toContain('getConsentVerifiedPublicProfileSitemapRows')
+    expect(sitemap.indexOf('if (IS_PREVIEW) return staticEntries')).toBeLessThan(sitemap.indexOf('getConsentVerifiedPublicProfileSitemapRows()'))
   })
 
   test('the OpenNext Worker handles dynamic routes before static asset fallback', () => {
@@ -98,9 +100,13 @@ describe('staging preview safety boundary', () => {
 
   test('staging deployment is opt-in for same-repository deploy branches', () => {
     const workflow = read('.github/workflows/cloudflare-staging-deploy.yml')
-    expect(workflow).toContain('pull_request:')
-    expect(workflow).toContain("startsWith(github.event.pull_request.head.ref, 'deploy/staging-')")
-    expect(workflow).toContain('github.event.pull_request.head.repo.full_name == github.repository')
+    const pullRequestWorkflow = read('.github/workflows/cloudflare-staging-pr-deploy.yml')
+    expect(workflow).not.toContain('pull_request:')
+    expect(workflow).toContain('push:')
+    expect(workflow).toContain('branches: ["experience/staging-redesign-20261106"]')
+    expect(pullRequestWorkflow).toContain('pull_request:')
+    expect(pullRequestWorkflow).toContain("startsWith(github.event.pull_request.head.ref, 'deploy/staging-')")
+    expect(pullRequestWorkflow).toContain('github.event.pull_request.head.repo.full_name == github.repository')
     expect(workflow).toContain('environment: staging')
     expect(workflow).toContain('npx wrangler deploy')
     expect(workflow).toContain('assessment_html="$(curl -fsSL')
