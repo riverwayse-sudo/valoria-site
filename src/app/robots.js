@@ -1,7 +1,9 @@
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://valoriainstitute.com'
 const IS_STAGING = process.env.VALU_PREVIEW === '1' ||
   process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ||
-  SITE_URL.includes('staging.')
+  (process.env.NEXT_PUBLIC_SITE_URL || '').includes('staging.')
+const SITE_URL = IS_STAGING
+  ? (process.env.NEXT_PUBLIC_SITE_URL || 'https://staging.valoriainstitute.com')
+  : 'https://valoriainstitute.com'
 
 export default function robots() {
   const rules = IS_STAGING
