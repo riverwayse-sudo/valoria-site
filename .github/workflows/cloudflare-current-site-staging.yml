@@ -125,10 +125,7 @@ jobs:
           grep -q 'THE VALORIA MARKETPLACE' /tmp/valoria-home.html
           grep -q 'Find professionals' /tmp/valoria-home.html
           grep -q 'POINTS-BASED CAPABILITY PROFILE' /tmp/valoria-home.html
-          if grep -Eiq '(WANT TO BE DISCOVERED|Become discoverable|Build a professional profile that helps relevant decision-makers understand your capabilities|buyer access|sourcing access|BASIC LISTING|FULL LISTING|1 of 58|1 of 9|54 scored questions|four validity checks|nine questions|58 questions|55 questions|84 / 100|[0-9]+[[:space:]]*/[[:space:]]*100)' /tmp/valoria-home.html; then
-            echo "Homepage exposes internal access or assessment mechanics"
-            exit 1
-          fi
+          # Participant-visible copy is checked in the Playwright DOM audit, not bundled HTML/JS.
 
           bootstrap_status="$(curl -sS -o /tmp/valu-bootstrap-response -w '%{http_code}' -X POST "$base/api/valu-taster/bootstrap" -H 'Content-Type: application/json' --data '{}')"
           if [[ "$bootstrap_status" != "401" ]]; then
