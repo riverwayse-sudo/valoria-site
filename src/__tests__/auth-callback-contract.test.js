@@ -22,6 +22,16 @@ describe('authenticated email confirmation handoff', () => {
     expect(callback).toContain("router.replace('/dashboard?welcome=profile')")
   })
 
+  test('signup and resend only use allowlisted Valoria callback origins', () => {
+    const signup = read('src/app/professional-signup/page.jsx')
+    const helper = read('src/lib/auth-callback-url.js')
+    expect(signup).toContain('getProfessionalAuthCallbackUrl(window.location.origin, tasterId)')
+    expect(signup).not.toContain('process.env.NEXT_PUBLIC_SITE_URL ||')
+    expect(helper).toContain('https://valoriainstitute.com')
+    expect(helper).toContain('https://staging.valoriainstitute.com')
+    expect(helper).toContain('return null')
+  })
+
   test('the server-side taster linker requires confirmed email and matching identity evidence', () => {
     const route = read('src/app/api/link-taster/route.js')
     expect(route).toContain("if (!user.email_confirmed_at)")
