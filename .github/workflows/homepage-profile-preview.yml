@@ -1,0 +1,165 @@
+name: Build isolated PR #367 homepage visual preview
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/homepage-profile-preview.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: valoria-homepage-profile-pr367-preview
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out the preview workflow
+        uses: actions/checkout@v4
+
+      - name: Check out the exact homepage redesign commit
+        uses: actions/checkout@v4
+        with:
+          ref: 08c477314fb189486344f02cdfa3990980f3e10d
+          path: app
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install locked dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Configure staging-only build environment
+        working-directory: app
+        shell: bash
+        run: |
+          cat > .env <<'EOF'
+          NEXT_PUBLIC_SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
+          SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_C3j_CjLgTLDGRu8rH1SXEg_tYpxoYUm
+          SUPABASE_SERVICE_ROLE_KEY=placeholder-service-role-key
+          ANTHROPIC_API_KEY=placeholder-anthropic-key
+          VALU_ASSESSMENT_ORIGIN=https://assessment-staging.valoriainstitute.com
+          VALU_UPSTREAM_ORIGIN=https://assessment-staging.valoriainstitute.com
+          VALU_PREVIEW_ASSESSMENT_ORIGIN=https://assessment-staging.valoriainstitute.com
+          NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN=https://assessment-staging.valoriainstitute.com
+          NEXT_PUBLIC_SITE_URL=https://valoria-homepage-profiles-pr367.riverwayse.workers.dev
+          CF_WORKERS=1
+          CF_WORKERS_PREVIEW=1
+          VALU_PREVIEW=1
+          NEXT_PUBLIC_VALU_PREVIEW=1
+          VALU_STAGING_API_ENABLED=1
+          NEXT_PUBLIC_VALU_STAGING_API_ENABLED=1
+          EOF
+
+      - name: Install pinned Cloudflare build tools
+        working-directory: app
+        run: npm install --no-save --package-lock=false @opennextjs/cloudflare@1.20.15 wrangler@4.156.1
+
+      - name: Build exact PR commit for Cloudflare Workers
+        working-directory: app
+        run: npx @opennextjs/cloudflare build
+        env:
+          CI: "true"
+          NEXT_TELEMETRY_DISABLED: "1"
+
+      - name: Retarget Worker config to isolated preview and staging assessment
+        working-directory: app
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs'
+          const file = 'wrangler.jsonc'
+          let config = fs.readFileSync(file, 'utf8')
+          config = config.replace('"name": "valoria-institute-site"', '"name": "valoria-homepage-profiles-pr367"')
+          config = config.replace('"service": "valoria-assessment"', '"service": "valoria-staging-assessment"')
+          if (!config.includes('"service": "valoria-staging-assessment"')) throw new Error('Staging assessment service binding was not applied')
+          if (!config.includes('"name": "valoria-homepage-profiles-pr367"')) throw new Error('Isolated Worker name was not applied')
+          config = config.replace('"vars": {', '"workers_dev": true,\n  "vars": {')
+          fs.writeFileSync(file, config)
+          NODE
+
+      - name: Deploy route-less preview Worker
+        working-directory: app
+        run: npx wrangler deploy --config wrangler.jsonc
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Install Playwright and Chromium
+        working-directory: app
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+
+      - name: Capture and audit desktop and mobile homepage
+        working-directory: app
+        shell: bash
+        run: |
+          mkdir -p artifacts/homepage-profile-preview
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright'
+          import fs from 'node:fs/promises'
+          const url = 'https://valoria-homepage-profiles-pr367.riverwayse.workers.dev/'
+          const browser = await chromium.launch({ headless: true })
+          const report = { commit: '08c477314fb189486344f02cdfa3990980f3e10d', url, viewports: [], failures: [] }
+          try {
+            for (const viewport of [
+              { name: 'desktop', width: 1440, height: 960 },
+              { name: 'mobile', width: 390, height: 844 }
+            ]) {
+              const page = await browser.newPage({ viewport: { width: viewport.width, height: viewport.height } })
+              const errors = []
+              page.on('pageerror', error => errors.push(error.message))
+              const response = await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 })
+              await page.screenshot({ path: `artifacts/homepage-profile-preview/${viewport.name}.png`, fullPage: true })
+              const state = await page.evaluate(() => {
+                const section = document.querySelector('.live-profiles')
+                const cards = [...document.querySelectorAll('.vi-scroll-card')]
+                const first = cards[0]
+                const rect = first?.getBoundingClientRect()
+                return {
+                  title: document.title,
+                  viewportWidth: window.innerWidth,
+                  documentWidth: document.documentElement.scrollWidth,
+                  horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 2,
+                  profileSectionPresent: Boolean(section),
+                  profileCards: cards.length,
+                  firstCard: rect ? { width: Math.round(rect.width), height: Math.round(rect.height) } : null,
+                  profileSectionText: section?.innerText?.slice(0, 500) || null
+                }
+              })
+              const item = { ...viewport, status: response?.status() ?? null, ...state, pageErrors: errors }
+              report.viewports.push(item)
+              if (item.status !== 200) report.failures.push(`${viewport.name}: homepage returned HTTP ${item.status}`)
+              if (item.horizontalOverflow) report.failures.push(`${viewport.name}: horizontal overflow detected`)
+              if (!item.profileSectionPresent) report.failures.push(`${viewport.name}: profile registry section missing`)
+              if (errors.length) report.failures.push(`${viewport.name}: browser page errors: ${errors.join('; ')}`)
+              await page.close()
+            }
+          } finally {
+            await browser.close()
+          }
+          await fs.writeFile('artifacts/homepage-profile-preview/report.json', JSON.stringify(report, null, 2))
+          console.log(JSON.stringify(report, null, 2))
+          if (report.failures.length) process.exitCode = 1
+          NODE
+
+      - name: Upload visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: valoria-homepage-profile-preview
+          path: app/artifacts/homepage-profile-preview/
+          if-no-files-found: warn
+          retention-days: 7
