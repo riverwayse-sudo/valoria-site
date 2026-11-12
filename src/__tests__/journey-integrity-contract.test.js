@@ -515,3 +515,39 @@ describe('journey integrity contract', () => {
 
 
 })
+
+
+describe('signup-first VALU taster entry contract', () => {
+  test('new taster signup requires email confirmation before issuing the assessment handoff', () => {
+    const signup = read('src/app/professional-signup/page.jsx')
+    const callback = read('src/app/auth/callback/page.jsx')
+    const issuer = read('src/app/api/valu-taster-start/route.js')
+    const continuation = read('src/app/valu/taster-start/page.jsx')
+    expect(signup).toContain("journey=valu_taster")
+    expect(signup).toContain("returnTo=%2Fvalu%2Ftaster-start")
+    expect(callback).toContain("params.get('journey') === 'valu_taster'")
+    expect(callback).toContain('/api/valu-taster-start')
+    expect(issuer).toContain("entry_point: 'taster_start'")
+    expect(issuer).toContain("target_stage: 'taster'")
+    expect(issuer).toContain("if (!user.email_confirmed_at || !user.email)")
+    expect(issuer).toContain("createHash('sha256')")
+    expect(continuation).toContain('/api/valu-taster-start')
+  })
+
+  test('new taster-start handoff does not change the dashboard full-assessment issuer', () => {
+    const fullHandoff = read('src/app/api/valu-handoff/route.js')
+    const tasterHandoff = read('src/app/api/valu-taster-start/route.js')
+    expect(fullHandoff).toContain("entry_point: 'dashboard_assessment'")
+    expect(fullHandoff).toContain("target_stage: 'assess'")
+    expect(tasterHandoff).toContain("entry_point: 'taster_start'")
+    expect(tasterHandoff).toContain("target_stage: 'taster'")
+  })
+
+  test('existing post-taster account-link path remains available for legacy participants', () => {
+    const signup = read('src/app/professional-signup/page.jsx')
+    const callback = read('src/app/auth/callback/page.jsx')
+    expect(signup).toContain('/api/link-taster')
+    expect(callback).toContain("if (pendingTasterId)")
+    expect(callback).toContain('/api/link-taster')
+  })
+})
