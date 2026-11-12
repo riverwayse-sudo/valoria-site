@@ -133,7 +133,7 @@ async function confirmToBuyer({ enquiryId, enquiryType, atbId, buyerName, buyerE
   })
 }
 
-async function notifyProfessional({ supabase, enquiryId, professionalProfileId, enquiryType, atbId, buyerName, buyerCompany, actionUrl }) {
+async function notifyProfessional({ supabase, professionalProfileId, enquiryId, enquiryType, atbId, buyerName, buyerCompany, actionUrl }) {
   const label = TYPE_LABELS[enquiryType] || 'Enquiry'
   const safeAtbId = escapeHtml(atbId)
   const safeBuyerName = escapeHtml(buyerName)
