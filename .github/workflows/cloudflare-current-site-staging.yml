@@ -110,7 +110,7 @@ jobs:
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
           grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
           curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
-          grep -q 'staging.valoriainstitute.com' /tmp/valoria-sitemap.xml
+          grep -q 'valoria-staging-site.riverwayse.workers.dev' /tmp/valoria-sitemap.xml
           curl -fsS "$base/" -o /tmp/valoria-home.html
           grep -q 'START THE VALU INDEX TASTER' /tmp/valoria-home.html
           grep -q 'What brings you' /tmp/valoria-home.html
