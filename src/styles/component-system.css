@@ -27,9 +27,7 @@
       @media(min-width:1181px){.nav-mobile{display:none!important}}
     
 /* Shared page grid: footer and fixed navigation use the same left edge as page sections. */
-nav.vi-nav{
-  padding-inline:max(var(--pad),calc((100vw - var(--vi-content,1160px))/2));
-}
+nav.vi-nav{padding-inline:24px;}
 .vi-footer > .container{
   width:100%;
   max-width:none;
