@@ -37,10 +37,13 @@ function AuthCallbackFlow() {
         const { data: { user }, error: userError } = await supabase.auth.getUser()
         if (userError || !user) throw userError || new Error('Your account session could not be verified.')
 
+        const identityHash = params.get('identity_hash') || sessionStorage.getItem('pending_identity_hash')
+        const pendingTasterId = params.get('pending_taster_id') || localStorage.getItem('pending_taster_id')
+
         // Professional Taster registration is account-first. Only this explicit
         // callback parameter returns a confirmed professional to the Taster;
         // ordinary confirmation flows retain their existing dashboard behavior.
-        if (params.get('valu_taster') === '1') {
+        if (params.get('valu_taster') === '1' && !identityHash && !pendingTasterId) {
           if (!user.email_confirmed_at) throw new Error('Confirm your email before beginning the VALU Index Taster.')
           if (user.user_metadata?.valu_taster_signup !== true) {
             throw new Error('Your professional Taster registration could not be verified. Please sign in and complete your details.')
@@ -50,9 +53,6 @@ function AuthCallbackFlow() {
           if (!cancelled) router.replace('/valu/assessment/')
           return
         }
-
-        const identityHash = params.get('identity_hash') || sessionStorage.getItem('pending_identity_hash')
-        const pendingTasterId = params.get('pending_taster_id') || localStorage.getItem('pending_taster_id')
 
         if (identityHash) {
           setMessage('Email confirmed. Linking your VALU Index to your account…')
