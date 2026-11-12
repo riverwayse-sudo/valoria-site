@@ -530,6 +530,9 @@ describe('signup-first VALU taster entry contract', () => {
     expect(issuer).toContain("entry_point: 'taster_start'")
     expect(issuer).toContain("target_stage: 'taster'")
     expect(issuer).toContain("if (!user.email_confirmed_at || !user.email)")
+    expect(issuer).toContain("siteOrigin === 'https://staging.valoriainstitute.com'");
+    expect(issuer).toContain("assessmentOrigin === 'https://assessment.valoriainstitute.com'");
+    expect(issuer).toContain("production assessment environment is not configured safely");
     expect(issuer).toContain("createHash('sha256')")
     expect(continuation).toContain('/api/valu-taster-start')
   })
