@@ -105,3 +105,11 @@ These additions resolve copy and disclosure issues found while reconciling PR #3
 | `src/app/layout.jsx` — organisation metadata | “Africa is Valoria's first market, with Nigeria as its jurisdiction”; service offer referenced a “current Full assessment”. | “Africa is Valoria's first market. It is beginning in Nigeria”; show VALU Index points/designations only where approved for public display. | §12, pp. 12–13; §18, p. 18 | Implemented in staging. Does not claim US service availability. |
 | `src/app/valu/start/page.jsx` — product explanation | “VALU gives you a different starting point”; “WHAT VALU MEASURES”; “VALU shows what you can become.” | Use “The VALU Index” consistently and describe the measured capability rather than imply prediction. | §14 D and I, pp. 15–16 | Implemented in staging. |
 
+
+
+## Additional owner-approved copy corrections — 12 November 2026
+
+| Location | Existing wording / behaviour | Proposed wording / action | Audit reference / approval | Review status / required evidence |
+|---|---|---|---|---|
+| `src/app/page.jsx` — homepage professional pathway card | “Build a verified professional presence.” | “Build a stronger professional presence.” | Current Website Audit §6, p. 6 (professional value proposition); §14 I, p. 16 (remove unsupported claims). | Replaces an unsubstantiated verification claim with the audit's approved professional-value language. Confirm the rendered card uses the revised wording. |
+| `src/components/LiveProfilesScroll.jsx` — homepage professional CTA below the public profile rail | “WANT TO BE DISCOVERED? Build a professional profile that helps relevant buyers understand your capabilities. TAKE THE VALU INDEX TASTER.” | Remove the entire CTA block; no replacement copy. | Explicit owner instruction, 12 November 2026. | Owner-approved removal. Confirm the block is absent from desktop and mobile homepage renders. |
