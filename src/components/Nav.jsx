@@ -151,7 +151,7 @@ export default function Nav() {
 }
  
 // Route every signed-in VALU Index start through the authenticated continuation endpoint.
-// Anonymous visitors still begin at the configured public taster URL.
+// Anonymous visitors must create and confirm a Valoria account before the public taster.
 export function AssessmentStartLink({ href = '/valu/assessment/', className, style, children, onClick, dashboardOnly = false, ...props }) {
   const [opening, setOpening] = useState(false)
   const [error, setError] = useState('')
@@ -187,7 +187,7 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
           return
         }
         if (!access.can_continue) {
-          window.location.assign(href)
+          window.location.assign('/valu/taster-start')
           return
         }
 
@@ -211,8 +211,8 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
         window.location.assign('/login?returnTo=%2Fdashboard')
         return
       }
-      // Anonymous visitors start the public nine-question taster.
-      window.location.assign(href)
+      // Signup and email confirmation precede every new taster session.
+      window.location.assign('/professional-signup?journey=valu_taster')
     } catch (err) {
       setError(err?.message || 'We could not open your VALU Index. Please try again.')
       setOpening(false)
@@ -222,7 +222,7 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
   // The anchor must advertise the actual assessment destination. Normal clicks
   // still obtain a fresh, short-lived handoff code before navigating, so this
   // canonical URL is never used as a substitute for the authenticated token.
-  const linkHref = dashboardOnly ? 'https://assessment.valoriainstitute.com/remaining' : href
+  const linkHref = dashboardOnly ? 'https://assessment.valoriainstitute.com/remaining' : '/professional-signup?journey=valu_taster'
 
   return <>
     <a href={linkHref} className={className} style={style} onClick={handleClick} aria-busy={opening} {...props}>
