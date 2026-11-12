@@ -42,7 +42,7 @@ export default async function LiveProfilesScroll() {
         <div className="live-profiles-copy">
           <div className="live-profiles-kicker">THE VALORIA MARKETPLACE</div>
           <h2 id="marketplace-title" className="live-profiles-title">Find professionals <em>by capability.</em></h2>
-          <p className="live-profiles-subtitle">Explore public profiles by capability. Full listings add VALU Index insight where available; every listing requires explicit visibility consent.</p>
+          <p className="live-profiles-subtitle">Explore public profiles by capability. Some profiles include additional VALU Index insight where available; every profile requires explicit visibility consent.</p>
           {!dataUnavailable && <div className="live-profiles-proof" aria-label="Public marketplace profile count"><strong>{discoverableCount}</strong><span>public professional profiles</span></div>}
         </div>
 
@@ -55,7 +55,7 @@ export default async function LiveProfilesScroll() {
             {counts.candidate > 0 ? (
               <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent"><span><small>ATB CONNECT</small>Find talent</span><b>→</b></Link>
             ) : (
-              <a href="/contact-us?type=candidate" className="live-profile-action primary"><span><small>ATB CONNECT</small>Request sourcing access</span><b>→</b></a>
+              <a href="/contact-us?type=candidate" className="live-profile-action primary"><span><small>ATB CONNECT</small>Discuss your talent needs</span><b>→</b></a>
             )}
             {counts.speaker > 0 ? (
               <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker"><span><small>ATB SPOTLIGHT</small>Find a speaker</span><b>→</b></Link>
@@ -120,7 +120,7 @@ export default async function LiveProfilesScroll() {
       ) : (
         <div className="live-profiles-public-state" role="status">
           <strong className="live-profiles-empty-title">The registry is opening through verified capability.</strong>
-          Public profiles appear only after the participant has completed the applicable requirements and explicitly agreed to public visibility. Until then, employers and organisers can submit a brief and our team can advise on the appropriate sourcing route.
+          Public profiles appear only after the participant has completed the applicable requirements and explicitly agreed to public visibility. Until then, employers and organisers can submit a brief and our team can advise on the appropriate next step.
           <div className="live-profiles-empty-actions">
             <Link href="/contact-us?type=candidate">SUBMIT A TALENT BRIEF <span aria-hidden="true">→</span></Link>
             <Link href="/contact-us?type=speaker_booking">DISCUSS A SPEAKER BRIEF <span aria-hidden="true">→</span></Link>
