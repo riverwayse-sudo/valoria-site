@@ -93,7 +93,7 @@ async function notifyAdmin({ enquiryId, enquiryType, atbId, buyerName, buyerEmai
   const safeBuyerEmail = escapeHtml(buyerEmail)
   const safeBuyerCompany = escapeHtml(buyerCompany || 'Not provided')
   const safeSubject = escapeHtml(subject || '(none given)')
-  const safeBody = escapeHtml(body || '').replace(/\\r?\\n/g, '<br/>')
+  const safeBody = escapeHtml(body || '').replace(/\r?\n/g, '<br/>')
   const html = `
     <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;">
       <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">NEW ${label.toUpperCase()}</p>
