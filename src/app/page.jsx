@@ -2,7 +2,7 @@ import Nav, { AssessmentStartLink } from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
-import CapabilityProfilePreview from '@/components/CapabilityProfilePreview'
+import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import HomepageEvents from '@/components/HomepageEvents'
 import HomepageEventPopup from '@/components/HomepageEventPopup'
 import './home.css'
@@ -100,7 +100,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <CapabilityProfilePreview />
+      <LiveProfilesScroll />
     </main>
     <Footer />
   </>
