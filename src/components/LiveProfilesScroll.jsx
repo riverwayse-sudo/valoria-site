@@ -10,6 +10,7 @@ const TRACK_META = {
   facilitator: { label: 'Facilitator', href: '/marketplace/facilitators' },
 }
 
+// Staging-only visual fixtures; never expose these as public participant records.
 const STAGING_PROFILE_FIXTURES = [
   { id: 'staging-qa-001', atb_id: 'ATB-PREVIEW-001', headline: 'Strategy & Operations', selectedCapabilities: ['candidate', 'speaker'], points: 78 },
   { id: 'staging-qa-002', atb_id: 'ATB-PREVIEW-002', headline: 'Finance & Governance', selectedCapabilities: ['candidate', 'facilitator'], points: 84 },
