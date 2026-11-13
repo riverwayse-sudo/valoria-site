@@ -242,11 +242,11 @@ function Profile({p, onSelect}) {
 
     {skills.length > 0 && <div className={styles.profileSkills} aria-label="Professional skills">{skills.map(value=><span key={value}>{value}</span>)}</div>}
 
-    {selectedCaps.size > 0 && <div className={styles.specialistCapabilities} aria-label="Declared capability selections">
-      {capabilityBadges.filter(([key]) => selectedCaps.has(key)).map(([key,label]) => (
-        <span key={key} className={styles.capabilitySelected}>{label}</span>
+    <div className={styles.specialistCapabilities} aria-label="Capability selections; selected capabilities are highlighted">
+      {capabilityBadges.map(([key,label]) => (
+        <span key={key} className={selectedCaps.has(key) ? styles.capabilitySelected : styles.capabilityUnselected}>{label}</span>
       ))}
-    </div>}
+    </div>
 
     {strongestCluster && <span className={styles.strongestCapability}>Strongest: {CLUSTER_NAMES[strongestCluster] || titleCase(strongestCluster)}</span>}
 
