@@ -137,15 +137,15 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             rows.length === 0 && activeTrack === 'all' ? (
               <div className={styles.empty}>
                 <strong>No public professional profiles are currently available.</strong>
-                <p>Public listings appear when a professional meets the applicable Basic or Full listing requirements, chooses public visibility and records consent.</p>
+                <p>Public profiles appear when a professional meets the relevant requirements, chooses public visibility and records consent.</p>
                 <Link className={styles.view} href="/login?returnTo=%2Fprofile%2Fsetup">EXISTING PROFESSIONAL? REVIEW YOUR PROFILE →</Link>
               </div>
             ) : rows.length === 0 && Number(counts?.all || 0) === 0 ? (
               <div className={styles.empty}>
                 <strong>{activeTrack === 'candidate' ? 'ATB Connect is preparing its first public talent listings.' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'ATB Spotlight is preparing its first public event-professional listings.' : 'The public marketplace is being prepared.'}</strong>
-                <p>{activeTrack === 'candidate' ? 'Employers can request sourcing access now. Tell Valoria the roles, sectors and capability requirements your organisation needs.' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'Event organisers can share an event brief, audience, format and facilitation requirements with Valoria.' : 'Employers and event organisers can begin a conversation with Valoria while public profiles and opportunities are being prepared.'}</p>
+                <p>{activeTrack === 'candidate' ? 'Employers can share the roles, sectors and capabilities their organisation needs. Valoria can advise on the right next step.' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'Event organisers can share an event brief, audience, format and facilitation requirements with Valoria.' : 'Employers and event organisers can begin a conversation with Valoria while public profiles and opportunities are being prepared.'}</p>
                 <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
-                  <Link className={styles.view} href="/contact-us?type=candidate">REQUEST SOURCING ACCESS →</Link>
+                  <Link className={styles.view} href="/contact-us?type=candidate">DISCUSS YOUR TALENT NEEDS →</Link>
                   <Link className={styles.view} href="/contact-us?type=speaker_booking">DISCUSS AN EVENT BRIEF →</Link>
                 </div>
                 <Link className={styles.view} href="/login?returnTo=%2Fprofile%2Fsetup">EXISTING PROFESSIONAL? REVIEW YOUR PROFILE →</Link>
@@ -225,7 +225,7 @@ function Profile({p, onSelect}) {
             <small>VALU INDEX</small><b>{p.valu_index}</b><span>POINTS</span>
           </div>
           <span className={`${styles.tierBadge} ${designationClass}`}>{designation}</span>
-        </> : <span className={styles.assessmentPending}>Full VALU Index pending</span>}
+        </> : <span className={styles.assessmentPending}>Additional assessment insight pending</span>}
       </div>
     </header>
 
@@ -334,9 +334,9 @@ function ProfilePreviewModal({ profile, onClose }) {
               </div>
             </div>
             <div className={styles.modalIndex}>
-              <small>{isFull ? 'VALU INDEX' : 'LISTING LEVEL'}</small>
-              <strong>{isFull ? profile.valu_index : 'BASIC'}</strong>
-              <span>{isFull ? 'POINTS' : 'PUBLIC LISTING'}</span>
+              <small>{isFull ? 'VALU INDEX' : 'PROFILE'}</small>
+              <strong>{isFull ? profile.valu_index : 'PUBLIC'}</strong>
+              <span>{isFull ? 'POINTS' : 'PROFILE'}</span>
               {tier && <b>{tier.name}</b>}
             </div>
           </div>
@@ -346,16 +346,16 @@ function ProfilePreviewModal({ profile, onClose }) {
               <p id="profile-preview-description" className={styles.modalSummary}>
                 {isFull
                   ? (assessmentSummary || 'The Full VALU Index is complete. The professional insight is being prepared.')
-                  : 'This Basic listing introduces the professional’s public identity, declared capabilities and areas of expertise. Additional VALU Index insight is displayed only when available.'}
+                  : 'This profile introduces the professional’s public identity, declared capabilities and areas of expertise. Additional VALU Index insight appears when available.'}
               </p>
               <div className={styles.modalCredential}>
-                <span>{isFull ? 'VALU INDEX INSIGHT' : 'BASIC PROFESSIONAL LISTING'}</span>
+                <span>{isFull ? 'VALU INDEX INSIGHT' : 'PROFILE OVERVIEW'}</span>
                 <strong>{tier ? tier.name : 'VALU INDEX SCORE NOT DISPLAYED'}</strong>
               </div>
             </section>
             <section className={styles.modalPanel}>
               <p className={styles.modalSectionLabel}>CAPABILITY SELECTION</p>
-              <p className={styles.modalSectionCopy}>The three capability lanes are shown consistently. Selection is distinct from capability-specific listing eligibility.</p>
+              <p className={styles.modalSectionCopy}>The three capability areas are shown consistently to help you understand the ways this professional can contribute.</p>
               <div className={styles.modalCapabilities}>
                 {capabilityBadges.map(item => (
                   <div key={item.key} className={capabilities.has(item.key) ? styles.modalCapabilitySelected : styles.modalCapability}>
