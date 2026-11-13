@@ -26,26 +26,44 @@ export default function HeroSlider() {
   }
 
   return (
-    <section className="hero hero-slider" id="hero" aria-label="Valoria Institute introduction">
+    <section className="hero hero-slider hero-fashion-editorial" id="hero" aria-label="Valoria Institute introduction">
       <div className="hero-bg" aria-hidden="true" />
       <div className="hero-grid" aria-hidden="true" />
 
       <div className="hero-slides" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
         <div className={`hero-slide ${active === 0 ? 'is-active' : ''}`} aria-hidden={active !== 0}>
           <div className="container hero-inner">
-            <div>
-              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">NIGERIA'S PROFESSIONAL CAPABILITY MARKETPLACE</span></div>
-              <h1 className="hero-title au d2">Capability should decide<br />who gets seen.<br /><em>Valoria sets the standard.</em></h1>
-              <p className="hero-sub au d3">Valoria assesses Nigerian professionals against one capability standard, develops what matters and connects qualified talent with employers, event organisers and training buyers.</p>
-              <div className="hero-actions au d4"><AssessmentStartLink href="/valu/register/" className="btn-gold">START THE VALU INDEX TASTER</AssessmentStartLink><a href="/valu#how-it-works" className="btn-outline">SEE HOW IT WORKS</a></div>
-              <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">VALU <small style={{fontSize:10,letterSpacing:'.08em'}}>INDEX</small></div><div className="hmc-right"><div className="hmc-desig">POINTS-BASED CAPABILITY PROFILE</div><div className="hmc-bars"><span>PRIME</span><span>VALU</span></div></div></div></div>
+            <div className="hero-editorial-copy">
+              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">THE INSTITUTION FOR PROFESSIONAL MERIT</span></div>
+              <p className="hero-editorial-issue">WORTH. BUILT. <span>— THE VALORIA STANDARD</span></p>
+              <h1 className="hero-title au d2">Talent is not the problem.<br /><em>Infrastructure is.</em></h1>
+              <p className="hero-sub au d3">Valoria builds the systems that develop African professionals, make merit visible and connect proven capability to meaningful opportunity.</p>
+              <div className="hero-actions au d4">
+                <AssessmentStartLink href="/valu/register/" className="btn-gold">DISCOVER YOUR VALU INDEX <span aria-hidden="true">→</span></AssessmentStartLink>
+                <a href="/about-us" className="btn-outline">THE INSTITUTION</a>
+              </div>
+              <p className="hero-editorial-footnote">DEVELOPMENT · VISIBILITY · CONNECTION</p>
             </div>
-            <div className="valu-card au d4" aria-label="The VALU Index structure">
-              <div className="vc-label">THE VALU INDEX</div>
-              <div className="vc-score"><span className="vc-num">VALU</span><span className="vc-denom">INDEX</span></div>
-              <div className="vc-desig">POINTS-BASED CAPABILITY PROFILE</div>
-              <div className="vc-cluster-list"><span>Presence</span><span>Relationships</span><span>Intelligence</span><span>Mastery</span><span>Enterprise</span></div>
-              <div className="vc-foot">PRIME framework · results expressed in points</div>
+
+            <div className="hero-editorial-visual au d3">
+              <img
+                className="hero-editorial-image"
+                src="/images/temitayo-adetokunbo-host.webp"
+                alt="Valoria Institute host Temitayo Adetokunbo"
+                fetchPriority="high"
+              />
+              <div className="hero-editorial-image-shade" aria-hidden="true" />
+              <div className="hero-editorial-caption">
+                <span>THE PEOPLE BEHIND THE STANDARD</span>
+                <strong>Worth is recognised.<br />Merit is built.</strong>
+              </div>
+              <div className="valu-card" aria-label="The VALU Index structure">
+                <div className="vc-label">THE VALU INDEX</div>
+                <div className="vc-score"><span className="vc-num">VALU</span><span className="vc-denom">INDEX</span></div>
+                <div className="vc-desig">POINTS-BASED CAPABILITY PROFILE</div>
+                <div className="vc-cluster-list"><span>Presence</span><span>Relationships</span><span>Intelligence</span><span>Mastery</span><span>Enterprise</span></div>
+                <div className="vc-foot">PRIME framework · results expressed in points</div>
+              </div>
             </div>
           </div>
         </div>
@@ -78,7 +96,7 @@ export default function HeroSlider() {
         <button type="button" className={`hero-slider-dot ${active === 1 ? 'is-active' : ''}`} onClick={() => goTo(1)} aria-label="Show upcoming event slide" aria-pressed={active === 1} />
         <span className="hero-slider-index">0{active + 1} / 02</span>
       </div>
-      <div className="hero-scroll-cue" aria-hidden="true"><span>Scroll</span><svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></div>
+      <div className="hero-scroll-cue" aria-hidden="true"><span>DISCOVER</span><svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#C9A84C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></div>
 
       {selectedSession && <EventRegistrationModal session={selectedSession} onClose={() => setSelectedSession(null)} />}
     </section>
