@@ -1,6 +1,6 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
-import { PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION } from '@/lib/profile-consent-copy'
+import { PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION, PUBLIC_PROFILE_CONSENT_SOURCES } from '@/lib/profile-consent-copy'
 
 const PUBLIC_PROFILE_FIELDS = [
   'id',
@@ -121,7 +121,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
 
   const { data: acknowledgement, error: acknowledgementError } = await admin
     .from('professional_profile_acknowledgements')
-    .select('id,acknowledgement_version')
+    .select('id,acknowledgement_version,source')
     .eq('professional_id', professionalId)
     .eq('acknowledgement_type', 'profile_submission')
     .order('acknowledged_at', { ascending: false })
@@ -134,7 +134,7 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
     console.error('Public profile consent verification failed:', acknowledgementError)
     throw new Error('Public profile consent could not be verified.')
   }
-  if (acknowledgement?.acknowledgement_version !== PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION) return null
+  if (acknowledgement?.acknowledgement_version !== PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION || !PUBLIC_PROFILE_CONSENT_SOURCES.includes(acknowledgement?.source)) return null
 
   const { data: profile, error: profileError } = await admin
     .from('professional_profiles')
@@ -351,7 +351,7 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
 
   const { data: acknowledgements, error: acknowledgementError } = await admin
     .from('professional_profile_acknowledgements')
-    .select('professional_id,acknowledgement_version')
+    .select('professional_id,acknowledgement_version,source')
     .in('professional_id', profiles.map(profile => profile.id))
     .eq('acknowledgement_type', 'profile_submission')
     .order('acknowledged_at', { ascending: false })
@@ -366,11 +366,11 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
   const latestAcknowledgements = new Map()
   for (const acknowledgement of acknowledgements || []) {
     if (!latestAcknowledgements.has(acknowledgement.professional_id)) {
-      latestAcknowledgements.set(acknowledgement.professional_id, acknowledgement.acknowledgement_version)
+      latestAcknowledgements.set(acknowledgement.professional_id, { version: acknowledgement.acknowledgement_version, source: acknowledgement.source })
     }
   }
   const consented = new Set([...latestAcknowledgements.entries()]
-    .filter(([, version]) => version === PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION)
+    .filter(([, acknowledgement]) => acknowledgement.version === PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION && PUBLIC_PROFILE_CONSENT_SOURCES.includes(acknowledgement.source))
     .map(([professionalId]) => professionalId))
   return profiles.filter(profile => {
     const access = rosterById.get(profile.id)?.assessment_access

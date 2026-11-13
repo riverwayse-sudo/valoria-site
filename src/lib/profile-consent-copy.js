@@ -1,4 +1,5 @@
 export const PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION = 'public-profile-visibility-v3-2026-11-07'
+export const PUBLIC_PROFILE_CONSENT_SOURCES = Object.freeze(['profile_setup', 'profile_edit'])
 export const REGISTERED_PROFILE_ACKNOWLEDGEMENT_VERSION = 'registered-profile-submission-v2-2026-11-06'
 
 export const PUBLIC_PROFILE_CONSENT_TEXT =
