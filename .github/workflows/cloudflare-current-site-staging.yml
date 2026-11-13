@@ -19,7 +19,8 @@ permissions:
 
 concurrency:
   group: valoria-site-staging-environment
-  cancel-in-progress: false
+  # Latest staging candidate wins; prevent an older browser audit from blocking newer review builds.
+  cancel-in-progress: true
 
 jobs:
   deploy-staging:
