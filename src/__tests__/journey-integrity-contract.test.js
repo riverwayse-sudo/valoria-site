@@ -660,4 +660,11 @@ describe('journey integrity contract', () => {
   })
 
 
+
+test('Taster-start handoff correctly extracts a Bearer authorization token', () => {
+  const route = read('src/app/api/valu-taster/start/route.js')
+  expect(route).toContain(".replace(/^Bearer\\s+/i, '').trim()")
+  expect(route).not.toContain(".replace(/^Bearer\\\\s+/i, '').trim()")
+})
+
 })
