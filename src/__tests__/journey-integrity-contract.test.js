@@ -715,6 +715,8 @@ test('staging browser audit verifies the actual homepage profile rail and its sc
   expect(audit).toContain('[data-visual-fixture="true"]')
   expect(audit).toContain('scrollReady')
   expect(audit).toContain('scrollBehavior')
+  expect(audit).toContain('mobileCriticalRoutes')
+  expect(audit).toContain('timeout: 15000')
   expect(audit).toContain('if (!previewReady) report.failures.push')
 })
 
