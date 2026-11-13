@@ -3033,7 +3033,3 @@
   }
   .home-pathways .home-pathway-card:last-child { border-bottom: 0; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .hero-fashion-editorial .hero-slider-dot,
-  .home-pathways .home-pathway-card { transition: none; }
-}
