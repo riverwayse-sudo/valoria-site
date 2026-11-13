@@ -3469,3 +3469,24 @@
     scrollbar-width: thin;
   }
 }
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .live-profiles .vi-scroll-track {
+    animation: none;
+    transform: none;
+  }
+  .live-profiles .vi-scroll-mask {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-mask-image: none;
+    mask-image: none;
+    scrollbar-width: thin;
+    scroll-snap-type: x proximity;
+  }
+  .live-profiles .vi-scroll-group[aria-hidden="true"] {
+    display: none;
+  }
+  .live-profiles .vi-scroll-card {
+    scroll-snap-align: start;
+  }
+}
