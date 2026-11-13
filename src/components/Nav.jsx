@@ -82,7 +82,7 @@ export default function Nav() {
   // Keep the primary CTA stable during auth hydration. Previously it changed
   // from START VALU INDEX to MY PROFILE/DASHBOARD after getUser(), causing a visible
   // header layout shift on every page for signed-in users.
-  const cta = { label: 'START VALU INDEX', href: NAVIGATION.assessmentUrl, external: true }
+  const cta = { label: 'START VALU INDEX', href: NAVIGATION.assessmentUrl }
 
   const renderItem = (item, className = 'nav-dropdown-link') => {
     const active = isPathActive(pathname, item.href)
@@ -151,8 +151,8 @@ export default function Nav() {
 }
  
 // Route every signed-in VALU Index start through the authenticated continuation endpoint.
-// Anonymous visitors still begin at the configured public taster URL.
-export function AssessmentStartLink({ href = '/valu/assessment/', className, style, children, onClick, dashboardOnly = false, ...props }) {
+// Anonymous visitors begin at account-first professional registration.
+export function AssessmentStartLink({ href = '/valu/register/', className, style, children, onClick, dashboardOnly = false, ...props }) {
   const [opening, setOpening] = useState(false)
   const [error, setError] = useState('')
 
@@ -211,7 +211,7 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
         window.location.assign('/login?returnTo=%2Fdashboard')
         return
       }
-      // Anonymous visitors start the public nine-question taster.
+      // Anonymous visitors start with account creation and email confirmation.
       window.location.assign(href)
     } catch (err) {
       setError(err?.message || 'We could not open your VALU Index. Please try again.')
@@ -219,9 +219,8 @@ export function AssessmentStartLink({ href = '/valu/assessment/', className, sty
     }
   }
 
-  // The anchor must advertise the actual assessment destination. Normal clicks
-  // still obtain a fresh, short-lived handoff code before navigating, so this
-  // canonical URL is never used as a substitute for the authenticated token.
+  // The anchor advertises the public account-first entry point. Normal signed-in
+  // clicks still obtain a fresh, short-lived handoff before opening the full assessment.
   const linkHref = dashboardOnly ? 'https://assessment.valoriainstitute.com/remaining' : href
 
   return <>
