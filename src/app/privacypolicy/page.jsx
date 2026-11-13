@@ -5,7 +5,7 @@ import '../pages.css'
 export const metadata = {
   title: 'Privacy Policy | Valoria Institute',
   description: 'How Valoria Institute collects, uses, and protects your personal data. NDPA 2023 compliant.',
-  robots: { index: true, follow: true },
+  robots: (process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || (process.env.NEXT_PUBLIC_SITE_URL || '').includes('staging.')) ? { index: false, follow: false, googleBot: { index: false, follow: false } } : { index: true, follow: true },
   alternates: { canonical: 'https://valoriainstitute.com/privacypolicy' },
 }
 
