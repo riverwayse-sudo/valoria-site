@@ -184,7 +184,7 @@ const aboutPath = path.join(root, 'src/app/about/page.jsx');
 const programmesPath = path.join(root, 'src/app/programmes/page.jsx');
 if (fs.existsSync(valuStartPath)) {
   const valuStart = fs.readFileSync(valuStartPath, 'utf8');
-  if (!valuStart.includes('Register your contact and professional details before the taster') || !valuStart.includes('Your official result in points') || !valuStart.includes('VALU Index')) {
+  if (!valuStart.includes('Create your Valoria account and confirm your email before beginning the Taster') || !valuStart.includes('Your official result in points') || !valuStart.includes('VALU Index')) {
     violations.push('VALU entry page must explain the taster value and the official VALU Index');
   }
   if (/The 9-question taster is separate from the 58-question full VALU assessment|Valoria has two separate assessment stages|Two separate assessments/i.test(valuStart)) {
