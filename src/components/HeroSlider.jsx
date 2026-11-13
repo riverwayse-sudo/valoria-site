@@ -39,7 +39,7 @@ export default function HeroSlider() {
               <h1 className="hero-title au d2">Talent is not the problem.<br /><em>Infrastructure is.</em></h1>
               <p className="hero-sub au d3">Valoria builds the systems that develop African professionals, make merit visible and connect proven capability to meaningful opportunity.</p>
               <div className="hero-actions au d4">
-                <AssessmentStartLink href="/valu/register/" className="btn-gold">DISCOVER YOUR VALU INDEX <span aria-hidden="true">→</span></AssessmentStartLink>
+                <AssessmentStartLink href="/valu/register/" className="btn-gold">START THE VALU INDEX TASTER <span aria-hidden="true">→</span></AssessmentStartLink>
                 <a href="/about-us" className="btn-outline">THE INSTITUTION</a>
               </div>
               <p className="hero-editorial-footnote">DEVELOPMENT · VISIBILITY · CONNECTION</p>
