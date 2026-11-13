@@ -121,7 +121,7 @@ jobs:
           fi
           curl -fsS "$base/" -o /tmp/valoria-home.html
           grep -q 'Capability should decide' /tmp/valoria-home.html
-          grep -q 'Valoria sets the standard.' /tmp/valoria-home.html
+          grep -q 'Capability deserves' /tmp/valoria-home.html
           grep -q 'START THE VALU INDEX TASTER' /tmp/valoria-home.html
           grep -q 'THE VALORIA MARKETPLACE' /tmp/valoria-home.html
           grep -q 'Find professionals' /tmp/valoria-home.html
