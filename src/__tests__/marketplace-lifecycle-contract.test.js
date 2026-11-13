@@ -35,7 +35,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).toContain("p.assessment_access === 'full'")
     expect(directory).toContain("p.assessment_access === 'full' && p.valu_index != null")
     expect(directory).not.toContain('BASIC LISTING')
-    expect(directory).toContain('applicable Basic or Full listing requirements')
+    expect(directory).toContain('Public profiles appear when a professional meets the relevant requirements')
   })
   test('marketplace accepts canonically equivalent Unicode ATB identifiers without changing the stored ID', () => {
     const source = read('src/lib/marketplace-data.js')
@@ -279,7 +279,7 @@ describe('VALUI marketplace lifecycle contract', () => {
       expect(source).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
       expect(source).not.toMatch(/9-question|58-question|15-question/i)
     }
-    expect(start).toContain('Register your contact and professional details before the taster')
+    expect(start).toContain('Create your Valoria account and confirm your email before beginning the Taster')
     expect(start).toContain('Your official result in points')
     expect(signup).toContain('VALU Index Taster')
   })
@@ -504,7 +504,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain('rawHeadline.length >= 2')
     expect(publicProfile).toContain('hasCurrentFullAssessment')
     expect(homepage).toContain('profiles.slice(0, 13)')
-    expect(directory).toContain('BASIC PROFESSIONAL LISTING')
+    expect(directory).toContain('PROFILE OVERVIEW')
+    expect(directory).not.toContain('BASIC PROFESSIONAL LISTING')
     expect(directory).not.toContain('completed the VALU Index Taster and has Basic marketplace access')
   })
 
