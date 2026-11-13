@@ -24,5 +24,7 @@ describe('three-lane capability display contract', () => {
     expect(rail).toContain('aria-hidden="true"')
     expect(styles).toContain('.vi-scroll-track-label span.is-active')
     expect(styles).toContain('.vi-scroll-track-label span.is-inactive')
+    expect(styles).toContain('grid-template-columns: 36px minmax(0, 1fr) 40px')
+    expect(styles).toContain('font-size: 6.5px')
   })
 })
