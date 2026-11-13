@@ -260,26 +260,31 @@ try {
       const track = shell?.querySelector('.vi-scroll-track')
       const fixtures = [...(shell?.querySelectorAll('[data-visual-fixture="true"]') || [])]
       const publicCards = [...(shell?.querySelectorAll('[data-marketplace-intent]') || [])]
+      const mask = shell?.querySelector('.vi-scroll-mask')
       const note = shell?.querySelector('.live-profiles-preview-note')
       const animation = track ? getComputedStyle(track).animationName : 'none'
+      const touch = window.matchMedia('(hover: none), (pointer: coarse)').matches
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const shouldAnimate = !touch && !reducedMotion
+      const overflowX = mask ? getComputedStyle(mask).overflowX : 'hidden'
+      const scrollReady = shouldAnimate ? animation !== 'none' : overflowX === 'auto'
       const clearlyLabelled = fixtures.length === 0 || Boolean(
         note?.innerText.includes('VISUAL PREVIEW ONLY')
         && fixtures.every(card => card.innerText.includes('VISUAL FIXTURE') && card.innerText.includes('Not a participant profile'))
       )
-      const previewReady = Boolean(track && ((fixtures.length === 3 && clearlyLabelled) || publicCards.length > 0))
-      // Freeze the already-verified rail for a readable full-page screenshot.
+      const previewReady = Boolean(track && scrollReady && ((fixtures.length === 3 && clearlyLabelled) || publicCards.length > 0))
+      // Freeze the verified rail for a readable full-page screenshot.
       if (track) {
         track.style.animation = 'none'
         track.style.transform = 'none'
       }
-      return { previewReady, syntheticFixtures: fixtures.length, clearlyLabelled, animation }
+      return { previewReady, syntheticFixtures: fixtures.length, clearlyLabelled, animation, scrollReady, scrollBehavior: shouldAnimate ? 'auto' : 'swipe' }
     })
     const previewReady = previewState.previewReady
     const filename = `homepage-profile-cards-preview-${viewport.name}.png`
     await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
-    report.profileCardPreviews.push({ viewport: viewport.name, status: response?.status() ?? null, screenshot: filename, syntheticFixtures: previewState.syntheticFixtures, clearlyLabelled: previewState.clearlyLabelled, scrollAnimation: previewState.animation, previewReady })
-    if (!previewReady) report.failures.push(`${viewport.name}: homepage profile rail is missing real cards or clearly labelled staging fixtures`)
-    if (!previewState.animation || previewState.animation === 'none') report.failures.push(`${viewport.name}: homepage profile rail auto-scroll animation is missing`)
+    report.profileCardPreviews.push({ viewport: viewport.name, status: response?.status() ?? null, screenshot: filename, syntheticFixtures: previewState.syntheticFixtures, clearlyLabelled: previewState.clearlyLabelled, scrollAnimation: previewState.animation, scrollBehavior: previewState.scrollBehavior, scrollReady: previewState.scrollReady, previewReady })
+    if (!previewReady) report.failures.push(`${viewport.name}: homepage profile rail is missing cards or the expected scroll behavior`)
     await context.close()
   }
 
