@@ -277,6 +277,7 @@ try {
       if (track) {
         track.style.animation = 'none'
         track.style.transform = 'none'
+        track.querySelector('.vi-scroll-group[aria-hidden="true"]')?.style.setProperty('display', 'none')
       }
       return { previewReady, syntheticFixtures: fixtures.length, clearlyLabelled, animation, scrollReady, scrollBehavior: shouldAnimate ? 'auto' : 'swipe' }
     })
