@@ -3396,3 +3396,24 @@
   .home-page-shell .vi-footer .uf-grid { grid-template-columns: 1fr 1fr; }
   .home-page-shell .vi-footer .uf-brand { grid-column: 1 / -1; }
 }
+
+
+/* STAGING CLOSEOUT: restore readable contrast in the dark VALU editorial panel. */
+.home-redesign-root .valu-section.valu-conversion .valu-conversion-intro .valu-title {
+  color: var(--editorial-paper);
+}
+.home-redesign-root .valu-section.valu-conversion .valu-conversion-intro .valu-title em {
+  color: var(--editorial-gold);
+}
+.home-redesign-root .valu-section.valu-conversion .valu-conversion-intro .valu-desc {
+  color: rgba(247,244,238,.78);
+}
+.home-redesign-root .valu-section.valu-conversion .valu-conversion-intro .valu-conversion-proof {
+  color: rgba(247,244,238,.72);
+}
+.home-redesign-root .valu-section.valu-conversion .valu-conversion-intro .valu-conversion-proof b {
+  color: var(--editorial-gold);
+}
+.home-redesign-root .valu-section.valu-conversion .valu-conversion-intro .valu-conversion-note {
+  color: rgba(247,244,238,.62);
+}
