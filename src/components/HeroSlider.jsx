@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { AssessmentStartLink } from '@/components/Nav'
 import EventRegistrationModal, { SessionTimer } from './EventRegistrationModal'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
@@ -34,15 +35,15 @@ export default function HeroSlider() {
         <div className={`hero-slide ${active === 0 ? 'is-active' : ''}`} aria-hidden={active !== 0}>
           <div className="container hero-inner">
             <div className="hero-editorial-copy">
-              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">THE INSTITUTION FOR PROFESSIONAL MERIT</span></div>
+              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">AN INSTITUTION FOR PROFESSIONAL CAPABILITY</span></div>
               <p className="hero-editorial-issue">WORTH. BUILT. <span>— THE VALORIA STANDARD</span></p>
-              <h1 className="hero-title au d2">Talent is not the problem.<br /><em>Infrastructure is.</em></h1>
-              <p className="hero-sub au d3">Valoria builds the systems that develop African professionals, make merit visible and connect proven capability to meaningful opportunity.</p>
+              <h1 className="hero-title au d2">Capability deserves<br /><em>a higher standard.</em></h1>
+              <p className="hero-sub au d3">For accomplished professionals and the organisations that rely on their judgment, Valoria brings structure to how capability is assessed, developed and discovered.</p>
               <div className="hero-actions au d4">
-                <AssessmentStartLink href="/valu/register/" className="btn-gold">START THE VALU INDEX TASTER <span aria-hidden="true">→</span></AssessmentStartLink>
-                <a href="/about-us" className="btn-outline">THE INSTITUTION</a>
+                <Link href="/prime" className="btn-gold">EXPLORE THE FRAMEWORK <span aria-hidden="true">→</span></Link>
+                <AssessmentStartLink href="/valu/register/" className="btn-outline">START THE VALU INDEX</AssessmentStartLink>
               </div>
-              <p className="hero-editorial-footnote">DEVELOPMENT · VISIBILITY · CONNECTION</p>
+              <p className="hero-editorial-footnote">WORTH. BUILT. · CAPABILITY, CONSIDERED WITH INTENT</p>
             </div>
 
             <div className="hero-editorial-visual au d3">
