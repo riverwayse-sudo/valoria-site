@@ -19,7 +19,7 @@ export async function POST(request) {
     return responseError('The secure Taster service is not configured.', 503)
   }
 
-  const accessToken = (request.headers.get('authorization') || '').replace(/^Bearer\\s+/i, '').trim()
+  const accessToken = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '').trim()
   if (!accessToken) return responseError('Sign in to your confirmed Valoria account before beginning the Taster.', 401)
 
   const verifier = createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false } })
