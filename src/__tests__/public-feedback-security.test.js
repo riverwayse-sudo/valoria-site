@@ -20,7 +20,7 @@ describe('public webinar feedback security contract', () => {
     expect(api).toContain('optionalText(most_valuable, 2000')
     expect(api).toContain('optionalText(improvements, 2000')
     expect(api).toContain('optionalText(name, 200')
-    expect(api).toContain('optionalText(email, 320)')
+    expect(api).toContain("optionalText(email, 320, 'Email')")
   })
 
   test('feedback submissions use trusted edge IP rate limiting', () => {
