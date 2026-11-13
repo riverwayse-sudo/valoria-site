@@ -691,6 +691,7 @@ test('staging visual audit captures clearly labelled synthetic profile-card fixt
   const audit = read('scripts/staging-browser-audit.mjs')
   expect(audit).toContain('VISUAL PREVIEW ONLY')
   expect(audit).toContain('ATB-PREVIEW-001')
+  expect(audit).toContain('Talent · Speaker · Facilitator')
   expect(audit).toContain('data-visual-fixture="true"')
   expect(audit).toContain('These are not public listings or participant records')
 })
