@@ -467,17 +467,17 @@ describe('journey integrity contract', () => {
     expect(report).toContain(' points</span>')
   })
 
-  test('public VALU explanation follows registration, taster, account creation and Full assessment', () => {
+  test('public VALU explanation follows account confirmation, separate Taster and Full assessment', () => {
     const start = read('src/app/valu/start/page.jsx')
     const signup = read('src/app/professional-signup/page.jsx')
-    expect(start).toContain('Register your contact and professional details before the taster')
+    expect(start).toContain('Create your Valoria account and confirm your email before beginning the Taster')
     expect(start).toContain('Your official result in points')
     expect(start).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
     expect(start).not.toMatch(/9-question|58-question/i)
     expect(signup).toContain('VALU Index Taster')
     expect(signup).toContain('full VALU Index')
   })
-  test('professional account creation remains separate from pre-taster registration', () => {
+  test('legacy post-taster account linking remains available without changing the account-first entry flow', () => {
     const signup = read('src/app/professional-signup/page.jsx')
     const callback = read('src/app/auth/callback/page.jsx')
     expect(signup).toContain('ACCOUNT BRIDGE')
@@ -513,5 +513,167 @@ describe('journey integrity contract', () => {
     expect(sidebar).toContain('Your official VALU Index and PRIME insights will appear here')
   })
 
+
+  test('professional account signup and email confirmation happen before the Taster', () => {
+    const register = read('src/app/valu/register/page.jsx')
+    const bootstrap = read('src/app/api/valu-taster/bootstrap/route.js')
+    const tasterStart = read('src/app/api/valu-taster/start/route.js')
+    const callback = read('src/app/auth/callback/page.jsx')
+    const publicSignup = read('src/app/signup/page.jsx')
+    expect(register).toContain('valu_taster_signup: true')
+    expect(register).toContain('emailRedirectTo: emailRedirect()')
+    expect(register).toContain('CREATE ACCOUNT & CONTINUE')
+    expect(register).toContain('supabase.auth.getSession()')
+    expect(register).toContain("fetch('/api/valu-taster/start'")
+    expect(tasterStart).toContain('user.email_confirmed_at')
+    expect(tasterStart).toContain("metadata.valu_taster_signup !== true")
+    expect(tasterStart).toContain("entry_point: 'taster_start'")
+    expect(tasterStart).toContain("target_stage: 'taster'")
+    expect(tasterStart).toContain("randomBytes(32).toString('base64url')")
+    expect(tasterStart).toContain('const HANDOFF_TTL_SECONDS = 60')
+    expect(tasterStart).toContain("destination.hash = new URLSearchParams({ taster_start_code: handoffCode }).toString()")
+    expect(tasterStart).toContain('admin.auth.admin.updateUserById')
+    expect(tasterStart).toContain("privacy_notice_version: '2026-11-12'")
+    expect(tasterStart).toContain('privacy_acknowledged_at: consentedAt')
+    expect(tasterStart).toContain('completedTaster')
+    expect(tasterStart).toContain("new URL('/dashboard?welcome=profile', request.url)")
+    expect(tasterStart).toContain("headers: { 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' }")
+    expect(bootstrap).toContain('user.email_confirmed_at')
+    expect(bootstrap).toContain("metadata.valu_taster_signup !== true")
+    expect(bootstrap).toContain("begin_valu_taster_signup")
+    expect(bootstrap).toContain("p_signup_key: user.id")
+    expect(bootstrap).toContain('stableResumeToken')
+    expect(bootstrap).toContain('client cannot create unlimited parallel Taster records')
+    expect(bootstrap).toContain("from('lead_captures')")
+    expect(bootstrap).toContain('Your saved Taster session has expired')
+    expect(callback).toContain("params.get('valu_taster') === '1' && !identityHash && !pendingTasterId")
+    expect(callback).toContain("fetch('/api/valu-taster/start'")
+    expect(callback).toContain('window.location.replace(destination.toString())')
+    expect(publicSignup).toContain('href="/valu/register/"')
+    expect(publicSignup).toContain('create and confirm your Valoria account before taking the VALU Index Taster')
+  })
+
+  test('the assessment app cannot create a new Taster without the confirmed-account bootstrap', () => {
+    const source = read('src/app/api/valu-taster/bootstrap/route.js')
+    const gate = read('src/app/valu/register/page.jsx')
+    expect(source).toContain('createServerClient')
+    expect(source).toContain('user.email_confirmed_at')
+    expect(source).toContain('createHmac')
+    expect(source).toContain('begin_valu_taster_signup')
+    expect(gate).toContain('supabase.auth.signUp')
+    expect(gate).toContain('supabase.auth.signInWithPassword')
+  })
+
+
+  test('staging robots and sitemap never advertise production as the canonical host', () => {
+    const robots = read('src/app/robots.js')
+    const sitemap = read('src/app/sitemap.js')
+    const workflow = read('.github/workflows/cloudflare-current-site-staging.yml')
+    const layout = read('src/app/layout.jsx')
+    expect(robots).toContain('process.env.NEXT_PUBLIC_SITE_URL')
+    expect(robots).toContain("(process.env.NEXT_PUBLIC_SITE_URL || '').includes('staging.')")
+    expect(robots).toContain("disallow: ['/']")
+    expect(sitemap).toContain("const SITE_URL = IS_STAGING ? (process.env.NEXT_PUBLIC_SITE_URL || 'https://staging.valoriainstitute.com') : 'https://valoriainstitute.com'")
+    expect(workflow).toContain('<loc>https://staging.valoriainstitute.com/')
+    expect(workflow).toContain('Staging sitemap must not publish production canonical URLs')
+    expect(layout).toContain('staging-site-banner')
+    expect(layout).toContain('robots:IS_STAGING?{index:false,follow:false')
+    expect(layout).toContain('const GA_MEASUREMENT_ID = IS_STAGING ? null')
+  })
+
+
+  test('VALU explainer uses participant-facing language without discoverability jargon', () => {
+    const valu = read('src/app/valu/page.jsx')
+    expect(valu).toContain('make them easier to match to relevant opportunities')
+    expect(valu).not.toMatch(/become discoverable|discoverability/i)
+  })
+
+  test('account-first Taster completion never creates a second account after the Taster', () => {
+    const professionalSignup = read('src/app/professional-signup/page.jsx')
+    expect(professionalSignup).toContain("params.get('account_first')==='1'")
+    expect(professionalSignup).toContain('Sign in to the same confirmed Valoria account')
+    expect(professionalSignup).toContain('No second account is needed.')
+    expect(professionalSignup).toContain('/login?pending_taster_id=')
+    expect(professionalSignup).toContain("if(accountFirst && !redirecting)return")
+    expect(professionalSignup).toContain("window.location.replace('/dashboard?welcome=profile')")
+  })
+
+  test('staging browser audit detects participant-facing assessment counts correctly', () => {
+    const audit = read('scripts/staging-browser-audit.mjs')
+    expect(audit).toContain(String.raw`\\b1 of 58\\b`.replaceAll('\\\\', '\\'))
+    expect(audit).toContain(String.raw`\\b1 of 9\\b`.replaceAll('\\\\', '\\'))
+    expect(audit).toContain('9[- ]questions?')
+    expect(audit).not.toContain(String.raw`\\\\b1 of 58\\\\b`)
+  })
+
+  test('public marketplace copy avoids internal listing and sourcing terminology', () => {
+    const registry = read('src/components/LiveProfilesScroll.jsx')
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    for (const source of [registry, directory]) {
+      expect(source).not.toMatch(/BASIC LISTING|FULL LISTING|sourcing access|buyer access|BASIC PROFESSIONAL LISTING/i)
+    }
+    expect(registry).toContain('Discuss your talent needs')
+    expect(directory).toContain('DISCUSS YOUR TALENT NEEDS')
+  })
+
+  test('homepage registry uses compact cards without exposing internal listing tiers', () => {
+    const registry = read('src/components/LiveProfilesScroll.jsx')
+    const homeCss = read('src/app/home.css')
+    expect(registry).toContain("isBasic ? 'PUBLIC PROFILE'")
+    expect(registry).toContain("isBasic ? 'PROFILE' : 'VALU INDEX'")
+    expect(registry).not.toContain('BASIC LISTING')
+    expect(registry).not.toContain('FULL LISTING')
+    expect(registry).not.toContain('WANT TO BE DISCOVERED')
+    expect(registry).toContain('YOUR PROFESSIONAL PRESENCE')
+    expect(homeCss).toContain('width: min(350px, 82vw)')
+    expect(homeCss).toContain('min-height: 142px')
+    expect(homeCss).toContain('grid-template-columns: 40px minmax(0,1fr) 54px 12px')
+  })
+
+  test('public VALU entry points route through account-first registration while preserving signed-in handoff', () => {
+    const navigation = read('src/config/navigation.js')
+    const nav = read('src/components/Nav.jsx')
+    const home = read('src/app/page.jsx')
+    const valu = read('src/app/valu/page.jsx')
+    const register = read('src/app/valu/register/page.jsx')
+    const hero = read('src/components/HeroSlider.jsx')
+    const footer = read('src/components/Footer.jsx')
+    const liveProfiles = read('src/components/LiveProfilesScroll.jsx')
+    expect(navigation).toContain("assessmentUrl: '/valu/register/'")
+    expect(nav).toContain("href = '/valu/register/'")
+    expect(home).toContain('href="/valu/register/"')
+    expect(home).toContain("import LiveProfilesScroll from '@/components/LiveProfilesScroll'")
+    expect(home).toContain('<LiveProfilesScroll />')
+    expect(home).not.toContain('CapabilityProfilePreview')
+    expect(valu).toContain('Create and confirm your Valoria account first')
+    expect(register).toContain("{mode !== 'complete' && <label style={S.label}>PASSWORD")
+    expect(register).toContain("disabled={mode==='complete'}")
+    expect(hero).toContain('href="/valu/register/"')
+    expect(footer).toContain('<AssessmentStartLink href="/valu/register/">')
+    expect(liveProfiles).toContain("candidate: { label: 'Talent'")
+    expect(liveProfiles).toContain("speaker: { label: 'Speaker'")
+    expect(liveProfiles).toContain("facilitator: { label: 'Facilitator'")
+    expect(liveProfiles).toContain('getMarketplaceDirectoryData')
+    expect(liveProfiles).toContain('assessment_access === \'basic\'')
+    expect(nav).toContain("fetch('/api/valu-handoff'")
+    expect(nav).toContain('window.location.assign(data.url)')
+  })
+
+
+
+test('Taster-start handoff correctly extracts a Bearer authorization token', () => {
+  const route = read('src/app/api/valu-taster/start/route.js')
+  expect(route).toContain(".replace(/^Bearer\\s+/i, '').trim()")
+  expect(route).not.toContain(".replace(/^Bearer\\\\s+/i, '').trim()")
+})
+
+
+test('staging browser audit reveals scroll-triggered sections before screenshot capture', () => {
+  const audit = read('scripts/staging-browser-audit.mjs')
+  expect(audit).toContain("document.querySelectorAll('.reveal')")
+  expect(audit).toContain("element.scrollIntoView({ block: 'center', behavior: 'auto' })")
+  expect(audit).toContain("element.classList.contains('visible')")
+  expect(audit).toContain('scroll-reveal content remained hidden')
+})
 
 })
