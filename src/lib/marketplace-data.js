@@ -1,5 +1,6 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
+import { PUBLIC_PROFILE_CONSENT_SOURCES } from '@/lib/profile-consent-copy'
 
 const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
@@ -191,7 +192,7 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
 
   const { data: acknowledgements, error: acknowledgementError } = await admin
     .from('professional_profile_acknowledgements')
-    .select('professional_id,acknowledgement_version')
+    .select('professional_id,acknowledgement_version,source')
     .eq('acknowledgement_type', 'profile_submission')
     .in('professional_id', ids)
     .order('acknowledged_at', { ascending: false })
@@ -206,11 +207,11 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
   const latestAcknowledgements = new Map()
   for (const acknowledgement of acknowledgements || []) {
     if (!latestAcknowledgements.has(acknowledgement.professional_id)) {
-      latestAcknowledgements.set(acknowledgement.professional_id, acknowledgement.acknowledgement_version)
+      latestAcknowledgements.set(acknowledgement.professional_id, { version: acknowledgement.acknowledgement_version, source: acknowledgement.source })
     }
   }
   const consentedIds = new Set([...latestAcknowledgements.entries()]
-    .filter(([, version]) => version === PUBLIC_PROFILE_ACK_VERSION)
+    .filter(([, acknowledgement]) => acknowledgement.version === PUBLIC_PROFILE_ACK_VERSION && PUBLIC_PROFILE_CONSENT_SOURCES.includes(acknowledgement.source))
     .map(([professionalId]) => professionalId))
   const profileById = new Map((profiles || []).map(profile => [profile.id, profile]))
   return new Set(rows.filter(row => {
