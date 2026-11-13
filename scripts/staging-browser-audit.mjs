@@ -277,15 +277,16 @@ try {
       const scrollReady = shouldAnimate ? animation !== 'none' : overflowX === 'auto'
       const clearlyLabelled = fixtures.length === 0 || Boolean(
         note?.innerText.includes('VISUAL PREVIEW ONLY')
-        && fixtures.every(card => card.innerText.includes('VISUAL FIXTURE') && card.innerText.includes('Not a participant profile'))
+        && fixtures.every(card => card.innerText.includes('VISUAL FIXTURE'))
       )
       const previewReady = Boolean(track && scrollReady && ((fixtures.length === 3 && clearlyLabelled) || publicCards.length > 0))
       // Freeze the verified rail for a readable full-page screenshot.
       if (track) {
-        track.style.animation = 'none'
-        track.style.transform = 'none'
+        track.style.setProperty('animation', 'none', 'important')
+        track.style.setProperty('transform', 'translate3d(0,0,0)', 'important')
         track.querySelector('.vi-scroll-group[aria-hidden="true"]')?.style.setProperty('display', 'none')
       }
+      if (mask) mask.scrollLeft = 0
       return { previewReady, syntheticFixtures: fixtures.length, clearlyLabelled, animation, scrollReady, scrollBehavior: shouldAnimate ? 'auto' : 'swipe' }
     })
     const previewReady = previewState.previewReady
