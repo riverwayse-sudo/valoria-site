@@ -687,19 +687,31 @@ test('homepage professional rail uses compact editorial profile cards', () => {
 })
 
 
-test('staging visual audit captures clearly labelled synthetic profile-card fixtures', () => {
-  const audit = read('scripts/staging-browser-audit.mjs')
-  expect(audit).toContain('VISUAL PREVIEW ONLY')
-  expect(audit).toContain('ATB-PREVIEW-001')
-  expect(audit).toContain('<span class="is-active">Talent</span>')
-  expect(audit).toContain('<span class="is-inactive">Facilitator</span>')
-  expect(audit).toContain('data-visual-fixture="true"')
-  expect(audit).toContain('These are not public listings or participant records')
+test('staging homepage uses only clearly labelled QA fixtures when no public profiles exist', () => {
+  const source = read('src/components/LiveProfilesScroll.jsx')
+  expect(source).toContain("process.env.VALU_PREVIEW === '1'")
+  expect(source).toContain('ATB-PREVIEW-001')
+  expect(source).toContain('VISUAL FIXTURE')
+  expect(source).toContain("data-visual-fixture={isClone ? undefined : 'true'}")
+  expect(source).toContain('Not a participant profile')
+  expect(source).toContain('sample point values')
 })
 
 
-test('staging profile-card preview fails closed when fixture markup is absent', () => {
+test('homepage profile rail animates accessibly and remains swipeable for touch or reduced motion', () => {
+  const styles = read('src/app/home.css')
+  expect(styles).toContain('@keyframes valoria-profile-marquee')
+  expect(styles).toContain('animation-play-state: paused')
+  expect(styles).toContain('@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce)')
+  expect(styles).toContain('scroll-snap-type: x proximity')
+})
+
+
+test('staging browser audit verifies the actual homepage profile rail and its scroll behavior', () => {
   const audit = read('scripts/staging-browser-audit.mjs')
+  expect(audit).toContain('[data-visual-fixture="true"]')
+  expect(audit).toContain('scrollReady')
+  expect(audit).toContain('scrollBehavior')
   expect(audit).toContain('if (!previewReady) report.failures.push')
 })
 
