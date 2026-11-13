@@ -166,10 +166,22 @@ nav.vi-nav.scrolled,
 .ps-card-cta:hover { transform: translate3d(2px,0,0); }
 .vi-scroll-track { animation: vi-scroll-x var(--motion-registry-loop) linear infinite; }
 @keyframes vi-scroll-x { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
+
+/* Profile rail motion pauses for pointer and keyboard interaction. */
+.live-profiles .vi-scroll-mask:hover .vi-scroll-track,
+.live-profiles .vi-scroll-mask:focus-within .vi-scroll-track {
+  animation-play-state: paused;
+}
+@media (hover: none), (pointer: coarse) {
+  .live-profiles .vi-scroll-track {
+    animation: none;
+    transform: none;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .ps-card,.ps-card-cta { transition: none; }
   .ps-card:hover,.ps-card-cta:hover { transform: none; }
-  .vi-scroll-track { animation: none; }
+  .vi-scroll-track { animation: none; transform: none; }
 }
 
 

@@ -22,6 +22,33 @@ const routes = [
   { name: 'dashboard-preview', url: `${SITE}/dashboard?preview=1`, site: true },
   { name: 'assessment-proxy', url: `${SITE}/valu/assessment/`, site: true },
   { name: 'assessment-host', url: `${ASSESSMENT}/`, site: false },
+  { name: 'atb-connect', url: `${SITE}/atb-connect`, site: true },
+  { name: 'atb-spotlight', url: `${SITE}/atb-spotlight`, site: true },
+  { name: 'careers', url: `${SITE}/careers`, site: true },
+  { name: 'coaching', url: `${SITE}/coaching`, site: true },
+  { name: 'contact-us', url: `${SITE}/contact-us`, site: true },
+  { name: 'develop', url: `${SITE}/develop`, site: true },
+  { name: 'facilitators', url: `${SITE}/facilitators`, site: true },
+  { name: 'feedback', url: `${SITE}/feedback`, site: true },
+  { name: 'insights', url: `${SITE}/insights`, site: true },
+  { name: 'journey', url: `${SITE}/journey`, site: true },
+  { name: 'login', url: `${SITE}/login`, site: true },
+  { name: 'marketplace-facilitators', url: `${SITE}/marketplace/facilitators`, site: true },
+  { name: 'marketplace-speakers', url: `${SITE}/marketplace/speakers`, site: true },
+  { name: 'marketplace-talent', url: `${SITE}/marketplace/talent`, site: true },
+  { name: 'opportunities', url: `${SITE}/opportunities`, site: true },
+  { name: 'opportunities-submit', url: `${SITE}/opportunities/submit`, site: true },
+  { name: 'programmes', url: `${SITE}/programmes`, site: true },
+  { name: 'register', url: `${SITE}/register`, site: true },
+  { name: 'report', url: `${SITE}/report`, site: true },
+  { name: 'reset-password', url: `${SITE}/reset-password`, site: true },
+  { name: 'signup', url: `${SITE}/signup`, site: true },
+  { name: 'spotlight', url: `${SITE}/spotlight`, site: true },
+  { name: 'terms-of-use', url: `${SITE}/terms-of-use`, site: true },
+  { name: 'privacypolicy', url: `${SITE}/privacypolicy`, site: true },
+  { name: 'valoria-develop', url: `${SITE}/valoria-develop`, site: true },
+  { name: 'waitlist', url: `${SITE}/waitlist`, site: true },
+  { name: 'assessment-bridge', url: `${SITE}/assessment/bridge`, site: true },
 ]
 const report = {
   generatedAt: new Date().toISOString(),
@@ -37,8 +64,15 @@ await fs.mkdir(OUT, { recursive: true })
 const browser = await chromium.launch({ headless: true })
 
 try {
+  const mobileCriticalRoutes = new Set([
+    'homepage', 'marketplace', 'valu', 'valu-register',
+    'professional-signup-account-first', 'dashboard-preview',
+    'assessment-proxy', 'assessment-host', 'contact-us',
+    'opportunities', 'signup', 'register',
+  ])
   for (const route of routes) {
-    for (const viewport of viewports) {
+    const routeViewports = mobileCriticalRoutes.has(route.name) ? viewports : [viewports[0]]
+    for (const viewport of routeViewports) {
       const context = await browser.newContext({
         viewport: { width: viewport.width, height: viewport.height },
         deviceScaleFactor: 1,
@@ -66,9 +100,9 @@ try {
       let status = null
       let navigationError = null
       try {
-        const response = await page.goto(route.url, { waitUntil: 'domcontentloaded', timeout: 60000 })
+        const response = await page.goto(route.url, { waitUntil: 'domcontentloaded', timeout: 15000 })
         status = response?.status() ?? null
-        await page.waitForTimeout(1800)
+        await page.waitForTimeout(800)
       } catch (error) {
         navigationError = error.message
       }
@@ -80,14 +114,22 @@ try {
         const reveals = [...document.querySelectorAll('.reveal')]
         for (const element of reveals) {
           element.scrollIntoView({ block: 'center', behavior: 'auto' })
-          await new Promise(resolve => setTimeout(resolve, 100))
+          await new Promise(resolve => setTimeout(resolve, 50))
         }
         window.scrollTo({ top: 0, behavior: 'auto' })
       })
-      await page.waitForTimeout(350)
+      await page.waitForTimeout(200)
 
       const state = await page.evaluate(() => {
         const robots = document.querySelector('meta[name="robots"]')?.content || ''
+        const fontFamilies = {
+          body: getComputedStyle(document.body).fontFamily,
+          heading: document.querySelector('h1') ? getComputedStyle(document.querySelector('h1')).fontFamily : '',
+          button: document.querySelector('button') ? getComputedStyle(document.querySelector('button')).fontFamily : '',
+          input: document.querySelector('input') ? getComputedStyle(document.querySelector('input')).fontFamily : '',
+        }
+        const editorialScope = document.body.classList.contains('valoria-staging-editorial')
+          || Boolean(document.querySelector('.valu-staging-editorial'))
         const banner = document.querySelector('.staging-site-banner')?.innerText ||
           (document.body.innerText.includes('STAGING PREVIEW') ? 'STAGING PREVIEW' : '')
         const navBrand = document.querySelector('a[aria-label="Valoria Institute home"]')?.href || ''
@@ -119,6 +161,8 @@ try {
         return {
           title: document.title,
           robots,
+          fontFamilies,
+          editorialScope,
           banner,
           viewportWidth: window.innerWidth,
           documentWidth: document.documentElement.scrollWidth,
@@ -167,6 +211,9 @@ try {
       if (state.horizontalOverflow) report.failures.push(`${route.name}/${viewport.name}: horizontal overflow`)
       if (state.revealState?.total !== state.revealState?.visible) report.failures.push(`${route.name}/${viewport.name}: scroll-reveal content remained hidden (${state.revealState?.visible}/${state.revealState?.total})`)
       if (!state.robots.toLowerCase().includes('noindex')) report.failures.push(`${route.name}/${viewport.name}: staging page is missing noindex robots metadata`)
+      if (Object.values(state.fontFamilies).filter(Boolean).some(font => !font.toLowerCase().includes('raleway'))) report.failures.push(`${route.name}/${viewport.name}: Raleway typography contract failed: ${JSON.stringify(state.fontFamilies)}`)
+      if (route.site && !state.editorialScope) report.failures.push(`${route.name}/${viewport.name}: staging editorial scope is missing`)
+      if (route.name.startsWith('assessment-') && !state.editorialScope) report.failures.push(`${route.name}/${viewport.name}: assessment editorial scope is missing`)
       if (!state.banner.includes('STAGING PREVIEW')) report.failures.push(`${route.name}/${viewport.name}: staging banner is missing`)
       if (state.analyticsLoaded) report.failures.push(`${route.name}/${viewport.name}: production analytics loaded in staging`)
       if (forbiddenRequests.length) report.failures.push(`${route.name}/${viewport.name}: production Supabase/assessment request detected`)
@@ -204,85 +251,50 @@ try {
       hasTouch: viewport.isMobile,
     })
     const page = await context.newPage()
-    const response = await page.goto(`${SITE}/`, { waitUntil: 'domcontentloaded', timeout: 60000 })
-    await page.waitForTimeout(1800)
+    const response = await page.goto(`${SITE}/`, { waitUntil: 'domcontentloaded', timeout: 15000 })
+    await page.waitForTimeout(800)
     await page.evaluate(async () => {
       const reveals = [...document.querySelectorAll('.reveal')]
       for (const element of reveals) {
         element.scrollIntoView({ block: 'center', behavior: 'auto' })
-        await new Promise(resolve => setTimeout(resolve, 100))
+        await new Promise(resolve => setTimeout(resolve, 50))
       }
       window.scrollTo({ top: 0, behavior: 'auto' })
     })
-    await page.waitForTimeout(350)
-    const previewReady = await page.evaluate(() => {
-      const shell = document.querySelector('.live-profiles-shell')
-      if (!shell) return false
-      shell.querySelector('.live-profiles-public-state')?.remove()
-      const note = document.createElement('div')
-      note.className = 'live-profiles-public-state'
-      note.innerHTML = '<span class="live-profiles-empty-title">VISUAL PREVIEW ONLY</span><p>Illustrative cards for layout QA. These are not public listings or participant records.</p>'
-      const mask = document.createElement('div')
-      mask.className = 'vi-scroll-mask'
-      mask.innerHTML = `
-        <div class="vi-scroll-track">
-          <div class="vi-scroll-card" data-visual-fixture="true">
-            <div class="vi-scroll-avatar"><span>01</span></div>
-            <div class="vi-scroll-copy">
-              <div class="vi-scroll-topline">ATB-PREVIEW-001 <i>VISUAL FIXTURE</i></div>
-              <span class="vi-scroll-name">Illustrative Professional 01</span>
-              <div class="vi-scroll-headline">Strategy &amp; Operations</div>
-              <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-active">Speaker</span><span class="is-inactive">Facilitator</span></div>
-              <div class="vi-scroll-designation">Illustrative designation</div>
-              <div class="vi-scroll-summary">Synthetic content for layout review only</div>
-              <div class="vi-scroll-development">Not a participant profile</div>
-            </div>
-            <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>78</strong><span class="vi-scroll-score-max">PTS</span></div>
-            <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
-          </div>
-          <div class="vi-scroll-card" data-visual-fixture="true">
-            <div class="vi-scroll-avatar"><span>02</span></div>
-            <div class="vi-scroll-copy">
-              <div class="vi-scroll-topline">ATB-PREVIEW-002 <i>VISUAL FIXTURE</i></div>
-              <span class="vi-scroll-name">Illustrative Professional 02</span>
-              <div class="vi-scroll-headline">Finance &amp; Governance</div>
-              <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-inactive">Speaker</span><span class="is-active">Facilitator</span></div>
-              <div class="vi-scroll-designation">Illustrative designation</div>
-              <div class="vi-scroll-summary">Synthetic content for layout review only</div>
-              <div class="vi-scroll-development">Not a participant profile</div>
-            </div>
-            <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>84</strong><span class="vi-scroll-score-max">PTS</span></div>
-            <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
-          </div>
-          <div class="vi-scroll-card" data-visual-fixture="true">
-            <div class="vi-scroll-avatar"><span>03</span></div>
-            <div class="vi-scroll-copy">
-              <div class="vi-scroll-topline">ATB-PREVIEW-003 <i>VISUAL FIXTURE</i></div>
-              <span class="vi-scroll-name">Illustrative Professional 03</span>
-              <div class="vi-scroll-headline">Digital Transformation</div>
-              <div class="vi-scroll-track-label"><span class="is-inactive">Talent</span><span class="is-active">Speaker</span><span class="is-active">Facilitator</span></div>
-              <div class="vi-scroll-designation">Illustrative designation</div>
-              <div class="vi-scroll-summary">Synthetic content for layout review only</div>
-              <div class="vi-scroll-development">Not a participant profile</div>
-            </div>
-            <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>72</strong><span class="vi-scroll-score-max">PTS</span></div>
-            <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
-          </div>
-        </div>`
-      const bottom = shell.querySelector('.live-profiles-bottom')
-      shell.insertBefore(note, bottom)
-      shell.insertBefore(mask, bottom)
-      const track = mask.querySelector('.vi-scroll-track')
+    await page.waitForTimeout(200)
+    const previewState = await page.evaluate(() => {
+      const shell = document.querySelector('.live-profiles')
+      const track = shell?.querySelector('.vi-scroll-track')
+      const fixtures = [...(shell?.querySelectorAll('[data-visual-fixture="true"]') || [])]
+      const publicCards = [...(shell?.querySelectorAll('[data-marketplace-intent]') || [])]
+      const mask = shell?.querySelector('.vi-scroll-mask')
+      const note = shell?.querySelector('.live-profiles-preview-note')
+      const animation = track ? getComputedStyle(track).animationName : 'none'
+      const touch = window.matchMedia('(hover: none), (pointer: coarse)').matches
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const shouldAnimate = !touch && !reducedMotion
+      const overflowX = mask ? getComputedStyle(mask).overflowX : 'hidden'
+      const scrollReady = shouldAnimate ? animation !== 'none' : overflowX === 'auto'
+      // Visible provenance is the banner plus each card's fixture badge; hidden helper copy is not required.
+      const clearlyLabelled = fixtures.length === 0 || Boolean(
+        note?.innerText.includes('VISUAL PREVIEW ONLY')
+        && fixtures.every(card => card.innerText.includes('VISUAL FIXTURE'))
+      )
+      const previewReady = Boolean(track && scrollReady && ((fixtures.length === 3 && clearlyLabelled) || publicCards.length > 0))
+      // Freeze the verified rail for a readable full-page screenshot.
       if (track) {
-        track.style.animation = 'none'
-        track.style.transform = 'none'
+        track.style.setProperty('animation', 'none', 'important')
+        track.style.setProperty('transform', 'translate3d(0,0,0)', 'important')
+        track.querySelector('.vi-scroll-group[aria-hidden="true"]')?.style.setProperty('display', 'none')
       }
-      return Boolean(track && mask.querySelectorAll('[data-visual-fixture="true"]').length === 3)
+      if (mask) mask.scrollLeft = 0
+      return { previewReady, syntheticFixtures: fixtures.length, clearlyLabelled, animation, scrollReady, scrollBehavior: shouldAnimate ? 'auto' : 'swipe' }
     })
+    const previewReady = previewState.previewReady
     const filename = `homepage-profile-cards-preview-${viewport.name}.png`
     await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
-    report.profileCardPreviews.push({ viewport: viewport.name, status: response?.status() ?? null, screenshot: filename, syntheticFixtures: 3, clearlyLabelled: true, previewReady })
-    if (!previewReady) report.failures.push(`${viewport.name}: compact profile-card visual fixture could not be rendered`)
+    report.profileCardPreviews.push({ viewport: viewport.name, status: response?.status() ?? null, screenshot: filename, syntheticFixtures: previewState.syntheticFixtures, clearlyLabelled: previewState.clearlyLabelled, scrollAnimation: previewState.animation, scrollBehavior: previewState.scrollBehavior, scrollReady: previewState.scrollReady, previewReady })
+    if (!previewReady) report.failures.push(`${viewport.name}: homepage profile rail is missing cards or the expected scroll behavior`)
     await context.close()
   }
 

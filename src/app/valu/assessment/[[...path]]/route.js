@@ -3,6 +3,9 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 const ALLOWED_ASSESSMENT_HOSTS = new Set([
   'assessment.valoriainstitute.com',
   'valoria-platform.riverwayse.workers.dev',
+  // Explicit staging origins. Keep this allowlist exact; never accept arbitrary upstream hosts.
+  'assessment-staging.valoriainstitute.com',
+  'valoria-staging-assessment.riverwayse.workers.dev',
 ])
 
 function getAssessmentOrigin() {

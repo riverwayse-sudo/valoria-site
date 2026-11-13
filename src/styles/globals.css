@@ -256,3 +256,160 @@ html body .page-hero-actions-centered,
 html body .eyebrow-center {
   justify-content: flex-start !important;
 }
+
+
+/* STAGING-ONLY EDITORIAL SYSTEM
+   Applies the Valoria publication art direction across the site shell and page journeys.
+   Production is unaffected: RootLayout adds this class only when IS_STAGING is true.
+*/
+body.valoria-staging-editorial {
+  --vi-editorial-ink: #1A1A2E;
+  --vi-editorial-indigo: #2E2E4A;
+  --vi-editorial-gold: #C9A84C;
+  --vi-editorial-brass: #D4C9A8;
+  --vi-editorial-paper: #F7F4EE;
+  --vi-editorial-linen: #EDE8DC;
+  --vi-editorial-ivory: #FAFAF7;
+  --vi-editorial-rule: rgba(212, 201, 168, .34);
+  --vi-editorial-gutter: clamp(22px, 5vw, 76px);
+  background: var(--vi-editorial-ink);
+  color: var(--vi-editorial-paper);
+  font-family: 'Raleway', sans-serif;
+}
+
+body.valoria-staging-editorial,
+body.valoria-staging-editorial :where(button, input, textarea, select, option) {
+  font-family: 'Raleway', sans-serif !important;
+}
+
+body.valoria-staging-editorial :where(h1,h2,h3,h4,h5,h6) {
+  font-family: 'Raleway', sans-serif !important;
+  font-weight: 700;
+  letter-spacing: -.035em;
+}
+
+body.valoria-staging-editorial :where(p,li) {
+  line-height: 1.72;
+}
+
+body.valoria-staging-editorial :where(img, picture, video) {
+  border-radius: 0;
+}
+
+body.valoria-staging-editorial .vi-nav {
+  min-height: 76px;
+  height: 76px;
+  padding-inline: var(--vi-editorial-gutter);
+  background: rgba(26, 26, 46, .96);
+  border-bottom: 1px solid var(--vi-editorial-rule);
+  box-shadow: none;
+  backdrop-filter: blur(18px);
+}
+
+body.valoria-staging-editorial .nav-link {
+  font-family: 'Raleway', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  border-radius: 0;
+}
+
+body.valoria-staging-editorial .nav-link:hover,
+body.valoria-staging-editorial .nav-link.active {
+  color: var(--vi-editorial-paper);
+  background: transparent;
+  box-shadow: inset 0 -1px var(--vi-editorial-gold);
+}
+
+body.valoria-staging-editorial .nav-cta,
+body.valoria-staging-editorial .m-cta {
+  border-radius: 1px !important;
+  letter-spacing: .12em !important;
+}
+
+body.valoria-staging-editorial :where(.btn-gold,.btn-secondary,.btn-tertiary,.btn-ghost,.btn-outline,.valu-btn,.vs-btn,.opportunities-submit) {
+  min-height: 50px;
+  border-radius: 1px !important;
+  font-family: 'Raleway', sans-serif !important;
+  font-weight: 800;
+  letter-spacing: .12em;
+  transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+body.valoria-staging-editorial :where(.page-hero,.valu-hero,.vs-hero,.opportunities-hero) {
+  position: relative;
+  isolation: isolate;
+  border-bottom: 1px solid var(--vi-editorial-rule);
+}
+
+body.valoria-staging-editorial :where(.page-hero,.valu-hero,.vs-hero) :where(h1,.page-title) {
+  max-width: 940px;
+  font-size: clamp(42px, 6.4vw, 88px) !important;
+  font-weight: 800 !important;
+  line-height: .99 !important;
+  letter-spacing: -.055em !important;
+  text-wrap: balance;
+}
+
+body.valoria-staging-editorial :where(.page-sub,.valu-lede,.vs-lede,.opportunities-lede) {
+  max-width: 660px;
+  font-size: clamp(16px, 1.35vw, 19px);
+  line-height: 1.75;
+}
+
+body.valoria-staging-editorial :where(.page-section,.valu-intro,.valu-process,.valu-prime,.valu-outcome,.valu-final,.vs-light) {
+  border-top: 1px solid var(--vi-editorial-rule);
+}
+
+body.valoria-staging-editorial :where(.card,.vi-card,.programme-card,.opportunity-card,.contact-direct-card,.coaching-request) {
+  border-radius: 1px !important;
+  box-shadow: none;
+}
+
+body.valoria-staging-editorial :where(.vi-card,.programme-card) {
+  border: 1px solid var(--vi-editorial-rule);
+}
+
+body.valoria-staging-editorial :where(.form-row input,.form-row textarea,.coaching-field,.form-shell input,.form-shell textarea) {
+  border-radius: 1px !important;
+  border-color: var(--vi-editorial-rule);
+  font-family: 'Raleway', sans-serif !important;
+  min-height: 50px;
+}
+
+body.valoria-staging-editorial :where(.eyebrow-text,.valu-kicker,.vs-kicker,.opportunities-kicker,.page-kicker) {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 800;
+  letter-spacing: .19em;
+}
+
+body.valoria-staging-editorial .vi-footer {
+  border-top: 1px solid var(--vi-editorial-rule);
+  background: #151525;
+}
+
+body.valoria-staging-editorial .staging-site-banner {
+  font-family: 'Raleway', sans-serif !important;
+  letter-spacing: .16em;
+}
+
+@media (max-width: 900px) {
+  body.valoria-staging-editorial .vi-nav {
+    min-height: 68px;
+    height: 68px;
+  }
+  body.valoria-staging-editorial :where(.page-hero,.valu-hero,.vs-hero) :where(h1,.page-title) {
+    font-size: clamp(38px, 9vw, 60px) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.valoria-staging-editorial *,
+  body.valoria-staging-editorial *::before,
+  body.valoria-staging-editorial *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

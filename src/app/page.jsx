@@ -23,12 +23,12 @@ const pathwayCards = [
 ]
 
 export default function HomePage() {
-  return <>
+  return <div className="home-page-shell">
     <Nav />
     <HomepageEventPopup />
     <main id="main-content" className="home-redesign-root">
       <HeroSlider />
-      <HomepageEvents />
+      <LiveProfilesScroll />
 
       <section className="home-pathways" aria-labelledby="pathways-title">
         <div className="container">
@@ -100,8 +100,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      <LiveProfilesScroll />
+      <HomepageEvents />
     </main>
     <Footer />
-  </>
+  </div>
 }
