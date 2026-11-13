@@ -41,7 +41,7 @@ export default function HeroSlider() {
               <p className="hero-sub au d3">For accomplished professionals and the organisations that rely on their judgment, Valoria brings structure to how capability is assessed, developed and discovered.</p>
               <div className="hero-actions au d4">
                 <Link href="/prime" className="btn-gold">EXPLORE THE FRAMEWORK <span aria-hidden="true">→</span></Link>
-                <AssessmentStartLink href="/valu/register/" className="btn-outline">START THE VALU INDEX</AssessmentStartLink>
+                <AssessmentStartLink href="/valu/register/" className="btn-outline">START THE VALU INDEX TASTER</AssessmentStartLink>
               </div>
               <p className="hero-editorial-footnote">WORTH. BUILT. · CAPABILITY, CONSIDERED WITH INTENT</p>
             </div>
