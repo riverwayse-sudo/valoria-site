@@ -676,4 +676,14 @@ test('staging browser audit reveals scroll-triggered sections before screenshot 
   expect(audit).toContain('scroll-reveal content remained hidden')
 })
 
+
+test('homepage professional rail uses compact editorial profile cards', () => {
+  const styles = read('src/app/home.css')
+  expect(styles).toContain('Homepage profile rail — compact editorial registry treatment')
+  expect(styles).toContain('width: 292px')
+  expect(styles).toContain('min-height: 116px')
+  expect(styles).toContain('width: min(278px, calc(100vw - 52px))')
+  expect(styles).toContain('.vi-scroll-designation,\n.vi-scroll-summary,\n.vi-scroll-development {\n  display: none;')
+})
+
 })
