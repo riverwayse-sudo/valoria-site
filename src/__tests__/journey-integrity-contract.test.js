@@ -695,4 +695,10 @@ test('staging visual audit captures clearly labelled synthetic profile-card fixt
   expect(audit).toContain('These are not public listings or participant records')
 })
 
+
+test('staging profile-card preview fails closed when fixture markup is absent', () => {
+  const audit = read('scripts/staging-browser-audit.mjs')
+  expect(audit).toContain('if (!previewReady) report.failures.push')
+})
+
 })
