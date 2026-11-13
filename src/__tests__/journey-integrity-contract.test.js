@@ -698,10 +698,13 @@ test('staging homepage uses only clearly labelled QA fixtures when no public pro
 })
 
 
-test('homepage profile rail animates accessibly and remains swipeable for touch or reduced motion', () => {
+test('homepage profile rail uses the canonical motion system and remains swipeable for touch or reduced motion', () => {
   const styles = read('src/app/home.css')
-  expect(styles).toContain('@keyframes valoria-profile-marquee')
-  expect(styles).toContain('animation-play-state: paused')
+  const motion = read('src/styles/motion.css')
+  expect(motion).toContain('@keyframes vi-scroll-x')
+  expect(motion).toContain('animation-play-state: paused')
+  expect(motion).toContain('@media (hover: none), (pointer: coarse)')
+  expect(motion).toContain('@media (prefers-reduced-motion: reduce)')
   expect(styles).toContain('@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce)')
   expect(styles).toContain('scroll-snap-type: x proximity')
 })
