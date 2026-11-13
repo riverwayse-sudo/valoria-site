@@ -44,17 +44,19 @@ jobs:
           cat > .env <<'EOF'
           NEXT_PUBLIC_SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
           SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
+          NEXT_PUBLIC_SITE_URL=https://staging.valoriainstitute.com
           NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_C3j_CjLgTLDGRu8rH1SXEg_tYpxoYUm
           SUPABASE_SERVICE_ROLE_KEY=placeholder-service-role-key
           ANTHROPIC_API_KEY=placeholder-anthropic-key
-          VALU_UPSTREAM_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
-          VALU_PREVIEW_ASSESSMENT_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
-          NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN=https://valoria-staging-assessment.riverwayse.workers.dev
+          VALU_ASSESSMENT_ORIGIN=https://assessment-staging.valoriainstitute.com
+          VALU_UPSTREAM_ORIGIN=https://assessment-staging.valoriainstitute.com
+          VALU_PREVIEW_ASSESSMENT_ORIGIN=https://assessment-staging.valoriainstitute.com
+          NEXT_PUBLIC_VALU_ASSESSMENT_ORIGIN=https://assessment-staging.valoriainstitute.com
           CF_WORKERS_PREVIEW=1
           VALU_PREVIEW=1
           NEXT_PUBLIC_VALU_PREVIEW=1
-          VALU_STAGING_API_ENABLED=0
-          NEXT_PUBLIC_VALU_STAGING_API_ENABLED=0
+          VALU_STAGING_API_ENABLED=1
+          NEXT_PUBLIC_VALU_STAGING_API_ENABLED=1
           EOF
       - name: Install pinned Cloudflare build tools
         run: npm install --no-save @opennextjs/cloudflare@1.20.15 wrangler@4.156.1
