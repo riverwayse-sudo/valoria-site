@@ -223,7 +223,7 @@ export default function ValuRegisterPage() {
               {error && <div role="alert" style={S.error}>{error}</div>}
               <button type="submit" disabled={loading||!valid} style={{...S.button,opacity:(loading || !valid) ? 0.55 : 1}}>{loading ? 'PLEASE WAIT…' : mode==='signup' ? 'CREATE ACCOUNT & CONTINUE →' : mode==='signin' ? 'SIGN IN & CONTINUE →' : 'SAVE DETAILS & BEGIN →'}</button>
             </form>
-            {mode !== 'complete' && <p style={S.switch}>{mode==='signup'?'Already have a Valoria account?':'New to Valoria?'} <button type="button" onClick={()=>{setMode(mode==='signup'?'signin':'signup');setError('')}}>{mode==='signup'?'Sign in':'Create an account'}</button></p>}
+            {mode !== 'complete' && <p style={S.switch}>{mode==='signup'?'Already have a Valoria account?':'New to Valoria?'} <button type="button" style={S.switchButton} onClick={()=>{setMode(mode==='signup'?'signin':'signup');setError('')}}>{mode==='signup'?'Sign in':'Create an account'}</button></p>}
           </>
         )}
       </section>
@@ -247,6 +247,7 @@ const S = {
   button:{width:'100%',padding:'15px 18px',border:0,borderRadius:999,background:GOLD,color:MIDNIGHT,fontSize:11,fontWeight:900,letterSpacing:'.12em',cursor:'pointer'},
   note:{fontSize:11,lineHeight:1.6,color:DIM,margin:'-4px 0 0'},
   switch:{fontSize:12,color:DIM,textAlign:'center',margin:'20px 0 0'},
+  switchButton:{border:0,background:'transparent',color:GOLD,textDecoration:'underline',font:'inherit',fontWeight:700,cursor:'pointer',padding:0,marginLeft:4},
   steps:{padding:'14px 16px',border:'1px solid rgba(201,168,76,.2)',borderRadius:9,margin:'18px 0 22px',color:DIM,fontSize:12},
   error:{padding:12,border:'1px solid rgba(216,90,48,.35)',borderRadius:8,color:'#F3A0A0',fontSize:12,lineHeight:1.5},
 }
