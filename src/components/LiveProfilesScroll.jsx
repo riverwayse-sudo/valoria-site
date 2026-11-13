@@ -46,29 +46,6 @@ export default async function LiveProfilesScroll() {
           {!dataUnavailable && <div className="live-profiles-proof" aria-label="Public marketplace profile count"><strong>{discoverableCount}</strong><span>public professional profiles</span></div>}
         </div>
 
-        {dataUnavailable ? (
-          <div className="live-profiles-actions">
-            <Link href="/marketplace" className="live-profile-action primary"><span><small>PUBLIC MARKETPLACE</small>Listings temporarily unavailable</span><b>→</b></Link>
-          </div>
-        ) : (
-          <div className="live-profiles-actions" aria-label="Marketplace and development actions">
-            {counts.candidate > 0 ? (
-              <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent"><span><small>ATB CONNECT</small>Find talent</span><b>→</b></Link>
-            ) : (
-              <a href="/contact-us?type=candidate" className="live-profile-action primary"><span><small>ATB CONNECT</small>Discuss your talent needs</span><b>→</b></a>
-            )}
-            {counts.speaker > 0 ? (
-              <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker"><span><small>ATB SPOTLIGHT</small>Find a speaker</span><b>→</b></Link>
-            ) : (
-              <a href="/contact-us?type=speaker_booking" className="live-profile-action"><span><small>ATB SPOTLIGHT</small>Discuss a speaker brief</span><b>→</b></a>
-            )}
-            {counts.facilitator > 0 ? (
-              <Link href="/marketplace/facilitators" className="live-profile-action" data-marketplace-intent="facilitator"><span><small>ATB SPOTLIGHT</small>Find a facilitator</span><b>→</b></Link>
-            ) : (
-              <Link href="/contact-us?type=training" className="live-profile-action"><span><small>VALORIA DEVELOP</small>Commission a PRIME programme</span><b>→</b></Link>
-            )}
-          </div>
-        )}
       </div>
 
       {dataUnavailable ? (
@@ -124,13 +101,21 @@ export default async function LiveProfilesScroll() {
         <div className="live-profiles-public-state" role="status">
           <strong className="live-profiles-empty-title">The registry is opening through verified capability.</strong>
           Public profiles appear only after the participant has completed the applicable requirements and explicitly agreed to public visibility. Until then, employers and organisers can submit a brief and our team can advise on the appropriate next step.
-          <div className="live-profiles-empty-actions">
-            <Link href="/contact-us?type=candidate">SUBMIT A TALENT BRIEF <span aria-hidden="true">→</span></Link>
-            <Link href="/contact-us?type=speaker_booking">DISCUSS A SPEAKER BRIEF <span aria-hidden="true">→</span></Link>
-            <Link href="/contact-us?type=training">DISCUSS A PROGRAMME <span aria-hidden="true">→</span></Link>
-          </div>
         </div>
       )}
+
+
+      <div className="live-profiles-actions" aria-label="Valoria engagement routes">
+        <Link href="/contact-us?type=hiring" className="live-profile-action primary">
+          <span><small>ATB CONNECT</small>Discuss your talent needs</span><b>→</b>
+        </Link>
+        <Link href="/contact-us?type=speaker" className="live-profile-action">
+          <span><small>ATB SPOTLIGHT</small>Discuss a speaker brief</span><b>→</b>
+        </Link>
+        <Link href="/contact-us?type=training" className="live-profile-action">
+          <span><small>VALORIA DEVELOP</small>Commission a PRIME programme</span><b>→</b>
+        </Link>
+      </div>
 
       <div className="live-profiles-professional-cta">
         <span className="live-profiles-professional-rule" />
