@@ -1,7 +1,5 @@
-import { BRAND } from '@/lib/brand'
-
 export const NAVIGATION = {
-  assessmentUrl: BRAND.assessmentUrl,
+  assessmentUrl: '/valu/register/',
   primary: [
     {
       label: 'Explore',
@@ -25,7 +23,7 @@ export const NAVIGATION = {
           label: 'Understand',
           items: [
             { label: 'About the VALU Index', href: '/valu', description: 'Understand the VALU Index and its assessment journey.' },
-            { label: 'Start the VALU Index', href: BRAND.assessmentUrl, external: true, description: 'Begin your VALU Index assessment.' },
+            { label: 'Start the VALU Index', href: '/valu/register/', description: 'Create your account and begin the VALU Index Taster.' },
           ],
         },
       ],
@@ -55,7 +53,7 @@ export const NAVIGATION = {
     ],
     valu: [
       { label: 'About the VALU Index', href: '/valu' },
-      { label: 'Start the VALU Index', href: BRAND.assessmentUrl, external: true },
+      { label: 'Start the VALU Index', href: '/valu/register/' },
     ],
     about: [
       { label: 'About Valoria', href: '/about-us' },
