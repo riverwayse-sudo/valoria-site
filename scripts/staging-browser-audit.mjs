@@ -275,6 +275,7 @@ try {
       const shouldAnimate = !touch && !reducedMotion
       const overflowX = mask ? getComputedStyle(mask).overflowX : 'hidden'
       const scrollReady = shouldAnimate ? animation !== 'none' : overflowX === 'auto'
+      // Visible provenance is the banner plus each card's fixture badge; hidden helper copy is not required.
       const clearlyLabelled = fixtures.length === 0 || Boolean(
         note?.innerText.includes('VISUAL PREVIEW ONLY')
         && fixtures.every(card => card.innerText.includes('VISUAL FIXTURE'))
