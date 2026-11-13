@@ -5,7 +5,7 @@ import '../pages.css'
 export const metadata = {
   title: 'Terms of Use | Valoria Institute',
   description: 'Terms governing your use of the Valoria Institute platform — for professionals, employers, event organisers, and training buyers.',
-  robots: { index: true, follow: true },
+  robots: (process.env.VALU_PREVIEW === '1' || process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' || (process.env.NEXT_PUBLIC_SITE_URL || '').includes('staging.')) ? { index: false, follow: false, googleBot: { index: false, follow: false } } : { index: true, follow: true },
   alternates: { canonical: 'https://valoriainstitute.com/terms-of-use' },
 }
 
