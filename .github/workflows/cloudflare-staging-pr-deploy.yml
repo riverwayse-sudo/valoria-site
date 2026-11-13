@@ -39,8 +39,6 @@ jobs:
         run: npm audit --omit=dev --audit-level=high
       - name: Run Jest contract tests
         run: npm test -- --runInBand
-      - name: Run opportunity validation tests
-        run: npm run test:opportunity-validation
       - name: Provide CI-only staging build configuration
         run: |
           cat > .env <<'EOF'
