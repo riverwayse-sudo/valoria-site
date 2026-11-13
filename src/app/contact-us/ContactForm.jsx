@@ -23,6 +23,12 @@ export default function ContactForm() {
     supabase.auth.getUser().then(({ data: { user } }) => setCurrentUser(user))
   }, [])
 
+  useEffect(() => {
+    const requestedType = new URLSearchParams(window.location.search).get('type')
+    const inquiryType = ({ hiring: 'hiring', speaker: 'speaker', training: 'training' })[requestedType]
+    if (inquiryType) setForm(current => ({ ...current, inquiryType }))
+  }, [])
+
   async function handleSubmit(e) {
     e.preventDefault()
     setSending(true)
