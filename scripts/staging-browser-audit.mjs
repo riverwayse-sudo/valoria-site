@@ -115,6 +115,14 @@ try {
 
       const state = await page.evaluate(() => {
         const robots = document.querySelector('meta[name="robots"]')?.content || ''
+        const fontFamilies = {
+          body: getComputedStyle(document.body).fontFamily,
+          heading: document.querySelector('h1') ? getComputedStyle(document.querySelector('h1')).fontFamily : '',
+          button: document.querySelector('button') ? getComputedStyle(document.querySelector('button')).fontFamily : '',
+          input: document.querySelector('input') ? getComputedStyle(document.querySelector('input')).fontFamily : '',
+        }
+        const editorialScope = document.body.classList.contains('valoria-staging-editorial')
+          || Boolean(document.querySelector('.valu-staging-editorial'))
         const banner = document.querySelector('.staging-site-banner')?.innerText ||
           (document.body.innerText.includes('STAGING PREVIEW') ? 'STAGING PREVIEW' : '')
         const navBrand = document.querySelector('a[aria-label="Valoria Institute home"]')?.href || ''
@@ -146,6 +154,8 @@ try {
         return {
           title: document.title,
           robots,
+          fontFamilies,
+          editorialScope,
           banner,
           viewportWidth: window.innerWidth,
           documentWidth: document.documentElement.scrollWidth,
@@ -194,6 +204,9 @@ try {
       if (state.horizontalOverflow) report.failures.push(`${route.name}/${viewport.name}: horizontal overflow`)
       if (state.revealState?.total !== state.revealState?.visible) report.failures.push(`${route.name}/${viewport.name}: scroll-reveal content remained hidden (${state.revealState?.visible}/${state.revealState?.total})`)
       if (!state.robots.toLowerCase().includes('noindex')) report.failures.push(`${route.name}/${viewport.name}: staging page is missing noindex robots metadata`)
+      if (Object.values(state.fontFamilies).filter(Boolean).some(font => !font.toLowerCase().includes('raleway'))) report.failures.push(`${route.name}/${viewport.name}: Raleway typography contract failed: ${JSON.stringify(state.fontFamilies)}`)
+      if (route.site && !state.editorialScope) report.failures.push(`${route.name}/${viewport.name}: staging editorial scope is missing`)
+      if (route.name.startsWith('assessment-') && !state.editorialScope) report.failures.push(`${route.name}/${viewport.name}: assessment editorial scope is missing`)
       if (!state.banner.includes('STAGING PREVIEW')) report.failures.push(`${route.name}/${viewport.name}: staging banner is missing`)
       if (state.analyticsLoaded) report.failures.push(`${route.name}/${viewport.name}: production analytics loaded in staging`)
       if (forbiddenRequests.length) report.failures.push(`${route.name}/${viewport.name}: production Supabase/assessment request detected`)
