@@ -19,6 +19,7 @@ describe('three-lane capability display contract', () => {
     const styles = read('src/app/home.css')
     expect(rail).toContain('Object.entries(TRACK_META)')
     expect(rail).toContain("className={item.active ? 'is-active' : 'is-inactive'}")
+    expect(rail).toContain("item.active ? 'selected' : 'not selected'")
     expect(styles).toContain('.vi-scroll-track-label span.is-active')
     expect(styles).toContain('.vi-scroll-track-label span.is-inactive')
   })
