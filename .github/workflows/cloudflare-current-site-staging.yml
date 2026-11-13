@@ -119,11 +119,12 @@ jobs:
             exit 1
           fi
           curl -fsS "$base/" -o /tmp/valoria-home.html
-          grep -q 'Capability should decide' /tmp/valoria-home.html
-          grep -q 'Valoria sets the standard.' /tmp/valoria-home.html
+          grep -Fq 'THE INSTITUTION FOR PROFESSIONAL MERIT' /tmp/valoria-home.html
+          grep -Fq 'Talent is not the problem.' /tmp/valoria-home.html
+          grep -Fq 'Infrastructure is.' /tmp/valoria-home.html
           grep -q 'START THE VALU INDEX TASTER' /tmp/valoria-home.html
-          grep -q 'THE VALORIA MARKETPLACE' /tmp/valoria-home.html
-          grep -q 'Find professionals' /tmp/valoria-home.html
+          grep -Fq 'What brings you' /tmp/valoria-home.html
+          grep -Fq 'Find capability with context.' /tmp/valoria-home.html
           grep -q 'POINTS-BASED CAPABILITY PROFILE' /tmp/valoria-home.html
           # Participant-visible copy is checked in the Playwright DOM audit, not bundled HTML/JS.
 
