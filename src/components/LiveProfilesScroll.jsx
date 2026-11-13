@@ -101,7 +101,7 @@ export default async function LiveProfilesScroll() {
                           <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>PUBLIC</i></div>
                           <strong className="vi-scroll-name">{profile.atb_id || 'VALORIA PROFESSIONAL'}</strong>
                           <div className="vi-scroll-headline">{displayText(profile.headline)}</div>
-                          <div className="vi-scroll-track-label" aria-label={`Capabilities: ${capabilityStates.map(item => `${item.label} ${item.active ? 'selected' : 'not selected'}`).join(', ')}`}>{capabilityStates.map(item => <span key={item.key} className={item.active ? 'is-active' : 'is-inactive'}>{item.label}</span>)}</div>
+                          <div className="vi-scroll-track-label" role="group" aria-label={`Capabilities: ${capabilityStates.map(item => `${item.label} ${item.active ? 'selected' : 'not selected'}`).join(', ')}`}>{capabilityStates.map(item => <span key={item.key} className={item.active ? 'is-active' : 'is-inactive'} aria-hidden="true">{item.label}</span>)}</div>
                           <div className="vi-scroll-designation">{isBasic ? 'PUBLIC PROFILE' : (tier?.name || 'VALU INDEX PROFILE')}</div>
                           {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div>{development && <div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div>}</>}
                         </div>
