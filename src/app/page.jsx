@@ -23,7 +23,7 @@ const pathwayCards = [
 ]
 
 export default function HomePage() {
-  return <>
+  return <div className="home-page-shell">
     <Nav />
     <HomepageEventPopup />
     <main id="main-content" className="home-redesign-root">
@@ -103,5 +103,5 @@ export default function HomePage() {
       <LiveProfilesScroll />
     </main>
     <Footer />
-  </>
+  </div>
 }
