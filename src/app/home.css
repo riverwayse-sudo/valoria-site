@@ -2695,11 +2695,11 @@
 .vi-scroll-track-label span {
   display: inline-flex;
   align-items: center;
-  padding: 2px 4px;
-  border: 1px solid rgba(247,244,238,.12);
+  padding: 2px 3px;
+  border: 1px solid rgba(247,244,238,.18);
   border-radius: 3px;
-  color: rgba(247,244,238,.30);
-  font-size: 6px;
+  color: rgba(247,244,238,.48);
+  font-size: 7px;
   line-height: 1.1;
   white-space: nowrap;
 }
