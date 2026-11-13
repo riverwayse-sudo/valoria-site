@@ -710,4 +710,11 @@ test('email confirmation exchanges its code before reading an existing browser s
   expect(callback).toContain('a previously signed-in account cannot be mistaken')
 })
 
+
+test('account-first sign-in toggle uses the Valoria visual system', () => {
+  const register = read('src/app/valu/register/page.jsx')
+  expect(register).toContain('style={S.switchButton}')
+  expect(register).toContain("switchButton:{border:0,background:'transparent',color:GOLD")
+})
+
 })
