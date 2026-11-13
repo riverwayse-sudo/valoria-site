@@ -28,6 +28,7 @@ export default function HomePage() {
     <Nav />
     <main id="main-content" className="home-redesign-root">
       <HeroSlider />
+      <LiveProfilesScroll />
 
       <section className="home-pathways" aria-labelledby="pathways-title">
         <div className="container">
@@ -99,7 +100,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <LiveProfilesScroll />
       <HomepageEvents />
     </main>
     <Footer />
