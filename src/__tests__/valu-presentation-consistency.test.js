@@ -53,7 +53,8 @@ describe('VALU presentation consistency', () => {
     expect(read('src/app/page.jsx')).toContain('START THE VALU INDEX TASTER');
     expect(read('src/app/prime/page.jsx')).toContain('TAKE THE VALU INDEX TASTER');
     expect(read('src/app/insights/page.jsx')).toContain('START THE VALU INDEX TASTER');
-    expect(read('src/app/signup/page.jsx')).toContain('TAKE THE VALU INDEX TASTER');
+    expect(read('src/app/signup/page.jsx')).toContain('CREATE ACCOUNT & BEGIN')
+    expect(read('src/app/signup/page.jsx')).toContain('href="/valu/register/"');
     expect(read('src/components/LiveProfilesScroll.jsx')).toContain('TAKE THE VALU INDEX TASTER');
   })
 
