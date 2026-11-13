@@ -3,9 +3,34 @@ import {useEffect,useState} from 'react'
 import Link from 'next/link'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import {supabase} from '@/lib/supabase'
 export default function OpportunitiesPage(){
  const [items,setItems]=useState([]),[matches,setMatches]=useState([]),[loading,setLoading]=useState(true),[error,setError]=useState('')
- useEffect(()=>{(async()=>{try{const [allRes,matchRes]=await Promise.all([fetch('/api/opportunities'),fetch('/api/opportunities/matches')]);const all=await allRes.json().catch(()=>({}));const personal=await matchRes.json().catch(()=>({}));if(!allRes.ok)throw new Error(all.error||'Opportunities could not be loaded.');setItems(all.opportunities||[]);if(matchRes.ok)setMatches(personal.matches||[]);else if(matchRes.status!==401)setError(personal.error||'Personalized matches could not be loaded.')}catch(e){setError(e.message||'Opportunities could not be loaded.')}finally{setLoading(false)}})()},[])
+ useEffect(()=>{
+  let active=true
+  ;(async()=>{
+   try{
+    const allRes=await fetch('/api/opportunities')
+    const all=await allRes.json().catch(()=>({}))
+    if(!allRes.ok)throw new Error(all.error||'Opportunities could not be loaded.')
+    const {data:{session}}=await supabase.auth.getSession()
+    let personal={matches:[]}
+    if(session){
+     const matchRes=await fetch('/api/opportunities/matches')
+     personal=await matchRes.json().catch(()=>({}))
+     if(!matchRes.ok&&matchRes.status!==401)throw new Error(personal.error||'Personalized matches could not be loaded.')
+    }
+    if(!active)return
+    setItems(all.opportunities||[])
+    setMatches(personal.matches||[])
+   }catch(e){
+    if(active)setError(e.message||'Opportunities could not be loaded.')
+   }finally{
+    if(active)setLoading(false)
+   }
+  })()
+  return()=>{active=false}
+ },[])
  return <><Nav/><main className="opportunities-page">
   <section className="opportunities-hero"><div className="opportunities-shell">
    <div className="opportunities-kicker">VALORIA OPPORTUNITIES</div>
