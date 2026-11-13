@@ -110,7 +110,7 @@ export default async function LiveProfilesScroll() {
           </div>
         </>
       ) : (
-        <div className="live-profiles-public-state"><span className="live-profiles-dot" />Public profiles appear only after participants meet the applicable requirements and explicitly agree to public visibility. In the meantime, organisations can use the engagement routes above to brief Valoria.</div>
+        <div className="live-profiles-public-state"><span className="live-profiles-dot" />Public profiles appear only after participants meet the applicable requirements and explicitly agree to public visibility. In the meantime, organisations can use the engagement routes below to brief Valoria.</div>
       )}
 
               <div className="live-profiles-actions" aria-label="Valoria engagement routes">
