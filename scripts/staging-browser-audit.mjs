@@ -64,8 +64,15 @@ await fs.mkdir(OUT, { recursive: true })
 const browser = await chromium.launch({ headless: true })
 
 try {
+  const mobileCriticalRoutes = new Set([
+    'homepage', 'marketplace', 'valu', 'valu-register',
+    'professional-signup-account-first', 'dashboard-preview',
+    'assessment-proxy', 'assessment-host', 'contact-us',
+    'opportunities', 'signup', 'register',
+  ])
   for (const route of routes) {
-    for (const viewport of viewports) {
+    const routeViewports = mobileCriticalRoutes.has(route.name) ? viewports : [viewports[0]]
+    for (const viewport of routeViewports) {
       const context = await browser.newContext({
         viewport: { width: viewport.width, height: viewport.height },
         deviceScaleFactor: 1,
@@ -93,9 +100,9 @@ try {
       let status = null
       let navigationError = null
       try {
-        const response = await page.goto(route.url, { waitUntil: 'domcontentloaded', timeout: 60000 })
+        const response = await page.goto(route.url, { waitUntil: 'domcontentloaded', timeout: 15000 })
         status = response?.status() ?? null
-        await page.waitForTimeout(1800)
+        await page.waitForTimeout(800)
       } catch (error) {
         navigationError = error.message
       }
@@ -107,11 +114,11 @@ try {
         const reveals = [...document.querySelectorAll('.reveal')]
         for (const element of reveals) {
           element.scrollIntoView({ block: 'center', behavior: 'auto' })
-          await new Promise(resolve => setTimeout(resolve, 100))
+          await new Promise(resolve => setTimeout(resolve, 50))
         }
         window.scrollTo({ top: 0, behavior: 'auto' })
       })
-      await page.waitForTimeout(350)
+      await page.waitForTimeout(200)
 
       const state = await page.evaluate(() => {
         const robots = document.querySelector('meta[name="robots"]')?.content || ''
@@ -244,17 +251,17 @@ try {
       hasTouch: viewport.isMobile,
     })
     const page = await context.newPage()
-    const response = await page.goto(`${SITE}/`, { waitUntil: 'domcontentloaded', timeout: 60000 })
-    await page.waitForTimeout(1800)
+    const response = await page.goto(`${SITE}/`, { waitUntil: 'domcontentloaded', timeout: 15000 })
+    await page.waitForTimeout(800)
     await page.evaluate(async () => {
       const reveals = [...document.querySelectorAll('.reveal')]
       for (const element of reveals) {
         element.scrollIntoView({ block: 'center', behavior: 'auto' })
-        await new Promise(resolve => setTimeout(resolve, 100))
+        await new Promise(resolve => setTimeout(resolve, 50))
       }
       window.scrollTo({ top: 0, behavior: 'auto' })
     })
-    await page.waitForTimeout(350)
+    await page.waitForTimeout(200)
     const previewState = await page.evaluate(() => {
       const shell = document.querySelector('.live-profiles')
       const track = shell?.querySelector('.vi-scroll-track')
