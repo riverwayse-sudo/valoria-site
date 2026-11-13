@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { BRAND } from '@/lib/brand'
+import { AssessmentStartLink } from '@/components/Nav'
 import EventRegistrationModal, { SessionTimer } from '@/components/EventRegistrationModal'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
 
@@ -48,7 +48,7 @@ export default function SessionShowcase() {
               {!current.replay && <div className="session-showcase-timer"><SessionTimer session={current} /></div>}
               <div className="session-showcase-actions">
                 <button className="session-showcase-primary" type="button" disabled={!current.replay && currentState !== 'registration-open'} onClick={handlePrimaryAction}>{actionLabel} <span aria-hidden="true">&nbsp;→</span></button>
-                <a className="session-showcase-secondary" href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer">TAKE THE ASSESSMENT <span aria-hidden="true">&nbsp;→</span></a>
+                <AssessmentStartLink href="/valu/register/" className="session-showcase-secondary">TAKE THE ASSESSMENT <span aria-hidden="true">&nbsp;→</span></AssessmentStartLink>
               </div>
               <p className="session-showcase-note">Every conversation connects the discussion back to the VALU Index — Valoria's framework for understanding professional capability and worth.</p>
             </div>
