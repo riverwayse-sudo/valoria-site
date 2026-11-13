@@ -2683,3 +2683,32 @@
     transform: none;
   }
 }
+
+
+/* Homepage profile rail capability states: always show all three lanes. */
+.vi-scroll-track-label {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 3px;
+  overflow: hidden;
+}
+.vi-scroll-track-label span {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 4px;
+  border: 1px solid rgba(247,244,238,.12);
+  border-radius: 3px;
+  color: rgba(247,244,238,.30);
+  font-size: 6px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.vi-scroll-track-label span.is-active {
+  border-color: rgba(201,168,76,.55);
+  background: rgba(201,168,76,.10);
+  color: var(--gold);
+}
+.vi-scroll-track-label span.is-inactive {
+  border-color: rgba(247,244,238,.10);
+  color: rgba(247,244,238,.28);
+}
