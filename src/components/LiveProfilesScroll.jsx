@@ -85,8 +85,11 @@ export default async function LiveProfilesScroll() {
                       : Array.isArray(profile.selected_capabilities) && profile.selected_capabilities.length
                         ? profile.selected_capabilities
                         : (Array.isArray(profile.capabilities) ? profile.capabilities : [])
-                    const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
-                    const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
+                    const normalizedTracks = tracks.map(track => {
+                      const value = String(track || '').trim().toLowerCase()
+                      return value === 'talent' ? 'candidate' : value
+                    })
+                    const capabilityStates = Object.entries(TRACK_META).map(([key, meta]) => ({ key, label: meta.label, active: normalizedTracks.includes(key) }))
                     const profileHref = profile.atb_id ? `/profile/${encodeURIComponent(profile.atb_id)}` : '/marketplace'
                     const development = developmentArea(profile.cluster_scores)
                     const isBasic = profile.assessment_access === 'basic'
@@ -98,7 +101,7 @@ export default async function LiveProfilesScroll() {
                           <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>PUBLIC</i></div>
                           <strong className="vi-scroll-name">{profile.atb_id || 'VALORIA PROFESSIONAL'}</strong>
                           <div className="vi-scroll-headline">{displayText(profile.headline)}</div>
-                          <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'NO DECLARED ROLE'}</div>
+                          <div className="vi-scroll-track-label" aria-label={`Capabilities: ${capabilityStates.filter(item => item.active).map(item => item.label).join(', ') || 'none selected'}`}>{capabilityStates.map(item => <span key={item.key} className={item.active ? 'is-active' : 'is-inactive'}>{item.label}</span>)}</div>
                           <div className="vi-scroll-designation">{isBasic ? 'PUBLIC PROFILE' : (tier?.name || 'VALU INDEX PROFILE')}</div>
                           {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div>{development && <div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div>}</>}
                         </div>
