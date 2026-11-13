@@ -59,53 +59,17 @@ export default async function LiveProfilesScroll() {
           </div>
         </div>
 
-        <div className="live-profiles-actions" aria-label="Marketplace actions">
-          {trackCounts.candidate > 0 ? (
-            <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent">
-              <span><small>ATB CONNECT</small>Find talent</span><b>→</b>
-            </Link>
-          ) : (
-            <Link href="/contact-us?type=candidate" className="live-profile-action primary">
-              <span><small>ATB CONNECT</small>Discuss your talent needs</span><b>→</b>
-            </Link>
-          )}
-          {trackCounts.speaker > 0 ? (
-            <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker">
-              <span><small>ATB SPOTLIGHT</small>Find a speaker</span><b>→</b>
-            </Link>
-          ) : (
-            <Link href="/contact-us?type=speaker_booking" className="live-profile-action">
-              <span><small>ATB SPOTLIGHT</small>Discuss a speaker brief</span><b>→</b>
-            </Link>
-          )}
+        <div className="live-profiles-actions" aria-label="Valoria engagement routes">
+          <Link href="/contact-us?type=hiring" className="live-profile-action primary">
+            <span><small>ATB CONNECT</small>Discuss your talent needs</span><b>→</b>
+          </Link>
+          <Link href="/contact-us?type=speaker" className="live-profile-action">
+            <span><small>ATB SPOTLIGHT</small>Discuss a speaker brief</span><b>→</b>
+          </Link>
           <Link href="/contact-us?type=training" className="live-profile-action">
             <span><small>VALORIA DEVELOP</small>Commission a PRIME programme</span><b>→</b>
           </Link>
-        </div>
-      </div>
-
-      {unique.length > 0 ? (
-        <>
-          <div className="vi-scroll-mask">
-            <div className="vi-scroll-track">
-              {loop.map((profile, index) => {
-                const tracks = Array.isArray(profile.active_tracks) ? profile.active_tracks : []
-                const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
-                const primaryTrack = normalizedTracks.find(track => TRACK_META[track]) || 'candidate'
-                const meta = TRACK_META[primaryTrack]
-                const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
-                return (
-                  <Link
-                    href={meta.href}
-                    key={`${profile.id}-${index}`}
-                    className="vi-scroll-card"
-                    data-marketplace-intent={primaryTrack}
-                    aria-label={`Discover more ${meta.label.toLowerCase()} professionals`}
-                  >
-                    <div className="vi-scroll-avatar" aria-hidden="true">
-                      <ValoriaAvatar src={profile.photo_url} seed={profile.id || profile.atb_id} size={64} />
-                    </div>
-                    <div className="vi-scroll-copy">
+        </div>                   <div className="vi-scroll-copy">
                       <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>LIVE</i></div>
                       <div className="vi-scroll-headline">{profile.headline || 'Valoria Professional'}</div>
                       <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'Professional'}</div>
@@ -113,7 +77,7 @@ export default async function LiveProfilesScroll() {
                     <div className="vi-scroll-score" aria-label={`VALU Index ${profile.valu_index ?? 'not available'}`}>
                       <span className="vi-scroll-score-label">VALU</span>
                       <strong>{profile.valu_index ?? '—'}</strong>
-                      <span className="vi-scroll-score-max">/100</span>
+                      <span className="vi-scroll-score-max">points</span>
                     </div>
                     <span className="vi-scroll-card-arrow" aria-hidden="true">↗</span>
                   </Link>
