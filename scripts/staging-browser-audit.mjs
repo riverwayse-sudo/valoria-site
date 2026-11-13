@@ -72,6 +72,19 @@ try {
         navigationError = error.message
       }
 
+      // Reveal scroll-triggered content before taking a full-page screenshot.
+      // Full-page capture does not itself scroll through the page, so without
+      // this pass legitimate sections remain opacity-hidden in visual evidence.
+      await page.evaluate(async () => {
+        const reveals = [...document.querySelectorAll('.reveal')]
+        for (const element of reveals) {
+          element.scrollIntoView({ block: 'center', behavior: 'auto' })
+          await new Promise(resolve => setTimeout(resolve, 100))
+        }
+        window.scrollTo({ top: 0, behavior: 'auto' })
+      })
+      await page.waitForTimeout(350)
+
       const state = await page.evaluate(() => {
         const robots = document.querySelector('meta[name="robots"]')?.content || ''
         const banner = document.querySelector('.staging-site-banner')?.innerText ||
@@ -92,6 +105,8 @@ try {
         const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
         const visibleInternalPattern = /(WANT TO BE DISCOVERED|Become discoverable|buyer access|sourcing access|BASIC LISTING|FULL LISTING|\b1 of 58\b|\b1 of 9\b|54 scored questions|four validity checks|nine[- ]questions?|9[- ]questions?|58[- ]questions?|55[- ]questions?|84 \/ 100|\b[0-9]+\s*\/\s*100\b)/gi
         const visibleInternalTerms = [...document.body.innerText.matchAll(visibleInternalPattern)].map(match => match[0])
+        const revealElements = [...document.querySelectorAll('.reveal')]
+        const revealState = { total: revealElements.length, visible: revealElements.filter(element => element.classList.contains('visible')).length }
         const track = document.querySelector('.vi-scroll-track')
         const panel = document.querySelector('.hero-event-panel')
         const overflowingCards = [...document.querySelectorAll('[class*="card"]')]
@@ -118,6 +133,7 @@ try {
             clipsContent: panel.scrollWidth > panel.clientWidth + 2,
           } : null,
           overflowingCards,
+          revealState,
           analyticsLoaded: Boolean(window.gtag || window.fbq),
           literalNewlineVisible,
           visibleInternalTerms,
@@ -148,6 +164,7 @@ try {
       if (navigationError) report.failures.push(`${route.name}/${viewport.name}: navigation failed: ${navigationError}`)
       if (status === null || status >= 400) report.failures.push(`${route.name}/${viewport.name}: HTTP ${status}`)
       if (state.horizontalOverflow) report.failures.push(`${route.name}/${viewport.name}: horizontal overflow`)
+      if (state.revealState?.total !== state.revealState?.visible) report.failures.push(`${route.name}/${viewport.name}: scroll-reveal content remained hidden (${state.revealState?.visible}/${state.revealState?.total})`)
       if (!state.robots.toLowerCase().includes('noindex')) report.failures.push(`${route.name}/${viewport.name}: staging page is missing noindex robots metadata`)
       if (!state.banner.includes('STAGING PREVIEW')) report.failures.push(`${route.name}/${viewport.name}: staging banner is missing`)
       if (state.analyticsLoaded) report.failures.push(`${route.name}/${viewport.name}: production analytics loaded in staging`)
