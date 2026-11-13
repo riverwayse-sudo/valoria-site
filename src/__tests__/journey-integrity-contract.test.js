@@ -701,4 +701,11 @@ test('staging profile-card preview fails closed when fixture markup is absent', 
   expect(audit).toContain('if (!previewReady) report.failures.push')
 })
 
+
+test('email confirmation exchanges its code before reading an existing browser session', () => {
+  const callback = read('src/app/auth/callback/page.jsx')
+  expect(callback.indexOf('exchangeCodeForSession(code)')).toBeLessThan(callback.indexOf('supabase.auth.getSession()'))
+  expect(callback).toContain('a previously signed-in account cannot be mistaken')
+})
+
 })
