@@ -2712,3 +2712,36 @@
   border-color: rgba(247,244,238,.10);
   color: rgba(247,244,238,.28);
 }
+
+
+/* Preserve room for all three capability chips inside the compact card. */
+.vi-scroll-card {
+  grid-template-columns: 36px minmax(0, 1fr) 40px;
+  gap: 8px;
+}
+.vi-scroll-avatar {
+  width: 36px;
+  height: 36px;
+}
+.vi-scroll-copy {
+  min-width: 0;
+}
+.vi-scroll-score {
+  min-width: 0;
+  text-align: right;
+}
+.vi-scroll-score-label {
+  font-size: 5px;
+  white-space: nowrap;
+}
+.vi-scroll-card-arrow {
+  display: none;
+}
+.vi-scroll-track-label {
+  gap: 3px;
+}
+.vi-scroll-track-label span {
+  padding: 2px 3px;
+  font-size: 6.5px;
+  letter-spacing: 0;
+}
