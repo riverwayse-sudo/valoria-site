@@ -19,7 +19,6 @@ permissions:
 
 concurrency:
   group: valoria-site-staging-environment
-  # Latest staging candidate wins; prevent an older browser audit from blocking newer review builds.
   cancel-in-progress: true
 
 jobs:
@@ -121,13 +120,11 @@ jobs:
             exit 1
           fi
           curl -fsS "$base/" -o /tmp/valoria-home.html
-          grep -Fq 'AN INSTITUTION FOR PROFESSIONAL CAPABILITY' /tmp/valoria-home.html
-          grep -Fq 'Capability deserves' /tmp/valoria-home.html
-          grep -Fq 'a higher standard.' /tmp/valoria-home.html
-          grep -Fq 'EXPLORE THE FRAMEWORK' /tmp/valoria-home.html
+          grep -q 'Capability should decide' /tmp/valoria-home.html
+          grep -q 'Valoria sets the standard.' /tmp/valoria-home.html
           grep -q 'START THE VALU INDEX TASTER' /tmp/valoria-home.html
-          grep -Fq 'What brings you' /tmp/valoria-home.html
-          grep -Fq 'Find capability with context.' /tmp/valoria-home.html
+          grep -q 'THE VALORIA MARKETPLACE' /tmp/valoria-home.html
+          grep -q 'Find professionals' /tmp/valoria-home.html
           grep -q 'POINTS-BASED CAPABILITY PROFILE' /tmp/valoria-home.html
           # Participant-visible copy is checked in the Playwright DOM audit, not bundled HTML/JS.
 
