@@ -104,12 +104,19 @@ describe('main website left-alignment contract', () => {
     expect(source).not.toContain('youtube-nocookie.com/embed/')
   })
 
-  test('empty marketplace state offers truthful sourcing routes without implying public listings exist', () => {
+  test('homepage Registry keeps institutional enquiry routes available in every data state', () => {
     const source = read('src/components/LiveProfilesScroll.jsx')
+    const contact = read('src/app/contact-us/ContactForm.jsx')
     expect(source).toContain('The registry is opening through verified capability.')
-    expect(source).toContain('/contact-us?type=candidate')
-    expect(source).toContain('/contact-us?type=speaker_booking')
+    expect(source).toContain('aria-label="Valoria engagement routes"')
+    expect(source).toContain('/contact-us?type=hiring')
+    expect(source).toContain('/contact-us?type=speaker')
     expect(source).toContain('/contact-us?type=training')
+    expect(source).not.toContain('/contact-us?type=candidate')
+    expect(source).not.toContain('/contact-us?type=speaker_booking')
+    expect(contact).toContain("hiring: 'hiring'")
+    expect(contact).toContain("speaker: 'speaker'")
+    expect(contact).toContain("training: 'training'")
   })
 
 
