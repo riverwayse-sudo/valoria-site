@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import Nav, { AssessmentStartLink } from '@/components/Nav'
 import Footer from '@/components/Footer'
-import { BRAND } from '@/lib/brand'
 
 export const metadata = {
   title: 'Start the VALU Index Taster — Valoria Institute',
@@ -18,17 +17,15 @@ const dimensions = [
 
 const faqs = [
   ['How does it work?', 'Start with the VALU Index Taster, then complete the full VALU Index. You will receive your official points result and PRIME profile.'],
-  ['Do I need an account first?', 'Register your contact and professional details before the taster so your progress has a persistent record. This is not your Valoria account. You create or connect your secure account after the taster, before continuing to the full VALU Index.'],
+  ['Do I need an account first?', 'Yes. Create your Valoria account and confirm your email before beginning the Taster. Your saved Taster then connects to your account, and you can continue to the separate full VALU Index from your dashboard.'],
   ['Who is it for?', 'It is designed for professionals across industries and markets—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight, visibility and access to opportunity.'],
   ['Is it free?', 'Yes. The VALU Index Taster and full VALU Index are free to complete. The wider Valoria ecosystem connects insight to development, visibility and opportunity.'],
   ['Does the result define me?', 'No. The taster is directional, not an official score or permanent label. Your official points result is issued after you complete the full VALU Index.'],
-  ['What happens after I finish?', 'After the taster, create or connect your secure Valoria account. You can complete your professional profile for Basic marketplace consideration. The full VALU Index establishes your official points result and merit designation for Full marketplace eligibility. Public visibility also requires your permission.'],
+  ['What happens after I finish?', 'Your Taster is saved and connected to your confirmed Valoria account. Continue from your dashboard to complete the separate full VALU Index. Your official points result and merit designation are issued only after the full assessment. Public visibility also requires your permission.'],
   ['Can I pause part-way through?', 'Yes. Your progress is saved as you go, and you can return to your dashboard to continue without restarting.'],
 ]
 
 export default function ValuStartPage() {
-  const assessmentUrl = BRAND.assessmentUrl
-
   return <>
     
     <Nav />
@@ -41,7 +38,7 @@ export default function ValuStartPage() {
               <h1 style={{ maxWidth: "12.5ch", fontSize: "clamp(1.85rem, 3.1vw, 3.1rem)", lineHeight: 1.12, letterSpacing: "-0.045em", marginBlock: "0 1.1rem" }}>Your CV tells people what you’ve done.<br /><em>The VALU Index shows what you can become.</em></h1>
               <p className="vs-lede">A professional diagnostic built around PRIME to give you a clearer starting point for understanding your capability, direction and professional presence.</p>
               <div className="vs-actions">
-                <AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">START THE VALU INDEX TASTER <b>→</b></AssessmentStartLink>
+                <AssessmentStartLink href="/valu/register/" className="vs-btn vs-primary">START THE VALU INDEX TASTER <b>→</b></AssessmentStartLink>
                 <a href="#how" className="vs-btn vs-secondary">SEE HOW IT WORKS <b>↓</b></a>
               </div>
               <div className="vs-proof"><span>A QUICK START</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
@@ -81,11 +78,11 @@ export default function ValuStartPage() {
       <section className="vs-light vs-journey">
         <div className="vs-shell">
           <div className="vs-kicker dark"><span /> HOW IT WORKS</div>
-          <h2>Register first. Take your taster.<br /><em>Then build your next step.</em></h2>
+          <h2>Create your account. Take your Taster.<br /><em>Then build your next step.</em></h2>
           <div className="vs-journey-grid">
-            <article><span>01</span><h3>Register</h3><p>Share your contact and professional details first. This creates a persistent record for your taster; it is not your secure Valoria account.</p></article>
-            <article><span>02</span><h3>Take your taster</h3><p>Complete the guided directional taster. Your responses are saved against your registration.</p></article>
-            <article><span>03</span><h3>Create your account</h3><p>After the taster, create or connect your secure Valoria account and confirm your email.</p></article>
+            <article><span>01</span><h3>Create your account</h3><p>Create your Valoria account and confirm your email before beginning. Your account protects your saved journey.</p></article>
+            <article><span>02</span><h3>Take your Taster</h3><p>Complete the guided directional Taster. Your responses are saved to your confirmed account.</p></article>
+            <article><span>03</span><h3>Continue to your dashboard</h3><p>Your completed Taster is connected to your account. Your dashboard is the secure home for the next step.</p></article>
             <article><span>04</span><h3>Complete the full VALU Index</h3><p>The full VALU Index establishes your official points result and PRIME capability profile. It is not required for the Basic taster pathway.</p></article>
             <article><span>05</span><h3>Build and discover</h3><p>Complete your professional profile. Marketplace visibility follows the relevant Basic or Full eligibility checks and your explicit permission.</p></article>
           </div>
@@ -105,7 +102,7 @@ export default function ValuStartPage() {
         <div className="vs-shell">
           <div className="vs-next-grid">
             <div><div className="vs-kicker dark"><span /> AFTER VALU</div><h2>One assessment opens a much bigger professional journey.</h2></div>
-            <div className="vs-copy"><p>After the taster, create or connect your secure account and complete your professional profile for Basic marketplace consideration. The full VALU Index establishes your official points result and merit designation for Full marketplace eligibility.</p><div className="vs-next-list"><div><b>01</b><span>Complete your professional profile</span></div><div><b>02</b><span>Make your capabilities discoverable</span></div><div><b>03</b><span>Explore deeper assessment and development pathways</span></div></div></div>
+            <div className="vs-copy"><p>Your Taster is connected to your account. Continue from your dashboard to complete the full VALU Index and receive your official points result and merit designation. Marketplace eligibility remains subject to the applicable profile, capability and consent checks.</p><div className="vs-next-list"><div><b>01</b><span>Complete your professional profile</span></div><div><b>02</b><span>Make your capabilities discoverable</span></div><div><b>03</b><span>Explore deeper assessment and development pathways</span></div></div></div>
           </div>
         </div>
       </section>
@@ -118,7 +115,7 @@ export default function ValuStartPage() {
       </section>
 
       <section className="vs-final">
-        <div className="vs-shell"><div className="vs-kicker"><span /> WORTH. BUILT.</div><h2>Your capability deserves<br /><em>more than a CV.</em></h2><p>Start with the VALU Index Taster, then continue to the full VALU Index when you are ready.</p><AssessmentStartLink href={assessmentUrl} className="vs-btn vs-primary">START THE VALU INDEX TASTER <b>→</b></AssessmentStartLink><p className="vs-back">Already completed a taster? <Link href="/professional-signup/recover">Recover your saved taster</Link>.</p><Link href="/valu" className="vs-back">Learn more about VALU →</Link></div>
+        <div className="vs-shell"><div className="vs-kicker"><span /> WORTH. BUILT.</div><h2>Your capability deserves<br /><em>more than a CV.</em></h2><p>Start with the VALU Index Taster, then continue to the full VALU Index when you are ready.</p><AssessmentStartLink href="/valu/register/" className="vs-btn vs-primary">START THE VALU INDEX TASTER <b>→</b></AssessmentStartLink><p className="vs-back">Already completed a taster? <Link href="/professional-signup/recover">Recover your saved taster</Link>.</p><Link href="/valu" className="vs-back">Learn more about VALU →</Link></div>
       </section>
     </main>
     <Footer />

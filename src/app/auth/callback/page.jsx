@@ -20,13 +20,14 @@ function AuthCallbackFlow() {
     async function finishConfirmation() {
       try {
         const code = params.get('code')
-        let { data: { session } } = await supabase.auth.getSession()
-        if (!session?.access_token && code) {
+        // Exchange the confirmation code before reading any existing browser
+        // session, so a previously signed-in account cannot be mistaken for
+        // the account behind the email link.
+        if (code) {
           const { error } = await supabase.auth.exchangeCodeForSession(code)
           if (error) throw error
-          const result = await supabase.auth.getSession()
-          session = result.data.session
         }
+        let { data: { session } } = await supabase.auth.getSession()
         if (!session?.access_token) {
           await new Promise(resolve => setTimeout(resolve, 700))
           const result = await supabase.auth.getSession()
@@ -39,6 +40,31 @@ function AuthCallbackFlow() {
 
         const identityHash = params.get('identity_hash') || sessionStorage.getItem('pending_identity_hash')
         const pendingTasterId = params.get('pending_taster_id') || localStorage.getItem('pending_taster_id')
+
+        // Professional Taster registration is account-first. Only this explicit
+        // callback parameter returns a confirmed professional to the Taster;
+        // ordinary confirmation flows retain their existing dashboard behavior.
+        if (params.get('valu_taster') === '1' && !identityHash && !pendingTasterId) {
+          if (!user.email_confirmed_at) throw new Error('Confirm your email before beginning the VALU Index Taster.')
+          if (user.user_metadata?.valu_taster_signup !== true) {
+            throw new Error('Your professional Taster registration could not be verified. Please sign in and complete your details.')
+          }
+          setMessage('Email confirmed. Your Valoria account is ready. Securely opening your VALU Index Taster…')
+          const handoffResponse = await fetch('/api/valu-taster/start', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          })
+          const handoff = await handoffResponse.json().catch(() => ({}))
+          if (!handoffResponse.ok || !handoff.url) {
+            throw new Error(handoff.error || 'We could not securely open your Taster. Please return to your Valoria account and try again.')
+          }
+          const destination = new URL(handoff.url, window.location.origin)
+          if (destination.origin !== window.location.origin || !destination.pathname.startsWith('/valu/assessment/')) {
+            throw new Error('The Taster handoff destination could not be verified.')
+          }
+          if (!cancelled) window.location.replace(destination.toString())
+          return
+        }
 
         if (identityHash) {
           setMessage('Email confirmed. Linking your VALU Index to your account…')

@@ -1,9 +1,8 @@
-import Nav from '@/components/Nav'
+import Nav, { AssessmentStartLink } from '@/components/Nav'
 import Footer from '@/components/Footer'
 import EventPoster from '@/components/EventPoster'
 import EventRegistrationTrigger from '@/components/EventRegistrationTrigger'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
-import { BRAND } from '@/lib/brand'
 
 export const dynamic = 'force-dynamic'
 
@@ -158,7 +157,7 @@ export default function EventsPage() {
               <div className="page-kicker">REPLAY</div>
               <h2 className="section-title">Why being good at your job is no longer <em>enough.</em></h2>
               <p className="page-sub">The opening Valoria conversation on professional worth, visibility, influence and the infrastructure required to turn capability into recognised opportunity.</p>
-              <a className="btn-gold" href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer">START YOUR VALU INDEX →</a>
+              <AssessmentStartLink href="/valu/register/" className="btn-gold">START YOUR VALU INDEX →</AssessmentStartLink>
             </div>
             <div className="replay-video"><iframe src="https://www.youtube.com/embed/B9dD22vTErI" title="Valoria Institute replay" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
           </div>

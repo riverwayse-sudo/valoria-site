@@ -12,17 +12,7 @@ on:
       - "package.json"
       - "package-lock.json"
       - "wrangler.jsonc"
-  push:
-    branches:
-      - 'deploy/staging-*'
-    paths:
-      - "src/**"
-      - "supabase/migrations/**"
-      - "scripts/**"
       - ".github/workflows/cloudflare-current-site-staging.yml"
-      - "package.json"
-      - "package-lock.json"
-      - "wrangler.jsonc"
 
 permissions:
   contents: read
@@ -89,6 +79,7 @@ jobs:
             /
             /valu
             /valu/start
+            /valu/register
             /valu/assessment
             /prime
             /about-us
@@ -122,19 +113,29 @@ jobs:
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
           grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
           curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
-          grep -q 'valoria-staging-site.riverwayse.workers.dev' /tmp/valoria-sitemap.xml
+          grep -q '<loc>https://staging.valoriainstitute.com/' /tmp/valoria-sitemap.xml
+          if grep -Eq '<loc>https://(www\.)?valoriainstitute\.com/' /tmp/valoria-sitemap.xml; then
+            echo "Staging sitemap must not publish production canonical URLs"
+            exit 1
+          fi
           curl -fsS "$base/" -o /tmp/valoria-home.html
           grep -q 'Capability should decide' /tmp/valoria-home.html
           grep -q 'Valoria sets the standard.' /tmp/valoria-home.html
           grep -q 'START THE VALU INDEX TASTER' /tmp/valoria-home.html
-          grep -q 'Make your capability legible.' /tmp/valoria-home.html
+          grep -q 'THE VALORIA MARKETPLACE' /tmp/valoria-home.html
+          grep -q 'Find professionals' /tmp/valoria-home.html
           grep -q 'POINTS-BASED CAPABILITY PROFILE' /tmp/valoria-home.html
-          if grep -Eiq '(WANT TO BE DISCOVERED|Become discoverable|Build a professional profile that helps relevant decision-makers understand your capabilities|buyer access|sourcing access|BASIC LISTING|FULL LISTING|1 of 58|1 of 9|54 scored questions|four validity checks|nine questions|58 questions|55 questions|84 / 100|vi-scroll-track|live-profiles|[0-9]+[[:space:]]*/[[:space:]]*100)' /tmp/valoria-home.html; then
-            echo "Homepage exposes internal access or assessment mechanics"
+          # Participant-visible copy is checked in the Playwright DOM audit, not bundled HTML/JS.
+
+          bootstrap_status="$(curl -sS -o /tmp/valu-bootstrap-response -w '%{http_code}' -X POST "$base/api/valu-taster/bootstrap" -H 'Content-Type: application/json' --data '{}')"
+          if [[ "$bootstrap_status" != "401" ]]; then
+            echo "Unauthenticated Taster bootstrap returned HTTP $bootstrap_status; expected 401."
+            cat /tmp/valu-bootstrap-response || true
             exit 1
           fi
+          grep -q 'Create or sign in to your Valoria account' /tmp/valu-bootstrap-response
 
-          echo "API authentication probes are executed in the Playwright browser audit."
+          echo "Unauthenticated Taster bootstrap correctly rejects access; browser audit covers the public entry surfaces."
 
       - name: Install Playwright without changing project dependencies
         run: npm install --no-save --package-lock=false playwright@1.65.0
