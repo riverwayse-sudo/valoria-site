@@ -10,6 +10,12 @@ const TRACK_META = {
   facilitator: { label: 'Facilitator', href: '/marketplace/facilitators' },
 }
 
+const STAGING_PROFILE_FIXTURES = [
+  { id: 'staging-qa-001', atb_id: 'ATB-PREVIEW-001', headline: 'Strategy & Operations', selectedCapabilities: ['candidate', 'speaker'], points: 78 },
+  { id: 'staging-qa-002', atb_id: 'ATB-PREVIEW-002', headline: 'Finance & Governance', selectedCapabilities: ['candidate', 'facilitator'], points: 84 },
+  { id: 'staging-qa-003', atb_id: 'ATB-PREVIEW-003', headline: 'Digital Transformation', selectedCapabilities: ['speaker', 'facilitator'], points: 72 },
+]
+
 const displayText = value => String(value ?? '').normalize('NFKC').replace(/[\uFFFD]/g, '').trim()
 
 function developmentArea(scores) {
@@ -34,6 +40,8 @@ export default async function LiveProfilesScroll() {
   }
 
   const qualityProfiles = profiles.slice(0, 13)
+  const showVisualPreview = process.env.VALU_PREVIEW === '1' && !dataUnavailable && qualityProfiles.length === 0
+  const displayProfiles = qualityProfiles.length ? qualityProfiles : (showVisualPreview ? STAGING_PROFILE_FIXTURES : [])
   const discoverableCount = counts.all
 
   return (
@@ -50,13 +58,49 @@ export default async function LiveProfilesScroll() {
 
       {dataUnavailable ? (
         <div className="live-profiles-public-state" role="status">Public profile data could not be verified right now. Please try the marketplace again shortly.</div>
-      ) : qualityProfiles.length > 0 ? (
+      ) : displayProfiles.length > 0 ? (
         <>
-          <div className="vi-scroll-mask">
-            <div className="vi-scroll-track" aria-label="Public professional profiles">
+          {showVisualPreview && (
+            <>
+              <div className="live-profiles-public-state" role="status">
+                <strong className="live-profiles-empty-title">The registry is opening through verified capability.</strong>
+                Public profiles appear only after the participant has completed the applicable requirements and explicitly agreed to public visibility.
+              </div>
+              <div className="live-profiles-preview-note" role="note">
+                <strong>VISUAL PREVIEW ONLY</strong>
+                <span>Illustrative QA fixtures and sample point values — not participant records or live scores.</span>
+              </div>
+            </>
+          )}
+          <div className="vi-scroll-mask" aria-label={showVisualPreview ? 'Visual preview of professional profile cards' : 'Public professional profile carousel'}>
+            <div className="vi-scroll-track" aria-label={showVisualPreview ? 'Illustrative profile cards' : 'Public professional profiles'}>
               {[false, true].map((isClone) => (
                 <div className="vi-scroll-group" key={isClone ? 'clone' : 'original'} aria-hidden={isClone}>
-                  {qualityProfiles.map(profile => {
+                  {displayProfiles.map((profile, index) => {
+                    if (showVisualPreview) {
+                      const capabilityStates = Object.entries(TRACK_META).map(([key, meta]) => ({
+                        key, label: meta.label, active: profile.selectedCapabilities.includes(key),
+                      }))
+                      return (
+                        <div className="vi-scroll-card" key={profile.id} data-visual-fixture={isClone ? undefined : 'true'} aria-label="QA visual fixture, not a participant profile">
+                          <div className="vi-scroll-avatar" aria-hidden="true"><ValoriaAvatar seed={profile.id} size={64} /></div>
+                          <div className="vi-scroll-copy">
+                            <div className="vi-scroll-topline"><span>{profile.atb_id}</span><i>VISUAL FIXTURE</i></div>
+                            <strong className="vi-scroll-name">Illustrative Professional {String(index + 1).padStart(2, '0')}</strong>
+                            <div className="vi-scroll-headline">{profile.headline}</div>
+                            <div className="vi-scroll-track-label" role="group" aria-label={`Capabilities: ${capabilityStates.map(item => `${item.label} ${item.active ? 'selected' : 'not selected'}`).join(', ')}`}>{capabilityStates.map(item => <span key={item.key} className={item.active ? 'is-active' : 'is-inactive'} aria-hidden="true">{item.label}</span>)}</div>
+                            <div className="vi-scroll-designation">QA VISUAL PREVIEW</div>
+                            <div className="vi-scroll-summary">Synthetic content for layout review only</div>
+                            <div className="vi-scroll-development">Not a participant profile</div>
+                          </div>
+                          <div className="vi-scroll-score" aria-label="Illustrative VALU Index points for visual QA only">
+                            <span className="vi-scroll-score-label">VALU INDEX</span>
+                            <strong>{profile.points}</strong>
+                            <span className="vi-scroll-score-max">PTS · QA</span>
+                          </div>
+                        </div>
+                      )
+                    }
                     const tracks = Array.isArray(profile.selectedCapabilities) && profile.selectedCapabilities.length
                       ? profile.selectedCapabilities
                       : Array.isArray(profile.selected_capabilities) && profile.selected_capabilities.length
