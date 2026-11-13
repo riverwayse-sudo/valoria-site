@@ -3417,3 +3417,55 @@
 .home-redesign-root .valu-section.valu-conversion .valu-conversion-intro .valu-conversion-note {
   color: rgba(247,244,238,.62);
 }
+
+
+/* Staging and production profile rail: seamless, pausable horizontal motion. */
+.live-profiles .vi-scroll-track {
+  gap: 0;
+  animation: valoria-profile-marquee var(--profile-scroll-duration, 48s) linear infinite;
+}
+.live-profiles .vi-scroll-group {
+  gap: 14px;
+}
+.live-profiles .vi-scroll-mask:hover .vi-scroll-track,
+.live-profiles .vi-scroll-mask:focus-within .vi-scroll-track {
+  animation-play-state: paused;
+}
+@keyframes valoria-profile-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.live-profiles-preview-note {
+  display: flex;
+  width: min(var(--space-content-width), calc(100% - 2 * var(--pad)));
+  max-width: var(--space-content-width);
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px 12px;
+  margin: 0 auto 8px;
+  padding: 9px 12px;
+  border-left: 2px solid var(--gold);
+  background: rgba(201,168,76,.045);
+  color: rgba(247,244,238,.62);
+  font-size: 9px;
+  line-height: 1.5;
+}
+.live-profiles-preview-note strong {
+  color: var(--gold);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-profiles .vi-scroll-track {
+    animation: none;
+    transform: none;
+  }
+  .live-profiles .vi-scroll-mask {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-mask-image: none;
+    mask-image: none;
+    scrollbar-width: thin;
+  }
+}
