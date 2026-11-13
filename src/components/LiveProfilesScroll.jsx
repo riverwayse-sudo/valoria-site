@@ -59,17 +59,7 @@ export default async function LiveProfilesScroll() {
           </div>
         </div>
 
-        <div className="live-profiles-actions" aria-label="Valoria engagement routes">
-          <Link href="/contact-us?type=hiring" className="live-profile-action primary">
-            <span><small>ATB CONNECT</small>Discuss your talent needs</span><b>→</b>
-          </Link>
-          <Link href="/contact-us?type=speaker" className="live-profile-action">
-            <span><small>ATB SPOTLIGHT</small>Discuss a speaker brief</span><b>→</b>
-          </Link>
-          <Link href="/contact-us?type=training" className="live-profile-action">
-            <span><small>VALORIA DEVELOP</small>Commission a PRIME programme</span><b>→</b>
-          </Link>
-        </div>
+
       </div>
 
       {unique.length > 0 ? (
@@ -122,6 +112,18 @@ export default async function LiveProfilesScroll() {
       ) : (
         <div className="live-profiles-public-state"><span className="live-profiles-dot" />Public profiles appear only after participants meet the applicable requirements and explicitly agree to public visibility. In the meantime, organisations can use the engagement routes above to brief Valoria.</div>
       )}
+
+              <div className="live-profiles-actions" aria-label="Valoria engagement routes">
+          <Link href="/contact-us?type=hiring" className="live-profile-action primary">
+            <span><small>ATB CONNECT</small>Discuss your talent needs</span><b>→</b>
+          </Link>
+          <Link href="/contact-us?type=speaker" className="live-profile-action">
+            <span><small>ATB SPOTLIGHT</small>Discuss a speaker brief</span><b>→</b>
+          </Link>
+          <Link href="/contact-us?type=training" className="live-profile-action">
+            <span><small>VALORIA DEVELOP</small>Commission a PRIME programme</span><b>→</b>
+          </Link>
+        </div>
 
       <div className="live-profiles-professional-cta">
         <span className="live-profiles-professional-rule" />
