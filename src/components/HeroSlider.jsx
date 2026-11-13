@@ -49,14 +49,14 @@ export default function HeroSlider() {
             <div className="hero-editorial-visual au d3">
               <img
                 className="hero-editorial-image"
-                src="/images/temitayo-adetokunbo-host.webp"
-                alt="Valoria Institute host Temitayo Adetokunbo"
+                src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=1400&q=85"
+                alt="Sculptural contemporary architecture in natural light"
                 fetchPriority="high"
               />
               <div className="hero-editorial-image-shade" aria-hidden="true" />
               <div className="hero-editorial-caption">
-                <span>THE PEOPLE BEHIND THE STANDARD</span>
-                <strong>Worth is recognised.<br />Merit is built.</strong>
+                <span>THE ARCHITECTURE OF PROFESSIONAL MERIT</span>
+                <strong>Standards shape<br />what becomes possible.</strong>
               </div>
               <div className="valu-card" aria-label="The VALU Index structure">
                 <div className="vc-label">THE VALU INDEX</div>
