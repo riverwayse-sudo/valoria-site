@@ -255,74 +255,31 @@ try {
       window.scrollTo({ top: 0, behavior: 'auto' })
     })
     await page.waitForTimeout(350)
-    const previewReady = await page.evaluate(() => {
-      const shell = document.querySelector('.live-profiles-shell')
-      if (!shell) return false
-      shell.querySelector('.live-profiles-public-state')?.remove()
-      const note = document.createElement('div')
-      note.className = 'live-profiles-public-state'
-      note.innerHTML = '<span class="live-profiles-empty-title">VISUAL PREVIEW ONLY</span><p>Illustrative cards for layout QA. These are not public listings or participant records.</p>'
-      const mask = document.createElement('div')
-      mask.className = 'vi-scroll-mask'
-      mask.innerHTML = `
-        <div class="vi-scroll-track">
-          <div class="vi-scroll-card" data-visual-fixture="true">
-            <div class="vi-scroll-avatar"><span>01</span></div>
-            <div class="vi-scroll-copy">
-              <div class="vi-scroll-topline">ATB-PREVIEW-001 <i>VISUAL FIXTURE</i></div>
-              <span class="vi-scroll-name">Illustrative Professional 01</span>
-              <div class="vi-scroll-headline">Strategy &amp; Operations</div>
-              <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-active">Speaker</span><span class="is-inactive">Facilitator</span></div>
-              <div class="vi-scroll-designation">Illustrative designation</div>
-              <div class="vi-scroll-summary">Synthetic content for layout review only</div>
-              <div class="vi-scroll-development">Not a participant profile</div>
-            </div>
-            <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>78</strong><span class="vi-scroll-score-max">PTS</span></div>
-            <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
-          </div>
-          <div class="vi-scroll-card" data-visual-fixture="true">
-            <div class="vi-scroll-avatar"><span>02</span></div>
-            <div class="vi-scroll-copy">
-              <div class="vi-scroll-topline">ATB-PREVIEW-002 <i>VISUAL FIXTURE</i></div>
-              <span class="vi-scroll-name">Illustrative Professional 02</span>
-              <div class="vi-scroll-headline">Finance &amp; Governance</div>
-              <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-inactive">Speaker</span><span class="is-active">Facilitator</span></div>
-              <div class="vi-scroll-designation">Illustrative designation</div>
-              <div class="vi-scroll-summary">Synthetic content for layout review only</div>
-              <div class="vi-scroll-development">Not a participant profile</div>
-            </div>
-            <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>84</strong><span class="vi-scroll-score-max">PTS</span></div>
-            <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
-          </div>
-          <div class="vi-scroll-card" data-visual-fixture="true">
-            <div class="vi-scroll-avatar"><span>03</span></div>
-            <div class="vi-scroll-copy">
-              <div class="vi-scroll-topline">ATB-PREVIEW-003 <i>VISUAL FIXTURE</i></div>
-              <span class="vi-scroll-name">Illustrative Professional 03</span>
-              <div class="vi-scroll-headline">Digital Transformation</div>
-              <div class="vi-scroll-track-label"><span class="is-inactive">Talent</span><span class="is-active">Speaker</span><span class="is-active">Facilitator</span></div>
-              <div class="vi-scroll-designation">Illustrative designation</div>
-              <div class="vi-scroll-summary">Synthetic content for layout review only</div>
-              <div class="vi-scroll-development">Not a participant profile</div>
-            </div>
-            <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>72</strong><span class="vi-scroll-score-max">PTS</span></div>
-            <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
-          </div>
-        </div>`
-      const bottom = shell.querySelector('.live-profiles-bottom')
-      shell.insertBefore(note, bottom)
-      shell.insertBefore(mask, bottom)
-      const track = mask.querySelector('.vi-scroll-track')
+    const previewState = await page.evaluate(() => {
+      const shell = document.querySelector('.live-profiles')
+      const track = shell?.querySelector('.vi-scroll-track')
+      const fixtures = [...(shell?.querySelectorAll('[data-visual-fixture="true"]') || [])]
+      const publicCards = [...(shell?.querySelectorAll('[data-marketplace-intent]') || [])]
+      const note = shell?.querySelector('.live-profiles-preview-note')
+      const animation = track ? getComputedStyle(track).animationName : 'none'
+      const clearlyLabelled = fixtures.length === 0 || Boolean(
+        note?.innerText.includes('VISUAL PREVIEW ONLY')
+        && fixtures.every(card => card.innerText.includes('VISUAL FIXTURE') && card.innerText.includes('Not a participant profile'))
+      )
+      const previewReady = Boolean(track && ((fixtures.length === 3 && clearlyLabelled) || publicCards.length > 0))
+      // Freeze the already-verified rail for a readable full-page screenshot.
       if (track) {
         track.style.animation = 'none'
         track.style.transform = 'none'
       }
-      return Boolean(track && mask.querySelectorAll('[data-visual-fixture="true"]').length === 3)
+      return { previewReady, syntheticFixtures: fixtures.length, clearlyLabelled, animation }
     })
+    const previewReady = previewState.previewReady
     const filename = `homepage-profile-cards-preview-${viewport.name}.png`
     await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
-    report.profileCardPreviews.push({ viewport: viewport.name, status: response?.status() ?? null, screenshot: filename, syntheticFixtures: 3, clearlyLabelled: true, previewReady })
-    if (!previewReady) report.failures.push(`${viewport.name}: compact profile-card visual fixture could not be rendered`)
+    report.profileCardPreviews.push({ viewport: viewport.name, status: response?.status() ?? null, screenshot: filename, syntheticFixtures: previewState.syntheticFixtures, clearlyLabelled: previewState.clearlyLabelled, scrollAnimation: previewState.animation, previewReady })
+    if (!previewReady) report.failures.push(`${viewport.name}: homepage profile rail is missing real cards or clearly labelled staging fixtures`)
+    if (!previewState.animation || previewState.animation === 'none') report.failures.push(`${viewport.name}: homepage profile rail auto-scroll animation is missing`)
     await context.close()
   }
 
