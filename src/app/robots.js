@@ -1,9 +1,14 @@
-const SITE_URL = 'https://valoriainstitute.com'
+const IS_STAGING = process.env.VALU_PREVIEW === '1' ||
+  process.env.NEXT_PUBLIC_VALU_PREVIEW === '1' ||
+  (process.env.NEXT_PUBLIC_SITE_URL || '').includes('staging.')
+const SITE_URL = IS_STAGING
+  ? (process.env.NEXT_PUBLIC_SITE_URL || 'https://staging.valoriainstitute.com')
+  : 'https://valoriainstitute.com'
 
 export default function robots() {
-  return {
-    rules: [
-      {
+  const rules = IS_STAGING
+    ? [{ userAgent: '*', disallow: ['/'] }]
+    : [{
         userAgent: '*',
         allow: '/',
         disallow: [
@@ -25,8 +30,10 @@ export default function robots() {
           '/auth/callback',
           '/reset-password',
         ],
-      },
-    ],
+      }]
+
+  return {
+    rules,
     sitemap: `${SITE_URL}/sitemap.xml`,
   }
 }
