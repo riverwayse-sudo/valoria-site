@@ -2504,3 +2504,182 @@
   .vi-scroll-score strong { font-size: 18px; }
   .live-profiles-professional-cta { grid-template-columns: minmax(0,1fr); gap: 10px; }
 }
+
+/* Homepage profile rail — compact editorial registry treatment.
+   Scoped to the homepage rail; directory profile cards remain unchanged. */
+.live-profiles {
+  padding-top: clamp(58px, 6vw, 82px);
+}
+
+.vi-scroll-mask {
+  padding: 8px 0 20px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+}
+
+.vi-scroll-track {
+  gap: 14px;
+}
+
+.vi-scroll-card {
+  position: relative;
+  box-sizing: border-box;
+  grid-template-columns: 42px minmax(0, 1fr) 48px 12px;
+  grid-template-rows: auto;
+  gap: 8px 10px;
+  align-items: center;
+  width: 292px;
+  min-height: 116px;
+  padding: 13px 13px 12px;
+  overflow: hidden;
+  border: 1px solid rgba(201,168,76,.18);
+  border-radius: 12px;
+  background:
+    linear-gradient(112deg, rgba(201,168,76,.065), transparent 42%),
+    #191929;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+
+.vi-scroll-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--gold), rgba(201,168,76,.12));
+  opacity: .8;
+}
+
+.vi-scroll-card:hover,
+.vi-scroll-card:focus-visible {
+  background:
+    linear-gradient(112deg, rgba(201,168,76,.11), transparent 48%),
+    #202037;
+  border-color: rgba(201,168,76,.58);
+  transform: translateY(-3px);
+}
+
+.vi-scroll-avatar {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(201,168,76,.48);
+  border-radius: 10px;
+  background: #2e2e4a;
+}
+
+.vi-scroll-avatar img {
+  border-radius: 9px;
+}
+
+.vi-scroll-copy {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+
+.vi-scroll-topline {
+  gap: 6px;
+  margin-bottom: 5px;
+  color: rgba(247,244,238,.48);
+  font-size: 7px;
+  letter-spacing: .12em;
+}
+
+.vi-scroll-topline i {
+  padding: 2px 4px;
+  border-radius: 2px;
+  font-size: 6px;
+}
+
+.vi-scroll-name {
+  display: block;
+  margin: 0 0 3px;
+  overflow: hidden;
+  color: var(--parchment);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vi-scroll-headline {
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.vi-scroll-track-label {
+  margin-top: 6px;
+  color: var(--gold);
+  font-size: 6px;
+  letter-spacing: .12em;
+}
+
+.vi-scroll-designation,
+.vi-scroll-summary,
+.vi-scroll-development {
+  display: none;
+}
+
+.vi-scroll-score {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  align-self: center;
+  padding-left: 8px;
+  border-left-color: rgba(201,168,76,.24);
+}
+
+.vi-scroll-score-label {
+  font-size: 5px;
+  letter-spacing: .10em;
+}
+
+.vi-scroll-score strong {
+  font-size: 19px;
+  font-weight: 400;
+}
+
+.vi-scroll-score-max {
+  display: block;
+  margin: 2px 0 0;
+  font-size: 6px;
+}
+
+.vi-scroll-card-arrow {
+  grid-column: 4;
+  grid-row: 1 / span 2;
+  align-self: center;
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .vi-scroll-card {
+    grid-template-columns: 40px minmax(0, 1fr) 44px 10px;
+    width: min(278px, calc(100vw - 52px));
+    min-height: 108px;
+    padding: 11px 11px 10px;
+    gap: 7px 8px;
+  }
+
+  .vi-scroll-avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .vi-scroll-name {
+    font-size: 11px;
+  }
+
+  .vi-scroll-headline {
+    font-size: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vi-scroll-card:hover,
+  .vi-scroll-card:focus-visible {
+    transform: none;
+  }
+}
