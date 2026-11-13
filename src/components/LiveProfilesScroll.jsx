@@ -51,7 +51,7 @@ export default async function LiveProfilesScroll() {
           <div className="live-profiles-kicker">THE VALORIA REGISTRY · LIVE</div>
           <h2 id="registry-title" className="live-profiles-title">See who is already <em>discoverable.</em></h2>
           <p className="live-profiles-subtitle">
-            This is not a feature preview. These are professionals in the live Valoria marketplace — assessed, positioned and discoverable by capability.
+            Explore professionals whose public profiles have met Valoria's applicable requirements and visibility consent.
           </p>
           <div className="live-profiles-proof" aria-label="Registry summary">
             <strong>{discoverableCount}</strong>
@@ -60,14 +60,26 @@ export default async function LiveProfilesScroll() {
         </div>
 
         <div className="live-profiles-actions" aria-label="Marketplace actions">
-          <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent">
-            <span><small>HIRING / SOURCING</small>Find talent</span><b>→</b>
-          </Link>
-          <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker">
-            <span><small>EVENTS / PROGRAMMES</small>Find a speaker</span><b>→</b>
-          </Link>
-          <Link href="/marketplace/facilitators" className="live-profile-action" data-marketplace-intent="facilitator">
-            <span><small>WORKSHOPS / CHANGE</small>Find a facilitator</span><b>→</b>
+          {trackCounts.candidate > 0 ? (
+            <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent">
+              <span><small>ATB CONNECT</small>Find talent</span><b>→</b>
+            </Link>
+          ) : (
+            <Link href="/contact-us?type=candidate" className="live-profile-action primary">
+              <span><small>ATB CONNECT</small>Discuss your talent needs</span><b>→</b>
+            </Link>
+          )}
+          {trackCounts.speaker > 0 ? (
+            <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker">
+              <span><small>ATB SPOTLIGHT</small>Find a speaker</span><b>→</b>
+            </Link>
+          ) : (
+            <Link href="/contact-us?type=speaker_booking" className="live-profile-action">
+              <span><small>ATB SPOTLIGHT</small>Discuss a speaker brief</span><b>→</b>
+            </Link>
+          )}
+          <Link href="/contact-us?type=training" className="live-profile-action">
+            <span><small>VALORIA DEVELOP</small>Commission a PRIME programme</span><b>→</b>
           </Link>
         </div>
       </div>
@@ -120,7 +132,7 @@ export default async function LiveProfilesScroll() {
           </div>
         </>
       ) : (
-        <div className="live-profiles-public-state"><span className="live-profiles-dot" />The public registry is being populated. Start with VALU to build a discoverable professional record.</div>
+        <div className="live-profiles-public-state"><span className="live-profiles-dot" />Public profiles appear only after participants meet the applicable requirements and explicitly agree to public visibility. In the meantime, organisations can use the engagement routes above to brief Valoria.</div>
       )}
 
       <div className="live-profiles-professional-cta">
