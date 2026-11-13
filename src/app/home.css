@@ -1190,11 +1190,8 @@
   width: min(var(--space-content-width), calc(100% - 2 * var(--pad)));
   max-width: var(--space-content-width);
   margin-inline: auto;
-  padding-bottom: 44px;
-  display: grid;
-  grid-template-columns: minmax(0,1fr) minmax(300px,440px);
-  gap: clamp(36px, 6vw, 80px);
-  align-items: end;
+  padding-bottom: 30px;
+  display: block;
 }
 
 .live-profiles-kicker {
@@ -1253,30 +1250,31 @@
 }
 
 .live-profiles-actions {
+  width: min(var(--space-content-width), calc(100% - 2 * var(--pad)));
+  max-width: var(--space-content-width);
+  margin: 28px auto 34px;
   display: grid;
-  gap: 0;
-  overflow: hidden;
-  border: 1px solid rgba(247,244,238,.12);
-  border-radius: var(--home-radius);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  overflow: visible;
 }
 
 .live-profile-action {
   display: flex;
-  min-height: 96px;
+  min-height: 116px;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 20px 22px;
+  padding: 22px 24px;
   background: rgba(247,244,238,.025);
-  border: 0;
-  border-bottom: 1px solid rgba(247,244,238,.12);
-  border-radius: 0;
+  border: 1px solid rgba(247,244,238,.12);
+  border-radius: var(--home-radius);
   color: var(--parchment);
   text-decoration: none;
 }
 
 .live-profile-action:last-child {
-  border-bottom: 0;
+  border-bottom: 1px solid rgba(247,244,238,.12);
 }
 
 .live-profile-action.primary {
@@ -1634,8 +1632,8 @@
 }
 
 @media (max-width: 900px) {
-  .live-profiles-actions { border-radius: var(--home-radius); }
-  .live-profile-action { min-height: 88px; padding: 18px; }
+  .live-profiles-actions { grid-template-columns: 1fr; }
+  .live-profile-action { min-height: 82px; padding: 18px; }
 
   .home-redesign-root > section:not(.hero) {
     padding-block: var(--space-section-tight);
