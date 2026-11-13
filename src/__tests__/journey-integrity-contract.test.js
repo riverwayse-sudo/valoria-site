@@ -667,4 +667,13 @@ test('Taster-start handoff correctly extracts a Bearer authorization token', () 
   expect(route).not.toContain(".replace(/^Bearer\\\\s+/i, '').trim()")
 })
 
+
+test('staging browser audit reveals scroll-triggered sections before screenshot capture', () => {
+  const audit = read('scripts/staging-browser-audit.mjs')
+  expect(audit).toContain("document.querySelectorAll('.reveal')")
+  expect(audit).toContain("element.scrollIntoView({ block: 'center', behavior: 'auto' })")
+  expect(audit).toContain("element.classList.contains('visible')")
+  expect(audit).toContain('scroll-reveal content remained hidden')
+})
+
 })
