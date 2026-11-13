@@ -5,7 +5,6 @@ import HeroSlider from '@/components/HeroSlider'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
 import HomepageEvents from '@/components/HomepageEvents'
 import HomepageEventPopup from '@/components/HomepageEventPopup'
-import { BRAND } from '@/lib/brand'
 import './home.css'
 
 export const dynamic = 'force-dynamic'
@@ -65,7 +64,7 @@ export default function HomePage() {
               <span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
             </div>
             <div className="home-dual-actions">
-              <a href={BRAND.assessmentUrl} target="_blank" rel="noopener noreferrer" className="btn-gold">START THE VALU INDEX TASTER <span aria-hidden="true">→</span></a>
+              <AssessmentStartLink href="/valu/register/" className="btn-gold">START THE VALU INDEX TASTER <span aria-hidden="true">→</span></AssessmentStartLink>
               <a href="/valu" className="text-link">SEE HOW THE VALU INDEX WORKS <span aria-hidden="true">→</span></a>
             </div>
             <p className="valu-conversion-note">A starting signal, not a final designation.</p>
@@ -94,9 +93,9 @@ export default function HomePage() {
             <div className="vcc-steps">
               <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>Register before your taster</small></div></div>
               <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Complete the full VALU Index</small></div></div>
-              <div className="vcc-step"><span>03</span><div><b>Become discoverable</b><small>Unlock relevant opportunities</small></div></div>
+              <div className="vcc-step"><span>03</span><div><b>Connect to opportunity</b><small>Bring your capability into view</small></div></div>
             </div>
-            <AssessmentStartLink href={BRAND.assessmentUrl} className="vcc-bottom-cta">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
+            <AssessmentStartLink href="/valu/register/" className="vcc-bottom-cta">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
           </Reveal>
         </div>
       </section>
