@@ -117,16 +117,6 @@ export default async function LiveProfilesScroll() {
           </div>
           <div className="live-profiles-bottom"><Link href="/marketplace" className="live-profiles-link">VIEW THE MARKETPLACE <span>→</span></Link></div>
         </>
-      ) : (
-        <div className="live-profiles-public-state" role="status">
-          <strong className="live-profiles-empty-title">The registry is opening through verified capability.</strong>
-          Public profiles appear only after the participant has completed the applicable requirements and explicitly agreed to public visibility. Until then, employers and organisers can submit a brief and our team can advise on the appropriate sourcing route.
-          <div className="live-profiles-empty-actions">
-            <Link href="/contact-us?type=candidate">SUBMIT A TALENT BRIEF <span aria-hidden="true">→</span></Link>
-            <Link href="/contact-us?type=speaker_booking">DISCUSS A SPEAKER BRIEF <span aria-hidden="true">→</span></Link>
-            <Link href="/contact-us?type=training">DISCUSS A PROGRAMME <span aria-hidden="true">→</span></Link>
-          </div>
-        </div>
       )}
 
       <div className="live-profiles-professional-cta">
