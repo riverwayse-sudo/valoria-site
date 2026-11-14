@@ -73,7 +73,7 @@ export default async function LiveProfilesScroll() {
 
       {dataUnavailable ? (
         <div className="live-profiles-public-state" role="status">Public profile data could not be verified right now. Please try the marketplace again shortly.</div>
-      ) : qualityProfiles.length > 0 ? (
+      ) : qualityProfiles.length > 0 && (
         <>
           <div className="vi-scroll-mask">
             <div className="vi-scroll-track" aria-label="Public professional profiles">
