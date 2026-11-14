@@ -85,6 +85,19 @@ BEGIN
     RAISE EXCEPTION 'Listing-status reconciliation is not using the canonical consent predicate';
   END IF;
 
+  IF position(
+    'private.has_public_profile_consent(p.id)'
+    IN pg_get_functiondef('private.get_marketplace_public_roster_v1_impl(uuid,text)'::regprocedure)
+  ) = 0 THEN
+    RAISE EXCEPTION 'Public marketplace RPC is not revalidating participant consent';
+  END IF;
+
+  IF has_table_privilege('anon', 'public.marketplace_public_roster', 'SELECT')
+     OR has_table_privilege('authenticated', 'public.marketplace_public_roster', 'SELECT')
+     OR has_table_privilege('anon', 'public.professional_profiles', 'SELECT') THEN
+    RAISE EXCEPTION 'Public profile source tables must remain inaccessible to direct client SELECT';
+  END IF;
+
   IF has_function_privilege('anon', 'private.has_public_profile_consent(uuid)', 'EXECUTE')
      OR has_function_privilege('authenticated', 'private.has_public_profile_consent(uuid)', 'EXECUTE') THEN
     RAISE EXCEPTION 'Client roles must not execute the private consent helper directly';
