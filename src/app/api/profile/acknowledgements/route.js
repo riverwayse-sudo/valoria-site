@@ -67,71 +67,13 @@ export async function POST(request) {
   const acknowledgementVersion = visibility === 'public' ? PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION : REGISTERED_PROFILE_ACKNOWLEDGEMENT_VERSION
   const acknowledgementText = visibility === 'public' ? PUBLIC_PROFILE_CONSENT_TEXT : REGISTERED_PROFILE_CONSENT_TEXT
 
-  if (visibility === 'public') {
-    // Refresh the canonical Basic/Full tier before checking whether this profile
-    // can be published. The refresh function keeps unconsented profiles private.
-    const { error: readinessError } = await admin.rpc('sync_professional_listing_status', {
-      p_professional_id: user.id,
-    })
-    if (readinessError) {
-      console.error('Profile listing readiness refresh failed:', readinessError)
-      return NextResponse.json({ error: 'Your listing eligibility could not be verified. Please try again.' }, { status: 502 })
-    }
-
-    const [{ data: currentProfile, error: currentProfileError }, { data: roster, error: rosterError }, { data: taster, error: tasterError }, { data: currentAssessment, error: assessmentError }] = await Promise.all([
-      admin.from('professional_profiles')
-        .select('profile_complete,display_name,headline,current_job_title,listing_status,revoked_at,is_test,valu_index,assessment_completed_at,assessment_expires_at')
-        .eq('id', user.id)
-        .maybeSingle(),
-      admin.from('marketplace_public_roster')
-        .select('assessment_access,full_name,headline,current_job_title')
-        .eq('professional_id', user.id)
-        .maybeSingle(),
-      admin.from('taster_sessions')
-        .select('id')
-        .eq('user_id', user.id)
-        .not('completed_at', 'is', null)
-        .limit(1)
-        .maybeSingle(),
-      admin.from('valu_assessments')
-        .select('total_score,completed_at,expires_at')
-        .eq('user_id', user.id)
-        .not('completed_at', 'is', null)
-        .order('completed_at', { ascending: false })
-        .limit(1)
-        .maybeSingle(),
-    ])
-
-    if (currentProfileError || rosterError || tasterError || assessmentError) {
-      return NextResponse.json({ error: 'Your Basic or Full listing status could not be verified.' }, { status: 502 })
-    }
-
-    const assessmentExpiry = Date.parse(currentAssessment?.expires_at || currentProfile?.assessment_expires_at || '')
-    const profileExpiry = Date.parse(currentProfile?.assessment_expires_at || '')
-    const currentAssessmentEligible = Boolean(currentAssessment
-      && Number(currentAssessment.total_score) >= 35
-      && Number(currentAssessment.total_score) === Number(currentProfile?.valu_index)
-      && Date.parse(currentAssessment.completed_at || '') === Date.parse(currentProfile?.assessment_completed_at || '')
-      && Number.isFinite(assessmentExpiry) && assessmentExpiry > Date.now()
-      && Number.isFinite(profileExpiry) && profileExpiry > Date.now())
-    const basicEligible = roster?.assessment_access === 'basic' && (Boolean(taster) || currentAssessmentEligible)
-    const fullEligible = roster?.assessment_access === 'full' && currentProfile?.profile_complete === true
-    const displayName = currentProfile?.display_name?.trim() || roster?.full_name?.trim()
-    const headline = currentProfile?.headline?.trim()
-      || currentProfile?.current_job_title?.trim()
-      || roster?.headline?.trim()
-      || roster?.current_job_title?.trim()
-    const identityReady = Boolean(displayName && headline)
-    const listingReady = currentProfile?.listing_status === 'listed'
-      && currentProfile?.is_test === false
-      && !currentProfile?.revoked_at
-
-    if (!(listingReady && identityReady && (basicEligible || fullEligible))) {
-      return NextResponse.json({
-        error: 'Your profile is not yet ready for public listing. Basic listing requires a linked completed taster or a current Full assessment, plus a valid professional identity; Full listing requires a complete Full VALU profile.',
-      }, { status: 409 })
-    }
-  }
+  // Record the participant's explicit visibility choice before asking the
+  // canonical listing pipeline to refresh the public roster. The roster itself
+  // is consent-gated, so checking roster membership here would create a circular
+  // dependency: a participant could never consent while absent from the roster.
+  // Eligibility, identity, assessment validity, capability evidence, test and
+  // revocation checks remain enforced by sync_professional_listing_status and
+  // the database roster writer after this acknowledgement is stored.
 
   // Registered-only is applied before recording the preference. Public consent
   // is recorded first; the canonical readiness function then applies public
