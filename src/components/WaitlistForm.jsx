@@ -173,11 +173,11 @@ export default function WaitlistForm() {
               </svg>
             </div>
             <div className="wl-done-title">You&apos;re on the list.</div>
-            <p className="wl-done-sub">Something is being built that Africa has never had before.</p>
+            <p className="wl-done-sub">A clearer standard for professional capability is taking shape.</p>
             <div className="wl-done-sections">
               <div className="wl-done-section">
                 <div className="wl-done-label">THE PROBLEM</div>
-                <p className="wl-done-body">Every day, exceptional African professionals are passed over — not because they lack capability, but because no one can prove it. The same names circulate. The same networks win. Everyone else waits.</p>
+                <p className="wl-done-body">Every day, capable professionals are overlooked — not because they lack expertise, but because their capabilities are difficult to recognise and compare. Familiar names keep circulating while valuable expertise remains unseen.</p>
               </div>
               <div className="wl-done-section">
                 <div className="wl-done-label">THE SHIFT</div>
