@@ -9,7 +9,7 @@ The `staging` branch is the integration validation branch. Changes must pass the
 ## Production architecture
 
 - **`/`** — Institutional homepage with live professional count/profile rail, VALU snapshot entry point, marketplace pathways and webinar replay.
-- **`/marketplace`** — Public African Talent Bureau marketplace and track-specific discovery.
+- **`/marketplace`** — Public professional marketplace operated through the African Talent Bureau and its track-specific discovery pathways.
 - **`/profile/[id]`** — Public professional profile surface using the platform's public profile identifiers.
 - **`/profile/setup`** — Authenticated professional profile completion flow.
 - **`/dashboard`** — Authenticated account dashboard.
