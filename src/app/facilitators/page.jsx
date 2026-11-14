@@ -5,7 +5,7 @@ import '../pages.css'
 
 export const metadata = {
   title: 'Development Programmes — Valoria Develop',
-  description: 'Explore PRIME-mapped development to run development programmes for your teams. Every programme maps to the same five clusters your team\'s VALU Index is measured against.',
+  description: 'Explore PRIME-aligned development programmes for individuals and organisations, with scope, facilitator suitability and measurement agreed for each engagement.',
   keywords: ['facilitator commissioning', 'corporate development programmes', 'PRIME-aligned development', 'team capability development', 'Valoria Develop', 'capability development'],
   openGraph: {
     title: 'Commission Facilitators — Valoria Develop | Valoria Institute',
@@ -18,12 +18,12 @@ export const metadata = {
 const HOW_IT_WORKS = [
   { step: '01', title: 'Tell us what you need.', body: 'Submit an enquiry through the platform or contact us directly. Tell us which cluster your team needs to close — Presence, Relationships, Intelligence, Mastery, or Enterprise — and the context: team size, delivery format, timeline.' },
   { step: '02', title: 'We identify a suitable facilitator.', body: 'We review available facilitator experience, declared capabilities and relevant qualifications against your programme requirements. Suitability and assessment status are confirmed before an engagement is agreed.' },
-  { step: '03', title: 'The programme runs against the standard.', body: 'Programmes are built directly on the PRIME framework — the same architecture the VALU Index measures against. So development closes the exact gaps the assessment surfaced, not generic training content.' },
-  { step: '04', title: 'Measure movement on the same standard.', body: 'Teams can re-take the VALU Index after 90 days to see cluster score movement. Development that doesn\'t produce measurable shift is not development — it\'s content delivery.' },
+  { step: '03', title: 'The programme follows the framework.', body: 'Programmes are designed around the PRIME capability framework and the priorities agreed with your organisation. Delivery content and outcomes are defined for the engagement.' },
+  { step: '04', title: 'Review progress against agreed measures.', body: 'Where assessment or follow-up measurement is included in the scope, the approach, timing and reporting are agreed before delivery.' },
 ]
 
 const DIFF = [
-  { label: 'PRIME-aligned programme delivery', desc: 'Facilitator experience and relevant qualifications are reviewed against the needs of each programme. Do not imply PRIME certification unless it has been formally awarded.' },
+  { label: 'PRIME-aligned programme delivery', desc: 'Programme design follows the PRIME capability framework and is scoped around the organisation’s development priorities.' },
   { label: 'Mapped to your VALU gaps', desc: 'If your team\'s Intelligence cluster scores are pulling the total down, that\'s where the programme targets. Not a generic leadership module.' },
   { label: 'Measurable by design', desc: 'Where included in the agreed scope, assessment before and after a programme can provide a structured view of progress.' },
   { label: 'One team, or a full cohort', desc: 'Commission for a single senior team, a graduate cohort, or a multi-site org. The framework scales — the delivery doesn\'t change.' },
@@ -87,7 +87,7 @@ export default function FacilitatorsPage() {
           <div className="page-section-inner">
             <Reveal>
               <div className="eyebrow" className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">HOW COMMISSIONING WORKS</span><div className="eyebrow-line" /></div>
-              <h2 className="section-title" className="section-title section-title-centered">From gap identification<br /><em>to measurable outcome.</em></h2>
+              <h2 className="section-title" className="section-title section-title-centered">From capability priorities<br /><em>to intentional development.</em></h2>
             </Reveal>
             <div className="facilitator-grid">
               {HOW_IT_WORKS.map(s => (
