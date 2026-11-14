@@ -1,10 +1,8 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
-import { PUBLIC_PROFILE_CONSENT_SOURCES } from '@/lib/profile-consent-copy'
 
 const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
-const PUBLIC_PROFILE_ACK_VERSION = 'public-profile-visibility-v3-2026-11-07'
 
 function getAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -190,35 +188,12 @@ async function getApprovedPublicProfessionalIds(admin, rows) {
     }))
   }
 
-  const { data: acknowledgements, error: acknowledgementError } = await admin
-    .from('professional_profile_acknowledgements')
-    .select('professional_id,acknowledgement_version,source')
-    .eq('acknowledgement_type', 'profile_submission')
-    .in('professional_id', ids)
-    .order('acknowledged_at', { ascending: false })
-    .order('created_at', { ascending: false })
-    .order('id', { ascending: false })
-
-  if (acknowledgementError) {
-    console.error('Public profile consent verification failed:', acknowledgementError)
-    throw new Error('Public profile consent could not be verified.')
-  }
-
-  const latestAcknowledgements = new Map()
-  for (const acknowledgement of acknowledgements || []) {
-    if (!latestAcknowledgements.has(acknowledgement.professional_id)) {
-      latestAcknowledgements.set(acknowledgement.professional_id, { version: acknowledgement.acknowledgement_version, source: acknowledgement.source })
-    }
-  }
-  const consentedIds = new Set([...latestAcknowledgements.entries()]
-    .filter(([, acknowledgement]) => acknowledgement.version === PUBLIC_PROFILE_ACK_VERSION && PUBLIC_PROFILE_CONSENT_SOURCES.includes(acknowledgement.source))
-    .map(([professionalId]) => professionalId))
   const profileById = new Map((profiles || []).map(profile => [profile.id, profile]))
   return new Set(rows.filter(row => {
     const profile = profileById.get(row.professional_id)
     if (!profile || profile.is_test !== false || profile.visibility !== 'public'
       || profile.listing_status !== 'listed' || profile.revoked_at != null
-      || !consentedIds.has(profile.id)) return false
+) return false
 
     if (row.assessment_access === 'full') return Number(row.valu_index) >= 35 && Number(row.valu_index) === Number(profile.valu_index) && fullReadyIds.has(profile.id)
     return row.assessmentAccess === 'basic'
@@ -253,7 +228,7 @@ export async function getMarketplaceRows(track = 'all') {
   // Category membership follows the participant's publicly declared active capability selection.
   // This is distinct from evidence-approved capability readiness: selection determines the
   // directory lane, while readiness remains separately governed in the admin workflow.
-  // Public listing, consent, assessment validity and revocation checks are enforced above.
+  // Automatic listing eligibility, assessment validity and revocation checks are enforced above.
   return rows.filter(row => {
     if (track === 'all') return true
     const capability = normalizeTrack(track)
