@@ -33,6 +33,8 @@ describe('institutional positioning and public copy contract', () => {
     expect(waitlist).not.toMatch(/PRIME-certified facilitator/i)
     expect(programmes).toContain('confirmed before delivery')
     expect(facilitators).toContain('confirmed before an engagement is agreed')
+    expect(facilitators).not.toMatch(/after 90 days|Do not imply PRIME certification/i)
+    expect(waitlist).not.toMatch(/every profile is verified|No guesswork\. No gatekeeping/i)
   })
 
   test('legal and operational jurisdiction remains explicit in legal notices', () => {
