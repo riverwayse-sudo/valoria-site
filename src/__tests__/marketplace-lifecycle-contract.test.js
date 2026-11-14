@@ -35,7 +35,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).toContain("p.assessment_access === 'full'")
     expect(directory).toContain("p.assessment_access === 'full' && p.valu_index != null")
     expect(directory).not.toContain('BASIC LISTING')
-    expect(directory).toContain('Public profiles appear when a professional meets the relevant requirements')
+    expect(directory).toContain('Public profiles appear when they meet Valoria’s listing requirements.')
   })
   test('marketplace accepts canonically equivalent Unicode ATB identifiers without changing the stored ID', () => {
     const source = read('src/lib/marketplace-data.js')
@@ -133,7 +133,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).not.toContain("update({ profile_complete: true")
   })
 
-  test('profile setup and edit collect explicit consent while preserving the Basic listing path', () => {
+  test('profile setup and edit preserve the separate visibility acknowledgement workflow', () => {
     const setup = read('src/app/profile/setup/page.jsx')
     const edit = read('src/app/profile/edit/page.jsx')
     const route = read('src/app/api/profile/acknowledgements/route.js')
@@ -501,9 +501,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     const publicProfile = read('src/lib/public-profile.js')
     const homepage = read('src/components/LiveProfilesScroll.jsx')
     const directory = read('src/components/MarketplaceDirectory.jsx')
-    expect(data).toContain('currentBasicAssessmentIds')
-    expect(data).toContain('linkedTasterIds.has(profile.id) || currentBasicAssessmentIds.has(profile.id)')
-    expect(data).toContain('rawHeadline.length >= 2')
+    expect(data).toContain('getApprovedPublicProfessionalIds(projected)')
+    expect(data).toContain('function isQualifiedPublicProfile(row)')
     expect(publicProfile).toContain('hasCurrentFullAssessment')
     expect(homepage).toContain('profiles.slice(0, 13)')
     expect(directory).toContain('PROFILE OVERVIEW')

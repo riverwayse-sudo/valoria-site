@@ -137,7 +137,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             rows.length === 0 && activeTrack === 'all' ? (
               <div className={styles.empty}>
                 <strong>No public professional profiles are currently available.</strong>
-                <p>Public profiles appear when a professional meets the relevant requirements, chooses public visibility and records consent.</p>
+                <p>Public profiles appear when they meet Valoria’s listing requirements.</p>
                 <Link className={styles.view} href="/login?returnTo=%2Fprofile%2Fsetup">EXISTING PROFESSIONAL? REVIEW YOUR PROFILE →</Link>
               </div>
             ) : rows.length === 0 && Number(counts?.all || 0) === 0 ? (

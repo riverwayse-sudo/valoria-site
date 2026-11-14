@@ -49,8 +49,11 @@ if (!fs.existsSync(marketplaceDataPath)) {
   violations.push('consent-verified marketplace directory data helper missing');
 } else {
   const marketplaceData = fs.readFileSync(marketplaceDataPath, 'utf8');
-  if (!marketplaceData.includes('PUBLIC_PROFILE_CONSENT_SOURCES.includes(acknowledgement.source)')) {
-    violations.push('marketplace directory must reject administrative attestations as public participant consent');
+  if (!marketplaceData.includes("const SOURCE = 'marketplace_public_roster'")) {
+    violations.push('marketplace directory must use the canonical database-enforced public roster');
+  }
+  if (marketplaceData.includes('professional_profile_acknowledgements')) {
+    violations.push('marketplace directory must not add a second participant-consent gate beyond the canonical roster');
   }
 }
 if (fs.existsSync(profileRoutePath)) {
@@ -95,13 +98,6 @@ if (!fs.existsSync(publicProfilePath)) {
 } else {
   const publicProfile = fs.readFileSync(publicProfilePath, 'utf8');
   for (const required of [
-    'professional_profile_acknowledgements',
-    'PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION',
-    'PUBLIC_PROFILE_CONSENT_SOURCES',
-    'PUBLIC_PROFILE_CONSENT_SOURCES.includes(acknowledgement?.source)',
-    "acknowledgement_type', 'profile_submission'",
-    "acknowledgement?.acknowledgement_version !== PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION",
-    ".order('acknowledged_at', { ascending: false })",
     "visibility', 'public'",
     "listing_status', 'listed'",
     "is_test', false",

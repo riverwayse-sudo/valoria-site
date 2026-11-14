@@ -86,121 +86,13 @@ function dedupeProfessionals(rows) {
   return [...map.values()]
 }
 
-async function getApprovedPublicProfessionalIds(admin, rows) {
-  if (!rows.length) return new Set()
-  const ids = rows.map(row => row.professional_id)
-  const { data: profiles, error } = await admin
-    .from('professional_profiles')
-    .select('id,display_name,headline,current_job_title,profile_complete,is_test,visibility,listing_status,revoked_at,valu_index,assessment_completed_at,assessment_expires_at')
-    .in('id', ids)
-
-  if (error) {
-    console.error('Public profile quality verification failed:', error)
-    throw new Error('Public profile quality could not be verified.')
-  }
-
-  const basicIds = rows
-    .filter(row => row.assessmentAccess === 'basic')
-    .map(row => row.professional_id)
-  let linkedTasterIds = new Set()
-  if (basicIds.length) {
-    const { data: tasters, error: tasterError } = await admin
-      .from('taster_sessions')
-      .select('user_id')
-      .in('user_id', basicIds)
-      .not('completed_at', 'is', null)
-
-    if (tasterError) {
-      console.error('Basic listing taster verification failed:', tasterError)
-      throw new Error('Basic listing eligibility could not be verified.')
-    }
-    linkedTasterIds = new Set((tasters || []).map(row => row.user_id))
-  }
-
-  // A current full assessment may qualify for a restricted Basic directory card
-  // when capability/CV evidence is still pending. No VALU score is exposed.
-  let currentBasicAssessmentIds = new Set()
-  if (basicIds.length) {
-    const { data: basicAssessments, error: basicAssessmentError } = await admin
-      .from('valu_assessments')
-      .select('user_id,total_score,completed_at,expires_at')
-      .in('user_id', basicIds)
-      .not('completed_at', 'is', null)
-      .order('completed_at', { ascending: false })
-    if (basicAssessmentError) {
-      console.error('Basic listing assessment verification failed:', basicAssessmentError)
-      throw new Error('Basic listing assessment eligibility could not be verified.')
-    }
-    const latestBasicAssessmentById = new Map()
-    for (const assessment of basicAssessments || []) {
-      if (!latestBasicAssessmentById.has(assessment.user_id)) {
-        latestBasicAssessmentById.set(assessment.user_id, assessment)
-      }
-    }
-    const profileById = new Map((profiles || []).map(profile => [profile.id, profile]))
-    currentBasicAssessmentIds = new Set(basicIds.filter(id => {
-      const assessment = latestBasicAssessmentById.get(id)
-      const profile = profileById.get(id)
-      const assessmentExpiry = Date.parse(assessment?.expires_at || profile?.assessment_expires_at || '')
-      const profileExpiry = Date.parse(profile?.assessment_expires_at || '')
-      return Boolean(assessment && profile
-        && Number(assessment.total_score) >= 35
-        && Number(assessment.total_score) === Number(profile.valu_index)
-        && Date.parse(assessment.completed_at || '') === Date.parse(profile.assessment_completed_at || '')
-        && Number.isFinite(assessmentExpiry) && assessmentExpiry > Date.now()
-        && Number.isFinite(profileExpiry) && profileExpiry > Date.now())
-    }))
-  }
-
-  const fullIds = rows
-    .filter(row => row.assessment_access === 'full')
-    .map(row => row.professional_id)
-  let fullReadyIds = new Set()
-  if (fullIds.length) {
-    const { data: fullAssessments, error: assessmentError } = await admin
-      .from('valu_assessments')
-      .select('user_id,total_score,completed_at,expires_at')
-      .in('user_id', fullIds)
-      .not('completed_at', 'is', null)
-      .order('completed_at', { ascending: false })
-    if (assessmentError) {
-      console.error('Full assessment validity verification failed:', assessmentError)
-      throw new Error('Full assessment validity could not be verified.')
-    }
-    const latestAssessmentById = new Map()
-    for (const assessment of fullAssessments || []) {
-      if (!latestAssessmentById.has(assessment.user_id)) latestAssessmentById.set(assessment.user_id, assessment)
-    }
-    // Full assessment access is distinct from capability-specific listing readiness.
-    // A current, valid Full VALU result may appear in the general directory even when
-    // profile completion or capability evidence is still pending.
-    fullReadyIds = new Set(fullIds.filter(id => {
-      const profile = (profiles || []).find(item => item.id === id)
-      const assessment = latestAssessmentById.get(id)
-      const assessmentExpiry = Date.parse(assessment?.expires_at || profile?.assessment_expires_at || '')
-      const profileExpiry = Date.parse(profile?.assessment_expires_at || '')
-      return Boolean(profile && assessment
-        && Number(assessment.total_score) >= 35
-        && Number(assessment.total_score) === Number(profile.valu_index)
-        && Date.parse(assessment.completed_at || '') === Date.parse(profile.assessment_completed_at || '')
-        && Number.isFinite(assessmentExpiry) && assessmentExpiry > Date.now()
-        && Number.isFinite(profileExpiry) && profileExpiry > Date.now())
-    }))
-  }
-
-  const profileById = new Map((profiles || []).map(profile => [profile.id, profile]))
-  return new Set(rows.filter(row => {
-    const profile = profileById.get(row.professional_id)
-    if (!profile || profile.is_test !== false || profile.visibility !== 'public'
-      || profile.listing_status !== 'listed' || profile.revoked_at != null
-) return false
-
-    if (row.assessment_access === 'full') return Number(row.valu_index) >= 35 && Number(row.valu_index) === Number(profile.valu_index) && fullReadyIds.has(profile.id)
-    return row.assessmentAccess === 'basic'
-      && (linkedTasterIds.has(profile.id) || currentBasicAssessmentIds.has(profile.id))
-      && Boolean(profile.display_name?.trim() || row.full_name?.trim())
-      && Boolean(profile.headline?.trim() || profile.current_job_title?.trim() || row.headline?.trim() || row.current_job_title?.trim())
-  }).map(row => row.professional_id))
+// The canonical marketplace roster is the database-enforced public projection.
+// Re-querying profiles and assessments here duplicated (and could contradict) the
+// eligibility rules, causing valid roster rows to disappear from both public surfaces.
+function getApprovedPublicProfessionalIds(rows) {
+  return new Set((rows || [])
+    .filter(row => row?.professional_id && ['basic', 'full'].includes(row.assessment_access))
+    .map(row => row.professional_id))
 }
 
 export async function getMarketplaceRows(track = 'all') {
@@ -219,7 +111,7 @@ export async function getMarketplaceRows(track = 'all') {
   }
 
   const projected = dedupeProfessionals((data || []).filter(isQualifiedPublicProfile))
-  const approvedIds = await getApprovedPublicProfessionalIds(admin, projected)
+  const approvedIds = getApprovedPublicProfessionalIds(projected)
   const rows = projected
     .filter(row => approvedIds.has(row.professional_id))
     .map(row => row.assessmentAccess === 'basic'
