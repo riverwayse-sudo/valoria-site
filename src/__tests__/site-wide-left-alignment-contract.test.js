@@ -104,12 +104,11 @@ describe('main website left-alignment contract', () => {
     expect(source).not.toContain('youtube-nocookie.com/embed/')
   })
 
-  test('empty marketplace state offers truthful sourcing routes without implying public listings exist', () => {
+  test('homepage does not render the removed empty-marketplace explanation panel or its brief links', () => {
     const source = read('src/components/LiveProfilesScroll.jsx')
-    expect(source).toContain('The registry is opening through verified capability.')
-    expect(source).toContain('/contact-us?type=candidate')
-    expect(source).toContain('/contact-us?type=speaker_booking')
-    expect(source).toContain('/contact-us?type=training')
+    expect(source).not.toContain('The registry is opening through verified capability.')
+    expect(source).not.toContain('Public profiles appear only after the participant')
+    expect(source).not.toContain('live-profiles-empty-actions')
   })
 
 
