@@ -19,11 +19,11 @@ describe('participant public-profile consent enforcement', () => {
     expect(migration).toContain('Expected one legacy consent block in sync_professional_listing_status')
   })
 
-  test('reconciliation removes only public projection and visibility, not participant records', () => {
-    expect(migration).toContain("SET visibility = 'registered_only'")
+  test('reconciliation removes only public projection, not participant records', () => {
     expect(migration).toContain('DELETE FROM public.marketplace_public_roster')
     expect(migration).not.toMatch(/DELETE\s+FROM\s+public\.professional_profiles/i)
     expect(migration).not.toMatch(/DELETE\s+FROM\s+public\.professional_profile_acknowledgements/i)
+    expect(migration).not.toMatch(/UPDATE\s+public\.professional_profiles/i)
     expect(migration).not.toMatch(/UPDATE\s+public\.valu_assessments/i)
     expect(migration).not.toMatch(/UPDATE\s+public\.professional_capabilities/i)
   })
