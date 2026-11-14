@@ -27,8 +27,10 @@ describe('institutional positioning and public copy contract', () => {
   test('programme copy does not claim unawarded certification or fixed follow-up measurement', () => {
     const programmes = read('src/app/programmes/page.jsx')
     const facilitators = read('src/app/facilitators/page.jsx')
+    const waitlist = read('src/components/WaitlistForm.jsx')
     expect(programmes).not.toMatch(/certified facilitators|90 days after|Cohort-level reporting available/i)
     expect(facilitators).not.toMatch(/PRIME-certified|Valoria-certified|certified facilitator|BROWSE CERTIFIED FACILITATORS/i)
+    expect(waitlist).not.toMatch(/PRIME-certified facilitator/i)
     expect(programmes).toContain('confirmed before delivery')
     expect(facilitators).toContain('confirmed before an engagement is agreed')
   })
