@@ -43,7 +43,7 @@ export default function ProgrammesPage() {
             <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">DEVELOPMENT PROGRAMMES</span></div>
             <h1 className="page-title">A programme<br />for every <em>cluster.</em></h1>
             <p className="page-sub">
-              Every Valoria Develop programme is built against one or more PRIME clusters — the same architecture the VALU Index measures against. So development closes real gaps, not hypothetical ones. And movement shows up in the next assessment, not just in feedback forms.
+              Valoria Develop programmes are designed around one or more PRIME clusters — the same capability framework used by the VALU Index. Each engagement is scoped around defined development priorities, with any assessment or follow-up measures agreed in advance.
             </p>
             <div className="page-hero-actions">
               <a href="/contact-us" className="btn-gold">COMMISSION A PROGRAMME</a>
@@ -57,7 +57,7 @@ export default function ProgrammesPage() {
           <div className="page-section-inner">
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE FIVE PROGRAMMES</span></div>
-              <h2 className="section-title" className="section-title programmes-clusters-title">Built on PRIME.<br /><em>Measured against it too.</em></h2>
+              <h2 className="section-title" className="section-title programmes-clusters-title">Built on PRIME.<br /><em>Designed around capability.</em></h2>
             </Reveal>
             <div className="programmes-grid">
               {PRIME_CLUSTERS.map((c) => {
@@ -86,7 +86,7 @@ export default function ProgrammesPage() {
           <div className="page-section-inner two-col">
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WHY MEASUREMENT MATTERS</span></div>
-              <h2 className="section-title">Development that<br /><em>shows up in the numbers.</em></h2>
+              <h2 className="section-title">Development with<br /><em>a clearer basis for progress.</em></h2>
               <p className="page-copy">
                 Valoria Develop programmes are designed around the same PRIME framework used by the VALU Index. Where assessment and follow-up measurement are included in the agreed scope, they can provide a structured view of capability development. The timing, method and reporting are confirmed before delivery.
               </p>
@@ -97,10 +97,10 @@ export default function ProgrammesPage() {
             <Reveal>
               <ul className="checklist" role="list">
                 {[
-                  'Pre-programme VALU Index establishes the baseline across all five clusters',
-                  'Programme targets the specific cluster(s) where movement is needed most',
+                  'Where agreed, a pre-programme VALU Index can establish a baseline across the five clusters',
+                  'Programme priorities are mapped to the capability areas agreed with the organisation',
                   'Facilitator suitability and relevant qualifications are confirmed for each engagement',
-                  'Post-programme VALU Index (90 days out) shows what actually moved',
+                  'Where agreed, follow-up assessment can provide a structured view of capability development',
                   'Reporting requirements are agreed as part of the programme scope',
                 ].map((t, i) => (
                   <li key={i}>
