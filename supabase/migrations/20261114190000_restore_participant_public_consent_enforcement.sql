@@ -66,7 +66,8 @@ $migration$;
 DELETE FROM public.marketplace_public_roster AS roster
 WHERE NOT private.has_public_profile_consent(roster.professional_id);
 
--- Fail the migration if any non-consented public projection remains.
+-- Public profile and directory readers start from this canonical projection.
+-- Client roles cannot select the roster table directly.
 DO $assert$
 BEGIN
   IF EXISTS (
@@ -77,20 +78,24 @@ BEGIN
     RAISE EXCEPTION 'Marketplace roster still contains a profile without participant-entered public consent';
   END IF;
 
-  IF EXISTS (
-    SELECT 1
-    FROM public.professional_profiles AS profile
-    WHERE profile.visibility IN ('public', 'marketplace')
-      AND NOT private.has_public_profile_consent(profile.id)
-  ) THEN
-    RAISE EXCEPTION 'A profile without participant-entered public consent remains publicly visible';
-  END IF;
-
   IF position(
     'private.has_public_profile_consent(p_professional_id)'
     IN pg_get_functiondef('private.sync_professional_listing_status(uuid)'::regprocedure)
   ) = 0 THEN
     RAISE EXCEPTION 'Listing-status reconciliation is not using the canonical consent predicate';
+  END IF;
+
+  IF position(
+    'private.has_public_profile_consent(p.id)'
+    IN pg_get_functiondef('private.get_marketplace_public_roster_v1_impl(uuid,text)'::regprocedure)
+  ) = 0 THEN
+    RAISE EXCEPTION 'Public marketplace RPC is not revalidating participant consent';
+  END IF;
+
+  IF has_table_privilege('anon', 'public.marketplace_public_roster', 'SELECT')
+     OR has_table_privilege('authenticated', 'public.marketplace_public_roster', 'SELECT')
+     OR has_table_privilege('anon', 'public.professional_profiles', 'SELECT') THEN
+    RAISE EXCEPTION 'Public profile source tables must remain inaccessible to direct client SELECT';
   END IF;
 
   IF has_function_privilege('anon', 'private.has_public_profile_consent(uuid)', 'EXECUTE')
