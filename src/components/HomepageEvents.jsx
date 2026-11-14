@@ -4,8 +4,8 @@ import EventPoster from '@/components/EventPoster'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
 
 const replay = PROFESSIONAL_STANDARD_SERIES.find((session) => session.dateApproved && session.youtubeVideoId)
-const liveSession = PROFESSIONAL_STANDARD_SERIES.find((session) => getSessionState(session) === 'live')
-const featured = liveSession || replay
+const currentSession = PROFESSIONAL_STANDARD_SERIES.find((session) => ['registration-open', 'live'].includes(getSessionState(session)))
+const featured = currentSession || replay
 const MEET_URL = 'https://meet.google.com/hde-owjd-mwc'
 
 function labelForState(state) {
@@ -20,7 +20,7 @@ export default function HomepageEvents() {
 
   const state = getSessionState(featured)
   const status = labelForState(state)
-  const isLive = state === 'live'
+  const isCurrent = featured === currentSession
   const youtubeUrl = featured.youtubeVideoId
     ? 'https://www.youtube.com/watch?v=' + featured.youtubeVideoId
     : null
@@ -30,15 +30,15 @@ export default function HomepageEvents() {
       <div className="container">
         <div className="home-section-heading home-events-heading">
           <div>
-            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">{isLive ? 'HAPPENING NOW · THE PROFESSIONAL STANDARD SERIES' : 'THE VALORIA CONVERSATION · SESSION ' + featured.id}</span></div>
-            <h2 id="home-events-title">{isLive ? <>Influence is built.<br /><em>Join the conversation live.</em></> : <>You’re doing more.<br /><em>But are you creating impact?</em></>}</h2>
+            <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">{isCurrent ? 'THE CURRENT VALORIA CONVERSATION · THE PROFESSIONAL STANDARD SERIES' : 'THE VALORIA CONVERSATION · SESSION ' + featured.id}</span></div>
+            <h2 id="home-events-title">{isCurrent ? <>Influence is built.<br /><em>Join the conversation.</em></> : <>You’re doing more.<br /><em>But are you creating impact?</em></>}</h2>
           </div>
-          <p>{isLive ? 'The current Valoria conversation is underway. Join the session directly and take part in the discussion.' : 'Watch “' + featured.title + '” with ' + (featured.speaker || 'Valoria Institute') + '. A practical conversation on the capabilities that turn professional performance into recognised opportunity.'}</p>
+          <p>{isCurrent ? 'Join the current Valoria conversation directly. The session link takes you to the live event room.' : 'Watch “' + featured.title + '” with ' + (featured.speaker || 'Valoria Institute') + '. A practical conversation on the capabilities that turn professional performance into recognised opportunity.'}</p>
         </div>
 
         <div className="home-events-feature">
           <div className="home-events-video">
-            {isLive ? (
+            {isCurrent ? (
               <div className="home-events-poster"><EventPoster session={featured} /></div>
             ) : (
               <a
@@ -71,7 +71,7 @@ export default function HomepageEvents() {
               <span>{featured.speaker || 'VALORIA INSTITUTE'}</span>
             </div>
             <div className="home-events-watch-actions">
-              {isLive ? (
+              {isCurrent ? (
                 <a className="home-events-watch-link" href={MEET_URL} target="_blank" rel="noopener noreferrer">
                   JOIN THE LIVE EVENT <span aria-hidden="true">↗</span>
                 </a>
