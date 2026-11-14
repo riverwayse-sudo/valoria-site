@@ -22,6 +22,8 @@ describe('participant public-profile consent enforcement', () => {
 
   test('reconciliation removes only public projection, not participant records', () => {
     expect(migration).toContain('DELETE FROM public.marketplace_public_roster')
+    expect(migration).toContain("has_table_privilege('anon', 'public.marketplace_public_roster', 'SELECT')")
+    expect(migration).toContain("private.has_public_profile_consent(p.id)")
     expect(migration).not.toMatch(/DELETE\s+FROM\s+public\.professional_profiles/i)
     expect(migration).not.toMatch(/DELETE\s+FROM\s+public\.professional_profile_acknowledgements/i)
     expect(migration).not.toMatch(/UPDATE\s+public\.professional_profiles/i)
