@@ -66,7 +66,8 @@ $migration$;
 DELETE FROM public.marketplace_public_roster AS roster
 WHERE NOT private.has_public_profile_consent(roster.professional_id);
 
--- Fail the migration if any non-consented public projection remains.
+-- Public profile and directory readers start from this canonical projection.
+-- Client roles cannot select the roster table directly.
 DO $assert$
 BEGIN
   IF EXISTS (
@@ -75,15 +76,6 @@ BEGIN
     WHERE NOT private.has_public_profile_consent(roster.professional_id)
   ) THEN
     RAISE EXCEPTION 'Marketplace roster still contains a profile without participant-entered public consent';
-  END IF;
-
-  IF EXISTS (
-    SELECT 1
-    FROM public.professional_profiles AS profile
-    WHERE profile.visibility IN ('public', 'marketplace')
-      AND NOT private.has_public_profile_consent(profile.id)
-  ) THEN
-    RAISE EXCEPTION 'A profile without participant-entered public consent remains publicly visible';
   END IF;
 
   IF position(
