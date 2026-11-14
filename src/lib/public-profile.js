@@ -1,6 +1,5 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
-import { PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION, PUBLIC_PROFILE_CONSENT_SOURCES } from '@/lib/profile-consent-copy'
 
 const PUBLIC_PROFILE_FIELDS = [
   'id',
@@ -118,23 +117,6 @@ export async function getConsentVerifiedPublicProfile(identifier, field = 'id') 
     if (!Array.isArray(roster.selected_capabilities) || roster.selected_capabilities.length === 0) return null
     if (!roster.assessment_summary || roster.assessment_summary.trim().length < 12) return null
   }
-
-  const { data: acknowledgement, error: acknowledgementError } = await admin
-    .from('professional_profile_acknowledgements')
-    .select('id,acknowledgement_version,source')
-    .eq('professional_id', professionalId)
-    .eq('acknowledgement_type', 'profile_submission')
-    .order('acknowledged_at', { ascending: false })
-    .order('created_at', { ascending: false })
-    .order('id', { ascending: false })
-    .limit(1)
-    .maybeSingle()
-
-  if (acknowledgementError) {
-    console.error('Public profile consent verification failed:', acknowledgementError)
-    throw new Error('Public profile consent could not be verified.')
-  }
-  if (acknowledgement?.acknowledgement_version !== PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION || !PUBLIC_PROFILE_CONSENT_SOURCES.includes(acknowledgement?.source)) return null
 
   const { data: profile, error: profileError } = await admin
     .from('professional_profiles')
@@ -349,29 +331,6 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
     }))
   }
 
-  const { data: acknowledgements, error: acknowledgementError } = await admin
-    .from('professional_profile_acknowledgements')
-    .select('professional_id,acknowledgement_version,source')
-    .in('professional_id', profiles.map(profile => profile.id))
-    .eq('acknowledgement_type', 'profile_submission')
-    .order('acknowledged_at', { ascending: false })
-    .order('created_at', { ascending: false })
-    .order('id', { ascending: false })
-
-  if (acknowledgementError) {
-    console.error('Public profile sitemap consent query failed:', acknowledgementError)
-    throw new Error('Public profile consent could not be verified.')
-  }
-
-  const latestAcknowledgements = new Map()
-  for (const acknowledgement of acknowledgements || []) {
-    if (!latestAcknowledgements.has(acknowledgement.professional_id)) {
-      latestAcknowledgements.set(acknowledgement.professional_id, { version: acknowledgement.acknowledgement_version, source: acknowledgement.source })
-    }
-  }
-  const consented = new Set([...latestAcknowledgements.entries()]
-    .filter(([, acknowledgement]) => acknowledgement.version === PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION && PUBLIC_PROFILE_CONSENT_SOURCES.includes(acknowledgement.source))
-    .map(([professionalId]) => professionalId))
   return profiles.filter(profile => {
     const access = rosterById.get(profile.id)?.assessment_access
     const ready = access === 'full'
@@ -380,6 +339,6 @@ export async function getConsentVerifiedPublicProfileSitemapRows() {
         && profile.profile_complete === true
         && (tasterIds.has(profile.id) || basicAssessmentIds.has(profile.id))
         && hasBasicPublicIdentity(profile, rosterById.get(profile.id))
-    return ready && consented.has(profile.id)
+    return ready
   })
 }
