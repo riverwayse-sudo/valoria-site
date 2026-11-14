@@ -181,11 +181,11 @@ export default function WaitlistForm() {
               </div>
               <div className="wl-done-section">
                 <div className="wl-done-label">THE SHIFT</div>
-                <p className="wl-done-body">Valoria changes the question employers and organisers ask. Not <em className="wl-em-white">&ldquo;who do I already know?&rdquo;</em> — but <em className="wl-em-gold">&ldquo;who is genuinely the best for this?&rdquo;</em> One assessed standard. No guesswork. No gatekeeping.</p>
+                <p className="wl-done-body">Valoria helps employers and organisers look beyond familiarity by presenting professional capability through a more structured lens. The aim is clearer information, more considered discovery and better-informed decisions.</p>
               </div>
               <div className="wl-done-section">
                 <div className="wl-done-label">WHAT&apos;S COMING</div>
-                <p className="wl-done-body">A marketplace where every profile is verified by the VALU Index. Where employers search by capability, not connection. Where speakers get booked on merit. Where facilitators earn trust before they walk into the room.</p>
+                <p className="wl-done-body">Connected pathways where assessment context, professional experience and declared capabilities can support discovery. Organisations can explore talent, event organisers can identify relevant speakers, and development buyers can discuss suitable facilitators.</p>
               </div>
               <div className="wl-done-three">
                 <div className="wl-done-label">THREE WAYS IN</div>
