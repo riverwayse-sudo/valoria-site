@@ -59,14 +59,8 @@ BEGIN
 END;
 $migration$;
 
--- Remove public visibility where the latest record is not participant-entered.
--- No profile, assessment, capability or acknowledgement records are deleted.
-UPDATE public.professional_profiles AS profile
-SET visibility = 'registered_only',
-    updated_at = now()
-WHERE profile.visibility IN ('public', 'marketplace')
-  AND NOT private.has_public_profile_consent(profile.id);
-
+-- The public profile and marketplace readers both begin from this canonical
+-- projection. Remove rows lacking consent; retain all source profile data.
 -- The roster is a projection, not the source of truth. Remove only rows that
 -- cannot be supported by current participant-entered public consent.
 DELETE FROM public.marketplace_public_roster AS roster
