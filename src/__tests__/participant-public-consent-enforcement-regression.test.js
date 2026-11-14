@@ -5,6 +5,7 @@ const migration = fs.readFileSync(
   path.join(process.cwd(), 'supabase/migrations/20261114190000_restore_participant_public_consent_enforcement.sql'),
   'utf8'
 )
+const publicProfile = fs.readFileSync(path.join(process.cwd(), 'src/lib/public-profile.js'), 'utf8')
 
 describe('participant public-profile consent enforcement', () => {
   test('the consent helper requires the latest participant-entered public acknowledgement', () => {
@@ -26,6 +27,11 @@ describe('participant public-profile consent enforcement', () => {
     expect(migration).not.toMatch(/UPDATE\s+public\.professional_profiles/i)
     expect(migration).not.toMatch(/UPDATE\s+public\.valu_assessments/i)
     expect(migration).not.toMatch(/UPDATE\s+public\.professional_capabilities/i)
+  })
+
+  test('public profile reads require the canonical roster projection first', () => {
+    expect(publicProfile.indexOf(".from('marketplace_public_roster')")).toBeGreaterThanOrEqual(0)
+    expect(publicProfile.indexOf(".from('marketplace_public_roster')")).toBeLessThan(publicProfile.indexOf(".from('professional_profiles')"))
   })
 
   test('the helper remains private to trusted database execution', () => {
