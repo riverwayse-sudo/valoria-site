@@ -11,7 +11,7 @@ describe('participant public-profile consent enforcement', () => {
     expect(migration).toContain("acknowledgement.acknowledgement_version = 'public-profile-visibility-v3-2026-11-07'")
     expect(migration).toContain("acknowledgement.source IN ('profile_setup', 'profile_edit')")
     expect(migration).toContain('ORDER BY acknowledgement.acknowledged_at DESC NULLS LAST')
-    expect(migration).not.toMatch(/SELECT\\s+TRUE\\s*;/i)
+    expect(migration).not.toMatch(/SELECT\s+TRUE\s*;/i)
   })
 
   test('listing reconciliation uses the same canonical consent predicate', () => {
@@ -22,10 +22,10 @@ describe('participant public-profile consent enforcement', () => {
   test('reconciliation removes only public projection and visibility, not participant records', () => {
     expect(migration).toContain('SET visibility = \'registered_only\'')
     expect(migration).toContain('DELETE FROM public.marketplace_public_roster')
-    expect(migration).not.toMatch(/DELETE\\s+FROM\\s+public\\.professional_profiles/i)
-    expect(migration).not.toMatch(/DELETE\\s+FROM\\s+public\\.professional_profile_acknowledgements/i)
-    expect(migration).not.toMatch(/UPDATE\\s+public\\.valu_assessments/i)
-    expect(migration).not.toMatch(/UPDATE\\s+public\\.professional_capabilities/i)
+    expect(migration).not.toMatch(/DELETE\s+FROM\s+public\\.professional_profiles/i)
+    expect(migration).not.toMatch(/DELETE\s+FROM\s+public\\.professional_profile_acknowledgements/i)
+    expect(migration).not.toMatch(/UPDATE\s+public\\.valu_assessments/i)
+    expect(migration).not.toMatch(/UPDATE\s+public\\.professional_capabilities/i)
   })
 
   test('the helper remains private to trusted database execution', () => {
