@@ -133,7 +133,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).not.toContain("update({ profile_complete: true")
   })
 
-  test('profile setup and edit collect explicit consent while preserving the Basic listing path', () => {
+  test('profile setup and edit preserve the separate visibility acknowledgement workflow', () => {
     const setup = read('src/app/profile/setup/page.jsx')
     const edit = read('src/app/profile/edit/page.jsx')
     const route = read('src/app/api/profile/acknowledgements/route.js')
