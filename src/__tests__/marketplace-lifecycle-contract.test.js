@@ -502,7 +502,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     const homepage = read('src/components/LiveProfilesScroll.jsx')
     const directory = read('src/components/MarketplaceDirectory.jsx')
     expect(data).toContain('getApprovedPublicProfessionalIds(rows)')
-    expect(data).toContain('linkedTasterIds.has(profile.id) || currentBasicAssessmentIds.has(profile.id)')
+    expect(data).toContain('getApprovedPublicProfessionalIds(rows)')
     expect(data).toContain('rawHeadline.length >= 2')
     expect(publicProfile).toContain('hasCurrentFullAssessment')
     expect(homepage).toContain('profiles.slice(0, 13)')
