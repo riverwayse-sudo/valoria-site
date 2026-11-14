@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 
 const migration = fs.readFileSync(
-  path.join(process.cwd(), 'supabase/migrations/20261114190000_restore_participant_public_consent_enforcement.sql'),
+  path.join(process.cwd(), 'supabase/migrations/20261114195630_restore_participant_public_consent_enforcement.sql'),
   'utf8'
 )
 const publicProfile = fs.readFileSync(path.join(process.cwd(), 'src/lib/public-profile.js'), 'utf8')
