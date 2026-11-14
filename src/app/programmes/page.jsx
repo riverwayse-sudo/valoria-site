@@ -6,8 +6,8 @@ import '../pages.css'
 
 export const metadata = {
   title: 'Development Programmes — Valoria Institute',
-  description: 'Five PRIME-mapped development programmes delivered by certified facilitators. Each programme targets a specific cluster — so development closes the exact gaps your VALU Index assessment surfaced.',
-  keywords: ['PRIME programmes', 'professional development Nigeria', 'capability training Africa', 'VALU Index development', 'Valoria Develop programmes'],
+  description: 'PRIME-mapped development programmes for individuals and organisations. Each programme is scoped around relevant capability priorities, with facilitator suitability and any measurement approach confirmed for the engagement.',
+  keywords: ['PRIME programmes', 'professional development', 'capability development', 'VALU Index development', 'Valoria Develop programmes'],
   openGraph: {
     title: 'Development Programmes | Valoria Institute',
     description: 'A programme for every cluster. Development that maps to the same standard you\'re measured against.',
@@ -88,10 +88,10 @@ export default function ProgrammesPage() {
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WHY MEASUREMENT MATTERS</span></div>
               <h2 className="section-title">Development that<br /><em>shows up in the numbers.</em></h2>
               <p className="page-copy">
-                Because Valoria Develop programmes run on the same PRIME framework as the VALU Index, the before-and-after measurement is built in. Teams take the VALU Index before the programme. They retake it 90 days after. The cluster score movement is your ROI — visible, specific, and comparable across the cohort.
+                Valoria Develop programmes are designed around the same PRIME framework used by the VALU Index. Where assessment and follow-up measurement are included in the agreed scope, they can provide a structured view of capability development. The timing, method and reporting are confirmed before delivery.
               </p>
               <p className="page-copy page-copy-spaced">
-                Most organisations spend training budgets and then rely on a Net Promoter Score to know if it worked. Valoria Develop gives you a five-cluster score instead.
+                Rather than relying on attendance or satisfaction alone, organisations can agree relevant measures of progress as part of the programme scope.
               </p>
             </Reveal>
             <Reveal>
@@ -99,9 +99,9 @@ export default function ProgrammesPage() {
                 {[
                   'Pre-programme VALU Index establishes the baseline across all five clusters',
                   'Programme targets the specific cluster(s) where movement is needed most',
-                  'Certified facilitators deliver against defined PRIME behavioural anchors',
+                  'Facilitator suitability and relevant qualifications are confirmed for each engagement',
                   'Post-programme VALU Index (90 days out) shows what actually moved',
-                  'Cohort-level reporting available for organisational development leads',
+                  'Reporting requirements are agreed as part of the programme scope',
                 ].map((t, i) => (
                   <li key={i}>
                     <span className="dot"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#1D9E75" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
@@ -140,7 +140,7 @@ export default function ProgrammesPage() {
         <section className="page-section alt cta-banner">
           <Reveal>
             <h2 className="section-title">Commission a programme<br /><em>against the standard.</em></h2>
-            <p className="page-sub">Tell us which cluster your team needs to close, and we&apos;ll match you with the right certified facilitator.</p>
+            <p className="page-sub">Tell us which capability priorities your team needs to address. We&apos;ll review the requirements and confirm suitable delivery options.</p>
             <div className="page-hero-actions" style={{ justifyContent: 'center' }}>
               <a href="/contact-us" className="btn-gold">COMMISSION A PROGRAMME</a>
               <a href="/facilitators" className="btn-outline">HOW COMMISSIONING WORKS</a>
