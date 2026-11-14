@@ -89,7 +89,7 @@ export default function HomepageEvents() {
 
         <div className="home-events-footer">
           <span>PROFESSIONAL THINKING · CAPABILITY · PRACTICAL ACTION</span>
-          {isLive ? (
+          {isCurrent ? (
             <a href={MEET_URL} target="_blank" rel="noopener noreferrer">JOIN THE LIVE EVENT <span aria-hidden="true">↗</span></a>
           ) : (
             <a href={youtubeUrl} target="_blank" rel="noopener noreferrer">WATCH ON YOUTUBE <span aria-hidden="true">↗</span></a>
