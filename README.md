@@ -1,6 +1,6 @@
 # Valoria Institute — Public Site
 
-The public Valoria Institute marketing and marketplace-entry site, built with Next.js 14 and deployed to Vercel.
+The public Valoria Institute marketing and marketplace-entry site, built with Next.js 15 and deployed through the current project deployment pipeline.
 
 ## Staging deployment
 
@@ -9,7 +9,7 @@ The `staging` branch is the integration validation branch. Changes must pass the
 ## Production architecture
 
 - **`/`** — Institutional homepage with live professional count/profile rail, VALU snapshot entry point, marketplace pathways and webinar replay.
-- **`/marketplace`** — Public African Talent Bureau marketplace and track-specific discovery.
+- **`/marketplace`** — Public professional marketplace operated through the African Talent Bureau and its track-specific discovery pathways.
 - **`/profile/[id]`** — Public professional profile surface using the platform's public profile identifiers.
 - **`/profile/setup`** — Authenticated professional profile completion flow.
 - **`/dashboard`** — Authenticated account dashboard.
@@ -18,6 +18,8 @@ The `staging` branch is the integration validation branch. Changes must pass the
 - **`/privacypolicy`**, **`/terms-of-use`** — Legal pages.
 
 ## Brand source of truth
+
+Public website copy must follow [`docs/institutional-positioning-and-copy-standard.md`](docs/institutional-positioning-and-copy-standard.md), which defines Valoria's institution-first narrative, canonical terminology, claim controls and geographic/legal language.
 
 `src/lib/brand.js` is governed by Valoria Institute Brand Guidelines **VI-BG-2026-001**.
 

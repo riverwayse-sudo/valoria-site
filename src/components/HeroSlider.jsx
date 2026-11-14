@@ -37,9 +37,9 @@ export default function HeroSlider() {
         <div className={`hero-slide ${active === 0 ? 'is-active' : ''}`} aria-hidden={active !== 0}>
           <div className="container hero-inner">
             <div>
-              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">AN INTERNATIONAL PROFESSIONAL CAPABILITY INSTITUTION</span></div>
+              <div className="hero-eyebrow au d1"><div className="hero-eyebrow-line" /><span className="hero-eyebrow-text">THE INSTITUTIONAL STANDARD FOR PROFESSIONAL CAPABILITY</span></div>
               <h1 className="hero-title au d2">Your professional worth<br />deserves to be <em>understood.</em></h1>
-              <p className="hero-sub au d3">Valoria Institute helps people understand, develop and demonstrate their professional capabilities — connecting expertise with meaningful opportunities across industries and borders.</p>
+              <p className="hero-sub au d3">Valoria Institute establishes a structured standard for understanding professional capability. Through assessment, PRIME-based development and connected pathways to professional visibility and opportunity, it helps individuals and organisations make capability clearer and more actionable.</p>
               <div className="hero-actions au d4"><a href={BRAND.assessmentUrl} className="btn-gold">DISCOVER YOUR CAPABILITIES</a><MarketplaceCTA className="btn-outline">EXPLORE THE BUREAU</MarketplaceCTA></div>
               <div className="hero-mobile-card au d5" aria-hidden="true"><div className="hmc-row"><div className="hmc-score">84</div><div className="hmc-right"><div className="hmc-desig">FORCE TO ALIGN WITH · ✦✦</div><div className="hmc-bars">{bars.map((w, i) => <div key={i} className={`hmc-bar score-${w}`} />)}</div></div></div></div>
             </div>
