@@ -39,7 +39,7 @@ export default function HomepageEvents() {
         <div className="home-events-feature">
           <div className="home-events-video">
             {isCurrent ? (
-              <div className="home-events-poster"><EventPoster session={featured} /></div>
+              <div className="events-page home-events-poster"><EventPoster session={featured} /></div>
             ) : (
               <a
                 className="home-events-video-link"
