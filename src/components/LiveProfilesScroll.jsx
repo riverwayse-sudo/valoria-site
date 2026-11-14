@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { AssessmentStartLink } from '@/components/Nav'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { getValuTier, PRIME_CLUSTERS } from '@/lib/brand'
+import { BRAND, getValuTier, PRIME_CLUSTERS } from '@/lib/brand'
 import { getMarketplaceDirectoryData } from '@/lib/marketplace-data'
 
 const TRACK_META = {
@@ -42,7 +42,7 @@ export default async function LiveProfilesScroll() {
         <div className="live-profiles-copy">
           <div className="live-profiles-kicker">THE VALORIA MARKETPLACE</div>
           <h2 id="marketplace-title" className="live-profiles-title">Find professionals <em>by capability.</em></h2>
-          <p className="live-profiles-subtitle">Explore public profiles by capability. Some profiles include additional VALU Index insight where available; every profile requires explicit visibility consent.</p>
+          <p className="live-profiles-subtitle">Explore public profiles by capability. Full listings add VALU Index insight where available; every listing requires explicit visibility consent.</p>
           {!dataUnavailable && <div className="live-profiles-proof" aria-label="Public marketplace profile count"><strong>{discoverableCount}</strong><span>public professional profiles</span></div>}
         </div>
 
@@ -55,7 +55,7 @@ export default async function LiveProfilesScroll() {
             {counts.candidate > 0 ? (
               <Link href="/marketplace/talent" className="live-profile-action primary" data-marketplace-intent="talent"><span><small>ATB CONNECT</small>Find talent</span><b>→</b></Link>
             ) : (
-              <a href="/contact-us?type=candidate" className="live-profile-action primary"><span><small>ATB CONNECT</small>Discuss your talent needs</span><b>→</b></a>
+              <a href="/contact-us?type=candidate" className="live-profile-action primary"><span><small>ATB CONNECT</small>Request sourcing access</span><b>→</b></a>
             )}
             {counts.speaker > 0 ? (
               <Link href="/marketplace/speakers" className="live-profile-action" data-marketplace-intent="speaker"><span><small>ATB SPOTLIGHT</small>Find a speaker</span><b>→</b></Link>
@@ -85,11 +85,8 @@ export default async function LiveProfilesScroll() {
                       : Array.isArray(profile.selected_capabilities) && profile.selected_capabilities.length
                         ? profile.selected_capabilities
                         : (Array.isArray(profile.capabilities) ? profile.capabilities : [])
-                    const normalizedTracks = tracks.map(track => {
-                      const value = String(track || '').trim().toLowerCase()
-                      return value === 'talent' ? 'candidate' : value
-                    })
-                    const capabilityStates = Object.entries(TRACK_META).map(([key, meta]) => ({ key, label: meta.label, active: normalizedTracks.includes(key) }))
+                    const normalizedTracks = tracks.map(track => track === 'talent' ? 'candidate' : track)
+                    const capabilityLabels = normalizedTracks.map(track => TRACK_META[track]?.label).filter(Boolean)
                     const profileHref = profile.atb_id ? `/profile/${encodeURIComponent(profile.atb_id)}` : '/marketplace'
                     const development = developmentArea(profile.cluster_scores)
                     const isBasic = profile.assessment_access === 'basic'
@@ -101,13 +98,13 @@ export default async function LiveProfilesScroll() {
                           <div className="vi-scroll-topline"><span>{profile.atb_id || 'VALORIA PROFESSIONAL'}</span><i>PUBLIC</i></div>
                           <strong className="vi-scroll-name">{profile.atb_id || 'VALORIA PROFESSIONAL'}</strong>
                           <div className="vi-scroll-headline">{displayText(profile.headline)}</div>
-                          <div className="vi-scroll-track-label" role="group" aria-label={`Capabilities: ${capabilityStates.map(item => `${item.label} ${item.active ? 'selected' : 'not selected'}`).join(', ')}`}>{capabilityStates.map(item => <span key={item.key} className={item.active ? 'is-active' : 'is-inactive'} aria-hidden="true">{item.label}</span>)}</div>
-                          <div className="vi-scroll-designation">{isBasic ? 'PUBLIC PROFILE' : (tier?.name || 'VALU INDEX PROFILE')}</div>
+                          <div className="vi-scroll-track-label">{capabilityLabels.length ? capabilityLabels.join(' · ') : 'NO DECLARED ROLE'}</div>
+                          <div className="vi-scroll-designation">{isBasic ? 'BASIC LISTING' : (tier?.name || 'ASSESSMENT FOLLOW-UP')}</div>
                           {!isBasic && <><div className="vi-scroll-summary">{displayText(profile.assessment_summary)}</div>{development && <div className="vi-scroll-development">TOP DEVELOPMENT AREA · {development}</div>}</>}
                         </div>
-                        <div className="vi-scroll-score" aria-label={isBasic ? 'Public professional profile' : `VALU Index ${profile.valu_index} points`}>
-                          <span className="vi-scroll-score-label">{isBasic ? 'PROFILE' : 'VALU INDEX'}</span>
-                          <strong>{isBasic ? 'PUBLIC' : profile.valu_index}</strong>
+                        <div className="vi-scroll-score" aria-label={isBasic ? 'Basic marketplace listing' : `VALU Index ${profile.valu_index} points`}>
+                          <span className="vi-scroll-score-label">{isBasic ? 'LISTING LEVEL' : 'VALU INDEX'}</span>
+                          <strong>{isBasic ? 'BASIC' : profile.valu_index}</strong>
                           {!isBasic && <span className="vi-scroll-score-max">points</span>}
                         </div>
                         <span className="vi-scroll-card-arrow" aria-hidden="true">↗</span>
@@ -123,7 +120,7 @@ export default async function LiveProfilesScroll() {
       ) : (
         <div className="live-profiles-public-state" role="status">
           <strong className="live-profiles-empty-title">The registry is opening through verified capability.</strong>
-          Public profiles appear only after the participant has completed the applicable requirements and explicitly agreed to public visibility. Until then, employers and organisers can submit a brief and our team can advise on the appropriate next step.
+          Public profiles appear only after the participant has completed the applicable requirements and explicitly agreed to public visibility. Until then, employers and organisers can submit a brief and our team can advise on the appropriate sourcing route.
           <div className="live-profiles-empty-actions">
             <Link href="/contact-us?type=candidate">SUBMIT A TALENT BRIEF <span aria-hidden="true">→</span></Link>
             <Link href="/contact-us?type=speaker_booking">DISCUSS A SPEAKER BRIEF <span aria-hidden="true">→</span></Link>
@@ -134,8 +131,8 @@ export default async function LiveProfilesScroll() {
 
       <div className="live-profiles-professional-cta">
         <span className="live-profiles-professional-rule" />
-        <div><small>YOUR PROFESSIONAL PRESENCE</small><strong>Make your capabilities easier to understand and connect to opportunity.</strong></div>
-        <AssessmentStartLink href="/valu/register/">TAKE THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
+        <div><small>WANT TO BE DISCOVERED?</small><strong>Build a professional profile that helps relevant buyers understand your capabilities.</strong></div>
+        <AssessmentStartLink href={BRAND.assessmentUrl}>TAKE THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
       </div>
     </section>
   )
