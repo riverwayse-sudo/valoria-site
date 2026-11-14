@@ -2,11 +2,11 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import EventPoster from '@/components/EventPoster'
-import EventRegistrationTrigger from '@/components/EventRegistrationTrigger'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState } from '@/lib/professionalStandardSeries'
 
 const SESSION = PROFESSIONAL_STANDARD_SERIES.find((item) => item.id === '04')
-const DISMISS_KEY = 'valoria-home-event-popup-dismissed-2026-11-v2'
+const DISMISS_KEY = 'valoria-home-event-popup-dismissed-2026-11-v3'
+const MEET_URL = 'https://meet.google.com/hde-owjd-mwc'
 
 export default function HomepageEventPopup() {
   const [open, setOpen] = useState(false)
@@ -19,7 +19,7 @@ export default function HomepageEventPopup() {
   }, [])
 
   useEffect(() => {
-    if (!SESSION || getSessionState(SESSION) !== 'registration-open') return undefined
+    if (!SESSION || !['registration-open', 'live'].includes(getSessionState(SESSION))) return undefined
 
     try {
       if (window.localStorage.getItem(DISMISS_KEY) === '1') return undefined
@@ -59,11 +59,11 @@ export default function HomepageEventPopup() {
           <EventPoster session={SESSION} />
         </div>
         <div className="homepage-event-popup-copy">
-          <p className="homepage-event-popup-eyebrow">THE NEXT VALORIA CONVERSATION</p>
-          <h2 id="homepage-event-popup-title">Make your influence count.</h2>
+          <p className="homepage-event-popup-eyebrow">LIVE AT VALORIA · PROFESSIONAL STANDARD SERIES</p>
+          <h2 id="homepage-event-popup-title">The conversation is live.</h2>
           <p>{SESSION.description}</p>
           <div className="homepage-event-popup-actions">
-            <EventRegistrationTrigger session={SESSION} className="event-register-button" >RESERVE YOUR PLACE <span aria-hidden="true">→</span></EventRegistrationTrigger>
+            <a className="event-register-button" href={MEET_URL} target="_blank" rel="noopener noreferrer">JOIN THE LIVE EVENT <span aria-hidden="true">→</span></a>
             <button className="homepage-event-popup-dismiss" type="button" onClick={close}>Maybe later</button>
           </div>
         </div>
