@@ -145,8 +145,10 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(setup).not.toContain('if (!row.profile_complete)')
     expect(edit).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
     expect(edit).toContain('REGISTERED_PROFILE_CONSENT_TEXT')
-    expect(route).toContain("const basicEligible = roster?.assessment_access === 'basic' && (Boolean(taster) || currentAssessmentEligible)")
-    expect(route).toContain("const fullEligible = roster?.assessment_access === 'full' && currentProfile?.profile_complete === true")
+    expect(route).toContain('Record the participant\'s explicit visibility choice before asking the')
+    expect(route).toContain('checking roster membership here would create a circular')
+    expect(route).not.toContain("const basicEligible = roster?.assessment_access === 'basic'")
+    expect(route).not.toContain("const fullEligible = roster?.assessment_access === 'full'")
     expect(copy).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
   })
   test('database keeps profile completeness separate from full-assessment and listing eligibility', () => {
