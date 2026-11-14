@@ -27,11 +27,14 @@ for (const [name, path, expected] of checks) {
 }
 
 const home = await fetch(base + '/').then(r => r.text())
-for (const marker of ['START THE VALU INDEX TASTER', 'Find professionals']) {
+for (const marker of ['START THE VALU INDEX TASTER', 'Find professionals', 'JOIN THE LIVE EVENT', 'Influence Without Authority: The Real Currency of Organisational Power']) {
   const ok = home.includes(marker)
   console.log(`${ok ? 'PASS' : 'FAIL'} homepage marker: ${marker}`)
   if (!ok) failed++
 }
+const staleEventCta = home.includes('REGISTER FOR THIS CONVERSATION')
+console.log(`${staleEventCta ? 'FAIL' : 'PASS'} homepage stale event CTA removed`)
+if (staleEventCta) failed++
 
 if (failed) {
   console.error(`Production smoke failed: ${failed} check(s).`)
