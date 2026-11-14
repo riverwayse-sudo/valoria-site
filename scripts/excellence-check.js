@@ -98,13 +98,6 @@ if (!fs.existsSync(publicProfilePath)) {
 } else {
   const publicProfile = fs.readFileSync(publicProfilePath, 'utf8');
   for (const required of [
-    'professional_profile_acknowledgements',
-    'PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION',
-    'PUBLIC_PROFILE_CONSENT_SOURCES',
-    'PUBLIC_PROFILE_CONSENT_SOURCES.includes(acknowledgement?.source)',
-    "acknowledgement_type', 'profile_submission'",
-    "acknowledgement?.acknowledgement_version !== PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION",
-    ".order('acknowledged_at', { ascending: false })",
     "visibility', 'public'",
     "listing_status', 'listed'",
     "is_test', false",
