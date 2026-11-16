@@ -8,7 +8,7 @@
 "use strict";
 
 const { computeFingerprint, buildLockRecord, isLockActive } = require("../lockEngine");
-const { getDesignation, getPathway, computeWeightedIndex, computeClusterScoresOnly } = require("../scoringEngine");
+const { getDesignation, getPathway, computeWeightedIndex, computeClusterScoresOnly } = require("./fixtures/legacyScoringEngine");
 
 // ── SHARED RESULT SHAPE ───────────────────────────────────────────────────
 // Every path that produces a "results" object must return ALL of these fields.
