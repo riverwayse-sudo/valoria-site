@@ -3,7 +3,7 @@
 import EventPoster from '@/components/EventPoster'
 import { PROFESSIONAL_STANDARD_SERIES, getSessionState, formatSessionDate } from '@/lib/professionalStandardSeries'
 
-const replay = PROFESSIONAL_STANDARD_SERIES.find((session) => session.dateApproved && session.youtubeVideoId)
+const replay = [...PROFESSIONAL_STANDARD_SERIES].reverse().find((session) => session.dateApproved && session.youtubeVideoId)
 const currentSession = PROFESSIONAL_STANDARD_SERIES.find((session) => ['registration-open', 'live'].includes(getSessionState(session)))
 const featured = currentSession || replay
 const MEET_URL = 'https://meet.google.com/hde-owjd-mwc'
