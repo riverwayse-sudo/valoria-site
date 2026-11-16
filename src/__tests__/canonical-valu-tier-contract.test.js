@@ -17,9 +17,10 @@ describe('Canonical VALU merit tiers', () => {
     expect(brand).not.toContain("name: 'Developing Professional'")
     expect(brand).not.toContain("name: 'Building Foundations'")
 
-    for (const tier of ['Elite', 'Distinguished', 'Proficient', 'Standard']) {
-      expect(prime).toContain(`name: '${tier}'`)
-    }
+    expect(prime).toContain('TIER_DESIGNATIONS.map(item =>')
+    expect(prime).toContain('${item.min}–${item.max} points')
+    expect(prime).toContain('DESIGNATION_MEANINGS[item.name]')
+    expect(prime).not.toContain('const DESIGNATIONS = [')
   })
 
   test('basic listings remain without an official merit tier', () => {
