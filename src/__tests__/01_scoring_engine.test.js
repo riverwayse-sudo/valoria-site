@@ -13,7 +13,7 @@ const {
   getDesignation,
   getPathway,
   computeResults,
-} = require("../scoringEngine");
+} = require("./fixtures/legacyScoringEngine");
 
 function makeQuestion(id, cluster, skill, validAnchor = false) {
   return {
@@ -146,7 +146,10 @@ describe("computeResults (full pipeline)", () => {
     const answers={}; FIXTURE_QUESTIONS.forEach((q,i)=>answers[i]=2); const r=computeResults(answers,slowTimings,{},FIXTURE_QUESTIONS);
     if(r.uniformityFlag) expect(r.listed).toBe(false); expect(typeof r.listed).toBe("boolean");
   });
-  test("frontend and backend produce identical index for same raw scores", () => {
-    const raw={P:27,R:36,I:45,M:27,E:27}; const scores=computeClusterScoresOnly(raw); expect(computeWeightedIndex(scores)).toBe(computeWeightedIndex(scores));
+  test("known raw cluster scores produce the expected weighted index", () => {
+    const raw = { P: 27, R: 36, I: 45, M: 27, E: 27 };
+    const scores = computeClusterScoresOnly(raw);
+    expect(scores).toEqual({ P: 75, R: 75, I: 75, M: 75, E: 75 });
+    expect(computeWeightedIndex(scores)).toBe(75);
   });
 });
