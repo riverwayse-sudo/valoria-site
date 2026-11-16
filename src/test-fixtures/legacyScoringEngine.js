@@ -1,7 +1,7 @@
-// LEGACY TEST HARNESS ONLY — not used by the production assessment flow.
+// LEGACY TEST FIXTURE ONLY — not used by the production assessment flow.
 // The production scoring source of truth is valoria-platform/valoria-final/src/
 // scoringEngine.js together with valuV4Contract.js. Keep this module aligned
-// only with the site-side unit-test fixtures; never use it to calculate live
+// only with these site-side unit tests; never use it to calculate live
 // participant scores. Production scoring changes must be made in the platform
 // contract and validated against the canonical question bank.
 
