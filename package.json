@@ -13,7 +13,6 @@
     "lint:critical": "npx --yes eslint@8.57.1 --no-eslintrc --env browser,node,es2021 --parser-options '{\"ecmaVersion\":\"latest\",\"sourceType\":\"module\",\"ecmaFeatures\":{\"jsx\":true}}' --rule 'no-undef:error' 'src/app/profile/[id]/page.jsx' 'src/app/profile/[id]/ProfileClient.jsx' src/app/login/page.jsx src/app/signup/page.jsx src/app/professional-signup/page.jsx src/app/dashboard/page.jsx src/app/report/page.jsx src/app/profile/onboarding/page.jsx"
   },
   "dependencies": {
-    "@next/third-parties": "15.5.29",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.108.2",
     "next": "15.5.29",
