@@ -13,7 +13,7 @@ const {
   getDesignation,
   getPathway,
   computeResults,
-} = require("./fixtures/legacyScoringEngine");
+} = require("../test-fixtures/legacyScoringEngine");
 
 function makeQuestion(id, cluster, skill, validAnchor = false) {
   return {
