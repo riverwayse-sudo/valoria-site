@@ -1,7 +1,7 @@
 import Nav, { AssessmentStartLink } from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
-import { PRIME_CLUSTERS } from '@/lib/brand'
+import { PRIME_CLUSTERS, TIER_DESIGNATIONS } from '@/lib/brand'
 import '../pages.css'
 
 export const metadata = {
@@ -12,12 +12,12 @@ export const metadata = {
 }
 
 
-const DESIGNATIONS = [
-  { name: 'Elite', range: '90–100 points', meaning: 'A distinguished level of assessed professional capability across the PRIME framework.' },
-  { name: 'Distinguished', range: '75–89 points', meaning: 'Strong professional capability, supported by clear strengths across the PRIME dimensions.' },
-  { name: 'Proficient', range: '55–74 points', meaning: 'A credible professional capability baseline with demonstrated strengths and focused development opportunities.' },
-  { name: 'Standard', range: '35–54 points', meaning: 'An established starting baseline for structured professional development.' },
-]
+const DESIGNATION_MEANINGS = {
+  Elite: 'A distinguished level of assessed professional capability across the PRIME framework.',
+  Distinguished: 'Strong professional capability, supported by clear strengths across the PRIME dimensions.',
+  Proficient: 'A credible professional capability baseline with demonstrated strengths and focused development opportunities.',
+  Standard: 'An established starting baseline for structured professional development.',
+}
 
 export default function PrimePage() {
   return (
@@ -75,10 +75,10 @@ export default function PrimePage() {
               <h2 className="section-title">Progress is<br /><em>earned, not purchased.</em></h2>
             </Reveal>
             <div className="prime-tier-list">
-              {DESIGNATIONS.map(item => (
+              {TIER_DESIGNATIONS.map(item => (
                 <article key={item.name} className="card-gold prime-tier">
-                  <div className="prime-tier-meta"><div>{item.name}</div><small className="prime-tier-range">{item.range}</small></div>
-                  <p className="cluster-desc prime-tier-copy">{item.meaning}</p>
+                  <div className="prime-tier-meta"><div>{item.name}</div><small className="prime-tier-range">{`${item.min}–${item.max} points`}</small></div>
+                  <p className="cluster-desc prime-tier-copy">{DESIGNATION_MEANINGS[item.name]}</p>
                 </article>
               ))}
             </div>
