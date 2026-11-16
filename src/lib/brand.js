@@ -27,6 +27,9 @@ export const PRIME_CLUSTERS = [
   { letter: 'E', name: 'Enterprise', color: COLORS.gold, subtitle: 'How you build', skills: ['Commercial Thinking', 'Systems Building', 'Venture Mindset'] },
 ]
 
+// Stable lookup for cluster labels used by marketplace and profile views.
+export const PRIME_CLUSTER_NAMES = Object.fromEntries(PRIME_CLUSTERS.map(({ letter, name }) => [letter, name]))
+
 // VALU Index values are points out of 100, not percentages.
 // A taster completion grants Basic marketplace access only; it does not create an
 // official VALU Index score or merit tier. Full assessment completion unlocks
