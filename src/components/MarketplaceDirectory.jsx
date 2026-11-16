@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { getValuTier, PRIME_CLUSTERS, TIER_DESIGNATIONS } from '@/lib/brand'
+import { getValuTier, PRIME_CLUSTERS, PRIME_CLUSTER_NAMES, TIER_DESIGNATIONS } from '@/lib/brand'
 
 const TRACKS = [
   ['all','All', '/marketplace'],
@@ -16,7 +16,7 @@ const TRACKS = [
   ['speaker','Speakers','/marketplace/speakers'],
   ['facilitator','Facilitators','/marketplace/facilitators'],
 ]
-const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Mastery', E:'Enterprise' }
+const CLUSTER_NAMES = PRIME_CLUSTER_NAMES
 const SCORE_BANDS = TIER_DESIGNATIONS.filter(tier => tier.min >= 35).map(tier => ({ name:tier.name, min:tier.min, max:tier.max }))
 
 const normalize = v => String(v || '').toLowerCase() === 'talent' ? 'candidate' : String(v || '').toLowerCase()
