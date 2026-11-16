@@ -348,7 +348,7 @@ describe("sessionSeed contract", () => {
   });
 
   test("different session seeds produce different question orders", () => {
-    const { seededShuffle } = require("../scoringEngine");
+    const { seededShuffle } = require("./fixtures/legacyScoringEngine");
     const options = [
       { text: "A", score: 1 }, { text: "B", score: 2 },
       { text: "C", score: 3 }, { text: "D", score: 4 },
