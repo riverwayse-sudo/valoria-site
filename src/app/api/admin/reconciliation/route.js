@@ -1,4 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
+import adminAuth from '@/lib/server/admin-auth.cjs'
+
+const { authorizeAdmin } = adminAuth
 import { PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION } from '@/lib/profile-consent-copy'
 
 function db() {
@@ -8,14 +11,9 @@ function db() {
 }
 async function requireAdmin(request) {
   const supabase = db()
-  if (!supabase) return { supabase:null, response:Response.json({error:'Service not configured.'},{status:503}) }
-  const token=(request.headers.get('authorization')||'').replace(/^Bearer\s+/i,'')
-  if(!token) return {supabase,response:Response.json({error:'Not authenticated.'},{status:401})}
-  const {data,error}=await supabase.auth.getUser(token)
-  if(error||!data?.user?.id) return {supabase,response:Response.json({error:'Not authenticated.'},{status:401})}
-  const {data:admin}=await supabase.from('admin_users').select('id').eq('id',data.user.id).maybeSingle()
-  if(!admin) return {supabase,response:Response.json({error:'Admin access required.'},{status:403})}
-  return {supabase,user:data.user}
+  if (!supabase) return { supabase: null, user: null, response: Response.json({ error: 'Service not configured.' }, { status: 503 }) }
+  const { user, response } = await authorizeAdmin(request, supabase)
+  return { supabase, user, response }
 }
 export async function GET(request){
   const {supabase,response}=await requireAdmin(request)
