@@ -1,7 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { hashEventCertificateToken } from '@/lib/event-certificate-token'
 
-export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 function db() {
@@ -30,7 +29,7 @@ export async function GET(request, { params }) {
   const filename = `Valoria-Certificate-${certificate.recipient_name.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '')}.pdf`
   const { data: signed, error: signedError } = await supabase.storage
     .from(certificate.storage_bucket)
-    .createSignedUrl(certificate.storage_path, 60, { download: filename })
+    .createSignedUrl(certificate.storage_path, 60, { download: true })
 
   if (signedError || !signed?.signedUrl) {
     console.error('Event certificate signed URL failed:', signedError?.message || 'No URL returned')
@@ -42,5 +41,7 @@ export async function GET(request, { params }) {
     .update({ downloaded_at: new Date().toISOString() })
     .eq('id', certificate.id)
 
-  return Response.redirect(signed.signedUrl, 302)
+  const downloadUrl = new URL(signed.signedUrl)
+  downloadUrl.searchParams.set('download', filename)
+  return Response.redirect(downloadUrl.toString(), 302)
 }
