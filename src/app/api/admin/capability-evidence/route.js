@@ -1,20 +1,18 @@
 import { NextResponse } from 'next/server'
+import adminAuth from '@/lib/server/admin-auth.cjs'
+
+const { authorizeAdmin } = adminAuth
 import { createClient } from '@supabase/supabase-js'
 
 function adminClient(){
   const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY
   return url&&key?createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}}):null
 }
-async function requireAdmin(request){
-  const db=adminClient()
-  if(!db) return {response:NextResponse.json({error:'Review service is unavailable.'},{status:503})}
-  const token=request.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1]
-  if(!token) return {response:NextResponse.json({error:'Not authenticated.'},{status:401})}
-  const {data:{user},error}=await db.auth.getUser(token)
-  if(error||!user) return {response:NextResponse.json({error:'Not authenticated.'},{status:401})}
-  const {data:admin}=await db.from('admin_users').select('id').eq('id',user.id).maybeSingle()
-  if(!admin) return {response:NextResponse.json({error:'Admin access required.'},{status:403})}
-  return {db,user}
+async function requireAdmin(request) {
+  const supabase = adminClient()
+  if (!supabase) return { supabase: null, db: null, user: null, response: Response.json({ error: 'Review service is unavailable.' }, { status: 503 }) }
+  const { user, response } = await authorizeAdmin(request, supabase)
+  return { supabase, db: supabase, user, response }
 }
 
 export async function GET(request){
