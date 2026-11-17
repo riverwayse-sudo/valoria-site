@@ -94,6 +94,9 @@ export async function POST(request) {
 
   if (insertError) {
     await supabase.storage.from(STORAGE_BUCKET).remove([storagePath])
+    if (insertError.code === '23505') {
+      return Response.json({ error: 'A certificate has already been issued for this attendee and event.' }, { status: 409 })
+    }
     console.error('Event certificate record insert failed:', insertError.message)
     return Response.json({ error: 'Certificate record could not be saved.' }, { status: 500 })
   }
