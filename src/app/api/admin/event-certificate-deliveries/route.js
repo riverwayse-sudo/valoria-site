@@ -32,6 +32,12 @@ async function requireAdmin(request) {
   return { supabase }
 }
 
+export async function GET(request) {
+  const { response } = await requireAdmin(request)
+  if (response) return response
+  return Response.json({ ok: true }, { headers: { 'Cache-Control': 'no-store' } })
+}
+
 export async function POST(request) {
   const { supabase, response } = await requireAdmin(request)
   if (response) return response
