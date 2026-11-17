@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
-import { authorizeAdmin } from '@/lib/server/admin-auth.cjs'
+import adminAuth from '@/lib/server/admin-auth.cjs'
+
+const { authorizeAdmin } = adminAuth
 
 function db() {
   const url=process.env.NEXT_PUBLIC_SUPABASE_URL, key=process.env.SUPABASE_SERVICE_ROLE_KEY
