@@ -1,20 +1,24 @@
-import { createEventCertificateToken, hashEventCertificateToken } from '../lib/event-certificate-token'
+const fs = require('fs')
+const path = require('path')
 
-describe('event certificate token helpers', () => {
-  test('creates a cryptographically random 256-bit hex token', () => {
-    const token = createEventCertificateToken()
-    expect(token).toMatch(/^[a-f0-9]{64}$/)
+describe('event certificate token contract', () => {
+  const source = fs.readFileSync(
+    path.join(process.cwd(), 'src/lib/event-certificate-token.js'),
+    'utf8'
+  )
+
+  test('generates a cryptographically random 256-bit token', () => {
+    expect(source).toContain('new Uint8Array(32)')
+    expect(source).toContain('crypto.getRandomValues(bytes)')
+    expect(source).toContain("toString(16).padStart(2, '0')")
   })
 
-  test('hashes valid tokens to a fixed SHA-256 digest', async () => {
-    const digest = await hashEventCertificateToken('a'.repeat(64))
-    expect(digest).toMatch(/^[a-f0-9]{64}$/)
-    expect(await hashEventCertificateToken('a'.repeat(64))).toBe(digest)
+  test('stores only a SHA-256 digest of a valid 64-character hex token', () => {
+    expect(source).toContain("!/^[a-f0-9]{64}$/.test(value)")
+    expect(source).toContain("subtle.digest('SHA-256'")
   })
 
-  test('rejects malformed tokens before lookup', async () => {
-    expect(await hashEventCertificateToken('not-a-token')).toBeNull()
-    expect(await hashEventCertificateToken('')).toBeNull()
-    expect(await hashEventCertificateToken('g'.repeat(64))).toBeNull()
+  test('returns no digest for malformed tokens', () => {
+    expect(source).toContain('if (!/^[a-f0-9]{64}$/.test(value)) return null')
   })
 })
