@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
-import { authorizeAdmin } from '@/lib/server/admin-auth'
+import adminAuth from '@/lib/server/admin-auth.cjs'
+
+const { authorizeAdmin } = adminAuth
 
 function db() {
   return createClient(
