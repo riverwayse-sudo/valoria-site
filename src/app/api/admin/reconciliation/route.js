@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
-import { authorizeAdmin } from '@/lib/server/admin-auth.cjs'
+import adminAuth from '@/lib/server/admin-auth.cjs'
+
+const { authorizeAdmin } = adminAuth
 import { PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION } from '@/lib/profile-consent-copy'
 
 function db() {
