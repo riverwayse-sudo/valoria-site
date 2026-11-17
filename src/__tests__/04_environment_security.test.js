@@ -222,67 +222,17 @@ describe("Secret scanning — no credentials in source files", () => {
   });
 });
 
-// ── SECTION 4: RLS security contract ─────────────────────────────────────
-describe("RLS security contract (logic layer)", () => {
-  // These tests assert the *logic* of RLS decisions without hitting the DB.
-  // Actual DB RLS tests require a test Supabase project — see README.
-
-  test("client-side admin check is never the sole security gate", () => {
-    // The pattern: if (user.isAdmin) → decorative only.
-    // Real security must be enforced by RLS on the server.
-    // This test documents the contract — not testable in unit tests,
-    // but flagged for integration testing against the actual DB.
-    const adminCheck = (user) => user?.role === "admin";
-    // Client says admin
-    expect(adminCheck({ role: "admin" })).toBe(true);
-    // But server RLS must ALSO check — client check alone is insufficient.
-    // This test exists as a contract marker.
-    expect(true).toBe(true); // placeholder — real check is in Supabase RLS policy
+// ── SECTION 4: Authorization and data-access integration coverage ────────
+describe("Authorization and data-access coverage boundaries", () => {
+  test("admin authorization is exercised by the application helper test suite", () => {
+    const testPath = path.join(__dirname, "admin-authorization.test.js");
+    expect(fs.existsSync(testPath)).toBe(true);
   });
 
-  test("anon key cannot be used for service_role operations", () => {
-    const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNia2dwaXNna3VoYmFsc3hxa2RyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzMjI2NjEsImV4cCI6MjA5Mzg5ODY2MX0.iRPs_W6O6JkkHyVlH-9XkEgA1HNo8xtaMakoV5kwLEY";
-    const payload = JSON.parse(Buffer.from(ANON_KEY.split(".")[1], "base64").toString());
-    // Anon key must never have service_role — would bypass all RLS
-    expect(payload.role).toBe("anon");
-    expect(payload.role).not.toBe("service_role");
-  });
-
-  test("admin authorization is database-backed, not an email allowlist", () => {
-    // Runtime authorization is enforced by the admin_users table and server-side
-    // checks. No static ADMIN_EMAILS allowlist is part of the application contract.
+  test("database RLS behavior is not represented as unit-tested without a test database", () => {
+    // RLS enforcement requires integration tests against the deployed schema.
+    // Do not simulate PostgREST filters locally and present that as proof.
     expect(true).toBe(true);
-  });
-
-  test("valu_assessments table access requires identity_hash (no naked selects)", () => {
-    // Simulates the fetch pattern used in fetchAssessmentByFingerprint
-    // A proper fetch always filters by identity_hash
-    function buildFetchParams(fingerprint) {
-      if (!fingerprint) throw new Error("fingerprint required");
-      return new URLSearchParams({
-        identity_hash: `eq.${fingerprint}`,
-        select: "name,role,total_score,cluster_scores,skill_scores,ai_report",
-        order: "completed_at.desc",
-        limit: "1",
-      });
-    }
-    const params = buildFetchParams("fp_abc123");
-    expect(params.get("identity_hash")).toBe("eq.fp_abc123");
-    expect(params.get("limit")).toBe("1");
-  });
-
-  test("fetchAssessmentByEmail always includes email filter", () => {
-    function buildEmailFetchParams(email) {
-      if (!email) throw new Error("email required");
-      return new URLSearchParams({
-        email: `eq.${email}`,
-        select: "name,role,total_score,cluster_scores,skill_scores",
-        order: "completed_at.desc",
-        limit: "1",
-      });
-    }
-    const params = buildEmailFetchParams("user@example.com");
-    expect(params.get("email")).toBe("eq.user@example.com");
   });
 });
 
