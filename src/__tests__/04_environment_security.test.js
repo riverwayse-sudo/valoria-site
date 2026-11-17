@@ -222,19 +222,11 @@ describe("Secret scanning — no credentials in source files", () => {
   });
 });
 
-// ── SECTION 4: Authorization and data-access integration coverage ────────
-describe("Authorization and data-access coverage boundaries", () => {
-  test("admin authorization is exercised by the application helper test suite", () => {
-    const testPath = path.join(__dirname, "admin-authorization.test.js");
-    expect(fs.existsSync(testPath)).toBe(true);
-  });
-
-  test("database RLS behavior is not represented as unit-tested without a test database", () => {
-    // RLS enforcement requires integration tests against the deployed schema.
-    // Do not simulate PostgREST filters locally and present that as proof.
-    expect(true).toBe(true);
-  });
-});
+// ── SECTION 4: RLS integration-test boundary ─────────────────────────────
+// Database RLS behavior cannot be established by local URLSearchParams
+// simulations or placeholder assertions. It requires integration tests
+// against a dedicated Supabase test project and the deployed policy schema.
+// Admin route authorization is covered by admin-authorization.test.js.
 
 // ── SECTION 5: Build output validation ───────────────────────────────────
 describe("Build configuration checks", () => {
