@@ -1,19 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
+import { authorizeAdmin } from '@/lib/server/admin-auth.cjs'
 
 function db() {
   const url=process.env.NEXT_PUBLIC_SUPABASE_URL, key=process.env.SUPABASE_SERVICE_ROLE_KEY
   return url && key ? createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}}) : null
 }
 async function requireAdmin(request) {
-  const supabase=db()
-  if(!supabase) return {response:Response.json({error:'Service unavailable.'},{status:503})}
-  const token=(request.headers.get('authorization')||'').replace(/^Bearer\s+/i,'')
-  if(!token) return {response:Response.json({error:'Not authenticated.'},{status:401})}
-  const {data,error}=await supabase.auth.getUser(token)
-  if(error||!data?.user?.id) return {response:Response.json({error:'Not authenticated.'},{status:401})}
-  const {data:admin}=await supabase.from('admin_users').select('id').eq('id',data.user.id).maybeSingle()
-  if(!admin) return {response:Response.json({error:'Admin access required.'},{status:403})}
-  return {supabase,user:data.user}
+  const supabase = db()
+  if (!supabase) return { supabase: null, user: null, response: Response.json({ error: 'Service unavailable.' }, { status: 503 }) }
+  const { user, response } = await authorizeAdmin(request, supabase)
+  return { supabase, user, response }
 }
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const norm=v=>String(v||'').trim().toLowerCase().replace(/\s+/g,' ')
