@@ -19,7 +19,7 @@ create table if not exists public.event_certificate_deliveries (
     check (storage_path like 'event-certificates/influence-without-authority-2026-11-14/%.pdf')
 );
 
-create index if not exists event_certificate_deliveries_event_email_idx
+create unique index if not exists event_certificate_deliveries_event_email_uidx
   on public.event_certificate_deliveries(event_slug, recipient_email);
 
 alter table public.event_certificate_deliveries enable row level security;
