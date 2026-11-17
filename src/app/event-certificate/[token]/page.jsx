@@ -89,6 +89,9 @@ export default async function EventCertificatePage({ params }) {
         </p>
         <Link href="/events" style={{ display: 'inline-block', marginTop: 22, color: '#C9A84C', fontWeight: 700 }}>Explore professional development →</Link>
         <div style={{ marginTop: 24 }}>
+          <a href="https://youtu.be/Ae9N59SlR_8" target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(250,250,247,.72)', fontSize: 13 }}>Watch the event replay ↗</a>
+        </div>
+        <div style={{ marginTop: 18 }}>
           <Link href="/marketplace" style={{ color: 'rgba(250,250,247,.55)', fontSize: 13 }}>Discover the Valoria talent marketplace</Link>
         </div>
       </section>
