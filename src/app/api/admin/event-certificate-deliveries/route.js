@@ -1,7 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { createEventCertificateToken, hashEventCertificateToken } from '@/lib/event-certificate-token'
 
-export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const EVENT_SLUG = 'influence-without-authority-2026-11-14'
