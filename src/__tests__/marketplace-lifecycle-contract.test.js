@@ -43,6 +43,16 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain('/^ATB-[A-Z0-9-]{4,40}$/i.test(normalizedAtbId)')
   })
 
+  test('dashboard separates public directory visibility from capability-specific approval', () => {
+    const dashboard = read('src/app/dashboard/page.jsx')
+    expect(dashboard).toContain(".from('marketplace_public_roster')")
+    expect(dashboard).toContain(".eq('professional_id', user.id)")
+    expect(dashboard).toContain('const isVisible = isSupply && isDirectoryListed === true')
+    expect(dashboard).toContain("'PUBLIC DIRECTORY'")
+    expect(dashboard).toContain('CAPABILITY PATHS READY')
+    expect(dashboard).toContain('isDirectoryListed === null')
+  })
+
   test('marketplace data is professional-first and deduplicates capabilities', () => {
     const source = read('src/lib/marketplace-data.js')
     expect(source).toContain('professional_id')

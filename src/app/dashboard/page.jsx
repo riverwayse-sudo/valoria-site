@@ -117,6 +117,7 @@ export default function DashboardPage() {
   const [showMessages, setShowMessages] = useState(false)
   const [profileViewCount, setProfileViewCount] = useState(null)
   const [capabilities, setCapabilities] = useState([])
+  const [isDirectoryListed, setIsDirectoryListed] = useState(null)
   const [assessment, setAssessment] = useState(null)
   const [assessmentAccess, setAssessmentAccess] = useState(null)
 
@@ -153,6 +154,19 @@ export default function DashboardPage() {
       let supply = !!proProfile
 
       if (prof) {
+        // General directory visibility is independent of capability-specific approval.
+        const { data: publicRosterEntry, error: publicRosterError } = await supabase
+          .from('marketplace_public_roster')
+          .select('professional_id')
+          .eq('professional_id', user.id)
+          .maybeSingle()
+        if (publicRosterError) {
+          console.warn('Dashboard public directory status check failed:', publicRosterError)
+          setIsDirectoryListed(null)
+        } else {
+          setIsDirectoryListed(Boolean(publicRosterEntry))
+        }
+
         const { data: capabilityRows, error: capabilityError } = await supabase
           .from('professional_capabilities')
           .select('id,capability,is_active,eligibility_status,eligible_for_listing,missing_requirements')
@@ -337,14 +351,16 @@ export default function DashboardPage() {
   const isSpeaker     = isSupply && tracks.includes('speaker')
   const isFacilitator = isSupply && tracks.includes('facilitator')
   const isOrganiser = !isSupply && p.user_type === 'organiser'
-  // Marketplace visibility is capability-level. A multi-capability professional
-  // must not be labelled "Not Listed" simply because the legacy profile-level
-  // listing_status is stale or represents a different governance layer.
+  // General directory visibility is separate from capability-specific listing readiness.
   const listedCapabilities = capabilities.filter(c => c.is_active && (c.eligibility_status === 'listed' || c.eligible_for_listing === true))
-  const isVisible   = isSupply && listedCapabilities.length > 0
-  const listingLabel = listedCapabilities.length
-    ? `LISTED IN ${listedCapabilities.length} ${listedCapabilities.length === 1 ? 'PATH' : 'PATHS'}`
-    : 'PROFILE IN DEVELOPMENT'
+  const isVisible = isSupply && isDirectoryListed === true
+  const listingLabel = isDirectoryListed === true
+    ? 'PUBLIC DIRECTORY'
+    : isDirectoryListed === null
+      ? 'CHECKING DIRECTORY STATUS'
+      : listedCapabilities.length
+        ? 'CAPABILITY PATHS READY'
+        : 'PROFILE IN DEVELOPMENT'
   const initials    = getInitials(p.display_name)
   const firstName   = p.display_name ? p.display_name.split(' ')[0] : 'there'
   const atbId       = p.atb_id || null
@@ -771,8 +787,8 @@ export default function DashboardPage() {
               {enquiries.length === 0 ? (
                 <EmptyState
                   icon="◈"
-                  message={isVisible ? 'No enquiries yet — your profile is live and visible.' : 'Enable your marketplace listing to start receiving enquiries.'}
-                  cta={!isVisible ? { label: 'Enable Listing', href: '/profile/edit' } : null}
+                  message={isVisible ? 'No enquiries yet — your profile is live and visible.' : isDirectoryListed === null ? 'We could not confirm your public directory status just now.' : 'Complete your profile and capability requirements to become discoverable in more marketplace categories.'}
+                  cta={!isVisible && isDirectoryListed === false ? { label: 'Review Listing', href: '/profile/edit' } : null}
                 />
               ) : (
                 <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
