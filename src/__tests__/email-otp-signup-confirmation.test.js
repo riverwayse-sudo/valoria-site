@@ -18,7 +18,7 @@ describe("email OTP signup confirmation", () => {
     ["login recovery for unconfirmed accounts", login],
   ])("%s verifies the six-digit code with Supabase", (_name, source) => {
     expect(source).toContain("supabase.auth.verifyOtp");
-    expect(source).toContain("type:'email'");
+    expect(source).toMatch(/type:\s*['"]email['"]/);
     expect(source).toContain("inputMode=\"numeric\"");
     expect(source).toContain("autoComplete=\"one-time-code\"");
     expect(source).toContain("pattern=\"[0-9]{6}\"");
