@@ -20,8 +20,9 @@ describe('homepage expired event promotion removal', () => {
     expect(hero).not.toContain('hero-slider-controls')
   })
 
-  test('the homepage events section remains available for event archive and replay content', () => {
+  test('the homepage does not render the expired event feature section', () => {
     const page = read('src/app/page.jsx')
-    expect(page).toContain('<HomepageEvents />')
+    expect(page).not.toContain("import HomepageEvents from '@/components/HomepageEvents'")
+    expect(page).not.toContain('<HomepageEvents />')
   })
 })
