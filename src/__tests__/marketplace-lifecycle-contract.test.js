@@ -133,7 +133,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).not.toContain("update({ profile_complete: true")
   })
 
-  test('profile setup and edit preserve the separate visibility acknowledgement workflow', () => {
+  test('profile setup records listing consent while profile settings no longer expose a visibility selector', () => {
     const setup = read('src/app/profile/setup/page.jsx')
     const edit = read('src/app/profile/edit/page.jsx')
     const route = read('src/app/api/profile/acknowledgements/route.js')
@@ -145,8 +145,10 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(setup).toContain('REGISTERED_PROFILE_CONSENT_TEXT')
     expect(setup).toContain("fetch('/api/profile/acknowledgements'")
     expect(setup).not.toContain('if (!row.profile_complete)')
-    expect(edit).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
-    expect(edit).toContain('REGISTERED_PROFILE_CONSENT_TEXT')
+    expect(edit).not.toContain('PUBLIC_PROFILE_CONSENT_TEXT')
+    expect(edit).not.toContain('REGISTERED_PROFILE_CONSENT_TEXT')
+    expect(edit).not.toContain('profile-visibility')
+    expect(edit).not.toContain('saveVisibilityConsent')
     expect(route).toContain('Record the participant\'s explicit visibility choice before asking the')
     expect(route).toContain('checking roster membership here would create a circular')
     expect(route).not.toContain("const basicEligible = roster?.assessment_access === 'basic'")
