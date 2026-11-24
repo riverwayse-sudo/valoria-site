@@ -21,6 +21,14 @@ describe('automatic professional profile listing governance', () => {
     expect(sql).toContain('private.sync_professional_listing_status(v_professional_id)')
   })
 
+  test('profile setup does not imply a manual profile approval queue', () => {
+    const source = fs.readFileSync(path.join(process.cwd(), 'src/app/profile/setup/page.jsx'), 'utf8')
+    expect(source).toContain('SUBMIT PROFILE')
+    expect(source).not.toContain('SUBMIT PROFILE FOR REVIEW')
+    expect(source).not.toContain('profile clears review')
+    expect(source).toContain('assigned automatically')
+  })
+
   test('the migration fails closed if the production function has drifted', () => {
     const sql = fs.readFileSync(migrationPath, 'utf8')
     expect(sql).toContain('IF v_count <> 1 THEN')
