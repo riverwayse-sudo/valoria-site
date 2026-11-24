@@ -137,7 +137,7 @@ export default function SignupPage() {
                 pattern="[0-9]{6}"
                 maxLength={6}
                 value={otpCode}
-                onChange={e => setOtpCode(e.target.value.replace(/\\D/g, '').slice(0, 6))}
+                onChange={e => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 placeholder="000000"
                 required
                 style={S.input}
