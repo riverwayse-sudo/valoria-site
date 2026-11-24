@@ -21,6 +21,14 @@ describe('automatic professional profile listing governance', () => {
     expect(sql).toContain('private.sync_professional_listing_status(v_professional_id)')
   })
 
+  test('public terms distinguish automatic profile listing from evidence-gated capability lanes', () => {
+    const source = fs.readFileSync(path.join(process.cwd(), 'src/app/terms-of-use/page.jsx'), 'utf8')
+    expect(source).toContain('listed automatically')
+    expect(source).toContain('explicit, recorded consent')
+    expect(source).toContain('capability-specific placement')
+    expect(source).not.toContain('Listing is not automatic')
+  })
+
   test('profile setup does not imply a manual profile approval queue', () => {
     const source = fs.readFileSync(path.join(process.cwd(), 'src/app/profile/setup/page.jsx'), 'utf8')
     expect(source).toContain('SUBMIT PROFILE')
