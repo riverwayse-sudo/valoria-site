@@ -27,14 +27,22 @@ for (const [name, path, expected] of checks) {
 }
 
 const home = await fetch(base + '/').then(r => r.text())
-for (const marker of ['START THE VALU INDEX TASTER', 'Find professionals', 'JOIN THE LIVE EVENT', 'Influence Without Authority: The Real Currency of Organisational Power']) {
+for (const marker of ['START THE VALU INDEX TASTER', 'Find professionals']) {
   const ok = home.includes(marker)
   console.log(`${ok ? 'PASS' : 'FAIL'} homepage marker: ${marker}`)
   if (!ok) failed++
 }
-const staleEventCta = home.includes('REGISTER FOR THIS CONVERSATION')
-console.log(`${staleEventCta ? 'FAIL' : 'PASS'} homepage stale event CTA removed`)
-if (staleEventCta) failed++
+// The 14 November 2026 event has passed and its homepage promotion was
+// intentionally removed. Guard against accidentally restoring expired CTAs.
+for (const staleMarker of [
+  'REGISTER FOR THIS CONVERSATION',
+  'JOIN THE LIVE EVENT',
+  'Influence Without Authority: The Real Currency of Organisational Power',
+]) {
+  const present = home.includes(staleMarker)
+  console.log(`${present ? 'FAIL' : 'PASS'} expired homepage event content absent: ${staleMarker}`)
+  if (present) failed++
+}
 
 if (failed) {
   console.error(`Production smoke failed: ${failed} check(s).`)
