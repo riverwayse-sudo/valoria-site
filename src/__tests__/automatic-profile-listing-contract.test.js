@@ -37,6 +37,13 @@ describe('automatic professional profile listing governance', () => {
     expect(source).toContain('assigned automatically')
   })
 
+  test('dashboard gives existing professionals a direct route to record visibility consent', () => {
+    const source = fs.readFileSync(path.join(process.cwd(), 'src/app/dashboard/page.jsx'), 'utf8')
+    expect(source).toContain('Choose your marketplace visibility')
+    expect(source).toContain('/profile/edit#profile-visibility-title')
+    expect(source).toContain("p.visibility !== 'public'")
+  })
+
   test('the migration fails closed if the production function has drifted', () => {
     const sql = fs.readFileSync(migrationPath, 'utf8')
     expect(sql).toContain('IF v_count <> 1 THEN')
