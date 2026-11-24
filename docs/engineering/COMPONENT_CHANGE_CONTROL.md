@@ -122,3 +122,20 @@ A component becomes **VERIFIED — PROTECTED** only after its owner-approved acc
 ## 9. Relationship to the quality standard
 
 This protocol supplements, and does not weaken, `ENGINEERING_STANDARD.md`. Where requirements conflict, follow the stricter security, privacy, data-integrity and release requirement. Repository quality registers remain the source of truth for current component status and evidence.
+
+## 10. Display-preservation gate
+
+Any change that can affect website rendering, page data, shared CSS, global tokens, navigation, routes or component behavior must follow `docs/engineering/PLATFORM_INVARIANTS.md` and record:
+- the exact pages/components intentionally changed;
+- protected pages/components inspected, including homepage, profile cards, marketplace listings and public profiles where relevant;
+- baseline and after-state checks at matching desktop and mobile viewports;
+- route, console, responsive overflow and interaction results;
+- any visual/data differences and why each is expected.
+
+If the task is not intended to change website display, its diff must contain no runtime source, style, asset, route, configuration or migration changes. Documentation-only governance changes must remain documentation-only. Any accidental runtime-file change blocks the PR until removed or separately authorized.
+
+HTTP 200, a successful build or a source-contract test does not establish display parity. Unexplained differences block release.
+
+## 11. Release policy
+
+All production-bound changes must also follow `docs/engineering/PRODUCTION_RELEASE_POLICY.md`. These requirements supplement this protocol and do not authorize production deployment by themselves.
