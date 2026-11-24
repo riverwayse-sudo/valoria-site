@@ -149,6 +149,9 @@ export async function GET(request){
     return {...r,listing_capabilities:listed.map(capability=>capability.capability),marketplace_exclusion_reasons:reasons}
   })
   const counts=rows.reduce((acc,r)=>{acc[r.lifecycle_state]=(acc[r.lifecycle_state]||0)+1;return acc},{})
+  // Registration is a profile-record measure, not a lifecycle or marketplace state.
+  // Keep incomplete, registered-only, and unlisted non-test profiles in this total.
+  counts.registered_profiles=profiles.filter(profile=>profile.is_test!==true).length
   counts.unique_public_professionals=new Set(rows.filter(r=>r.public_roster).map(r=>r.user_id)).size
   counts.roster_projection_professionals=new Set(rows.filter(r=>r.roster_projection).map(r=>r.user_id)).size
   counts.public_talent=rows.filter(r=>r.public_roster&&r.public_track==='candidate').length
