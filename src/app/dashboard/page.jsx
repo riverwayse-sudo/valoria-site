@@ -414,6 +414,16 @@ export default function DashboardPage() {
           </nav>
         </header>
 
+        {isSupply && p.visibility !== 'public' && (
+          <section role="status" aria-labelledby="visibility-action-title" style={{ padding:'18px clamp(20px,4vw,40px)', background:'rgba(201,168,76,.09)', borderBottom:`1px solid ${GLINE}`, display:'flex', alignItems:'center', justifyContent:'space-between', gap:'14px', flexWrap:'wrap' }}>
+            <div style={{ minWidth:0, flex:'1 1 260px' }}>
+              <h2 id="visibility-action-title" style={{ margin:0, color:PARCH, fontSize:'13px', fontWeight:700 }}>Choose your marketplace visibility</h2>
+              <p style={{ margin:'5px 0 0', color:DIM, fontSize:'11px', lineHeight:1.6 }}>Your profile is not currently visible to public visitors. You can choose public or registered-only visibility and record your preference at any time.</p>
+            </div>
+            <Link href="/profile/edit#profile-visibility-title" style={{ display:'inline-block', padding:'10px 15px', background:GOLD, color:DARK, fontSize:'10px', fontWeight:800, letterSpacing:'.08em', textDecoration:'none', whiteSpace:'nowrap' }}>REVIEW VISIBILITY</Link>
+          </section>
+        )}
+
         {/* COVER BANNER */}
         <div style={{ position:'relative', height:'88px', overflow:'hidden', background:`radial-gradient(ellipse 800px 400px at 10% 30%, rgba(201,168,76,.22), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 70%, rgba(201,168,76,.1), transparent 55%), linear-gradient(155deg, ${MID} 0%, ${DARK} 70%)` }}>
           <svg viewBox="0 0 1200 280" preserveAspectRatio="none" style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:.45 }}>
