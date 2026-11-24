@@ -174,6 +174,7 @@ export default function LoginPage() {
           })
           const recovery = await recoveryRes.json().catch(() => ({}))
           if (recoveryRes.ok && recovery.linked > 0) {
+            localStorage.removeItem('valu_taster_first_resume_token')
             const { data: recoveredProfile } = await supabase
               .from('professional_profiles')
               .select('id, display_name')
