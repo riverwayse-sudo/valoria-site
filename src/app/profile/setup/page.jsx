@@ -19,7 +19,9 @@ const EMPTY_FORM = {
   username: '', phone: '',
   display_name: '', current_job_title: '', headline: '', location: '', industry: '', preferred_industry: '',
   years_experience: '', bio: '', languages: [],
-  visibility: 'registered_only',
+  // New profiles default to public visibility, but the participant must still
+  // actively tick the public-profile consent checkbox before submission.
+  visibility: 'public',
   skills: [], topics: [], facilitation_topics: [],
   programme_types: [], format_capabilities: [],
   audience_sizes: [], pcp_certified: false,
@@ -1194,7 +1196,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
 
       <button onClick={handleFinish} disabled={!form.consent || saving}
         style={{ display:'block', width:'100%', padding:'16px', background: form.consent && !saving ? GOLD : 'rgba(201,168,76,.2)', color: form.consent && !saving ? DARK : 'rgba(201,168,76,.4)', fontSize:'12px', fontWeight:700, letterSpacing:'.14em', border:'none', cursor: form.consent && !saving ? 'pointer' : 'not-allowed', fontFamily:'inherit' }}>
-        {saving ? 'SUBMITTING…' : 'SUBMIT PROFILE FOR REVIEW'}
+        {saving ? 'SUBMITTING…' : 'SUBMIT PROFILE'}
       </button>
     </div>
   )
