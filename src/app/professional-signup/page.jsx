@@ -11,7 +11,7 @@ import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/
 const GOLD='#C9A84C', DARK='#0F0F1A', PARCH='#F7F4EE', DIM='rgba(247,244,238,.48)'
 function ProfessionalSignupForm(){
   const params=useSearchParams(); const tasterId=params.get('taster_id')||''; const name=params.get('name')||''; const role=params.get('role')||''; const experience=params.get('experience')||''; const capturedEmail=(params.get('email')||'').trim().toLowerCase(); const accountFirst=params.get('account_first')==='1'
-  const [form,setForm]=useState({email:capturedEmail,password:'',confirm:''}); const [loading,setLoading]=useState(false); const [error,setError]=useState(''); const [done,setDone]=useState(false); const [linked,setLinked]=useState(false); const [confirmationRequired,setConfirmationRequired]=useState(false); const [resending,setResending]=useState(false); const [resendMessage,setResendMessage]=useState(''); const [redirecting,setRedirecting]=useState(false); const [checkingSession,setCheckingSession]=useState(true)
+  const [form,setForm]=useState({email:capturedEmail,password:'',confirm:''}); const [loading,setLoading]=useState(false); const [error,setError]=useState(''); const [done,setDone]=useState(false); const [linked,setLinked]=useState(false); const [confirmationRequired,setConfirmationRequired]=useState(false); const [resending,setResending]=useState(false); const [resendMessage,setResendMessage]=useState(''); const [otpCode,setOtpCode]=useState(''); const [verifyingOtp,setVerifyingOtp]=useState(false); const [redirecting,setRedirecting]=useState(false); const [checkingSession,setCheckingSession]=useState(true)
   const valid=useMemo(()=>tasterId&&name&&role&&form.email&&form.password.length>=PASSWORD_POLICY.minLength&&form.password===form.confirm,[tasterId,name,role,form])
   useEffect(()=>{
     let cancelled=false
@@ -49,6 +49,26 @@ function ProfessionalSignupForm(){
     continueSignedInUser().catch(err=>{if(!cancelled){setError(err?.message||'We could not verify your Valoria session.');setCheckingSession(false)}})
     return ()=>{cancelled=true}
   },[tasterId,name,role,accountFirst])
+  async function verifyEmailOtp(event){
+    event.preventDefault()
+    if(verifyingOtp||otpCode.length!==6)return
+    setVerifyingOtp(true)
+    setError('')
+    try{
+      const {data,error:verifyError}=await supabase.auth.verifyOtp({
+        email:form.email.trim().toLowerCase(),
+        token:otpCode,
+        type:'email'
+      })
+      if(verifyError)throw verifyError
+      if(!data?.session?.access_token||!data?.user?.email_confirmed_at)throw new Error('Your email code was accepted, but Valoria could not establish a confirmed account session. Please request a new code.')
+      window.location.replace(`/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`)
+    }catch(err){
+      setError(err?.message||'That code could not be verified. Check it and try again, or request a new code.')
+    }finally{
+      setVerifyingOtp(false)
+    }
+  }
   async function resendConfirmation(){
     setResending(true)
     setResendMessage('')
@@ -59,7 +79,7 @@ function ProfessionalSignupForm(){
         options:{emailRedirectTo:`${window.location.origin}/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`}
       })
       if(error)throw error
-      setResendMessage('A fresh confirmation email has been requested. Check your inbox and spam folder.')
+      setResendMessage('A fresh six-digit confirmation code has been requested. Check your inbox and spam folder.')
     }catch(err){
       setResendMessage(err?.message||'We could not resend the confirmation email. Please wait a moment and try again.')
     }finally{
@@ -125,7 +145,7 @@ function ProfessionalSignupForm(){
   if(accountFirst && checkingSession)return <Shell><div style={S.eyebrow}>VALU INDEX TASTER</div><h1 style={S.title}>Verifying your <em>account.</em></h1><p style={S.sub}>We’re checking your saved Taster and confirmed Valoria session…</p></Shell>
   if(accountFirst && !redirecting)return <Shell><VALUJourneyProgress stage="account" /><div style={S.eyebrow}>TASTER SAVED</div><h1 style={S.title}>Your Taster is ready to <em>connect.</em></h1><p style={S.sub}>Sign in to the same confirmed Valoria account used to begin this Taster. We’ll connect your saved responses and return you to your dashboard. No second account is needed.</p>{error&&<p role="alert" style={S.error}>{error}</p>}<Link href={`/login?pending_taster_id=${encodeURIComponent(tasterId)}&returnTo=%2Fdashboard`} style={S.button}>SIGN IN TO CONNECT YOUR TASTER →</Link>{error&&<button type="button" onClick={()=>window.location.reload()} style={S.secondary}>RETRY CONNECTION</button>}</Shell>
   if(!tasterId||!name||!role)return <Shell><h1 style={S.title}>Your VALU Index journey needs a starting point.</h1><p style={S.sub}>Begin with the VALU Index Taster. After it is saved, create or connect your account; your full VALU Index is available from your dashboard.</p><a href="/valu/assessment/" style={S.button}>START THE VALU INDEX TASTER →</a></Shell>
-  if(confirmationRequired)return <Shell><VALUJourneyProgress stage="account" /><div style={S.eyebrow}>ACCOUNT BRIDGE · EMAIL CONFIRMATION</div><h1 style={S.title}>One quick confirmation. <em>Then your VALU Index.</em></h1><p style={S.sub}>We’ve sent a confirmation link to <strong>{form.email.trim().toLowerCase()}</strong>. Confirm your email to sign in and return to your dashboard. Your taster is saved; your full VALU Index will be ready there.</p><div style={S.bridgeSteps}><div><b>✓</b><span><strong>VALU Index Taster saved</strong><small>Your taster is saved.</small></span></div><div><b>02</b><span><strong>Confirm your email</strong><small>Confirm your email.</small></span></div><div><b>03</b><span><strong>Begin your full VALU Index</strong><small>Continue from your dashboard.</small></span></div></div><button type="button" onClick={resendConfirmation} disabled={resending} style={{...S.button,opacity:resending?0.55:1}}>{resending?'REQUESTING A NEW LINK…':'RESEND CONFIRMATION EMAIL'}</button>{resendMessage&&<p role="status" style={S.note}>{resendMessage}</p>}<p style={S.note}>Can’t find the email? Check your spam or promotions folder. Your saved answers remain intact while you confirm your address.</p></Shell>
+  if(confirmationRequired)return <Shell><VALUJourneyProgress stage="account" /><div style={S.eyebrow}>ACCOUNT BRIDGE · EMAIL CONFIRMATION</div><h1 style={S.title}>One quick confirmation. <em>Then your VALU Index.</em></h1><p style={S.sub}>We’ve sent a six-digit confirmation code to <strong>{form.email.trim().toLowerCase()}</strong>. Enter it below to activate your account. Your taster is saved; your full VALU Index will be ready from your dashboard.</p><form onSubmit={verifyEmailOtp} style={S.form}><label>Six-digit email code<input required type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} value={otpCode} onChange={e=>setOtpCode(e.target.value.replace(/\\D/g,'').slice(0,6))} placeholder="000000" style={S.input}/></label><button type="submit" disabled={verifyingOtp||otpCode.length!==6} style={{...S.button,opacity:(verifyingOtp||otpCode.length!==6)?0.55:1}}>{verifyingOtp?'VERIFYING…':'VERIFY EMAIL & CONTINUE →'}</button></form><div style={S.bridgeSteps}><div><b>✓</b><span><strong>VALU Index Taster saved</strong><small>Your taster is saved.</small></span></div><div><b>02</b><span><strong>Confirm your email</strong><small>Confirm your email.</small></span></div><div><b>03</b><span><strong>Begin your full VALU Index</strong><small>Continue from your dashboard.</small></span></div></div><button type="button" onClick={resendConfirmation} disabled={resending} style={{...S.button,opacity:resending?0.55:1}}>{resending?'REQUESTING A NEW LINK…':'RESEND CONFIRMATION EMAIL'}</button>{resendMessage&&<p role="status" style={S.note}>{resendMessage}</p>}<p style={S.note}>Can’t find the email? Check your spam or promotions folder. Your saved answers remain intact while you confirm your address.</p></Shell>
 
   if(done){return <Shell><VALUJourneyProgress stage="full" /><div style={S.eyebrow}>TASTER SAVED</div><h1 style={S.title}>Your dashboard is <em>ready.</em></h1><p style={S.sub}>Your taster is linked to your account. Go to your dashboard to begin your full VALU Index.</p>{!linked&&<p style={S.error}>Your account was created, but the taster link still needs to be completed before continuing.</p>}<Link href="/dashboard" style={S.button}>GO TO MY DASHBOARD →</Link><p style={S.note}>Your saved answers and progress are preserved.</p></Shell>}
   return <Shell><VALUJourneyProgress stage="account" /><div style={S.eyebrow}>ACCOUNT CREATION</div><h1 style={S.title}>Connect your taster. <em>Create your account.</em></h1><p style={S.sub}>Hi {name.split(/\s+/)[0]}. Your taster is saved. Secure your account now; after email confirmation, we’ll return you to your dashboard so you can begin your full VALU Index.</p><div style={S.summary}><div><span>NAME</span>{name}</div><div><span>ROLE</span>{role}</div><div><span>TASTER STATUS</span>Saved</div></div><form onSubmit={submit} style={S.form}><label>Email<input type="email" required value={form.email} readOnly aria-readonly="true" placeholder="you@example.com" style={{...S.input,opacity:0.82,cursor:"not-allowed"}}/><small style={S.note}>This address is attached to your saved VALU Index Taster. Use the same verified email to connect it to your account. If it needs correcting, contact Valoria support before continuing.</small></label><label>Password<input type="password" required minLength={8} value={form.password} onChange={e=>setForm({...form,password:e.target.value})} placeholder={`Minimum ${PASSWORD_POLICY.minLength} characters`} style={S.input}/></label><p style={S.note}>{passwordPolicyMessage()}</p><label>Confirm password<input type="password" required minLength={8} value={form.confirm} onChange={e=>setForm({...form,confirm:e.target.value})} placeholder="Repeat your password" style={S.input}/></label>{error&&<div style={S.error}>{error}</div>}<button type="submit" disabled={loading||!valid} style={{...S.button,opacity:(loading||!valid)?0.45:1}}>{loading?'CREATING ACCOUNT…':'CREATE ACCOUNT →'}</button></form><p style={S.note}>Already have a Valoria account? <Link href={`/login?pending_taster_id=${encodeURIComponent(tasterId)}&returnTo=%2Fdashboard`} style={{color:GOLD,textDecoration:'underline'}}>Sign in to connect your saved taster and continue your full VALU Index.</Link></p></Shell>
