@@ -18,7 +18,7 @@ describe("email OTP signup confirmation", () => {
     ["login recovery for unconfirmed accounts", login],
   ])("%s verifies the six-digit code with Supabase", (_name, source) => {
     expect(source).toContain("supabase.auth.verifyOtp");
-    expect(source).toContain("type: 'email'");
+    expect(source).toContain("type:'email'");
     expect(source).toContain("inputMode=\"numeric\"");
     expect(source).toContain("autoComplete=\"one-time-code\"");
     expect(source).toContain("pattern=\"[0-9]{6}\"");
@@ -34,7 +34,7 @@ describe("email OTP signup confirmation", () => {
   test("Taster confirmation returns through the existing authenticated callback", () => {
     expect(valuRegister).toContain("/auth/callback?valu_taster=1");
     expect(callback).toContain("supabase.auth.getSession()");
-    expect(callback).toContain("metadata.valu_taster_signup !== true");
+    expect(callback).toContain("user_metadata?.valu_taster_signup !== true");
     expect(callback).toContain("fetch('/api/valu-taster/start'");
   });
 
