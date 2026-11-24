@@ -17,6 +17,11 @@ export default function LoginPage() {
   const [resetting, setResetting] = useState(false)
   const [redirecting, setRedirecting] = useState(false)
   const [returnTo, setReturnTo] = useState('')
+  const [confirmationRequired, setConfirmationRequired] = useState(false)
+  const [otpCode, setOtpCode] = useState('')
+  const [otpVerifying, setOtpVerifying] = useState(false)
+  const [otpResending, setOtpResending] = useState(false)
+  const [otpMessage, setOtpMessage] = useState('')
 
   // Check for identity_hash in URL (from email confirmation redirect)
   useEffect(() => {
@@ -212,13 +217,63 @@ export default function LoginPage() {
         redirectAfterLogin('/dashboard')
       }
     } catch (err) {
-      setError(
-        err.message === 'Invalid login credentials'
-          ? 'Incorrect email or password. Try again, or reset your password below.'
-          : (err.message || 'Something went wrong. Please try again.')
-      )
+      if (/email not confirmed|confirm your email/i.test(err?.message || '')) {
+        setConfirmationRequired(true)
+        setError('Your account exists, but your email needs confirmation. Enter the six-digit code sent to your email.')
+      } else {
+        setError(
+          err.message === 'Invalid login credentials'
+            ? 'Incorrect email or password. Try again, or reset your password below.'
+            : (err.message || 'Something went wrong. Please try again.')
+        )
+      }
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function verifySignupOtp(event) {
+    event.preventDefault()
+    if (otpVerifying || otpCode.length !== 6 || !form.email.trim()) return
+    setOtpVerifying(true)
+    setError('')
+    try {
+      const { data, error: verifyError } = await supabase.auth.verifyOtp({
+        email: form.email.trim().toLowerCase(),
+        token: otpCode,
+        type: 'email',
+      })
+      if (verifyError) throw verifyError
+      if (!data?.session?.access_token || !data?.user?.email_confirmed_at) {
+        throw new Error('Your code was accepted, but Valoria could not establish a confirmed session. Please request a new code.')
+      }
+      window.location.replace('/auth/callback')
+    } catch (err) {
+      setError(err?.message || 'That code could not be verified. Check it and try again.')
+    } finally {
+      setOtpVerifying(false)
+    }
+  }
+
+  async function resendSignupOtp() {
+    if (!form.email.trim()) {
+      setError('Enter your email address first.')
+      return
+    }
+    setOtpResending(true)
+    setOtpMessage('')
+    setError('')
+    try {
+      const { error: resendError } = await supabase.auth.resend({
+        type: 'signup',
+        email: form.email.trim().toLowerCase(),
+      })
+      if (resendError) throw resendError
+      setOtpMessage('A fresh six-digit confirmation code has been sent. Check your inbox and spam folder.')
+    } catch (err) {
+      setError(err?.message || 'We could not send a new confirmation code. Please try again shortly.')
+    } finally {
+      setOtpResending(false)
     }
   }
 
@@ -255,6 +310,37 @@ export default function LoginPage() {
         </h1>
         <p style={styles.sub}>Sign in to your Valoria Institute account.</p>
 
+        {confirmationRequired ? (
+          <form onSubmit={verifySignupOtp} style={styles.form}>
+            <p style={styles.sub}>Enter the six-digit code sent to {form.email.trim().toLowerCase()} to confirm your account and continue.</p>
+            <div style={styles.field}>
+              <label style={styles.label}>SIX-DIGIT EMAIL CODE</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="[0-9]{6}"
+                maxLength={6}
+                value={otpCode}
+                onChange={e => setOtpCode(e.target.value.replace(/\\D/g, '').slice(0, 6))}
+                placeholder="000000"
+                required
+                style={styles.input}
+              />
+            </div>
+            {error && <div style={styles.errorBox}>{error}</div>}
+            {otpMessage && <div style={styles.successBox}>{otpMessage}</div>}
+            <button type="submit" disabled={otpVerifying || otpCode.length !== 6} style={{ ...styles.btnGold, opacity: otpVerifying || otpCode.length !== 6 ? 0.55 : 1 }}>
+              {otpVerifying ? 'VERIFYING…' : 'VERIFY EMAIL & CONTINUE'}
+            </button>
+            <button type="button" onClick={resendSignupOtp} disabled={otpResending} style={styles.forgotBtn}>
+              {otpResending ? 'SENDING CODE…' : 'SEND A NEW CODE'}
+            </button>
+            <button type="button" onClick={() => { setConfirmationRequired(false); setError(''); setOtpCode('') }} style={styles.forgotBtn}>
+              BACK TO SIGN IN
+            </button>
+          </form>
+        ) : (
         <form onSubmit={handleLogin} style={styles.form}>
           <div style={styles.field}>
             <label style={styles.label}>Email Address</label>
@@ -294,6 +380,7 @@ export default function LoginPage() {
             {resetting ? 'Sending reset link...' : 'Forgot password?'}
           </button>
         </form>
+        )}
 
         <div style={{ marginTop: '18px', fontSize: '12px', color: 'rgba(247,244,238,.4)', textAlign: 'center', lineHeight: 1.8 }}>
           <p style={{ margin: '0 0 4px' }}>
