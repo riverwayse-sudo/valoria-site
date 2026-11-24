@@ -561,4 +561,18 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(migration).toContain('from public, anon, authenticated')
     expect(migration).toContain('The public roster projection implementation is intentionally not changed')
   })
+  test('admin registration totals come from the authoritative server profile query and exclude fixtures', () => {
+    const analytics = read('src/app/api/admin/analytics/route.js')
+    const admin = read('src/app/admin/page.jsx')
+    expect(analytics).toContain(".select('id,is_test,profile_complete,listing_status')")
+    expect(analytics).toContain('profileRows.filter(p => p.is_test !== true).length')
+    expect(analytics).toContain('registeredProfiles, completeProfiles, listedProfiles')
+    expect(analytics).toContain("return Response.json({ error: 'Could not load registered profile data.' }, { status: 500 })")
+    expect(admin).toContain("['Registered profiles',analytics?.registeredProfiles ?? '—']")
+    expect(admin).toContain('listed: analytics?.listedProfiles ??')
+    expect(admin).toContain('complete: analytics?.completeProfiles ??')
+    expect(admin).toContain('The profile list could not be loaded.')
+    expect(admin).toContain('.filter(p => p.is_test !== true)')
+  })
+
 })
