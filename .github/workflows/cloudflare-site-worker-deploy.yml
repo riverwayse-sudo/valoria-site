@@ -90,3 +90,9 @@ jobs:
               exit 1
             fi
           done
+
+          homepage="$(curl -sSL --retry 4 --retry-all-errors --max-time 25 "$base/")"
+          if printf '%s' "$homepage" | grep -Eiq 'UPCOMING AT VALORIA|JOIN THE LIVE EVENT|THE CURRENT VALORIA CONVERSATION|Influence Without Authority'; then
+            echo "Expired event promotion is still present in the production homepage HTML"
+            exit 1
+          fi
