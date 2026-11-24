@@ -3,7 +3,6 @@ import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import HeroSlider from '@/components/HeroSlider'
 import LiveProfilesScroll from '@/components/LiveProfilesScroll'
-import HomepageEvents from '@/components/HomepageEvents'
 import './home.css'
 
 export const dynamic = 'force-dynamic'
@@ -26,7 +25,6 @@ export default function HomePage() {
     <Nav />
     <main id="main-content" className="home-redesign-root">
       <HeroSlider />
-      <HomepageEvents />
 
       <section className="home-pathways" aria-labelledby="pathways-title">
         <div className="container">
