@@ -569,7 +569,7 @@ function ProfileSetupForm() {
             {submittedInfo.atb_id ? (
               <div style={{ fontSize:'22px', fontWeight:700, color:GOLD, letterSpacing:'.04em', fontFamily:'monospace' }}>{submittedInfo.atb_id}</div>
             ) : (
-              <div style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.6 }}>Your ID will appear on your dashboard once your profile clears review — usually within 48 hours.</div>
+              <div style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.6 }}>Your Valoria ID will appear on your dashboard once your profile record is created.</div>
             )}
           </div>
 
@@ -1097,7 +1097,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
   return (
     <div>
       <Title>Review &amp;<br/><Em>submit.</Em></Title>
-      <Sub>Take one more look before this goes live for review.</Sub>
+      <Sub>Confirm your details and visibility choice. Eligible profiles are listed automatically once you submit and meet the listing requirements.</Sub>
 
       <div style={{ background:MID, color:PARCH, padding:'20px', marginBottom:'24px', border:`1px solid ${GLINE}` }}>
         <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'12px' }}>
