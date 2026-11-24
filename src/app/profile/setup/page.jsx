@@ -186,7 +186,7 @@ function ProfileSetupForm() {
     Expertise: 'Describe the work you do in each selected pathway. This information helps Valoria organise your capability profile and assess relevant evidence.',
     Media: 'Add supporting material that helps reviewers and prospective partners understand your professional background. Your CV remains private unless a permitted workflow uses it.',
     Terms: 'Set practical preferences for matching and introductions. These preferences do not change your VALU Index points or determine eligibility by themselves.',
-    Review: 'Review your details and confirm that the information is accurate before submitting your profile.'
+    Review: 'Review your details and confirm that the information is accurate before saving your profile.'
   }
   const currentSectionIndex = sectionNames.indexOf(currentSection)
   const nextSection = currentSection === 'Review' ? null : (sectionNames[currentSectionIndex + 1] || 'Review')
@@ -569,7 +569,7 @@ function ProfileSetupForm() {
             {submittedInfo.atb_id ? (
               <div style={{ fontSize:'22px', fontWeight:700, color:GOLD, letterSpacing:'.04em', fontFamily:'monospace' }}>{submittedInfo.atb_id}</div>
             ) : (
-              <div style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.6 }}>Your ID will appear on your dashboard once your profile clears review — usually within 48 hours.</div>
+              <div style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.6 }}>Your profile ID is assigned automatically when your profile is saved. You can continue to your dashboard and complete any remaining listing requirements there.</div>
             )}
           </div>
 
