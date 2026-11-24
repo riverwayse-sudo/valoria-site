@@ -41,6 +41,7 @@ function ProfessionalSignupForm(){
         localStorage.removeItem('pending_taster_id')
         localStorage.removeItem('pending_taster_name')
         localStorage.removeItem('pending_taster_role')
+        localStorage.removeItem('valu_taster_first_resume_token')
         if(!cancelled)window.location.replace('/dashboard?welcome=profile')
       }catch(err){
         if(!cancelled){setError(err?.message||'We could not connect your saved Taster. Please retry.');setRedirecting(false)}
