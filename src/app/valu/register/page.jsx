@@ -234,7 +234,7 @@ export default function ValuRegisterPage() {
                   pattern="[0-9]{6}"
                   maxLength={6}
                   value={otpCode}
-                  onChange={event => setOtpCode(event.target.value.replace(/\\D/g, '').slice(0, 6))}
+                  onChange={event => setOtpCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
                   style={S.input}
                   placeholder="000000"
                   aria-label="Six-digit email confirmation code"
