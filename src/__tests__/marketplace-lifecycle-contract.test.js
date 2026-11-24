@@ -479,6 +479,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(source).toContain("from('users').select('id,email,full_name')")
     expect(source).toContain("const assessmentAccess=roster?.assessment_access==='basic'?'basic':a?'full':completedTasterUserIds.has(j.user_id)?'basic':'none'")
     expect(source).toContain('atb_id:p.atb_id||null')
+    expect(source).toContain('counts.registered_profiles=profiles.filter(profile=>profile.is_test!==true).length')
+    expect(source).toContain('Registration is a profile-record measure, not a lifecycle or marketplace state.')
   })
 
   test('admin marketplace readiness keeps Basic taster listings separate from Full capability gates', () => {
