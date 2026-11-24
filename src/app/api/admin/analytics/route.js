@@ -34,8 +34,19 @@ export async function GET(request) {
   const { data: adminRow } = await supabase.from('admin_users').select('id').eq('id', callerData.user.id).maybeSingle()
   if (!adminRow) return Response.json({ error: 'Admin access required.' }, { status: 403 })
 
-  const { data: unlisted } = await supabase.from('professional_profiles').select('id').eq('listing_status', 'unlisted')
-  const excludedIds = new Set((unlisted || []).map(p => p.id))
+  const { data: profileMetrics, error: profileMetricsError } = await supabase
+    .from('professional_profiles')
+    .select('id,is_test,profile_complete,listing_status')
+  if (profileMetricsError) {
+    console.error('Admin analytics: professional_profiles query failed:', profileMetricsError)
+    return Response.json({ error: 'Could not load registered profile data.' }, { status: 500 })
+  }
+  const profileRows = profileMetrics || []
+  const excludedIds = new Set(profileRows.filter(p => p.listing_status === 'unlisted').map(p => p.id))
+  // Registration is independent of profile completion, consent, and public listing.
+  const registeredProfiles = profileRows.filter(p => p.is_test !== true).length
+  const completeProfiles = profileRows.filter(p => p.is_test !== true && p.profile_complete === true).length
+  const listedProfiles = profileRows.filter(p => p.is_test !== true && p.listing_status === 'listed').length
 
   const { data: assessments, error: assessmentsError } = await supabase
     .from('valu_assessments')
@@ -75,5 +86,5 @@ export async function GET(request) {
   }
 
   const { count: waitlistSignups } = await supabase.from('waitlist').select('id', { count: 'exact', head: true })
-  return Response.json({ totalAssessments: clean.length, waitlistSignups: waitlistSignups ?? 0, careerTypes, industries, trainingPriorities, scoreDistribution, incompleteProfiles })
+  return Response.json({ totalAssessments: clean.length, waitlistSignups: waitlistSignups ?? 0, registeredProfiles, completeProfiles, listedProfiles, careerTypes, industries, trainingPriorities, scoreDistribution, incompleteProfiles })
 }
