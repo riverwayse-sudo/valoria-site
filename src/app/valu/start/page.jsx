@@ -4,7 +4,7 @@ import Footer from '@/components/Footer'
 
 export const metadata = {
   title: 'Start the VALU Index Taster — Valoria Institute',
-  description: 'Begin with the VALU Index Taster, then complete the full VALU Index to receive your official points result and PRIME profile.',
+  description: 'Create or sign in to your Valoria account first. Confirm your email, complete the VALU Index Taster, then continue to the full VALU Index for your official points result and PRIME profile.',
 }
 
 const dimensions = [
@@ -16,12 +16,12 @@ const dimensions = [
 ]
 
 const faqs = [
-  ['How does it work?', 'Start with the VALU Index Taster, then complete the full VALU Index. You will receive your official points result and PRIME profile.'],
-  ['Do I need an account first?', 'No. Create your account first. After email confirmation, create or connect your Valoria account, then continue to the separate full VALU Index from your dashboard.'],
+  ['How does it work?', 'Create or sign in to your Valoria account, confirm your email, complete the VALU Index Taster, then complete the separate full VALU Index. You will receive your official points result and PRIME profile.'],
+  ['Do I need an account first?', 'Yes. Create or sign in to your Valoria account and confirm your email before beginning the Taster.'],
   ['Who is it for?', 'It is designed for professionals across industries and markets—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight, visibility and access to opportunity.'],
   ['Is it free?', 'Yes. The VALU Index Taster and full VALU Index are free to complete. The wider Valoria ecosystem connects insight to development, visibility and opportunity.'],
   ['Does the result define me?', 'No. The taster is directional, not an official score or permanent label. Your official points result is issued after you complete the full VALU Index.'],
-  ['What happens after I finish?', 'Your Taster is saved and connected to your confirmed Valoria account. Continue from your dashboard to complete the separate full VALU Index. Your official points result and merit designation are issued only after the full assessment. Public visibility also requires your permission.'],
+  ['What happens after I finish?', 'Your Taster is saved to your Valoria account. Continue from your dashboard to complete the separate full VALU Index. Your official points result and merit designation are issued only after the full assessment. Public visibility also requires your permission.'],
   ['Can I pause part-way through?', 'Yes. Your progress is saved as you go, and you can return to your dashboard to continue without restarting.'],
 ]
 
