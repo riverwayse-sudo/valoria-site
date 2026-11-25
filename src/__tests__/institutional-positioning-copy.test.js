@@ -1,0 +1,48 @@
+const fs = require('fs')
+const path = require('path')
+
+function read(relative) {
+  return fs.readFileSync(path.join(process.cwd(), relative), 'utf8')
+}
+
+describe('institutional positioning and public copy contract', () => {
+  test('homepage and About lead with the institution and professional capability', () => {
+    const hero = read('src/components/HeroSlider.jsx')
+    const about = read('src/app/about-us/page.jsx')
+    const footer = read('src/components/Footer.jsx')
+    expect(hero).toContain('THE INSTITUTIONAL STANDARD FOR PROFESSIONAL CAPABILITY')
+    expect(hero).toContain('professional capability')
+    expect(hero).not.toMatch(/Nigerian professionals|Nigeria.s professional capability marketplace/i)
+    expect(about).toContain('professional capability framework')
+    expect(about).not.toMatch(/African professional talent|African professionals are not underperforming|continent-wide human capital/i)
+    expect(footer).toContain('professional capability is assessed, developed, represented')
+    expect(footer).not.toMatch(/African professional merit/i)
+  })
+
+  test('metadata and development pages do not use geographic-first marketing keywords', () => {
+    const layout = read('src/app/layout.jsx')
+    const programmes = read('src/app/programmes/page.jsx')
+    const facilitators = read('src/app/facilitators/page.jsx')
+    const careers = read('src/app/careers/page.jsx')
+    expect(layout).not.toMatch(/African talent marketplace|hire African professionals|Nigeria talent search|areaServed:/i)
+    expect(programmes).not.toMatch(/professional development Nigeria|capability training Africa/i)
+    expect(facilitators).not.toMatch(/commissioning Nigeria|training Africa|development Lagos/i)
+    expect(careers).not.toMatch(/African professional merit|Lagos office/i)
+  })
+
+  test('waitlist copy does not make unsupported geographic or opening claims or expose question counts', () => {
+    const form = read('src/components/WaitlistForm.jsx')
+    const modal = read('src/components/WaitlistModal.jsx')
+    expect(form).not.toMatch(/Africa has never had|exceptional African professionals/i)
+    expect(modal).not.toMatch(/marketplace for assessed African professionals|marketplace opens|>9<.*questions/i)
+    expect(modal).toContain('PRIME dimensions')
+  })
+
+  test('legal disclosures retain the accurate operating entity and jurisdiction', () => {
+    const privacy = read('src/app/privacypolicy/page.jsx')
+    const terms = read('src/app/terms-of-use/page.jsx')
+    expect(privacy).toContain('African Talent Bureau Ltd')
+    expect(privacy).toContain('registered in Nigeria')
+    expect(terms).toContain('African Talent Bureau Ltd')
+  })
+})
