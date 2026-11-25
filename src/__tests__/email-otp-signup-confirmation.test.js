@@ -12,7 +12,6 @@ const callback = read("../app/auth/callback/page.jsx");
 
 describe("email OTP signup confirmation", () => {
   test.each([
-    ["professional Taster signup", valuRegister],
     ["employer and organiser signup", buyerSignup],
     ["legacy professional signup", legacyProfessionalSignup],
     ["login recovery for unconfirmed accounts", login],
@@ -26,7 +25,6 @@ describe("email OTP signup confirmation", () => {
   });
 
   test.each([
-    ["professional Taster signup", valuRegister],
     ["employer and organiser signup", buyerSignup],
     ["legacy professional signup", legacyProfessionalSignup],
   ])("%s uses the OTP template and exposes code resend without redirect links", (_name, source) => {
@@ -41,11 +39,16 @@ describe("email OTP signup confirmation", () => {
     expect(login).toContain("window.location.replace('/auth/callback')");
   });
 
-  test("Taster confirmation returns through the existing authenticated callback", () => {
-    expect(valuRegister).toContain("/auth/callback?valu_taster=1");
+  test("legacy VALU registration links redirect to the canonical Taster-first entry", () => {
+    expect(valuRegister).toContain("redirect('/valu/assessment/')");
+    expect(valuRegister).toContain("redirect('/valu/assessment/?journey=account-first')");
+    expect(valuRegister).not.toContain("supabase.auth.signUp");
+  });
+
+  test("post-Taster signup confirmation returns through the authenticated callback", () => {
+    expect(legacyProfessionalSignup).toContain("/auth/callback?pending_taster_id=");
     expect(callback).toContain("supabase.auth.getSession()");
-    expect(callback).toContain("user_metadata?.valu_taster_signup !== true");
-    expect(callback).toContain("fetch('/api/valu-taster/start'");
+    expect(callback).toContain("fetch('/api/link-taster'");
   });
 
   test("buyer signup preserves its dashboard or validated return destination", () => {
