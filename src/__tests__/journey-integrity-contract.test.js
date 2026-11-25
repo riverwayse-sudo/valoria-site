@@ -474,7 +474,7 @@ describe('journey integrity contract', () => {
   test('public VALU explanation follows Taster-first, account confirmation, and separate Full assessment', () => {
     const start = read('src/app/valu/start/page.jsx')
     const signup = read('src/app/professional-signup/page.jsx')
-    expect(start).toContain('Create your account first. After email confirmation')
+    expect(start).toContain('Create or sign in to your Valoria account first')
     expect(start).toContain('Create your account. Confirm your email. Begin your Taster.')
     expect(start).toContain('Your account is verified before your Taster begins')
     expect(start).toContain('After your Taster is complete, continue from your account dashboard')
