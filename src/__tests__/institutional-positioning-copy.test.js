@@ -30,6 +30,12 @@ describe('institutional positioning and public copy contract', () => {
     expect(programmes).not.toMatch(/professional development Nigeria|capability training Africa/i)
     expect(facilitators).not.toMatch(/commissioning Nigeria|training Africa|development Lagos/i)
     expect(careers).not.toMatch(/African professional merit|Lagos office/i)
+    const programmesPage = read('src/app/programmes/page.jsx')
+    const facilitatorsRoute = read('src/app/facilitators/page.jsx')
+    expect(programmesPage).toContain('FACILITATOR FIT &amp; COMMISSIONING')
+    expect(programmesPage).toContain('Follow-up VALU measurement is included only where agreed')
+    expect(programmesPage).not.toMatch(/Half-day intensive|Two-day cohort workshop|Cohort-level reporting available|before-and-after VALU Index scores/i)
+    expect(facilitatorsRoute).toContain("redirect('/programmes')")
   })
 
   test('waitlist copy does not make unsupported geographic or opening claims or expose question counts', () => {
