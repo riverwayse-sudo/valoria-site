@@ -41,7 +41,8 @@ describe("email OTP signup confirmation", () => {
 
   test("legacy VALU registration links redirect to the canonical Taster-first entry", () => {
     expect(valuRegister).toContain("redirect('/valu/assessment/')");
-    expect(valuRegister).toContain("redirect('/valu/assessment/?journey=account-first')");
+    expect(valuRegister).toContain("redirect('/valu/assessment/?journey=account-first')")
+    expect(valuRegister).toContain("params?.journey === 'valu_taster'");
     expect(valuRegister).not.toContain("supabase.auth.signUp");
   });
 
