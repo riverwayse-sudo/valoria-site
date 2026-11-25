@@ -74,6 +74,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p artifacts/staging-smoke
+          exec > >(tee -a artifacts/staging-smoke/smoke.log) 2>&1
+          set -x
           base="https://staging.valoriainstitute.com"
           routes=(
             /
@@ -103,6 +106,7 @@ jobs:
           )
           for route in "${routes[@]}"; do
             status="$(curl -sSL --retry 4 --retry-all-errors --max-time 25 -o /tmp/valoria-route-response -w '%{http_code}' "$base$route" || true)"
+            echo "CHECK route=$route status=$status"
             if [[ "$status" != "200" ]]; then
               echo "Route $route returned HTTP $status"
               cat /tmp/valoria-route-response || true
@@ -112,23 +116,59 @@ jobs:
           echo "PASS: all public, dashboard and policy routes return HTTP 200."
 
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
-          grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
+          cat /tmp/valoria-robots.txt | tee artifacts/staging-smoke/robots.txt
+          grep -Eq '^Disallow: /
+          # The assessment Worker owns Taster-first session APIs; its CORS, persistence,
+          # completion and retry behavior are validated by the platform staging workflow.
+          # Participant-visible navigation and fresh-session behavior are checked by Playwright.
+
+      - name: Upload staging smoke diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: valoria-staging-smoke-diagnostics
+          path: artifacts/staging-smoke/
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Install Playwright without changing project dependencies
+        run: npm install --no-save --package-lock=false playwright@1.65.0
+      - name: Install Chromium for staging browser acceptance
+        run: npx playwright install --with-deps chromium
+      - name: Run desktop/mobile and fresh-session staging browser audit
+        run: node scripts/staging-browser-audit.mjs
+      - name: Upload staging browser audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: valoria-staging-browser-audit
+          path: artifacts/staging-browser-audit/
+          if-no-files-found: warn
+          retention-days: 7
+        env:
+          STAGING_SITE_URL: https://staging.valoriainstitute.com
+          STAGING_ASSESSMENT_URL: https://assessment-staging.valoriainstitute.com
+ /tmp/valoria-robots.txt
           echo "PASS: staging robots policy blocks indexing."
           curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
+          cp /tmp/valoria-sitemap.xml artifacts/staging-smoke/sitemap.xml
           grep -q '<loc>https://staging.valoriainstitute.com/' /tmp/valoria-sitemap.xml
           if grep -Eq '<loc>https://(www\.)?valoriainstitute\.com/' /tmp/valoria-sitemap.xml; then
             echo "Staging sitemap must not publish production canonical URLs"
+            grep -n 'valoriainstitute.com' /tmp/valoria-sitemap.xml | head -50
             exit 1
           fi
           echo "PASS: staging sitemap contains only staging canonical URLs."
           curl -fsS "$base/" -o /tmp/valoria-home.html
-          grep -q 'Capability should decide' /tmp/valoria-home.html
-          grep -q 'Capability deserves' /tmp/valoria-home.html
-          grep -q 'START THE VALU INDEX TASTER' /tmp/valoria-home.html
-          grep -q 'href="/valu/assessment/"' /tmp/valoria-home.html
-          grep -q 'THE VALORIA MARKETPLACE' /tmp/valoria-home.html
-          grep -q 'Find professionals' /tmp/valoria-home.html
-          grep -q 'POINTS-BASED CAPABILITY PROFILE' /tmp/valoria-home.html
+          cp /tmp/valoria-home.html artifacts/staging-smoke/homepage.html
+          for phrase in 'Capability should decide' 'Capability deserves' 'START THE VALU INDEX TASTER' 'href="/valu/assessment/"' 'THE VALORIA MARKETPLACE' 'Find professionals' 'POINTS-BASED CAPABILITY PROFILE'; do
+            if grep -Fq "$phrase" /tmp/valoria-home.html; then
+              echo "PASS: homepage contains $phrase"
+            else
+              echo "FAIL: homepage missing $phrase"
+              grep -oE '.{0,100}(Capability|VALU|Marketplace|professionals|POINTS).{0,120}' /tmp/valoria-home.html | head -50 || true
+              exit 1
+            fi
+          done
           echo "PASS: homepage exposes the canonical Taster-first entry."
           # The assessment Worker owns Taster-first session APIs; its CORS, persistence,
           # completion and retry behavior are validated by the platform staging workflow.
