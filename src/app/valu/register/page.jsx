@@ -199,7 +199,7 @@ export default function ValuRegisterPage() {
       <Link href="/" style={styles.brand}>VALORIA INSTITUTE</Link>
       <div style={styles.eyebrow}>YOUR VALU INDEX JOURNEY</div>
       <h1 style={styles.title}>Your account comes <em>first.</em></h1>
-      <p style={styles.copy}>Create or sign in to your Valoria account. After email confirmation, you can complete the separate nine-question Taster and continue to the full VALU Index.</p>
+      <p style={styles.copy}>Create or sign in to your Valoria account. After email confirmation, you can begin your Taster and continue your VALU Index journey.</p>
       {hasSession && <p style={styles.notice}>You are signed in. Complete or confirm your professional details to begin.</p>}
       <form onSubmit={submit} style={styles.form}>
         <label style={styles.label}>FULL NAME
