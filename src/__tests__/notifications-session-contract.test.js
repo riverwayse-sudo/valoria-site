@@ -39,6 +39,8 @@ describe('authenticated VALU continuation entry points', () => {
     )
     expect(nudge).toContain("fetch('/api/valu-handoff'")
     expect(nudge).toContain('setTasterReady(hasCompletedTaster)')
+    expect(nudge).toContain('const fullAssessmentComplete = !!assessment?.completed_at')
+    expect(nudge).toContain('setAssessed(assessmentComplete)')
     expect(nudge).toContain('!handoffResponse?.ok')
     expect(nudge).toContain('AssessmentStartLink href="/dashboard" dashboardOnly')
     expect(nudge).toContain('AssessmentStartLink href="/valu/assessment/"')
