@@ -16,6 +16,7 @@ const routes = [
   { name: 'valu', url: `${SITE}/valu`, site: true },
   { name: 'valu-start', url: `${SITE}/valu/start`, site: true },
   { name: 'valu-register', url: `${SITE}/valu/register`, site: true },
+  { name: 'email-confirmation-interstitial', url: `${SITE}/auth/confirm`, site: true },
   { name: 'professional-signup-account-first', url: `${SITE}/professional-signup/?taster_id=55555555-5555-4555-8555-555555555555&name=Staging%20Participant&role=Staging%20QA&account_first=1`, site: true },
   { name: 'prime', url: `${SITE}/prime`, site: true },
   { name: 'about', url: `${SITE}/about-us`, site: true },
