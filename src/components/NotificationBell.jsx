@@ -68,6 +68,15 @@ export default function NotificationBell({ userId }) {
     }
   }, [userId, fetchNotifications])
 
+  useEffect(() => {
+    if (!isOpen) return
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') setIsOpen(false)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [isOpen])
+
   const markAsRead = async (notificationId) => {
     try {
       await fetch('/api/notifications', {
@@ -139,6 +148,7 @@ export default function NotificationBell({ userId }) {
         onClick={() => { setIsOpen(!isOpen); if (!isOpen && unreadCount > 0) markAllAsRead() }}
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
         aria-expanded={isOpen}
+        aria-controls="vi-notification-panel"
         style={{
           position: 'relative',
           background: 'none',
@@ -184,7 +194,7 @@ export default function NotificationBell({ userId }) {
             style={{ position: 'fixed', inset: 0, zIndex: 299 }}
             aria-hidden="true"
           />
-          <div style={{
+          <div id="vi-notification-panel" role="region" aria-label="Notifications" style={{
             position: 'absolute',
             top: 'calc(100% + 12px)',
             right: 0,
