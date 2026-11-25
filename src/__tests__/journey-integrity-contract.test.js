@@ -729,7 +729,7 @@ test('legacy assessment entry points converge on the authenticated continuation 
   expect(bridge).toContain("redirect('/assessment/continue')")
   expect(resolver).toContain("fetch('/api/valu-handoff'")
   expect(resolver).toContain("method: 'POST'")
-  expect(resolver).toContain("window.location.assign(data.url)")
+  expect(resolver).toContain("window.location.assign(destination)")
   expect(resolver).toContain("/login?returnTo=%2Fassessment%2Fcontinue")
   expect(resolver).toContain("/valu/register/")
   expect(resolver).not.toContain("searchParams.get('taster_id')")
