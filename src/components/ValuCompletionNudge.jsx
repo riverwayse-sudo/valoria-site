@@ -22,8 +22,9 @@ export default function ValuCompletionNudge(){
       const {data:{session}}=await supabase.auth.getSession()
       if(!user||!session?.access_token||!active)return
 
-      const [{data:profile},{data:latestSession},handoffResponse]=await Promise.all([
+      const [{data:profile},{data:assessment},{data:latestSession},handoffResponse]=await Promise.all([
         supabase.from('professional_profiles').select('profile_complete').eq('id',user.id).maybeSingle(),
+        supabase.from('valu_assessments').select('id,total_score,completed_at').eq('user_id',user.id).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle(),
         supabase.from('assessment_sessions').select('id,completed_at,updated_at').eq('user_id',user.id).order('updated_at',{ascending:false}).limit(1).maybeSingle(),
         fetch('/api/valu-handoff',{method:'GET',headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'}).catch(()=>null)
       ])
@@ -31,12 +32,13 @@ export default function ValuCompletionNudge(){
       if(!profile||profile.profile_complete||!handoffResponse?.ok)return
       const access=await handoffResponse.json().catch(()=>({}))
       const hasCompletedTaster=handoffResponse.ok&&access.can_continue===true
-      const fullAssessmentComplete=handoffResponse.ok&&access.assessment_completed===true
+      const fullAssessmentComplete = !!assessment?.completed_at
+      const assessmentComplete = fullAssessmentComplete || (handoffResponse.ok&&access.assessment_completed===true)
       if(active){
         const started = !!latestSession?.id && !latestSession?.completed_at
         setAssessmentStarted(started)
         setTasterReady(hasCompletedTaster)
-        setAssessed(fullAssessmentComplete)
+        setAssessed(assessmentComplete)
         setShow(true)
       }
     }
