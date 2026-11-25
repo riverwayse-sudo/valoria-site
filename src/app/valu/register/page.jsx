@@ -17,10 +17,6 @@ const EXPERIENCE = [
   ['15+', '15+ years'],
 ]
 
-function emailRedirect() {
-  return `${window.location.origin}/auth/callback?valu_taster=1`
-}
-
 export default function ValuRegisterPage() {
   const [mode, setMode] = useState('signup')
   const [form, setForm] = useState({
@@ -105,7 +101,6 @@ export default function ValuRegisterPage() {
           email: form.email.trim().toLowerCase(),
           password: form.password,
           options: {
-            emailRedirectTo: emailRedirect(),
             data: {
               display_name: form.name.trim(),
               full_name: form.name.trim(),
@@ -160,7 +155,7 @@ export default function ValuRegisterPage() {
     } catch (err) {
       if (mode === 'signin' && /email not confirmed|confirm your email/i.test(err?.message || '')) {
         setConfirmation(true)
-        setError('Your account exists, but your email still needs confirmation. Request a fresh link below.')
+        setError('Your account exists, but your email still needs confirmation. Request a fresh six-digit code below.')
       } else {
         setError(err?.message || 'We could not complete your account setup. Please try again.')
       }
@@ -199,7 +194,6 @@ export default function ValuRegisterPage() {
       const { error: resendError } = await supabase.auth.resend({
         type: 'signup',
         email: form.email.trim().toLowerCase(),
-        options: { emailRedirectTo: emailRedirect() },
       })
       if (resendError) throw resendError
       setResendMessage('A fresh six-digit confirmation code has been requested. Check your inbox and spam folder.')

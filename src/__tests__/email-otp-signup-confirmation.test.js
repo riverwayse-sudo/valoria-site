@@ -25,6 +25,16 @@ describe("email OTP signup confirmation", () => {
     expect(source).toContain("email_confirmed_at");
   });
 
+  test.each([
+    ["professional Taster signup", valuRegister],
+    ["employer and organiser signup", buyerSignup],
+    ["legacy professional signup", legacyProfessionalSignup],
+  ])("%s uses the OTP template and exposes code resend without redirect links", (_name, source) => {
+    expect(source).not.toContain("emailRedirectTo");
+    expect(source).toContain("supabase.auth.resend");
+    expect(source).toMatch(/type\s*:\s*['"]signup['"]/);
+  });
+
   test("login can resend and verify a signup code for an existing unconfirmed account", () => {
     expect(login).toContain("resendSignupOtp");
     expect(login).toContain("supabase.auth.resend");
