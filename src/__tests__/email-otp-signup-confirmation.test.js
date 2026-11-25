@@ -32,7 +32,7 @@ describe("email OTP signup confirmation", () => {
   ])("%s uses the OTP template and exposes code resend without redirect links", (_name, source) => {
     expect(source).not.toContain("emailRedirectTo");
     expect(source).toContain("supabase.auth.resend");
-    expect(source).toContain("type: 'signup'");
+    expect(source).toMatch(/type\s*:\s*['"]signup['"]/);
   });
 
   test("login can resend and verify a signup code for an existing unconfirmed account", () => {
