@@ -477,7 +477,7 @@ describe('journey integrity contract', () => {
     expect(start).toContain('Create or sign in to your Valoria account first')
     expect(start).toContain('Create your account. Confirm your email. Begin your Taster.')
     expect(start).toContain('Your account is verified before your Taster begins')
-    expect(start).toContain('After your Taster is complete, continue from your account dashboard')
+    expect(start).toContain('The full VALU Index establishes your official points result')
     expect(start).toContain('Your official result in points')
     expect(start).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
     expect(start).not.toMatch(/9-question|58-question/i)
