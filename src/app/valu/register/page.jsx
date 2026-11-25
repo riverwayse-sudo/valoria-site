@@ -1,7 +1,11 @@
 import { redirect } from 'next/navigation'
 
-// Legacy assessment links previously opened an account-first registration form.
-// Keep the URL working, but send every visitor to the canonical Taster-first entry.
-export default function ValuRegisterPage() {
+// Keep old registration URLs working, but never make account creation the default
+// public entry. Only preserve the explicit legacy journey for existing participants.
+export default async function ValuRegisterPage({ searchParams }) {
+  const params = await searchParams
+  if (params?.journey === 'account-first') {
+    redirect('/valu/assessment/?journey=account-first')
+  }
   redirect('/valu/assessment/')
 }
