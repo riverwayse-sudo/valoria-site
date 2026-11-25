@@ -45,6 +45,8 @@ export default function SignupPage() {
   const [returnTo, setReturnTo] = useState('')
   const [otpCode, setOtpCode] = useState('')
   const [verifyingOtp, setVerifyingOtp] = useState(false)
+  const [resendingOtp, setResendingOtp] = useState(false)
+  const [resendMessage, setResendMessage] = useState('')
 
   async function handleSignup(e) {
     e.preventDefault()
@@ -65,9 +67,6 @@ export default function SignupPage() {
         password: form.password,
         options: {
           data: { display_name: form.name, user_type: userType },
-          // Never derive auth redirects from window.location.origin: signups on a
-          // Vercel preview would otherwise send confirmation emails to that preview.
-          emailRedirectTo: 'https://valoriainstitute.com/auth/callback',
         },
       })
       if (signupError) throw signupError
@@ -92,6 +91,23 @@ export default function SignupPage() {
       setError(err.message || 'Something went wrong. Please try again.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function resendEmailOtp() {
+    const email = form.email.trim().toLowerCase()
+    if (!email || resendingOtp) return
+    setResendingOtp(true)
+    setResendMessage('')
+    setError('')
+    try {
+      const { error: resendError } = await supabase.auth.resend({ type: 'signup', email })
+      if (resendError) throw resendError
+      setResendMessage('A fresh confirmation code has been requested. Check your inbox and spam folder.')
+    } catch (err) {
+      setError(err?.message || 'We could not send a new confirmation code. Please try again shortly.')
+    } finally {
+      setResendingOtp(false)
     }
   }
 
@@ -149,6 +165,10 @@ export default function SignupPage() {
               {verifyingOtp ? 'VERIFYING…' : 'VERIFY EMAIL & CONTINUE →'}
             </button>
           </form>
+          {resendMessage && <div role="status" style={{ ...S.sub, marginTop: '10px' }}>{resendMessage}</div>}
+          <button type="button" onClick={resendEmailOtp} disabled={resendingOtp} style={{ ...S.btnGold, background: 'transparent', border: '1px solid rgba(201,168,76,.3)', color: GOLD, marginTop: '10px', opacity: resendingOtp ? 0.6 : 1 }}>
+            {resendingOtp ? 'REQUESTING NEW CODE…' : 'RESEND CONFIRMATION CODE'}
+          </button>
           {returnTo ? (
             <a href={returnTo} style={S.btnGold}>CONTINUE YOUR VALORIA JOURNEY →</a>
           ) : (
