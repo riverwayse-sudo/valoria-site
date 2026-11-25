@@ -134,9 +134,9 @@ jobs:
             cat /tmp/valu-bootstrap-response || true
             exit 1
           fi
-          grep -q 'Create or sign in to your Valoria account' /tmp/valu-bootstrap-response
+          node -e "const fs=require('fs'); const body=JSON.parse(fs.readFileSync('/tmp/valu-bootstrap-response','utf8')); if(typeof body.error!=='string' || !body.error.trim()) { console.error('Unauthenticated bootstrap did not return a structured error response:', body); process.exit(1); }"
 
-          echo "Unauthenticated Taster bootstrap correctly rejects access; browser audit covers the public entry surfaces."
+          echo "Unauthenticated Taster bootstrap correctly rejects access with a structured 401 response; browser audit covers the public entry surfaces."
 
       - name: Install Playwright without changing project dependencies
         run: npm install --no-save --package-lock=false playwright@1.65.0
