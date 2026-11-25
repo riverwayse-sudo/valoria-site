@@ -43,8 +43,6 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [returnTo, setReturnTo] = useState('')
-  const [otpCode, setOtpCode] = useState('')
-  const [verifyingOtp, setVerifyingOtp] = useState(false)
   const [resendingOtp, setResendingOtp] = useState(false)
   const [resendMessage, setResendMessage] = useState('')
 
@@ -66,6 +64,7 @@ export default function SignupPage() {
         email: form.email,
         password: form.password,
         options: {
+          emailRedirectTo: window.location.origin + '/auth/callback',
           data: { display_name: form.name, user_type: userType },
         },
       })
@@ -101,36 +100,17 @@ export default function SignupPage() {
     setResendMessage('')
     setError('')
     try {
-      const { error: resendError } = await supabase.auth.resend({ type: 'signup', email })
+      const { error: resendError } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: { emailRedirectTo: window.location.origin + '/auth/callback' },
+      })
       if (resendError) throw resendError
-      setResendMessage('A fresh confirmation code has been requested. Check your inbox and spam folder.')
+      setResendMessage('A fresh confirmation link has been requested. Check your inbox and spam folder.')
     } catch (err) {
       setError(err?.message || 'We could not send a new confirmation code. Please try again shortly.')
     } finally {
       setResendingOtp(false)
-    }
-  }
-
-  async function verifyEmailOtp(e) {
-    e.preventDefault()
-    if (verifyingOtp || otpCode.length !== 6) return
-    setVerifyingOtp(true)
-    setError('')
-    try {
-      const { data, error: verifyError } = await supabase.auth.verifyOtp({
-        email: form.email.trim().toLowerCase(),
-        token: otpCode,
-        type: 'email',
-      })
-      if (verifyError) throw verifyError
-      if (!data?.session?.access_token || !data?.user?.email_confirmed_at) {
-        throw new Error('Your email code was accepted, but Valoria could not establish a confirmed account session. Please request a new code.')
-      }
-      window.location.replace(returnTo || '/dashboard?welcome=profile')
-    } catch (err) {
-      setError(err?.message || 'That code could not be verified. Check it and try again, or request a new code.')
-    } finally {
-      setVerifyingOtp(false)
     }
   }
 
@@ -139,43 +119,17 @@ export default function SignupPage() {
       <div style={S.page}>
         <div style={S.card}>
           <div style={{ fontSize: '28px', color: GOLD, textAlign: 'center', marginBottom: '16px' }}>✦</div>
-          <h2 style={S.title}>Account created.</h2>
+          <h2 style={S.title}>Check your email.</h2>
           <p style={S.sub}>
-            We sent a six-digit confirmation code to <strong>{form.email.trim().toLowerCase()}</strong>. Enter it below to activate your account and continue.
+            We sent a secure confirmation link to <strong>{form.email.trim().toLowerCase()}</strong>. Open that email and select “Confirm your account”. You’ll then be signed in and returned to Valoria.
           </p>
-          <form onSubmit={verifyEmailOtp} style={{ ...S.form, marginTop: '18px' }}>
-            <div style={S.field}>
-              <label style={S.label}>SIX-DIGIT EMAIL CODE</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                pattern="[0-9]{6}"
-                maxLength={6}
-                value={otpCode}
-                onChange={e => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                placeholder="000000"
-                required
-                style={S.input}
-                aria-label="Six-digit email confirmation code"
-              />
-            </div>
-            {error && <div style={S.errorBox}>{error}</div>}
-            <button type="submit" disabled={verifyingOtp || otpCode.length !== 6} style={{ ...S.btnGold, opacity: verifyingOtp || otpCode.length !== 6 ? 0.55 : 1 }}>
-              {verifyingOtp ? 'VERIFYING…' : 'VERIFY EMAIL & CONTINUE →'}
-            </button>
-          </form>
+          {error && <div role="alert" style={S.errorBox}>{error}</div>}
           {resendMessage && <div role="status" style={{ ...S.sub, marginTop: '10px' }}>{resendMessage}</div>}
           <button type="button" onClick={resendEmailOtp} disabled={resendingOtp} style={{ ...S.btnGold, background: 'transparent', border: '1px solid rgba(201,168,76,.3)', color: GOLD, marginTop: '10px', opacity: resendingOtp ? 0.6 : 1 }}>
-            {resendingOtp ? 'REQUESTING NEW CODE…' : 'RESEND CONFIRMATION CODE'}
+            {resendingOtp ? 'SENDING LINK…' : 'RESEND CONFIRMATION LINK'}
           </button>
-          {returnTo ? (
-            <a href={returnTo} style={S.btnGold}>CONTINUE YOUR VALORIA JOURNEY →</a>
-          ) : (
-            <MarketplaceCTA style={S.btnGold}>BROWSE THE MARKETPLACE →</MarketplaceCTA>
-          )}
-          <a href="/dashboard" style={{ ...S.btnGold, background: 'transparent', border: '1px solid rgba(201,168,76,.3)', color: GOLD, marginTop: '10px', display: 'block', textAlign: 'center' }}>
-            GO TO DASHBOARD
+          <a href="/login" style={{ ...S.btnGold, background: 'transparent', border: '1px solid rgba(201,168,76,.3)', color: GOLD, marginTop: '10px', display: 'block', textAlign: 'center' }}>
+            ALREADY CONFIRMED? SIGN IN
           </a>
         </div>
       </div>
