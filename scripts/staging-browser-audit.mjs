@@ -194,8 +194,9 @@ try {
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
       const canonicalTasterEntries = new Set(['/valu/register'])
+      const normalisePath = value => value.replace(/\\/+$/, '') || '/'
       if (['homepage', 'valu', 'valu-start'].includes(route.name) &&
-          (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => !canonicalTasterEntries.has(href)))) {
+          (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => !canonicalTasterEntries.has(normalisePath(href))))) {
         report.failures.push(route.name + '/' + viewport.name + ': public Taster entry must require the canonical account-first registration route; found ' + JSON.stringify(state.tasterEntryLinks))
       }
       if (route.name === 'valu-register' &&
