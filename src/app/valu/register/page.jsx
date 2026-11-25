@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/password-policy'
+import { getValuTasterConfirmationRedirect } from '@/lib/auth-confirmation'
 
 const GOLD = '#C9A84C'
 const DARK = '#0F0F1A'
@@ -18,7 +19,9 @@ const EXPERIENCE = [
 ]
 
 function confirmationUrl() {
-  return `${window.location.origin}/auth/callback?valu_taster=1`
+  const redirect = getValuTasterConfirmationRedirect(window.location.origin)
+  if (!redirect) throw new Error('Email confirmation must be started from the official Valoria site.')
+  return redirect
 }
 
 export default function ValuRegisterPage() {
