@@ -8,6 +8,7 @@ export default function ValuCompletionNudge(){
   const [show,setShow]=useState(false)
   const [assessed,setAssessed]=useState(false)
   const [assessmentStarted,setAssessmentStarted]=useState(false)
+  const [tasterReady,setTasterReady]=useState(false)
   const closeButtonRef=useRef(null)
 
   useEffect(()=>{
@@ -18,20 +19,26 @@ export default function ValuCompletionNudge(){
       }catch{}
 
       const {data:{user}}=await supabase.auth.getUser()
-      if(!user||!active)return
+      const {data:{session}}=await supabase.auth.getSession()
+      if(!user||!session?.access_token||!active)return
 
-      const [{data:profile},{data:assessment},{data:latestSession}]=await Promise.all([
+      const [{data:profile},{data:assessment},{data:latestSession},handoffResponse]=await Promise.all([
         supabase.from('professional_profiles').select('profile_complete').eq('id',user.id).maybeSingle(),
         supabase.from('valu_assessments').select('id,total_score,completed_at').eq('user_id',user.id).not('completed_at','is',null).order('completed_at',{ascending:false}).limit(1).maybeSingle(),
-        supabase.from('assessment_sessions').select('id,completed_at,updated_at').eq('user_id',user.id).order('updated_at',{ascending:false}).limit(1).maybeSingle()
+        supabase.from('assessment_sessions').select('id,completed_at,updated_at').eq('user_id',user.id).order('updated_at',{ascending:false}).limit(1).maybeSingle(),
+        fetch('/api/valu-handoff',{method:'GET',headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'}).catch(()=>null)
       ])
 
-      if(!profile||profile.profile_complete)return
-      const fullAssessmentComplete=!!assessment?.completed_at
+      if(!profile||profile.profile_complete||!handoffResponse?.ok)return
+      const access=await handoffResponse.json().catch(()=>({}))
+      const hasCompletedTaster=handoffResponse.ok&&access.can_continue===true
+      const fullAssessmentComplete = !!assessment?.completed_at
+      const assessmentComplete = fullAssessmentComplete || (handoffResponse.ok&&access.assessment_completed===true)
       if(active){
         const started = !!latestSession?.id && !latestSession?.completed_at
         setAssessmentStarted(started)
-        setAssessed(fullAssessmentComplete)
+        setTasterReady(hasCompletedTaster)
+        setAssessed(assessmentComplete)
         setShow(true)
       }
     }
@@ -57,20 +64,24 @@ export default function ValuCompletionNudge(){
   return <div style={S.overlay} role="dialog" aria-modal="true" aria-labelledby="valu-nudge-title">
     <div style={S.card}>
       <button ref={closeButtonRef} onClick={dismiss} aria-label="Close" style={S.close}>×</button>
-      <div style={S.eyebrow}>{assessed?'VALU INDEX ASSESSMENT COMPLETE':assessmentStarted?'ASSESSMENT IN PROGRESS':'YOUR NEXT STEP'}</div>
+      <div style={S.eyebrow}>{assessed?'VALU INDEX ASSESSMENT COMPLETE':assessmentStarted?'ASSESSMENT IN PROGRESS':tasterReady?'TASTER SAVED':'YOUR NEXT STEP'}</div>
       <h2 id="valu-nudge-title" style={S.title}>
-        {assessed?'Your VALU Index assessment is complete.':assessmentStarted?'Continue your VALU Index assessment.':'Start your VALU Index assessment.'}
+        {assessed?'Your VALU Index assessment is complete.':assessmentStarted?'Continue your VALU Index assessment.':tasterReady?'Your Taster is saved. Continue to the full VALU Index.':'Start your VALU Index Taster.'}
       </h2>
       <p style={S.copy}>
         {assessed
           ? 'Your professional profile is ready to complete. Finish your details to establish your marketplace presence. Eligibility and public listing are determined separately by Valoria’s requirements.'
           : assessmentStarted
             ? 'Your progress is saved. Continue from your last answered question without restarting.'
-            : 'Start the VALU Index assessment to understand your professional capability and take the next step with Valoria.'}
+            : tasterReady
+              ? 'Your completed Taster is connected to your account. Continue to the separate full VALU Index to receive your official points result.'
+              : 'Begin with the VALU Index Taster. Your responses and result are saved before you create or connect your Valoria account.'}
       </p>
-      {assessmentStarted
-        ? <AssessmentStartLink href="/dashboard" dashboardOnly style={S.button}>CONTINUE MY ASSESSMENT →</AssessmentStartLink>
-        : <a href={assessed?"/profile/setup":"/valu/start"} style={S.button}>{assessed?"COMPLETE MY PROFILE":"START THE VALU INDEX"} →</a>}
+      {assessed
+        ? <a href="/profile/setup" style={S.button}>COMPLETE MY PROFILE →</a>
+        : assessmentStarted || tasterReady
+          ? <AssessmentStartLink href="/dashboard" dashboardOnly style={S.button}>{assessmentStarted?'CONTINUE MY ASSESSMENT →':'CONTINUE TO FULL VALU INDEX →'}</AssessmentStartLink>
+          : <AssessmentStartLink href="/valu/assessment/" style={S.button}>START THE VALU INDEX TASTER →</AssessmentStartLink>}
       <button onClick={dismiss} style={S.later}>Remind me later</button>
     </div>
   </div>

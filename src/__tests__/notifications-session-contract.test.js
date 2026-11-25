@@ -32,13 +32,19 @@ describe('authenticated VALU continuation entry points', () => {
     expect(dashboard).not.toContain("? '/valu/start'")
   })
 
-  test('sitewide assessment nudge resumes an in-progress assessment', () => {
+  test('sitewide assessment nudge routes by verified Taster and full-assessment state', () => {
     const nudge = fs.readFileSync(
       path.join(process.cwd(), 'src/components/ValuCompletionNudge.jsx'),
       'utf8'
     )
+    expect(nudge).toContain("fetch('/api/valu-handoff'")
+    expect(nudge).toContain('setTasterReady(hasCompletedTaster)')
+    expect(nudge).toContain('const fullAssessmentComplete = !!assessment?.completed_at')
+    expect(nudge).toContain('setAssessed(assessmentComplete)')
+    expect(nudge).toContain('!handoffResponse?.ok')
     expect(nudge).toContain('AssessmentStartLink href="/dashboard" dashboardOnly')
-    expect(nudge).toContain('href={assessed?"/profile/setup":"/valu/start"}')
-    expect(nudge).toContain('CONTINUE MY ASSESSMENT')
+    expect(nudge).toContain('AssessmentStartLink href="/valu/assessment/"')
+    expect(nudge).toContain('CONTINUE TO FULL VALU INDEX')
+    expect(nudge).not.toContain('href={assessed?"/profile/setup":"/valu/start"}')
   })
 })

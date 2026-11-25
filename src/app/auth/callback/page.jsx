@@ -41,9 +41,9 @@ function AuthCallbackFlow() {
         const identityHash = params.get('identity_hash') || sessionStorage.getItem('pending_identity_hash')
         const pendingTasterId = params.get('pending_taster_id') || localStorage.getItem('pending_taster_id')
 
-        // Professional Taster registration is account-first. Only this explicit
-        // callback parameter returns a confirmed professional to the Taster;
-        // ordinary confirmation flows retain their existing dashboard behavior.
+        // Legacy account-first Taster registrations still use this explicit
+        // callback parameter. New public journeys complete the Taster first and
+        // arrive here with pending_taster_id so the saved result is linked.
         if (params.get('valu_taster') === '1' && !identityHash && !pendingTasterId) {
           if (!user.email_confirmed_at) throw new Error('Confirm your email before beginning the VALU Index Taster.')
           if (user.user_metadata?.valu_taster_signup !== true) {
