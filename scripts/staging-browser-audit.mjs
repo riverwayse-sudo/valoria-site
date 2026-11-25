@@ -17,6 +17,7 @@ const routes = [
   { name: 'valu', url: `${SITE}/valu`, site: true },
   { name: 'valu-start', url: `${SITE}/valu/start`, site: true },
   { name: 'valu-register', url: `${SITE}/valu/register`, site: true },
+  { name: 'valu-register-legacy', url: `${SITE}/valu/register?journey=valu_taster`, site: true },
   { name: 'professional-signup-account-first', url: `${SITE}/professional-signup/?taster_id=55555555-5555-4555-8555-555555555555&name=Staging%20Participant&role=Staging%20QA&account_first=1`, site: true },
   { name: 'professional-signup-post-taster', url: `${SITE}/professional-signup/?taster_id=${POST_TASTER_ID}&name=Staging%20Participant&role=Staging%20QA&experience=0-3&email=staging-participant%40example.invalid`, site: true },
   { name: 'prime', url: `${SITE}/prime`, site: true },
@@ -107,6 +108,7 @@ try {
         }
         const urlTasterId = new URL(window.location.href).searchParams.get('taster_id') || ''
         const currentPath = window.location.pathname
+        const journeyParam = new URL(window.location.href).searchParams.get('journey') || ''
         const savedTasterCopy = /Your taster is saved/i.test(document.body.innerText)
         const signInLink = [...document.querySelectorAll('a')].find(a => /SIGN IN TO CONNECT YOUR TASTER/i.test(a.innerText))?.href || ''
         const accountCreationAction = /CREATE ACCOUNT|ACCOUNT CREATION/i.test(document.body.innerText)
@@ -150,6 +152,7 @@ try {
           registrationForm,
           urlTasterId,
           currentPath,
+          journeyParam,
           savedTasterCopy,
           signInLink,
           accountCreationAction,
@@ -193,6 +196,10 @@ try {
       }
       if (route.name === 'valu-register' && state.currentPath !== '/valu/assessment/') {
         report.failures.push(route.name + '/' + viewport.name + ': legacy registration URL did not redirect to the Taster-first route')
+      }
+      if (route.name === 'valu-register-legacy' &&
+          (state.currentPath !== '/valu/assessment/' || state.journeyParam !== 'account-first')) {
+        report.failures.push(route.name + '/' + viewport.name + ': in-progress legacy Taster registration did not retain its compatibility gate')
       }
       if (route.name === 'professional-signup-account-first' &&
           (!state.signInLink.includes('/login?pending_taster_id=') || state.accountCreationAction)) {
