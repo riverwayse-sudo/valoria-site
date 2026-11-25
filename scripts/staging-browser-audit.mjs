@@ -75,7 +75,7 @@ try {
       }
 
       // Reveal scroll-triggered content before taking a full-page screenshot.
-      // The route matrix also includes the GET-only email confirmation interstitial.
+      // The route matrix includes the GET-only email confirmation interstitial and public signup recovery surfaces.
       // Full-page capture does not itself scroll through the page, so without
       // this pass legitimate sections remain opacity-hidden in visual evidence.
       await page.evaluate(async () => {
