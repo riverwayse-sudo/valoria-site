@@ -4,7 +4,7 @@ const {
   safeAuthConfirmationNextPath,
   escapeAuthConfirmationHtml,
   getValuTasterConfirmationRedirect,
-} = require('../lib/auth-confirmation')
+} = require('../lib/auth-confirmation.cjs')
 
 describe('scanner-safe Supabase email confirmation', () => {
   test('allows the same-origin account callback and preserves only the Taster handoff flag', () => {
