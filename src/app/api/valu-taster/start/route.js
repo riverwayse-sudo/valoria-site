@@ -100,7 +100,7 @@ export async function POST(request) {
     return responseError('Secure Taster access is temporarily unavailable. Please try again.', 503)
   }
 
-  const destination = new URL('/valu/assessment/', request.url)
+  const destination = new URL('/valu/assessment/?journey=account-first', request.url)
   destination.hash = new URLSearchParams({ taster_start_code: handoffCode }).toString()
   return NextResponse.json({
     url: destination.toString(),
