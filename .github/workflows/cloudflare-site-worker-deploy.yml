@@ -92,20 +92,17 @@ jobs:
           done
 
           curl -fsS "$base/" -o /tmp/valoria-production-home.html
-          grep -q 'href="/valu/assessment/"' /tmp/valoria-production-home.html
+          grep -q 'href="/valu/register/?journey=valu_taster"' /tmp/valoria-production-home.html
 
-          curl -sS -D /tmp/valoria-register-headers -o /dev/null "$base/valu/register"
-          if ! grep -Eiq '^location: (https?://[^/]+)?/valu/assessment/' /tmp/valoria-register-headers; then
-            echo "Legacy /valu/register/ must redirect to the canonical Taster-first assessment entry"
-            cat /tmp/valoria-register-headers
+          register_status="$(curl -sSL --retry 3 --retry-all-errors --max-time 25 -o /tmp/valoria-register.html -w '%{http_code}' "$base/valu/register?journey=valu_taster")"
+          if [[ "$register_status" != "200" ]]; then
+            echo "Account-first VALU registration returned HTTP $register_status"
+            cat /tmp/valoria-register.html || true
             exit 1
           fi
-          echo "PASS: public CTAs and legacy registration links enter the Taster-first journey."
-
-          curl -sS -D /tmp/valoria-legacy-headers -o /dev/null "$base/valu/register?journey=valu_taster"
-          if ! grep -Eiq '^location: (https?://[^/]+)?/valu/assessment/\?journey=account-first' /tmp/valoria-legacy-headers; then
-            echo "Legacy in-progress Taster registration must retain its explicit account-first recovery handoff"
-            cat /tmp/valoria-legacy-headers
+          register_url="$(curl -sSL --retry 3 --retry-all-errors --max-time 25 -o /dev/null -w '%{url_effective}' "$base/valu/register?journey=valu_taster")"
+          if [[ "$register_url" != *"/valu/register"* || "$register_url" != *"journey=valu_taster"* ]]; then
+            echo "Account-first registration URL did not remain canonical: $register_url"
             exit 1
           fi
-          echo "PASS: explicit legacy Taster recovery remains routed through the compatibility gate."
+          echo "PASS: public and legacy Taster entry resolves to account-first registration."
