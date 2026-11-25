@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { AssessmentStartLink } from '@/components/Nav'
 import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
 import { PUBLIC_PROFILE_CONSENT_TEXT, REGISTERED_PROFILE_CONSENT_TEXT } from '@/lib/profile-consent-copy'
 
@@ -1165,9 +1166,9 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
             A completed taster linked to your account can support a Basic listing. Continue with the Full VALU Index to receive your official points, PRIME insight and Full-tier benefits. Public display still requires your explicit consent and the applicable identity and listing checks.
           </p>
-          <a href="https://valoriainstitute.com/valu/assessment/" style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
+          <AssessmentStartLink href="/dashboard" dashboardOnly style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
             COMPLETE THE FULL VALU INDEX →
-          </a>
+          </AssessmentStartLink>
         </div>
       )}
 

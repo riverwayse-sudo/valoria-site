@@ -43,7 +43,7 @@ describe('authenticated VALU continuation entry points', () => {
     expect(nudge).toContain('setAssessed(assessmentComplete)')
     expect(nudge).toContain('!handoffResponse?.ok')
     expect(nudge).toContain('AssessmentStartLink href="/dashboard" dashboardOnly')
-    expect(nudge).toContain('AssessmentStartLink href="/valu/assessment/"')
+    expect(nudge).toContain('href="/valu/register/?journey=valu_taster"')
     expect(nudge).toContain('CONTINUE TO FULL VALU INDEX')
     expect(nudge).not.toContain('href={assessed?"/profile/setup":"/valu/start"}')
   })

@@ -59,7 +59,12 @@ function AuthCallbackFlow() {
             throw new Error(handoff.error || 'We could not securely open your Taster. Please return to your Valoria account and try again.')
           }
           const destination = new URL(handoff.url, window.location.origin)
-          if (destination.origin !== window.location.origin || !destination.pathname.startsWith('/valu/assessment/')) {
+          if (destination.origin !== window.location.origin) {
+            throw new Error('The Taster handoff destination could not be verified.')
+          }
+          if (handoff.already_completed) {
+            if (destination.pathname !== '/dashboard') throw new Error('The completed assessment destination could not be verified.')
+          } else if (!destination.pathname.startsWith('/valu/assessment/')) {
             throw new Error('The Taster handoff destination could not be verified.')
           }
           if (!cancelled) window.location.replace(destination.toString())

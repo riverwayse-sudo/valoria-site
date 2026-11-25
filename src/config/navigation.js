@@ -1,5 +1,5 @@
 export const NAVIGATION = {
-  assessmentUrl: '/valu/assessment/',
+  assessmentUrl: '/valu/register/?journey=valu_taster',
   primary: [
     {
       label: 'Explore',
@@ -23,7 +23,7 @@ export const NAVIGATION = {
           label: 'Understand',
           items: [
             { label: 'About the VALU Index', href: '/valu', description: 'Understand the VALU Index and its assessment journey.' },
-            { label: 'Start the VALU Index', href: '/valu/assessment/', description: 'Begin the VALU Index Taster.' },
+            { label: 'Start the VALU Index', href: '/valu/register/?journey=valu_taster', description: 'Begin the VALU Index Taster.' },
           ],
         },
       ],
@@ -53,7 +53,7 @@ export const NAVIGATION = {
     ],
     valu: [
       { label: 'About the VALU Index', href: '/valu' },
-      { label: 'Start the VALU Index', href: '/valu/assessment/' },
+      { label: 'Start the VALU Index', href: '/valu/register/?journey=valu_taster' },
     ],
     about: [
       { label: 'About Valoria', href: '/about-us' },

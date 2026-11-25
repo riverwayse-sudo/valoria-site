@@ -48,7 +48,7 @@ export default function SessionShowcase() {
               {!current.replay && <div className="session-showcase-timer"><SessionTimer session={current} /></div>}
               <div className="session-showcase-actions">
                 <button className="session-showcase-primary" type="button" disabled={!current.replay && currentState !== 'registration-open'} onClick={handlePrimaryAction}>{actionLabel} <span aria-hidden="true">&nbsp;→</span></button>
-                <AssessmentStartLink href="/valu/assessment/" className="session-showcase-secondary">TAKE THE ASSESSMENT <span aria-hidden="true">&nbsp;→</span></AssessmentStartLink>
+                <AssessmentStartLink href="/valu/register/?journey=valu_taster" className="session-showcase-secondary">TAKE THE ASSESSMENT <span aria-hidden="true">&nbsp;→</span></AssessmentStartLink>
               </div>
               <p className="session-showcase-note">Every conversation connects the discussion back to the VALU Index — Valoria's framework for understanding professional capability and worth.</p>
             </div>
