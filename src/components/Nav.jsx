@@ -150,9 +150,10 @@ export default function Nav() {
   </>
 }
  
-// Route every signed-in VALU Index start through the authenticated continuation endpoint.
-// Anonymous visitors begin at account-first professional registration.
-export function AssessmentStartLink({ href = '/valu/register/', className, style, children, onClick, dashboardOnly = false, ...props }) {
+// Public VALU entry always begins with the Taster. Confirmed account creation follows the saved result.
+// Signed-in participants with an eligible saved Taster retain the authenticated full-assessment handoff.
+const TASTER_FIRST_ENTRY = '/valu/assessment/'
+export function AssessmentStartLink({ href = TASTER_FIRST_ENTRY, className, style, children, onClick, dashboardOnly = false, ...props }) {
   const [opening, setOpening] = useState(false)
   const [error, setError] = useState('')
 
@@ -187,7 +188,7 @@ export function AssessmentStartLink({ href = '/valu/register/', className, style
           return
         }
         if (!access.can_continue) {
-          window.location.assign(href)
+          window.location.assign(TASTER_FIRST_ENTRY)
           return
         }
 
@@ -211,17 +212,16 @@ export function AssessmentStartLink({ href = '/valu/register/', className, style
         window.location.assign('/login?returnTo=%2Fdashboard')
         return
       }
-      // Anonymous visitors start with account creation and email confirmation.
-      window.location.assign(href)
+      // Anonymous visitors begin the Taster immediately; account creation follows the saved result.
+      window.location.assign(TASTER_FIRST_ENTRY)
     } catch (err) {
       setError(err?.message || 'We could not open your VALU Index. Please try again.')
       setOpening(false)
     }
   }
 
-  // The anchor advertises the public account-first entry point. Normal signed-in
-  // clicks still obtain a fresh, short-lived handoff before opening the full assessment.
-  const linkHref = dashboardOnly ? 'https://assessment.valoriainstitute.com/remaining' : href
+  // The anchor advertises the canonical Taster-first entry. Dashboard-only links remain on the formal continuation route.
+  const linkHref = dashboardOnly ? 'https://assessment.valoriainstitute.com/remaining' : TASTER_FIRST_ENTRY
 
   return <>
     <a href={linkHref} className={className} style={style} onClick={handleClick} aria-busy={opening} {...props}>
