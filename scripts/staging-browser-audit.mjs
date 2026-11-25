@@ -168,7 +168,7 @@ try {
       if (navigationError) report.failures.push(`${route.name}/${viewport.name}: navigation failed: ${navigationError}`)
       if (status === null || status >= 400) report.failures.push(`${route.name}/${viewport.name}: HTTP ${status}`)
       if (route.name.startsWith('legacy-') || route.name === 'canonical-assessment-continue') {
-        if (state.finalPath !== '/login' || state.finalReturnTo !== '/assessment/continue') {
+        if (state.finalPath !== '/login' || state.finalReturnTo !== '/assessment/continue' || state.finalHasLegacyIdentityParams) {
           report.failures.push(`${route.name}/${viewport.name}: signed-out assessment entry must converge on login with a return path to /assessment/continue; found ${state.finalPath}?returnTo=${state.finalReturnTo}`)
         }
       }
