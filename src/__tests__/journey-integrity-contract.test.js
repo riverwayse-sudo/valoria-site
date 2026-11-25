@@ -550,8 +550,8 @@ describe('journey integrity contract', () => {
     expect(callback).toContain("params.get('valu_taster') === '1' && !identityHash && !pendingTasterId")
     expect(callback).toContain("fetch('/api/valu-taster/start'")
     expect(callback).toContain('window.location.replace(destination.toString())')
-    expect(publicSignup).toContain('href="/valu/register/"')
-    expect(publicSignup).toContain('create and confirm your Valoria account before taking the VALU Index Taster')
+    expect(publicSignup).toContain('href="/valu/assessment/"')
+    expect(publicSignup).toContain('begin with the VALU Index Taster')
   })
 
   test('the assessment app cannot create a new Taster without the confirmed-account bootstrap', () => {
@@ -631,7 +631,7 @@ describe('journey integrity contract', () => {
     expect(homeCss).toContain('grid-template-columns: 40px minmax(0,1fr) 54px 12px')
   })
 
-  test('public VALU entry points route through account-first registration while preserving signed-in handoff', () => {
+  test('public VALU entry points start Taster-first while preserving signed-in full-assessment handoff', () => {
     const navigation = read('src/config/navigation.js')
     const nav = read('src/components/Nav.jsx')
     const home = read('src/app/page.jsx')
@@ -640,13 +640,13 @@ describe('journey integrity contract', () => {
     const hero = read('src/components/HeroSlider.jsx')
     const footer = read('src/components/Footer.jsx')
     const liveProfiles = read('src/components/LiveProfilesScroll.jsx')
-    expect(navigation).toContain("assessmentUrl: '/valu/register/'")
-    expect(nav).toContain("href = '/valu/register/'")
+    expect(navigation).toContain("assessmentUrl: '/valu/assessment/'")
+    expect(nav).toContain("href = TASTER_FIRST_ENTRY")
     expect(home).toContain('href="/valu/register/"')
     expect(home).toContain("import LiveProfilesScroll from '@/components/LiveProfilesScroll'")
     expect(home).toContain('<LiveProfilesScroll />')
     expect(home).not.toContain('CapabilityProfilePreview')
-    expect(valu).toContain('Create and confirm your Valoria account first')
+    expect(valu).toContain('Begin the Taster first')
     expect(register).toContain("{mode !== 'complete' && <label style={S.label}>PASSWORD")
     expect(register).toContain("disabled={mode==='complete'}")
     expect(hero).toContain('href="/valu/register/"')
