@@ -1,3 +1,4 @@
+// CI uses the Playwright headless shell; no headed browser is required for this audit.
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { chromium } from 'playwright'

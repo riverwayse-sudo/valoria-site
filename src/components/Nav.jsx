@@ -221,7 +221,8 @@ export function AssessmentStartLink({ href = TASTER_FIRST_ENTRY, className, styl
   }
 
   // The anchor advertises the canonical account-first entry. Dashboard-only links remain on the formal continuation route.
-  const linkHref = dashboardOnly ? 'https://assessment.valoriainstitute.com/remaining' : TASTER_FIRST_ENTRY
+  // Modified clicks and no-JavaScript fallbacks must not bypass the signed dashboard handoff.
+  const linkHref = dashboardOnly ? '/dashboard' : TASTER_FIRST_ENTRY
 
   return <>
     <a href={linkHref} className={className} style={style} onClick={handleClick} aria-busy={opening} {...props}>
