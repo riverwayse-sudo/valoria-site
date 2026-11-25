@@ -105,7 +105,7 @@ try {
           privacyAcknowledgement: [...document.querySelectorAll('label')].some(label => /Privacy Notice/i.test(label.innerText)),
           heading: document.querySelector('h1')?.innerText || '',
         }
-        const pendingTasterId = localStorage.getItem('pending_taster_id') || ''
+        const urlTasterId = new URL(window.location.href).searchParams.get('taster_id') || ''
         const savedTasterCopy = /Your taster is saved/i.test(document.body.innerText)
         const signInLink = [...document.querySelectorAll('a')].find(a => /SIGN IN TO CONNECT YOUR TASTER/i.test(a.innerText))?.href || ''
         const accountCreationAction = /CREATE ACCOUNT|ACCOUNT CREATION/i.test(document.body.innerText)
@@ -147,7 +147,7 @@ try {
           assessmentSiteLinks: [navBrand, navDashboard].filter(Boolean),
           tasterEntryLinks,
           registrationForm,
-          pendingTasterId,
+          urlTasterId,
           savedTasterCopy,
           signInLink,
           accountCreationAction,
@@ -201,7 +201,7 @@ try {
           (!state.registrationForm.email || !state.registrationForm.emailReadOnly ||
            state.registrationForm.emailValue !== 'staging-participant@example.invalid' ||
            !state.registrationForm.password || !state.accountCreationAction ||
-           !state.savedTasterCopy || state.pendingTasterId !== POST_TASTER_ID)) {
+           !state.savedTasterCopy || state.urlTasterId !== POST_TASTER_ID)) {
         report.failures.push(route.name + '/' + viewport.name + ': saved Taster handoff must open post-Taster account creation with the original identity and Taster ID')
       }
 
