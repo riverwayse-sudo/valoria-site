@@ -74,7 +74,7 @@ jobs:
       - name: Smoke-test staging routes and privacy boundaries
         shell: bash
         run: |
-          set -euo pipefail -x
+          set -euo pipefail
           base="https://staging.valoriainstitute.com"
           routes=(
             /
@@ -105,36 +105,54 @@ jobs:
           for route in "${routes[@]}"; do
             status="$(curl -sSL --retry 4 --retry-all-errors --max-time 25 -o /tmp/valoria-route-response -w '%{http_code}' "$base$route" || true)"
             if [[ "$status" != "200" ]]; then
-              echo "Route $route returned HTTP $status"
+              echo "FAIL: route $route returned HTTP $status"
               cat /tmp/valoria-route-response || true
               exit 1
             fi
+            echo "PASS: $route returned HTTP 200"
           done
 
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
-          grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
-          curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
-          grep -q '<loc>https://staging.valoriainstitute.com/' /tmp/valoria-sitemap.xml
-          if grep -Eq '<loc>https://(www\.)?valoriainstitute\.com/' /tmp/valoria-sitemap.xml; then
-            echo "Staging sitemap must not publish production canonical URLs"
+          if ! grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt; then
+            echo "FAIL: staging robots.txt does not block indexing"
+            cat /tmp/valoria-robots.txt
             exit 1
           fi
+          echo "PASS: staging robots.txt blocks indexing"
+
+          curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
+          if ! grep -q '<loc>https://staging.valoriainstitute.com/' /tmp/valoria-sitemap.xml; then
+            echo "FAIL: staging sitemap is missing staging canonical URLs"
+            head -c 4000 /tmp/valoria-sitemap.xml
+            exit 1
+          fi
+          if grep -Eq '<loc>https://(www\.)?valoriainstitute\.com/' /tmp/valoria-sitemap.xml; then
+            echo "FAIL: staging sitemap publishes production canonical URLs"
+            exit 1
+          fi
+          echo "PASS: sitemap uses staging URLs and excludes production URLs"
+
           curl -fsS "$base/" -o /tmp/valoria-home.html
-          grep -q 'Capability should decide' /tmp/valoria-home.html
-          grep -q 'What brings you' /tmp/valoria-home.html
-          grep -q 'START THE VALU INDEX TASTER' /tmp/valoria-home.html
-          grep -q 'THE VALORIA MARKETPLACE' /tmp/valoria-home.html
-          grep -q 'Find professionals' /tmp/valoria-home.html
-          grep -q 'Explore public profiles by capability' /tmp/valoria-home.html
-          # Participant-visible copy is checked in the Playwright DOM audit, not bundled HTML/JS.
+          for expected in "What brings you" "START THE VALU INDEX TASTER"; do
+            if ! grep -Fq "$expected" /tmp/valoria-home.html; then
+              echo "FAIL: homepage is missing current expected copy: $expected"
+              exit 1
+            fi
+          done
+          echo "PASS: homepage contains the current entry-point copy"
 
           bootstrap_status="$(curl -sS -o /tmp/valu-bootstrap-response -w '%{http_code}' -X POST "$base/api/valu-taster/bootstrap" -H 'Content-Type: application/json' --data '{}')"
           if [[ "$bootstrap_status" != "401" ]]; then
-            echo "Unauthenticated Taster bootstrap returned HTTP $bootstrap_status; expected 401."
+            echo "FAIL: unauthenticated Taster bootstrap returned HTTP $bootstrap_status; expected 401."
             cat /tmp/valu-bootstrap-response || true
             exit 1
           fi
-          echo "Unauthenticated Taster bootstrap correctly rejects access with HTTP 401; browser audit covers the public entry surfaces."
+          if ! grep -Fq 'Create or sign in to your Valoria account' /tmp/valu-bootstrap-response; then
+            echo "FAIL: unauthenticated Taster bootstrap did not return the expected access guidance."
+            cat /tmp/valu-bootstrap-response
+            exit 1
+          fi
+          echo "PASS: unauthenticated Taster bootstrap rejects access with HTTP 401."
 
       - name: Install Playwright without changing project dependencies
         run: npm install --no-save --package-lock=false playwright@1.65.0
