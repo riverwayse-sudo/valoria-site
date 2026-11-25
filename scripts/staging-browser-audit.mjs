@@ -97,7 +97,10 @@ try {
         const navDashboard = [...document.querySelectorAll('a')].find(a => /return to dashboard/i.test(a.innerText))?.href || ''
         const tasterEntryLinks = [...document.querySelectorAll('a')]
           .filter(a => /START THE VALU INDEX TASTER/i.test(a.innerText))
-          .map(a => a.getAttribute('href'))
+          .map(a => {
+            const href = a.getAttribute('href') || ''
+            try { return new URL(href, window.location.href).pathname } catch { return href }
+          })
         const registrationForm = {
           email: Boolean(document.querySelector('input[type="email"]')),
           emailReadOnly: Boolean(document.querySelector('input[type="email"]')?.readOnly),
