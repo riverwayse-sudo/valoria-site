@@ -24,8 +24,8 @@ describe('authenticated journey visual density', () => {
 
   test('account confirmation removes repeated handoff explanation', () => {
     const signup = read('src/app/professional-signup/page.jsx')
-    expect(signup).toContain('We’ve sent a six-digit confirmation code to')
-    expect(signup).toContain('Your taster is saved; your full VALU Index will be ready from your dashboard.')
+    expect(signup).toContain('We sent a secure confirmation link to')
+    expect(signup).toContain('We’ll connect your saved Taster and return you to your dashboard.')
     expect(signup).not.toContain('returned to your dashboard automatically')
   })
 
