@@ -39,4 +39,14 @@ for (const file of auditedFiles) {
   }
 }
 if (count < 15) throw new Error(`Dropdown audit unexpectedly found only ${count} selects`);
+
+const navigation = fs.readFileSync(path.join(root, 'src/components/Nav.jsx'), 'utf8');
+if (!navigation.includes('aria-hidden={openMenu !== item.label}') || !navigation.includes('inert={openMenu !== item.label}') || !navigation.includes('inert={!menuOpen}')) {
+  throw new Error('Navigation dropdowns must hide and remove closed menus from keyboard focus.');
+}
+const notifications = fs.readFileSync(path.join(root, 'src/components/NotificationBell.jsx'), 'utf8');
+if (!notifications.includes("event.key === 'Escape'") || !notifications.includes('aria-controls="vi-notification-panel"')) {
+  throw new Error('Notification dropdown must expose its controlled region and support Escape dismissal.');
+}
+
 console.log(`Dropdown design-system contract passed: ${count} native selects across ${auditedFiles.length} audited files.`);
