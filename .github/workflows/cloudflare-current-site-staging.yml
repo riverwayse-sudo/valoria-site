@@ -1,17 +1,6 @@
 name: Validate and deploy current-site audit to isolated Cloudflare staging
 
 on:
-  push:
-    branches:
-      - "deploy/staging-*"
-    paths:
-      - "src/**"
-      - "supabase/migrations/**"
-      - "scripts/**"
-      - "package.json"
-      - "package-lock.json"
-      - "wrangler.jsonc"
-      - ".github/workflows/cloudflare-current-site-staging.yml"
   pull_request:
     branches:
       - main
