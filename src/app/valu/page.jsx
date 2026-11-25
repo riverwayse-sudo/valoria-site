@@ -18,7 +18,7 @@ export default function ValuPage() {
         <div className="valu-wrap">
           <div className="valu-kicker"><span /> THE VALU INDEX</div>
           <h1>Make your capability<br /><em>visible and actionable.</em></h1>
-          <p className="valu-lede">The VALU Index Taster introduces the PRIME framework and gives you an initial view of your professional capability. Begin the Taster first; after your result is saved, create or connect your Valoria account and continue from your dashboard to the separate full VALU Index for your official points result and PRIME profile.</p>
+          <p className="valu-lede">The VALU Index Taster introduces the PRIME framework and gives you an initial view of your professional capability. Create or sign in to your Valoria account first. After email confirmation, complete the separate VALU Index Taster and continue from your dashboard to the full VALU Index for your official points result and PRIME profile.</p>
           <div className="valu-actions">
             <AssessmentStartLink href="/valu/register/?journey=valu_taster" className="valu-btn valu-btn-gold">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
             <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW THE VALU INDEX SUPPORTS YOUR GROWTH <span>↓</span></a>
