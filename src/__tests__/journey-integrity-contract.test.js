@@ -554,15 +554,11 @@ describe('journey integrity contract', () => {
     expect(publicSignup).toContain('begin with the VALU Index Taster')
   })
 
-  test('the assessment app cannot create a new Taster without the confirmed-account bootstrap', () => {
-    const source = read('src/app/api/valu-taster/bootstrap/route.js')
-    const gate = read('src/app/valu/register/page.jsx')
-    expect(source).toContain('createServerClient')
-    expect(source).toContain('user.email_confirmed_at')
-    expect(source).toContain('createHmac')
-    expect(source).toContain('begin_valu_taster_signup')
-    expect(gate).toContain('supabase.auth.signUp')
-    expect(gate).toContain('supabase.auth.signInWithPassword')
+  test('legacy registration URL cannot create an account before the Taster', () => {
+    const register = read('src/app/valu/register/page.jsx')
+    expect(register).toContain("redirect('/valu/assessment/')")
+    expect(register).not.toContain('supabase.auth.signUp')
+    expect(register).not.toContain('supabase.auth.signInWithPassword')
   })
 
 
@@ -647,8 +643,8 @@ describe('journey integrity contract', () => {
     expect(home).toContain('<LiveProfilesScroll />')
     expect(home).not.toContain('CapabilityProfilePreview')
     expect(valu).toContain('Begin the Taster first')
-    expect(register).toContain("{mode !== 'complete' && <label style={S.label}>PASSWORD")
-    expect(register).toContain("disabled={mode==='complete'}")
+    expect(register).toContain("redirect('/valu/assessment/')")
+    expect(register).not.toContain('supabase.auth.signUp')
     expect(hero).toContain('href="/valu/register/"')
     expect(footer).toContain('<AssessmentStartLink href="/valu/register/">')
     expect(liveProfiles).toContain("candidate: { label: 'Talent'")
@@ -712,10 +708,9 @@ test('email confirmation exchanges its code before reading an existing browser s
 })
 
 
-test('account-first sign-in toggle uses the Valoria visual system', () => {
+test('legacy VALU registration entry redirects to the Taster-first journey', () => {
   const register = read('src/app/valu/register/page.jsx')
-  expect(register).toContain('style={S.switchButton}')
-  expect(register).toContain("switchButton:{border:0,background:'transparent',color:GOLD")
+  expect(register).toContain("redirect('/valu/assessment/')")
 })
 
 })
