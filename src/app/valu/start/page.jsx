@@ -17,7 +17,7 @@ const dimensions = [
 
 const faqs = [
   ['How does it work?', 'Start with the VALU Index Taster, then complete the full VALU Index. You will receive your official points result and PRIME profile.'],
-  ['Do I need an account first?', 'Yes. Create your Valoria account and confirm your email before beginning the Taster. Your saved Taster then connects to your account, and you can continue to the separate full VALU Index from your dashboard.'],
+  ['Do I need an account first?', 'No. Begin with the Taster. After your result is saved, create or connect your Valoria account, then continue to the separate full VALU Index from your dashboard.'],
   ['Who is it for?', 'It is designed for professionals across industries and markets—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight, visibility and access to opportunity.'],
   ['Is it free?', 'Yes. The VALU Index Taster and full VALU Index are free to complete. The wider Valoria ecosystem connects insight to development, visibility and opportunity.'],
   ['Does the result define me?', 'No. The taster is directional, not an official score or permanent label. Your official points result is issued after you complete the full VALU Index.'],
