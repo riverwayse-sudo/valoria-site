@@ -2,6 +2,8 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { chromium } from 'playwright'
 
+// Staging-only validation commit: verify the public Taster-first entry after the assessment route switch.
+
 const SITE = process.env.STAGING_SITE_URL || 'https://staging.valoriainstitute.com'
 const ASSESSMENT = process.env.STAGING_ASSESSMENT_URL || 'https://assessment-staging.valoriainstitute.com'
 const OUT = path.resolve('artifacts/staging-browser-audit')
