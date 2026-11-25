@@ -113,13 +113,25 @@ export async function POST(request) {
     },
   )
 
-  const { error } = await supabase.auth.verifyOtp({
+  const { data, error } = await supabase.auth.verifyOtp({
     token_hash: tokenHash,
     type: 'email',
   })
 
   if (error) {
     return NextResponse.redirect(new URL('/login?confirmation=expired', request.url), 303)
+  }
+
+  // A malformed or stale cross-environment RedirectTo is rejected by
+  // safeNextPath. Recover the account-first Taster journey from the verified
+  // user's metadata rather than losing the signup intent and landing on the
+  // ordinary dashboard. This is evaluated only after the one-time token has
+  // been verified; no client-supplied identity is trusted for this decision.
+  if (
+    nextPath === '/auth/callback' &&
+    data?.user?.user_metadata?.valu_taster_signup === true
+  ) {
+    response.headers.set('Location', new URL('/auth/callback?valu_taster=1', request.url).toString())
   }
 
   return response
