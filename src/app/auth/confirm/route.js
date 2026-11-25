@@ -78,7 +78,7 @@ export async function POST(request) {
   try {
     form = await request.formData()
   } catch {
-    return NextResponse.redirect(new URL('/login?confirmation=invalid', request.url))
+    return NextResponse.redirect(new URL('/login?confirmation=invalid', request.url), 303)
   }
 
   const tokenHash = String(form.get('token_hash') || '')
@@ -92,10 +92,10 @@ export async function POST(request) {
   const configuredUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   if (!configuredUrl || !anonKey) {
-    return NextResponse.redirect(new URL('/login?confirmation=unavailable', request.url))
+    return NextResponse.redirect(new URL('/login?confirmation=unavailable', request.url), 303)
   }
 
-  const response = NextResponse.redirect(new URL(nextPath, request.url))
+  const response = NextResponse.redirect(new URL(nextPath, request.url), 303)
   const supabase = createServerClient(
     normalizeSupabaseProjectUrl(configuredUrl),
     anonKey,
@@ -119,7 +119,7 @@ export async function POST(request) {
   })
 
   if (error) {
-    return NextResponse.redirect(new URL('/login?confirmation=expired', request.url))
+    return NextResponse.redirect(new URL('/login?confirmation=expired', request.url), 303)
   }
 
   return response
