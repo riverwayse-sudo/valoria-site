@@ -26,6 +26,7 @@ const routes = [
   { name: 'dashboard-preview', url: `${SITE}/dashboard?preview=1`, site: true },
   { name: 'assessment-proxy', url: `${SITE}/valu/assessment/`, site: true },
   { name: 'assessment-host', url: `${ASSESSMENT}/`, site: false },
+  { name: 'assessment-account-first-taster-gate', url: `${ASSESSMENT}/valu/assessment/?journey=account-first#taster_start_code=staging-invalid-probe`, site: false },
 ]
 const report = {
   generatedAt: new Date().toISOString(),
@@ -53,12 +54,18 @@ try {
       const pageErrors = []
       const consoleErrors = []
       const forbiddenRequests = []
+      let tasterHandoffExchangeAttempted = false
       page.on('pageerror', error => pageErrors.push(error.message))
       page.on('console', message => {
         if (message.type() === 'error') consoleErrors.push(message.text())
       })
       page.on('request', request => {
         const url = request.url()
+        const requestBody = request.postData() || ''
+        if (request.method() === 'POST' && url.includes('/api/submit-assessment') &&
+            requestBody.includes('exchange-taster-start-handoff')) {
+          tasterHandoffExchangeAttempted = true
+        }
         if (
           url.includes('sbkgpisgkuhbalsxqkdr.supabase.co') ||
           url.includes('assessment.valoriainstitute.com') ||
@@ -172,6 +179,7 @@ try {
         status,
         navigationError,
         ...state,
+        tasterHandoffExchangeAttempted,
         pageErrors,
         consoleErrors,
         forbiddenRequests,
@@ -220,6 +228,9 @@ try {
            !state.registrationForm.password || !state.accountCreationAction ||
            !state.savedTasterCopy || state.urlTasterId !== POST_TASTER_ID)) {
         report.failures.push(route.name + '/' + viewport.name + ': saved Taster handoff must open post-Taster account creation with the original identity and Taster ID')
+      }
+      if (route.name === 'assessment-account-first-taster-gate' && !tasterHandoffExchangeAttempted) {
+        report.failures.push(route.name + '/' + viewport.name + ': account-first gate did not exchange the one-time Taster start code')
       }
 
       await context.close()
