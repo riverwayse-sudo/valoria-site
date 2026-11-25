@@ -156,12 +156,12 @@ describe('journey integrity contract', () => {
     expect(source).not.toContain('Question 10')
     expect(source).not.toContain('/valu/assessment/?full=1&taster_id=')
   })
-  test('signup and resend confirmation use the current site origin so staging links do not jump to production', () => {
+  test('signup and resend use OTP while preserving the saved Taster callback handoff', () => {
     const source = read('src/app/professional-signup/page.jsx')
-    expect(source).toContain('emailRedirectTo:')
-    expect(source).toContain('window.location.origin')
+    expect(source).not.toContain('emailRedirectTo')
+    expect(source).toContain("type:'signup'")
+    expect(source).toContain("type:'email'")
     expect(source).toContain('/auth/callback?pending_taster_id=')
-    expect(source).not.toContain('https://valoriainstitute.com/auth/callback?pending_taster_id=')
     expect(source).toContain("localStorage.setItem('pending_taster_id',tasterId)")
   })
 
