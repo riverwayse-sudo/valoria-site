@@ -94,7 +94,7 @@ jobs:
           curl -fsS "$base/" -o /tmp/valoria-production-home.html
           grep -q 'href="/valu/assessment/"' /tmp/valoria-production-home.html
 
-          curl -sS -D /tmp/valoria-register-headers -o /dev/null "$base/valu/register/"
+          curl -sS -D /tmp/valoria-register-headers -o /dev/null "$base/valu/register"
           if ! grep -Eiq '^location: (https?://[^/]+)?/valu/assessment/' /tmp/valoria-register-headers; then
             echo "Legacy /valu/register/ must redirect to the canonical Taster-first assessment entry"
             cat /tmp/valoria-register-headers
