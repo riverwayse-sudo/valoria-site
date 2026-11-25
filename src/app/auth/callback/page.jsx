@@ -106,9 +106,19 @@ function AuthCallbackFlow() {
 
         const { data: buyerProfile } = await supabase.from('profiles').select('id').eq('id', user.id).maybeSingle()
         if (cancelled) return
-        setMessage(buyerProfile ? 'Email confirmed. You’re signed in. Taking you to your dashboard…' : 'Email confirmed. You’re signed in. Taking you to your dashboard…')
+        setMessage(buyerProfile ? 'Email confirmed. You’re signed in. Taking you to your account…' : 'Email confirmed. You’re signed in. Taking you to your account…')
         await new Promise(resolve => setTimeout(resolve, 900))
-        if (!cancelled) router.replace('/dashboard?welcome=profile')
+        const requestedReturnTo = params.get('returnTo') || ''
+        let destination = '/dashboard?welcome=profile'
+        if (requestedReturnTo) {
+          try {
+            const target = new URL(requestedReturnTo, window.location.origin)
+            if (target.origin === window.location.origin && target.pathname.startsWith('/') && target.pathname !== '/auth/callback') {
+              destination = target.pathname + target.search + target.hash
+            }
+          } catch { /* Keep the safe dashboard default. */ }
+        }
+        if (!cancelled) router.replace(destination)
       } catch (error) {
         if (cancelled) return
         setFailed(true)
