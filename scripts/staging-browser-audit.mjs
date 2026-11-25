@@ -4,7 +4,6 @@ import { chromium } from 'playwright'
 
 const SITE = process.env.STAGING_SITE_URL || 'https://staging.valoriainstitute.com'
 const ASSESSMENT = process.env.STAGING_ASSESSMENT_URL || 'https://assessment-staging.valoriainstitute.com'
-const POST_TASTER_ID = '66666666-6666-4666-8666-666666666666'
 const OUT = path.resolve('artifacts/staging-browser-audit')
 const viewports = [
   { name: 'desktop', width: 1440, height: 960, isMobile: false },
@@ -17,14 +16,15 @@ const routes = [
   { name: 'valu', url: `${SITE}/valu`, site: true },
   { name: 'valu-start', url: `${SITE}/valu/start`, site: true },
   { name: 'valu-register', url: `${SITE}/valu/register`, site: true },
-  { name: 'valu-register-legacy', url: `${SITE}/valu/register?journey=valu_taster`, site: true },
   { name: 'professional-signup-account-first', url: `${SITE}/professional-signup/?taster_id=55555555-5555-4555-8555-555555555555&name=Staging%20Participant&role=Staging%20QA&account_first=1`, site: true },
-  { name: 'professional-signup-post-taster', url: `${SITE}/professional-signup/?taster_id=${POST_TASTER_ID}&name=Staging%20Participant&role=Staging%20QA&experience=0-3&email=staging-participant%40example.invalid`, site: true },
   { name: 'prime', url: `${SITE}/prime`, site: true },
   { name: 'about', url: `${SITE}/about-us`, site: true },
   { name: 'dashboard-preview', url: `${SITE}/dashboard?preview=1`, site: true },
   { name: 'assessment-proxy', url: `${SITE}/valu/assessment/`, site: true },
   { name: 'assessment-host', url: `${ASSESSMENT}/`, site: false },
+  { name: 'legacy-journey-assessment', url: `${SITE}/journey/continue?stage=assess`, site: true },
+  { name: 'legacy-assessment-bridge', url: `${SITE}/assessment/bridge`, site: true },
+  { name: 'canonical-assessment-continue', url: `${SITE}/assessment/continue`, site: true },
 ]
 const report = {
   generatedAt: new Date().toISOString(),
@@ -100,16 +100,10 @@ try {
           .map(a => a.getAttribute('href'))
         const registrationForm = {
           email: Boolean(document.querySelector('input[type="email"]')),
-          emailReadOnly: Boolean(document.querySelector('input[type="email"]')?.readOnly),
-          emailValue: document.querySelector('input[type="email"]')?.value || '',
           password: Boolean(document.querySelector('input[type="password"]')),
           privacyAcknowledgement: [...document.querySelectorAll('label')].some(label => /Privacy Notice/i.test(label.innerText)),
           heading: document.querySelector('h1')?.innerText || '',
         }
-        const urlTasterId = new URL(window.location.href).searchParams.get('taster_id') || ''
-        const currentPath = window.location.pathname
-        const journeyParam = new URL(window.location.href).searchParams.get('journey') || ''
-        const savedTasterCopy = /Your taster is saved/i.test(document.body.innerText)
         const signInLink = [...document.querySelectorAll('a')].find(a => /SIGN IN TO CONNECT YOUR TASTER/i.test(a.innerText))?.href || ''
         const accountCreationAction = /CREATE ACCOUNT|ACCOUNT CREATION/i.test(document.body.innerText)
         const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
@@ -126,6 +120,19 @@ try {
               (el.scrollHeight > el.clientHeight + 4 || el.scrollWidth > el.clientWidth + 4)
           }).length
         return {
+          finalPath: window.location.pathname,
+          finalReturnTo: new URL(window.location.href).searchParams.get('returnTo') || '',
+          finalHasLegacyIdentityParams: ['taster_id', 'name', 'role', 'resume', 'token', 'pending_taster_id'].some(key => new URL(window.location.href).searchParams.has(key)),
+          nativeDropdowns: Array.from(document.querySelectorAll('select')).filter(el => {
+            const rect = el.getBoundingClientRect()
+            const style = getComputedStyle(el)
+            return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden'
+          }).map(el => ({
+            className: typeof el.className === 'string' ? el.className : '',
+            id: el.id || '',
+            label: el.getAttribute('aria-label') || Array.from(el.labels || []).map(label => label.textContent.trim()).filter(Boolean).join(' '),
+            disabled: el.disabled
+          })),
           title: document.title,
           robots,
           banner,
@@ -150,10 +157,6 @@ try {
           assessmentSiteLinks: [navBrand, navDashboard].filter(Boolean),
           tasterEntryLinks,
           registrationForm,
-          urlTasterId,
-          currentPath,
-          journeyParam,
-          savedTasterCopy,
           signInLink,
           accountCreationAction,
         }
@@ -177,6 +180,19 @@ try {
 
       if (navigationError) report.failures.push(`${route.name}/${viewport.name}: navigation failed: ${navigationError}`)
       if (status === null || status >= 400) report.failures.push(`${route.name}/${viewport.name}: HTTP ${status}`)
+      if (route.name.startsWith('legacy-') || route.name === 'canonical-assessment-continue') {
+        if (state.finalPath !== '/login' || state.finalReturnTo !== '/assessment/continue' || state.finalHasLegacyIdentityParams) {
+          report.failures.push(`${route.name}/${viewport.name}: signed-out assessment entry must converge on login with a return path to /assessment/continue; found ${state.finalPath}?returnTo=${state.finalReturnTo}`)
+        }
+      }
+      for (const [index, dropdown] of (state.nativeDropdowns || []).entries()) {
+        if (!dropdown.className.split(/\\s+/).includes('vi-select')) {
+          report.failures.push(`${route.name}/${viewport.name}: visible native dropdown ${dropdown.id || index} is missing the shared vi-select design-system class`)
+        }
+        if (!dropdown.disabled && !dropdown.id && !dropdown.label) {
+          report.failures.push(`${route.name}/${viewport.name}: visible native dropdown ${index} has no accessible label or id`)
+        }
+      }
       if (state.horizontalOverflow) report.failures.push(`${route.name}/${viewport.name}: horizontal overflow`)
       if (state.revealState?.total !== state.revealState?.visible) report.failures.push(`${route.name}/${viewport.name}: scroll-reveal content remained hidden (${state.revealState?.visible}/${state.revealState?.total})`)
       if (!state.robots.toLowerCase().includes('noindex')) report.failures.push(`${route.name}/${viewport.name}: staging page is missing noindex robots metadata`)
@@ -191,26 +207,16 @@ try {
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
       if (['homepage', 'valu', 'valu-start'].includes(route.name) &&
-          (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => href !== '/valu/assessment/'))) {
-        report.failures.push(route.name + '/' + viewport.name + ': public Taster entry must point directly to the canonical Taster-first route')
+          (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => href !== '/valu/register/'))) {
+        report.failures.push(route.name + '/' + viewport.name + ': public Taster entry does not route through account-first registration')
       }
-      if (route.name === 'valu-register' && state.currentPath !== '/valu/assessment/') {
-        report.failures.push(route.name + '/' + viewport.name + ': legacy registration URL did not redirect to the Taster-first route')
-      }
-      if (route.name === 'valu-register-legacy' &&
-          (state.currentPath !== '/valu/assessment/' || state.journeyParam !== 'account-first')) {
-        report.failures.push(route.name + '/' + viewport.name + ': in-progress legacy Taster registration did not retain its compatibility gate')
+      if (route.name === 'valu-register' &&
+          (!state.registrationForm.email || !state.registrationForm.password || !state.registrationForm.privacyAcknowledgement)) {
+        report.failures.push(route.name + '/' + viewport.name + ': account registration is missing email, password or privacy acknowledgement controls')
       }
       if (route.name === 'professional-signup-account-first' &&
           (!state.signInLink.includes('/login?pending_taster_id=') || state.accountCreationAction)) {
         report.failures.push(route.name + '/' + viewport.name + ': completed account-first Taster must offer sign-in, never duplicate account creation')
-      }
-      if (route.name === 'professional-signup-post-taster' &&
-          (!state.registrationForm.email || !state.registrationForm.emailReadOnly ||
-           state.registrationForm.emailValue !== 'staging-participant@example.invalid' ||
-           !state.registrationForm.password || !state.accountCreationAction ||
-           !state.savedTasterCopy || state.urlTasterId !== POST_TASTER_ID)) {
-        report.failures.push(route.name + '/' + viewport.name + ': saved Taster handoff must open post-Taster account creation with the original identity and Taster ID')
       }
 
       await context.close()
