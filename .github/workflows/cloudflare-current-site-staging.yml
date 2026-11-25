@@ -128,12 +128,12 @@ jobs:
           echo "PASS: all public, dashboard and policy routes return HTTP 200."
 
           public_register_url="$(curl -sSL --retry 3 --retry-all-errors --max-time 25 -o /dev/null -w '%{url_effective}' "$base/valu/register")"
-          if [[ "$public_register_url" != *"/valu/assessment/"* ]]; then
+          if [[ "$public_register_url" != *"/valu/assessment"* ]]; then
             echo "Unqualified legacy registration must end at the canonical Taster-first route: $public_register_url"
             exit 1
           fi
           legacy_register_url="$(curl -sSL --retry 3 --retry-all-errors --max-time 25 -o /dev/null -w '%{url_effective}' "$base/valu/register?journey=valu_taster")"
-          if [[ "$legacy_register_url" != *"/valu/assessment/"* || "$legacy_register_url" != *"journey=account-first"* ]]; then
+          if [[ "$legacy_register_url" != *"/valu/assessment"* || "$legacy_register_url" != *"journey=account-first"* ]]; then
             echo "In-progress legacy Taster registration must retain the explicit compatibility gate: $legacy_register_url"
             exit 1
           fi
