@@ -31,6 +31,9 @@ for (const file of auditedFiles) {
     if (!/className=["'][^"']*vi-select(?:--light)?[^"']*["']/.test(tag)) {
       throw new Error(`Unstandardised native select in ${file}: ${tag.slice(0, 160)}`);
     }
+    if ((tag.match(/\\bclassName=/g) || []).length > 1) {
+      throw new Error(`Duplicate className attributes on native select in ${file}: ${tag.slice(0, 160)}`);
+    }
   }
 }
 if (count < 15) throw new Error(`Dropdown audit unexpectedly found only ${count} selects`);
