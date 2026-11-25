@@ -2,19 +2,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
-const auditedFiles = [
-  'src/app/valu/register/page.jsx',
-  'src/app/contact-us/ContactForm.jsx',
-  'src/app/profile/evidence/page.jsx',
-  'src/app/profile/setup/page.jsx',
-  'src/app/admin/reconciliation/page.jsx',
-  'src/app/admin/waitlist/page.jsx',
-  'src/app/admin/page.jsx',
-  'src/components/WaitlistForm.jsx',
-  'src/components/WaitlistModal.jsx',
-  'src/components/MarketplaceDirectory.jsx',
-  'src/app/opportunities/submit/page.jsx',
-];
+function collectSourceFiles(directory) {
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const absolute = path.join(directory, entry.name);
+    if (entry.isDirectory()) return collectSourceFiles(absolute);
+    return /\\.(jsx|tsx)$/.test(entry.name) ? [absolute] : [];
+  });
+}
+const auditedFiles = collectSourceFiles(path.join(root, 'src'));
 const css = fs.readFileSync(path.join(root, 'src/styles/globals.css'), 'utf8');
 for (const token of [
   '--vi-select-bg: #1A1A2E',
@@ -29,7 +24,7 @@ for (const token of [
 }
 let count = 0;
 for (const file of auditedFiles) {
-  const source = fs.readFileSync(path.join(root, file), 'utf8');
+  const source = fs.readFileSync(file, 'utf8').replace(/<!--[\\s\\S]*?-->/g, '');
   const tags = [...source.matchAll(/<select\b[^>]*>/gs)].map(match => match[0]);
   for (const tag of tags) {
     count += 1;
