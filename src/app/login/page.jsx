@@ -18,10 +18,8 @@ export default function LoginPage() {
   const [redirecting, setRedirecting] = useState(false)
   const [returnTo, setReturnTo] = useState('')
   const [confirmationRequired, setConfirmationRequired] = useState(false)
-  const [otpCode, setOtpCode] = useState('')
-  const [otpVerifying, setOtpVerifying] = useState(false)
-  const [otpResending, setOtpResending] = useState(false)
-  const [otpMessage, setOtpMessage] = useState('')
+  const [confirmationLinkSending, setConfirmationLinkSending] = useState(false)
+  const [confirmationLinkMessage, setConfirmationLinkMessage] = useState('')
 
   // Check for identity_hash in URL (from email confirmation redirect)
   useEffect(() => {
@@ -220,7 +218,7 @@ export default function LoginPage() {
     } catch (err) {
       if (/email not confirmed|confirm your email/i.test(err?.message || '')) {
         setConfirmationRequired(true)
-        setError('Your account exists, but your email needs confirmation. Enter the six-digit code sent to your email.')
+        setError('Your account exists, but your email needs confirmation. Request a secure confirmation link below.')
       } else {
         setError(
           err.message === 'Invalid login credentials'
@@ -233,48 +231,36 @@ export default function LoginPage() {
     }
   }
 
-  async function verifySignupOtp(event) {
-    event.preventDefault()
-    if (otpVerifying || otpCode.length !== 6 || !form.email.trim()) return
-    setOtpVerifying(true)
-    setError('')
-    try {
-      const { data, error: verifyError } = await supabase.auth.verifyOtp({
-        email: form.email.trim().toLowerCase(),
-        token: otpCode,
-        type: 'email',
-      })
-      if (verifyError) throw verifyError
-      if (!data?.session?.access_token || !data?.user?.email_confirmed_at) {
-        throw new Error('Your code was accepted, but Valoria could not establish a confirmed session. Please request a new code.')
-      }
-      window.location.replace('/auth/callback')
-    } catch (err) {
-      setError(err?.message || 'That code could not be verified. Check it and try again.')
-    } finally {
-      setOtpVerifying(false)
+  function getConfirmationRedirectUrl() {
+    const target = new URL('/auth/callback', window.location.origin)
+    const current = new URLSearchParams(window.location.search)
+    for (const key of ['identity_hash', 'pending_taster_id', 'valu_taster', 'returnTo']) {
+      const value = current.get(key)
+      if (value) target.searchParams.set(key, value)
     }
+    return target.toString()
   }
 
-  async function resendSignupOtp() {
+  async function resendSignupConfirmationLink() {
     if (!form.email.trim()) {
       setError('Enter your email address first.')
       return
     }
-    setOtpResending(true)
-    setOtpMessage('')
+    setConfirmationLinkSending(true)
+    setConfirmationLinkMessage('')
     setError('')
     try {
       const { error: resendError } = await supabase.auth.resend({
         type: 'signup',
         email: form.email.trim().toLowerCase(),
+        options: { emailRedirectTo: getConfirmationRedirectUrl() },
       })
       if (resendError) throw resendError
-      setOtpMessage('A fresh six-digit confirmation code has been sent. Check your inbox and spam folder.')
+      setConfirmationLinkMessage('A fresh confirmation link has been requested. Check your inbox and spam folder.')
     } catch (err) {
-      setError(err?.message || 'We could not send a new confirmation code. Please try again shortly.')
+      setError(err?.message || 'We could not send a new confirmation link. Please try again shortly.')
     } finally {
-      setOtpResending(false)
+      setConfirmationLinkSending(false)
     }
   }
 
@@ -312,35 +298,17 @@ export default function LoginPage() {
         <p style={styles.sub}>Sign in to your Valoria Institute account.</p>
 
         {confirmationRequired ? (
-          <form onSubmit={verifySignupOtp} style={styles.form}>
-            <p style={styles.sub}>Enter the six-digit code sent to {form.email.trim().toLowerCase()} to confirm your account and continue.</p>
-            <div style={styles.field}>
-              <label style={styles.label}>SIX-DIGIT EMAIL CODE</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                pattern="[0-9]{6}"
-                maxLength={6}
-                value={otpCode}
-                onChange={e => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                placeholder="000000"
-                required
-                style={styles.input}
-              />
-            </div>
+          <div style={styles.form}>
+            <p style={styles.sub}>Your account exists, but its email address is not confirmed. Request a secure confirmation link for {form.email.trim().toLowerCase()}, then open it to activate your account.</p>
             {error && <div style={styles.errorBox}>{error}</div>}
-            {otpMessage && <div style={styles.successBox}>{otpMessage}</div>}
-            <button type="submit" disabled={otpVerifying || otpCode.length !== 6} style={{ ...styles.btnGold, opacity: otpVerifying || otpCode.length !== 6 ? 0.55 : 1 }}>
-              {otpVerifying ? 'VERIFYING…' : 'VERIFY EMAIL & CONTINUE'}
+            {confirmationLinkMessage && <div style={styles.successBox}>{confirmationLinkMessage}</div>}
+            <button type="button" onClick={resendSignupConfirmationLink} disabled={confirmationLinkSending} style={{ ...styles.btnGold, opacity: confirmationLinkSending ? 0.55 : 1 }}>
+              {confirmationLinkSending ? 'SENDING LINK…' : 'RESEND CONFIRMATION LINK'}
             </button>
-            <button type="button" onClick={resendSignupOtp} disabled={otpResending} style={styles.forgotBtn}>
-              {otpResending ? 'SENDING CODE…' : 'SEND A NEW CODE'}
-            </button>
-            <button type="button" onClick={() => { setConfirmationRequired(false); setError(''); setOtpCode('') }} style={styles.forgotBtn}>
+            <button type="button" onClick={() => { setConfirmationRequired(false); setError('') }} style={styles.forgotBtn}>
               BACK TO SIGN IN
             </button>
-          </form>
+          </div>
         ) : (
         <form onSubmit={handleLogin} style={styles.form}>
           <div style={styles.field}>
