@@ -628,7 +628,6 @@ describe('journey integrity contract', () => {
     expect(home).not.toContain('CapabilityProfilePreview')
     expect(valu).toContain('Create or sign in to your Valoria account first')
     expect(register).toContain('supabase.auth.signUp')
-    expect(register).not.toContain('supabase.auth.signUp')
     expect(hero).toContain('href="/valu/register/?journey=valu_taster"')
     expect(footer).toContain('<AssessmentStartLink href="/valu/register/?journey=valu_taster">')
     expect(liveProfiles).toContain("candidate: { label: 'Talent'")
