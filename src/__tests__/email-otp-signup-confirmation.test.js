@@ -47,6 +47,7 @@ describe("email-link signup confirmation", () => {
     expect(postHandler).toContain("token_hash: tokenHash");
     expect(postHandler).toContain("type: 'email'");
     expect(postHandler).toContain("response.cookies.set");
+    expect(postHandler).toContain("new URL(nextPath, request.url), 303");
     expect(postHandler).toContain("supabase.auth.verifyOtp");
   });
 
