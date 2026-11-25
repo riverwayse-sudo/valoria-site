@@ -124,9 +124,6 @@ try {
               (el.scrollHeight > el.clientHeight + 4 || el.scrollWidth > el.clientWidth + 4)
           }).length
         return {
-          finalPath: ${finalUrl.pathname},
-          finalReturnTo: ${finalUrl.searchParams.get("returnTo") || ""},
-          finalHasLegacyIdentityParams: ${["taster_id", "name", "role", "resume", "token", "pending_taster_id"].some(key => finalUrl.searchParams.has(key))},
           title: document.title,
           robots,
           banner,
@@ -155,6 +152,10 @@ try {
           accountCreationAction,
         }
       })
+      state.finalPath = finalUrl.pathname
+      state.finalReturnTo = finalUrl.searchParams.get('returnTo') || ''
+      state.finalHasLegacyIdentityParams = ['taster_id', 'name', 'role', 'resume', 'token', 'pending_taster_id']
+        .some(key => finalUrl.searchParams.has(key))
 
       const filename = `${route.name}-${viewport.name}.png`
       await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
