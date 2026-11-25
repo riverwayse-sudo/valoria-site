@@ -120,7 +120,7 @@ describe('journey integrity contract', () => {
     expect(handoff).toContain('export async function POST')
     expect(handoff).toContain(".eq('user_id', user.id)")
     expect(continuation).toContain("stage === 'assess'")
-    expect(continuation).toContain("return NextResponse.redirect(new URL('/dashboard', request.url))")
+    expect(continuation).toContain("return NextResponse.redirect(new URL('/assessment/continue', request.url))")
     expect(continuation).not.toContain('createValuHandoffToken')
     expect(continuation).toContain('hasLegacyAssessmentParams')
   })
@@ -407,7 +407,7 @@ describe('journey integrity contract', () => {
     const nudge = read('src/components/ValuCompletionNudge.jsx')
     const continuation = read('src/app/journey/continue/route.js')
     const legacyBridge = read('src/app/assessment/bridge/page.jsx')
-    expect(legacyBridge).toContain("redirect('/dashboard')")
+    expect(legacyBridge).toContain("redirect('/assessment/continue')")
     expect(dashboard).toContain('AssessmentStartLink')
     expect(dashboard).toContain('dashboardOnly')
     expect(nav).toContain('export function AssessmentStartLink')
@@ -430,7 +430,7 @@ describe('journey integrity contract', () => {
     expect(nudge).toContain('CONTINUE TO FULL VALU INDEX')
     expect(nudge).not.toContain('"/valu/start"')
     expect(continuation).toContain("stage === 'assess'")
-    expect(continuation).toContain("return NextResponse.redirect(new URL('/dashboard', request.url))")
+    expect(continuation).toContain("return NextResponse.redirect(new URL('/assessment/continue', request.url))")
     expect(continuation).not.toContain('assessment.valoriainstitute.com')
   })
 
@@ -698,4 +698,20 @@ test('legacy VALU registration entry enforces account-first confirmation', () =>
   expect(register).toContain("fetch('/api/valu-taster/start'")
 })
 
+})
+
+
+test('legacy assessment entry points converge on the authenticated continuation resolver', () => {
+  const resolver = read('src/app/assessment/continue/page.jsx')
+  const continuation = read('src/app/journey/continue/route.js')
+  const bridge = read('src/app/assessment/bridge/page.jsx')
+  expect(continuation).toContain("new URL('/assessment/continue', request.url)")
+  expect(bridge).toContain("redirect('/assessment/continue')")
+  expect(resolver).toContain("fetch('/api/valu-handoff'")
+  expect(resolver).toContain("method: 'POST'")
+  expect(resolver).toContain("window.location.assign(destination)")
+  expect(resolver).toContain("/login?returnTo=%2Fassessment%2Fcontinue")
+  expect(resolver).toContain("/valu/register/")
+  expect(resolver).not.toContain("searchParams.get('taster_id')")
+  expect(resolver).not.toContain("searchParams.get('resume')")
 })

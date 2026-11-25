@@ -30,17 +30,11 @@ export async function GET(request) {
   const hasLegacyAssessmentParams = ['taster_id', 'name', 'role', 'experience', 'resume', 'token', 'pending_taster_id']
     .some(key => searchParams.has(key))
 
-  // Assessment continuation is deliberately not a public route. Old email,
-  // bookmark and notification links always return to the account dashboard.
-  // The dashboard's authenticated POST to /api/valu-handoff is the only issuer.
+  // Legacy assessment URLs converge on one resolver. It ignores public identity
+  // and token parameters, verifies the signed-in account, and requests a fresh
+  // short-lived handoff from the authenticated server endpoint.
   if (stage === 'assess' || searchParams.has('token') || hasLegacyAssessmentParams) {
-    const user = await getUser(request)
-    if (!user) {
-      const login = new URL('/login', request.url)
-      login.searchParams.set('returnTo', '/dashboard')
-      return NextResponse.redirect(login)
-    }
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    return NextResponse.redirect(new URL('/assessment/continue', request.url))
   }
 
   if (!stage) {
