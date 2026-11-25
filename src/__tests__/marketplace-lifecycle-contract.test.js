@@ -277,7 +277,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(start).not.toContain("'Motivation & Stamina'")
   })
 
-  test('public VALU copy follows registration-first taster and points-based Full assessment', () => {
+  test('public VALU copy follows Taster-first and points-based Full assessment', () => {
     const prime = read('src/app/prime/page.jsx')
     const valu = read('src/app/valu/page.jsx')
     const start = read('src/app/valu/start/page.jsx')
@@ -286,7 +286,7 @@ describe('VALUI marketplace lifecycle contract', () => {
       expect(source).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
       expect(source).not.toMatch(/9-question|58-question|15-question/i)
     }
-    expect(start).toContain('Create your Valoria account and confirm your email before beginning the Taster')
+    expect(start).toContain('Begin with the Taster. After your result is saved')
     expect(start).toContain('Your official result in points')
     expect(signup).toContain('VALU Index Taster')
   })
