@@ -30,7 +30,7 @@ for (const token of [
 let count = 0;
 for (const file of auditedFiles) {
   const source = fs.readFileSync(path.join(root, file), 'utf8');
-  const tags = [...source.matchAll(/<select\\b[^>]*>/gs)].map(match => match[0]);
+  const tags = [...source.matchAll(/<select\b[^>]*>/gs)].map(match => match[0]);
   for (const tag of tags) {
     count += 1;
     if (!/className=["'][^"']*vi-select(?:--light)?[^"']*["']/.test(tag)) {
