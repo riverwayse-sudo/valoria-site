@@ -78,10 +78,10 @@ export default function ValuStartPage() {
       <section className="vs-light vs-journey">
         <div className="vs-shell">
           <div className="vs-kicker dark"><span /> HOW IT WORKS</div>
-          <h2>Create your account. Take your Taster.<br /><em>Then build your next step.</em></h2>
+          <h2>Take your Taster. Create your account.<br /><em>Then build your next step.</em></h2>
           <div className="vs-journey-grid">
-            <article><span>01</span><h3>Create your account</h3><p>Create your Valoria account and confirm your email before beginning. Your account protects your saved journey.</p></article>
-            <article><span>02</span><h3>Take your Taster</h3><p>Complete the guided directional Taster. Your responses are saved to your confirmed account.</p></article>
+            <article><span>01</span><h3>Take your Taster</h3><p>Complete the guided directional Taster. Your responses and result are saved securely before you create an account.</p></article>
+            <article><span>02</span><h3>Create or connect your account</h3><p>After your result is saved, create or connect your Valoria account and confirm your email. Your completed Taster stays linked to you.</p></article>
             <article><span>03</span><h3>Continue to your dashboard</h3><p>Your completed Taster is connected to your account. Your dashboard is the secure home for the next step.</p></article>
             <article><span>04</span><h3>Complete the full VALU Index</h3><p>The full VALU Index establishes your official points result and PRIME capability profile. It is not required for the Basic taster pathway.</p></article>
             <article><span>05</span><h3>Build and discover</h3><p>Complete your professional profile. Marketplace visibility follows the relevant Basic or Full eligibility checks and your explicit permission.</p></article>
