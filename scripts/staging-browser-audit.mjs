@@ -22,6 +22,9 @@ const routes = [
   { name: 'dashboard-preview', url: `${SITE}/dashboard?preview=1`, site: true },
   { name: 'assessment-proxy', url: `${SITE}/valu/assessment/`, site: true },
   { name: 'assessment-host', url: `${ASSESSMENT}/`, site: false },
+  { name: 'legacy-journey-assessment', url: `${SITE}/journey/continue?stage=assess`, site: true },
+  { name: 'legacy-assessment-bridge', url: `${SITE}/assessment/bridge`, site: true },
+  { name: 'canonical-assessment-continue', url: `${SITE}/assessment/continue`, site: true },
 ]
 const report = {
   generatedAt: new Date().toISOString(),
@@ -164,6 +167,11 @@ try {
 
       if (navigationError) report.failures.push(`${route.name}/${viewport.name}: navigation failed: ${navigationError}`)
       if (status === null || status >= 400) report.failures.push(`${route.name}/${viewport.name}: HTTP ${status}`)
+      if (route.name.startsWith('legacy-') || route.name === 'canonical-assessment-continue') {
+        if (state.finalPath !== '/login' || state.finalReturnTo !== '/assessment/continue') {
+          report.failures.push(`${route.name}/${viewport.name}: signed-out assessment entry must converge on login with a return path to /assessment/continue; found ${state.finalPath}?returnTo=${state.finalReturnTo}`)
+        }
+      }
       if (state.horizontalOverflow) report.failures.push(`${route.name}/${viewport.name}: horizontal overflow`)
       if (state.revealState?.total !== state.revealState?.visible) report.failures.push(`${route.name}/${viewport.name}: scroll-reveal content remained hidden (${state.revealState?.visible}/${state.revealState?.total})`)
       if (!state.robots.toLowerCase().includes('noindex')) report.failures.push(`${route.name}/${viewport.name}: staging page is missing noindex robots metadata`)
