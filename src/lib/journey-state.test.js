@@ -182,7 +182,7 @@ test('profile VALU display fields cannot substitute for a completed full assessm
   expect(state.assessment.complete).toBe(false)
   expect(state.assessment.score).toBeNull()
   expect(state.eligibility.complete).toBe(false)
-  expect(state.eligibility.missing).toContain('A completed full VALU Index assessment')
+  expect(state.eligibility.missing).toContain('A completed full VALU Index')
   expect(state.marketplace.capabilities).toEqual([])
   expect(state.next).toBe('assess')
 })
