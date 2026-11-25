@@ -147,7 +147,7 @@ jobs:
           curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
           cp /tmp/valoria-sitemap.xml artifacts/staging-smoke/sitemap.xml
           grep -q '<loc>https://staging.valoriainstitute.com/' /tmp/valoria-sitemap.xml
-          if grep -Eq '<loc>https://(www\\.)?valoriainstitute\\.com/' /tmp/valoria-sitemap.xml; then
+          if grep -Eq '<loc>https://(www\.)?valoriainstitute\.com/' /tmp/valoria-sitemap.xml; then
             echo "Staging sitemap must not publish production canonical URLs"
             grep -n 'valoriainstitute.com' /tmp/valoria-sitemap.xml | head -50
             exit 1
