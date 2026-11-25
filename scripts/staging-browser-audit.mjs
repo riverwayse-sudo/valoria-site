@@ -18,6 +18,7 @@ const routes = [
   { name: 'valu-start', url: `${SITE}/valu/start`, site: true },
   { name: 'valu-register', url: `${SITE}/valu/register`, site: true },
   { name: 'valu-register-legacy', url: `${SITE}/valu/register?journey=valu_taster`, site: true },
+  { name: 'auth-confirm', url: `${SITE}/auth/confirm?token_hash=staging-probe-token&type=email&next=%2Fauth%2Fcallback%3Fvalu_taster%3D1`, site: true },
   { name: 'professional-signup-account-first', url: `${SITE}/professional-signup/?taster_id=55555555-5555-4555-8555-555555555555&name=Staging%20Participant&role=Staging%20QA&account_first=1`, site: true },
   { name: 'professional-signup-post-taster', url: `${SITE}/professional-signup/?taster_id=${POST_TASTER_ID}&name=Staging%20Participant&role=Staging%20QA&experience=0-3&email=staging-participant%40example.invalid`, site: true },
   { name: 'prime', url: `${SITE}/prime`, site: true },
@@ -115,6 +116,11 @@ try {
         const savedTasterCopy = /Your taster is saved/i.test(document.body.innerText)
         const signInLink = [...document.querySelectorAll('a')].find(a => /SIGN IN TO CONNECT YOUR TASTER/i.test(a.innerText))?.href || ''
         const accountCreationAction = /CREATE ACCOUNT|ACCOUNT CREATION/i.test(document.body.innerText)
+        const confirmationForm = Boolean(
+          document.querySelector('form[method="post"][action="/auth/confirm"]') &&
+          document.querySelector('input[name="token_hash"]') &&
+          document.querySelector('button[type="submit"]')
+        )
         const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
         const visibleInternalPattern = /(WANT TO BE DISCOVERED|Become discoverable|buyer access|sourcing access|BASIC LISTING|FULL LISTING|\b1 of 58\b|\b1 of 9\b|54 scored questions|four validity checks|nine[- ]questions?|9[- ]questions?|58[- ]questions?|55[- ]questions?|84 \/ 100|\b[0-9]+\s*\/\s*100\b)/gi
         const visibleInternalTerms = [...document.body.innerText.matchAll(visibleInternalPattern)].map(match => match[0])
@@ -159,6 +165,7 @@ try {
           savedTasterCopy,
           signInLink,
           accountCreationAction,
+          confirmationForm,
         }
       })
 
@@ -183,7 +190,8 @@ try {
       if (state.horizontalOverflow) report.failures.push(`${route.name}/${viewport.name}: horizontal overflow`)
       if (state.revealState?.total !== state.revealState?.visible) report.failures.push(`${route.name}/${viewport.name}: scroll-reveal content remained hidden (${state.revealState?.visible}/${state.revealState?.total})`)
       if (!state.robots.toLowerCase().includes('noindex')) report.failures.push(`${route.name}/${viewport.name}: staging page is missing noindex robots metadata`)
-      if (!state.banner.includes('STAGING PREVIEW')) report.failures.push(`${route.name}/${viewport.name}: staging banner is missing`)
+      if (route.name !== 'auth-confirm' && !state.banner.includes('STAGING PREVIEW')) report.failures.push(`${route.name}/${viewport.name}: staging banner is missing`)
+      if (route.name === 'auth-confirm' && !state.confirmationForm) report.failures.push(`${route.name}/${viewport.name}: scanner-safe confirmation form is missing`)
       if (state.analyticsLoaded) report.failures.push(`${route.name}/${viewport.name}: production analytics loaded in staging`)
       if (forbiddenRequests.length) report.failures.push(`${route.name}/${viewport.name}: production Supabase/assessment request detected`)
       if (state.literalNewlineVisible && route.name.startsWith('assessment-')) report.failures.push(`${route.name}/${viewport.name}: literal \\n text is visible in the assessment UI`)
