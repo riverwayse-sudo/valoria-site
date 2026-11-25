@@ -24,6 +24,8 @@ jobs:
         run: npm run excellence:check
       - name: Lint critical user journeys for undefined identifiers
         run: npm run lint:critical
+      - name: Verify shared dropdown design system
+        run: npm run dropdown:check
       - name: Run unit tests
         run: npm test -- --runInBand
         env:
