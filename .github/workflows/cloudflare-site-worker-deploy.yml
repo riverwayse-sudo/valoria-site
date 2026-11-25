@@ -101,3 +101,11 @@ jobs:
             exit 1
           fi
           echo "PASS: public CTAs and legacy registration links enter the Taster-first journey."
+
+          curl -sS -D /tmp/valoria-legacy-headers -o /dev/null "$base/valu/register?journey=valu_taster"
+          if ! grep -Eiq '^location: (https?://[^/]+)?/valu/assessment/\?journey=account-first' /tmp/valoria-legacy-headers; then
+            echo "Legacy in-progress Taster registration must retain its explicit account-first recovery handoff"
+            cat /tmp/valoria-legacy-headers
+            exit 1
+          fi
+          echo "PASS: explicit legacy Taster recovery remains routed through the compatibility gate."
