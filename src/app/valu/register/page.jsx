@@ -214,7 +214,7 @@ export default function ValuRegisterPage() {
           <input required autoComplete="organization-title" maxLength={160} value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} style={styles.input} placeholder="e.g. Managing Director" />
         </label>
         <label style={styles.label}>PROFESSIONAL EXPERIENCE
-          <select required value={form.experience} onChange={e => setForm({ ...form, experience: e.target.value })} style={styles.input}>
+          <select className="vi-select" required value={form.experience} onChange={e => setForm({ ...form, experience: e.target.value })} style={styles.input}>
             <option value="">Select your experience</option>
             {EXPERIENCE.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
