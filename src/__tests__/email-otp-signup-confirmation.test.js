@@ -49,6 +49,14 @@ describe("email-link signup confirmation", () => {
     expect(postHandler).toContain("response.cookies.set");
     expect(postHandler).toContain("new URL(nextPath, request.url), 303");
     expect(postHandler).toContain("supabase.auth.verifyOtp");
+    expect(postHandler).toContain("data?.user?.user_metadata?.valu_taster_signup === true");
+    expect(postHandler).toContain("/auth/callback?valu_taster=1");
+  });
+
+  test("a rejected cross-environment redirect restores the Taster callback from verified account metadata", () => {
+    expect(confirmationRoute).toContain("nextPath === '/auth/callback'");
+    expect(confirmationRoute).toContain("data?.user?.user_metadata?.valu_taster_signup === true");
+    expect(confirmationRoute).toContain("response.headers.set('Location'");
   });
 
   test("Taster confirmation links the saved Taster and returns the participant to the dashboard", () => {
