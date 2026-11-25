@@ -17,7 +17,7 @@ const SOURCE_LABELS = {
   standalone:    'Standalone page',
 }
 
-// Kept in sync with the actual <select> options in WaitlistForm.jsx /
+// Kept in sync with the actual <select className="vi-select"> options in WaitlistForm.jsx /
 // WaitlistModal.jsx: professional, speaker, employer, event_planner, other.
 // 'facilitator' is intentionally not an option there, so it's never
 // submitted — don't build summary cards/filters around it.
