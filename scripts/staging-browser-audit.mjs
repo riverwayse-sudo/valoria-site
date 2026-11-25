@@ -2,6 +2,8 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { chromium } from 'playwright'
 
+// Push-triggered staging acceptance after the restricted deploy/staging-* workflow was merged to main.
+
 const SITE = process.env.STAGING_SITE_URL || 'https://staging.valoriainstitute.com'
 const ASSESSMENT = process.env.STAGING_ASSESSMENT_URL || 'https://assessment-staging.valoriainstitute.com'
 const POST_TASTER_ID = '66666666-6666-4666-8666-666666666666'
