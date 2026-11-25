@@ -145,6 +145,20 @@ jobs:
           fi
           echo "PASS: public and legacy registration routes preserve account-first onboarding."
 
+          confirm_url="$base/auth/confirm?token_hash=staging-probe-token&type=email&next=%2Fauth%2Fcallback%3Fvalu_taster%3D1"
+          confirm_status="$(curl -sS -D /tmp/valoria-confirm-headers -o /tmp/valoria-confirm.html -w '%{http_code}' "$confirm_url")"
+          if [[ "$confirm_status" != "200" ]]; then
+            echo "Scanner-safe email confirmation GET returned HTTP $confirm_status"
+            cat /tmp/valoria-confirm.html || true
+            exit 1
+          fi
+          grep -q 'method="post" action="/auth/confirm"' /tmp/valoria-confirm.html
+          grep -q 'name="token_hash" value="staging-probe-token"' /tmp/valoria-confirm.html
+          grep -Eiq '^cache-control: no-store' /tmp/valoria-confirm-headers
+          grep -Eiq '^referrer-policy: no-referrer' /tmp/valoria-confirm-headers
+          grep -Eiq '^content-security-policy:.*form-action .self.' /tmp/valoria-confirm-headers
+          echo "PASS: confirmation GET renders a no-store, no-referrer same-origin POST form without consuming the token."
+
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
           cp /tmp/valoria-robots.txt artifacts/staging-smoke/robots.txt
           grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
