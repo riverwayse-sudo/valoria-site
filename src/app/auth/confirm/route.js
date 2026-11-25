@@ -1,7 +1,9 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import { normalizeSupabaseProjectUrl } from '@/lib/supabase-url'
-import { escapeAuthConfirmationHtml, safeAuthConfirmationNextPath } from '@/lib/auth-confirmation'
+import authConfirmation from '@/lib/auth-confirmation.cjs'
+
+const { escapeAuthConfirmationHtml, safeAuthConfirmationNextPath } = authConfirmation
 
 const privateHeaders = {
   'Cache-Control': 'no-store, max-age=0',
