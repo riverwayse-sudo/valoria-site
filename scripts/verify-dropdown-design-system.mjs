@@ -6,7 +6,7 @@ function collectSourceFiles(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const absolute = path.join(directory, entry.name);
     if (entry.isDirectory()) return collectSourceFiles(absolute);
-    return /\\.(jsx|tsx)$/.test(entry.name) ? [absolute] : [];
+    return /\.(jsx|tsx)$/.test(entry.name) ? [absolute] : [];
   });
 }
 const auditedFiles = collectSourceFiles(path.join(root, 'src'));
