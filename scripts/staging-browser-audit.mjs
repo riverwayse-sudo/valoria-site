@@ -190,9 +190,10 @@ try {
       })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
+      const canonicalTasterEntries = new Set(['/valu/assessment', '/valu/assessment/'])
       if (['homepage', 'valu', 'valu-start'].includes(route.name) &&
-          (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => href !== '/valu/assessment/'))) {
-        report.failures.push(route.name + '/' + viewport.name + ': public Taster entry must point directly to the canonical Taster-first route')
+          (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => !canonicalTasterEntries.has(href)))) {
+        report.failures.push(route.name + '/' + viewport.name + ': public Taster entry must point directly to the canonical Taster-first route; found ' + JSON.stringify(state.tasterEntryLinks))
       }
       if (route.name === 'valu-register' && !['/valu/assessment', '/valu/assessment/'].includes(state.currentPath)) {
         report.failures.push(route.name + '/' + viewport.name + ': legacy registration URL did not redirect to the Taster-first route')
