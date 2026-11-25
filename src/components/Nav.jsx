@@ -150,7 +150,7 @@ export default function Nav() {
   </>
 }
  
-// Public assessment entry always begins with the Taster. Confirmed account creation follows the saved result.
+// Public Taster entry requires a confirmed Valoria account first.
 // Signed-in participants with an eligible saved Taster retain the authenticated full-assessment handoff.
 const TASTER_FIRST_ENTRY = '/valu/register/?journey=valu_taster'
 export function AssessmentStartLink({ href = TASTER_FIRST_ENTRY, className, style, children, onClick, dashboardOnly = false, ...props }) {
@@ -212,7 +212,7 @@ export function AssessmentStartLink({ href = TASTER_FIRST_ENTRY, className, styl
         window.location.assign('/login?returnTo=%2Fdashboard')
         return
       }
-      // Anonymous visitors begin the Taster immediately; account creation follows the saved result.
+      // Anonymous visitors create or sign in to a Valoria account before beginning the Taster.
       window.location.assign(TASTER_FIRST_ENTRY)
     } catch (err) {
       setError(err?.message || 'We could not open your VALU Index. Please try again.')
@@ -220,7 +220,7 @@ export function AssessmentStartLink({ href = TASTER_FIRST_ENTRY, className, styl
     }
   }
 
-  // The anchor advertises the canonical Taster-first entry. Dashboard-only links remain on the formal continuation route.
+  // The anchor advertises the canonical account-first entry. Dashboard-only links remain on the formal continuation route.
   const linkHref = dashboardOnly ? 'https://assessment.valoriainstitute.com/remaining' : TASTER_FIRST_ENTRY
 
   return <>
