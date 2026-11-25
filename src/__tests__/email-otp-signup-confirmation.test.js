@@ -39,11 +39,11 @@ describe("email OTP signup confirmation", () => {
     expect(login).toContain("window.location.replace('/auth/callback')");
   });
 
-  test("legacy VALU registration links redirect to the canonical Taster-first entry", () => {
-    expect(valuRegister).toContain("redirect('/valu/assessment/')");
-    expect(valuRegister).toContain("redirect('/valu/assessment/?journey=account-first')")
-    expect(valuRegister).toContain("params?.journey === 'valu_taster'");
-    expect(valuRegister).not.toContain("supabase.auth.signUp");
+  test("VALU registration creates an account before starting the authenticated Taster", () => {
+    expect(valuRegister).toContain("supabase.auth.signUp");
+    expect(valuRegister).toContain("emailRedirectTo: confirmationUrl()");
+    expect(valuRegister).toContain("/api/valu-taster/start");
+    expect(valuRegister).toContain("user.email_confirmed_at");
   });
 
   test("post-Taster signup confirmation returns through the authenticated callback", () => {
