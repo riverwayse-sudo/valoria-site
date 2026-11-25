@@ -1,5 +1,5 @@
 export const NAVIGATION = {
-  assessmentUrl: '/valu/assessment/',
+  assessmentUrl: '/valu/register/?journey=valu_taster',
   primary: [
     {
       label: 'Explore',
