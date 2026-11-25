@@ -74,7 +74,7 @@ jobs:
       - name: Smoke-test staging routes and privacy boundaries
         shell: bash
         run: |
-          set -euo pipefail
+          set -euo pipefail -x
           base="https://staging.valoriainstitute.com"
           routes=(
             /
