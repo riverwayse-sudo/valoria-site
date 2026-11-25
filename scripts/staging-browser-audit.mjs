@@ -193,17 +193,20 @@ try {
       })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
-      const canonicalTasterEntries = new Set(['/valu/assessment', '/valu/assessment/'])
+      const canonicalTasterEntries = new Set(['/valu/register'])
       if (['homepage', 'valu', 'valu-start'].includes(route.name) &&
           (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => !canonicalTasterEntries.has(href)))) {
-        report.failures.push(route.name + '/' + viewport.name + ': public Taster entry must point directly to the canonical Taster-first route; found ' + JSON.stringify(state.tasterEntryLinks))
+        report.failures.push(route.name + '/' + viewport.name + ': public Taster entry must require the canonical account-first registration route; found ' + JSON.stringify(state.tasterEntryLinks))
       }
-      if (route.name === 'valu-register' && !['/valu/assessment', '/valu/assessment/'].includes(state.currentPath)) {
-        report.failures.push(route.name + '/' + viewport.name + ': legacy registration URL did not redirect to the Taster-first route')
+      if (route.name === 'valu-register' &&
+          (state.currentPath !== '/valu/register' || !state.registrationForm.email || !state.registrationForm.password ||
+           !state.registrationForm.privacyAcknowledgement || !/account comes first/i.test(state.registrationForm.heading))) {
+        report.failures.push(route.name + '/' + viewport.name + ': public registration must collect account details and privacy acknowledgement before Taster access')
       }
       if (route.name === 'valu-register-legacy' &&
-          (!['/valu/assessment', '/valu/assessment/'].includes(state.currentPath) || state.journeyParam !== 'account-first')) {
-        report.failures.push(route.name + '/' + viewport.name + ': in-progress legacy Taster registration did not retain its compatibility gate')
+          (state.currentPath !== '/valu/register' || state.journeyParam !== 'valu_taster' ||
+           !state.registrationForm.email || !state.registrationForm.password || !state.registrationForm.privacyAcknowledgement)) {
+        report.failures.push(route.name + '/' + viewport.name + ': legacy registration URL must preserve the account-first Taster journey')
       }
       if (route.name === 'professional-signup-account-first' &&
           (!state.signInLink.includes('/login?pending_taster_id=') || state.accountCreationAction)) {
