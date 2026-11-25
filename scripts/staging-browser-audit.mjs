@@ -88,6 +88,10 @@ try {
         window.scrollTo({ top: 0, behavior: 'auto' })
       })
       await page.waitForTimeout(350)
+      if (route.name.startsWith('legacy-') || route.name === 'canonical-assessment-continue') {
+        await page.waitForURL(url => url.pathname === '/login', { timeout: 12000 }).catch(() => {})
+      }
+      const finalUrl = new URL(page.url())
 
       const state = await page.evaluate(() => {
         const robots = document.querySelector('meta[name="robots"]')?.content || ''
@@ -120,9 +124,9 @@ try {
               (el.scrollHeight > el.clientHeight + 4 || el.scrollWidth > el.clientWidth + 4)
           }).length
         return {
-          finalPath: window.location.pathname,
-          finalReturnTo: new URL(window.location.href).searchParams.get('returnTo') || '',
-          finalHasLegacyIdentityParams: ['taster_id', 'name', 'role', 'resume', 'token', 'pending_taster_id'].some(key => new URL(window.location.href).searchParams.has(key)),
+          finalPath: ${finalUrl.pathname},
+          finalReturnTo: ${finalUrl.searchParams.get("returnTo") || ""},
+          finalHasLegacyIdentityParams: ${["taster_id", "name", "role", "resume", "token", "pending_taster_id"].some(key => finalUrl.searchParams.has(key))},
           title: document.title,
           robots,
           banner,
