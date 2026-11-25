@@ -16,7 +16,7 @@ const dimensions = [
 ]
 
 const faqs = [
-  ['How does it work?', 'Create or sign in to your Valoria account, confirm your email, complete the VALU Index Taster, then complete the separate full VALU Index. You will receive your official points result and PRIME profile.'],
+  ['How does it work?', 'Create or sign in to your Valoria account, confirm your email, complete the VALU Index Taster, then complete the separate full VALU Index. You will receive your official result in points and PRIME profile.'],
   ['Do I need an account first?', 'Yes. Create or sign in to your Valoria account and confirm your email before beginning the Taster.'],
   ['Who is it for?', 'It is designed for professionals across industries and markets—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight, visibility and access to opportunity.'],
   ['Is it free?', 'Yes. The VALU Index Taster and full VALU Index are free to complete. The wider Valoria ecosystem connects insight to development, visibility and opportunity.'],
