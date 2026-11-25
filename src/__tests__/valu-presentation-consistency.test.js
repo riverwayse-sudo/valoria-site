@@ -6,12 +6,12 @@ function read(relative) {
 }
 
 describe('VALU presentation consistency', () => {
-  test('homepage communicates registration before the VALU taster without exposing question counts', () => {
+  test('homepage presents the Taster-first entry without exposing question counts', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('Register before your taster')
+    expect(home).toContain('Begin with your Taster')
     expect(home).toContain('START THE VALU INDEX TASTER')
     expect(home).not.toMatch(/9 questions|58 questions|Question\s+\d+\s+of\s+\d+/i)
-    expect(home).not.toContain('no account needed')
+    expect(home).toContain('START THE VALU INDEX TASTER')
     expect(home).not.toMatch(/\\b9\\s*QUESTIONS\\b|\\b58\\s*QUESTIONS\\b/i)
     const waitlist = read('src/components/WaitlistModal.jsx')
     expect(waitlist).not.toMatch(/\\b9\\s*QUESTIONS\\b|\\b58\\s*QUESTIONS\\b/i)
@@ -54,7 +54,7 @@ describe('VALU presentation consistency', () => {
     expect(read('src/app/prime/page.jsx')).toContain('TAKE THE VALU INDEX TASTER');
     expect(read('src/app/insights/page.jsx')).toContain('START THE VALU INDEX TASTER');
     expect(read('src/app/signup/page.jsx')).toContain('CREATE ACCOUNT & BEGIN')
-    expect(read('src/app/signup/page.jsx')).toContain('href="/valu/register/"');
+    expect(read('src/app/signup/page.jsx')).toContain('href="/valu/assessment/"');
     expect(read('src/components/LiveProfilesScroll.jsx')).toContain('TAKE THE VALU INDEX TASTER');
   })
 
