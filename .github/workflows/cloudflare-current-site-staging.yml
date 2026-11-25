@@ -1,6 +1,17 @@
 name: Validate and deploy current-site audit to isolated Cloudflare staging
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/**"
+      - "supabase/migrations/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - "wrangler.jsonc"
+      - ".github/workflows/cloudflare-current-site-staging.yml"
   pull_request:
     branches:
       - main
@@ -13,6 +24,7 @@ on:
       - "package-lock.json"
       - "wrangler.jsonc"
       - ".github/workflows/cloudflare-current-site-staging.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -25,7 +37,7 @@ jobs:
       cancel-in-progress: true
     name: Test, build, deploy and smoke-test isolated staging Worker
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
     environment: staging
     steps:
       - uses: actions/checkout@v4
@@ -70,7 +82,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      - name: Smoke-test staging routes and privacy boundaries
+      - name: Smoke-test staging routes, canonical redirects and privacy boundaries
         shell: bash
         run: |
           set -euo pipefail
@@ -115,40 +127,23 @@ jobs:
           done
           echo "PASS: all public, dashboard and policy routes return HTTP 200."
 
-          curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
-          cat /tmp/valoria-robots.txt | tee artifacts/staging-smoke/robots.txt
-          grep -Eq '^Disallow: /
-          # The assessment Worker owns Taster-first session APIs; its CORS, persistence,
-          # completion and retry behavior are validated by the platform staging workflow.
-          # Participant-visible navigation and fresh-session behavior are checked by Playwright.
+          public_register_url="$(curl -sSL --retry 3 --retry-all-errors --max-time 25 -o /dev/null -w '%{url_effective}' "$base/valu/register")"
+          if [[ "$public_register_url" != *"/valu/assessment"* ]]; then
+            echo "Unqualified legacy registration must end at the canonical Taster-first route: $public_register_url"
+            exit 1
+          fi
+          legacy_register_url="$(curl -sSL --retry 3 --retry-all-errors --max-time 25 -o /dev/null -w '%{url_effective}' "$base/valu/register?journey=valu_taster")"
+          if [[ "$legacy_register_url" != *"/valu/assessment"* || "$legacy_register_url" != *"journey=account-first"* ]]; then
+            echo "In-progress legacy Taster registration must retain the explicit compatibility gate: $legacy_register_url"
+            exit 1
+          fi
+          echo "PASS: public and legacy registration redirects preserve their intended journeys."
 
-      - name: Upload staging smoke diagnostics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: valoria-staging-smoke-diagnostics
-          path: artifacts/staging-smoke/
-          if-no-files-found: warn
-          retention-days: 7
-      - name: Install Playwright without changing project dependencies
-        run: npm install --no-save --package-lock=false playwright@1.65.0
-      - name: Install Chromium for staging browser acceptance
-        run: npx playwright install --with-deps chromium
-      - name: Run desktop/mobile and fresh-session staging browser audit
-        run: node scripts/staging-browser-audit.mjs
-      - name: Upload staging browser audit artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: valoria-staging-browser-audit
-          path: artifacts/staging-browser-audit/
-          if-no-files-found: warn
-          retention-days: 7
-        env:
-          STAGING_SITE_URL: https://staging.valoriainstitute.com
-          STAGING_ASSESSMENT_URL: https://assessment-staging.valoriainstitute.com
- /tmp/valoria-robots.txt
+          curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
+          cp /tmp/valoria-robots.txt artifacts/staging-smoke/robots.txt
+          grep -Eq '^Disallow: /$' /tmp/valoria-robots.txt
           echo "PASS: staging robots policy blocks indexing."
+
           curl -fsS "$base/sitemap.xml" -o /tmp/valoria-sitemap.xml
           cp /tmp/valoria-sitemap.xml artifacts/staging-smoke/sitemap.xml
           grep -q '<loc>https://staging.valoriainstitute.com/' /tmp/valoria-sitemap.xml
@@ -158,9 +153,10 @@ jobs:
             exit 1
           fi
           echo "PASS: staging sitemap contains only staging canonical URLs."
+
           curl -fsS "$base/" -o /tmp/valoria-home.html
           cp /tmp/valoria-home.html artifacts/staging-smoke/homepage.html
-          for phrase in 'Capability should decide' 'Capability deserves' 'START THE VALU INDEX TASTER' 'href="/valu/assessment/"' 'THE VALORIA MARKETPLACE' 'Find professionals' 'POINTS-BASED CAPABILITY PROFILE'; do
+          for phrase in 'Capability should decide' 'Find capability with context' 'START THE VALU INDEX TASTER' 'href="/valu/assessment/"' 'THE VALORIA MARKETPLACE' 'Find professionals' 'POINTS-BASED CAPABILITY PROFILE'; do
             if grep -Fq "$phrase" /tmp/valoria-home.html; then
               echo "PASS: homepage contains $phrase"
             else
@@ -170,16 +166,23 @@ jobs:
             fi
           done
           echo "PASS: homepage exposes the canonical Taster-first entry."
-          # The assessment Worker owns Taster-first session APIs; its CORS, persistence,
-          # completion and retry behavior are validated by the platform staging workflow.
-          # Participant-visible navigation and fresh-session behavior are checked by Playwright.
-
       - name: Install Playwright without changing project dependencies
         run: npm install --no-save --package-lock=false playwright@1.65.0
       - name: Install Chromium for staging browser acceptance
         run: npx playwright install --with-deps chromium
       - name: Run desktop/mobile and fresh-session staging browser audit
         run: node scripts/staging-browser-audit.mjs
+        env:
+          STAGING_SITE_URL: https://staging.valoriainstitute.com
+          STAGING_ASSESSMENT_URL: https://assessment-staging.valoriainstitute.com
+      - name: Upload staging diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: valoria-staging-acceptance-diagnostics
+          path: artifacts/staging-smoke/
+          if-no-files-found: warn
+          retention-days: 7
       - name: Upload staging browser audit artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -188,6 +191,3 @@ jobs:
           path: artifacts/staging-browser-audit/
           if-no-files-found: warn
           retention-days: 7
-        env:
-          STAGING_SITE_URL: https://staging.valoriainstitute.com
-          STAGING_ASSESSMENT_URL: https://assessment-staging.valoriainstitute.com

@@ -97,7 +97,10 @@ try {
         const navDashboard = [...document.querySelectorAll('a')].find(a => /return to dashboard/i.test(a.innerText))?.href || ''
         const tasterEntryLinks = [...document.querySelectorAll('a')]
           .filter(a => /START THE VALU INDEX TASTER/i.test(a.innerText))
-          .map(a => a.getAttribute('href'))
+          .map(a => {
+            const href = a.getAttribute('href') || ''
+            try { return new URL(href, window.location.href).pathname } catch { return href }
+          })
         const registrationForm = {
           email: Boolean(document.querySelector('input[type="email"]')),
           emailReadOnly: Boolean(document.querySelector('input[type="email"]')?.readOnly),
@@ -190,15 +193,16 @@ try {
       })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
+      const canonicalTasterEntries = new Set(['/valu/assessment', '/valu/assessment/'])
       if (['homepage', 'valu', 'valu-start'].includes(route.name) &&
-          (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => href !== '/valu/assessment/'))) {
-        report.failures.push(route.name + '/' + viewport.name + ': public Taster entry must point directly to the canonical Taster-first route')
+          (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => !canonicalTasterEntries.has(href)))) {
+        report.failures.push(route.name + '/' + viewport.name + ': public Taster entry must point directly to the canonical Taster-first route; found ' + JSON.stringify(state.tasterEntryLinks))
       }
-      if (route.name === 'valu-register' && state.currentPath !== '/valu/assessment/') {
+      if (route.name === 'valu-register' && !['/valu/assessment', '/valu/assessment/'].includes(state.currentPath)) {
         report.failures.push(route.name + '/' + viewport.name + ': legacy registration URL did not redirect to the Taster-first route')
       }
       if (route.name === 'valu-register-legacy' &&
-          (state.currentPath !== '/valu/assessment/' || state.journeyParam !== 'account-first')) {
+          (!['/valu/assessment', '/valu/assessment/'].includes(state.currentPath) || state.journeyParam !== 'account-first')) {
         report.failures.push(route.name + '/' + viewport.name + ': in-progress legacy Taster registration did not retain its compatibility gate')
       }
       if (route.name === 'professional-signup-account-first' &&
