@@ -101,19 +101,19 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       <section className={styles.controls}>
         <div className={styles.containerControl}>
           <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search professionals, skills or sectors…" aria-label="Search marketplace"/>
-          <select value={cluster} onChange={e=>setCluster(e.target.value)} aria-label="Filter by PRIME cluster">
+          <select className="vi-select--light" value={cluster} onChange={e=>setCluster(e.target.value)} aria-label="Filter by PRIME cluster">
             <option value="">All professional areas</option>
             {PRIME_CLUSTERS.map(item=><option key={item.letter} value={item.letter}>{item.name}</option>)}
           </select>
-          <select value={skill} onChange={e=>setSkill(e.target.value)} aria-label="Filter by skill">
+          <select className="vi-select--light" value={skill} onChange={e=>setSkill(e.target.value)} aria-label="Filter by skill">
             <option value="">All skills</option>
             {skills.map(value=><option key={value} value={value}>{value}</option>)}
           </select>
-          <select value={scoreBand} onChange={e=>setScoreBand(e.target.value)} aria-label="Filter by VALU Index points band">
+          <select className="vi-select--light" value={scoreBand} onChange={e=>setScoreBand(e.target.value)} aria-label="Filter by VALU Index points band">
             <option value="">All VALU Index scores</option>
             {SCORE_BANDS.map(value=><option key={value.name} value={value.name}>{value.name} · {value.min}–{value.max} points</option>)}
           </select>
-          <select value={sector} onChange={e=>setSector(e.target.value)} aria-label="Filter by sector">
+          <select className="vi-select--light" value={sector} onChange={e=>setSector(e.target.value)} aria-label="Filter by sector">
             <option value="">All sectors</option>
             {sectors.map(value=><option key={value} value={value}>{value}</option>)}
           </select>
