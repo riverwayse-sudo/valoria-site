@@ -1,3 +1,4 @@
+# Staging rollback: redeploy the current main baseline without the unmerged email-link confirmation experiment.
 name: Validate and deploy current-site audit to isolated Cloudflare staging
 
 on:
