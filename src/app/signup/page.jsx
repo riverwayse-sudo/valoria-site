@@ -64,7 +64,7 @@ export default function SignupPage() {
         email: form.email,
         password: form.password,
         options: {
-          emailRedirectTo: window.location.origin + '/auth/callback',
+          emailRedirectTo: window.location.origin + '/auth/callback' + (returnTo ? '?returnTo=' + encodeURIComponent(returnTo) : ''),
           data: { display_name: form.name, user_type: userType },
         },
       })
@@ -103,7 +103,7 @@ export default function SignupPage() {
       const { error: resendError } = await supabase.auth.resend({
         type: 'signup',
         email,
-        options: { emailRedirectTo: window.location.origin + '/auth/callback' },
+        options: { emailRedirectTo: window.location.origin + '/auth/callback' + (returnTo ? '?returnTo=' + encodeURIComponent(returnTo) : '') },
       })
       if (resendError) throw resendError
       setResendMessage('A fresh confirmation link has been requested. Check your inbox and spam folder.')
