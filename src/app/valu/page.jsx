@@ -20,7 +20,7 @@ export default function ValuPage() {
           <h1>Make your capability<br /><em>visible and actionable.</em></h1>
           <p className="valu-lede">The VALU Index Taster introduces the PRIME framework and gives you an initial view of your professional capability. Begin the Taster first; after your result is saved, create or connect your Valoria account and continue from your dashboard to the separate full VALU Index for your official points result and PRIME profile.</p>
           <div className="valu-actions">
-            <AssessmentStartLink href="/valu/assessment/" className="valu-btn valu-btn-gold">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
+            <AssessmentStartLink href="/valu/register/?journey=valu_taster" className="valu-btn valu-btn-gold">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
             <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW THE VALU INDEX SUPPORTS YOUR GROWTH <span>↓</span></a>
           </div>
           <div className="valu-meta"><span>VALU INDEX TASTER</span><i>·</i><span>FULL VALU INDEX</span><i>·</i><span>5 PRIME DIMENSIONS</span></div>
@@ -57,11 +57,11 @@ export default function ValuPage() {
       <section className="valu-outcome">
         <div className="valu-wrap valu-outcome-grid">
           <div><div className="valu-kicker valu-dark"><span /> WHAT THE FULL VALU INDEX ESTABLISHES</div><h2>Move from a directional taster to an official professional record.</h2></div>
-          <div><p>The taster offers an initial perspective on your professional capability. Your official VALU Index is established when you complete the full VALU Index.</p><p>The full VALU Index covers all 17 PRIME skills across Presence, Relationships, Intelligence, Mastery and Enterprise. It establishes your official points result and PRIME profile, with a 12-month validity period. Your professional profile and marketplace access then reflect your completed VALU Index and the applicable eligibility requirements.</p><AssessmentStartLink href="/valu/assessment/" className="valu-inline">START THE VALU INDEX TASTER →</AssessmentStartLink></div>
+          <div><p>The taster offers an initial perspective on your professional capability. Your official VALU Index is established when you complete the full VALU Index.</p><p>The full VALU Index covers all 17 PRIME skills across Presence, Relationships, Intelligence, Mastery and Enterprise. It establishes your official points result and PRIME profile, with a 12-month validity period. Your professional profile and marketplace access then reflect your completed VALU Index and the applicable eligibility requirements.</p><AssessmentStartLink href="/valu/register/?journey=valu_taster" className="valu-inline">START THE VALU INDEX TASTER →</AssessmentStartLink></div>
         </div>
       </section>
 
-      <section className="valu-final"><div className="valu-wrap"><div className="valu-kicker"><span /> {BRAND.tagline.toUpperCase()}</div><h2>Start with a clearer view<br /><em>of your capability.</em></h2><AssessmentStartLink href="/valu/assessment/" className="valu-btn valu-btn-gold">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink></div></section>
+      <section className="valu-final"><div className="valu-wrap"><div className="valu-kicker"><span /> {BRAND.tagline.toUpperCase()}</div><h2>Start with a clearer view<br /><em>of your capability.</em></h2><AssessmentStartLink href="/valu/register/?journey=valu_taster" className="valu-btn valu-btn-gold">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink></div></section>
     </main>
     <Footer />
   </>
