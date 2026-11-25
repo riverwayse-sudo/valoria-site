@@ -178,8 +178,8 @@ try {
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
       if (['homepage', 'valu', 'valu-start'].includes(route.name) &&
-          (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => href !== '/valu/register/'))) {
-        report.failures.push(route.name + '/' + viewport.name + ': public Taster entry does not route through account-first registration')
+          (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => href !== '/valu/assessment/'))) {
+        report.failures.push(route.name + '/' + viewport.name + ': public Taster entry does not route through the Taster-first assessment')
       }
       if (route.name === 'valu-register' &&
           (!state.registrationForm.email || !state.registrationForm.password || !state.registrationForm.privacyAcknowledgement)) {
