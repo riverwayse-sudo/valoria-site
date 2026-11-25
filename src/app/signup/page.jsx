@@ -108,7 +108,7 @@ export default function SignupPage() {
       if (resendError) throw resendError
       setResendMessage('A fresh confirmation link has been requested. Check your inbox and spam folder.')
     } catch (err) {
-      setError(err?.message || 'We could not send a new confirmation code. Please try again shortly.')
+      setError(err?.message || 'We could not send a new confirmation link. Please try again shortly.')
     } finally {
       setResendingOtp(false)
     }
