@@ -4,7 +4,9 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/password-policy'
-import { getValuTasterConfirmationRedirect } from '@/lib/auth-confirmation'
+import authConfirmation from '@/lib/auth-confirmation.cjs'
+
+const { getValuTasterConfirmationRedirect } = authConfirmation
 
 const GOLD = '#C9A84C'
 const DARK = '#0F0F1A'
