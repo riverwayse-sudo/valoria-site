@@ -13,6 +13,8 @@ const routes = [
   { name: 'homepage', url: `${SITE}/`, site: true },
   { name: 'marketplace', url: `${SITE}/marketplace`, site: true },
   { name: 'events', url: `${SITE}/events`, site: true },
+  { name: 'careers-apply', url: `${SITE}/careers/apply`, site: true },
+  { name: 'coaching-form', url: `${SITE}/coaching`, site: true },
   { name: 'valu', url: `${SITE}/valu`, site: true },
   { name: 'valu-start', url: `${SITE}/valu/start`, site: true },
   { name: 'valu-register', url: `${SITE}/valu/register`, site: true },
@@ -186,7 +188,7 @@ try {
         }
       }
       for (const [index, dropdown] of (state.nativeDropdowns || []).entries()) {
-        if (!dropdown.className.split(/\\s+/).includes('vi-select')) {
+        if (!dropdown.className.split(/\s+/).includes('vi-select')) {
           report.failures.push(`${route.name}/${viewport.name}: visible native dropdown ${dropdown.id || index} is missing the shared vi-select design-system class`)
         }
         if (!dropdown.disabled && !dropdown.id && !dropdown.label) {
@@ -318,6 +320,10 @@ try {
 } finally {
   await browser.close()
 }
+
+const dropdownControlsExercised = report.results.reduce((total, result) => total + (result.nativeDropdowns?.length || 0), 0)
+report.dropdownControlsExercised = dropdownControlsExercised
+if (dropdownControlsExercised === 0) report.failures.push('No visible native dropdown controls were exercised by the staging browser audit')
 
 await fs.writeFile(path.join(OUT, 'report.json'), JSON.stringify(report, null, 2))
 console.log(JSON.stringify({ pages: report.results.length, failures: report.failures, output: OUT }, null, 2))
