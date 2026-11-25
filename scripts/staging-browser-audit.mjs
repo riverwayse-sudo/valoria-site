@@ -1,4 +1,4 @@
-// CI uses the Playwright headless shell; no headed browser is required for this audit.
+// CI uses the Playwright headless shell and the runner's preinstalled browser libraries.
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { chromium } from 'playwright'
