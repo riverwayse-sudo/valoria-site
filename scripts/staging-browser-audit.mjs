@@ -106,6 +106,7 @@ try {
           heading: document.querySelector('h1')?.innerText || '',
         }
         const urlTasterId = new URL(window.location.href).searchParams.get('taster_id') || ''
+        const currentPath = window.location.pathname
         const savedTasterCopy = /Your taster is saved/i.test(document.body.innerText)
         const signInLink = [...document.querySelectorAll('a')].find(a => /SIGN IN TO CONNECT YOUR TASTER/i.test(a.innerText))?.href || ''
         const accountCreationAction = /CREATE ACCOUNT|ACCOUNT CREATION/i.test(document.body.innerText)
@@ -148,6 +149,7 @@ try {
           tasterEntryLinks,
           registrationForm,
           urlTasterId,
+          currentPath,
           savedTasterCopy,
           signInLink,
           accountCreationAction,
@@ -186,12 +188,11 @@ try {
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
       if (['homepage', 'valu', 'valu-start'].includes(route.name) &&
-          (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => href !== '/valu/register/'))) {
-        report.failures.push(route.name + '/' + viewport.name + ': public Taster entry does not route through account-first registration')
+          (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => href !== '/valu/assessment/'))) {
+        report.failures.push(route.name + '/' + viewport.name + ': public Taster entry must point directly to the canonical Taster-first route')
       }
-      if (route.name === 'valu-register' &&
-          (!state.registrationForm.email || !state.registrationForm.password || !state.registrationForm.privacyAcknowledgement)) {
-        report.failures.push(route.name + '/' + viewport.name + ': account registration is missing email, password or privacy acknowledgement controls')
+      if (route.name === 'valu-register' && state.currentPath !== '/valu/assessment/') {
+        report.failures.push(route.name + '/' + viewport.name + ': legacy registration URL did not redirect to the Taster-first route')
       }
       if (route.name === 'professional-signup-account-first' &&
           (!state.signInLink.includes('/login?pending_taster_id=') || state.accountCreationAction)) {
