@@ -25,10 +25,10 @@ export default function ValuCompletionNudge(){
       const [{data:profile},{data:latestSession},handoffResponse]=await Promise.all([
         supabase.from('professional_profiles').select('profile_complete').eq('id',user.id).maybeSingle(),
         supabase.from('assessment_sessions').select('id,completed_at,updated_at').eq('user_id',user.id).order('updated_at',{ascending:false}).limit(1).maybeSingle(),
-        fetch('/api/valu-handoff',{method:'GET',headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'})
+        fetch('/api/valu-handoff',{method:'GET',headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'}).catch(()=>null)
       ])
 
-      if(!profile||profile.profile_complete)return
+      if(!profile||profile.profile_complete||!handoffResponse?.ok)return
       const access=await handoffResponse.json().catch(()=>({}))
       const hasCompletedTaster=handoffResponse.ok&&access.can_continue===true
       const fullAssessmentComplete=handoffResponse.ok&&access.assessment_completed===true
