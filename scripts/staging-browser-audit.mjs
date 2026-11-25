@@ -194,11 +194,11 @@ try {
           (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => href !== '/valu/assessment/'))) {
         report.failures.push(route.name + '/' + viewport.name + ': public Taster entry must point directly to the canonical Taster-first route')
       }
-      if (route.name === 'valu-register' && state.currentPath !== '/valu/assessment/') {
+      if (route.name === 'valu-register' && !['/valu/assessment', '/valu/assessment/'].includes(state.currentPath)) {
         report.failures.push(route.name + '/' + viewport.name + ': legacy registration URL did not redirect to the Taster-first route')
       }
       if (route.name === 'valu-register-legacy' &&
-          (state.currentPath !== '/valu/assessment/' || state.journeyParam !== 'account-first')) {
+          (!['/valu/assessment', '/valu/assessment/'].includes(state.currentPath) || state.journeyParam !== 'account-first')) {
         report.failures.push(route.name + '/' + viewport.name + ': in-progress legacy Taster registration did not retain its compatibility gate')
       }
       if (route.name === 'professional-signup-account-first' &&
