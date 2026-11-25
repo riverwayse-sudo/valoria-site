@@ -2,10 +2,9 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { chromium } from 'playwright'
 
-// Staging-only validation commit: verify the public Taster-first entry after the assessment route switch.
-
 const SITE = process.env.STAGING_SITE_URL || 'https://staging.valoriainstitute.com'
 const ASSESSMENT = process.env.STAGING_ASSESSMENT_URL || 'https://assessment-staging.valoriainstitute.com'
+const POST_TASTER_ID = '66666666-6666-4666-8666-666666666666'
 const OUT = path.resolve('artifacts/staging-browser-audit')
 const viewports = [
   { name: 'desktop', width: 1440, height: 960, isMobile: false },
@@ -19,6 +18,7 @@ const routes = [
   { name: 'valu-start', url: `${SITE}/valu/start`, site: true },
   { name: 'valu-register', url: `${SITE}/valu/register`, site: true },
   { name: 'professional-signup-account-first', url: `${SITE}/professional-signup/?taster_id=55555555-5555-4555-8555-555555555555&name=Staging%20Participant&role=Staging%20QA&account_first=1`, site: true },
+  { name: 'professional-signup-post-taster', url: `${SITE}/professional-signup/?taster_id=${POST_TASTER_ID}&name=Staging%20Participant&role=Staging%20QA&experience=0-3&email=staging-participant%40example.invalid`, site: true },
   { name: 'prime', url: `${SITE}/prime`, site: true },
   { name: 'about', url: `${SITE}/about-us`, site: true },
   { name: 'dashboard-preview', url: `${SITE}/dashboard?preview=1`, site: true },
@@ -99,10 +99,14 @@ try {
           .map(a => a.getAttribute('href'))
         const registrationForm = {
           email: Boolean(document.querySelector('input[type="email"]')),
+          emailReadOnly: Boolean(document.querySelector('input[type="email"]')?.readOnly),
+          emailValue: document.querySelector('input[type="email"]')?.value || '',
           password: Boolean(document.querySelector('input[type="password"]')),
           privacyAcknowledgement: [...document.querySelectorAll('label')].some(label => /Privacy Notice/i.test(label.innerText)),
           heading: document.querySelector('h1')?.innerText || '',
         }
+        const pendingTasterId = localStorage.getItem('pending_taster_id') || ''
+        const savedTasterCopy = /Your taster is saved/i.test(document.body.innerText)
         const signInLink = [...document.querySelectorAll('a')].find(a => /SIGN IN TO CONNECT YOUR TASTER/i.test(a.innerText))?.href || ''
         const accountCreationAction = /CREATE ACCOUNT|ACCOUNT CREATION/i.test(document.body.innerText)
         const literalNewlineVisible = document.body.innerText.includes(String.fromCharCode(92, 110))
@@ -143,6 +147,8 @@ try {
           assessmentSiteLinks: [navBrand, navDashboard].filter(Boolean),
           tasterEntryLinks,
           registrationForm,
+          pendingTasterId,
+          savedTasterCopy,
           signInLink,
           accountCreationAction,
         }
@@ -190,6 +196,13 @@ try {
       if (route.name === 'professional-signup-account-first' &&
           (!state.signInLink.includes('/login?pending_taster_id=') || state.accountCreationAction)) {
         report.failures.push(route.name + '/' + viewport.name + ': completed account-first Taster must offer sign-in, never duplicate account creation')
+      }
+      if (route.name === 'professional-signup-post-taster' &&
+          (!state.registrationForm.email || !state.registrationForm.emailReadOnly ||
+           state.registrationForm.emailValue !== 'staging-participant@example.invalid' ||
+           !state.registrationForm.password || !state.accountCreationAction ||
+           !state.savedTasterCopy || state.pendingTasterId !== POST_TASTER_ID)) {
+        report.failures.push(route.name + '/' + viewport.name + ': saved Taster handoff must open post-Taster account creation with the original identity and Taster ID')
       }
 
       await context.close()
