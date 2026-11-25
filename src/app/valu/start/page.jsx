@@ -80,11 +80,11 @@ export default function ValuStartPage() {
           <div className="vs-kicker dark"><span /> HOW IT WORKS</div>
           <h2>Create your account. Confirm your email. Begin your Taster.<br /><em>Then build your next step.</em></h2>
           <div className="vs-journey-grid">
-            <article><span>01</span><h3>Take your Taster</h3><p>Complete the guided directional Taster. Your account is verified before your Taster begins, and your responses are saved securely.</p></article>
-            <article><span>02</span><h3>Create or connect your account</h3><p>After your Taster is complete, continue from your account dashboard and confirm your email. Your completed Taster stays linked to you.</p></article>
-            <article><span>03</span><h3>Continue to your dashboard</h3><p>Your completed Taster is connected to your account. Your dashboard is the secure home for the next step.</p></article>
-            <article><span>04</span><h3>Complete the full VALU Index</h3><p>The full VALU Index establishes your official points result and PRIME capability profile. It is not required for the Basic taster pathway.</p></article>
-            <article><span>05</span><h3>Build and discover</h3><p>Complete your professional profile. Marketplace visibility follows the relevant Basic or Full eligibility checks and your explicit permission.</p></article>
+            <article><span>01</span><h3>Create or sign in to your account</h3><p>Start with a secure Valoria account using your professional details.</p></article>
+            <article><span>02</span><h3>Confirm your email</h3><p>Verify your email address before beginning the Taster.</p></article>
+            <article><span>03</span><h3>Complete your Taster</h3><p>Complete the guided directional Taster. Your responses and initial result are saved to your confirmed account.</p></article>
+            <article><span>04</span><h3>Continue to the full VALU Index</h3><p>The full VALU Index establishes your official points result and PRIME capability profile. It is separate from the Taster and supports full access.</p></article>
+            <article><span>05</span><h3>Build and discover</h3><p>Complete your professional profile. Marketplace visibility follows the relevant eligibility checks and your explicit permission.</p></article>
           </div>
         </div>
       </section>
