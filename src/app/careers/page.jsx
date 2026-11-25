@@ -6,7 +6,7 @@ export const metadata = {
   title: 'Careers | Partnerships Executive',
   description: 'Explore the Partnerships Executive opportunity at Valoria Institute and submit your CV.',
   alternates: { canonical: 'https://valoriainstitute.com/careers' },
-  openGraph: { title: 'Careers at Valoria Institute', description: 'Build strategic relationships that connect African professional merit to opportunity.', url: 'https://valoriainstitute.com/careers', type: 'website' },
+  openGraph: { title: 'Careers at Valoria Institute', description: 'Build strategic relationships that connect professional capability to relevant opportunities.', url: 'https://valoriainstitute.com/careers', type: 'website' },
 }
 
 export default function CareersPage() {
@@ -21,7 +21,7 @@ export default function CareersPage() {
         <figure className="careers-hero-image">
           <img
             src="https://images.pexels.com/photos/30677719/pexels-photo-30677719/free-photo-of-professional-collaboration-in-lagos-office.jpeg?auto=compress&cs=tinysrgb&w=1400"
-            alt="Two professionals collaborating over a laptop in a Lagos office"
+            alt="Two professionals collaborating over a laptop in an office"
             fetchPriority="high"
           />
           <figcaption>Good work starts with meaningful collaboration.</figcaption>
