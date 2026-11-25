@@ -11,7 +11,7 @@ import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/
 const GOLD='#C9A84C', DARK='#0F0F1A', PARCH='#F7F4EE', DIM='rgba(247,244,238,.48)'
 function ProfessionalSignupForm(){
   const params=useSearchParams(); const tasterId=params.get('taster_id')||''; const name=params.get('name')||''; const role=params.get('role')||''; const experience=params.get('experience')||''; const capturedEmail=(params.get('email')||'').trim().toLowerCase(); const accountFirst=params.get('account_first')==='1'
-  const [form,setForm]=useState({email:capturedEmail,password:'',confirm:''}); const [loading,setLoading]=useState(false); const [error,setError]=useState(''); const [done,setDone]=useState(false); const [linked,setLinked]=useState(false); const [confirmationRequired,setConfirmationRequired]=useState(false); const [resending,setResending]=useState(false); const [resendMessage,setResendMessage]=useState(''); const [otpCode,setOtpCode]=useState(''); const [verifyingOtp,setVerifyingOtp]=useState(false); const [redirecting,setRedirecting]=useState(false); const [checkingSession,setCheckingSession]=useState(true)
+  const [form,setForm]=useState({email:capturedEmail,password:'',confirm:''}); const [loading,setLoading]=useState(false); const [error,setError]=useState(''); const [done,setDone]=useState(false); const [linked,setLinked]=useState(false); const [confirmationRequired,setConfirmationRequired]=useState(false); const [resending,setResending]=useState(false); const [resendMessage,setResendMessage]=useState(''); const [redirecting,setRedirecting]=useState(false); const [checkingSession,setCheckingSession]=useState(true)
   const valid=useMemo(()=>tasterId&&name&&role&&form.email&&form.password.length>=PASSWORD_POLICY.minLength&&form.password===form.confirm,[tasterId,name,role,form])
   useEffect(()=>{
     let cancelled=false
@@ -50,26 +50,6 @@ function ProfessionalSignupForm(){
     continueSignedInUser().catch(err=>{if(!cancelled){setError(err?.message||'We could not verify your Valoria session.');setCheckingSession(false)}})
     return ()=>{cancelled=true}
   },[tasterId,name,role,accountFirst])
-  async function verifyEmailOtp(event){
-    event.preventDefault()
-    if(verifyingOtp||otpCode.length!==6)return
-    setVerifyingOtp(true)
-    setError('')
-    try{
-      const {data,error:verifyError}=await supabase.auth.verifyOtp({
-        email:form.email.trim().toLowerCase(),
-        token:otpCode,
-        type:'email'
-      })
-      if(verifyError)throw verifyError
-      if(!data?.session?.access_token||!data?.user?.email_confirmed_at)throw new Error('Your email code was accepted, but Valoria could not establish a confirmed account session. Please request a new code.')
-      window.location.replace(`/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`)
-    }catch(err){
-      setError(err?.message||'That code could not be verified. Check it and try again, or request a new code.')
-    }finally{
-      setVerifyingOtp(false)
-    }
-  }
   async function resendConfirmation(){
     setResending(true)
     setResendMessage('')
@@ -77,10 +57,10 @@ function ProfessionalSignupForm(){
       const { error } = await supabase.auth.resend({
         type:'signup',
         email:form.email.trim().toLowerCase(),
-
+        options:{emailRedirectTo:window.location.origin + '/auth/callback?pending_taster_id=' + encodeURIComponent(tasterId)},
       })
       if(error)throw error
-      setResendMessage('A fresh six-digit confirmation code has been requested. Check your inbox and spam folder.')
+      setResendMessage('A fresh confirmation link has been requested. Check your inbox and spam folder.')
     }catch(err){
       setResendMessage(err?.message||'We could not resend the confirmation email. Please wait a moment and try again.')
     }finally{
@@ -98,7 +78,7 @@ function ProfessionalSignupForm(){
       const {data,error:signupError}=await supabase.auth.signUp({
         email:form.email.trim().toLowerCase(),
         password:form.password,
-        options:{data:{display_name:name,full_name:name,user_type:'professional',role,pending_taster_id:tasterId}}
+        options:{emailRedirectTo:window.location.origin + '/auth/callback?pending_taster_id=' + encodeURIComponent(tasterId),data:{display_name:name,full_name:name,user_type:'professional',role,pending_taster_id:tasterId}}
       })
       if(signupError)throw signupError
       if(!data?.user?.id)throw new Error('Account could not be created.')
