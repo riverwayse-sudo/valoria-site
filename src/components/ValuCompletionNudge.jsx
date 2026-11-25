@@ -75,13 +75,13 @@ export default function ValuCompletionNudge(){
             ? 'Your progress is saved. Continue from your last answered question without restarting.'
             : tasterReady
               ? 'Your completed Taster is connected to your account. Continue to the separate full VALU Index to receive your official points result.'
-              : 'Begin with the VALU Index Taster. Your responses and result are saved before you create or connect your Valoria account.'}
+              : 'Create or confirm your Valoria account before beginning the Taster. Your nine-question Taster remains separate from the full VALU Index.'}
       </p>
       {assessed
         ? <a href="/profile/setup" style={S.button}>COMPLETE MY PROFILE →</a>
         : assessmentStarted || tasterReady
           ? <AssessmentStartLink href="/dashboard" dashboardOnly style={S.button}>{assessmentStarted?'CONTINUE MY ASSESSMENT →':'CONTINUE TO FULL VALU INDEX →'}</AssessmentStartLink>
-          : <AssessmentStartLink href="/valu/assessment/" style={S.button}>START THE VALU INDEX TASTER →</AssessmentStartLink>}
+          : <a href="/valu/register/?journey=valu_taster" style={S.button}>CREATE OR SIGN IN TO BEGIN →</a>}
       <button onClick={dismiss} style={S.later}>Remind me later</button>
     </div>
   </div>
