@@ -77,7 +77,7 @@ function ProfessionalSignupForm(){
       const { error } = await supabase.auth.resend({
         type:'signup',
         email:form.email.trim().toLowerCase(),
-        options:{emailRedirectTo:`${window.location.origin}/auth/callback?pending_taster_id=${encodeURIComponent(tasterId)}`}
+
       })
       if(error)throw error
       setResendMessage('A fresh six-digit confirmation code has been requested. Check your inbox and spam folder.')
