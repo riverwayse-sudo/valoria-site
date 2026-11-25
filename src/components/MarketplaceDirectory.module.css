@@ -1062,3 +1062,6 @@
   .card { min-height: 0; padding: 17px; }
   .directory .container { padding: 24px 14px 40px; }
 }
+
+.controls select { color-scheme: light; }
+.controls select option { background: #FAFAF7; color: #1A1A2E; }
