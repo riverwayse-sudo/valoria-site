@@ -150,7 +150,7 @@ export default function Nav() {
   </>
 }
  
-// Public VALU entry always begins with the Taster. Confirmed account creation follows the saved result.
+// Public assessment entry always begins with the Taster. Confirmed account creation follows the saved result.
 // Signed-in participants with an eligible saved Taster retain the authenticated full-assessment handoff.
 const TASTER_FIRST_ENTRY = '/valu/assessment/'
 export function AssessmentStartLink({ href = TASTER_FIRST_ENTRY, className, style, children, onClick, dashboardOnly = false, ...props }) {
