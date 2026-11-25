@@ -101,3 +101,5 @@ export default function HomePage() {
     <Footer />
   </>
 }
+
+/* Cloudflare production rollout marker: public Taster-first journey. */
