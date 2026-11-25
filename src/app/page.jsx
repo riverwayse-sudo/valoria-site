@@ -87,7 +87,7 @@ export default function HomePage() {
               <div className="vcc-radar-center">VALU INDEX</div>
             </div>
             <div className="vcc-steps">
-              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>Register before your taster</small></div></div>
+              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>Begin with your Taster</small></div></div>
               <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Complete the full VALU Index</small></div></div>
               <div className="vcc-step"><span>03</span><div><b>Connect to opportunity</b><small>Bring your capability into view</small></div></div>
             </div>
