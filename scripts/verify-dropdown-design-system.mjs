@@ -24,7 +24,7 @@ for (const token of [
 }
 let count = 0;
 for (const file of auditedFiles) {
-  const source = fs.readFileSync(file, 'utf8').replace(/<!--[\\s\\S]*?-->/g, '');
+  const source = fs.readFileSync(file, 'utf8').replace(/<!--[\s\S]*?-->/g, '');
   const tags = [...source.matchAll(/<select\b[^>]*>/gs)].map(match => match[0]);
   for (const tag of tags) {
     count += 1;
