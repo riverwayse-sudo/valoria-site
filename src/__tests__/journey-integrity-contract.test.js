@@ -476,7 +476,7 @@ describe('journey integrity contract', () => {
     const signup = read('src/app/professional-signup/page.jsx')
     expect(start).toContain('Create or sign in to your Valoria account first')
     expect(start).toContain('Create your account. Confirm your email. Begin your Taster.')
-    expect(start).toContain('Your account is verified before your Taster begins')
+    expect(start).toContain('Verify your email address before beginning the Taster.')
     expect(start).toContain('The full VALU Index establishes your official points result')
     expect(start).toContain('Your official result in points')
     expect(start).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
