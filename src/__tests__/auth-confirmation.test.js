@@ -3,6 +3,7 @@ const path = require('path')
 const {
   safeAuthConfirmationNextPath,
   escapeAuthConfirmationHtml,
+  getValuTasterConfirmationRedirect,
 } = require('../lib/auth-confirmation')
 
 describe('scanner-safe Supabase email confirmation', () => {
@@ -20,6 +21,19 @@ describe('scanner-safe Supabase email confirmation', () => {
     expect(safeAuthConfirmationNextPath('/api/admin', origin)).toBe('/auth/callback')
     expect(safeAuthConfirmationNextPath('/auth/callback?valu_taster=1&taster_id=abc', origin)).toBe('/auth/callback')
     expect(safeAuthConfirmationNextPath('/dashboard?next=https://evil.example', origin)).toBe('/auth/callback')
+  })
+
+  test('keeps confirmation redirects on approved production, staging and local origins only', () => {
+    expect(getValuTasterConfirmationRedirect('https://valoriainstitute.com'))
+      .toBe('https://valoriainstitute.com/auth/callback?valu_taster=1')
+    expect(getValuTasterConfirmationRedirect('https://www.valoriainstitute.com'))
+      .toBe('https://www.valoriainstitute.com/auth/callback?valu_taster=1')
+    expect(getValuTasterConfirmationRedirect('https://staging.valoriainstitute.com'))
+      .toBe('https://staging.valoriainstitute.com/auth/callback?valu_taster=1')
+    expect(getValuTasterConfirmationRedirect('http://localhost:3000'))
+      .toBe('http://localhost:3000/auth/callback?valu_taster=1')
+    expect(getValuTasterConfirmationRedirect('https://valoria-preview.vercel.app')).toBeNull()
+    expect(getValuTasterConfirmationRedirect('http://valoriainstitute.com')).toBeNull()
   })
 
   test('escapes every HTML-sensitive token character before placing it in the confirmation form', () => {
