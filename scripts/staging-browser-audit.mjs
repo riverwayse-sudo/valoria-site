@@ -120,6 +120,9 @@ try {
               (el.scrollHeight > el.clientHeight + 4 || el.scrollWidth > el.clientWidth + 4)
           }).length
         return {
+          finalPath: window.location.pathname,
+          finalReturnTo: new URL(window.location.href).searchParams.get('returnTo') || '',
+          finalHasLegacyIdentityParams: ['taster_id', 'name', 'role', 'resume', 'token', 'pending_taster_id'].some(key => new URL(window.location.href).searchParams.has(key)),
           title: document.title,
           robots,
           banner,
