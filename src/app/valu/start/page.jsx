@@ -78,7 +78,7 @@ export default function ValuStartPage() {
       <section className="vs-light vs-journey">
         <div className="vs-shell">
           <div className="vs-kicker dark"><span /> HOW IT WORKS</div>
-          <h2>Take your Taster. Create your account.<br /><em>Then build your next step.</em></h2>
+          <h2>Create your account. Confirm your email. Begin your Taster.<br /><em>Then build your next step.</em></h2>
           <div className="vs-journey-grid">
             <article><span>01</span><h3>Take your Taster</h3><p>Complete the guided directional Taster. Your responses and result are saved securely before you create an account.</p></article>
             <article><span>02</span><h3>Create or connect your account</h3><p>After your result is saved, create or connect your Valoria account and confirm your email. Your completed Taster stays linked to you.</p></article>
