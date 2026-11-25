@@ -27,8 +27,6 @@ export default function ValuRegisterPage() {
   const [confirmation, setConfirmation] = useState(false)
   const [error, setError] = useState('')
   const [resendMessage, setResendMessage] = useState('')
-  const [otpCode, setOtpCode] = useState('')
-  const [verifyingOtp, setVerifyingOtp] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -101,6 +99,7 @@ export default function ValuRegisterPage() {
           email: form.email.trim().toLowerCase(),
           password: form.password,
           options: {
+            emailRedirectTo: window.location.origin + '/auth/callback?valu_taster=1',
             data: {
               display_name: form.name.trim(),
               full_name: form.name.trim(),
@@ -155,35 +154,12 @@ export default function ValuRegisterPage() {
     } catch (err) {
       if (mode === 'signin' && /email not confirmed|confirm your email/i.test(err?.message || '')) {
         setConfirmation(true)
-        setError('Your account exists, but your email still needs confirmation. Request a fresh six-digit code below.')
+        setError('Your account exists, but your email still needs confirmation. Request a fresh confirmation link below.')
       } else {
         setError(err?.message || 'We could not complete your account setup. Please try again.')
       }
     } finally {
       setLoading(false)
-    }
-  }
-
-  async function verifyEmailOtp(event) {
-    event.preventDefault()
-    if (verifyingOtp || otpCode.length !== 6) return
-    setVerifyingOtp(true)
-    setError('')
-    try {
-      const { data, error: verifyError } = await supabase.auth.verifyOtp({
-        email: form.email.trim().toLowerCase(),
-        token: otpCode,
-        type: 'email',
-      })
-      if (verifyError) throw verifyError
-      if (!data?.session?.access_token || !data?.user?.email_confirmed_at) {
-        throw new Error('Your email code was accepted, but Valoria could not establish a confirmed account session. Please request a new code.')
-      }
-      window.location.replace('/auth/callback?valu_taster=1')
-    } catch (err) {
-      setError(err?.message || 'That code could not be verified. Check it and try again, or request a new code.')
-    } finally {
-      setVerifyingOtp(false)
     }
   }
 
@@ -194,9 +170,10 @@ export default function ValuRegisterPage() {
       const { error: resendError } = await supabase.auth.resend({
         type: 'signup',
         email: form.email.trim().toLowerCase(),
+        options: { emailRedirectTo: window.location.origin + '/auth/callback?valu_taster=1' },
       })
       if (resendError) throw resendError
-      setResendMessage('A fresh six-digit confirmation code has been requested. Check your inbox and spam folder.')
+      setResendMessage('A fresh confirmation link has been requested. Check your inbox and spam folder.')
     } catch (err) {
       setResendMessage(err?.message || 'We could not resend the confirmation email. Please try again.')
     } finally {
@@ -211,32 +188,14 @@ export default function ValuRegisterPage() {
         {confirmation ? (
           <>
             <div style={S.eyebrow}>EMAIL CONFIRMATION REQUIRED</div>
-            <h1 style={S.title}>One confirmation before you <em>begin.</em></h1>
-            <p style={S.copy}>{error || <>We sent a six-digit confirmation code to <strong>{form.email.trim().toLowerCase()}</strong>. Enter the code below to activate your Valoria account. You will then return directly to the VALU Index Taster.</>}</p>
+            <h1 style={S.title}>Check your email. <em>Then begin.</em></h1>
+            <p style={S.copy}>{error || <>We sent a secure confirmation link to <strong>{form.email.trim().toLowerCase()}</strong>. Open it to activate your Valoria account. You will then return directly to the VALU Index Taster.</>}</p>
             <div style={S.steps}>
               <p><b>01</b> Confirm your email address</p>
               <p><b>02</b> Complete your VALU Index Taster</p>
               <p><b>03</b> Continue to your dashboard and the separate full VALU Index</p>
             </div>
-            <form onSubmit={verifyEmailOtp} style={S.form}>
-              <label style={S.label}>SIX-DIGIT EMAIL CODE
-                <input
-                  required
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  pattern="[0-9]{6}"
-                  maxLength={6}
-                  value={otpCode}
-                  onChange={event => setOtpCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
-                  style={S.input}
-                  placeholder="000000"
-                  aria-label="Six-digit email confirmation code"
-                />
-              </label>
-              <button type="submit" disabled={verifyingOtp || otpCode.length !== 6} style={{...S.button,opacity:(verifyingOtp || otpCode.length !== 6)?0.55:1}}>{verifyingOtp ? 'VERIFYING…' : 'VERIFY EMAIL & CONTINUE →'}</button>
-            </form>
-            <button type="button" onClick={resendConfirmation} disabled={loading} style={{...S.button,marginTop:12,background:'transparent',color:GOLD,border:`1px solid ${GOLD}`}}>{loading ? 'REQUESTING…' : 'SEND A NEW CODE'}</button>
+            <button type="button" onClick={resendConfirmation} disabled={loading} style={{...S.button,marginTop:12,background:'transparent',color:GOLD,border:'1px solid ' + GOLD}}>{loading ? 'SENDING LINK…' : 'RESEND CONFIRMATION LINK'}</button>
             {resendMessage && <p role="status" style={S.note}>{resendMessage}</p>}
           </>
         ) : (
