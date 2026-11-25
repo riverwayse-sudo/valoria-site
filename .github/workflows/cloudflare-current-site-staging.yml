@@ -162,7 +162,7 @@ jobs:
 
           curl -fsS "$base/" -o /tmp/valoria-home.html
           cp /tmp/valoria-home.html artifacts/staging-smoke/homepage.html
-          for phrase in 'Capability should decide' 'Find capability with context' 'START THE VALU INDEX TASTER' 'href="/valu/assessment/"' 'THE VALORIA MARKETPLACE' 'Find professionals' 'POINTS-BASED CAPABILITY PROFILE'; do
+          for phrase in 'Capability should decide' 'Find capability with context' 'START THE VALU INDEX TASTER' 'href="/valu/register/?journey=valu_taster"' 'THE VALORIA MARKETPLACE' 'Find professionals' 'POINTS-BASED CAPABILITY PROFILE'; do
             if grep -Fq "$phrase" /tmp/valoria-home.html; then
               echo "PASS: homepage contains $phrase"
             else
