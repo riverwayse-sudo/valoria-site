@@ -24,14 +24,16 @@ for (const token of [
 }
 let count = 0;
 for (const file of auditedFiles) {
-  const source = fs.readFileSync(file, 'utf8').replace(/<!--[\s\S]*?-->/g, '');
+  const source = fs.readFileSync(file, 'utf8')
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, '');
   const tags = [...source.matchAll(/<select\b[^>]*>/gs)].map(match => match[0]);
   for (const tag of tags) {
     count += 1;
     if (!/className=["'][^"']*vi-select(?:--light)?[^"']*["']/.test(tag)) {
       throw new Error(`Unstandardised native select in ${file}: ${tag.slice(0, 160)}`);
     }
-    if ((tag.match(/\\bclassName=/g) || []).length > 1) {
+    if ((tag.match(/\bclassName=/g) || []).length > 1) {
       throw new Error(`Duplicate className attributes on native select in ${file}: ${tag.slice(0, 160)}`);
     }
   }
