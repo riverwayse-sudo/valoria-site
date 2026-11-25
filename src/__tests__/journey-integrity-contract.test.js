@@ -735,3 +735,17 @@ test('legacy assessment entry points converge on the authenticated continuation 
   expect(resolver).not.toContain("searchParams.get('taster_id')")
   expect(resolver).not.toContain("searchParams.get('resume')")
 })
+
+
+test('assessment continuation requires confirmed identity and server-owned journey state', () => {
+  const resolver = read('src/app/assessment/continue/page.jsx')
+  expect(resolver).toContain("if (!session?.access_token || !session.user?.email_confirmed_at)")
+  expect(resolver).toContain("if (pendingTasterId)")
+  expect(resolver).toContain("Authorization: `Bearer ${session.access_token}`")
+  expect(resolver).toContain("if (access.assessment_completed) return '/dashboard'")
+  expect(resolver).toContain("if (!access.can_continue) return '/valu/register/'")
+  expect(resolver).toContain("method: 'POST'")
+  expect(resolver).toContain("if (destination.protocol !== 'https:')")
+  expect(resolver).not.toContain("searchParams.get('taster_id')")
+  expect(resolver).not.toContain("searchParams.get('resume')")
+})
