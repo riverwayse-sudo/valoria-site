@@ -127,17 +127,23 @@ jobs:
           done
           echo "PASS: all public, dashboard and policy routes return HTTP 200."
 
+          public_register_status="$(curl -sSL --retry 3 --retry-all-errors --max-time 25 -o /tmp/valoria-register.html -w '%{http_code}' "$base/valu/register")"
+          if [[ "$public_register_status" != "200" ]]; then
+            echo "Account-first registration returned HTTP $public_register_status"
+            cat /tmp/valoria-register.html || true
+            exit 1
+          fi
           public_register_url="$(curl -sSL --retry 3 --retry-all-errors --max-time 25 -o /dev/null -w '%{url_effective}' "$base/valu/register")"
-          if [[ "$public_register_url" != *"/valu/assessment"* ]]; then
-            echo "Unqualified legacy registration must end at the canonical Taster-first route: $public_register_url"
+          if [[ "$public_register_url" != *"/valu/register"* ]]; then
+            echo "Public registration did not remain at the account-first entry: $public_register_url"
             exit 1
           fi
           legacy_register_url="$(curl -sSL --retry 3 --retry-all-errors --max-time 25 -o /dev/null -w '%{url_effective}' "$base/valu/register?journey=valu_taster")"
-          if [[ "$legacy_register_url" != *"/valu/assessment"* || "$legacy_register_url" != *"journey=account-first"* ]]; then
-            echo "In-progress legacy Taster registration must retain the explicit compatibility gate: $legacy_register_url"
+          if [[ "$legacy_register_url" != *"/valu/register"* || "$legacy_register_url" != *"journey=valu_taster"* ]]; then
+            echo "Legacy Taster registration must preserve the account-first journey: $legacy_register_url"
             exit 1
           fi
-          echo "PASS: public and legacy registration redirects preserve their intended journeys."
+          echo "PASS: public and legacy registration routes preserve account-first onboarding."
 
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
           cp /tmp/valoria-robots.txt artifacts/staging-smoke/robots.txt
