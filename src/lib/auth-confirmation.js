@@ -30,3 +30,26 @@ export function escapeAuthConfirmationHtml(value) {
     "'": '&#39;',
   })[char])
 }
+
+export function getValuTasterConfirmationRedirect(origin) {
+  try {
+    const current = new URL(origin)
+    const hostname = current.hostname.toLowerCase()
+    const allowedProductionOrStaging = new Set([
+      'valoriainstitute.com',
+      'www.valoriainstitute.com',
+      'staging.valoriainstitute.com',
+    ])
+    const isLocalDevelopment = ['localhost', '127.0.0.1'].includes(hostname)
+
+    if (!allowedProductionOrStaging.has(hostname) && !isLocalDevelopment) return null
+    if (!isLocalDevelopment && current.protocol !== 'https:') return null
+    if (isLocalDevelopment && !['http:', 'https:'].includes(current.protocol)) return null
+
+    const callback = new URL('/auth/callback', current.origin)
+    callback.searchParams.set('valu_taster', '1')
+    return callback.toString()
+  } catch {
+    return null
+  }
+}
