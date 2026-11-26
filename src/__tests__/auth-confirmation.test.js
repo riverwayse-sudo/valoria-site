@@ -7,11 +7,27 @@ const {
 } = require('../lib/auth-confirmation.cjs')
 
 describe('scanner-safe Supabase email confirmation', () => {
-  test('allows the same-origin account callback and preserves only the Taster handoff flag', () => {
+  test('allows the same-origin legacy callback and preserves only its approved Taster flag', () => {
     expect(safeAuthConfirmationNextPath(
       'https://valoriainstitute.com/auth/callback?valu_taster=1',
       'https://valoriainstitute.com/auth/confirm?token_hash=test&type=email',
     )).toBe('/auth/callback?valu_taster=1')
+  })
+
+  test('allows the post-Taster callback only with one valid completed-Taster UUID', () => {
+    const tasterId = '66666666-6666-4666-8666-666666666666'
+    expect(safeAuthConfirmationNextPath(
+      `https://valoriainstitute.com/auth/callback?pending_taster_id=${tasterId}`,
+      'https://valoriainstitute.com/auth/confirm?token_hash=test&type=email',
+    )).toBe(`/auth/callback?pending_taster_id=${tasterId}`)
+  })
+
+  test('rejects malformed, duplicated or combined Taster identity parameters', () => {
+    const origin = 'https://valoriainstitute.com/auth/confirm'
+    const tasterId = '66666666-6666-4666-8666-666666666666'
+    expect(safeAuthConfirmationNextPath('/auth/callback?pending_taster_id=not-a-uuid', origin)).toBe('/auth/callback')
+    expect(safeAuthConfirmationNextPath(`/auth/callback?pending_taster_id=${tasterId}&pending_taster_id=${tasterId}`, origin)).toBe('/auth/callback')
+    expect(safeAuthConfirmationNextPath(`/auth/callback?pending_taster_id=${tasterId}&valu_taster=1`, origin)).toBe('/auth/callback')
   })
 
   test('rejects external, protocol-relative, unsupported and identity-bearing destinations', () => {
