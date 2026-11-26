@@ -6,7 +6,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import EnquiryForm from '@/components/EnquiryForm'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { getValuTier } from '@/lib/brand'
+import { getValuTier, PRIME_CLUSTERS, PRIME_CLUSTER_NAMES } from '@/lib/brand'
 
 // ─── helpers ─────────────────────────────────────────────
 function getInitials(name) {
@@ -26,7 +26,7 @@ function getYouTubeId(url) {
   const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
   return m ? m[1] : null
 }
-const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Mastery', E:'Enterprise' }
+const CLUSTER_NAMES = PRIME_CLUSTER_NAMES
 // Short, positive-framed line per PRIME cluster — used by the "Key
 // Strengths" card to turn a raw cluster score into something a buyer can
 // actually read as a strength, rather than just a number on the radar chart.
@@ -47,13 +47,7 @@ const DIM     = 'rgba(247,244,238,.5)'
 const FAINT   = 'rgba(247,244,238,.15)'
 const GLINE   = 'rgba(201,168,76,.12)'
 const GLINE2  = 'rgba(201,168,76,.28)'
-const PRIME   = [
-  { letter: 'P', color: '#C9A84C', label: 'Presence' },
-  { letter: 'R', color: '#C9A84C', label: 'Relationships' },
-  { letter: 'I', color: '#C9A84C', label: 'Intelligence' },
-  { letter: 'M', color: '#C9A84C', label: 'Mastery' },
-  { letter: 'E', color: '#C9A84C', label: 'Enterprise' },
-]
+const PRIME = PRIME_CLUSTERS.map(cluster => ({ letter: cluster.letter, color: cluster.color, label: cluster.name }))
 
 // Returns the top-scoring PRIME clusters (highest first), capped at 3, for
 // the "Key Strengths" card under About. Capped so the card only ever shows
