@@ -279,6 +279,14 @@ try {
         const response = await page.goto(route.url, { waitUntil: 'domcontentloaded', timeout: 60000 })
         status = response?.status() ?? null
         await page.waitForTimeout(1800)
+        if (['marketplace', 'atb-connect', 'atb-spotlight', 'atb-spotlight-facilitators'].includes(route.name)) {
+          await page.waitForFunction(() =>
+            document.querySelector('[data-directory-empty]') ||
+            (document.querySelector('[data-directory-grid]')?.children.length || 0) > 0,
+            null,
+            { timeout: 10000 }
+          ).catch(() => {})
+        }
       } catch (error) {
         navigationError = error.message
       }
