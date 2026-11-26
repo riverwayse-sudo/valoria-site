@@ -90,7 +90,7 @@ export default function PrimePage() {
             <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">WORTH, BUILT.</span><div className="eyebrow-line" /></div>
             <h2 className="section-title">Take the taster.<br /><em>See your first signal.</em></h2>
             <div className="page-hero-actions eyebrow-center">
-              <AssessmentStartLink href="/valu/register/?journey=valu_taster" className="btn-gold">TAKE THE VALU INDEX TASTER</AssessmentStartLink>
+              <AssessmentStartLink href="/valu/register/?journey=valu_taster" className="btn-gold">CREATE ACCOUNT TO BEGIN</AssessmentStartLink>
               <a href="/valu" className="btn-outline">HOW THE VALU INDEX WORKS</a>
             </div>
           </Reveal>
