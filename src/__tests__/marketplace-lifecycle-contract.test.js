@@ -551,8 +551,8 @@ describe('VALUI marketplace lifecycle contract', () => {
 
   test('marketplace enquiries notify the professional through the request client', () => {
     const api = read('src/app/api/enquiries/route.js')
-    expect(api).toContain('async function notifyProfessional({ supabase, professionalProfileId')
-    expect(api).toContain('notifyProfessional({ supabase, professionalProfileId: targetProfile.id')
+    expect(api).toContain('async function notifyProfessional({ supabase, enquiryId, professionalProfileId')
+    expect(api).toContain('notifyProfessional({\n        supabase,\n        enquiryId: enquiryRecord.id,\n        professionalProfileId: targetProfile.id')
   })
 
   test('consented public Full profiles remain directly accessible while incomplete profiles stay noindex', () => {
