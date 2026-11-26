@@ -38,3 +38,6 @@ Optional contact-list identifiers:
 - `BREVO_LIST_ID`
 
 Do not re-enable the legacy Brevo sync until its credential and egress policy are verified.
+
+
+Other legacy Brevo references remain outside the current transactional route set: `supabase/functions/send-lead-meeting-link` (meeting-link delivery), `src/lib/eventRegistrationBrevo.js` (event registration), `src/app/api/feedback/route.js` (contact sync), and `src/app/api/cron/valu-reminders/route.js` (legacy reminder route; scheduled assessment reminders are handled by the platform Resend Worker). These paths must be migrated or retired before claiming full provider consolidation.
