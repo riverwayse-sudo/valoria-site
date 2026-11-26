@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { createHash } from 'node:crypto'\nimport { createClient } from '@supabase/supabase-js'
+import { createHash } from 'node:crypto'
+import { createClient } from '@supabase/supabase-js'
 
 function fail(message, status) {
   return NextResponse.json({ error: message }, {
