@@ -95,6 +95,7 @@ describe('specialized profile content contract', () => {
     expect(directory).toContain('isGeneralView && strongestCluster')
     expect(directory).toContain("(selectedTrack === 'all' ? Number(scored(b))")
     expect(directory).toContain('isGeneralView ? (isFull ?')
+    expect(directory).toContain("p.assessment_access === 'basic' ? 'BASIC LISTING'")
     expect(directory).toContain('TALENT CAPABILITY')
     expect(directory).toContain('SPEAKER CAPABILITY')
     expect(directory).toContain('!isSpecializedView && isFull')
