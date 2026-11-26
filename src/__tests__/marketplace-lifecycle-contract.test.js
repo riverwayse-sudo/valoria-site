@@ -35,7 +35,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(directory).toContain("p.assessment_access === 'full'")
     expect(directory).toContain("p.assessment_access === 'full' && p.valu_index != null")
     expect(directory).not.toContain('BASIC LISTING')
-    expect(directory).toContain('Public profiles appear when they meet Valoria’s listing requirements.')
+    expect(directory).toContain('Public profiles appear only when participants choose public visibility and meet Valoria’s listing requirements.')
   })
   test('marketplace accepts canonically equivalent Unicode ATB identifiers without changing the stored ID', () => {
     const source = read('src/lib/marketplace-data.js')
@@ -277,7 +277,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(start).not.toContain("'Motivation & Stamina'")
   })
 
-  test('public VALU copy follows Taster-first and points-based Full assessment', () => {
+  test('public VALU copy follows account-first registration and points-based Full assessment', () => {
     const prime = read('src/app/prime/page.jsx')
     const valu = read('src/app/valu/page.jsx')
     const start = read('src/app/valu/start/page.jsx')
