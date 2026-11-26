@@ -14,13 +14,13 @@ export async function POST(request) {
 
   const { email, name } = body || {}
   const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : ''
-  const emailRe = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRe.test(normalizedEmail)) {
     return Response.json({ ok: false, error: 'A valid email is required.' }, { status: 400 })
   }
 
   const siteOrigin = getSiteOrigin()
-  const firstName = escapeHtml((typeof name === 'string' ? name.trim().split(/\\s+/)[0] : '') || 'there')
+  const firstName = escapeHtml((typeof name === 'string' ? name.trim().split(/\s+/)[0] : '') || 'there')
   const html = `
     <div style="font-family:'Raleway',sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;max-width:520px;margin:0 auto;">
       <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 16px;">VALORIA INSTITUTE</p>
