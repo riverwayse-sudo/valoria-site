@@ -20,6 +20,12 @@ describe('institutional positioning and public copy contract', () => {
     expect(about).toContain('not a recruitment agency, general-purpose jobs board or speaker-booking bureau')
     expect(footer).toContain('professional capability is assessed, developed, represented')
     expect(footer).not.toMatch(/African professional merit/i)
+    expect(footer).not.toMatch(/Lagos, Nigeria|Nigeria.s professional capability/i)
+    expect(read('src/lib/brand.js')).not.toContain('Lagos, Nigeria')
+    expect(read('src/app/contact-us/page.jsx')).toContain('Built for international professional markets.')
+    expect(read('src/lib/profileOptions.js')).not.toContain('Lagos, Nigeria')
+    expect(read('src/app/api/enquiries/route.js')).not.toContain('Lagos, Nigeria')
+    expect(read('src/app/api/admin/introduce/route.js')).not.toContain('Lagos, Nigeria')
   })
 
   test('metadata and development pages do not use geographic-first marketing keywords', () => {
