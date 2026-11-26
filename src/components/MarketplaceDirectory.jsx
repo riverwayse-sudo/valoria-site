@@ -74,6 +74,8 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
   },[rows,activeTrack,query,sector,cluster,skill,scoreBand])
 
   const clearFilters = () => { setQuery(''); setSector(''); setCluster(''); setSkill(''); setScoreBand('') }
+  const activeCount = Number(counts?.[activeTrack] ?? counts?.all ?? 0)
+  const hasPublicListings = rows.length > 0 || activeCount > 0
 
   return <div className={styles.page}>
     <Nav />
@@ -93,11 +95,12 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
             {activeTrack === 'speaker' && 'Discover speakers by professional focus, experience and declared expertise.'}
             {activeTrack === 'facilitator' && 'Discover facilitators by professional focus and sector. For a structured team development programme, explore Valoria Develop.'}
           </p>
-          {(activeTrack === 'all' || activeTrack === 'candidate') && <Link className={styles.shortlistCta} href="/contact-us?type=candidate">REQUEST A SHORTLIST <span aria-hidden="true">→</span></Link>}
+          {(activeTrack === 'all' || activeTrack === 'candidate') && <Link className={styles.shortlistCta} href="/contact-us?type=candidate">{hasPublicListings ? 'REQUEST A SHORTLIST' : 'DISCUSS YOUR TALENT NEEDS'} <span aria-hidden="true">→</span></Link>}
           {activeTrack === 'facilitator' && <Link className={styles.view} href="/programmes">EXPLORE VALORIA DEVELOP</Link>}
           <nav className={styles.tabs} aria-label="Filter by declared role">{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
         </div>
       </section>
+      {hasPublicListings && (
       <section className={styles.controls}>
         <div className={styles.containerControl}>
           <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search professionals, skills or sectors…" aria-label="Search marketplace"/>
@@ -121,6 +124,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
         </div>
         <details className={styles.filterHelp}><summary>How filtering works</summary><p>Filter by professional area, skills, sector or assessment score. We only show information approved for public display.</p></details>
       </section>
+      )}
       <section className={styles.directory} data-directory-root="true">
         <div className={styles.container}>
           <div className={styles.directoryHead} data-directory-head="true">
