@@ -46,24 +46,34 @@ export async function GET(request) {
   const accountReviews=latest.filter(review=>review.source_record_type==='assessment'&&review.decision==='verified_match'&&review.candidate_record_type==='account'&&review.candidate_record_id)
   const assessmentIds=[...new Set([...linkReviews.map(review=>review.source_record_id),...accountReviews.map(review=>review.source_record_id)])]
   const tasterIds=[...new Set([...linkReviews.map(review=>review.candidate_record_id),...ownerReviews.map(review=>review.source_record_id)])]
-  const assessmentsById={},tastersById={},candidateByTasterId={},assessmentIdentityById={}
+  const assessmentsById={},tastersById={},candidateByTasterId={},assessmentIdentityById={},auditedTasterLinksByAssessment={}
   if(assessmentIds.length||tasterIds.length){
-    const [assessmentRows,tasterRows,candidateRows,assessmentIdentityRows]=await Promise.all([
+    const [assessmentRows,tasterRows,candidateRows,assessmentIdentityRows,auditRows]=await Promise.all([
       assessmentIds.length ? supabase.from('valu_assessments').select('id,user_id,taster_id,name,role').in('id',assessmentIds) : Promise.resolve({data:[],error:null}),
       tasterIds.length ? supabase.from('taster_sessions').select('id,user_id,name,role,completed_at').in('id',tasterIds) : Promise.resolve({data:[],error:null}),
       tasterIds.length ? supabase.from('taster_identity_candidates').select('taster_id,linked_user_id').in('taster_id',tasterIds) : Promise.resolve({data:[],error:null}),
       assessmentIds.length ? supabase.from('assessment_identity_links').select('assessment_id,user_id').in('assessment_id',assessmentIds) : Promise.resolve({data:[],error:null}),
+      assessmentIds.length ? supabase.from('platform_audit_events').select('entity_id,after_state').eq('entity_type','valu_assessment').eq('action','admin_applied_verified_taster_link').in('entity_id',assessmentIds) : Promise.resolve({data:[],error:null}),
     ])
-    if(assessmentRows.error||tasterRows.error||candidateRows.error||assessmentIdentityRows.error) return Response.json({error:'Could not confirm whether reviewed identity corrections have been applied.'},{status:500})
+    if(assessmentRows.error||tasterRows.error||candidateRows.error||assessmentIdentityRows.error||auditRows.error) return Response.json({error:'Could not confirm whether reviewed identity corrections have been applied.'},{status:500})
     for(const row of assessmentRows.data||[]) assessmentsById[row.id]=row
     for(const row of tasterRows.data||[]) tastersById[row.id]=row
     for(const row of candidateRows.data||[]) candidateByTasterId[row.taster_id]=row
     for(const row of assessmentIdentityRows.data||[]) assessmentIdentityById[row.assessment_id]=row
+    for(const row of auditRows.data||[]){
+      const tasterId=row.after_state?.taster_id
+      if(!tasterId) continue
+      if(!auditedTasterLinksByAssessment[row.entity_id]) auditedTasterLinksByAssessment[row.entity_id]=new Set()
+      auditedTasterLinksByAssessment[row.entity_id].add(tasterId)
+    }
   }
   for(const review of linkReviews){
     const assessment=assessmentsById[review.source_record_id]
     const taster=tastersById[review.candidate_record_id]
-    const applied=Boolean(assessment&&taster&&assessment.taster_id===taster.id&&assessment.user_id&&assessment.user_id===taster.user_id&&norm(assessment.name)===norm(taster.name)&&norm(assessment.role)===norm(taster.role))
+    const hasAudit=auditedTasterLinksByAssessment[review.source_record_id]?.has(review.candidate_record_id)
+    // A reviewed discrepancy can be valid. The application is complete only
+    // when the exact taster_id, same existing owner and audit event are present.
+    const applied=Boolean(assessment&&taster&&assessment.taster_id===taster.id&&assessment.user_id&&assessment.user_id===taster.user_id&&hasAudit)
     review.application_state=applied?'applied':'awaiting_link'
   }
   for(const review of ownerReviews){
