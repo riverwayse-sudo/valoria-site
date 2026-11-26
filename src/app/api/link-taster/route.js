@@ -54,6 +54,9 @@ export async function POST(request) {
 
   if (tasterError) return NextResponse.json({ error: 'Could not verify the saved snapshot.' }, { status: 502 })
   if (!taster) return NextResponse.json({ error: 'Snapshot result not found.' }, { status: 404 })
+  // The linking endpoint is callable independently of the confirmation page.
+  // Enforce completion here as well; never attach an in-progress Taster.
+  if (!taster.completed_at) return NextResponse.json({ error: 'Complete your Taster before linking it to your account.' }, { status: 409 })
   if (!user.email_confirmed_at) return NextResponse.json({ error: 'Verify your email before linking a saved VALU Index Taster.' }, { status: 403 })
   const { data: identityCandidate, error: candidateLookupError } = await admin
     .from('taster_identity_candidates')
