@@ -20,6 +20,7 @@ const routes = [
   { name: 'programmes', url: `${SITE}/programmes`, site: true },
   { name: 'events', url: `${SITE}/events`, site: true },
   { name: 'opportunities', url: `${SITE}/opportunities`, site: true },
+  { name: 'opportunities-submit', url: `${SITE}/opportunities/submit`, site: true },
   { name: 'valu', url: `${SITE}/valu`, site: true },
   { name: 'valu-start', url: `${SITE}/valu/start`, site: true },
   { name: 'valu-register', url: `${SITE}/valu/register`, site: true },
@@ -392,6 +393,9 @@ try {
           opportunityError: document.querySelector('[data-opportunities-error]')?.innerText || '',
           opportunityCards: document.querySelectorAll('[data-opportunities-grid] .opportunity-card').length,
           opportunitySubmitHref: document.querySelector('[data-opportunities-submit]')?.getAttribute('href') || '',
+          opportunitySubmitForm: Boolean(document.querySelector('main form')),
+          opportunitySubmitRequiredFields: document.querySelectorAll('main form input[required], main form textarea[required]').length,
+          opportunitySubmitSelectClass: document.querySelector('main form select')?.className || '',
           journeyParam,
           savedTasterCopy,
           signInLink,
@@ -463,6 +467,11 @@ try {
            !state.registrationForm.password || !state.accountCreationAction ||
            !state.savedTasterCopy || state.urlTasterId !== POST_TASTER_ID)) {
         report.failures.push(route.name + '/' + viewport.name + ': saved Taster handoff must open post-Taster account creation with the original identity and Taster ID')
+      }
+      if (route.name === 'opportunities-submit' &&
+          (!state.opportunitySubmitForm || state.opportunitySubmitRequiredFields < 5 ||
+           !state.opportunitySubmitSelectClass.split(/\\s+/).some(token => token === 'vi-select' || token === 'vi-select--light'))) {
+        report.failures.push(`${route.name}/${viewport.name}: opportunity submission form must render with required fields and the shared select control; required=${state.opportunitySubmitRequiredFields}, selectClass=${state.opportunitySubmitSelectClass}`)
       }
       if (route.name === 'opportunities' &&
           (state.opportunityError || state.opportunityCards !== 0 ||
