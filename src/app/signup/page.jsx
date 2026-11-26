@@ -205,7 +205,7 @@ export default function SignupPage() {
                 TALENT & SPEAKERS
               </div>
               <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.6, margin: '0 0 12px' }}>
-                Professionals and speakers create or sign in to a Valoria account first. After email confirmation, complete the separate VALU Index Taster and continue to the full VALU Index.
+                Professionals and speakers create a Valoria account, complete the VALU Index Taster, then confirm their email to access the separate full VALU Index.
               </p>
               <a
                 href="/valu/register/?journey=valu_taster"
