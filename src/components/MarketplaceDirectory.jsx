@@ -9,7 +9,8 @@ import { useRouter } from 'next/navigation'
 import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { getValuTier, PRIME_CLUSTERS, PRIME_CLUSTER_NAMES, TIER_DESIGNATIONS } from '@/lib/brand'
-import { getCapabilityEvidence, getCapabilityEvidenceSummary } from '@/lib/profile-capability-evidence'
+import capabilityEvidence from '@/lib/profile-capability-evidence.cjs'
+const { getCapabilityEvidence, getCapabilityEvidenceSummary } = capabilityEvidence
 
 const TRACKS = [
   ['all','All', '/marketplace'],
