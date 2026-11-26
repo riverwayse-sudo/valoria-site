@@ -97,7 +97,7 @@ export default function WaitlistModal({ open, onClose, source = 'site_gate', aut
                 <div className="vi-assessment-clusters" aria-label="VALU PRIME clusters">
                   <span className="vi-cluster">Presence</span><span className="vi-cluster">Relationships</span><span className="vi-cluster">Intelligence</span><span className="vi-cluster">Mastery</span><span className="vi-cluster">Enterprise</span>
                 </div>
-                <a className="vi-assessment-btn" href="/valu">TAKE THE 9-QUESTION ASSESSMENT <span aria-hidden="true">→</span></a>
+                <a className="vi-assessment-btn" href="/valu/register/?journey=valu_taster">CREATE ACCOUNT TO BEGIN <span aria-hidden="true">→</span></a>
               </div>
               <div className="vi-assessment-side" aria-hidden="true"><span className="vi-assessment-number">5</span><span className="vi-assessment-small">PRIME dimensions</span></div>
             </div>
