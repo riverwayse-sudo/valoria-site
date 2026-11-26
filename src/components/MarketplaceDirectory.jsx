@@ -67,6 +67,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
         ...labelValues(profile.topics),
         ...labelValues(profile.facilitation_topics),
         ...labelValues(profile.programme_types),
+        ...labelValues(profile.format_capabilities),
       ]
     })
     return [...new Set(values.map(cleanSkill).filter(Boolean))].sort()
@@ -76,7 +77,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     const q=query.trim().toLowerCase()
     return rows.filter(p => {
       const caps=(p.selectedCapabilities || p.selected_capabilities || p.capabilities || p.tracks || [p.track]).map(normalize)
-      if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
+      if(selectedTrack !== 'all' && !caps.includes(selectedTrack)) return false
       if(sector && displayText(p.industry) !== sector) return false
       const trackEvidence = selectedTrack === 'all'
         ? [...labelValues(p.skills), ...labelValues(p.topics), ...labelValues(p.facilitation_topics), ...labelValues(p.programme_types), ...labelValues(p.format_capabilities)]
@@ -230,7 +231,7 @@ function Profile({p, onSelect, activeTrack = 'all'}) {
   const designation = tier?.name || 'Assessment Follow-up'
   const designationClass = tier ? styles[tier.name.toLowerCase()] || '' : ''
   const profileId = displayText(p.atb_id)
-  const skills = isGeneralView ? labelValues(p.skills).slice(0, 3) : getCapabilityCardLabels(p, normalizedTrack)
+  const skills = isGeneralView ? [...new Set([...labelValues(p.skills), ...labelValues(p.topics), ...labelValues(p.facilitation_topics), ...labelValues(p.programme_types)])].slice(0, 3) : getCapabilityCardLabels(p, normalizedTrack)
   const cardEvidenceLabel = isGeneralView ? 'Professional capabilities' : normalizedTrack === 'candidate' ? 'Talent skills' : normalizedTrack === 'speaker' ? 'Speaking expertise' : 'Facilitation expertise'
   const availability = displayText(p.availability_status)
   const role = displayText(normalizedTrack === 'candidate' ? (p.current_job_title || p.headline) : (p.headline || p.current_job_title))
@@ -275,7 +276,7 @@ function Profile({p, onSelect, activeTrack = 'all'}) {
       {location && <p className={styles.locationLine}>{location}</p>}
     </div>}
 
-    {skills.length > 0 && <div className={styles.profileSkills} aria-label={cardEvidenceLabel}>{skills.map(value=><span key={value}>{value}</span>)}</div>}
+    {skills.length > 0 ? <div className={styles.profileSkills} aria-label={cardEvidenceLabel}>{skills.map(value=><span key={value}>{value}</span>)}</div> : !isGeneralView ? <div className={styles.profileSkills} aria-label={cardEvidenceLabel}>Specialist evidence not yet published</div> : null}
 
     <div className={styles.specialistCapabilities} aria-label="Capability selections; selected capabilities are highlighted">
       {capabilityBadges.map(([key,label]) => (
