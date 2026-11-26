@@ -7,6 +7,9 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { getConsentVerifiedPublicProfile } from '@/lib/public-profile'
+import resendEmail from '@/lib/resend-email.cjs'
+
+const { sendResendEmail } = resendEmail
 
 function escapeHtml(value = '') {
   return String(value).replace(/[&<>\"']/g, character => ({
@@ -25,9 +28,7 @@ function getSupabase() {
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
 }
 
-const BREVO_KEY = process.env.BREVO_API_KEY
 const FROM_EMAIL = 'info@valoriainstitute.com'
-const FROM_NAME  = 'Valoria Institute'
 
 const TYPE_LABELS = {
   candidate: 'Candidate Introduction',
@@ -35,8 +36,7 @@ const TYPE_LABELS = {
   facilitator_commission: 'Facilitator Commission',
 }
 
-async function notifyAdmin({ enquiryType, atbId, buyerName, buyerEmail, buyerCompany, subject, body }) {
-  if (!BREVO_KEY) return
+async function notifyAdmin({ enquiryId, enquiryType, atbId, buyerName, buyerEmail, buyerCompany, subject, body }) {
   const label = TYPE_LABELS[enquiryType] || 'Enquiry'
   const safeAtbId = escapeHtml(atbId)
   const safeBuyerName = escapeHtml(buyerName)
@@ -53,23 +53,20 @@ async function notifyAdmin({ enquiryType, atbId, buyerName, buyerEmail, buyerCom
       <p><strong>Message:</strong><br/>${safeBody}</p>
       <p style="margin-top:20px;"><a href="https://valoriainstitute.com/admin">Review in admin dashboard</a></p>
     </div>`
-  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-    method: 'POST',
-    headers: { 'api-key': BREVO_KEY, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      sender: { name: FROM_NAME, email: FROM_EMAIL },
-      to: [{ email: FROM_EMAIL, name: FROM_NAME }],
-      replyTo: { email: buyerEmail, name: buyerName },
-      subject: `${label} — ${atbId}`,
-      htmlContent: html,
-      tags: ['enquiry', enquiryType],
-    }),
+  const result = await sendResendEmail({
+    to: FROM_EMAIL,
+    replyTo: buyerEmail,
+    subject: `${label} — ${atbId}`,
+    html,
+    text: `New ${label}\nProfessional: ${atbId}\nFrom: ${buyerName} <${buyerEmail}>\nCompany: ${buyerCompany || 'Not provided'}\nSubject: ${subject || '(none given)'}\n\n${body || ''}\n\nReview: https://valoriainstitute.com/admin`,
+    tags: { category: 'enquiry', enquiry_type: enquiryType },
+    idempotencyKey: `valoria/enquiry/${enquiryId}/admin`,
   })
-  if (!res.ok) console.error('Enquiry admin notify failed:', res.status, await res.text().catch(() => ''))
+  if (!result.ok) console.error('Enquiry admin notify failed:', result.status, result.error)
+  return result.ok
 }
 
-async function confirmToBuyer({ enquiryType, atbId, buyerName, buyerEmail }) {
-  if (!BREVO_KEY) return
+async function confirmToBuyer({ enquiryId, enquiryType, atbId, buyerName, buyerEmail }) {
   const label = TYPE_LABELS[enquiryType] || 'enquiry'
   const safeFirstName = escapeHtml(buyerName.split(' ')[0] || 'there')
   const safeAtbId = escapeHtml(atbId)
@@ -79,24 +76,20 @@ async function confirmToBuyer({ enquiryType, atbId, buyerName, buyerEmail }) {
       <p>We've received your ${label.toLowerCase()} regarding <strong>${safeAtbId}</strong>. Valoria Institute facilitates all introductions — someone from our team will be in touch shortly.</p>
       <p style="color:#888;font-size:12px;">Valoria Institute · African Talent Bureau Ltd</p>
     </div>`
-  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-    method: 'POST',
-    headers: { 'api-key': BREVO_KEY, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      sender: { name: FROM_NAME, email: FROM_EMAIL },
-      to: [{ email: buyerEmail, name: buyerName }],
-      replyTo: { email: FROM_EMAIL, name: FROM_NAME },
-      subject: `We've received your ${label.toLowerCase()}`,
-      htmlContent: html,
-      tags: ['enquiry-confirmation', enquiryType],
-    }),
+  const result = await sendResendEmail({
+    to: buyerEmail,
+    replyTo: FROM_EMAIL,
+    subject: `We've received your ${label.toLowerCase()}`,
+    html,
+    text: `Hi ${buyerName.split(' ')[0] || 'there'},\n\nWe've received your ${label.toLowerCase()} regarding ${atbId}. Valoria Institute facilitates all introductions — someone from our team will be in touch shortly.\n\nValoria Institute`,
+    tags: { category: 'enquiry-confirmation', enquiry_type: enquiryType },
+    idempotencyKey: `valoria/enquiry/${enquiryId}/buyer`,
   })
-  if (!res.ok) console.error('Enquiry buyer confirm failed:', res.status, await res.text().catch(() => ''))
+  if (!result.ok) console.error('Enquiry buyer confirm failed:', result.status, result.error)
+  return result.ok
 }
 
-async function notifyProfessional({ supabase, professionalProfileId, enquiryType, atbId, buyerName, buyerCompany, actionUrl }) {
-  // In-app bell notification — goes in platform_notifications, the table
-  // NotificationBell.jsx actually reads (see that file's fix note).
+async function notifyProfessional({ supabase, enquiryId, professionalProfileId, enquiryType, atbId, buyerName, buyerCompany, actionUrl }) {
   const label = TYPE_LABELS[enquiryType] || 'Enquiry'
   const safeAtbId = escapeHtml(atbId)
   const safeBuyerName = escapeHtml(buyerName)
@@ -110,12 +103,10 @@ async function notifyProfessional({ supabase, professionalProfileId, enquiryType
   }])
   if (notifError) console.error('Enquiry professional in-app notify failed:', notifError)
 
-  if (!BREVO_KEY) return
-  // The professional's email lives on auth.users, not professional_profiles.
   const { data: userRow, error: userErr } = await supabase.auth.admin.getUserById(professionalProfileId)
   if (userErr || !userRow?.user?.email) {
     console.error('Enquiry professional email lookup failed:', userErr)
-    return
+    return false
   }
   const html = `
     <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;">
@@ -124,18 +115,16 @@ async function notifyProfessional({ supabase, professionalProfileId, enquiryType
       <p>Valoria will review and be in touch with next steps — no action needed from you right now.</p>
       <p style="margin-top:20px;"><a href="https://valoriainstitute.com${actionUrl}">View your profile</a></p>
     </div>`
-  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-    method: 'POST',
-    headers: { 'api-key': BREVO_KEY, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      sender: { name: FROM_NAME, email: FROM_EMAIL },
-      to: [{ email: userRow.user.email }],
-      subject: `New ${label.toLowerCase()} — ${safeAtbId}`,
-      htmlContent: html,
-      tags: ['enquiry-professional-notify', enquiryType],
-    }),
+  const result = await sendResendEmail({
+    to: userRow.user.email,
+    subject: `New ${label.toLowerCase()} — ${safeAtbId}`,
+    html,
+    text: `${buyerName}${buyerCompany ? ` from ${buyerCompany}` : ''} has requested an introduction through Valoria Institute.\n\nValoria will review and be in touch with next steps — no action needed from you right now.\n\nView your profile: https://valoriainstitute.com${actionUrl}`,
+    tags: { category: 'enquiry-professional-notify', enquiry_type: enquiryType },
+    idempotencyKey: `valoria/enquiry/${enquiryId}/professional`,
   })
-  if (!res.ok) console.error('Enquiry professional email notify failed:', res.status, await res.text().catch(() => ''))
+  if (!result.ok) console.error('Enquiry professional email notify failed:', result.status, result.error)
+  return result.ok
 }
 
 export async function POST(request) {
@@ -226,7 +215,7 @@ export async function POST(request) {
     }
 
     const atbId = targetProfile.atb_id || 'a Valoria professional'
-    const { error } = await supabase.from('enquiries').insert([{
+    const { data: enquiryRecord, error } = await supabase.from('enquiries').insert([{
       buyer_user_id: verifiedBuyerId,
       buyer_name: normalizedName,
       buyer_email: normalizedEmail,
@@ -236,18 +225,46 @@ export async function POST(request) {
       body: normalizedMessage,
       enquiry_type,
       status: 'pending',
-    }])
+    }]).select('id').single()
 
-    if (error) {
+    if (error || !enquiryRecord?.id) {
       console.error('Enquiry insert error:', error)
       return Response.json({ error: 'Something went wrong. Please try again.' }, { status: 500 })
     }
 
-    notifyAdmin({ enquiryType: enquiry_type, atbId, buyerName: normalizedName, buyerEmail: normalizedEmail, buyerCompany: normalizedCompany, subject: normalizedSubject, body: normalizedMessage }).catch(e => console.error('notifyAdmin error:', e))
-    confirmToBuyer({ enquiryType: enquiry_type, atbId, buyerName: normalizedName, buyerEmail: normalizedEmail }).catch(e => console.error('confirmToBuyer error:', e))
-    notifyProfessional({ supabase, professionalProfileId: targetProfile.id, enquiryType: enquiry_type, atbId, buyerName: normalizedName, buyerCompany: normalizedCompany, actionUrl: `/profile/${targetProfile.id}` }).catch(e => console.error('notifyProfessional error:', e))
+    const emailArgs = {
+      enquiryId: enquiryRecord.id,
+      enquiryType: enquiry_type,
+      atbId,
+      buyerName: normalizedName,
+      buyerEmail: normalizedEmail,
+      buyerCompany: normalizedCompany,
+      subject: normalizedSubject,
+      body: normalizedMessage,
+    }
+    const [adminEmailSent, buyerEmailSent, professionalEmailSent] = await Promise.all([
+      notifyAdmin(emailArgs).catch(error => { console.error('notifyAdmin error:', error); return false }),
+      confirmToBuyer(emailArgs).catch(error => { console.error('confirmToBuyer error:', error); return false }),
+      notifyProfessional({
+        supabase,
+        enquiryId: enquiryRecord.id,
+        professionalProfileId: targetProfile.id,
+        enquiryType: enquiry_type,
+        atbId,
+        buyerName: normalizedName,
+        buyerCompany: normalizedCompany,
+        actionUrl: `/profile/${targetProfile.id}`,
+      }).catch(error => { console.error('notifyProfessional error:', error); return false }),
+    ])
 
-    return Response.json({ message: 'Enquiry sent.' }, { status: 200 })
+    return Response.json({
+      message: 'Enquiry sent.',
+      email_notifications: {
+        admin: adminEmailSent,
+        buyer: buyerEmailSent,
+        professional: professionalEmailSent,
+      },
+    }, { status: 200 })
   } catch (err) {
     console.error('Enquiries API error:', err)
     return Response.json({ error: 'Server error. Please try again.' }, { status: 500 })
