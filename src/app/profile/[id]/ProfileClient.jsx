@@ -293,7 +293,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
   const moreLink = !isSpecializedView ? '/marketplace' : ctaTrack === 'facilitator' ? '/valoria-develop' : ctaTrack === 'speaker' ? '/marketplace/speakers' : '/marketplace/talent'
   const moreLabel = !isSpecializedView ? 'VIEW MARKETPLACE' : `MORE ${ctaTrack === 'facilitator' ? 'FACILITATORS' : ctaTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}`
   const enquiryType = ctaTrack === 'facilitator' ? 'facilitator_commission' : ctaTrack === 'speaker' ? 'speaker_booking' : 'candidate'
-  const enquiryLabel = isSpecializedView ? (ctaTrack === 'facilitator' ? 'REQUEST FACILITATOR' : ctaTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO') : 'REQUEST INTRO'
+  const enquiryLabel = ctaTrack === 'facilitator' ? 'REQUEST FACILITATOR' : ctaTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'
   const generalProfileHref = `/profile/${encodeURIComponent(String(p.id))}`
   const isOwnProfile = !!(currentUser && currentUser.id === p.id)
 
