@@ -8,6 +8,7 @@ const GOLD = '#C9A84C'
 const DARK = '#0F0F1A'
 const MIDNIGHT = '#1A1A2E'
 const PARCHMENT = '#F7F4EE'
+const MUTED = 'rgba(247,244,238,.62)'
 const EXPERIENCE = [
   ['0-3', '0–3 years'],
   ['4-8', '4–8 years'],
