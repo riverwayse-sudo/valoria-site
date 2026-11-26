@@ -27,7 +27,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(facilitators).toContain("getMarketplaceDirectoryData('facilitator')")
   })
 
-  test('marketplace preserves Basic and Full data without repeating Basic tier labels on cards', () => {
+  test('marketplace preserves Basic and Full data without assigning Basic a merit tier', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
     const data = read('src/lib/marketplace-data.js')
     expect(data).toContain("assessmentAccess === 'basic'")
