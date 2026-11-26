@@ -105,6 +105,8 @@ describe('specialized profile content contract', () => {
     expect(profile).toContain('!isSpecializedView && p.cluster_scores')
     expect(profile).toContain('isSpecializedView ? (')
     expect(profile).toContain('VIEW GENERAL PROFILE')
+    expect(profile).toContain('const videoSectionLabel = isSpecializedView')
+    expect(profile).toContain('Facilitation Videos')
     expect(profile).toContain('p.experience_years')
     expect(profile).toContain('const profileHeadline = isSpecializedView')
     expect(data).toContain('facilitation_topics,format_capabilities,audience_sizes,past_events,past_clients')
