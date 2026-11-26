@@ -54,7 +54,7 @@ function ConfirmationRequest() {
       {status === 'sending' && <p style={{color:'#C9A84C',fontSize:11}}>SECURING YOUR NEXT STEP…</p>}
       {status === 'error' && <button onClick={() => window.location.reload()} style={{marginTop:12,padding:'13px 22px',border:0,borderRadius:99,background:'#C9A84C',fontWeight:800}}>RETRY</button>}
       {status === 'sent' && <p style={{color:'rgba(247,244,238,.48)',fontSize:11,lineHeight:1.7}}>Check your inbox and spam folder. Your full VALU Index remains a separate next step after account confirmation.</p>}
-      {status === 'confirmed' && <Link href="/login?returnTo=%2Fdashboard" style={{display:'inline-block',marginTop:12,color:'#C9A84C'}}>SIGN IN TO CONTINUE</Link>}
+      {status === 'confirmed' && <Link href={`/login?pending_taster_id=${encodeURIComponent(tasterId)}&returnTo=%2Fdashboard`} style={{display:'inline-block',marginTop:12,color:'#C9A84C'}}>SIGN IN TO CONTINUE</Link>}
     </section>
   </main>
 }
