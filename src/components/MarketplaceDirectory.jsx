@@ -310,12 +310,13 @@ function ProfilePreviewModal({ profile, onClose, activeTrack = 'all' }) {
   ]
   const skills = labelValues(profile.skills).slice(0, 4)
   const topics = labelValues(profile.topics).slice(0, 3)
-  const isSpecializedView = activeTrack !== 'all'
-  const specialistSections = isSpecializedView ? getCapabilityEvidence(profile, activeTrack) : []
-  const specialistSummary = isSpecializedView ? getCapabilityEvidenceSummary(profile, activeTrack) : ''
+  const selectedTrack = activeTrack || 'all'
+  const isSpecializedView = selectedTrack !== 'all'
+  const specialistSections = isSpecializedView ? getCapabilityEvidence(profile, selectedTrack) : []
+  const specialistSummary = isSpecializedView ? getCapabilityEvidenceSummary(profile, selectedTrack) : ''
   const assessmentSummary = !isSpecializedView && isFull ? displayText(profile.assessment_summary || '') : ''
   const profilePath = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
-  const profileHref = isSpecializedView ? `${profilePath}?track=${encodeURIComponent(activeTrack)}` : profilePath
+  const profileHref = isSpecializedView ? `${profilePath}?track=${encodeURIComponent(selectedTrack)}` : profilePath
   const enquiryActions = [
     { key: 'candidate', enquiryType: 'candidate', ctaLabel: 'REQUEST TALENT INTRO' },
     { key: 'speaker', enquiryType: 'speaker_booking', ctaLabel: 'BOOK SPEAKER' },
