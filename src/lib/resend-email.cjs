@@ -78,6 +78,16 @@ async function sendResendEmail({
   }
 }
 
+function getSiteOrigin() {
+  const fallback = 'https://valoriainstitute.com'
+  try {
+    const configured = new URL(process.env.NEXT_PUBLIC_SITE_URL || fallback)
+    return configured.protocol === 'https:' ? configured.origin : fallback
+  } catch {
+    return fallback
+  }
+}
+
 function escapeHtml(value = '') {
   return String(value).replace(/[&<>"']/g, character => ({
     '&': '&amp;',
@@ -88,4 +98,4 @@ function escapeHtml(value = '') {
   })[character])
 }
 
-module.exports = { sendResendEmail, escapeHtml }
+module.exports = { sendResendEmail, escapeHtml, getSiteOrigin }
