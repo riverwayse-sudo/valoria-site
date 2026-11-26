@@ -48,19 +48,28 @@ export async function POST(request) {
   const user = authData.user
   const { data: taster, error: tasterError } = await admin
     .from('taster_sessions')
-    .select('id,name,role,user_id,linked_at,completed_at')
+    .select('id,name,role,user_id,linked_at,completed_at,lead_capture_id')
     .eq('id', tasterId)
     .maybeSingle()
 
   if (tasterError) return NextResponse.json({ error: 'Could not verify the saved snapshot.' }, { status: 502 })
   if (!taster) return NextResponse.json({ error: 'Snapshot result not found.' }, { status: 404 })
+  // The linking endpoint is callable independently of the confirmation page.
+  // Enforce completion here as well; never attach an in-progress Taster.
+  if (!taster.completed_at) return NextResponse.json({ error: 'Complete your Taster before linking it to your account.' }, { status: 409 })
   if (!user.email_confirmed_at) return NextResponse.json({ error: 'Verify your email before linking a saved VALU Index Taster.' }, { status: 403 })
   const { data: identityCandidate, error: candidateLookupError } = await admin
     .from('taster_identity_candidates')
-    .select('candidate_email,candidate_role,linked_user_id,identity_status')
+    .select('candidate_name,candidate_role,candidate_email,lead_capture_id,linked_user_id,identity_status')
     .eq('taster_id', tasterId)
     .maybeSingle()
   if (candidateLookupError) return NextResponse.json({ error: 'Could not verify snapshot identity evidence.' }, { status: 502 })
+  if (identityCandidate && (
+    norm(identityCandidate.candidate_name) !== norm(taster.name) ||
+    (taster.lead_capture_id && identityCandidate.lead_capture_id !== taster.lead_capture_id)
+  )) {
+    return NextResponse.json({ error: 'The saved snapshot does not match its original registration evidence. Valoria support must review the identity before linking.' }, { status: 403 })
+  }
   if (identityCandidate?.candidate_email && norm(identityCandidate.candidate_email) !== norm(user.email)) {
     return NextResponse.json({ error: 'The saved snapshot email evidence does not match this account. Valoria support must review the identity before linking.' }, { status: 403 })
   }
