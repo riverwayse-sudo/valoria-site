@@ -28,9 +28,9 @@ export async function POST(request) {
   try { body=await request.json() } catch { return Response.json({error:'Invalid request body.'},{status:400}) }
   const tasterId=String(body?.tasterId||''), userId=String(body?.userId||'')
   if(!uuid.test(tasterId)||!uuid.test(userId)) return Response.json({error:'Valid snapshot and account IDs are required.'},{status:400})
-  const {data:review,error:reviewError}=await supabase.from('identity_reconciliation_reviews').select('id,decision,candidate_record_type,candidate_record_id,evidence_type,evidence_reference,notes,reviewed_at').eq('source_record_type','taster').eq('source_record_id',tasterId).order('reviewed_at',{ascending:false}).limit(1).maybeSingle()
+  const {data:review,error:reviewError}=await supabase.from('identity_reconciliation_reviews').select('id,decision,candidate_record_type,candidate_record_id,evidence_type,evidence_reference,notes,reviewed_by,reviewed_at').eq('source_record_type','taster').eq('source_record_id',tasterId).order('reviewed_at',{ascending:false}).limit(1).maybeSingle()
   if(reviewError) return Response.json({error:'Could not verify review ledger.'},{status:500})
-  if(!review||review.decision!=='verified_match'||review.candidate_record_type!=='account'||review.candidate_record_id!==userId||!review.evidence_reference||!traceable.has(review.evidence_type)) return Response.json({error:'A latest verified-match review for this exact account with traceable evidence is required.'},{status:409})
+  if(!review||!review.reviewed_by||review.decision!=='verified_match'||review.candidate_record_type!=='account'||review.candidate_record_id!==userId||!review.evidence_reference||!traceable.has(review.evidence_type)) return Response.json({error:'A latest verified-match review for this exact account with traceable evidence is required.'},{status:409})
   const {data:account,error:accountError}=await supabase.auth.admin.getUserById(userId)
   if(accountError||!account?.user) return Response.json({error:'Target account does not exist.'},{status:404})
   if(!account.user.email_confirmed_at) return Response.json({error:'Target account email must be confirmed before linking this snapshot.'},{status:409})
