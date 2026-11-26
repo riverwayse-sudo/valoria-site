@@ -282,6 +282,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
   const displayTrack = isSpecializedView
     ? normalizedRequestedTrack
     : (isFacilitator ? 'facilitator' : isSpeaker ? 'speaker' : 'candidate')
+  const profileHeadline = isSpecializedView && displayTrack === 'candidate' ? (p.current_job_title || p.headline) : (p.headline || p.current_job_title)
   const tags = isSpecializedView
     ? (displayTrack === 'facilitator' ? (p.programme_types || []) : displayTrack === 'speaker' ? (p.topics || []) : (p.skills || []))
     : [...new Set([...(p.skills || []), ...(p.topics || []), ...(p.facilitation_topics || []), ...(p.programme_types || []), ...(p.format_capabilities || []), ...(p.audience_sizes || [])])]
@@ -368,7 +369,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
                 <span style={{ fontSize:'14px', fontWeight:400, color: GOLD, letterSpacing:'.04em' }}>
-                  {p.headline || (isSpecializedView ? (displayTrack === 'facilitator' ? 'Facilitator profile' : displayTrack === 'speaker' ? 'Speaker profile' : 'Talent profile') : 'Valoria professional')}
+                  {profileHeadline || (isSpecializedView ? (displayTrack === 'facilitator' ? 'Facilitator profile' : displayTrack === 'speaker' ? 'Speaker profile' : 'Talent profile') : 'Valoria professional')}
                 </span>
                 <span style={{ fontSize:'9px', letterSpacing:'.1em', background: MID, border:`1px solid ${GLINE2}`, padding:'5px 10px', borderRadius:'4px', color: DIM, fontWeight:800 }}>
                   PUBLIC PROFILE
