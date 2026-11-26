@@ -4,7 +4,7 @@ The /auth/confirm endpoint deliberately does not consume a one-time token on a G
 
 ## Supabase Dashboard configuration
 
-Apply this to **both** the staging and production Supabase projects:
+Apply this to **staging first**. Update production only after the complete staging journey passes and production promotion is explicitly authorized:
 
 1. Open **Authentication → Email Templates → Confirm signup**.
 2. Replace the link that uses {{ .ConfirmationURL }} with the token-hash endpoint below.
