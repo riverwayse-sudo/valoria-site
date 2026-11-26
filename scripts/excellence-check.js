@@ -176,7 +176,7 @@ if (fs.existsSync(navPath)) {
 // Public content must explain the VALU journey without exposing internal assessment mechanics.
 const valuStartPath = path.join(root, 'src/app/valu/start/page.jsx');
 const signupPath = path.join(root, 'src/app/signup/page.jsx');
-const aboutPath = path.join(root, 'src/app/about/page.jsx');
+const aboutPath = path.join(root, 'src/app/about-us/page.jsx');
 const programmesPath = path.join(root, 'src/app/programmes/page.jsx');
 if (fs.existsSync(valuStartPath)) {
   const valuStart = fs.readFileSync(valuStartPath, 'utf8');
@@ -199,11 +199,19 @@ if (fs.existsSync(signupPath)) {
     violations.push('Signup page contains the retired combined-assessment journey');
   }
 }
-if (fs.existsSync(aboutPath)) {
+if (!fs.existsSync(aboutPath)) {
+  violations.push('About page missing: src/app/about-us/page.jsx');
+} else {
   const about = fs.readFileSync(aboutPath, 'utf8');
-  for (const statement of ['Vision', 'Mission', 'Purpose', 'An Africa where professional merit always finds its platform.', 'To bridge the gap between latent brilliance and institutional scale.']) {
-    if (!about.includes(statement)) violations.push('About page is missing approved institutional foundation: ' + statement);
+  for (const statement of [
+    'Valoria Institute establishes and operates the standards and infrastructure through which professional capability is assessed, developed, represented and connected to opportunity.',
+    'The VALU Index is an assessment result that informs capability development; it is not itself a professional certification or credential.',
+    'One institution. One standard. Multiple pathways for professional merit.',
+  ]) {
+    if (!about.includes(statement)) violations.push('About page is missing approved institutional copy: ' + statement);
   }
+  // Mission/Vision/Purpose wording remains an owner sign-off item because the
+  // legacy brand-manual Mission conflicts with the current public-copy standard.
 }
 const facilitatorsPath = path.join(root, 'src/app/facilitators/page.jsx');
 const waitlistPath = path.join(root, 'src/components/WaitlistForm.jsx');
