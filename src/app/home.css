@@ -2745,3 +2745,84 @@
   font-size: 6.5px;
   letter-spacing: 0;
 }
+
+
+/* Homepage profile rail motion: seamless on desktop, manually browsable on touch. */
+.live-profiles .vi-scroll-mask {
+  overflow: hidden;
+}
+
+.live-profiles .vi-scroll-track {
+  display: flex;
+  width: max-content;
+  gap: 0;
+  animation: valoria-profile-rail 64s linear infinite;
+  will-change: transform;
+}
+
+.live-profiles .vi-scroll-group {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 14px;
+}
+
+.live-profiles .vi-scroll-mask:hover .vi-scroll-track,
+.live-profiles .vi-scroll-mask:focus-within .vi-scroll-track {
+  animation-play-state: paused;
+}
+
+@keyframes valoria-profile-rail {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .live-profiles .vi-scroll-mask {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-mask-image: none;
+    mask-image: none;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(201,168,76,.45) transparent;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+
+  .live-profiles .vi-scroll-track {
+    animation: none;
+    will-change: auto;
+  }
+
+  .live-profiles .vi-scroll-group[aria-hidden="true"] {
+    display: none;
+  }
+
+  .live-profiles .vi-scroll-card {
+    scroll-snap-align: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-profiles .vi-scroll-mask {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-mask-image: none;
+    mask-image: none;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(201,168,76,.45) transparent;
+  }
+
+  .live-profiles .vi-scroll-track {
+    animation: none;
+    transform: none;
+    will-change: auto;
+  }
+
+  .live-profiles .vi-scroll-group[aria-hidden="true"] {
+    display: none;
+  }
+
+  .live-profiles .vi-scroll-card {
+    scroll-snap-align: start;
+  }
+}
