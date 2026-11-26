@@ -13,10 +13,10 @@ export const metadata = {
 
 
 const DESIGNATIONS = [
-  { name: 'Elite', range: '90–100 points', meaning: 'A distinguished level of assessed professional capability across the PRIME framework.' },
-  { name: 'Distinguished', range: '75–89 points', meaning: 'Strong professional capability, supported by clear strengths across the PRIME dimensions.' },
-  { name: 'Proficient', range: '55–74 points', meaning: 'A credible professional capability baseline with demonstrated strengths and focused development opportunities.' },
-  { name: 'Standard', range: '35–54 points', meaning: 'An established starting baseline for structured professional development.' },
+  { name: 'Force to Align With', range: '80–100 points', meaning: 'A high level of assessed capability, with strong alignment across the PRIME clusters.' },
+  { name: 'Emerging Force', range: '65–79 points', meaning: 'A strong capability profile with clear evidence of applied professional strengths.' },
+  { name: 'Developing Professional', range: '50–64 points', meaning: 'A developing capability profile with demonstrated strengths and identifiable growth priorities.' },
+  { name: 'Building Foundations', range: '35–49 points', meaning: 'A foundational capability profile with clear priorities for structured development.' },
 ]
 
 export default function PrimePage() {
