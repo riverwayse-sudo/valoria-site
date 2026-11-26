@@ -10,7 +10,7 @@ import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { getValuTier, PRIME_CLUSTERS, PRIME_CLUSTER_NAMES, TIER_DESIGNATIONS } from '@/lib/brand'
 import capabilityEvidence from '@/lib/profile-capability-evidence.cjs'
-const { getCapabilityEvidence, getCapabilityEvidenceSummary, getCapabilityCardLabels } = capabilityEvidence
+const { normalizeCapabilityTrack, getCapabilityEvidence, getCapabilityEvidenceSummary, getCapabilityCardLabels } = capabilityEvidence
 
 const TRACKS = [
   ['all','All', '/marketplace'],
@@ -28,6 +28,7 @@ const cleanSkill = v => displayText(v).replace(/\s*★$/, '')
 
 export default function MarketplaceDirectory({ rows = [], counts = {}, activeTrack = 'all', dataUnavailable = false }) {
   const router = useRouter()
+  const selectedTrack = normalizeCapabilityTrack(activeTrack || 'all')
   const [query,setQuery] = useState('')
   const [sector,setSector] = useState('')
   const [cluster,setCluster] = useState('')
@@ -52,14 +53,14 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     setCluster('')
     setSkill('')
     setScoreBand('')
-  }, [activeTrack])
+  }, [selectedTrack])
 
   const sectors = useMemo(() => [...new Set(rows.map(r=>displayText(r.industry)).filter(Boolean))].sort(), [rows])
   const skills = useMemo(() => {
     const values = rows.flatMap(profile => {
-      if (activeTrack === 'speaker') return [...labelValues(profile.topics), ...labelValues(profile.format_capabilities)]
-      if (activeTrack === 'facilitator') return [...labelValues(profile.facilitation_topics), ...labelValues(profile.programme_types), ...labelValues(profile.format_capabilities)]
-      if (activeTrack === 'candidate') return labelValues(profile.skills)
+      if (selectedTrack === 'speaker') return [...labelValues(profile.topics), ...labelValues(profile.format_capabilities)]
+      if (selectedTrack === 'facilitator') return [...labelValues(profile.facilitation_topics), ...labelValues(profile.programme_types), ...labelValues(profile.format_capabilities)]
+      if (selectedTrack === 'candidate') return labelValues(profile.skills)
       return [
         ...PRIME_CLUSTERS.flatMap(cluster => cluster.skills.map(cleanSkill)),
         ...labelValues(profile.skills),
@@ -69,7 +70,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       ]
     })
     return [...new Set(values.map(cleanSkill).filter(Boolean))].sort()
-  }, [rows, activeTrack])
+  }, [rows, selectedTrack])
 
   const results = useMemo(() => {
     const q=query.trim().toLowerCase()
@@ -77,12 +78,12 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       const caps=(p.selectedCapabilities || p.selected_capabilities || p.capabilities || p.tracks || [p.track]).map(normalize)
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
       if(sector && displayText(p.industry) !== sector) return false
-      const trackEvidence = activeTrack === 'all'
+      const trackEvidence = selectedTrack === 'all'
         ? [...labelValues(p.skills), ...labelValues(p.topics), ...labelValues(p.facilitation_topics), ...labelValues(p.programme_types), ...labelValues(p.format_capabilities)]
-        : getCapabilityEvidence(p, activeTrack).flatMap(section => section.items)
-      if(activeTrack === 'all' && cluster && !Number.isFinite(Number(p.cluster_scores?.[cluster]))) return false
+        : getCapabilityEvidence(p, selectedTrack).flatMap(section => section.items)
+      if(selectedTrack === 'all' && cluster && !Number.isFinite(Number(p.cluster_scores?.[cluster]))) return false
       if(skill && !trackEvidence.some(v=>v.toLowerCase()===skill.toLowerCase())) return false
-      if(activeTrack === 'all' && scoreBand) {
+      if(selectedTrack === 'all' && scoreBand) {
         const band = SCORE_BANDS.find(item => item.name === scoreBand)
         const points = Number(p.valu_index)
         if (!band || p.assessment_access !== 'full' || !Number.isFinite(points) || points < band.min || points > band.max) return false
@@ -191,7 +192,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
         </div>
       </section>
     </main>
-    <ProfilePreviewModal profile={selectedProfile} onClose={closeProfilePreview} activeTrack={activeTrack} />
+    <ProfilePreviewModal profile={selectedProfile} onClose={closeProfilePreview} activeTrack={selectedTrack} />
     <Footer />
   </div>
 }
