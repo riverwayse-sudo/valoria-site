@@ -1,8 +1,16 @@
 // Branded buyer welcome email. Supabase confirmation remains a separate Auth email.
 
+import { createClient } from '@supabase/supabase-js'
 import resendEmail from '@/lib/resend-email.cjs'
 
 const { sendResendEmail, escapeHtml, getSiteOrigin } = resendEmail
+
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !key) throw new Error('Supabase server configuration is missing.')
+  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+}
 
 export async function POST(request) {
   let body
@@ -17,6 +25,18 @@ export async function POST(request) {
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRe.test(normalizedEmail)) {
     return Response.json({ ok: false, error: 'A valid email is required.' }, { status: 400 })
+  }
+
+  const supabase = getSupabase()
+  const forwardedFor = request.headers.get('x-forwarded-for')
+  const ip = request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip') || forwardedFor?.split(',').pop()?.trim() || 'unknown'
+  const [ipLimit, emailLimit] = await Promise.all([
+    supabase.rpc('check_rate_limit', { p_key: `welcome-email:ip:${ip}`, p_max_count: 5, p_window_seconds: 3600 }),
+    supabase.rpc('check_rate_limit', { p_key: `welcome-email:email:${normalizedEmail}`, p_max_count: 1, p_window_seconds: 86400 }),
+  ])
+  for (const result of [ipLimit, emailLimit]) {
+    if (result.error) console.error('Welcome email rate limit check failed:', result.error)
+    else if (!result.data) return Response.json({ ok: false, error: 'Too many requests. Please try again later.' }, { status: 429 })
   }
 
   const siteOrigin = getSiteOrigin()
