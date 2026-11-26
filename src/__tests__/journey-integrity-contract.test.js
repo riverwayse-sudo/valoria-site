@@ -633,7 +633,7 @@ describe('journey integrity contract', () => {
     expect(home).toContain("import LiveProfilesScroll from '@/components/LiveProfilesScroll'")
     expect(home).toContain('<LiveProfilesScroll />')
     expect(home).not.toContain('CapabilityProfilePreview')
-    expect(valu).toContain('Create or sign in to your Valoria account first')
+    expect(valu).toContain('Create your Valoria account and complete the VALU Index Taster')
     expect(register).toContain("fetch('/api/valu-taster/register'")
     expect(hero).toContain('href="/valu/register/?journey=valu_taster"')
     expect(footer).toContain('<AssessmentStartLink href="/valu/register/?journey=valu_taster">')
