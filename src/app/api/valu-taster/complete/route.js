@@ -9,6 +9,10 @@ function fail(message, status) {
 }
 
 export async function POST(request) {
+  const origin = request.headers.get('origin')
+  if (!origin || new URL(origin).origin !== new URL(request.url).origin) {
+    return fail('Confirmation requests must come from the Valoria site.', 403)
+  }
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -80,6 +84,28 @@ export async function POST(request) {
   }
   if (user.email_confirmed_at) {
     return NextResponse.json({ already_confirmed: true }, { headers: { 'Cache-Control': 'no-store' } })
+  }
+
+  const emailKey = createHash('sha256').update(email).digest('hex')
+  try {
+    const limited = await fetch(`${url}/rest/v1/rpc/consume_rate_limit`, {
+      method: 'POST',
+      headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_rate_key: `valu-taster-confirm-email:${emailKey}`, p_limit: 3, p_window_seconds: 3600 }),
+      cache: 'no-store',
+    })
+    if (!limited.ok) throw new Error(`rate-limit:${limited.status}`)
+    const result = await limited.json()
+    const limit = Array.isArray(result) ? result[0] : result
+    if (!limit?.allowed) {
+      return NextResponse.json({ error: 'Too many confirmation emails have been requested for this address. Please try again later.' }, {
+        status: 429,
+        headers: { 'Cache-Control': 'no-store', 'Retry-After': String(limit?.retry_after_seconds || 3600) },
+      })
+    }
+  } catch (error) {
+    console.error('VALU email confirmation rate limiter failed:', error?.message || error)
+    return fail('Confirmation is temporarily unavailable. Please try again shortly.', 503)
   }
 
   const publicClient = createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false } })
