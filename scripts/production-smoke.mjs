@@ -27,7 +27,7 @@ for (const [name, path, expected] of checks) {
 }
 
 const home = await fetch(base + '/').then(r => r.text())
-for (const marker of ['START THE VALU INDEX TASTER', 'Find professionals']) {
+for (const marker of ['CREATE ACCOUNT TO BEGIN', 'Find professionals']) {
   const ok = home.includes(marker)
   console.log(`${ok ? 'PASS' : 'FAIL'} homepage marker: ${marker}`)
   if (!ok) failed++
