@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { getValuTier, PRIME_CLUSTERS, PRIME_CLUSTER_NAMES, TIER_DESIGNATIONS } from '@/lib/brand'
+import { getCapabilityEvidence, getCapabilityEvidenceSummary } from '@/lib/profile-capability-evidence'
 
 const TRACKS = [
   ['all','All', '/marketplace'],
@@ -180,45 +181,6 @@ function labelValues(value) {
   }).filter(Boolean))]
 }
 
-function evidenceValues(value, fields) {
-  if (!Array.isArray(value)) return []
-  return [...new Set(value.map(item => {
-    if (typeof item === 'string') return cleanSkill(item)
-    if (!item || typeof item !== 'object') return ''
-    return fields.map(field => displayText(item[field])).filter(Boolean).join(' · ')
-  }).filter(Boolean))]
-}
-
-function getSpecialistEvidence(profile, track) {
-  const capability = normalize(track)
-  const sections = capability === 'candidate'
-    ? [
-        { label: 'Core skills', items: labelValues(profile.skills) },
-        { label: 'Professional context', items: [
-          displayText(profile.current_job_title),
-          displayText(profile.industry),
-          profile.experience_years != null ? `${profile.experience_years} years' experience` : '',
-        ].filter(Boolean) },
-      ]
-    : capability === 'speaker'
-      ? [
-          { label: 'Speaking topics', items: labelValues(profile.topics) },
-          { label: 'Speaking formats', items: labelValues(profile.format_capabilities) },
-          { label: 'Audience experience', items: labelValues(profile.audience_sizes) },
-          { label: 'Speaking engagements', items: evidenceValues(profile.past_events, ['name', 'role']) },
-        ]
-      : capability === 'facilitator'
-        ? [
-            { label: 'Facilitation topics', items: labelValues(profile.facilitation_topics) },
-            { label: 'Programme types', items: labelValues(profile.programme_types) },
-            { label: 'Delivery formats', items: labelValues(profile.format_capabilities) },
-            { label: 'Audience experience', items: labelValues(profile.audience_sizes) },
-            { label: 'Clients & programmes', items: evidenceValues(profile.past_clients, ['name', 'programme']) },
-          ]
-        : []
-  return sections.filter(section => section.items.length > 0)
-}
-
 function getCapabilitySelection(profile) {
   return new Set([
     ...(Array.isArray(profile.selectedCapabilities) ? profile.selectedCapabilities : []),
@@ -349,7 +311,8 @@ function ProfilePreviewModal({ profile, onClose, activeTrack = 'all' }) {
   const skills = labelValues(profile.skills).slice(0, 4)
   const topics = labelValues(profile.topics).slice(0, 3)
   const isSpecializedView = activeTrack !== 'all'
-  const specialistSections = isSpecializedView ? getSpecialistEvidence(profile, activeTrack) : []
+  const specialistSections = isSpecializedView ? getCapabilityEvidence(profile, activeTrack) : []
+  const specialistSummary = isSpecializedView ? getCapabilityEvidenceSummary(profile, activeTrack) : ''
   const specialistItemCount = specialistSections.reduce((count, section) => count + section.items.length, 0)
   const assessmentSummary = !isSpecializedView && isFull ? displayText(profile.assessment_summary || '') : ''
   const profilePath = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
@@ -392,9 +355,7 @@ function ProfilePreviewModal({ profile, onClose, activeTrack = 'all' }) {
               <p className={styles.modalSectionLabel}>{isSpecializedView ? 'SPECIALIST CAPABILITY EVIDENCE' : 'VALU INDEX · PROFESSIONAL INSIGHT'}</p>
               <p id="profile-preview-description" className={styles.modalSummary}>
                 {isSpecializedView
-                  ? (specialistItemCount
-                    ? 'This view presents evidence specific to the selected capability. The overall VALU Index narrative remains separate.'
-                    : 'No published evidence is available for this capability yet. The overall VALU Index insight remains available in All professionals.')
+                  ? specialistSummary
                   : isFull
                     ? (assessmentSummary || 'The Full VALU Index is complete. The professional insight is being prepared.')
                     : 'This profile introduces the professional’s public identity, declared capabilities and areas of expertise. Additional VALU Index insight appears when available.'}
