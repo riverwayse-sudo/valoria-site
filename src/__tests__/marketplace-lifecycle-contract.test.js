@@ -34,6 +34,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain("assessment_access === 'full'")
     expect(directory).toContain("p.assessment_access === 'full'")
     expect(directory).toContain("p.assessment_access === 'full' && p.valu_index != null")
+    expect(directory).toContain("p.assessment_access === 'basic' ? 'PUBLIC PROFILE'")
     expect(directory).not.toContain('BASIC LISTING')
     expect(directory).toContain('Public profiles appear when they meet Valoria’s listing requirements.')
   })
