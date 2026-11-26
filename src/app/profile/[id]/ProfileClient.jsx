@@ -286,14 +286,22 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
   const compensation = (displayTrack === 'speaker' || displayTrack === 'facilitator')
     ? (p.fee_range || p.salary_expectation || null)
     : (p.salary_expectation || p.fee_range || null)
-  const compLabel = (displayTrack === 'speaker' || displayTrack === 'facilitator') ? 'Fee Range' : 'Salary Range'
+  const compLabel = !isSpecializedView
+    ? 'Compensation Range'
+    : (displayTrack === 'speaker' || displayTrack === 'facilitator') ? 'Fee Range' : 'Salary Range'
+  const ctaTrack = isSpecializedView ? displayTrack : (normalizedTracks.length === 1 ? normalizedTracks[0] : 'candidate')
+  const moreLink = !isSpecializedView ? '/marketplace' : ctaTrack === 'facilitator' ? '/valoria-develop' : ctaTrack === 'speaker' ? '/marketplace/speakers' : '/marketplace/talent'
+  const moreLabel = !isSpecializedView ? 'VIEW MARKETPLACE' : `MORE ${ctaTrack === 'facilitator' ? 'FACILITATORS' : ctaTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}`
+  const enquiryType = ctaTrack === 'facilitator' ? 'facilitator_commission' : ctaTrack === 'speaker' ? 'speaker_booking' : 'candidate'
+  const enquiryLabel = isSpecializedView ? (ctaTrack === 'facilitator' ? 'REQUEST FACILITATOR' : ctaTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO') : 'REQUEST INTRO'
+  const generalProfileHref = `/profile/${encodeURIComponent(String(p.id))}`
   const isOwnProfile = !!(currentUser && currentUser.id === p.id)
 
   const stats = [
     { label:'Location', value: p.location || '—' },
     { label:'Industry', value: p.industry || '—' },
     { label:'Experience', value: p.experience_years != null ? `${p.experience_years} yrs` : '—' },
-    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Basic listing', href: p.valu_score != null ? '#valu-card' : null },
+    ...(!isSpecializedView ? [{ label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Basic listing', href: p.valu_score != null ? '#valu-card' : null }] : []),
   ]
 
   return (
@@ -356,7 +364,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
                 <span style={{ fontSize:'14px', fontWeight:400, color: GOLD, letterSpacing:'.04em' }}>
-                  {p.headline || (displayTrack === 'facilitator' ? 'Facilitator profile' : displayTrack === 'speaker' ? 'Speaker profile' : 'Professional profile')}
+                  {p.headline || (isSpecializedView ? (displayTrack === 'facilitator' ? 'Facilitator profile' : displayTrack === 'speaker' ? 'Speaker profile' : 'Talent profile') : 'Valoria professional')}
                 </span>
                 <span style={{ fontSize:'9px', letterSpacing:'.1em', background: MID, border:`1px solid ${GLINE2}`, padding:'5px 10px', borderRadius:'4px', color: DIM, fontWeight:800 }}>
                   PUBLIC PROFILE
@@ -385,9 +393,9 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                 </Link>
               ) : (
                 <>
-                  <Link href={displayTrack === 'facilitator' ? '/valoria-develop' : displayTrack === 'speaker' ? '/marketplace/speakers' : '/marketplace/talent'}
+                  <Link href={moreLink}
                     style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
-                    MORE {displayTrack === 'facilitator' ? 'FACILITATORS' : displayTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}
+                    {moreLabel}
                   </Link>
                   {p.is_dummy ? (
                     <button type="button" disabled
@@ -398,8 +406,8 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                     <EnquiryForm
                       professionalProfileId={p.id}
                       atbId={atbId}
-                      enquiryType={displayTrack === 'facilitator' ? 'facilitator_commission' : displayTrack === 'speaker' ? 'speaker_booking' : 'candidate'}
-                      ctaLabel={displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
+                      enquiryType={enquiryType}
+                      ctaLabel={enquiryLabel}
                       currentUser={currentUser}
                       triggerStyle={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', border:'none', textDecoration:'none' }}
                     />
@@ -467,7 +475,9 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
           {/* SIDEBAR */}
           <div style={{ minWidth:0 }}>
 
-            {/* VALU Index */}
+            {!isSpecializedView ? (
+            <>
+            {/* Overall VALU Index — shown only in the general profile view. */}
             <div id="valu-card" style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px', scrollMarginTop:'96px' }}>
               <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'14px' }}>VALU Index</div>
               {p.valu_score != null ? (
@@ -492,6 +502,15 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                 </>
               )}
             </div>
+            </>
+            ) : (
+              <div style={{ background:MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
+                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'14px' }}>Capability View</div>
+                <div style={{ fontSize:'18px', fontWeight:700, color:GOLD, marginBottom:'10px' }}>{displayTrack === 'candidate' ? 'Talent' : displayTrack === 'speaker' ? 'Speaker' : 'Facilitator'}</div>
+                <p style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>This specialist view presents capability-specific competencies and evidence. The overall VALU Index report is kept in the general profile view.</p>
+                <Link href={generalProfileHref} style={{ display:'block', padding:'10px', border:`1px solid ${GLINE2}`, color:GOLD, fontSize:'9px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>VIEW GENERAL PROFILE</Link>
+              </div>
+            )}
 
             {/* Profile ID verification */}
             <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
@@ -604,7 +623,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
 
             {/* General view shows the combined capability set; specialist views use their own evidence adapter above. */}
             {!isSpecializedView && tags.length > 0 && (
-              <Section label={displayTrack === 'facilitator' ? 'Programme Types' : displayTrack === 'speaker' ? 'Speaking Topics' : 'Core Skills'}>
+              <Section label="Professional Capabilities">
                 <div style={{ display:'flex', flexWrap:'wrap', gap:'10px' }}>
                   {tags.map(t => (
                     <span key={t} style={{ padding:'8px 16px', border:`1px solid ${GLINE2}`, fontSize:'12px', fontWeight:400, color: DIM, letterSpacing:'.04em' }}>
@@ -615,7 +634,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               </Section>
             )}
 
-            {(!isSpecializedView || displayTrack === 'speaker') && displayTrack === 'speaker' && p.past_events?.length > 0 && (
+            {(!isSpecializedView || displayTrack === 'speaker') && isSpeaker && p.past_events?.length > 0 && (
               <Section label="Speaking Engagements">
                 <div style={{ display:'grid', gap:'10px' }}>
                   {p.past_events.filter(event => event?.name).map((event, index) => (
@@ -628,7 +647,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               </Section>
             )}
 
-            {(!isSpecializedView || displayTrack === 'facilitator') && displayTrack === 'facilitator' && p.past_clients?.length > 0 && (
+            {(!isSpecializedView || displayTrack === 'facilitator') && isFacilitator && p.past_clients?.length > 0 && (
               <Section label="Clients & Programmes">
                 <div style={{ display:'grid', gap:'10px' }}>
                   {p.past_clients.filter(client => client?.name).map((client, index) => (
