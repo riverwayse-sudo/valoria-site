@@ -146,8 +146,9 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(setup).not.toContain('visibility_choice')
     expect(setup).not.toContain('Registered only')
     expect(setup).not.toContain('profile clears review')
+    // Onboarding uses one explicit public-display consent; no registered-only consent remains.
     expect(setup).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
-    expect(setup).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
+    expect(setup).not.toContain('REGISTERED_PROFILE_CONSENT_TEXT')
     expect(setup).toContain("fetch('/api/profile/acknowledgements'")
     expect(setup).not.toContain('if (!row.profile_complete)')
     expect(edit).not.toContain('PUBLIC_PROFILE_CONSENT_TEXT')
@@ -156,6 +157,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(edit).not.toContain('saveVisibilityConsent')
     expect(route).toContain('Record or reuse the current public-display acknowledgement before asking')
     expect(route).toContain('checking roster membership here would create a circular')
+    expect(route).toContain("visibility === 'registered_only' || !latestAcknowledgement.hasPublicConsent")
     expect(route).not.toContain("const basicEligible = roster?.assessment_access === 'basic'")
     expect(route).not.toContain("const fullEligible = roster?.assessment_access === 'full'")
     expect(copy).toContain('PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION')
