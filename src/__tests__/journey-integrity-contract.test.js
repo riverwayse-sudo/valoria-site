@@ -117,6 +117,18 @@ describe('journey integrity contract', () => {
     expect(route).not.toContain('norm(assessment.name)===norm(taster.name)')
   })
 
+
+  test('unreviewed automated matches cannot apply account or Taster identity links', () => {
+    const claim = read('src/app/api/admin/reconciliation/claim/route.js')
+    const applyTasterLink = read('src/app/api/admin/reconciliation/apply-taster-link/route.js')
+    const applyTasterOwner = read('src/app/api/admin/reconciliation/apply-taster-owner/route.js')
+    const page = read('src/app/admin/reconciliation/page.jsx')
+    expect(claim).toContain('!review.reviewed_by')
+    expect(applyTasterLink).toContain('!review.reviewed_by')
+    expect(applyTasterOwner).toContain('!review.reviewed_by')
+    expect(page).toContain('review.reviewed_by&&review.decision')
+  })
+
   test('historical assessment claim verifies every critical persistence step', () => {
     const source = read('src/app/api/assessment/claim/route.js')
     expect(source).toContain('verifyError')
