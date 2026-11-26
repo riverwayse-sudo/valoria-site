@@ -115,7 +115,7 @@ export async function POST(request) {
           ${enquiry.buyer_company ? `<strong>Company:</strong> ${enquiry.buyer_company}<br/>` : ''}
         </p>
         <p><strong>Their message:</strong><br/>${(enquiry.body || '').replace(/\n/g, '<br/>')}</p>
-        <p style="color:#888;font-size:12px;">Valoria Institute &middot; African Talent Bureau Ltd &middot; Lagos, Nigeria</p>
+        <p style="color:#888;font-size:12px;">Valoria Institute &middot; African Talent Bureau Ltd</p>
       </div>`
 
     const [buyerSent, profSent] = await Promise.all([
