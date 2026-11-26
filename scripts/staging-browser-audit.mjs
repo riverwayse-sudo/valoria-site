@@ -14,6 +14,11 @@ const viewports = [
 const routes = [
   { name: 'homepage', url: `${SITE}/`, site: true },
   { name: 'marketplace', url: `${SITE}/marketplace`, site: true },
+  { name: 'atb-connect', url: `${SITE}/marketplace/talent`, site: true },
+  { name: 'atb-spotlight', url: `${SITE}/marketplace/speakers`, site: true },
+  { name: 'atb-spotlight-facilitators', url: `${SITE}/marketplace/facilitators`, site: true },
+  { name: 'programmes', url: `${SITE}/programmes`, site: true },
+  { name: 'facilitators-redirect', url: `${SITE}/facilitators`, site: true },
   { name: 'events', url: `${SITE}/events`, site: true },
   { name: 'valu', url: `${SITE}/valu`, site: true },
   { name: 'valu-start', url: `${SITE}/valu/start`, site: true },
@@ -362,6 +367,10 @@ try {
           registrationForm,
           urlTasterId,
           currentPath,
+          pageHeading: document.querySelector('h1')?.innerText || '',
+          directoryEmptyTitle: document.querySelector('.directory .empty strong')?.innerText || '',
+          directoryUnavailable: document.body.innerText.includes('Directory unavailable'),
+          directoryGridCards: document.querySelector('.directory .grid')?.children.length || 0,
           journeyParam,
           savedTasterCopy,
           signInLink,
@@ -433,6 +442,31 @@ try {
            !state.registrationForm.password || !state.accountCreationAction ||
            !state.savedTasterCopy || state.urlTasterId !== POST_TASTER_ID)) {
         report.failures.push(route.name + '/' + viewport.name + ': saved Taster handoff must open post-Taster account creation with the original identity and Taster ID')
+      }
+      if (route.name === 'marketplace' &&
+          (state.directoryUnavailable || state.directoryGridCards !== 0 ||
+           !state.directoryEmptyTitle.includes('No public professional profiles are currently available'))) {
+        report.failures.push(`${route.name}/${viewport.name}: public Registry must show a truthful empty state when no consented profiles are available`)
+      }
+      if (route.name === 'atb-connect' &&
+          (state.directoryUnavailable || state.directoryGridCards !== 0 ||
+           !state.directoryEmptyTitle.includes('ATB Connect is preparing its first public talent listings'))) {
+        report.failures.push(`${route.name}/${viewport.name}: ATB Connect must show the truthful no-supply state, not a fabricated profile inventory`)
+      }
+      if (['atb-spotlight', 'atb-spotlight-facilitators'].includes(route.name) &&
+          (state.directoryUnavailable || state.directoryGridCards !== 0 ||
+           !state.directoryEmptyTitle.includes('ATB Spotlight is preparing its first public event-professional listings'))) {
+        report.failures.push(`${route.name}/${viewport.name}: ATB Spotlight must show the truthful no-supply state, not a fabricated profile inventory`)
+      }
+      if (route.name === 'programmes') {
+        const programmeText = await page.locator('main').innerText()
+        if (!programmeText.includes('FACILITATOR FIT & COMMISSIONING') ||
+            /certified facilitators|90-day re-measurement|half-day intensive|two-day cohort workshop/i.test(programmeText)) {
+          report.failures.push(`${route.name}/${viewport.name}: Develop copy contains unsupported delivery or certification claims`)
+        }
+      }
+      if (route.name === 'facilitators-redirect' && state.currentPath !== '/programmes') {
+        report.failures.push(`${route.name}/${viewport.name}: legacy facilitator route must redirect to the consolidated Develop page`)
       }
       if (route.name === 'assessment-account-first-taster-gate' && !tasterHandoffExchangeAttempted) {
         report.failures.push(route.name + '/' + viewport.name + ': account-first gate did not exchange the one-time Taster start code')
