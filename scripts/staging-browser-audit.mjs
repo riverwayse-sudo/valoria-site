@@ -320,65 +320,84 @@ try {
       note.innerHTML = '<span class="live-profiles-empty-title">VISUAL PREVIEW ONLY</span><p>Illustrative cards for layout QA. These are not public listings or participant records.</p>'
       const mask = document.createElement('div')
       mask.className = 'vi-scroll-mask'
+      const fixtureCards = `
+        <div class="vi-scroll-card" data-visual-fixture="true">
+          <div class="vi-scroll-avatar"><span>01</span></div>
+          <div class="vi-scroll-copy">
+            <div class="vi-scroll-topline">ATB-PREVIEW-001 <i>VISUAL FIXTURE</i></div>
+            <span class="vi-scroll-name">Illustrative Professional 01</span>
+            <div class="vi-scroll-headline">Strategy &amp; Operations</div>
+            <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-active">Speaker</span><span class="is-inactive">Facilitator</span></div>
+            <div class="vi-scroll-designation">Illustrative designation</div>
+            <div class="vi-scroll-summary">Synthetic content for layout review only</div>
+            <div class="vi-scroll-development">Not a participant profile</div>
+          </div>
+          <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>78</strong><span class="vi-scroll-score-max">PTS</span></div>
+          <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
+        </div>
+        <div class="vi-scroll-card" data-visual-fixture="true">
+          <div class="vi-scroll-avatar"><span>02</span></div>
+          <div class="vi-scroll-copy">
+            <div class="vi-scroll-topline">ATB-PREVIEW-002 <i>VISUAL FIXTURE</i></div>
+            <span class="vi-scroll-name">Illustrative Professional 02</span>
+            <div class="vi-scroll-headline">Finance &amp; Governance</div>
+            <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-inactive">Speaker</span><span class="is-active">Facilitator</span></div>
+            <div class="vi-scroll-designation">Illustrative designation</div>
+            <div class="vi-scroll-summary">Synthetic content for layout review only</div>
+            <div class="vi-scroll-development">Not a participant profile</div>
+          </div>
+          <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>84</strong><span class="vi-scroll-score-max">PTS</span></div>
+          <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
+        </div>
+        <div class="vi-scroll-card" data-visual-fixture="true">
+          <div class="vi-scroll-avatar"><span>03</span></div>
+          <div class="vi-scroll-copy">
+            <div class="vi-scroll-topline">ATB-PREVIEW-003 <i>VISUAL FIXTURE</i></div>
+            <span class="vi-scroll-name">Illustrative Professional 03</span>
+            <div class="vi-scroll-headline">Digital Transformation</div>
+            <div class="vi-scroll-track-label"><span class="is-inactive">Talent</span><span class="is-active">Speaker</span><span class="is-active">Facilitator</span></div>
+            <div class="vi-scroll-designation">Illustrative designation</div>
+            <div class="vi-scroll-summary">Synthetic content for layout review only</div>
+            <div class="vi-scroll-development">Not a participant profile</div>
+          </div>
+          <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>72</strong><span class="vi-scroll-score-max">PTS</span></div>
+          <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
+        </div>`
       mask.innerHTML = `
         <div class="vi-scroll-track">
-          <div class="vi-scroll-card" data-visual-fixture="true">
-            <div class="vi-scroll-avatar"><span>01</span></div>
-            <div class="vi-scroll-copy">
-              <div class="vi-scroll-topline">ATB-PREVIEW-001 <i>VISUAL FIXTURE</i></div>
-              <span class="vi-scroll-name">Illustrative Professional 01</span>
-              <div class="vi-scroll-headline">Strategy &amp; Operations</div>
-              <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-active">Speaker</span><span class="is-inactive">Facilitator</span></div>
-              <div class="vi-scroll-designation">Illustrative designation</div>
-              <div class="vi-scroll-summary">Synthetic content for layout review only</div>
-              <div class="vi-scroll-development">Not a participant profile</div>
-            </div>
-            <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>78</strong><span class="vi-scroll-score-max">PTS</span></div>
-            <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
-          </div>
-          <div class="vi-scroll-card" data-visual-fixture="true">
-            <div class="vi-scroll-avatar"><span>02</span></div>
-            <div class="vi-scroll-copy">
-              <div class="vi-scroll-topline">ATB-PREVIEW-002 <i>VISUAL FIXTURE</i></div>
-              <span class="vi-scroll-name">Illustrative Professional 02</span>
-              <div class="vi-scroll-headline">Finance &amp; Governance</div>
-              <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-inactive">Speaker</span><span class="is-active">Facilitator</span></div>
-              <div class="vi-scroll-designation">Illustrative designation</div>
-              <div class="vi-scroll-summary">Synthetic content for layout review only</div>
-              <div class="vi-scroll-development">Not a participant profile</div>
-            </div>
-            <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>84</strong><span class="vi-scroll-score-max">PTS</span></div>
-            <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
-          </div>
-          <div class="vi-scroll-card" data-visual-fixture="true">
-            <div class="vi-scroll-avatar"><span>03</span></div>
-            <div class="vi-scroll-copy">
-              <div class="vi-scroll-topline">ATB-PREVIEW-003 <i>VISUAL FIXTURE</i></div>
-              <span class="vi-scroll-name">Illustrative Professional 03</span>
-              <div class="vi-scroll-headline">Digital Transformation</div>
-              <div class="vi-scroll-track-label"><span class="is-inactive">Talent</span><span class="is-active">Speaker</span><span class="is-active">Facilitator</span></div>
-              <div class="vi-scroll-designation">Illustrative designation</div>
-              <div class="vi-scroll-summary">Synthetic content for layout review only</div>
-              <div class="vi-scroll-development">Not a participant profile</div>
-            </div>
-            <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>72</strong><span class="vi-scroll-score-max">PTS</span></div>
-            <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
-          </div>
+          <div class="vi-scroll-group">${fixtureCards}</div>
+          <div class="vi-scroll-group" aria-hidden="true">${fixtureCards}</div>
         </div>`
       const bottom = shell.querySelector('.live-profiles-bottom')
       shell.insertBefore(note, bottom)
       shell.insertBefore(mask, bottom)
       const track = mask.querySelector('.vi-scroll-track')
-      if (track) {
-        track.style.animation = 'none'
-        track.style.transform = 'none'
+      const firstGroup = track?.querySelector('.vi-scroll-group:not([aria-hidden="true"])')
+      const cloneGroup = track?.querySelector('.vi-scroll-group[aria-hidden="true"]')
+      const trackStyle = track ? getComputedStyle(track) : null
+      const maskStyle = getComputedStyle(mask)
+      return {
+        ready: Boolean(firstGroup && cloneGroup &&
+          firstGroup.querySelectorAll('[data-visual-fixture="true"]').length === 3 &&
+          cloneGroup.querySelectorAll('[data-visual-fixture="true"]').length === 3),
+        animationName: trackStyle?.animationName || 'none',
+        animationPlayState: trackStyle?.animationPlayState || 'none',
+        overflowX: maskStyle.overflowX,
+        trackWidth: track?.scrollWidth || 0,
+        maskWidth: mask.clientWidth,
+        scrollable: Boolean(track && track.scrollWidth > mask.clientWidth + 4),
       }
-      return Boolean(track && mask.querySelectorAll('[data-visual-fixture="true"]').length === 3)
     })
     const filename = `homepage-profile-cards-preview-${viewport.name}.png`
     await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
-    report.profileCardPreviews.push({ viewport: viewport.name, status: response?.status() ?? null, screenshot: filename, syntheticFixtures: 3, clearlyLabelled: true, previewReady })
-    if (!previewReady) report.failures.push(`${viewport.name}: compact profile-card visual fixture could not be rendered`)
+    report.profileCardPreviews.push({ viewport: viewport.name, status: response?.status() ?? null, screenshot: filename, syntheticFixtures: 3, clearlyLabelled: true, ...previewReady })
+    if (!previewReady.ready) report.failures.push(`${viewport.name}: compact profile-card visual fixture could not be rendered`)
+    if (viewport.name === 'desktop' && previewReady.animationName !== 'valoria-profile-rail') {
+      report.failures.push('desktop: homepage profile rail must run the seamless auto-scroll animation')
+    }
+    if (viewport.name === 'mobile' && (previewReady.animationName !== 'none' || previewReady.overflowX !== 'auto' || !previewReady.scrollable)) {
+      report.failures.push('mobile: homepage profile rail must remain manually scrollable without auto-motion')
+    }
     await context.close()
   }
 
