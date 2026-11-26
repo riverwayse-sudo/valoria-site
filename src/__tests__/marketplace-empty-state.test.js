@@ -20,6 +20,6 @@ describe('marketplace empty-state behavior', () => {
 
   test('retains the truthful consent and listing-requirement explanation', () => {
     expect(source).toContain('We only show information approved for public display.')
-    expect(source).toContain('Public profiles appear when they meet Valoria’s listing requirements.')
+    expect(source).toContain('Public profiles appear only when participants choose public visibility and meet Valoria’s listing requirements.')
   })
 })
