@@ -604,6 +604,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     const setup = read('src/app/profile/setup/page.jsx')
     expect(consentApi).toContain('export async function GET')
     expect(consentApi).toContain("'admin_attestation'")
+    expect(consentApi).toContain('match(/^Bearer\\s+(.+)$/i)')
+    expect(consentApi).toContain("visibility === 'registered_only' || !latestAcknowledgement.hasPublicConsent")
     expect(consentApi).toContain('if (!latestAcknowledgement.hasPublicConsent)')
     expect(setup).toContain('has_public_consent === true')
     expect(setup).toContain('consentRecorded ?')
