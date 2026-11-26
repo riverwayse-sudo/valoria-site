@@ -10,7 +10,7 @@ import styles from './MarketplaceDirectory.module.css'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { getValuTier, PRIME_CLUSTERS, PRIME_CLUSTER_NAMES, TIER_DESIGNATIONS } from '@/lib/brand'
 import capabilityEvidence from '@/lib/profile-capability-evidence.cjs'
-const { getCapabilityEvidence, getCapabilityEvidenceSummary } = capabilityEvidence
+const { getCapabilityEvidence, getCapabilityEvidenceSummary, getCapabilityCardLabels } = capabilityEvidence
 
 const TRACKS = [
   ['all','All', '/marketplace'],
@@ -48,8 +48,28 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     }
   }, [router])
 
+  useEffect(() => {
+    setCluster('')
+    setSkill('')
+    setScoreBand('')
+  }, [activeTrack])
+
   const sectors = useMemo(() => [...new Set(rows.map(r=>displayText(r.industry)).filter(Boolean))].sort(), [rows])
-  const skills = useMemo(() => [...new Set(PRIME_CLUSTERS.flatMap(cluster => cluster.skills.map(cleanSkill)))].sort(), [])
+  const skills = useMemo(() => {
+    const values = rows.flatMap(profile => {
+      if (activeTrack === 'speaker') return [...labelValues(profile.topics), ...labelValues(profile.format_capabilities)]
+      if (activeTrack === 'facilitator') return [...labelValues(profile.facilitation_topics), ...labelValues(profile.programme_types), ...labelValues(profile.format_capabilities)]
+      if (activeTrack === 'candidate') return labelValues(profile.skills)
+      return [
+        ...PRIME_CLUSTERS.flatMap(cluster => cluster.skills.map(cleanSkill)),
+        ...labelValues(profile.skills),
+        ...labelValues(profile.topics),
+        ...labelValues(profile.facilitation_topics),
+        ...labelValues(profile.programme_types),
+      ]
+    })
+    return [...new Set(values.map(cleanSkill).filter(Boolean))].sort()
+  }, [rows, activeTrack])
 
   const results = useMemo(() => {
     const q=query.trim().toLowerCase()
@@ -57,15 +77,18 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
       const caps=(p.selectedCapabilities || p.selected_capabilities || p.capabilities || p.tracks || [p.track]).map(normalize)
       if(activeTrack !== 'all' && !caps.includes(activeTrack)) return false
       if(sector && displayText(p.industry) !== sector) return false
-      if(cluster && !Number.isFinite(Number(p.cluster_scores?.[cluster]))) return false
-      if(skill && !labelValues(p.skills).some(v=>v.toLowerCase()===skill.toLowerCase())) return false
-      if(scoreBand) {
+      const trackEvidence = activeTrack === 'all'
+        ? [...labelValues(p.skills), ...labelValues(p.topics), ...labelValues(p.facilitation_topics), ...labelValues(p.programme_types), ...labelValues(p.format_capabilities)]
+        : getCapabilityEvidence(p, activeTrack).flatMap(section => section.items)
+      if(activeTrack === 'all' && cluster && !Number.isFinite(Number(p.cluster_scores?.[cluster]))) return false
+      if(skill && !trackEvidence.some(v=>v.toLowerCase()===skill.toLowerCase())) return false
+      if(activeTrack === 'all' && scoreBand) {
         const band = SCORE_BANDS.find(item => item.name === scoreBand)
         const points = Number(p.valu_index)
         if (!band || p.assessment_access !== 'full' || !Number.isFinite(points) || points < band.min || points > band.max) return false
       }
       if(!q) return true
-      return [p.full_name,p.headline,p.current_job_title,p.atb_id,p.industry,...labelValues(p.skills),...labelValues(p.topics)].some(v=>displayText(v).toLowerCase().includes(q))
+      return [p.full_name,p.headline,p.current_job_title,p.atb_id,p.industry,...trackEvidence].some(v=>displayText(v).toLowerCase().includes(q))
     }).sort((a, b) => {
       const scored = value => value.assessment_access === 'full' && Number.isFinite(Number(value.valu_index))
       const isAvailable = value => /^(available|accepting|open)$/i.test(displayText(value.availability_status))
