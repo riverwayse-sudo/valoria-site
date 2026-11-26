@@ -3,7 +3,7 @@ import Nav, { AssessmentStartLink } from '@/components/Nav'
 import Footer from '@/components/Footer'
 
 export const metadata = {
-  title: 'Start the VALU Index Taster — Valoria Institute',
+  title: 'Begin your VALU Index journey — Valoria Institute',
   description: 'Create or sign in to your Valoria account first. Confirm your email, complete the VALU Index Taster, then continue to the full VALU Index for your official points result and PRIME profile.',
 }
 
@@ -38,7 +38,7 @@ export default function ValuStartPage() {
               <h1 style={{ maxWidth: "12.5ch", fontSize: "clamp(1.85rem, 3.1vw, 3.1rem)", lineHeight: 1.12, letterSpacing: "-0.045em", marginBlock: "0 1.1rem" }}>Your CV tells people what you’ve done.<br /><em>The VALU Index shows what you can become.</em></h1>
               <p className="vs-lede">A professional diagnostic built around PRIME to give you a clearer starting point for understanding your capability, direction and professional presence.</p>
               <div className="vs-actions">
-                <AssessmentStartLink href="/valu/register/?journey=valu_taster" className="vs-btn vs-primary">START THE VALU INDEX TASTER <b>→</b></AssessmentStartLink>
+                <AssessmentStartLink href="/valu/register/?journey=valu_taster" className="vs-btn vs-primary">CREATE ACCOUNT TO BEGIN <b>→</b></AssessmentStartLink>
                 <a href="#how" className="vs-btn vs-secondary">SEE HOW IT WORKS <b>↓</b></a>
               </div>
               <div className="vs-proof"><span>A QUICK START</span><i>·</i><span>FREE</span><i>·</i><span>BUILT AROUND PRIME</span></div>
@@ -115,7 +115,7 @@ export default function ValuStartPage() {
       </section>
 
       <section className="vs-final">
-        <div className="vs-shell"><div className="vs-kicker"><span /> WORTH. BUILT.</div><h2>Your capability deserves<br /><em>more than a CV.</em></h2><p>Create or sign in to your Valoria account first. After email confirmation, complete the Taster and continue to the separate full VALU Index when you are ready.</p><AssessmentStartLink href="/valu/register/?journey=valu_taster" className="vs-btn vs-primary">START THE VALU INDEX TASTER <b>→</b></AssessmentStartLink><p className="vs-back">Already completed a taster? <Link href="/professional-signup/recover">Recover your saved taster</Link>.</p><Link href="/valu" className="vs-back">Learn more about VALU →</Link></div>
+        <div className="vs-shell"><div className="vs-kicker"><span /> WORTH. BUILT.</div><h2>Your capability deserves<br /><em>more than a CV.</em></h2><p>Create or sign in to your Valoria account first. After email confirmation, complete the Taster and continue to the separate full VALU Index when you are ready.</p><AssessmentStartLink href="/valu/register/?journey=valu_taster" className="vs-btn vs-primary">CREATE ACCOUNT TO BEGIN <b>→</b></AssessmentStartLink><p className="vs-back">Already completed a taster? <Link href="/professional-signup/recover">Recover your saved taster</Link>.</p><Link href="/valu" className="vs-back">Learn more about VALU →</Link></div>
       </section>
     </main>
     <Footer />
