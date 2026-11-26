@@ -587,4 +587,14 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(admin).toContain('.filter(p => p.is_test !== true)')
   })
 
+  test('dashboard separates public directory visibility from capability-specific approval', () => {
+    const dashboard = read('src/app/dashboard/page.jsx')
+    expect(dashboard).toContain("from('marketplace_public_roster')")
+    expect(dashboard).toContain(".eq('professional_id', user.id)")
+    expect(dashboard).toContain('const isVisible = isSupply && isDirectoryListed === true')
+    expect(dashboard).toContain("'PUBLIC DIRECTORY'")
+    expect(dashboard).toContain('CAPABILITY PATHS READY')
+    expect(dashboard).toContain('isDirectoryListed === null')
+  })
+
 })
