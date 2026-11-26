@@ -262,7 +262,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
   )
 
   const p = profile
-  const tracks = p.active_tracks || (p.user_type ? [p.user_type] : [])
+  const tracks = Array.isArray(p.active_tracks) ? p.active_tracks : p.active_tracks ? [p.active_tracks] : (p.user_type ? [p.user_type] : [])
   const normalizedTracks = tracks.map(normalizeCapabilityTrack)
   const isSpeaker = normalizedTracks.includes('speaker')
   const isFacilitator = normalizedTracks.includes('facilitator')
