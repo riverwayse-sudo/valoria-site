@@ -134,28 +134,26 @@ export default function ValuRegisterPage() {
         return
       }
 
-      const { data, error: signupError } = await supabase.auth.signUp({
-        email: form.email.trim().toLowerCase(),
-        password: form.password,
-        options: {
-          emailRedirectTo: confirmationUrl(),
-          data: metadata,
-        },
+      const response = await fetch('/api/valu-taster/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+        body: JSON.stringify({
+          name: form.name.trim(),
+          role: form.role.trim(),
+          experience: form.experience,
+          email: form.email.trim().toLowerCase(),
+          password: form.password,
+          privacyAcknowledged: form.privacyAcknowledged,
+          marketingConsent: form.marketingConsent,
+        }),
       })
-      if (signupError) throw signupError
-      if (!data?.user?.id) throw new Error('Your Valoria account could not be created.')
-
-      if (Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-        const returnTo = encodeURIComponent('/valu/register/?journey=valu_taster')
-        window.location.replace(`/login?returnTo=${returnTo}`)
-        return
+      const result = await response.json().catch(() => ({}))
+      if (!response.ok || !result.url) {
+        throw new Error(result.error || 'Your Valoria account could not be securely prepared.')
       }
-
-      if (data.session?.access_token && data.user.email_confirmed_at) {
-        await startTaster(data.session.access_token)
-        return
-      }
-      setConfirmationSent(true)
+      window.location.replace(result.url)
+      return
     } catch (reason) {
       setError(reason?.message || 'We could not create your Valoria account. Please try again.')
     } finally {
@@ -203,8 +201,8 @@ export default function ValuRegisterPage() {
     <section style={styles.card}>
       <Link href="/" style={styles.brand}>VALORIA INSTITUTE</Link>
       <div style={styles.eyebrow}>YOUR VALU INDEX JOURNEY</div>
-      <h1 style={styles.title}>Your account comes <em>first.</em></h1>
-      <p style={styles.copy}>Create or sign in to your Valoria account. After email confirmation, you can begin your Taster and continue your VALU Index journey.</p>
+      <h1 style={styles.title}>Your journey starts <em>here.</em></h1>
+      <p style={styles.copy}>Create your Valoria account, complete your Taster, then confirm your email to access your dashboard and full VALU Index.</p>
       {hasSession && <p style={styles.notice}>You are signed in. Complete or confirm your professional details to begin.</p>}
       <form onSubmit={submit} style={styles.form}>
         <label style={styles.label}>FULL NAME
@@ -241,7 +239,7 @@ export default function ValuRegisterPage() {
         </label>
         {error && <p role="alert" style={styles.error}>{error}</p>}
         {notice && <p role="status" style={styles.notice}>{notice}</p>}
-        <button type="submit" disabled={!valid || loading} style={{ ...styles.primary, opacity: !valid || loading ? .55 : 1 }}>{loading ? 'SAVING…' : hasSession ? 'SAVE DETAILS & BEGIN TASTER →' : 'CREATE ACCOUNT →'}</button>
+        <button type="submit" disabled={!valid || loading} style={{ ...styles.primary, opacity: !valid || loading ? .55 : 1 }}>{loading ? 'SAVING…' : hasSession ? 'SAVE DETAILS & BEGIN TASTER →' : 'CREATE ACCOUNT & BEGIN TASTER →'}</button>
       </form>
       <p style={styles.small}>Already have a Valoria account? <Link href="/login?returnTo=%2Fvalu%2Fregister%2F%3Fjourney%3Dvalu_taster" style={styles.inlineLink}>Sign in to continue.</Link></p>
     </section>
