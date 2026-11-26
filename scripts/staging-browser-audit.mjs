@@ -392,8 +392,8 @@ try {
     await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
     report.profileCardPreviews.push({ viewport: viewport.name, status: response?.status() ?? null, screenshot: filename, syntheticFixtures: 3, clearlyLabelled: true, ...previewReady })
     if (!previewReady.ready) report.failures.push(`${viewport.name}: compact profile-card visual fixture could not be rendered`)
-    if (viewport.name === 'desktop' && previewReady.animationName !== 'valoria-profile-rail') {
-      report.failures.push('desktop: homepage profile rail must run the seamless auto-scroll animation')
+    if (viewport.name === 'desktop' && previewReady.animationName !== 'vi-scroll-x') {
+      report.failures.push('desktop: homepage profile rail must use the canonical vi-scroll-x motion')
     }
     if (viewport.name === 'mobile' && (previewReady.animationName !== 'none' || previewReady.overflowX !== 'auto' || !previewReady.scrollable)) {
       report.failures.push('mobile: homepage profile rail must remain manually scrollable without auto-motion')
