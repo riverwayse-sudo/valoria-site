@@ -191,6 +191,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     const source = read('src/app/api/link-taster/route.js')
     expect(source).toContain("request.headers.get('authorization')")
     expect(source).toContain('userClient.auth.getUser()')
+    expect(source).toContain("if (!taster.completed_at)")
     expect(source).not.toContain('const { taster_id: tasterId, user_id: userId')
     expect(source).not.toContain('getUserById(userId)')
   })
