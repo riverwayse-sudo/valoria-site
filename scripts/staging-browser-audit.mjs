@@ -105,7 +105,7 @@ try {
         const navBrand = document.querySelector('a[aria-label="Valoria Institute home"]')?.href || ''
         const navDashboard = [...document.querySelectorAll('a')].find(a => /return to dashboard/i.test(a.innerText))?.href || ''
         const tasterEntryLinks = [...document.querySelectorAll('a')]
-          .filter(a => /START THE VALU INDEX TASTER/i.test(a.innerText))
+          .filter(a => /CREATE ACCOUNT TO BEGIN/i.test(a.innerText))
           .map(a => {
             const href = a.getAttribute('href') || ''
             try { return new URL(href, window.location.href).pathname } catch { return href }
@@ -214,7 +214,7 @@ try {
       const normalisePath = value => value.replace(/\/+$/, '') || '/'
       if (['homepage', 'valu', 'valu-start'].includes(route.name) &&
           (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => !canonicalTasterEntries.has(normalisePath(href))))) {
-        report.failures.push(route.name + '/' + viewport.name + ': public Taster entry must require the canonical account-first registration route; found ' + JSON.stringify(state.tasterEntryLinks))
+        report.failures.push(route.name + '/' + viewport.name + ': public entry must require the canonical account-first registration route; found ' + JSON.stringify(state.tasterEntryLinks))
       }
       if (route.name === 'valu-register' &&
           (state.currentPath !== '/valu/register' || !state.registrationForm.email || !state.registrationForm.password ||
