@@ -377,7 +377,7 @@ try {
           currentPath,
           pageHeading: document.querySelector('h1')?.innerText || '',
           directoryEmptyTitle: document.querySelector('[data-directory-empty] strong')?.innerText || '',
-          directoryUnavailable: document.body.innerText.includes('Directory unavailable'),
+          directoryUnavailable: /Marketplace data could not be verified|directory is temporarily unavailable/i.test(document.body.innerText),
           directoryGridCards: document.querySelector('[data-directory-grid]')?.children.length || 0,
           opportunityEmptyTitle: document.querySelector('.opportunities-empty h2')?.innerText || '',
           opportunityError: document.querySelector('.opportunities-error')?.innerText || '',
