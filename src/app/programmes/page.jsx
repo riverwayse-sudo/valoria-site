@@ -6,8 +6,8 @@ import '../pages.css'
 
 export const metadata = {
   title: 'Development Programmes',
-  description: 'Five PRIME-mapped development programmes for individuals and organisations. Each programme targets a specific cluster — so development can address the capability gaps your VALU Index assessment surfaces.',
-  keywords: ['PRIME programmes', 'professional development Nigeria', 'capability training Africa', 'VALU Index development', 'Valoria Develop programmes'],
+  description: 'PRIME-aligned development for individuals and organisations. Programme scope, facilitator suitability, delivery format and any follow-up measurement are confirmed for each engagement.',
+  keywords: ['PRIME programmes', 'professional capability development', 'VALU Index development', 'Valoria Develop programmes', 'organisational development'],
   openGraph: {
     title: 'Development Programmes | Valoria Institute',
     description: 'A programme for every cluster. Development that maps to the same standard you\'re measured against.',
@@ -24,12 +24,6 @@ const CLUSTER_DETAIL = {
   E: { focus: 'Commercial thinking · Systems building · Venture mindset', outcome: 'Professionals who can build structures that outlast them, not just work well inside ones others built.' },
 }
 
-const FORMAT_OPTIONS = [
-  { label: 'Half-day intensive', desc: 'Single cluster focus. High-intensity, practical — suited to senior teams with limited time.' },
-  { label: 'Two-day cohort workshop', desc: 'One or two clusters, full facilitation. Standard for graduate and mid-career cohorts.' },
-  { label: 'Multi-week programme', desc: 'Full PRIME coverage or deep-dive into one cluster. Suited to organisational transformation contexts.' },
-  { label: 'Custom format', desc: 'Built to your team size, delivery preference, and the specific cluster profile your VALU Index surfaced.' },
-]
 
 export default function ProgrammesPage() {
   return (
@@ -56,8 +50,8 @@ export default function ProgrammesPage() {
         <section className="page-section">
           <div className="page-section-inner">
             <Reveal>
-              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE FIVE PROGRAMMES</span></div>
-              <h2 className="section-title programmes-clusters-title">Built on PRIME.<br /><em>Measured against it too.</em></h2>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">THE FIVE PRIME CLUSTERS</span></div>
+              <h2 className="section-title programmes-clusters-title">Built on PRIME.<br /><em>Scoped to the need.</em></h2>
             </Reveal>
             <div className="programmes-grid">
               {PRIME_CLUSTERS.map((c) => {
@@ -86,12 +80,12 @@ export default function ProgrammesPage() {
           <div className="page-section-inner two-col">
             <Reveal>
               <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">WHY MEASUREMENT MATTERS</span></div>
-              <h2 className="section-title">Development that<br /><em>shows up in the numbers.</em></h2>
+              <h2 className="section-title">Development guided by<br /><em>a clearer standard.</em></h2>
               <p className="page-copy">
                 Because Valoria Develop programmes use the same PRIME framework as the VALU Index, baseline and follow-up measurement can be included where agreed. The timing and reporting approach are confirmed in the programme scope. Cluster score movement can then provide a structured view of progress.
               </p>
               <p className="page-copy page-copy-spaced">
-                Most organisations spend training budgets and then rely on a Net Promoter Score to know if it worked. Valoria Develop gives you a five-cluster score instead.
+                Training activity alone does not establish capability movement. Where included in the agreed scope, a follow-up VALU Index can provide a structured view of progress against the PRIME framework.
               </p>
             </Reveal>
             <Reveal>
@@ -101,7 +95,6 @@ export default function ProgrammesPage() {
                   'Programme targets the specific cluster(s) where movement is needed most',
                   'Programme delivery is scoped against relevant PRIME behavioural anchors',
                   'Where included, a follow-up VALU Index provides a structured view of progress; timing is agreed in the programme scope',
-                  'Cohort-level reporting available for organisational development leads',
                 ].map((t, i) => (
                   <li key={i}>
                     <span className="dot"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#1D9E75" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
@@ -113,25 +106,34 @@ export default function ProgrammesPage() {
           </div>
         </section>
 
-        {/* FORMAT OPTIONS */}
-        <section className="page-section">
+        {/* FACILITATOR FIT AND COMMISSIONING */}
+        <section className="page-section" id="commissioning">
           <div className="page-section-inner">
             <Reveal>
-              <div className="eyebrow" style={{ justifyContent: 'center' }}><div className="eyebrow-line" /><span className="eyebrow-text">DELIVERY FORMATS</span><div className="eyebrow-line" /></div>
-              <h2 className="section-title" style={{ textAlign: 'center', marginBottom: '40px' }}>Built around<br /><em>your team, not ours.</em></h2>
+              <div className="eyebrow eyebrow-center"><div className="eyebrow-line" /><span className="eyebrow-text">FACILITATOR FIT &amp; COMMISSIONING</span><div className="eyebrow-line" /></div>
+              <h2 className="section-title section-title-centered">The right scope.<br /><em>The right delivery.</em></h2>
+              <p className="page-copy" style={{ maxWidth: '760px', margin: '0 auto 36px', textAlign: 'center' }}>
+                Valoria Develop engagements are scoped around the capability priorities, audience and context. Facilitator experience and relevant qualifications are reviewed against the brief before an engagement is confirmed.
+              </p>
             </Reveal>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-              {FORMAT_OPTIONS.map((f, i) => (
-                <Reveal key={i}>
+            <div className="facilitator-grid">
+              {[
+                { step: '01', title: 'Define the capability priority.', body: 'Tell us which PRIME cluster or development need matters, who the programme is for, and the context in which the capability will be used.' },
+                { step: '02', title: 'Scope the engagement.', body: 'We review the programme objective, participant group, delivery approach, timeline and the evidence or measurement required.' },
+                { step: '03', title: 'Confirm facilitator suitability.', body: 'Relevant experience, declared capabilities and qualifications are reviewed against the agreed programme requirements.' },
+                { step: '04', title: 'Agree delivery and review.', body: 'Delivery format, duration, commercial terms and any follow-up measurement are documented before the programme begins.' },
+              ].map(s => (
+                <Reveal key={s.step}>
                   <div className="card-gold">
-                    <div className="cluster-name" style={{ marginBottom: '10px', fontSize: '14px' }}>{f.label}</div>
-                    <p className="cluster-desc">{f.desc}</p>
+                    <div className="facilitator-step">{s.step}</div>
+                    <div className="cluster-name cluster-name-spaced">{s.title}</div>
+                    <p className="cluster-desc">{s.body}</p>
                   </div>
                 </Reveal>
               ))}
             </div>
-            <p style={{ color: 'var(--faint)', fontSize: '12px', marginTop: '32px', textAlign: 'center' }}>
-              Full programme outlines, facilitator profiles, and commercial terms are confirmed at commissioning.
+            <p className="page-copy page-copy-spaced" style={{ maxWidth: '760px', margin: '28px auto 0', textAlign: 'center' }}>
+              Follow-up VALU measurement is included only where agreed in the programme scope. No facilitator is described as certified unless the relevant certification has been formally awarded.
             </p>
           </div>
         </section>
@@ -143,7 +145,7 @@ export default function ProgrammesPage() {
             <p className="page-sub">Tell us which cluster your team needs to address. We&apos;ll review your requirements and confirm facilitator suitability for the engagement.</p>
             <div className="page-hero-actions" style={{ justifyContent: 'center' }}>
               <a href="/contact-us" className="btn-gold">COMMISSION A PROGRAMME</a>
-              <a href="/facilitators" className="btn-outline">HOW COMMISSIONING WORKS</a>
+              <a href="#commissioning" className="btn-outline">HOW COMMISSIONING WORKS</a>
             </div>
           </Reveal>
         </section>
