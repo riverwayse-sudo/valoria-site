@@ -46,7 +46,7 @@ export async function POST(request) {
 
   const {data:review,error:reviewError}=await supabase
     .from('identity_reconciliation_reviews')
-    .select('id,decision,candidate_record_type,candidate_record_id,evidence_type,evidence_reference,reviewed_at')
+    .select('id,decision,candidate_record_type,candidate_record_id,evidence_type,evidence_reference,reviewed_by,reviewed_at')
     .eq('source_record_type','assessment')
     .eq('source_record_id',assessmentId)
     .order('reviewed_at',{ascending:false})
@@ -54,7 +54,7 @@ export async function POST(request) {
     .maybeSingle()
   if(reviewError) return Response.json({error:'Could not verify the identity review ledger.'},{status:500})
   const allowedEvidence=['stable_id','authenticated_account','verified_email','submission_log','release_log','admin_documentation']
-  if(!review || review.decision!=='verified_match' || review.candidate_record_type!=='account' || review.candidate_record_id!==targetUserId || !review.evidence_reference || !allowedEvidence.includes(review.evidence_type)) {
+  if(!review || !review.reviewed_by || review.decision!=='verified_match' || review.candidate_record_type!=='account' || review.candidate_record_id!==targetUserId || !review.evidence_reference || !allowedEvidence.includes(review.evidence_type)) {
     return Response.json({error:'A latest verified-match review naming this exact account and traceable evidence is required before changing assessment ownership.'},{status:409})
   }
   const assessmentEmailMatches=Boolean(assessment.email&&target.user.email&&String(assessment.email).trim().toLowerCase()===String(target.user.email).trim().toLowerCase())

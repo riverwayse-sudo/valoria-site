@@ -27,9 +27,9 @@ export async function POST(request) {
   try { body=await request.json() } catch { return Response.json({error:'Invalid request body.'},{status:400}) }
   const assessmentId=String(body?.assessmentId||''), tasterId=String(body?.tasterId||'')
   if(!uuid.test(assessmentId)||!uuid.test(tasterId)) return Response.json({error:'Valid assessment and taster IDs are required.'},{status:400})
-  const {data:review,error:reviewError}=await supabase.from('identity_reconciliation_reviews').select('id,decision,candidate_record_type,candidate_record_id,evidence_type,evidence_reference,notes,reviewed_at').eq('source_record_type','assessment').eq('source_record_id',assessmentId).order('reviewed_at',{ascending:false}).limit(1).maybeSingle()
+  const {data:review,error:reviewError}=await supabase.from('identity_reconciliation_reviews').select('id,decision,candidate_record_type,candidate_record_id,evidence_type,evidence_reference,notes,reviewed_by,reviewed_at').eq('source_record_type','assessment').eq('source_record_id',assessmentId).order('reviewed_at',{ascending:false}).limit(1).maybeSingle()
   if(reviewError) return Response.json({error:'Could not verify review ledger.'},{status:500})
-  if(!review||review.decision!=='verified_match'||review.candidate_record_type!=='taster'||review.candidate_record_id!==tasterId||!review.evidence_reference||!traceable.has(review.evidence_type)) return Response.json({error:'A latest verified-match review for this exact taster with traceable evidence is required.'},{status:409})
+  if(!review||!review.reviewed_by||review.decision!=='verified_match'||review.candidate_record_type!=='taster'||review.candidate_record_id!==tasterId||!review.evidence_reference||!traceable.has(review.evidence_type)) return Response.json({error:'A latest verified-match review for this exact taster with traceable evidence is required.'},{status:409})
   const {data:a,error:ae}=await supabase.from('valu_assessments').select('id,user_id,taster_id,name,role,email,completed_at').eq('id',assessmentId).maybeSingle()
   if(ae) return Response.json({error:'Could not verify assessment.'},{status:500})
   if(!a||!a.completed_at) return Response.json({error:'Only completed assessments can be linked.'},{status:409})
