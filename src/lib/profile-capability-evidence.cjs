@@ -65,6 +65,21 @@ function getCapabilityEvidence(profile = {}, requestedTrack) {
   return sections.filter(section => section.items.length > 0)
 }
 
+function getCapabilityCardLabels(profile = {}, requestedTrack) {
+  const track = normalizeCapabilityTrack(requestedTrack)
+  const preferredLabels = track === 'candidate'
+    ? ['Core skills']
+    : track === 'speaker'
+      ? ['Speaking topics', 'Speaking formats']
+      : track === 'facilitator'
+        ? ['Facilitation topics', 'Programme types', 'Delivery formats']
+        : []
+  return getCapabilityEvidence(profile, track)
+    .filter(section => preferredLabels.includes(section.label))
+    .flatMap(section => section.items)
+    .slice(0, 3)
+}
+
 function getCapabilityEvidenceSummary(profile = {}, requestedTrack) {
   const track = normalizeCapabilityTrack(requestedTrack)
   const sections = getCapabilityEvidence(profile, track)
@@ -82,4 +97,4 @@ function getCapabilityEvidenceSummary(profile = {}, requestedTrack) {
   return `This ${label} view is based on published capability evidence across ${evidence}. The overall VALU Index narrative remains separate.`
 }
 
-module.exports = { normalizeCapabilityTrack, getCapabilityEvidence, getCapabilityEvidenceSummary }
+module.exports = { normalizeCapabilityTrack, getCapabilityEvidence, getCapabilityEvidenceSummary, getCapabilityCardLabels }
