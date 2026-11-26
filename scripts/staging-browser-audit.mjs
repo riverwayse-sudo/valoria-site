@@ -54,6 +54,26 @@ const routes = [
   { name: 'assessment-host', url: `${ASSESSMENT}/`, site: false },
   { name: 'assessment-account-first-taster-gate', url: `${ASSESSMENT}/valu/assessment/?journey=account-first#taster_start_code=staging-invalid-probe`, site: false },
 ]
+const visualRoutes = new Set([
+  'homepage',
+  'marketplace',
+  'events',
+  'valu',
+  'prime',
+  'about',
+  'programmes',
+  'marketplace-talent',
+  'marketplace-speakers',
+  'marketplace-facilitators',
+  'opportunities',
+  'opportunity-submit',
+  'contact-us',
+  'privacy-policy',
+  'terms-of-use',
+  'signup',
+  'login',
+  'admin-reconciliation-unauthenticated',
+])
 const expectedRedirectPaths = {
   'assessment-legacy': '/valu',
   'privacy-legacy': '/privacypolicy',
@@ -216,8 +236,11 @@ try {
         }
       })
 
-      const filename = `${route.name}-${viewport.name}.png`
-      await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
+      const captureScreenshot = visualRoutes.has(route.name)
+      const filename = captureScreenshot ? `${route.name}-${viewport.name}.png` : null
+      if (captureScreenshot) {
+        await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
+      }
       const result = {
         route: route.name,
         url: route.url,
