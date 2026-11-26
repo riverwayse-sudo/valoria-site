@@ -41,9 +41,12 @@ export async function GET(request) {
     if(!latestBySource[key]) latestBySource[key]=review
   }
   const latest=Object.values(latestBySource)
-  const linkReviews=latest.filter(review=>review.source_record_type==='assessment'&&review.decision==='verified_match'&&review.candidate_record_type==='taster'&&review.candidate_record_id)
-  const ownerReviews=latest.filter(review=>review.source_record_type==='taster'&&review.decision==='verified_match'&&review.candidate_record_type==='account'&&review.candidate_record_id)
-  const accountReviews=latest.filter(review=>review.source_record_type==='assessment'&&review.decision==='verified_match'&&review.candidate_record_type==='account'&&review.candidate_record_id)
+  for(const review of latest){
+    if(review.decision==='verified_match'&&!review.reviewed_by) review.application_state='awaiting_human_review'
+  }
+  const linkReviews=latest.filter(review=>review.reviewed_by&&review.source_record_type==='assessment'&&review.decision==='verified_match'&&review.candidate_record_type==='taster'&&review.candidate_record_id)
+  const ownerReviews=latest.filter(review=>review.reviewed_by&&review.source_record_type==='taster'&&review.decision==='verified_match'&&review.candidate_record_type==='account'&&review.candidate_record_id)
+  const accountReviews=latest.filter(review=>review.reviewed_by&&review.source_record_type==='assessment'&&review.decision==='verified_match'&&review.candidate_record_type==='account'&&review.candidate_record_id)
   const assessmentIds=[...new Set([...linkReviews.map(review=>review.source_record_id),...accountReviews.map(review=>review.source_record_id)])]
   const tasterIds=[...new Set([...linkReviews.map(review=>review.candidate_record_id),...ownerReviews.map(review=>review.source_record_id)])]
   const assessmentsById={},tastersById={},candidateByTasterId={},assessmentIdentityById={},auditedTasterLinksByAssessment={}
