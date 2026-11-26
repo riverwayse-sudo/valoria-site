@@ -41,8 +41,8 @@ export default function ContactPage() {
               </div>
               <div className="info-card">
                 <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">INSTITUTIONAL SCOPE</span></div>
-                <p className="contact-location">Built for international professional markets.</p>
-                <p className="contact-note">Valoria Institute establishes the standards and infrastructure for professional capability, development and visibility.</p>
+                <p className="contact-location">Africa-first, internationally minded.</p>
+                <p className="contact-note">Valoria Institute's initial operating market is Africa. Public listings and opportunities reflect current availability and eligibility. Legal jurisdiction: Nigeria.</p>
               </div>
             </Reveal>
           </div>
