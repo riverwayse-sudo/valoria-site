@@ -8,7 +8,9 @@ function read(relative) {
 describe('VALU presentation consistency', () => {
   test('homepage presents account-first entry without exposing question counts', () => {
     const home = read('src/app/page.jsx')
-    expect(home).toContain('Begin with your Taster')
+    expect(home).toContain('Create your account')
+    expect(home).toContain('Confirm your email before beginning the Taster')
+    expect(home).not.toContain('Begin with your Taster')
     expect(home).toContain('CREATE ACCOUNT TO BEGIN')
     expect(home).not.toMatch(/9 questions|58 questions|Question\s+\d+\s+of\s+\d+/i)
     expect(home).toContain('CREATE ACCOUNT TO BEGIN')
