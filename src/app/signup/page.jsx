@@ -205,7 +205,7 @@ export default function SignupPage() {
                 TALENT & SPEAKERS
               </div>
               <p style={{ fontSize: '13px', color: DIM, lineHeight: 1.6, margin: '0 0 12px' }}>
-                Professionals and speakers create or sign in to a Valoria account first. After email confirmation, complete the separate VALU Index Taster and continue to the full VALU Index.
+                Professionals and speakers create a Valoria account, complete the VALU Index Taster, then confirm their email to access the separate full VALU Index.
               </p>
               <a
                 href="/valu/register/?journey=valu_taster"
@@ -266,7 +266,7 @@ export default function SignupPage() {
             <form onSubmit={handleSignup} style={S.form}>
               {[
                 { key: 'name', label: 'Full Name', type: 'text', placeholder: 'Your full name' },
-                { key: 'company', label: userType === 'organiser' ? 'Organisation / Event Company' : 'Company Name', type: 'text', placeholder: userType === 'organiser' ? 'e.g. Lagos Event Group' : 'e.g. Zenith Capital Ltd' },
+                { key: 'company', label: userType === 'organiser' ? 'Organisation / Event Company' : 'Company Name', type: 'text', placeholder: userType === 'organiser' ? 'e.g. Northstar Events' : 'e.g. Zenith Capital Ltd' },
                 { key: 'email', label: 'Work Email Address', type: 'email', placeholder: 'you@company.com' },
                 { key: 'password', label: 'Password', type: 'password', placeholder: `Minimum ${PASSWORD_POLICY.minLength} characters` },
                 { key: 'confirmPassword', label: 'Confirm Password', type: 'password', placeholder: 'Re-enter your password' },

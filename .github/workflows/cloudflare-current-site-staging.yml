@@ -82,6 +82,20 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Configure optional staging-only Supabase service-role secret
+        env:
+          SUPABASE_STAGING_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_STAGING_SERVICE_ROLE_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "${SUPABASE_STAGING_SERVICE_ROLE_KEY:-}" ]]; then
+            printf '%s' "$SUPABASE_STAGING_SERVICE_ROLE_KEY" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --config wrangler.jsonc --env staging
+            echo "PASS: staging-only Supabase service-role secret configured without exposing its value."
+          else
+            echo "::notice::SUPABASE_STAGING_SERVICE_ROLE_KEY is not configured; live Auth registration and confirmation remain fail-closed in staging."
+          fi
       - name: Smoke-test staging routes, canonical redirects and privacy boundaries
         shell: bash
         run: |
@@ -158,6 +172,18 @@ jobs:
           grep -Eiq '^referrer-policy: no-referrer' /tmp/valoria-confirm-headers
           grep -Eiq '^content-security-policy:.*form-action .self.' /tmp/valoria-confirm-headers
           echo "PASS: confirmation GET renders a no-store, no-referrer same-origin POST form without consuming the token."
+
+          post_taster_id="66666666-6666-4666-8666-666666666666"
+          post_taster_url="$base/auth/confirm?token_hash=staging-probe-token&type=email&next=%2Fauth%2Fcallback%3Fpending_taster_id%3D$post_taster_id"
+          post_taster_status="$(curl -sS -D /tmp/valoria-post-taster-confirm-headers -o /tmp/valoria-post-taster-confirm.html -w '%{http_code}' "$post_taster_url")"
+          if [[ "$post_taster_status" != "200" ]]; then
+            echo "Post-Taster confirmation GET returned HTTP $post_taster_status"
+            cat /tmp/valoria-post-taster-confirm.html || true
+            exit 1
+          fi
+          grep -Fq "name=\"next\" value=\"/auth/callback?pending_taster_id=$post_taster_id\"" /tmp/valoria-post-taster-confirm.html
+          grep -Eiq '^cache-control: no-store' /tmp/valoria-post-taster-confirm-headers
+          echo "PASS: post-Taster confirmation preserves only the validated completed-Taster UUID."
 
           curl -fsS "$base/robots.txt" -o /tmp/valoria-robots.txt
           cp /tmp/valoria-robots.txt artifacts/staging-smoke/robots.txt

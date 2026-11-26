@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import {
   PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION,
+  PUBLIC_PROFILE_CONSENT_SOURCES,
   REGISTERED_PROFILE_ACKNOWLEDGEMENT_VERSION,
   PUBLIC_PROFILE_CONSENT_TEXT,
   REGISTERED_PROFILE_CONSENT_TEXT,
@@ -15,6 +16,58 @@ function getAdmin() {
   return createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
   })
+}
+
+async function getLatestAcknowledgement(admin, professionalId) {
+  const { data, error } = await admin
+    .from('professional_profile_acknowledgements')
+    .select('id,acknowledgement_version,source,acknowledgement_type,acknowledged_at,created_at')
+    .eq('professional_id', professionalId)
+    .eq('acknowledgement_type', 'profile_submission')
+    .order('acknowledged_at', { ascending: false, nullsFirst: false })
+    .order('created_at', { ascending: false })
+    .order('id', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (error) return { data: null, error, hasPublicConsent: false }
+  const hasPublicConsent = Boolean(
+    data &&
+    data.acknowledgement_version === PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION &&
+    PUBLIC_PROFILE_CONSENT_SOURCES.includes(data.source)
+  )
+  return { data: data || null, error: null, hasPublicConsent }
+}
+
+export async function GET(request) {
+  const admin = getAdmin()
+  if (!admin) {
+    return NextResponse.json({ error: 'Profile consent service is temporarily unavailable.' }, { status: 503 })
+  }
+
+  const token = request.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1]
+  if (!token) return NextResponse.json({ error: 'Sign in before checking profile consent.' }, { status: 401 })
+
+  const { data: authData, error: authError } = await admin.auth.getUser(token)
+  const user = authData?.user
+  if (authError || !user) {
+    return NextResponse.json({ error: 'Your session could not be verified. Please sign in again.' }, { status: 401 })
+  }
+  if (!user.email_confirmed_at) {
+    return NextResponse.json({ error: 'Confirm your email before checking profile consent.' }, { status: 403 })
+  }
+
+  const latest = await getLatestAcknowledgement(admin, user.id)
+  if (latest.error) {
+    console.error('Profile consent status lookup failed:', latest.error)
+    return NextResponse.json({ error: 'Profile consent status could not be verified.' }, { status: 502 })
+  }
+
+  return NextResponse.json({
+    ok: true,
+    has_public_consent: latest.hasPublicConsent,
+    acknowledgement_version: latest.hasPublicConsent ? latest.data.acknowledgement_version : null,
+  }, { headers: { 'Cache-Control': 'no-store' } })
 }
 
 export async function POST(request) {
@@ -46,7 +99,7 @@ export async function POST(request) {
   }
 
   if (body?.consent !== true || !['public', 'registered_only'].includes(body?.visibility)) {
-    return NextResponse.json({ error: 'Choose a visibility setting and confirm the profile statement.' }, { status: 400 })
+    return NextResponse.json({ error: 'A valid profile consent response is required.' }, { status: 400 })
   }
 
   const { data: profile, error: profileError } = await admin
@@ -67,17 +120,13 @@ export async function POST(request) {
   const acknowledgementVersion = visibility === 'public' ? PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION : REGISTERED_PROFILE_ACKNOWLEDGEMENT_VERSION
   const acknowledgementText = visibility === 'public' ? PUBLIC_PROFILE_CONSENT_TEXT : REGISTERED_PROFILE_CONSENT_TEXT
 
-  // Record the participant's explicit visibility choice before asking the
-  // canonical listing pipeline to refresh the public roster. The roster itself
-  // is consent-gated, so checking roster membership here would create a circular
-  // dependency: a participant could never consent while absent from the roster.
-  // Eligibility, identity, assessment validity, capability evidence, test and
-  // revocation checks remain enforced by sync_professional_listing_status and
-  // the database roster writer after this acknowledgement is stored.
-
-  // Registered-only is applied before recording the preference. Public consent
-  // is recorded first; the canonical readiness function then applies public
-  // visibility only if this is the latest consent preference.
+  // Record or reuse the current public-display acknowledgement before asking
+  // the canonical listing pipeline to refresh the public roster. The roster is
+  // consent-gated, so checking roster membership here would create a circular
+  // dependency. Eligibility, identity, assessment validity, capability evidence,
+  // test and revocation checks remain enforced by the database listing pipeline.
+  // The current UI exposes no visibility selector. registered_only remains
+  // accepted only for compatibility with older clients.
   if (visibility === 'registered_only') {
     const { error: visibilityError } = await admin
       .from('professional_profiles')
@@ -89,20 +138,31 @@ export async function POST(request) {
     }
   }
 
-  const { error: acknowledgementError } = await admin
-    .from('professional_profile_acknowledgements')
-    .insert({
-      professional_id: user.id,
-      acknowledgement_type: 'profile_submission',
-      acknowledgement_version: acknowledgementVersion,
-      acknowledgement_text: acknowledgementText,
-      source: acknowledgementSource,
-      acknowledged_at: new Date().toISOString(),
-    })
+  const latestAcknowledgement = await getLatestAcknowledgement(admin, user.id)
+  if (latestAcknowledgement.error) {
+    console.error('Existing profile consent lookup failed:', latestAcknowledgement.error)
+    return NextResponse.json({ error: 'Your existing profile consent could not be verified. Please try again.' }, { status: 502 })
+  }
 
-  if (acknowledgementError) {
-    console.error('Profile acknowledgement record failed:', acknowledgementError)
-    return NextResponse.json({ error: 'Your consent could not be recorded. Your profile has not been submitted.' }, { status: 502 })
+  // Reuse a current public-display acknowledgement, including the established
+  // admin_attestation evidence. Do not ask existing profile owners to approve
+  // public visibility again or create duplicate acknowledgement rows on edits.
+  if (visibility === 'registered_only' || !latestAcknowledgement.hasPublicConsent) {
+    const { error: acknowledgementError } = await admin
+      .from('professional_profile_acknowledgements')
+      .insert({
+        professional_id: user.id,
+        acknowledgement_type: 'profile_submission',
+        acknowledgement_version: acknowledgementVersion,
+        acknowledgement_text: acknowledgementText,
+        source: acknowledgementSource,
+        acknowledged_at: new Date().toISOString(),
+      })
+
+    if (acknowledgementError) {
+      console.error('Profile acknowledgement record failed:', acknowledgementError)
+      return NextResponse.json({ error: 'Your consent could not be recorded. Your profile has not been submitted.' }, { status: 502 })
+    }
   }
 
   const { data: readiness, error: readinessError } = await admin.rpc('sync_professional_listing_status', {

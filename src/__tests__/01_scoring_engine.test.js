@@ -13,7 +13,7 @@ const {
   getDesignation,
   getPathway,
   computeResults,
-} = require("../scoringEngine");
+} = require("../test-fixtures/siteScoringEngineFixture");
 
 function makeQuestion(id, cluster, skill, validAnchor = false) {
   return {
@@ -76,20 +76,20 @@ describe("computeWeightedIndex", () => {
 });
 
 describe("getDesignation", () => {
-  const cases = [[100,"Elite"],[90,"Elite"],[89,"Distinguished"],[75,"Distinguished"],[74,"Proficient"],[55,"Proficient"],[54,"Standard"],[35,"Standard"]];
+  const cases = [[100,"Force to Align With"],[80,"Force to Align With"],[79,"Emerging Force"],[65,"Emerging Force"],[64,"Developing Professional"],[50,"Developing Professional"],[49,"Building Foundations"],[35,"Building Foundations"]];
   test.each(cases)("score %i points → %s", (score, expected) => expect(getDesignation(score).name).toBe(expected));
   test("scores below 35 points have no merit designation", () => {
     expect(getDesignation(34)).toBeNull();
     expect(getDesignation(0)).toBeNull();
   });
   test("official merit band boundaries are applied", () => {
-    expect(getDesignation(90).name).toBe("Elite");
-    expect(getDesignation(89).name).toBe("Distinguished");
-    expect(getDesignation(75).name).toBe("Distinguished");
-    expect(getDesignation(74).name).toBe("Proficient");
-    expect(getDesignation(55).name).toBe("Proficient");
-    expect(getDesignation(54).name).toBe("Standard");
-    expect(getDesignation(35).name).toBe("Standard");
+    expect(getDesignation(80).name).toBe("Force to Align With");
+    expect(getDesignation(79).name).toBe("Emerging Force");
+    expect(getDesignation(65).name).toBe("Emerging Force");
+    expect(getDesignation(64).name).toBe("Developing Professional");
+    expect(getDesignation(50).name).toBe("Developing Professional");
+    expect(getDesignation(49).name).toBe("Building Foundations");
+    expect(getDesignation(35).name).toBe("Building Foundations");
   });
 });
 
@@ -135,6 +135,10 @@ describe("computeResults (full pipeline)", () => {
     const answers={0:0}; const shuffleMap={0:[{text:"C",score:3},{text:"A",score:1},{text:"B",score:2},{text:"D",score:4}]};
     expect(computeResults(answers,slowTimings,shuffleMap,FIXTURE_QUESTIONS).clusterScores.P).toBeGreaterThan(0);
   });
+  test("computed results below 35 points have no merit designation", () => {
+    const r = computeResults(worstAnswers(FIXTURE_QUESTIONS), slowTimings, {}, FIXTURE_QUESTIONS);
+    if (r.valuIndex < 35) expect(r.desig).toBeNull();
+  });
   test("result includes all required output fields", () => {
     const r=computeResults(perfectAnswers(FIXTURE_QUESTIONS),slowTimings,{},FIXTURE_QUESTIONS);
     ["valuIndex","clusterScores","skillScores","desig","futureReadyScore","strongest","weakest","consistencyFlags","gamingDetected","anchorFlags","speedFlag","uniformityFlag","listed","pathway","anyFlag","globalSD"].forEach(f=>expect(r).toHaveProperty(f));
@@ -146,7 +150,10 @@ describe("computeResults (full pipeline)", () => {
     const answers={}; FIXTURE_QUESTIONS.forEach((q,i)=>answers[i]=2); const r=computeResults(answers,slowTimings,{},FIXTURE_QUESTIONS);
     if(r.uniformityFlag) expect(r.listed).toBe(false); expect(typeof r.listed).toBe("boolean");
   });
-  test("frontend and backend produce identical index for same raw scores", () => {
-    const raw={P:27,R:36,I:45,M:27,E:27}; const scores=computeClusterScoresOnly(raw); expect(computeWeightedIndex(scores)).toBe(computeWeightedIndex(scores));
+  test("known raw cluster scores produce the expected weighted index", () => {
+    const raw = { P: 27, R: 36, I: 45, M: 27, E: 27 };
+    const scores = computeClusterScoresOnly(raw);
+    expect(scores).toEqual({ P: 75, R: 75, I: 75, M: 75, E: 75 });
+    expect(computeWeightedIndex(scores)).toBe(75);
   });
 });

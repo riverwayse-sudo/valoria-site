@@ -173,11 +173,11 @@ export default function WaitlistForm() {
               </svg>
             </div>
             <div className="wl-done-title">You&apos;re on the list.</div>
-            <p className="wl-done-sub">Something is being built that Africa has never had before.</p>
+            <p className="wl-done-sub">A clearer standard for understanding professional capability.</p>
             <div className="wl-done-sections">
               <div className="wl-done-section">
                 <div className="wl-done-label">THE PROBLEM</div>
-                <p className="wl-done-body">Every day, exceptional African professionals are passed over — not because they lack capability, but because no one can prove it. The same names circulate. The same networks win. Everyone else waits.</p>
+                <p className="wl-done-body">When professional capability is difficult to compare, visibility can depend too heavily on familiarity and networks. Valoria is building a clearer way to assess, develop and represent what people can contribute.</p>
               </div>
               <div className="wl-done-section">
                 <div className="wl-done-label">THE SHIFT</div>
@@ -185,7 +185,7 @@ export default function WaitlistForm() {
               </div>
               <div className="wl-done-section">
                 <div className="wl-done-label">WHAT&apos;S COMING</div>
-                <p className="wl-done-body">A marketplace where professional capabilities are presented with clear assessment context. Employers can explore talent by capability, event organisers can discover speakers by expertise, and development buyers can enquire about PRIME-mapped programmes.</p>
+                <p className="wl-done-body">Valoria connects structured capability assessment, PRIME-aligned development and pathways to professional visibility. Employers can explore talent by capability, event organisers can discover speakers by expertise, and development buyers can enquire about PRIME-mapped programmes.</p>
               </div>
               <div className="wl-done-three">
                 <div className="wl-done-label">THREE WAYS IN</div>

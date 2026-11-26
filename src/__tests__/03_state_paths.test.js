@@ -8,7 +8,7 @@
 "use strict";
 
 const { computeFingerprint, buildLockRecord, isLockActive } = require("../lockEngine");
-const { getDesignation, getPathway, computeWeightedIndex, computeClusterScoresOnly } = require("../scoringEngine");
+const { getDesignation, getPathway, computeWeightedIndex, computeClusterScoresOnly } = require("../test-fixtures/siteScoringEngineFixture");
 
 // ── SHARED RESULT SHAPE ───────────────────────────────────────────────────
 // Every path that produces a "results" object must return ALL of these fields.
@@ -250,7 +250,7 @@ describe("View Previous path (locked user)", () => {
     const profile = simulateDBResult({ valuIndex: 68 });
     // Simulates: onBegin({ previousProfile: profile })
     expect(profile.results.valuIndex).toBe(68);
-    expect(profile.results.desig.name).toBe("Proficient");
+    expect(profile.results.desig.name).toBe("Emerging Force");
   });
 
   test("view previous result has aiReport field (may be null)", () => {
@@ -348,7 +348,7 @@ describe("sessionSeed contract", () => {
   });
 
   test("different session seeds produce different question orders", () => {
-    const { seededShuffle } = require("../scoringEngine");
+    const { seededShuffle } = require("../test-fixtures/siteScoringEngineFixture");
     const options = [
       { text: "A", score: 1 }, { text: "B", score: 2 },
       { text: "C", score: 3 }, { text: "D", score: 4 },

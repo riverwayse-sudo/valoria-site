@@ -4,7 +4,7 @@ The /auth/confirm endpoint deliberately does not consume a one-time token on a G
 
 ## Supabase Dashboard configuration
 
-Apply this to **both** the staging and production Supabase projects:
+Apply this to **staging first**. Update production only after the complete staging journey passes and production promotion is explicitly authorized:
 
 1. Open **Authentication → Email Templates → Confirm signup**.
 2. Replace the link that uses {{ .ConfirmationURL }} with the token-hash endpoint below.
@@ -24,7 +24,7 @@ Plain-text URL:
 {{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next={{ .RedirectTo }}
 ~~~
 
-The registration flow sets emailRedirectTo to the canonical /auth/callback?valu_taster=1 URL. Supabase supplies that value as {{ .RedirectTo }}; the confirmation handler accepts only same-origin /auth/callback or /dashboard destinations and rejects external redirects or identity/resume parameters.
+There are two supported same-origin callback states. The legacy confirmed-account-first route uses /auth/callback?valu_taster=1. The current account-at-entry route requests confirmation only after the Taster is completed and uses /auth/callback?pending_taster_id=<completed-Taster-UUID>. The confirmation handler accepts either the single legacy flag or one syntactically valid Taster UUID; it rejects duplicate parameters, combined states, arbitrary identity/resume parameters and external redirects. The Taster UUID is only a lookup hint: the authenticated /api/link-taster endpoint must independently verify ownership before linking the saved record.
 
 ## Release verification
 
@@ -33,7 +33,8 @@ After saving each project template:
 1. Register a controlled test account on the matching site environment.
 2. Open the confirmation email and verify the link opens the Valoria confirmation page without consuming the token.
 3. Press **CONFIRM MY EMAIL ADDRESS**.
-4. Verify the browser receives the authenticated Supabase session and returns to /auth/callback?valu_taster=1.
-5. Verify the account is already signed in and the Taster handoff begins without asking the participant to sign in again.
+4. Verify the browser receives the authenticated Supabase session and returns to the exact callback state requested by that flow.
+5. For the current journey, verify the callback contains pending_taster_id, the authenticated account links only its own completed Taster, and the participant lands on the dashboard already signed in.
+6. Verify the separate 58-question assessment remains a subsequent dashboard action.
 
 Do not use a real participant account for this test. The staging project should be used first.

@@ -11,8 +11,16 @@ function safeAuthConfirmationNextPath(value, requestUrl) {
     if (target.pathname === '/dashboard' && target.search) return fallback
     if (target.pathname === '/auth/callback') {
       const keys = [...target.searchParams.keys()]
-      if (keys.some(key => key !== 'valu_taster')) return fallback
-      if (target.searchParams.has('valu_taster') && target.searchParams.get('valu_taster') !== '1') return fallback
+      if (keys.length > 1) return fallback
+      if (keys.length === 1) {
+        const key = keys[0]
+        const values = target.searchParams.getAll(key)
+        if (values.length !== 1) return fallback
+        if (key === 'valu_taster' && values[0] !== '1') return fallback
+        if (key === 'pending_taster_id' &&
+            !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(values[0])) return fallback
+        if (!['valu_taster', 'pending_taster_id'].includes(key)) return fallback
+      }
     }
 
     return target.pathname + target.search

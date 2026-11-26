@@ -1,7 +1,7 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 
-const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
+const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,experience_years,facilitation_topics,format_capabilities,audience_sizes,past_events,past_clients,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
 
 function getAdminClient() {

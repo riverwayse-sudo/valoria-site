@@ -39,11 +39,25 @@ describe("email OTP signup confirmation", () => {
     expect(login).toContain("window.location.replace('/auth/callback')");
   });
 
-  test("VALU registration creates an account before starting the authenticated Taster", () => {
-    expect(valuRegister).toContain("supabase.auth.signUp");
-    expect(valuRegister).toContain("emailRedirectTo: confirmationUrl()");
-    expect(valuRegister).toContain("/api/valu-taster/start");
-    expect(valuRegister).toContain("user.email_confirmed_at");
+  test("VALU registration creates an unconfirmed account and begins the Taster before email confirmation", () => {
+    const createRoute = read("../app/api/valu-taster/register/route.js");
+    expect(valuRegister).toContain("/api/valu-taster/register");
+    expect(createRoute).toContain("admin.auth.admin.createUser");
+    expect(createRoute).toContain("email_confirm: false");
+    expect(createRoute).toContain("entry_point: 'taster_start'");
+    expect(createRoute).toContain("target_stage: 'taster'");
+  });
+
+  test("VALU email confirmation is requested only after the completed Taster is ownership-verified", () => {
+    const completeRoute = read("../app/api/valu-taster/complete/route.js");
+    expect(completeRoute).toContain("admin.auth.admin.getUserById");
+    expect(completeRoute).toContain("user.email_confirmed_at");
+    expect(completeRoute).toContain("type: 'signup'");
+    expect(completeRoute).toContain("candidate.lead_capture_id !== taster.lead_capture_id");
+    expect(completeRoute).toContain("lead?.source !== 'valu_taster_signup'");
+    expect(completeRoute).toContain("taster.user_id !== user.id")
+    expect(completeRoute).toContain("candidate.linked_user_id !== user.id")
+    expect(completeRoute).toContain("if (!candidate || !candidate.candidate_email")
   });
 
   test("post-Taster signup confirmation returns through the authenticated callback", () => {

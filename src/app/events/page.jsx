@@ -25,7 +25,7 @@ function SessionCard({ session, state }) {
           <span>{isEnded ? 'COMPLETED' : isComingSoon ? 'COMING SOON' : state === 'live' ? 'LIVE NOW' : 'REGISTRATION OPEN'}</span>
           {session.description && <p>{session.description}</p>}
         </div>
-        {!isEnded && !isComingSoon && <div className="event-editorial-actions"><EventRegistrationTrigger session={session} />{session.id === '03' && <a className="btn-gold" href="#webinar">WATCH ON VALORIA →</a>}</div>}
+        {!isEnded && !isComingSoon && <div className="event-editorial-actions"><EventRegistrationTrigger session={session} />{session.id === '04' && <a className="btn-gold" href="#webinar">WATCH ON VALORIA →</a>}</div>}
       </div>
     </article>
   )
@@ -73,13 +73,13 @@ export default function EventsPage() {
                   <div className="page-kicker events-list-kicker">{webinarState === 'live' ? 'LIVE WEBINAR' : webinarState === 'ended' ? 'EVENT STREAM' : 'FEATURED WEBINAR'}</div>
                   <h2 className="section-title" id="webinar-title">{webinar.title}</h2>
                 </div>
-                <p>{webinar.speaker} · {formatSessionDate(webinar)} · 10:00 AM WAT · 90 minutes</p>
+                <p>{webinar.speaker} · Hosted by {webinar.host} · {formatSessionDate(webinar)} · 10:00 AM WAT</p>
               </div>
               <div style={{ width: '100%', maxWidth: 1080, margin: '0 auto' }}>
                 <div style={{ position: 'relative', aspectRatio: '16 / 9', width: '100%', overflow: 'hidden', background: '#11111b', border: '1px solid rgba(201,168,76,.28)' }}>
                   <iframe
                     src={`https://www.youtube.com/embed/${webinar.youtubeVideoId}`}
-                    title={webinar.title + ' — Valoria Institute livestream'}
+                    title={webinar.title + ' — Valoria Institute event replay'}
                     loading="eager"
                     referrerPolicy="strict-origin-when-cross-origin"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -88,7 +88,7 @@ export default function EventsPage() {
                   />
                 </div>
                 <p style={{ marginTop: 14, fontSize: 14, lineHeight: 1.7 }}>
-                  If the video does not load, <a href={`https://youtube.com/live/${webinar.youtubeVideoId}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C9A84C', textDecoration: 'underline' }}>watch the webinar directly on YouTube</a>.
+                  If the video does not load, <a href={`https://youtu.be/${webinar.youtubeVideoId}`} target="_blank" rel="noopener noreferrer" style={{ color: '#C9A84C', textDecoration: 'underline' }}>watch the webinar directly on YouTube</a>.
                 </p>
               </div>
             </div>

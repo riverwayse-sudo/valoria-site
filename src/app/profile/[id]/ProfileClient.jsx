@@ -6,7 +6,9 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import EnquiryForm from '@/components/EnquiryForm'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
-import { getValuTier } from '@/lib/brand'
+import { getValuTier, PRIME_CLUSTERS, PRIME_CLUSTER_NAMES } from '@/lib/brand'
+import capabilityEvidence from '@/lib/profile-capability-evidence.cjs'
+const { normalizeCapabilityTrack, getCapabilityEvidence, getCapabilityEvidenceSummary } = capabilityEvidence
 
 // ─── helpers ─────────────────────────────────────────────
 function getInitials(name) {
@@ -26,7 +28,6 @@ function getYouTubeId(url) {
   const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
   return m ? m[1] : null
 }
-const CLUSTER_NAMES = { P:'Presence', R:'Relationships', I:'Intelligence', M:'Mastery', E:'Enterprise' }
 // Short, positive-framed line per PRIME cluster — used by the "Key
 // Strengths" card to turn a raw cluster score into something a buyer can
 // actually read as a strength, rather than just a number on the radar chart.
@@ -47,13 +48,7 @@ const DIM     = 'rgba(247,244,238,.5)'
 const FAINT   = 'rgba(247,244,238,.15)'
 const GLINE   = 'rgba(201,168,76,.12)'
 const GLINE2  = 'rgba(201,168,76,.28)'
-const PRIME   = [
-  { letter: 'P', color: '#C9A84C', label: 'Presence' },
-  { letter: 'R', color: '#C9A84C', label: 'Relationships' },
-  { letter: 'I', color: '#C9A84C', label: 'Intelligence' },
-  { letter: 'M', color: '#C9A84C', label: 'Mastery' },
-  { letter: 'E', color: '#C9A84C', label: 'Enterprise' },
-]
+const PRIME = PRIME_CLUSTERS.map(({ letter, color }) => ({ letter, color }))
 
 // Returns the top-scoring PRIME clusters (highest first), capped at 3, for
 // the "Key Strengths" card under About. Capped so the card only ever shows
@@ -66,7 +61,7 @@ function rankedClusterStrengths(clusterScores) {
     .slice(0, 3)
     .map(([letter, score]) => ({
       letter, score,
-      name: CLUSTER_NAMES[letter] || letter,
+      name: PRIME_CLUSTER_NAMES[letter] || letter,
       color: PRIME.find(c => c.letter === letter)?.color || GOLD,
       blurb: CLUSTER_STRENGTH_COPY[letter] || '',
     }))
@@ -267,36 +262,52 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
     </>
   )
 
-  const p           = profile
-  const tracks        = p.active_tracks || (p.user_type ? [p.user_type] : [])
-  const isSpeaker     = tracks.includes('speaker')
-  const isFacilitator = tracks.includes('facilitator')
-  const isCandidate   = tracks.includes('candidate') || tracks.includes('talent') || tracks.length === 0
-  const initials    = getInitials(p.display_name)
+  const p = profile
+  const tracks = Array.isArray(p.active_tracks) ? p.active_tracks : p.active_tracks ? [p.active_tracks] : (p.user_type ? [p.user_type] : [])
+  const normalizedTracks = tracks.map(normalizeCapabilityTrack)
+  const isSpeaker = normalizedTracks.includes('speaker')
+  const isFacilitator = normalizedTracks.includes('facilitator')
+  const isCandidate = normalizedTracks.includes('candidate') || normalizedTracks.length === 0
+  const initials = getInitials(p.display_name)
   const avatarLetters = getAvatarLetters(p.display_name)
-  const atbId       = String(p.atb_id || '—').normalize('NFKC')
-  const videos      = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
-  const compensation = (isSpeaker || isFacilitator) ? (p.fee_range || p.salary_expectation || null) : (p.salary_expectation || p.fee_range || null)
-  const compLabel   = (isSpeaker || isFacilitator) ? 'Fee Range' : 'Salary Range'
-  // Which track's framing (headline placeholder, CTA copy, tags shown) to
-  // display. If the marketplace page someone clicked in from tells us which
-  // track they were browsing (?track=speaker etc.), honour that — otherwise
-  // fall back to a fixed priority. Previously this always showed
-  // facilitator-first for anyone with multiple tracks, so a profile that was
-  // both Speaker and Facilitator showed "Request Facilitator" even when
-  // reached from the Speaker marketplace.
+  const atbId = String(p.atb_id || '—').normalize('NFKC')
+  const videos = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
   const requestedTrack = searchParams?.track
-  const displayTrack = (requestedTrack && tracks.includes(requestedTrack))
-    ? requestedTrack
+  const normalizedRequestedTrack = normalizeCapabilityTrack(requestedTrack)
+  const isSpecializedView = Boolean(requestedTrack && normalizedTracks.includes(normalizedRequestedTrack))
+  // A requested spectrum controls specialist evidence and enquiry framing.
+  // Without one, the page is the general profile view: it shows the overall
+  // Assessment report and the combined capability set. The fixed fallback below is
+  // used only for a sensible enquiry type when a single CTA is needed.
+  const displayTrack = isSpecializedView
+    ? normalizedRequestedTrack
     : (isFacilitator ? 'facilitator' : isSpeaker ? 'speaker' : 'candidate')
-  const tags        = displayTrack === 'facilitator' ? (p.programme_types || []) : displayTrack === 'speaker' ? (p.topics || []) : (p.skills || [])
+  const profileHeadline = isSpecializedView && displayTrack === 'candidate' ? (p.current_job_title || p.headline) : (p.headline || p.current_job_title)
+  const tags = isSpecializedView
+    ? (displayTrack === 'facilitator' ? (p.programme_types || []) : displayTrack === 'speaker' ? (p.topics || []) : (p.skills || []))
+    : [...new Set([...(p.skills || []), ...(p.topics || []), ...(p.facilitation_topics || []), ...(p.programme_types || []), ...(p.format_capabilities || []), ...(p.audience_sizes || [])])]
+  const specialistSections = isSpecializedView ? getCapabilityEvidence(p, displayTrack) : []
+  const specialistSummary = isSpecializedView ? getCapabilityEvidenceSummary(p, displayTrack) : ''
+  const videoSectionLabel = isSpecializedView ? (displayTrack === 'speaker' ? 'Speaking Reels & Videos' : displayTrack === 'facilitator' ? 'Facilitation Videos' : 'Professional Videos') : (isSpeaker || isFacilitator ? 'Speaker & Facilitation Videos' : 'Videos')
+  const compensation = (displayTrack === 'speaker' || displayTrack === 'facilitator')
+    ? (p.fee_range || p.salary_expectation || null)
+    : (p.salary_expectation || p.fee_range || null)
+  const compLabel = !isSpecializedView
+    ? 'Compensation Range'
+    : (displayTrack === 'speaker' || displayTrack === 'facilitator') ? 'Fee Range' : 'Salary Range'
+  const ctaTrack = isSpecializedView ? displayTrack : (normalizedTracks.length === 1 ? normalizedTracks[0] : 'candidate')
+  const moreLink = !isSpecializedView ? '/marketplace' : ctaTrack === 'facilitator' ? '/valoria-develop' : ctaTrack === 'speaker' ? '/marketplace/speakers' : '/marketplace/talent'
+  const moreLabel = !isSpecializedView ? 'VIEW MARKETPLACE' : `MORE ${ctaTrack === 'facilitator' ? 'FACILITATORS' : ctaTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}`
+  const enquiryType = ctaTrack === 'facilitator' ? 'facilitator_commission' : ctaTrack === 'speaker' ? 'speaker_booking' : 'candidate'
+  const enquiryLabel = ctaTrack === 'facilitator' ? 'REQUEST FACILITATOR' : ctaTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'
+  const generalProfileHref = `/profile/${encodeURIComponent(String(p.id))}`
   const isOwnProfile = !!(currentUser && currentUser.id === p.id)
 
   const stats = [
-    { label:'Location',   value: p.location || '—' },
-    { label:'Industry',   value: p.industry || '—' },
-    { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
-    { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Basic listing', href: p.valu_score != null ? '#valu-card' : null },
+    { label:'Location', value: p.location || '—' },
+    { label:'Industry', value: p.industry || '—' },
+    { label:'Experience', value: p.experience_years != null ? `${p.experience_years} yrs` : '—' },
+    ...(!isSpecializedView ? [{ label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Not displayed', href: p.valu_score != null ? '#valu-card' : null }] : []),
   ]
 
   return (
@@ -359,7 +370,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
                 <span style={{ fontSize:'14px', fontWeight:400, color: GOLD, letterSpacing:'.04em' }}>
-                  {p.headline || (displayTrack === 'facilitator' ? 'Facilitator profile' : displayTrack === 'speaker' ? 'Speaker profile' : 'Professional profile')}
+                  {profileHeadline || (isSpecializedView ? (displayTrack === 'facilitator' ? 'Facilitator profile' : displayTrack === 'speaker' ? 'Speaker profile' : 'Talent profile') : 'Valoria professional')}
                 </span>
                 <span style={{ fontSize:'9px', letterSpacing:'.1em', background: MID, border:`1px solid ${GLINE2}`, padding:'5px 10px', borderRadius:'4px', color: DIM, fontWeight:800 }}>
                   PUBLIC PROFILE
@@ -388,9 +399,9 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                 </Link>
               ) : (
                 <>
-                  <Link href={displayTrack === 'facilitator' ? '/valoria-develop' : displayTrack === 'speaker' ? '/marketplace/speakers' : '/marketplace/talent'}
+                  <Link href={moreLink}
                     style={{ padding:'12px 22px', background:'transparent', border:`1px solid ${GLINE2}`, color: PARCH, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', textDecoration:'none' }}>
-                    MORE {displayTrack === 'facilitator' ? 'FACILITATORS' : displayTrack === 'speaker' ? 'SPEAKERS' : 'TALENT'}
+                    {moreLabel}
                   </Link>
                   {p.is_dummy ? (
                     <button type="button" disabled
@@ -401,8 +412,8 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                     <EnquiryForm
                       professionalProfileId={p.id}
                       atbId={atbId}
-                      enquiryType={displayTrack === 'facilitator' ? 'facilitator_commission' : displayTrack === 'speaker' ? 'speaker_booking' : 'candidate'}
-                      ctaLabel={displayTrack === 'facilitator' ? 'REQUEST FACILITATOR' : displayTrack === 'speaker' ? 'BOOK SPEAKER' : 'REQUEST INTRO'}
+                      enquiryType={enquiryType}
+                      ctaLabel={enquiryLabel}
                       currentUser={currentUser}
                       triggerStyle={{ padding:'12px 22px', background: GOLD, color: DARK, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', border:'none', textDecoration:'none' }}
                     />
@@ -470,14 +481,16 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
           {/* SIDEBAR */}
           <div style={{ minWidth:0 }}>
 
-            {/* VALU Index */}
+            {!isSpecializedView ? (
+            <>
+            {/* Overall VALU Index — shown only in the general profile view. */}
             <div id="valu-card" style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px', scrollMarginTop:'96px' }}>
               <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'14px' }}>VALU Index</div>
               {p.valu_score != null ? (
                 <>
                   <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_score}<span style={{ fontSize:'16px', color: DIM, fontWeight:400 }}> points</span></div>
                   {getValuTier(p.valu_score, 'full') && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{getValuTier(p.valu_score, 'full').name} · {getValuTier(p.valu_score, 'full').stars}</div>}
-                  {p.cluster_scores && (
+                  {!isSpecializedView && p.cluster_scores && (
                     <div style={{ marginTop:'8px' }}>
                       <PrimeRadarChart scores={p.cluster_scores} />
                     </div>
@@ -486,7 +499,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               ) : (
                 <>
                   <p style={{ fontSize:'13px', fontWeight:300, color: DIM, lineHeight:1.7, marginBottom:'16px' }}>
-                    {p.assessment_access === 'basic' ? 'This professional is listed at the Basic tier. VALU Index points and result-derived insight are not displayed on this profile.' : 'This professional has not yet received a full VALU Index result.'}
+                    {p.assessment_access === 'basic' ? 'This public profile presents professional identity and declared capabilities. VALU Index points and result-derived insight are not displayed here.' : 'This professional has not yet received a full VALU Index result.'}
                   </p>
                   <a href="https://valoriainstitute.com/valu/register/?journey=valu_taster"
                     style={{ display:'block', padding:'11px', background:'transparent', border:`1px solid ${GLINE2}`, color: GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>
@@ -495,6 +508,15 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                 </>
               )}
             </div>
+            </>
+            ) : (
+              <div style={{ background:MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
+                <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(201,168,76,.5)', marginBottom:'14px' }}>Capability View</div>
+                <div style={{ fontSize:'18px', fontWeight:700, color:GOLD, marginBottom:'10px' }}>{displayTrack === 'candidate' ? 'Talent' : displayTrack === 'speaker' ? 'Speaker' : 'Facilitator'}</div>
+                <p style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>This specialist view presents capability-specific competencies and evidence. The overall VALU Index report is kept in the general profile view.</p>
+                <Link href={generalProfileHref} style={{ display:'block', padding:'10px', border:`1px solid ${GLINE2}`, color:GOLD, fontSize:'9px', fontWeight:700, letterSpacing:'.12em', textAlign:'center', textDecoration:'none' }}>VIEW GENERAL PROFILE</Link>
+              </div>
+            )}
 
             {/* Profile ID verification */}
             <div style={{ background: MID, border:`1px solid ${GLINE}`, padding:'22px', marginBottom:'16px' }}>
@@ -556,19 +578,35 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               ) : null
             })()}
 
-            {/* The public profile summary is generated from the VALU Index report, not a self-written bio or CV summary. */}
-            <Section label="VALU Index Summary">
-              {p.assessment_summary
-                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
-                : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>{p.assessment_access === 'basic' ? 'A Basic listing presents professional identity and capability information. VALU Index insight is not displayed at this tier.' : 'Your VALU Index summary will appear here when your VALU Index and listing requirements are complete.'}</p>}
-            </Section>
+            {isSpecializedView ? (
+              <Section label={`${displayTrack === 'candidate' ? 'Talent' : displayTrack === 'speaker' ? 'Speaker' : 'Facilitator'} Capability Evidence`}>
+                <p style={{ fontSize:'15px', fontWeight:300, color:DIM, lineHeight:1.8 }}>{specialistSummary}</p>
+                {specialistSections.filter(section => !['Speaking engagements', 'Clients and programmes'].includes(section.label)).map(section => (
+                  <div key={section.label} style={{ marginTop:'18px' }}>
+                    <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.16em', color:GOLD, textTransform:'uppercase', marginBottom:'10px' }}>{section.label}</div>
+                    <div style={{ display:'flex', flexWrap:'wrap', gap:'9px' }}>
+                      {section.items.map(item => <span key={item} style={{ padding:'8px 13px', border:`1px solid ${GLINE2}`, fontSize:'12px', color:DIM }}>{item}</span>)}
+                    </div>
+                  </div>
+                ))}
+              </Section>
+            ) : (
+              <>
+                {/* The general profile summary is generated from the overall VALU Index report, not a self-written bio or CV summary. */}
+                <Section label="VALU Index Summary">
+                  {p.assessment_summary
+                    ? <p style={{ fontSize:'15px', fontWeight:300, color:DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
+                    : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>{p.assessment_access === 'basic' ? 'This public profile presents professional identity and capability information. VALU Index insight is not displayed here.' : 'Your VALU Index summary will appear here when your VALU Index and listing requirements are complete.'}</p>}
+                </Section>
+              </>
+            )}
 
             {/* Key Strengths — rectangular card, gold background per brand,
                 surfacing the top-scoring PRIME clusters as concrete points
                 rather than making a buyer read the radar chart to figure out
                 what the assessment actually found strong. Only shows once
                 the VALU Index has been completed. */}
-            {p.cluster_scores && (
+            {!isSpecializedView && p.cluster_scores && (
               <div style={{ background: GOLD, padding:'22px', marginBottom:'32px' }}>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(15,15,26,.55)', marginBottom:'16px' }}>Key Strengths</div>
                 <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
@@ -589,9 +627,9 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               </div>
             )}
 
-            {/* Skills / Topics */}
-            {tags.length > 0 && (
-              <Section label={displayTrack === 'facilitator' ? 'Programme Types' : displayTrack === 'speaker' ? 'Speaking Topics' : 'Core Skills'}>
+            {/* General view shows the combined capability set; specialist views use their own evidence adapter above. */}
+            {!isSpecializedView && tags.length > 0 && (
+              <Section label="Professional Capabilities">
                 <div style={{ display:'flex', flexWrap:'wrap', gap:'10px' }}>
                   {tags.map(t => (
                     <span key={t} style={{ padding:'8px 16px', border:`1px solid ${GLINE2}`, fontSize:'12px', fontWeight:400, color: DIM, letterSpacing:'.04em' }}>
@@ -602,7 +640,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               </Section>
             )}
 
-            {displayTrack === 'speaker' && p.past_events?.length > 0 && (
+            {(!isSpecializedView || displayTrack === 'speaker') && isSpeaker && p.past_events?.length > 0 && (
               <Section label="Speaking Engagements">
                 <div style={{ display:'grid', gap:'10px' }}>
                   {p.past_events.filter(event => event?.name).map((event, index) => (
@@ -615,7 +653,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               </Section>
             )}
 
-            {displayTrack === 'facilitator' && p.past_clients?.length > 0 && (
+            {(!isSpecializedView || displayTrack === 'facilitator') && isFacilitator && p.past_clients?.length > 0 && (
               <Section label="Clients & Programmes">
                 <div style={{ display:'grid', gap:'10px' }}>
                   {p.past_clients.filter(client => client?.name).map((client, index) => (
@@ -656,7 +694,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
 
             {/* Video grid (when no video expanded) */}
             {videos.length > 0 && activeVideo === null && (
-              <Section label={(isSpeaker || isFacilitator) ? 'Speaker Reel & Videos' : 'Videos'}>
+              <Section label={videoSectionLabel}>
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:'12px' }}>
                   {videos.slice(0,4).map((url, i) => {
                     const ytId = getYouTubeId(url)

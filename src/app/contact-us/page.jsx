@@ -40,9 +40,9 @@ export default function ContactPage() {
                 <p className="contact-note">We respond within two business days.</p>
               </div>
               <div className="info-card">
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">LOCATION</span></div>
-                <p className="contact-location">{BRAND.location}</p>
-                <p className="contact-note">A {BRAND.copyrightEntity} initiative. {BRAND.compliance}.</p>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">INSTITUTIONAL SCOPE</span></div>
+                <p className="contact-location">Africa-first, internationally minded.</p>
+                <p className="contact-note">Valoria Institute's initial operating market is Africa. Public listings and opportunities reflect current availability and eligibility. Legal jurisdiction: Nigeria.</p>
               </div>
             </Reveal>
           </div>

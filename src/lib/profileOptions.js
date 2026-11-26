@@ -61,7 +61,7 @@ export const VALIDATORS = {
 
 export function validatorError(kind) {
   switch (kind) {
-    case 'place': return 'That doesn\u2019t look like a location — letters only, e.g. Lagos, Nigeria.'
+    case 'place': return 'That doesn\u2019t look like a location — letters only, e.g. Accra, Ghana.'
     case 'number': return 'Numbers only, please (e.g. 12).'
     case 'linkedin': return 'Enter a valid LinkedIn URL, e.g. https://linkedin.com/in/yourname'
     case 'youtube': return 'Enter a valid YouTube URL.'

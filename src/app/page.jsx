@@ -102,4 +102,4 @@ export default function HomePage() {
   </>
 }
 
-/* Cloudflare production rollout marker: public Taster-first journey. */
+/* Cloudflare production rollout marker: account-first VALU Taster journey. */

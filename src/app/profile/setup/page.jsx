@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { AssessmentStartLink } from '@/components/Nav'
 import { uploadProfessionalCv } from '@/lib/upload-professional-cv'
-import { PUBLIC_PROFILE_CONSENT_TEXT, REGISTERED_PROFILE_CONSENT_TEXT } from '@/lib/profile-consent-copy'
+import { PUBLIC_PROFILE_CONSENT_TEXT } from '@/lib/profile-consent-copy'
 
 import {
   GOLD, DARK, MID, PARCH, DIM, GLINE,
@@ -20,8 +20,8 @@ const EMPTY_FORM = {
   username: '', phone: '',
   display_name: '', current_job_title: '', headline: '', location: '', industry: '', preferred_industry: '',
   years_experience: '', bio: '', languages: [],
-  // New profiles default to public visibility, but the participant must still
-  // actively tick the public-profile consent checkbox before submission.
+  // Public listing is automatic after profile submission and valid consent.
+  // There is no separate visibility setting or administrator approval step.
   visibility: 'public',
   skills: [], topics: [], facilitation_topics: [],
   programme_types: [], format_capabilities: [],
@@ -64,7 +64,7 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   // since a bare "which industry do you know best" reads as ambiguous next
   // to the preferred-industry question right after it.
   s.push({ key:'industry', kind:'industry-pair', section:'Profile', title:'Which industry are you in?', options:INDUSTRIES, required:true })
-  s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your name appears on your public profile only if you choose public marketplace visibility; otherwise it remains visible only within Valoria.', placeholder:'Your full professional name', required:true })
+  s.push({ key:'display_name', kind:'text', section:'Profile', title:'What should we call you?', sub:'Your professional profile is listed publicly once public-display consent is recorded and the listing requirements are met.', placeholder:'Your full professional name', required:true })
   s.push({ key:'username', kind:'text', section:'Profile', title:'Choose a username.', sub:'This is how you\u2019ll be identified on Valoria. Letters, numbers, dots, underscores or hyphens — no spaces.', placeholder:'e.g. chioma_adeyemi', required:true, validator:'username' })
   s.push({ key:'phone', kind:'text', section:'Profile', inputType:'tel', title:'What\u2019s your phone number?', sub:'Kept private — only shared once Valoria facilitates an introduction.', placeholder:'+234 801 234 5678', required:true, validator:'phone' })
   s.push({ key:'current_job_title', kind:'text', section:'Profile', title:'What\u2019s your current job title?', sub:'Your actual title — this stays factual and separate from your headline below.', placeholder:'e.g. Senior Product Manager', required:true })
@@ -75,9 +75,8 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
   ], required:true })
   s.push({ key:'bio', kind:'textarea', section:'Profile', title:'Write a short bio.', sub:'First person, 3–4 sentences. What you do, who you serve, what makes you distinct.', placeholder:'I\u2019m a fintech growth strategist with 12 years of experience...', maxLength:600, required:true })
   s.push({ key:'languages', kind:'multi-chip', section:'Profile', title:'Which languages do you speak?', sub:'Select all that apply.', options:LANGUAGES, required:true })
-  // Visibility is selected explicitly at the final review step. New profiles
-  // default to registered_only; public visibility is applied only after the
-  // user confirms the public-profile consent statement.
+  // Public display is the default listing path. The participant confirms
+  // public-display consent at submission; no visibility selector is shown.
 
   // The self-report "What are your core skills?" question was removed here —
   // replaced by the current/preferred industry pair at the top of this
@@ -165,6 +164,7 @@ function ProfileSetupForm() {
   const hadExistingTracksRef = useRef(false)
 
   const [form, setForm] = useState(EMPTY_FORM)
+  const [consentRecorded, setConsentRecorded] = useState(false)
 
   const isCandidate   = form.active_tracks.includes('candidate')
   const isSpeaker     = form.active_tracks.includes('speaker')
@@ -197,6 +197,28 @@ function ProfileSetupForm() {
       if (!user) { router.push('/login'); return }
       setUser(user)
 
+      // Reuse the current public-display acknowledgement when one is already
+      // on record, including an established administrator attestation. This
+      // avoids asking returning profile owners to approve visibility again.
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.access_token) {
+        try {
+          const consentResponse = await fetch('/api/profile/acknowledgements', {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+            cache: 'no-store',
+          })
+          if (consentResponse.ok) {
+            const consentStatus = await consentResponse.json()
+            if (consentStatus.has_public_consent === true) {
+              setConsentRecorded(true)
+              setForm(f => ({ ...f, consent: true }))
+            }
+          }
+        } catch (consentError) {
+          console.warn('Existing profile consent could not be loaded:', consentError)
+        }
+      }
+
       // Prefill from an existing row so this page also serves as "edit" —
       // previously it only ever started blank, even for someone who'd
       // already completed setup and just wanted to change one field.
@@ -215,7 +237,7 @@ function ProfileSetupForm() {
           // onto the other, so without this an existing value never made
           // it back into the form on reload.
           years_experience:    existing.experience_years != null ? String(existing.experience_years) : f.years_experience,
-          visibility:          existing.visibility || f.visibility,
+          visibility:          'public',
           // DB column is preferred_industries (text[]); the form is a
           // single-select string, same mismatch pattern as availability below.
           preferred_industry:  Array.isArray(existing.preferred_industries) ? (existing.preferred_industries[0] || f.preferred_industry) : f.preferred_industry,
@@ -538,8 +560,8 @@ function ProfileSetupForm() {
     }
 
     setSaving(false)
-    window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'profile_setup_completed', params: { profile_complete: row.profile_complete === true, assessment_access: acknowledgementResult.assessment_access || 'unknown', visibility_choice: acknowledgementResult.visibility || form.visibility } } }))
-    if ((acknowledgementResult.visibility || form.visibility) === 'public') {
+    window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'profile_setup_completed', params: { profile_complete: row.profile_complete === true, assessment_access: acknowledgementResult.assessment_access || 'unknown', public_display_consent_recorded: true } } }))
+    if (!consentRecorded && (acknowledgementResult.visibility || form.visibility) === 'public') {
       window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'public_visibility_consent_granted', params: { source: 'profile_setup' } } }))
     }
     setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: acknowledgementResult.listing_status || row?.listing_status || 'pending', visibility: acknowledgementResult.visibility || form.visibility, assessment_access: acknowledgementResult.assessment_access || null })
@@ -562,7 +584,7 @@ function ProfileSetupForm() {
           </div>
           <Title>You&apos;re in,<br/><Em>{form.display_name?.split(' ')[0] || 'welcome'}.</Em></Title>
           <p style={{ fontSize:'14px', fontWeight:300, color:DIM, lineHeight:1.75, marginBottom:'28px' }}>
-            Your professional profile and visibility preference have been saved.
+            Your professional profile and public-display consent have been saved.
           </p>
 
           <div style={{ background:MID, border:`1px solid ${GLINE}`, padding:'24px', marginBottom:'24px' }}>
@@ -577,7 +599,7 @@ function ProfileSetupForm() {
           <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'28px', textAlign:'left' }}>
             <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>WHAT HAPPENS NEXT</div>
             <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.8, margin:0 }}>
-              Status: <strong style={{ color:PARCH }}>{submittedInfo.visibility === 'public' && submittedInfo.listing_status === 'listed' ? `Public ${submittedInfo.assessment_access === 'basic' ? 'Basic' : 'Full'} listing` : submittedInfo.assessment_access ? `${submittedInfo.assessment_access === 'basic' ? 'Basic' : 'Full'} tier · Registered only` : 'Not yet listed'}</strong>. A completed taster can support a Basic listing. The Full VALU Index adds points, PRIME insight and Full-tier benefits. Public display follows your explicit visibility choice and the applicable identity, eligibility and listing checks.
+              Status: <strong style={{ color:PARCH }}>{submittedInfo.visibility === 'public' && submittedInfo.listing_status === 'listed' ? `Public ${submittedInfo.assessment_access === 'basic' ? 'Basic' : 'Full'} listing` : submittedInfo.assessment_access ? `${submittedInfo.assessment_access === 'basic' ? 'Basic' : 'Full'} tier · Public listing pending` : 'Profile submitted · Listing status pending'}</strong>. A completed taster can support a Basic listing. The Full VALU Index adds points, PRIME insight and Full-tier benefits. Public display follows your recorded public-display consent and the applicable identity, eligibility and listing checks.
             </p>
           </div>
 
@@ -660,7 +682,7 @@ function ProfileSetupForm() {
           photoUploading={photoUploading} photoError={photoError} fileRef={fileRef} uploadPhoto={uploadPhoto}
           cvUploading={cvUploading} cvError={cvError} cvFileRef={cvFileRef} uploadCV={uploadCV} downloadExistingCV={downloadExistingCV}
           isCandidate={isCandidate} isSpeaker={isSpeaker} isFacilitator={isFacilitator}
-          tags={tags} videoLinks={videoLinks} handleFinish={handleFinish}
+          tags={tags} videoLinks={videoLinks} handleFinish={handleFinish} consentRecorded={consentRecorded}
           onChangeTracks={() => { setEditingTracks(true); setScreenIndex(0) }}
         />
           </div>
@@ -733,7 +755,7 @@ function ScreenBody(props) {
   const { screen, form, set, toggleArr, updateListItem, selectAndAdvance, goNext, saving,
           photoUploading, photoError, fileRef, uploadPhoto,
           cvUploading, cvError, cvFileRef, uploadCV, downloadExistingCV,
-          isSpeaker, tags, videoLinks, handleFinish, onChangeTracks } = props
+          isSpeaker, tags, videoLinks, handleFinish, consentRecorded, onChangeTracks } = props
 
   const val = form[screen.key]
 
@@ -1086,7 +1108,7 @@ function ScreenBody(props) {
     }
 
     case 'review': {
-      return <ReviewScreen {...props} tags={tags} videoLinks={videoLinks} handleFinish={handleFinish} onChangeTracks={onChangeTracks} />
+      return <ReviewScreen {...props} tags={tags} videoLinks={videoLinks} handleFinish={handleFinish} consentRecorded={consentRecorded} onChangeTracks={onChangeTracks} />
     }
 
     default:
@@ -1094,11 +1116,11 @@ function ScreenBody(props) {
   }
 }
 
-function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, videoLinks, handleFinish, saving, saveError, set, onChangeTracks }) {
+function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, videoLinks, handleFinish, saving, saveError, set, consentRecorded, onChangeTracks }) {
   return (
     <div>
       <Title>Review &amp;<br/><Em>submit.</Em></Title>
-      <Sub>Take one more look before this goes live for review.</Sub>
+      <Sub>Confirm your details. Eligible profiles are listed automatically after submission when valid public-display consent is recorded and the listing requirements are met. No separate visibility setting or administrator approval is required.</Sub>
 
       <div style={{ background:MID, color:PARCH, padding:'20px', marginBottom:'24px', border:`1px solid ${GLINE}` }}>
         <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'12px' }}>
@@ -1157,14 +1179,14 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
             {form.designation ? <> — <strong style={{ color:'GOLD' }}>{form.designation}</strong></> : null}.
           </p>
           <p style={{ fontSize:'12px', fontWeight:300, color:DIM, lineHeight:1.6, margin:0 }}>
-            A completed taster can support a Basic listing. Full VALU Index insight and Full-tier benefits require a current full VALU Index. Public visibility depends on your consent and the applicable identity, eligibility and listing checks.
+            A completed taster can support a Basic listing. Full VALU Index insight and Full-tier benefits require a current full VALU Index. Public display follows your recorded public-display consent and the applicable identity, eligibility and listing checks.
           </p>
         </div>
       ) : (
         <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'24px' }}>
           <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>NEXT — COMPLETE YOUR VALU INDEX</div>
           <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7, margin:'0 0 14px' }}>
-            A completed taster linked to your account can support a Basic listing. Continue with the Full VALU Index to receive your official points, PRIME insight and Full-tier benefits. Public display still requires your explicit consent and the applicable identity and listing checks.
+            A completed taster linked to your account can support a Basic listing. Continue with the Full VALU Index to receive your official points, PRIME insight and Full-tier benefits. Public display follows your recorded public-display consent and the applicable identity and listing checks.
           </p>
           <AssessmentStartLink href="/dashboard" dashboardOnly style={{ fontSize:'11px', fontWeight:700, letterSpacing:'.12em', color:GOLD, textDecoration:'none' }}>
             COMPLETE THE FULL VALU INDEX →
@@ -1172,24 +1194,20 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
         </div>
       )}
 
-      <fieldset style={{ border:`1px solid ${GLINE}`, padding:'18px', margin:'0 0 22px', background:'rgba(201,168,76,.03)' }}>
-        <legend style={{ padding:'0 8px', color:GOLD, fontSize:'10px', fontWeight:700, letterSpacing:'.12em' }}>PROFILE VISIBILITY</legend>
-        <label style={{ display:'flex', alignItems:'flex-start', gap:'10px', marginBottom:'14px', cursor:'pointer' }}>
-          <input type="radio" name="profile-visibility" value="registered_only" checked={form.visibility === 'registered_only'} onChange={() => set('visibility','registered_only')} style={{ marginTop:'3px', accentColor:GOLD }} />
-          <span style={{ fontSize:'13px', color:PARCH, lineHeight:1.6 }}><strong>Registered Valoria members only</strong><br/><small style={{ color:DIM }}>Your profile will not appear to public visitors.</small></span>
-        </label>
-        <label style={{ display:'flex', alignItems:'flex-start', gap:'10px', cursor:'pointer' }}>
-          <input type="radio" name="profile-visibility" value="public" checked={form.visibility === 'public'} onChange={() => set('visibility','public')} style={{ marginTop:'3px', accentColor:GOLD }} />
-          <span style={{ fontSize:'13px', color:PARCH, lineHeight:1.6 }}><strong>Public marketplace</strong><br/><small style={{ color:DIM }}>Your approved public profile fields may be viewed by visitors when all listing requirements are met.</small></span>
-        </label>
-      </fieldset>
 
-      <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'28px' }}>
-        <input type="checkbox" checked={form.consent} onChange={e => set('consent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
-        <span style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7 }}>
-          {form.visibility === 'public' ? PUBLIC_PROFILE_CONSENT_TEXT : REGISTERED_PROFILE_CONSENT_TEXT}
-        </span>
-      </label>
+
+      {consentRecorded ? (
+        <p style={{ fontSize:'13px', color:'GOLD', lineHeight:1.7, margin:'0 0 28px' }}>
+          ✓ Public-display consent is already on record. No further visibility approval is required.
+        </p>
+      ) : (
+        <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'28px' }}>
+          <input type="checkbox" checked={form.consent} onChange={e => set('consent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
+          <span style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7 }}>
+            {PUBLIC_PROFILE_CONSENT_TEXT}
+          </span>
+        </label>
+      )}
 
       {saveError && (
         <p style={{ fontSize:'12px', color:'#F09595', margin:'0 0 14px', lineHeight:1.6 }}>{saveError}</p>
