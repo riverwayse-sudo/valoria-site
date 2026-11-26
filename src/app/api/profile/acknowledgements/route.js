@@ -98,7 +98,7 @@ export async function POST(request) {
   }
 
   if (body?.consent !== true || !['public', 'registered_only'].includes(body?.visibility)) {
-    return NextResponse.json({ error: 'Choose a visibility setting and confirm the profile statement.' }, { status: 400 })
+    return NextResponse.json({ error: 'A valid profile consent response is required.' }, { status: 400 })
   }
 
   const { data: profile, error: profileError } = await admin
@@ -119,17 +119,13 @@ export async function POST(request) {
   const acknowledgementVersion = visibility === 'public' ? PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION : REGISTERED_PROFILE_ACKNOWLEDGEMENT_VERSION
   const acknowledgementText = visibility === 'public' ? PUBLIC_PROFILE_CONSENT_TEXT : REGISTERED_PROFILE_CONSENT_TEXT
 
-  // Record the participant's explicit visibility choice before asking the
-  // canonical listing pipeline to refresh the public roster. The roster itself
-  // is consent-gated, so checking roster membership here would create a circular
-  // dependency: a participant could never consent while absent from the roster.
-  // Eligibility, identity, assessment validity, capability evidence, test and
-  // revocation checks remain enforced by sync_professional_listing_status and
-  // the database roster writer after this acknowledgement is stored.
-
-  // Registered-only is applied before recording the preference. Public consent
-  // is recorded first; the canonical readiness function then applies public
-  // visibility only if this is the latest consent preference.
+  // Record or reuse the current public-display acknowledgement before asking
+  // the canonical listing pipeline to refresh the public roster. The roster is
+  // consent-gated, so checking roster membership here would create a circular
+  // dependency. Eligibility, identity, assessment validity, capability evidence,
+  // test and revocation checks remain enforced by the database listing pipeline.
+  // The current UI exposes no visibility selector. registered_only remains
+  // accepted only for compatibility with older clients.
   if (visibility === 'registered_only') {
     const { error: visibilityError } = await admin
       .from('professional_profiles')
