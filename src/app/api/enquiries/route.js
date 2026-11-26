@@ -77,7 +77,7 @@ async function confirmToBuyer({ enquiryType, atbId, buyerName, buyerEmail }) {
     <div style="font-family:sans-serif;font-size:14px;line-height:1.7;color:#1A1A2E;">
       <p>Hi ${safeFirstName},</p>
       <p>We've received your ${label.toLowerCase()} regarding <strong>${safeAtbId}</strong>. Valoria Institute facilitates all introductions — someone from our team will be in touch shortly.</p>
-      <p style="color:#888;font-size:12px;">Valoria Institute · African Talent Bureau Ltd · Lagos, Nigeria</p>
+      <p style="color:#888;font-size:12px;">Valoria Institute · African Talent Bureau Ltd</p>
     </div>`
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
