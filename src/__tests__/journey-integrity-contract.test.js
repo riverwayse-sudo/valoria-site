@@ -472,7 +472,7 @@ describe('journey integrity contract', () => {
     expect(report).toContain(' points</span>')
   })
 
-  test('public VALU explanation follows Taster-first, account confirmation, and separate Full assessment', () => {
+  test('public VALU explanation follows account-first registration, Taster and separate Full assessment', () => {
     const start = read('src/app/valu/start/page.jsx')
     const signup = read('src/app/professional-signup/page.jsx')
     expect(start).toContain('Create or sign in to your Valoria account first')
@@ -612,7 +612,7 @@ describe('journey integrity contract', () => {
     expect(homeCss).toContain('grid-template-columns: 40px minmax(0,1fr) 54px 12px')
   })
 
-  test('public VALU entry points start Taster-first while preserving signed-in full-assessment handoff', () => {
+  test('public VALU entry points start with account confirmation before Taster while preserving signed-in full-assessment handoff', () => {
     const navigation = read('src/config/navigation.js')
     const nav = read('src/components/Nav.jsx')
     const home = read('src/app/page.jsx')
