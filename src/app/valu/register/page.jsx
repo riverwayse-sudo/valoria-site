@@ -8,7 +8,6 @@ const GOLD = '#C9A84C'
 const DARK = '#0F0F1A'
 const MIDNIGHT = '#1A1A2E'
 const PARCHMENT = '#F7F4EE'
-const MUTED = 'rgba(247,244,238,.62)'
 const EXPERIENCE = [
   ['0-3', '0–3 years'],
   ['4-8', '4–8 years'],
@@ -28,7 +27,7 @@ export default function ValuRegisterPage() {
   const [notice, setNotice] = useState('')
 
   const valid = useMemo(() => {
-    const identityValid = form.name.trim() && form.role.trim() && form.experience && form.email.trim() && form.privacyAcknowledged
+    const identityValid = !!(form.name.trim() && form.role.trim() && form.experience && form.email.trim() && form.privacyAcknowledged)
     if (!identityValid) return false
     return hasSession || (
       form.password.length >= PASSWORD_POLICY.minLength &&
@@ -75,7 +74,7 @@ export default function ValuRegisterPage() {
           marketingConsent: metadata.marketing_consent === true,
         }
         setForm(current => ({ ...current, ...next }))
-        const ready = user.email_confirmed_at && metadata.valu_taster_signup === true &&
+        const ready = !!user.email_confirmed_at && metadata.valu_taster_signup === true &&
           metadata.privacy_acknowledged === true && next.name && next.role && next.experience
         if (ready) {
           setNotice('Your confirmed account is ready. Preparing your secure Taster access…')
@@ -117,7 +116,7 @@ export default function ValuRegisterPage() {
         if (updateError) throw updateError
         const { data: { session } } = await supabase.auth.getSession()
         if (!session?.access_token || !data?.user?.email_confirmed_at) {
-          throw new Error('Confirm your email address before beginning the Taster.')
+          throw new Error('Sign in with a confirmed Valoria account to begin the Taster. New accounts can begin before email confirmation.')
         }
         await startTaster(session.access_token)
         return
@@ -142,7 +141,6 @@ export default function ValuRegisterPage() {
         throw new Error(result.error || 'Your Valoria account could not be securely prepared.')
       }
       window.location.replace(result.url)
-      return
     } catch (reason) {
       setError(reason?.message || 'We could not create your Valoria account. Please try again.')
     } finally {
@@ -152,16 +150,6 @@ export default function ValuRegisterPage() {
 
   if (checkingSession) {
     return <main style={styles.page}><section style={styles.card}><div style={styles.eyebrow}>VALORIA INSTITUTE</div><h1 style={styles.title}>Preparing your account.</h1><p style={styles.copy}>Checking your secure Valoria session…</p></section></main>
-  }
-
-  return <main style={styles.page}><section style={styles.card}>
-      <div style={styles.eyebrow}>EMAIL CONFIRMATION</div>
-      <h1 style={styles.title}>One confirmation. <em>Then your Taster.</em></h1>
-      <p style={styles.copy}>We sent a secure confirmation link to <strong>{form.email.trim().toLowerCase()}</strong>. Open that email on this device to confirm your account. Your Taster will begin only after Valoria verifies your email.</p>
-      {error && <p role="alert" style={styles.error}>{error}</p>}
-            <button type="button" onClick={resendConfirmation} disabled={loading} style={styles.secondary}>{loading ? 'REQUESTING…' : 'RESEND CONFIRMATION EMAIL'}</button>
-      <p style={styles.small}>Check your inbox and spam folder. You can return here after confirmation; your account details have been saved.</p>
-    </section></main>
   }
 
   return <main style={styles.page}>
