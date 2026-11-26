@@ -46,7 +46,7 @@ export async function POST(request) {
       <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 16px;">VALORIA INSTITUTE</p>
       <h1 style="font-size:22px;font-weight:400;margin:0 0 16px;">Welcome to Valoria.</h1>
       <p style="margin:0 0 12px;">Hi ${firstName},</p>
-      <p style="margin:0 0 12px;">Your account is ready. Here are a few ways to begin:</p>
+      <p style="margin:0 0 12px;">Your registration with Valoria has been received. If you have not yet confirmed your email address, please use the separate confirmation email to verify it. Once confirmed, you can begin here:</p>
       <ul style="margin:0 0 16px;padding-left:20px;">
         <li style="margin-bottom:6px;">Explore assessment-informed professional profiles</li>
         <li style="margin-bottom:6px;">Request an introduction to a professional, speaker or facilitator</li>
@@ -60,7 +60,7 @@ export async function POST(request) {
     to: normalizedEmail,
     subject: 'Welcome to Valoria Institute',
     html,
-    text: `Welcome to Valoria Institute, ${typeof name === 'string' ? name.trim() : 'there'}.\n\nExplore assessment-informed professional profiles, request introductions, and use your dashboard to track your Valoria journey.\n\nExplore the marketplace: ${siteOrigin}/marketplace\n\nThe Valoria Institute team`,
+    text: `Welcome to Valoria Institute, ${typeof name === 'string' ? name.trim() : 'there'}.\n\nYour registration has been received. Confirm your email address using the separate confirmation email, then explore assessment-informed professional profiles, request introductions, and use your dashboard to track your Valoria journey.\n\nExplore the marketplace: ${siteOrigin}/marketplace\n\nThe Valoria Institute team`,
     tags: { category: 'welcome-email', audience: 'buyer' },
     idempotencyKey: `valoria/welcome/${normalizedEmail}`,
   })
