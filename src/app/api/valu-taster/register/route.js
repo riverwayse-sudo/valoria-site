@@ -13,6 +13,10 @@ function fail(message, status) {
 }
 
 export async function POST(request) {
+  const origin = request.headers.get('origin')
+  if (!origin || new URL(origin).origin !== new URL(request.url).origin) {
+    return fail('Registration requests must come from the Valoria site.', 403)
+  }
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !serviceKey) return fail('The secure registration service is not configured.', 503)
@@ -34,6 +38,28 @@ export async function POST(request) {
   }
   const passwordCheck = validatePassword(password)
   if (!passwordCheck.valid) return fail(passwordCheck.errors.join(' '), 400)
+
+  const emailKey = createHash('sha256').update(email).digest('hex')
+  try {
+    const limited = await fetch(`${url}/rest/v1/rpc/consume_rate_limit`, {
+      method: 'POST',
+      headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_rate_key: `valu-taster-account-email:${emailKey}`, p_limit: 4, p_window_seconds: 3600 }),
+      cache: 'no-store',
+    })
+    if (!limited.ok) throw new Error(`rate-limit:${limited.status}`)
+    const result = await limited.json()
+    const limit = Array.isArray(result) ? result[0] : result
+    if (!limit?.allowed) {
+      return NextResponse.json({ error: 'Too many registration attempts for this email address. Please try again later.' }, {
+        status: 429,
+        headers: { 'Cache-Control': 'no-store', 'Retry-After': String(limit?.retry_after_seconds || 3600) },
+      })
+    }
+  } catch (error) {
+    console.error('VALU email registration rate limiter failed:', error?.message || error)
+    return fail('Registration is temporarily unavailable. Please try again shortly.', 503)
+  }
 
   const ip = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const ipKey = createHash('sha256').update(ip).digest('hex')
