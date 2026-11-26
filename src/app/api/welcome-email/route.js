@@ -1,87 +1,73 @@
-// src/app/api/welcome-email/route.js
-//
-// Sends a Valoria-branded welcome email to new buyer accounts right after
-// signup — separate from Supabase's own bare confirmation-link email,
-// which has no branding or context. Buyers had no welcome treatment of any
-// kind before this; only the waitlist flow ever sent anything.
-//
-// Professionals aren't included here — they already get a "Welcome,
-// {name}." branded email (with their score and a Complete Your Profile
-// CTA) as part of report delivery in the assessment app's send-email.js.
-// A second one would just be redundant.
+// Branded buyer welcome email. Supabase confirmation remains a separate Auth email.
 
-const BREVO_KEY = process.env.BREVO_API_KEY
-const FROM_EMAIL = 'info@valoriainstitute.com'
-const FROM_NAME  = 'Valoria Institute'
+import { createClient } from '@supabase/supabase-js'
+import resendEmail from '@/lib/resend-email.cjs'
+
+const { sendResendEmail, escapeHtml, getSiteOrigin } = resendEmail
+
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !key) throw new Error('Supabase server configuration is missing.')
+  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+}
 
 export async function POST(request) {
-  if (!BREVO_KEY) {
-    console.error('Welcome email skipped: BREVO_API_KEY not configured.')
-    return new Response(JSON.stringify({ ok: false, error: 'Email not configured.' }), {
-      status: 501, headers: { 'Content-Type': 'application/json' },
-    })
-  }
-
   let body
   try {
     body = await request.json()
   } catch {
-    return new Response(JSON.stringify({ ok: false, error: 'Invalid request body.' }), {
-      status: 400, headers: { 'Content-Type': 'application/json' },
-    })
+    return Response.json({ ok: false, error: 'Invalid request body.' }, { status: 400 })
   }
 
   const { email, name } = body || {}
+  const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : ''
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!email || !emailRe.test(email)) {
-    return new Response(JSON.stringify({ ok: false, error: 'A valid email is required.' }), {
-      status: 400, headers: { 'Content-Type': 'application/json' },
-    })
+  if (!emailRe.test(normalizedEmail)) {
+    return Response.json({ ok: false, error: 'A valid email is required.' }, { status: 400 })
   }
 
-  const firstName = (name || '').trim().split(/\s+/)[0] || 'there'
+  const supabase = getSupabase()
+  const forwardedFor = request.headers.get('x-forwarded-for')
+  const ip = request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip') || forwardedFor?.split(',').pop()?.trim() || 'unknown'
+  const [ipLimit, emailLimit] = await Promise.all([
+    supabase.rpc('check_rate_limit', { p_key: `welcome-email:ip:${ip}`, p_max_count: 5, p_window_seconds: 3600 }),
+    supabase.rpc('check_rate_limit', { p_key: `welcome-email:email:${normalizedEmail}`, p_max_count: 1, p_window_seconds: 86400 }),
+  ])
+  for (const result of [ipLimit, emailLimit]) {
+    if (result.error) console.error('Welcome email rate limit check failed:', result.error)
+    else if (!result.data) return Response.json({ ok: false, error: 'Too many requests. Please try again later.' }, { status: 429 })
+  }
 
+  const siteOrigin = getSiteOrigin()
+  const firstName = escapeHtml((typeof name === 'string' ? name.trim().split(/\s+/)[0] : '') || 'there')
   const html = `
-    <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;max-width:520px;margin:0 auto;">
+    <div style="font-family:'Raleway',sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;max-width:520px;margin:0 auto;">
       <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 16px;">VALORIA INSTITUTE</p>
       <h1 style="font-size:22px;font-weight:400;margin:0 0 16px;">Welcome to Valoria.</h1>
       <p style="margin:0 0 12px;">Hi ${firstName},</p>
-      <p style="margin:0 0 12px;">You're in. Your account is ready — here's what to do next:</p>
+      <p style="margin:0 0 12px;">Your account is ready. Here are a few ways to begin:</p>
       <ul style="margin:0 0 16px;padding-left:20px;">
-        <li style="margin-bottom:6px;">Browse the marketplace for PRIME-assessed talent, speakers, and facilitators</li>
-        <li style="margin-bottom:6px;">Request an introduction to anyone you'd like to connect with — Valoria facilitates every introduction personally</li>
-        <li>Check your dashboard any time to track requests you've sent</li>
+        <li style="margin-bottom:6px;">Explore assessment-informed professional profiles</li>
+        <li style="margin-bottom:6px;">Request an introduction to a professional, speaker or facilitator</li>
+        <li>Use your dashboard to track requests and your Valoria journey</li>
       </ul>
-      <a href="https://valoriainstitute.com/marketplace" style="display:inline-block;margin-top:8px;padding:12px 24px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.08em;">BROWSE THE MARKETPLACE</a>
+      <a href="${siteOrigin}/marketplace" style="display:inline-block;margin-top:8px;padding:12px 24px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.08em;">EXPLORE THE MARKETPLACE</a>
       <p style="margin:28px 0 0;font-size:12px;color:#8A8578;">— The Valoria Institute team</p>
     </div>`
 
-  try {
-    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
-      headers: { 'api-key': BREVO_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sender: { name: FROM_NAME, email: FROM_EMAIL },
-        to: [{ email, name: name || undefined }],
-        subject: 'Welcome to Valoria Institute',
-        htmlContent: html,
-        tags: ['welcome-email', 'buyer'],
-      }),
-    })
-    if (!res.ok) {
-      const errText = await res.text().catch(() => '')
-      console.error('Welcome email failed:', res.status, errText)
-      return new Response(JSON.stringify({ ok: false, error: 'Send failed.' }), {
-        status: 502, headers: { 'Content-Type': 'application/json' },
-      })
-    }
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200, headers: { 'Content-Type': 'application/json' },
-    })
-  } catch (err) {
-    console.error('Welcome email error:', err)
-    return new Response(JSON.stringify({ ok: false, error: 'Send failed.' }), {
-      status: 500, headers: { 'Content-Type': 'application/json' },
-    })
+  const result = await sendResendEmail({
+    to: normalizedEmail,
+    subject: 'Welcome to Valoria Institute',
+    html,
+    text: `Welcome to Valoria Institute, ${typeof name === 'string' ? name.trim() : 'there'}.\n\nExplore assessment-informed professional profiles, request introductions, and use your dashboard to track your Valoria journey.\n\nExplore the marketplace: ${siteOrigin}/marketplace\n\nThe Valoria Institute team`,
+    tags: { category: 'welcome-email', audience: 'buyer' },
+    idempotencyKey: `valoria/welcome/${normalizedEmail}`,
+  })
+
+  if (!result.ok) {
+    console.error('Welcome email failed:', result.status, result.error)
+    return Response.json({ ok: false, error: 'Send failed.' }, { status: result.status === 501 ? 501 : 502 })
   }
+  return Response.json({ ok: true, email_id: result.id }, { status: 200 })
 }
