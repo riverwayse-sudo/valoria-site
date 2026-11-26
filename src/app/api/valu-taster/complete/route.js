@@ -11,7 +11,7 @@ function fail(message, status) {
 
 export async function POST(request) {
   const origin = request.headers.get('origin')
-  if (!origin || new URL(origin).origin !== new URL(request.url).origin) {
+  if (!origin || origin !== new URL(request.url).origin) {
     return fail('Confirmation requests must come from the Valoria site.', 403)
   }
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
