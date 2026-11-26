@@ -125,7 +125,7 @@ export default async function LiveProfilesScroll() {
       <div className="live-profiles-professional-cta">
         <span className="live-profiles-professional-rule" />
         <div><small>YOUR PROFESSIONAL PRESENCE</small><strong>Make your capabilities easier to understand and connect to opportunity.</strong></div>
-        <AssessmentStartLink href="/valu/register/?journey=valu_taster">TAKE THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
+        <AssessmentStartLink href="/valu/register/?journey=valu_taster">CREATE ACCOUNT TO BEGIN <span>→</span></AssessmentStartLink>
       </div>
     </section>
   )
