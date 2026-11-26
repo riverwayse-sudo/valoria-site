@@ -10,6 +10,7 @@ describe('marketplace empty-state behavior', () => {
   test('does not show search filters before public listings exist', () => {
     expect(source).toContain('const hasPublicListings = rows.length > 0 || activeCount > 0')
     expect(source).toContain('{hasPublicListings && (')
+    expect(source).toContain('data-directory-controls="true"')
     expect(source).toContain('<section className={styles.controls}>')
   })
 
