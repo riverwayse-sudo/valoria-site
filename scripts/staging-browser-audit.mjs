@@ -279,6 +279,15 @@ try {
         const response = await page.goto(route.url, { waitUntil: 'domcontentloaded', timeout: 60000 })
         status = response?.status() ?? null
         await page.waitForTimeout(1800)
+        if (route.name === 'opportunities') {
+          await page.waitForFunction(() =>
+            document.querySelector('[data-opportunities-empty]') ||
+            document.querySelector('[data-opportunities-error]') ||
+            document.querySelector('[data-opportunities-grid]'),
+            null,
+            { timeout: 10000 }
+          ).catch(() => {})
+        }
         if (['marketplace', 'atb-connect', 'atb-spotlight', 'atb-spotlight-facilitators'].includes(route.name)) {
           await page.waitForFunction(() =>
             document.querySelector('[data-directory-empty]') ||
@@ -379,10 +388,10 @@ try {
           directoryEmptyTitle: document.querySelector('[data-directory-empty] strong')?.innerText || '',
           directoryUnavailable: /Marketplace data could not be verified|directory is temporarily unavailable/i.test(document.body.innerText),
           directoryGridCards: document.querySelector('[data-directory-grid]')?.children.length || 0,
-          opportunityEmptyTitle: document.querySelector('.opportunities-empty h2')?.innerText || '',
-          opportunityError: document.querySelector('.opportunities-error')?.innerText || '',
-          opportunityCards: document.querySelectorAll('.opportunity-card').length,
-          opportunitySubmitHref: [...document.querySelectorAll('a')].find(a => /POST AN OPPORTUNITY/i.test(a.innerText))?.getAttribute('href') || '',
+          opportunityEmptyTitle: document.querySelector('[data-opportunities-empty] h2')?.innerText || '',
+          opportunityError: document.querySelector('[data-opportunities-error]')?.innerText || '',
+          opportunityCards: document.querySelectorAll('[data-opportunities-grid] .opportunity-card').length,
+          opportunitySubmitHref: document.querySelector('[data-opportunities-submit]')?.getAttribute('href') || '',
           journeyParam,
           savedTasterCopy,
           signInLink,
