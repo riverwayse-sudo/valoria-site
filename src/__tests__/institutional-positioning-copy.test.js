@@ -17,6 +17,7 @@ describe('institutional positioning and public copy contract', () => {
     expect(about).not.toMatch(/African professional talent|African professionals are not underperforming|continent-wide human capital|Score-based tiers are credentials/i)
     expect(about).toContain('The VALU Index is an assessment result that informs capability development')
     expect(about).toContain('not itself a professional certification or credential')
+    expect(about).toContain('not a recruitment agency, general-purpose jobs board or speaker-booking bureau')
     expect(footer).toContain('professional capability is assessed, developed, represented')
     expect(footer).not.toMatch(/African professional merit/i)
   })
