@@ -32,4 +32,14 @@ describe('Canonical VALU merit tiers', () => {
     expect(brand).toContain("meritTier: false")
     expect(brand).toContain("if (assessmentLevel !== 'full' || points == null")
   })
+  test('marketplace and individual profiles share one canonical PRIME cluster mapping', () => {
+    const brand = read('src/lib/brand.js')
+    const directory = read('src/components/MarketplaceDirectory.jsx')
+    const profile = read('src/app/profile/[id]/ProfileClient.jsx')
+    expect(brand).toContain('export const PRIME_CLUSTER_NAMES = Object.fromEntries(PRIME_CLUSTERS.map')
+    expect(directory).toContain('CLUSTER_NAMES = PRIME_CLUSTER_NAMES')
+    expect(profile).toContain('PRIME_CLUSTER_NAMES[letter]')
+    expect(profile).toContain('PRIME_CLUSTERS.map(({ letter, color })')
+  })
+
 })
