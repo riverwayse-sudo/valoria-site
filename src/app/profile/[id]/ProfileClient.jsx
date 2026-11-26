@@ -603,7 +603,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                 rather than making a buyer read the radar chart to figure out
                 what the assessment actually found strong. Only shows once
                 the VALU Index has been completed. */}
-            {p.cluster_scores && (
+            {!isSpecializedView && p.cluster_scores && (
               <div style={{ background: GOLD, padding:'22px', marginBottom:'32px' }}>
                 <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(15,15,26,.55)', marginBottom:'16px' }}>Key Strengths</div>
                 <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
