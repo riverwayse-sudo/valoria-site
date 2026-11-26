@@ -157,7 +157,7 @@ export default function ValuRegisterPage() {
     <section style={styles.card}>
       <Link href="/" style={styles.brand}>VALORIA INSTITUTE</Link>
       <div style={styles.eyebrow}>YOUR VALU INDEX JOURNEY</div>
-      <h1 style={styles.title}>Your journey starts <em>here.</em></h1>
+      <h1 style={styles.title}>Your account comes first.</h1>
       <p style={styles.copy}>Create your Valoria account, complete your Taster, then confirm your email to access your dashboard and full VALU Index.</p>
       {hasSession && <p style={styles.notice}>You are signed in. Complete or confirm your professional details to begin.</p>}
       <form onSubmit={submit} style={styles.form}>
