@@ -1,13 +1,20 @@
 import { createClient } from '@supabase/supabase-js'
+import resendEmail from '@/lib/resend-email.cjs'
 
-async function sendWelcomeEmail({ email, fullName, journeyUrl }) {
-  const key=process.env.BREVO_API_KEY
-  if(!key)return
-  const fromEmail=process.env.BREVO_FROM_EMAIL||'info@valoriainstitute.com'
-  const fromName=process.env.BREVO_FROM_NAME||'Valoria Institute'
-  const escape=v=>String(v||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))
-  const first=escape(fullName.split(/\s+/)[0]||'there')
-  const res=await fetch('https://api.brevo.com/v3/smtp/email',{method:'POST',headers:{'api-key':key,'Content-Type':'application/json'},body:JSON.stringify({sender:{name:fromName,email:fromEmail},to:[{email,name:fullName}],replyTo:{email:fromEmail,name:fromName},subject:'Your Valoria journey starts here.',htmlContent:`<div style="font-family:Arial,sans-serif;background:#0F0F1A;color:#F7F4EE;padding:40px"><div style="max-width:560px;margin:auto;background:#1A1A2E;padding:40px"><p style="color:#C9A84C;letter-spacing:.16em;font-size:11px;font-weight:700">VALORIA INSTITUTE</p><h1 style="font-weight:400">Your place is saved.</h1><p>Hi ${first},</p><p>We've saved your interest with Valoria. You do not need to start over when you return.</p><p style="margin-top:28px"><a href="${escape(journeyUrl)}" style="display:inline-block;background:#C9A84C;color:#1A1A2E;padding:14px 20px;text-decoration:none;font-weight:700">CONTINUE YOUR VALORIA JOURNEY →</a></p><p style="color:rgba(247,244,238,.55);font-size:12px">This continuation link is valid for 30 days.</p></div></div>`,tags:['valoria-lead','journey-continuity']})});if(!res.ok)throw new Error(`BREVO_EMAIL_${res.status}`)
+const { sendResendEmail, escapeHtml } = resendEmail
+
+async function sendWelcomeEmail({ email, fullName, journeyUrl, source }) {
+  const first = escapeHtml(fullName.split(/\\s+/)[0] || 'there')
+  const safeJourneyUrl = escapeHtml(journeyUrl)
+  return sendResendEmail({
+    to: email,
+    replyTo: 'info@valoriainstitute.com',
+    subject: 'Your Valoria journey starts here.',
+    html: `<div style="font-family:Arial,sans-serif;background:#0F0F1A;color:#F7F4EE;padding:40px"><div style="max-width:560px;margin:auto;background:#1A1A2E;padding:40px"><p style="color:#C9A84C;letter-spacing:.16em;font-size:11px;font-weight:700">VALORIA INSTITUTE</p><h1 style="font-weight:400">Your place is saved.</h1><p>Hi ${first},</p><p>We've saved your interest with Valoria. You do not need to start over when you return.</p><p style="margin-top:28px"><a href="${safeJourneyUrl}" style="display:inline-block;background:#C9A84C;color:#1A1A2E;padding:14px 20px;text-decoration:none;font-weight:700">CONTINUE YOUR VALORIA JOURNEY →</a></p><p style="color:rgba(247,244,238,.55);font-size:12px">This continuation link is valid for 30 days.</p></div></div>`,
+    text: `Hi ${fullName.split(/\\s+/)[0] || 'there'},\n\nWe've saved your interest with Valoria. You do not need to start over when you return.\n\nContinue your Valoria journey: ${journeyUrl}\n\nThis continuation link is valid for 30 days.\n\nValoria Institute`,
+    tags: { category: 'waitlist', source: source || 'waitlist_page' },
+    idempotencyKey: `valoria/waitlist/${email}`,
+  })
 }
 
 function getSupabase() {
@@ -81,12 +88,19 @@ export async function POST(request) {
       ? `${new URL(request.url).origin}/journey/continue?token=${encodeURIComponent(reentry.token)}`
       : `${new URL(request.url).origin}/journey`
 
-    // Send welcome email (fire and forget — don't block the response)
-    sendWelcomeEmail({ email: email.trim().toLowerCase(), fullName: full_name.trim(), journeyUrl }).catch(
-      err => console.error('Brevo email error:', err)
-    )
+    const emailResult = await sendWelcomeEmail({
+      email: email.trim().toLowerCase(),
+      fullName: full_name.trim(),
+      journeyUrl,
+      source: baseSource,
+    })
+    if (!emailResult.ok) console.error('Waitlist welcome email failed:', emailResult.status, emailResult.error)
 
-    return Response.json({ message: 'Joined successfully.', journey_url: journeyUrl }, { status: 200 })
+    return Response.json({
+      message: 'Joined successfully.',
+      journey_url: journeyUrl,
+      email_sent: emailResult.ok,
+    }, { status: 200 })
   } catch (err) {
     console.error('Waitlist API error:', err)
     return Response.json({ error: 'Server error. Please try again.' }, { status: 500 })
