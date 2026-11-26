@@ -25,6 +25,7 @@ export default function ValuRegisterPage() {
   const [checkingSession, setCheckingSession] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
 
   const valid = useMemo(() => {
     const identityValid = form.name.trim() && form.role.trim() && form.experience && form.email.trim() && form.privacyAcknowledged
@@ -228,4 +229,5 @@ const styles = {
   inlineLink: { color: GOLD, textDecoration: 'underline' },
   small: { color: 'rgba(247,244,238,.42)', fontSize: 11, lineHeight: 1.65, marginTop: 14 },
   error: { color: '#F0A5A5', fontSize: 12, lineHeight: 1.6 },
+  notice: { color: '#D4C9A8', fontSize: 12, lineHeight: 1.6 },
 }
