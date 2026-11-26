@@ -55,6 +55,8 @@ describe("email OTP signup confirmation", () => {
     expect(completeRoute).toContain("type: 'signup'");
     expect(completeRoute).toContain("candidate.lead_capture_id !== taster.lead_capture_id");
     expect(completeRoute).toContain("lead?.source !== 'valu_taster_signup'");
+    expect(completeRoute).toContain("taster.user_id !== user.id")
+    expect(completeRoute).toContain("candidate.linked_user_id !== user.id")
   });
 
   test("post-Taster signup confirmation returns through the authenticated callback", () => {
