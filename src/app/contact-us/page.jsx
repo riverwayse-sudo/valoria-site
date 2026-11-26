@@ -40,9 +40,9 @@ export default function ContactPage() {
                 <p className="contact-note">We respond within two business days.</p>
               </div>
               <div className="info-card">
-                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">LOCATION</span></div>
-                <p className="contact-location">{BRAND.location}</p>
-                <p className="contact-note">A {BRAND.copyrightEntity} initiative. {BRAND.compliance}.</p>
+                <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">INSTITUTIONAL SCOPE</span></div>
+                <p className="contact-location">Built for international professional markets.</p>
+                <p className="contact-note">Valoria Institute establishes the standards and infrastructure for professional capability, development and visibility.</p>
               </div>
             </Reveal>
           </div>
