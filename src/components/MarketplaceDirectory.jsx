@@ -93,14 +93,14 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     }).sort((a, b) => {
       const scored = value => value.assessment_access === 'full' && Number.isFinite(Number(value.valu_index))
       const isAvailable = value => /^(available|accepting|open)$/i.test(displayText(value.availability_status))
-      return Number(scored(b)) - Number(scored(a)) ||
+      return (selectedTrack === 'all' ? Number(scored(b)) - Number(scored(a)) : 0) ||
         Number(isAvailable(b)) - Number(isAvailable(a)) ||
         displayText(a.full_name).localeCompare(displayText(b.full_name))
     })
-  },[rows,activeTrack,query,sector,cluster,skill,scoreBand])
+  },[rows,selectedTrack,query,sector,cluster,skill,scoreBand])
 
   const clearFilters = () => { setQuery(''); setSector(''); setCluster(''); setSkill(''); setScoreBand('') }
-  const activeCount = Number(counts?.[activeTrack] ?? counts?.all ?? 0)
+  const activeCount = Number(counts?.[selectedTrack] ?? counts?.all ?? 0)
   const hasPublicListings = rows.length > 0 || activeCount > 0
 
   return <div className={styles.page}>
@@ -108,54 +108,54 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
     <main>
       <section className={styles.hero}>
         <div className={styles.container}>
-          <p className={styles.eyebrow}>{activeTrack === 'candidate' ? 'ATB CONNECT' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'ATB SPOTLIGHT' : 'VALORIA MARKETPLACE'}</p>
+          <p className={styles.eyebrow}>{selectedTrack === 'candidate' ? 'ATB CONNECT' : selectedTrack === 'speaker' || selectedTrack === 'facilitator' ? 'ATB SPOTLIGHT' : 'VALORIA MARKETPLACE'}</p>
           <h1>
-            {activeTrack === 'all' && <>Find professionals<br/><i>by capability.</i></>}
-            {activeTrack === 'candidate' && <>Precision hiring,<br/><i>not CV triage.</i></>}
-            {activeTrack === 'speaker' && <>Find a speaker<br/><i>who can hold a room.</i></>}
-            {activeTrack === 'facilitator' && <>Find a facilitator<br/><i>for the work ahead.</i></>}
+            {selectedTrack === 'all' && <>Find professionals<br/><i>by capability.</i></>}
+            {selectedTrack === 'candidate' && <>Precision hiring,<br/><i>not CV triage.</i></>}
+            {selectedTrack === 'speaker' && <>Find a speaker<br/><i>who can hold a room.</i></>}
+            {selectedTrack === 'facilitator' && <>Find a facilitator<br/><i>for the work ahead.</i></>}
           </h1>
           <p className={styles.lede}>
-            {activeTrack === 'all' && 'Discover professionals by demonstrated capability, sector and declared expertise.'}
-            {activeTrack === 'candidate' && 'Find professionals by demonstrated capability, sector and declared expertise.'}
-            {activeTrack === 'speaker' && 'Discover speakers by professional focus, experience and declared expertise.'}
-            {activeTrack === 'facilitator' && 'Discover facilitators by professional focus and sector. For a structured team development programme, explore Valoria Develop.'}
+            {selectedTrack === 'all' && 'Discover professionals by demonstrated capability, sector and declared expertise.'}
+            {selectedTrack === 'candidate' && 'Find professionals by demonstrated capability, sector and declared expertise.'}
+            {selectedTrack === 'speaker' && 'Discover speakers by speaking topics, delivery formats, audience experience and engagements.'}
+            {selectedTrack === 'facilitator' && 'Discover facilitators by facilitation topics, programme types, delivery formats and client evidence. For a structured team development programme, explore Valoria Develop.'}
           </p>
-          {(activeTrack === 'all' || activeTrack === 'candidate') && <Link className={styles.shortlistCta} href="/contact-us?type=candidate">{hasPublicListings ? 'REQUEST A SHORTLIST' : 'DISCUSS YOUR TALENT NEEDS'} <span aria-hidden="true">→</span></Link>}
-          {activeTrack === 'facilitator' && <Link className={styles.view} href="/programmes">EXPLORE VALORIA DEVELOP</Link>}
-          <nav className={styles.tabs} aria-label="Filter by declared role">{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={activeTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
+          {(selectedTrack === 'all' || selectedTrack === 'candidate') && <Link className={styles.shortlistCta} href="/contact-us?type=candidate">{hasPublicListings ? 'REQUEST A SHORTLIST' : 'DISCUSS YOUR TALENT NEEDS'} <span aria-hidden="true">→</span></Link>}
+          {selectedTrack === 'facilitator' && <Link className={styles.view} href="/programmes">EXPLORE VALORIA DEVELOP</Link>}
+          <nav className={styles.tabs} aria-label="Filter by declared role">{TRACKS.map(([id,label,href])=><Link key={id} href={href} className={selectedTrack===id ? styles.activeTab : ''}>{label}<b>{counts[id] || 0}</b></Link>)}</nav>
         </div>
       </section>
       {hasPublicListings && (
       <section className={styles.controls}>
         <div className={styles.containerControl}>
-          <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search professionals, skills or sectors…" aria-label="Search marketplace"/>
-          <select className="vi-select--light" value={cluster} onChange={e=>setCluster(e.target.value)} aria-label="Filter by PRIME cluster">
+          <input value={query} onChange={e=>setQuery(e.target.value)} placeholder={selectedTrack === 'speaker' ? 'Search speaking topics, formats or sectors…' : selectedTrack === 'facilitator' ? 'Search facilitation topics, programmes or sectors…' : selectedTrack === 'candidate' ? 'Search talent skills, roles or sectors…' : 'Search professionals, capabilities or sectors…'} aria-label="Search marketplace"/>
+          {selectedTrack === 'all' && <select className="vi-select--light" value={cluster} onChange={e=>setCluster(e.target.value)} aria-label="Filter by PRIME cluster">
             <option value="">All professional areas</option>
             {PRIME_CLUSTERS.map(item=><option key={item.letter} value={item.letter}>{item.name}</option>)}
-          </select>
-          <select className="vi-select--light" value={skill} onChange={e=>setSkill(e.target.value)} aria-label="Filter by skill">
-            <option value="">All skills</option>
+          </select>}
+          <select className="vi-select--light" value={skill} onChange={e=>setSkill(e.target.value)} aria-label={selectedTrack === 'speaker' ? 'Filter by speaking topic or format' : selectedTrack === 'facilitator' ? 'Filter by facilitation topic or programme type' : selectedTrack === 'candidate' ? 'Filter by Talent skill' : 'Filter by capability'}>
+            <option value="">{selectedTrack === 'speaker' ? 'All speaking topics and formats' : selectedTrack === 'facilitator' ? 'All facilitation specialisms' : selectedTrack === 'candidate' ? 'All Talent skills' : 'All capabilities'}</option>
             {skills.map(value=><option key={value} value={value}>{value}</option>)}
           </select>
-          <select className="vi-select--light" value={scoreBand} onChange={e=>setScoreBand(e.target.value)} aria-label="Filter by VALU Index points band">
+          {selectedTrack === 'all' && <select className="vi-select--light" value={scoreBand} onChange={e=>setScoreBand(e.target.value)} aria-label="Filter by VALU Index points band">
             <option value="">All VALU Index scores</option>
             {SCORE_BANDS.map(value=><option key={value.name} value={value.name}>{value.name} · {value.min}–{value.max} points</option>)}
-          </select>
+          </select>}
           <select className="vi-select--light" value={sector} onChange={e=>setSector(e.target.value)} aria-label="Filter by sector">
             <option value="">All sectors</option>
             {sectors.map(value=><option key={value} value={value}>{value}</option>)}
           </select>
           {(query || sector || cluster || skill || scoreBand) && <button onClick={clearFilters}>CLEAR</button>}
         </div>
-        <details className={styles.filterHelp}><summary>How filtering works</summary><p>Filter by professional area, skills, sector or assessment score. We only show information approved for public display.</p></details>
+        <details className={styles.filterHelp}><summary>How filtering works</summary><p>{selectedTrack === 'all' ? 'Filter by professional area, capabilities, sector or overall VALU Index points.' : selectedTrack === 'speaker' ? 'Filter by speaking topics, formats and sector. The overall VALU Index report remains in the General view.' : selectedTrack === 'facilitator' ? 'Filter by facilitation topics, programme types, delivery formats and sector. The overall VALU Index report remains in the General view.' : 'Filter by Talent skills and sector. The overall VALU Index report remains in the General view.'} We only show information approved for public display.</p></details>
       </section>
       )}
       <section className={styles.directory} data-directory-root="true">
         <div className={styles.container}>
           <div className={styles.directoryHead} data-directory-head="true">
             <div><p className={styles.eyebrow}>PUBLIC MARKETPLACE</p><h2 data-directory-count="true">{dataUnavailable ? 'Directory unavailable' : `${results.length} ${results.length===1?'professional':'professionals'}`}</h2></div>
-            <span>Assessment-informed professional profiles</span>
+            <span>{selectedTrack === 'all' ? 'Assessment-informed professional profiles' : selectedTrack === 'speaker' ? 'Speaking topics, formats and engagements' : selectedTrack === 'facilitator' ? 'Facilitation topics, programmes and client evidence' : 'Talent skills and professional context'}</span>
           </div>
           {dataUnavailable ? (
             <div className={styles.empty} data-directory-empty="true">
@@ -164,7 +164,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
               <button type="button" className={styles.view} onClick={() => router.refresh()}>RETRY →</button>
             </div>
           ) : results.length ? <div className={styles.grid} data-directory-grid="true">{results.map(p=><Profile key={p.id} p={p} activeTrack={selectedTrack} onSelect={() => setSelectedProfile(p)}/>)}</div> :
-            rows.length === 0 && activeTrack === 'all' ? (
+            rows.length === 0 && selectedTrack === 'all' ? (
               <div className={styles.empty} data-directory-empty="true">
                 <strong>No public professional profiles are currently available.</strong>
                 <p>Public profiles appear when they meet Valoria’s listing requirements.</p>
@@ -172,7 +172,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
               </div>
             ) : rows.length === 0 && Number(counts?.all || 0) === 0 ? (
               <div className={styles.empty} data-directory-empty="true">
-                <strong>{activeTrack === 'candidate' ? 'ATB Connect is preparing its first public talent listings.' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'ATB Spotlight is preparing its first public event-professional listings.' : 'The public marketplace is being prepared.'}</strong>
+                <strong>{selectedTrack === 'candidate' ? 'ATB Connect is preparing its first public talent listings.' : selectedTrack === 'speaker' || selectedTrack === 'facilitator' ? 'ATB Spotlight is preparing its first public event-professional listings.' : 'The public marketplace is being prepared.'}</strong>
                 <p>{activeTrack === 'candidate' ? 'Employers can share the roles, sectors and capabilities their organisation needs. Valoria can advise on the right next step.' : activeTrack === 'speaker' || activeTrack === 'facilitator' ? 'Event organisers can share an event brief, audience, format and facilitation requirements with Valoria.' : 'Employers and event organisers can begin a conversation with Valoria while public profiles and opportunities are being prepared.'}</p>
                 <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
                   <Link className={styles.view} href="/contact-us?type=candidate">DISCUSS YOUR TALENT NEEDS →</Link>
@@ -180,11 +180,11 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
                 </div>
                 <Link className={styles.view} href="/login?returnTo=%2Fprofile%2Fsetup">EXISTING PROFESSIONAL? REVIEW YOUR PROFILE →</Link>
               </div>
-            ) : rows.length === 0 && activeTrack !== 'all' ? (
+            ) : rows.length === 0 && selectedTrack !== 'all' ? (
               <div className={styles.empty} data-directory-empty="true">
-                <strong>{activeTrack === 'candidate' ? 'No public talent profiles match this view yet.' : activeTrack === 'speaker' ? 'No public speaker profiles match this view yet.' : 'No public facilitator profiles match this view yet.'}</strong>
-                <p>{activeTrack === 'candidate' ? 'Share the role, sector and capability requirements you need. Our team can advise on the right sourcing route.' : activeTrack === 'speaker' ? 'Share the event, audience and subject you need covered. Our team can advise on the next step.' : 'Share your programme goals, audience and delivery format. Our team can advise on a suitable facilitation route.'}</p>
-                <Link className={styles.view} href={activeTrack === 'candidate' ? '/contact-us?type=candidate' : activeTrack === 'speaker' ? '/contact-us?type=speaker_booking' : '/contact-us?type=facilitator_commission'}>{activeTrack === 'candidate' ? 'SHARE A TALENT BRIEF' : activeTrack === 'speaker' ? 'SHARE AN EVENT BRIEF' : 'DISCUSS A FACILITATION BRIEF'} →</Link>
+                <strong>{selectedTrack === 'candidate' ? 'No public talent profiles match this view yet.' : selectedTrack === 'speaker' ? 'No public speaker profiles match this view yet.' : 'No public facilitator profiles match this view yet.'}</strong>
+                <p>{selectedTrack === 'candidate' ? 'Share the role, sector and capability requirements you need. Our team can advise on the right sourcing route.' : selectedTrack === 'speaker' ? 'Share the event, audience and subject you need covered. Our team can advise on the next step.' : 'Share your programme goals, audience and delivery format. Our team can advise on a suitable facilitation route.'}</p>
+                <Link className={styles.view} href={selectedTrack === 'candidate' ? '/contact-us?type=candidate' : selectedTrack === 'speaker' ? '/contact-us?type=speaker_booking' : '/contact-us?type=facilitator_commission'}>{selectedTrack === 'candidate' ? 'SHARE A TALENT BRIEF' : selectedTrack === 'speaker' ? 'SHARE AN EVENT BRIEF' : 'DISCUSS A FACILITATION BRIEF'} →</Link>
               </div>
             ) : (
               <div className={styles.empty} data-directory-empty="true"><strong>No public professionals match these filters.</strong><p>Try clearing a filter or selecting another declared role.</p></div>
