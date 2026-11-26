@@ -9,7 +9,7 @@ import { createClient } from '@supabase/supabase-js'
 import { getConsentVerifiedPublicProfile } from '@/lib/public-profile'
 import resendEmail from '@/lib/resend-email.cjs'
 
-const { sendResendEmail } = resendEmail
+const { sendResendEmail, getSiteOrigin } = resendEmail
 
 function escapeHtml(value = '') {
   return String(value).replace(/[&<>\"']/g, character => ({
@@ -29,6 +29,7 @@ function getSupabase() {
 }
 
 const FROM_EMAIL = 'info@valoriainstitute.com'
+const SITE_ORIGIN = getSiteOrigin()
 
 const TYPE_LABELS = {
   candidate: 'Candidate Introduction',
@@ -51,7 +52,7 @@ async function notifyAdmin({ enquiryId, enquiryType, atbId, buyerName, buyerEmai
       <p><strong>From:</strong> ${safeBuyerName} &lt;${safeBuyerEmail}&gt;${buyerCompany ? ` — ${safeBuyerCompany}` : ''}</p>
       <p><strong>Subject:</strong> ${safeSubject}</p>
       <p><strong>Message:</strong><br/>${safeBody}</p>
-      <p style="margin-top:20px;"><a href="https://valoriainstitute.com/admin">Review in admin dashboard</a></p>
+      <p style="margin-top:20px;"><a href="${SITE_ORIGIN}/admin">Review in admin dashboard</a></p>
     </div>`
   const result = await sendResendEmail({
     to: FROM_EMAIL,
@@ -113,7 +114,7 @@ async function notifyProfessional({ supabase, enquiryId, professionalProfileId, 
       <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">NEW ${label.toUpperCase()}</p>
       <p>${safeBuyerName}${buyerCompany ? ` from ${safeBuyerCompany}` : ''} has requested an introduction through Valoria Institute.</p>
       <p>Valoria will review and be in touch with next steps — no action needed from you right now.</p>
-      <p style="margin-top:20px;"><a href="https://valoriainstitute.com${actionUrl}">View your profile</a></p>
+      <p style="margin-top:20px;"><a href="${SITE_ORIGIN}${actionUrl}">View your profile</a></p>
     </div>`
   const result = await sendResendEmail({
     to: userRow.user.email,
