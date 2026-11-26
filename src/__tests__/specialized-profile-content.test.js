@@ -73,7 +73,7 @@ describe('specialized profile content contract', () => {
     }
     expect(getCapabilityCardLabels(profile, 'candidate')).toEqual(['Talent skill'])
     expect(getCapabilityCardLabels(profile, 'speaker')).toEqual(['Speaking topic', 'Keynote'])
-    expect(getCapabilityCardLabels(profile, 'facilitator')).toEqual(['Facilitation topic', 'Leadership programme'])
+    expect(getCapabilityCardLabels(profile, 'facilitator')).toEqual(['Facilitation topic', 'Leadership programme', 'Keynote'])
   })
 
   test('missing specialist evidence uses a neutral fallback, never the general VALU summary', () => {
