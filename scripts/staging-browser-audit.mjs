@@ -39,6 +39,128 @@ const report = {
   profileCardPreviews: [],
   failures: [],
 }
+async function auditDropdownInteractions(page, route, viewport) {
+  const failures = []
+  const result = { nativeSelects: 0, desktopMenus: 0, mobileMenu: false, disabledStyle: null, optionPalette: null }
+
+  if (route.name === 'homepage' && !viewport.isMobile) {
+    const triggers = page.locator('button.nav-trigger[aria-haspopup="true"][aria-controls]')
+    result.desktopMenus = await triggers.count()
+    if (!result.desktopMenus) failures.push('desktop navigation exposes no dropdown triggers')
+    for (let i = 0; i < result.desktopMenus; i++) {
+      const trigger = triggers.nth(i)
+      const id = await trigger.getAttribute('aria-controls')
+      const menu = page.locator(`[id="${id}"]`)
+      if (await trigger.getAttribute('aria-expanded') !== 'false') failures.push(`desktop menu ${id} is not initially collapsed`)
+      if (await menu.getAttribute('aria-hidden') !== 'true' || await menu.getAttribute('inert') === null) {
+        failures.push(`desktop menu ${id} is not hidden and inert while closed`)
+      }
+      await trigger.click()
+      await page.waitForFunction((menuId) => {
+        const element = document.getElementById(menuId)
+        return element && element.getAttribute('aria-hidden') === 'false' && !element.hasAttribute('inert')
+      }, id, { timeout: 5000 })
+      if (await trigger.getAttribute('aria-expanded') !== 'true') failures.push(`desktop menu ${id} did not expose aria-expanded=true`)
+      await page.keyboard.press('Escape')
+      await page.waitForFunction((menuId) => {
+        const element = document.getElementById(menuId)
+        return element && element.getAttribute('aria-hidden') === 'true' && element.hasAttribute('inert')
+      }, id, { timeout: 5000 })
+      if (await trigger.getAttribute('aria-expanded') !== 'false') failures.push(`desktop menu ${id} did not close on Escape`)
+      const focusReturned = await trigger.evaluate(element => document.activeElement === element)
+      if (!focusReturned) failures.push(`desktop menu ${id} did not retain focus on its trigger after Escape`)
+    }
+  }
+
+  if (route.name === 'homepage' && viewport.isMobile) {
+    const burger = page.locator('button.nav-burger[aria-controls="vi-mobile-navigation"]')
+    const mobileNav = page.locator('#vi-mobile-navigation')
+    if (await burger.count()) {
+      if (await burger.getAttribute('aria-expanded') !== 'false') failures.push('mobile navigation is not initially collapsed')
+      if (await mobileNav.getAttribute('aria-hidden') !== 'true' || await mobileNav.getAttribute('inert') === null) {
+        failures.push('mobile navigation is not hidden and inert while closed')
+      }
+      await burger.click()
+      await page.waitForFunction(() => {
+        const nav = document.getElementById('vi-mobile-navigation')
+        return nav && nav.getAttribute('aria-hidden') === 'false' && !nav.hasAttribute('inert')
+      }, null, { timeout: 5000 })
+      if (await burger.getAttribute('aria-expanded') !== 'true') failures.push('mobile navigation did not expose aria-expanded=true')
+      await page.keyboard.press('Escape')
+      await page.waitForFunction(() => {
+        const nav = document.getElementById('vi-mobile-navigation')
+        return nav && nav.getAttribute('aria-hidden') === 'true' && nav.hasAttribute('inert')
+      }, null, { timeout: 5000 })
+      if (await burger.getAttribute('aria-expanded') !== 'false') failures.push('mobile navigation did not close on Escape')
+      result.mobileMenu = true
+    } else {
+      failures.push('mobile navigation toggle was not found')
+    }
+  }
+
+  const selects = page.locator('select')
+  result.nativeSelects = await selects.count()
+  for (let i = 0; i < result.nativeSelects; i++) {
+    const select = selects.nth(i)
+    const className = await select.getAttribute('class') || ''
+    if (!/(^|\\s)vi-select(?:--light)?(\\s|$)/.test(className)) failures.push(`native select ${i + 1} on ${route.name} is missing the shared select class`)
+    const hasLabel = await select.evaluate(element =>
+      Boolean((element.labels && element.labels.length) || element.getAttribute('aria-label') || element.closest('label'))
+    )
+    if (!hasLabel) failures.push(`native select ${i + 1} on ${route.name} has no accessible label`)
+    if (await select.isVisible()) {
+      await page.keyboard.press('Tab')
+      await select.focus()
+      const focusStyle = await select.evaluate(element => {
+        const style = getComputedStyle(element)
+        return { outlineWidth: parseFloat(style.outlineWidth) || 0, outlineStyle: style.outlineStyle, boxShadow: style.boxShadow }
+      })
+      if (focusStyle.outlineWidth < 1 || focusStyle.outlineStyle === 'none') {
+        failures.push(`native select ${i + 1} on ${route.name} has no visible keyboard focus treatment`)
+      }
+      await select.evaluate(element => element.blur())
+    }
+  }
+
+  if (route.name === 'homepage' && viewport.name === 'desktop') {
+    result.disabledStyle = await page.evaluate(() => {
+      const select = document.createElement('select')
+      select.className = 'vi-select'
+      select.disabled = true
+      select.innerHTML = '<option>Disabled control</option>'
+      document.body.appendChild(select)
+      const opacity = getComputedStyle(select).opacity
+      select.remove()
+      return opacity
+    })
+    if (Math.abs(Number(result.disabledStyle) - 0.58) > 0.05) failures.push('disabled native select does not use the shared disabled state')
+
+    result.optionPalette = await page.evaluate(() => {
+      const read = className => {
+        const select = document.createElement('select')
+        select.className = className
+        select.innerHTML = '<option>Palette probe</option>'
+        document.body.appendChild(select)
+        const style = getComputedStyle(select.options[0])
+        const palette = { color: style.color, backgroundColor: style.backgroundColor }
+        select.remove()
+        return palette
+      }
+      return { dark: read('vi-select'), light: read('vi-select--light') }
+    })
+    const dark = result.optionPalette.dark
+    const light = result.optionPalette.light
+    if (dark.color !== 'rgb(247, 244, 238)' || dark.backgroundColor !== 'rgb(26, 26, 46)') {
+      failures.push('dark dropdown option palette does not match the Valoria contrast tokens')
+    }
+    if (light.color !== 'rgb(26, 26, 46)' || light.backgroundColor !== 'rgb(250, 250, 247)') {
+      failures.push('light dropdown option palette does not match the Valoria contrast tokens')
+    }
+  }
+
+  return { result, failures }
+}
+
 await fs.mkdir(OUT, { recursive: true })
 const browser = await chromium.launch({ headless: true })
 
@@ -177,6 +299,9 @@ try {
         }
       })
 
+      const dropdownAudit = await auditDropdownInteractions(page, route, viewport)
+      for (const failure of dropdownAudit.failures) report.failures.push(`${route.name}/${viewport.name}: dropdown audit: ${failure}`)
+
       const filename = `${route.name}-${viewport.name}.png`
       await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
       const result = {
@@ -186,6 +311,7 @@ try {
         status,
         navigationError,
         ...state,
+        dropdownAudit: dropdownAudit.result,
         tasterHandoffExchangeAttempted,
         pageErrors,
         consoleErrors,
