@@ -42,4 +42,27 @@ describe('Canonical VALU merit tiers', () => {
     expect(profile).toContain('PRIME_CLUSTERS.map(({ letter, color })')
   })
 
+
+  test('PRIME uses the canonical 17 skills and approved cluster themes', () => {
+    const brand = read('src/lib/brand.js')
+    const prime = read('src/app/prime/page.jsx')
+    const clusterNames = ['Presence', 'Relationships', 'Intelligence', 'Mastery', 'Enterprise']
+    const canonicalSkills = [
+      'Communication', 'Negotiation', 'Personal Brand & Executive Presence',
+      'Emotional Intelligence', 'Conflict Resolution', 'People Development', 'Stakeholder Management',
+      'Critical Thinking', 'Strategic Thinking', 'Business Acumen', 'AI Fluency',
+      'Execution & Accountability', 'Resilience & Self-Leadership', 'Adaptability',
+      'Commercial Creativity', 'Influence Without Authority', 'Human-AI Collaboration',
+    ]
+    expect(brand).toContain("subtitle: 'How you create'")
+    expect(brand).not.toContain("How you build")
+    expect(brand.match(/skills: \[/g)).toHaveLength(5)
+    for (const skill of canonicalSkills) expect(brand).toContain(skill)
+    for (const retired of ['Composure Under Scrutiny', 'Trust-Building', 'Collaborative Intelligence', 'Network Quality', 'Analytical Depth', 'Decision-Making', 'Cognitive Agility', 'Execution Discipline', 'Commercial Thinking', 'Systems Building', 'Venture Mindset']) {
+      expect(brand).not.toContain(retired)
+    }
+    expect(prime).toContain('Five clusters.')
+    expect(clusterNames).toHaveLength(5)
+  })
+
 })
