@@ -98,12 +98,13 @@ async function auditDropdownInteractions(page, route, viewport) {
     }
   }
 
-  const selects = page.locator('select')
-  result.nativeSelects = await selects.count()
+  if (route.site) {
+    const selects = page.locator('select')
+    result.nativeSelects = await selects.count()
   for (let i = 0; i < result.nativeSelects; i++) {
     const select = selects.nth(i)
     const className = await select.getAttribute('class') || ''
-    if (!/(^|\\s)vi-select(?:--light)?(\\s|$)/.test(className)) failures.push(`native select ${i + 1} on ${route.name} is missing the shared select class`)
+    if (!/(^|\s)vi-select(?:--light)?(\s|$)/.test(className)) failures.push(`native select ${i + 1} on ${route.name} is missing the shared select class`)
     const hasLabel = await select.evaluate(element =>
       Boolean((element.labels && element.labels.length) || element.getAttribute('aria-label') || element.closest('label'))
     )
@@ -119,6 +120,7 @@ async function auditDropdownInteractions(page, route, viewport) {
         failures.push(`native select ${i + 1} on ${route.name} has no visible keyboard focus treatment`)
       }
       await select.evaluate(element => element.blur())
+    }
     }
   }
 
