@@ -88,6 +88,25 @@ describe('journey integrity contract', () => {
     expect(source).toContain('all_required_reads_verified')
   })
 
+
+  test('admin Taster-link application requires a verified same-owner review and writes an audit trail', () => {
+    const route = read('src/app/api/admin/reconciliation/apply-taster-link/route.js')
+    const page = read('src/app/admin/reconciliation/page.jsx')
+    expect(page).toContain('/api/admin/reconciliation/apply-taster-link')
+    expect(route).toContain("from('admin_users')")
+    expect(route).toContain("from('identity_reconciliation_reviews')")
+    expect(route).toContain("review.decision !== 'verified_match'")
+    expect(route).toContain("review.candidate_record_type !== 'taster'")
+    expect(route).toContain('review.candidate_record_id !== tasterId')
+    expect(route).toContain('assessment.user_id !== taster.user_id')
+    expect(route).toContain('!assessment.completed_at')
+    expect(route).toContain('!taster.completed_at')
+    expect(route).toContain(".is('taster_id', null)")
+    expect(route).toContain("from('platform_audit_events')")
+    expect(route).toContain('refresh_professional_journey')
+    expect(route).not.toContain('.update({ user_id:')
+  })
+
   test('historical assessment claim verifies every critical persistence step', () => {
     const source = read('src/app/api/assessment/claim/route.js')
     expect(source).toContain('verifyError')
