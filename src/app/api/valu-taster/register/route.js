@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { randomBytes, createHash } from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
-import { PASSWORD_POLICY, validatePassword } from '@/lib/password-policy'
+import { validatePassword } from '@/lib/password-policy'
 
 const EXPERIENCE = new Set(['0-3', '4-8', '9-15', '16+'])
 
