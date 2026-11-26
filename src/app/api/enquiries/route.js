@@ -1,7 +1,7 @@
 // src/app/api/enquiries/route.js
 // Real enquiry capture: writes to `enquiries` (so demand-side activity is no
 // longer invisible to the platform) and notifies info@valoriainstitute.com
-// via Brevo. Previously the "REQUEST INTRO" / "BOOK SPEAKER" / "REQUEST
+// via Resend. Previously the "REQUEST INTRO" / "BOOK SPEAKER" / "REQUEST
 // FACILITATOR" buttons were plain mailto: links — no DB record, no admin
 // visibility, no way to measure conversion. This is the fix.
 
