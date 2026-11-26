@@ -101,7 +101,7 @@ export async function POST(request) {
           ${profPhone ? `<strong>Phone:</strong> ${profPhone}<br/>` : ''}
         </p>
         <p>Your original message has been shared with them. Please reference "${label}" when you follow up.</p>
-        <p style="color:#888;font-size:12px;">Valoria Institute &middot; African Talent Bureau Ltd &middot; Lagos, Nigeria</p>
+        <p style="color:#888;font-size:12px;">Valoria Institute &middot; African Talent Bureau Ltd</p>
       </div>`
 
     const toProfHtml = `
