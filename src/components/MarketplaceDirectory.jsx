@@ -163,7 +163,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
               <p>The directory is temporarily unavailable. Try again shortly.</p>
               <button type="button" className={styles.view} onClick={() => router.refresh()}>RETRY →</button>
             </div>
-          ) : results.length ? <div className={styles.grid} data-directory-grid="true">{results.map(p=><Profile key={p.id} p={p} onSelect={() => setSelectedProfile(p)}/>)}</div> :
+          ) : results.length ? <div className={styles.grid} data-directory-grid="true">{results.map(p=><Profile key={p.id} p={p} activeTrack={selectedTrack} onSelect={() => setSelectedProfile(p)}/>)}</div> :
             rows.length === 0 && activeTrack === 'all' ? (
               <div className={styles.empty} data-directory-empty="true">
                 <strong>No public professional profiles are currently available.</strong>
@@ -216,24 +216,27 @@ function getCapabilitySelection(profile) {
   ].map(normalize).filter(Boolean))
 }
 
-function Profile({p, onSelect}) {
+function Profile({p, onSelect, activeTrack = 'all'}) {
   const selectedCaps = getCapabilitySelection(p)
   const capabilityBadges = [
     ['candidate','Talent'],
     ['speaker','Speaker'],
     ['facilitator','Facilitator'],
   ]
-  const isFull = p.assessment_access === 'full' && p.valu_index != null
+  const normalizedTrack = normalizeCapabilityTrack(activeTrack)
+  const isGeneralView = normalizedTrack === 'all'
+  const isFull = isGeneralView && p.assessment_access === 'full' && p.valu_index != null
   const tier = isFull ? getValuTier(p.valu_index, 'full') : null
   const designation = tier?.name || 'Assessment Follow-up'
   const designationClass = tier ? styles[tier.name.toLowerCase()] || '' : ''
   const profileId = displayText(p.atb_id)
-  const skills = labelValues(p.skills).slice(0, 3)
+  const skills = isGeneralView ? labelValues(p.skills).slice(0, 3) : getCapabilityCardLabels(p, normalizedTrack)
+  const cardEvidenceLabel = isGeneralView ? 'Professional capabilities' : normalizedTrack === 'candidate' ? 'Talent skills' : normalizedTrack === 'speaker' ? 'Speaking expertise' : 'Facilitation expertise'
   const availability = displayText(p.availability_status)
-  const role = displayText(p.current_job_title || p.headline)
+  const role = displayText(normalizedTrack === 'candidate' ? (p.current_job_title || p.headline) : (p.headline || p.current_job_title))
   const sector = displayText(p.industry)
   const location = displayText(p.location)
-  const clusterScores = p.cluster_scores && typeof p.cluster_scores === 'object' ? Object.entries(p.cluster_scores).filter(([key, value]) => Object.hasOwn(CLUSTER_NAMES, key) && value != null && value !== '' && Number.isFinite(Number(value))) : []
+  const clusterScores = isGeneralView && p.cluster_scores && typeof p.cluster_scores === 'object' ? Object.entries(p.cluster_scores).filter(([key, value]) => Object.hasOwn(CLUSTER_NAMES, key) && value != null && value !== '' && Number.isFinite(Number(value))) : []
   const strongestCluster = clusterScores.sort((a, b) => Number(b[1]) - Number(a[1]))[0]?.[0]
   const available = /^(available|accepting|open)$/i.test(availability)
   const explicitlyUnavailable = /unavailable|not available|closed/i.test(availability)
@@ -250,12 +253,14 @@ function Profile({p, onSelect}) {
         </div>
       </div>
       <div className={styles.scoreDesignation}>
-        {isFull ? <>
+        {isGeneralView ? (isFull ? <>
           <div className={styles.valu} aria-label={`VALU Index ${p.valu_index} points`}>
             <small>VALU INDEX</small><b>{p.valu_index}</b><span>POINTS</span>
           </div>
           <span className={`${styles.tierBadge} ${designationClass}`}>{designation}</span>
-        </> : <span className={styles.assessmentPending}>Additional assessment insight pending</span>}
+        </> : <span className={styles.assessmentPending}>Additional assessment insight pending</span>) : (
+          <span className={styles.assessmentPending}>{normalizedTrack === 'candidate' ? 'TALENT CAPABILITY' : normalizedTrack === 'speaker' ? 'SPEAKER CAPABILITY' : 'FACILITATOR CAPABILITY'}</span>
+        )}
       </div>
     </header>
 
@@ -270,7 +275,7 @@ function Profile({p, onSelect}) {
       {location && <p className={styles.locationLine}>{location}</p>}
     </div>}
 
-    {skills.length > 0 && <div className={styles.profileSkills} aria-label="Professional skills">{skills.map(value=><span key={value}>{value}</span>)}</div>}
+    {skills.length > 0 && <div className={styles.profileSkills} aria-label={cardEvidenceLabel}>{skills.map(value=><span key={value}>{value}</span>)}</div>}
 
     <div className={styles.specialistCapabilities} aria-label="Capability selections; selected capabilities are highlighted">
       {capabilityBadges.map(([key,label]) => (
@@ -278,7 +283,7 @@ function Profile({p, onSelect}) {
       ))}
     </div>
 
-    {strongestCluster && <span className={styles.strongestCapability}>Strongest: {CLUSTER_NAMES[strongestCluster] || titleCase(strongestCluster)}</span>}
+    {isGeneralView && strongestCluster && <span className={styles.strongestCapability}>Strongest: {CLUSTER_NAMES[strongestCluster] || titleCase(strongestCluster)}</span>}
 
     <button type="button" onClick={onSelect} className={`${styles.view} ${styles.viewButton}`} aria-haspopup="dialog">View profile <span aria-hidden="true">→</span></button>
   </article>
@@ -335,7 +340,7 @@ function ProfilePreviewModal({ profile, onClose, activeTrack = 'all' }) {
   ]
   const skills = labelValues(profile.skills).slice(0, 4)
   const topics = labelValues(profile.topics).slice(0, 3)
-  const selectedTrack = activeTrack || 'all'
+  const selectedTrack = normalizeCapabilityTrack(activeTrack || 'all')
   const isSpecializedView = selectedTrack !== 'all'
   const specialistSections = isSpecializedView ? getCapabilityEvidence(profile, selectedTrack) : []
   const specialistSummary = isSpecializedView ? getCapabilityEvidenceSummary(profile, selectedTrack) : ''
