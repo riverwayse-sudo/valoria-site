@@ -1098,7 +1098,7 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
   return (
     <div>
       <Title>Review &amp;<br/><Em>submit.</Em></Title>
-      <Sub>Take one more look before this goes live for review.</Sub>
+      <Sub>Confirm your details and visibility choice. Profiles are listed automatically only when you choose public visibility, submit your profile and meet Valoria’s listing requirements.</Sub>
 
       <div style={{ background:MID, color:PARCH, padding:'20px', marginBottom:'24px', border:`1px solid ${GLINE}` }}>
         <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'12px' }}>
