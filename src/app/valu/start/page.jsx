@@ -81,8 +81,8 @@ export default function ValuStartPage() {
           <h2>Create your account. Complete your Taster. Confirm your email.<br /><em>Then build your next step.</em></h2>
           <div className="vs-journey-grid">
             <article><span>01</span><h3>Create or sign in to your account</h3><p>Start with a secure Valoria account using your professional details.</p></article>
-            <article><span>02</span><h3>Confirm your email</h3><p>After completing the Taster, verify your email to activate your account and access your dashboard.</p></article>
-            <article><span>03</span><h3>Complete your Taster</h3><p>Complete the guided directional Taster. Your responses and initial result are saved securely before email confirmation.</p></article>
+            <article><span>02</span><h3>Complete your Taster</h3><p>Complete the guided directional Taster. Your responses and initial result are saved securely before email confirmation.</p></article>
+            <article><span>03</span><h3>Confirm your email</h3><p>After completing the Taster, verify your email to activate your account and access your dashboard.</p></article>
             <article><span>04</span><h3>Continue to the full VALU Index</h3><p>The full VALU Index establishes your official points result and PRIME capability profile. It is separate from the Taster and supports full access.</p></article>
             <article><span>05</span><h3>Build and discover</h3><p>Complete your professional profile. Marketplace visibility follows the relevant eligibility checks and your explicit permission.</p></article>
           </div>
