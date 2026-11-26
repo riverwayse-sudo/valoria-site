@@ -7,7 +7,8 @@ import Footer from '@/components/Footer'
 import EnquiryForm from '@/components/EnquiryForm'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { getValuTier, PRIME_CLUSTERS, PRIME_CLUSTER_NAMES } from '@/lib/brand'
-import { normalizeCapabilityTrack, getCapabilityEvidence, getCapabilityEvidenceSummary } from '@/lib/profile-capability-evidence'
+import capabilityEvidence from '@/lib/profile-capability-evidence.cjs'
+const { normalizeCapabilityTrack, getCapabilityEvidence, getCapabilityEvidenceSummary } = capabilityEvidence
 
 // ─── helpers ─────────────────────────────────────────────
 function getInitials(name) {
