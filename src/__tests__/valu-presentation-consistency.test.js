@@ -6,12 +6,12 @@ function read(relative) {
 }
 
 describe('VALU presentation consistency', () => {
-  test('homepage presents the Taster-first entry without exposing question counts', () => {
+  test('homepage presents account-first entry without exposing question counts', () => {
     const home = read('src/app/page.jsx')
     expect(home).toContain('Begin with your Taster')
-    expect(home).toContain('START THE VALU INDEX TASTER')
+    expect(home).toContain('CREATE ACCOUNT TO BEGIN')
     expect(home).not.toMatch(/9 questions|58 questions|Question\s+\d+\s+of\s+\d+/i)
-    expect(home).toContain('START THE VALU INDEX TASTER')
+    expect(home).toContain('CREATE ACCOUNT TO BEGIN')
     expect(home).not.toMatch(/\\b9\\s*QUESTIONS\\b|\\b58\\s*QUESTIONS\\b/i)
     const waitlist = read('src/components/WaitlistModal.jsx')
     expect(waitlist).not.toMatch(/\\b9\\s*QUESTIONS\\b|\\b58\\s*QUESTIONS\\b/i)
@@ -50,17 +50,17 @@ describe('VALU presentation consistency', () => {
     }
     expect(read('src/app/valu/page.jsx')).toContain('VALU Index Taster');
     expect(read('src/app/valu/start/page.jsx')).toContain('full VALU Index');
-    expect(read('src/app/page.jsx')).toContain('START THE VALU INDEX TASTER');
-    expect(read('src/app/prime/page.jsx')).toContain('TAKE THE VALU INDEX TASTER');
-    expect(read('src/app/insights/page.jsx')).toContain('START THE VALU INDEX TASTER');
+    expect(read('src/app/page.jsx')).toContain('CREATE ACCOUNT TO BEGIN');
+    expect(read('src/app/prime/page.jsx')).toContain('CREATE ACCOUNT TO BEGIN');
+    expect(read('src/app/insights/page.jsx')).toContain('EXPLORE THE VALU INDEX');
     expect(read('src/app/signup/page.jsx')).toContain('CREATE ACCOUNT & BEGIN')
     expect(read('src/app/signup/page.jsx')).toContain('href="/valu/register/?journey=valu_taster"');
-    expect(read('src/components/LiveProfilesScroll.jsx')).toContain('TAKE THE VALU INDEX TASTER');
+    expect(read('src/components/LiveProfilesScroll.jsx')).toContain('CREATE ACCOUNT TO BEGIN');
   })
 
   test('homepage VALU card uses the approved points-based PRIME presentation', () => {
     const hero = read('src/components/HeroSlider.jsx')
-    expect(hero).toContain('START THE VALU INDEX TASTER')
+    expect(hero).toContain('CREATE ACCOUNT TO BEGIN')
     expect(hero).not.toContain('TAKE THE VALU TASTER')
     expect(hero).not.toContain('VALU Index assessment structure')
     expect(hero).toContain('POINTS-BASED CAPABILITY PROFILE')
