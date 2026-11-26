@@ -48,6 +48,7 @@ const routes = [
   { name: 'login', url: `${SITE}/login`, site: true },
   { name: 'signup', url: `${SITE}/signup`, site: true },
   { name: 'register', url: `${SITE}/register`, site: true },
+  { name: 'admin-reconciliation-unauthenticated', url: `${SITE}/admin/reconciliation`, site: true },
   { name: 'dashboard-preview', url: `${SITE}/dashboard?preview=1`, site: true },
   { name: 'assessment-proxy', url: `${SITE}/valu/assessment/`, site: true },
   { name: 'assessment-host', url: `${ASSESSMENT}/`, site: false },
@@ -63,6 +64,7 @@ const expectedRedirectPaths = {
   'atb-connect-legacy': '/marketplace/talent',
   'atb-spotlight-legacy': '/marketplace/speakers',
   'spotlight-legacy': '/marketplace/speakers',
+  'admin-reconciliation-unauthenticated': '/admin/login',
 }
 const report = {
   generatedAt: new Date().toISOString(),
