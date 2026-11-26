@@ -17,7 +17,7 @@ const SOURCE_LABELS = {
   standalone:    'Standalone page',
 }
 
-// Kept in sync with the actual <select> options in WaitlistForm.jsx /
+// Kept in sync with the actual <select className="vi-select"> options in WaitlistForm.jsx /
 // WaitlistModal.jsx: professional, speaker, employer, event_planner, other.
 // 'facilitator' is intentionally not an option there, so it's never
 // submitted — don't build summary cards/filters around it.
@@ -130,7 +130,7 @@ export default function AdminWaitlistPage() {
             onChange={e => setSearch(e.target.value)}
             style={{ padding:'10px 14px', background:'rgba(255,255,255,.04)', border:`1px solid ${GLINE}`, color: PARCH, fontSize:'13px', fontFamily:'var(--font,Raleway,sans-serif)', outline:'none', width:'280px' }}
           />
-          <select
+          <select className="vi-select"
             value={filter}
             onChange={e => setFilter(e.target.value)}
             style={{ padding:'10px 14px', background: MID, border:`1px solid ${GLINE}`, color: PARCH, fontSize:'13px', fontFamily:'var(--font,Raleway,sans-serif)', outline:'none' }}>

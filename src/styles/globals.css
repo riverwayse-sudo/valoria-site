@@ -256,3 +256,35 @@ html body .page-hero-actions-centered,
 html body .eyebrow-center {
   justify-content: flex-start !important;
 }
+
+/* VALORIA DROPDOWN DESIGN SYSTEM — v1 */
+:root {
+  --vi-select-bg: #1A1A2E; --vi-select-fg: #F7F4EE;
+  --vi-select-border: rgba(201,168,76,.42); --vi-select-border-hover: #C9A84C;
+  --vi-select-focus: rgba(201,168,76,.24); --vi-select-option-bg: #1A1A2E;
+  --vi-select-option-fg: #F7F4EE; --vi-select-disabled: #8A8578;
+}
+html body select:not(.vi-select--light) {
+  color-scheme: dark !important; background-color: var(--vi-select-bg) !important;
+  color: var(--vi-select-fg) !important; border-color: var(--vi-select-border) !important;
+  accent-color: #C9A84C;
+}
+html body select:not(.vi-select--light) option {
+  background-color: var(--vi-select-option-bg) !important; color: var(--vi-select-option-fg) !important;
+}
+html body select:not(.vi-select--light):hover { border-color: var(--vi-select-border-hover) !important; }
+html body select:not(.vi-select--light):focus-visible {
+  outline: 2px solid var(--vi-select-border-hover) !important; outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--vi-select-focus) !important;
+}
+html body select:not(.vi-select--light):disabled { opacity: .58; cursor: not-allowed; }
+html body select.vi-select--light {
+  color-scheme: light !important; background-color: #FAFAF7 !important;
+  color: #1A1A2E !important; border-color: #D4C9A8 !important;
+}
+html body select.vi-select--light option { background-color: #FAFAF7 !important; color: #1A1A2E !important; }
+html body select.vi-select--light:focus-visible {
+  outline: 2px solid var(--vi-select-border-hover) !important; outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--vi-select-focus) !important;
+}
+

@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
@@ -26,6 +26,11 @@ export default function NotificationBell({ userId }) {
   const [unreadCount, setUnreadCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(true)
+  const triggerRef = useRef(null)
+  const closePanel = useCallback(() => {
+    setIsOpen(false)
+    triggerRef.current?.focus()
+  }, [])
 
   const fetchNotifications = useCallback(async () => {
     if (!userId) return
@@ -68,6 +73,15 @@ export default function NotificationBell({ userId }) {
     }
   }, [userId, fetchNotifications])
 
+  useEffect(() => {
+    if (!isOpen) return
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') closePanel()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [isOpen, closePanel])
+
   const markAsRead = async (notificationId) => {
     try {
       await fetch('/api/notifications', {
@@ -102,7 +116,7 @@ export default function NotificationBell({ userId }) {
   function openNotification(notif) {
     if (!notif.read_at) markAsRead(notif.id)
     if (notif.action_url) {
-      setIsOpen(false)
+      closePanel()
       router.push(notif.action_url)
     }
   }
@@ -136,9 +150,13 @@ export default function NotificationBell({ userId }) {
   return (
     <div style={{ position: 'relative' }}>
       <button
-        onClick={() => { setIsOpen(!isOpen); if (!isOpen && unreadCount > 0) markAllAsRead() }}
+        type="button"
+        ref={triggerRef}
+        data-dropdown-trigger="notifications"
+        onClick={() => { if (isOpen) closePanel(); else { setIsOpen(true); if (unreadCount > 0) markAllAsRead() } }}
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
         aria-expanded={isOpen}
+        aria-controls="vi-notification-panel"
         style={{
           position: 'relative',
           background: 'none',
@@ -180,16 +198,16 @@ export default function NotificationBell({ userId }) {
       {isOpen && (
         <>
           <div
-            onClick={() => setIsOpen(false)}
+            onClick={closePanel}
             style={{ position: 'fixed', inset: 0, zIndex: 299 }}
             aria-hidden="true"
           />
-          <div style={{
+          <div id="vi-notification-panel" data-dropdown-panel="notifications" role="region" aria-label="Notifications" style={{
             position: 'absolute',
             top: 'calc(100% + 12px)',
             right: 0,
-            width: '340px',
-            maxHeight: '480px',
+            width: 'min(340px, calc(100vw - 24px))',
+            maxHeight: 'min(480px, calc(100dvh - 100px))',
             background: MID,
             border: `1px solid ${GLINE}`,
             borderRadius: '12px',
@@ -238,10 +256,16 @@ export default function NotificationBell({ userId }) {
                 </div>
               ) : (
                 notifications.map((notif) => (
-                  <div
+                  <button
+                    type="button"
                     key={notif.id}
                     onClick={() => openNotification(notif)}
                     style={{
+                      display: 'block',
+                      width: '100%',
+                      textAlign: 'left',
+                      font: 'inherit',
+                      border: 'none',
                       padding: '14px 16px',
                       borderBottom: `1px solid ${GLINE}`,
                       cursor: notif.action_url ? 'pointer' : (notif.read_at ? 'default' : 'pointer'),
@@ -296,7 +320,7 @@ export default function NotificationBell({ userId }) {
                         }} />
                       )}
                     </div>
-                  </div>
+                  </button>
                 ))
               )}
             </div>
