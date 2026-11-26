@@ -143,6 +143,8 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(setup).toContain('Eligible profiles are listed automatically after submission when valid public-display consent is recorded and the listing requirements are met. No separate visibility setting or administrator approval is required.')
     expect(setup).not.toContain('SUBMIT PROFILE FOR REVIEW')
     expect(setup).not.toContain('name="profile-visibility"')
+    expect(setup).not.toContain('visibility_choice')
+    expect(setup).not.toContain('Registered only')
     expect(setup).not.toContain('profile clears review')
     expect(setup).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
     expect(setup).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
