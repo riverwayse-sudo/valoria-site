@@ -18,6 +18,7 @@ const routes = [
   { name: 'atb-spotlight', url: `${SITE}/marketplace/speakers`, site: true },
   { name: 'atb-spotlight-facilitators', url: `${SITE}/marketplace/facilitators`, site: true },
   { name: 'programmes', url: `${SITE}/programmes`, site: true },
+  { name: 'facilitators-legacy', url: `${SITE}/facilitators`, site: true },
   { name: 'events', url: `${SITE}/events`, site: true },
   { name: 'opportunities', url: `${SITE}/opportunities`, site: true },
   { name: 'opportunities-submit', url: `${SITE}/opportunities/submit`, site: true },
@@ -321,7 +322,7 @@ try {
         const navBrand = document.querySelector('a[aria-label="Valoria Institute home"]')?.href || ''
         const navDashboard = [...document.querySelectorAll('a')].find(a => /return to dashboard/i.test(a.innerText))?.href || ''
         const tasterEntryLinks = [...document.querySelectorAll('a')]
-          .filter(a => /START THE VALU INDEX TASTER/i.test(a.innerText))
+          .filter(a => /CREATE ACCOUNT TO BEGIN/i.test(a.innerText))
           .map(a => {
             const href = a.getAttribute('href') || ''
             try { return new URL(href, window.location.href).pathname } catch { return href }
@@ -389,6 +390,17 @@ try {
           directoryEmptyTitle: document.querySelector('[data-directory-empty] strong')?.innerText || '',
           directoryUnavailable: /Marketplace data could not be verified|directory is temporarily unavailable/i.test(document.body.innerText),
           directoryGridCards: document.querySelector('[data-directory-grid]')?.children.length || 0,
+          directoryControlsVisible: Boolean(document.querySelector('[data-directory-controls]')),
+          directoryBuyerLinks: [...document.querySelectorAll('[data-directory-empty] a')].map(a => a.getAttribute('href') || ''),
+          homeAccountFirstSteps: ['Create your account', 'Confirm your email before beginning the Taster', 'Complete your Taster', 'Complete the full VALU Index'].every(copy => document.body.innerText.includes(copy)),
+          homeLegacyTasterFirstCopy: /Begin with your Taster|Taster-first/i.test(document.body.innerText),
+          homeNigerianPositioning: /Nigerian professionals|Nigeria's professional capability marketplace/i.test(document.body.innerText),
+          heroInstitutionalCopy: document.body.innerText.includes('THE INSTITUTIONAL STANDARD FOR PROFESSIONAL CAPABILITY'),
+          programmeHasFitCommissioning: document.body.innerText.includes('FACILITATOR FIT & COMMISSIONING'),
+          programmeHasUnsupportedDeliveryClaims: /certified facilitators|90-day re-measurement|half-day intensive|two-day cohort workshop/i.test(document.body.innerText),
+          primeHasCanonicalBands: ['Elite', 'Distinguished', 'Proficient', 'Standard'].every(name => document.body.innerText.includes(name)),
+          aboutHasCertificationBoundary: /Valoria Institute.s institutional standards and certification role are distinct from the assessment/i.test(document.body.innerText) &&
+            /The VALU Index is an assessment result/i.test(document.body.innerText),
           opportunityEmptyTitle: document.querySelector('[data-opportunities-empty] h2')?.innerText || '',
           opportunityError: document.querySelector('[data-opportunities-error]')?.innerText || '',
           opportunityCards: document.querySelectorAll('[data-opportunities-grid] .opportunity-card').length,
@@ -479,10 +491,37 @@ try {
            state.opportunitySubmitHref !== '/opportunities/submit')) {
         report.failures.push(`${route.name}/${viewport.name}: opportunity discovery must show the verified empty state and retain the buyer submission route; error=${state.opportunityError}, cards=${state.opportunityCards}, empty=${state.opportunityEmptyTitle}, submit=${state.opportunitySubmitHref}`)
       }
+      if (route.name === 'homepage' &&
+          (!state.homeAccountFirstSteps || state.homeLegacyTasterFirstCopy ||
+           state.homeNigerianPositioning || !state.heroInstitutionalCopy)) {
+        report.failures.push(`${route.name}/${viewport.name}: homepage must present the institutional standard and account-confirmation-before-Taster journey`)
+      }
+      if (route.name === 'programmes' &&
+          (!state.programmeHasFitCommissioning || state.programmeHasUnsupportedDeliveryClaims)) {
+        report.failures.push(`${route.name}/${viewport.name}: Develop page must avoid unsupported certification or fixed-delivery promises`)
+      }
+      if (route.name === 'facilitators-legacy' && state.currentPath !== '/programmes') {
+        report.failures.push(`${route.name}/${viewport.name}: legacy facilitator route must redirect to the consolidated Develop page; path=${state.currentPath}`)
+      }
+      if (route.name === 'prime' && !state.primeHasCanonicalBands) {
+        report.failures.push(`${route.name}/${viewport.name}: PRIME page must show the canonical four merit designations`)
+      }
+      if (route.name === 'about' && !state.aboutHasCertificationBoundary) {
+        report.failures.push(`${route.name}/${viewport.name}: About page must distinguish the Institute's certification role from the VALU Index assessment`)
+      }
       if (route.name === 'marketplace' &&
           (state.directoryUnavailable || state.directoryGridCards !== 0 ||
            !state.directoryEmptyTitle.includes('No public professional profiles are currently available'))) {
         report.failures.push(`${route.name}/${viewport.name}: public Registry state invalid; unavailable=${state.directoryUnavailable}, empty=${state.directoryEmptyTitle}, cards=${state.directoryGridCards}`)
+      }
+      if (['marketplace', 'atb-connect', 'atb-spotlight', 'atb-spotlight-facilitators'].includes(route.name) &&
+          state.directoryEmptyTitle && state.directoryGridCards === 0 && state.directoryControlsVisible) {
+        report.failures.push(`${route.name}/${viewport.name}: search filters must stay hidden while the public directory has no listings`)
+      }
+      if (route.name === 'marketplace' && state.directoryEmptyTitle &&
+          (!state.directoryBuyerLinks.includes('/contact-us?type=candidate') ||
+           !state.directoryBuyerLinks.includes('/contact-us?type=speaker_booking'))) {
+        report.failures.push(`${route.name}/${viewport.name}: empty Registry must offer real buyer enquiry routes; links=${JSON.stringify(state.directoryBuyerLinks)}`)
       }
       if (route.name === 'atb-connect' &&
           (state.directoryUnavailable || state.directoryGridCards !== 0 ||
