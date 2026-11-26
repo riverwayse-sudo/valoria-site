@@ -101,7 +101,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
         </div>
       </section>
       {hasPublicListings && (
-      <section className={styles.controls}>
+      <section className={styles.controls} data-directory-controls="true">
         <div className={styles.containerControl}>
           <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search professionals, skills or sectors…" aria-label="Search marketplace"/>
           <select className="vi-select--light" value={cluster} onChange={e=>setCluster(e.target.value)} aria-label="Filter by PRIME cluster">
