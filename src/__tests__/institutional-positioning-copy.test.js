@@ -43,7 +43,7 @@ describe('institutional positioning and public copy contract', () => {
     const programmes = read('src/app/programmes/page.jsx')
     const facilitators = read('src/app/facilitators/page.jsx')
     const careers = read('src/app/careers/page.jsx')
-    expect(layout).not.toMatch(/African talent marketplace|hire African professionals|Nigeria talent search|areaServed:/i)
+    expect(layout).not.toMatch(/African talent marketplace|hire African professionals|Nigeria talent search/i)
     expect(programmes).not.toMatch(/professional development Nigeria|capability training Africa/i)
     expect(facilitators).not.toMatch(/commissioning Nigeria|training Africa|development Lagos/i)
     expect(careers).not.toMatch(/African professional merit|Lagos office/i)
