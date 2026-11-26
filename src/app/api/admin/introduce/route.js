@@ -26,8 +26,6 @@ function getSupabase() {
   return createClient(url, key)
 }
 
-const FROM_EMAIL = 'info@valoriainstitute.com'
-
 const TYPE_LABELS = {
   candidate: 'Introduction',
   speaker_booking: 'Speaker Booking',
