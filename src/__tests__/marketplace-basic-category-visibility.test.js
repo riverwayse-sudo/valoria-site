@@ -14,6 +14,6 @@ describe('Marketplace category visibility', () => {
     expect(source).not.toContain("row.assessmentAccess === 'full' && row.capabilities.includes(capability)")
     expect(source).toContain("row.assessmentAccess === 'basic'")
     expect(component).toContain('p.selectedCapabilities || p.selected_capabilities || p.capabilities')
-    expect(component).not.toContain("p.assessment_access === 'basic' ?")
+    expect(component).toContain("p.assessment_access === 'basic' ? 'PUBLIC PROFILE' : 'VALU INDEX INSIGHT UNAVAILABLE'")
   })
 })
