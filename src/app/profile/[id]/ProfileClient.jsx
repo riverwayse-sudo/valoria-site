@@ -288,6 +288,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
     : [...new Set([...(p.skills || []), ...(p.topics || []), ...(p.facilitation_topics || []), ...(p.programme_types || []), ...(p.format_capabilities || []), ...(p.audience_sizes || [])])]
   const specialistSections = isSpecializedView ? getCapabilityEvidence(p, displayTrack) : []
   const specialistSummary = isSpecializedView ? getCapabilityEvidenceSummary(p, displayTrack) : ''
+  const videoSectionLabel = isSpecializedView ? (displayTrack === 'speaker' ? 'Speaking Reels & Videos' : displayTrack === 'facilitator' ? 'Facilitation Videos' : 'Professional Videos') : (isSpeaker || isFacilitator ? 'Speaker & Facilitation Videos' : 'Videos')
   const compensation = (displayTrack === 'speaker' || displayTrack === 'facilitator')
     ? (p.fee_range || p.salary_expectation || null)
     : (p.salary_expectation || p.fee_range || null)
@@ -693,7 +694,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
 
             {/* Video grid (when no video expanded) */}
             {videos.length > 0 && activeVideo === null && (
-              <Section label={(isSpeaker || isFacilitator) ? 'Speaker Reel & Videos' : 'Videos'}>
+              <Section label={videoSectionLabel}>
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:'12px' }}>
                   {videos.slice(0,4).map((url, i) => {
                     const ytId = getYouTubeId(url)
