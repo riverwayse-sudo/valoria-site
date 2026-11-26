@@ -698,11 +698,13 @@ test('email confirmation exchanges its code before reading an existing browser s
 })
 
 
-test('legacy VALU registration entry enforces account-first confirmation', () => {
+test('legacy VALU registration entry creates an unconfirmed account before Taster', () => {
   const register = read('src/app/valu/register/page.jsx')
-  expect(register).toContain('supabase.auth.signUp')
-  expect(register).toContain('email_confirmed_at')
-  expect(register).toContain("fetch('/api/valu-taster/start'")
+  const create = read('src/app/api/valu-taster/register/route.js')
+  expect(register).toContain("fetch('/api/valu-taster/register'")
+  expect(create).toContain('admin.auth.admin.createUser')
+  expect(create).toContain('email_confirm: false')
+  expect(create).toContain("entry_point: 'taster_start'")
 })
 
 })
