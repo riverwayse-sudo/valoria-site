@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import resendEmail from '@/lib/resend-email.cjs'
 
-const { sendResendEmail, escapeHtml } = resendEmail
+const { sendResendEmail, escapeHtml, getSiteOrigin } = resendEmail
 
 async function sendWelcomeEmail({ email, fullName, journeyUrl, source }) {
   const first = escapeHtml(fullName.split(/\\s+/)[0] || 'there')
@@ -84,9 +84,10 @@ export async function POST(request) {
       source_id: email.trim().toLowerCase(),
       expires_at: expiresAt,
     }).select('token').single()
+    const siteOrigin = getSiteOrigin()
     const journeyUrl = reentry?.token
-      ? `${new URL(request.url).origin}/journey/continue?token=${encodeURIComponent(reentry.token)}`
-      : `${new URL(request.url).origin}/journey`
+      ? `${siteOrigin}/journey/continue?token=${encodeURIComponent(reentry.token)}`
+      : `${siteOrigin}/journey`
 
     const emailResult = await sendWelcomeEmail({
       email: email.trim().toLowerCase(),
