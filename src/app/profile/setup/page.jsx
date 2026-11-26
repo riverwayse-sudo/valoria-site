@@ -856,7 +856,7 @@ function ScreenBody(props) {
         <div>
           <Title>{screen.title}</Title>
           {screen.sub && <Sub>{screen.sub}</Sub>}
-          <select value={val || ''} onChange={e => set(screen.key, e.target.value)} style={selectStyle}>
+          <select className="vi-select" value={val || ''} onChange={e => set(screen.key, e.target.value)} style={selectStyle}>
             <option value="" disabled>Select…</option>
             {screen.options.map(o => (
               typeof o === 'string'
@@ -985,7 +985,7 @@ function ScreenBody(props) {
               <div key={i} style={{ display:'grid', gridTemplateColumns: `repeat(${screen.fields.length}, 1fr)`, gap:'10px', marginBottom:'10px' }}>
                 {screen.fields.map(f => (
                   f.type === 'select' ? (
-                    <select key={f.key} style={selectStyle} value={row[f.key] || ''}
+                    <select className="vi-select" key={f.key} style={selectStyle} value={row[f.key] || ''}
                       onChange={e => updateListItem(screen.key, i, f.key, e.target.value)}>
                       <option value="" disabled style={{ background:'#1A1A2E', color:'#F7F4EE' }}>{f.placeholder}</option>
                       {f.options.map(o => <option key={o} value={o} style={{ background:'#1A1A2E', color:'#F7F4EE' }}>{o}</option>)}
@@ -1278,7 +1278,7 @@ function CurrencyRangeInput({ value, onChange, periodLabel }) {
         </p>
       )}
       <div style={{ display:'grid', gridTemplateColumns:'110px 1fr 1fr', gap:'10px', marginBottom:'6px' }}>
-        <select value={currency} onChange={e => { setCurrency(e.target.value); commit({ currency:e.target.value }) }} style={selectStyle}>
+        <select className="vi-select" value={currency} onChange={e => { setCurrency(e.target.value); commit({ currency:e.target.value }) }} style={selectStyle}>
           {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} {c.symbol}</option>)}
         </select>
         <input type="number" min="0" inputMode="numeric" style={inputStyle} placeholder="Min" value={min}
