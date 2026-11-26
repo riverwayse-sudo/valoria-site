@@ -44,7 +44,7 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Profile consent service is temporarily unavailable.' }, { status: 503 })
   }
 
-  const token = request.headers.get('authorization')?.match(/^Bearer\\s+(.+)$/i)?.[1]
+  const token = request.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1]
   if (!token) return NextResponse.json({ error: 'Sign in before checking profile consent.' }, { status: 401 })
 
   const { data: authData, error: authError } = await admin.auth.getUser(token)
@@ -146,7 +146,7 @@ export async function POST(request) {
   // Reuse a current public-display acknowledgement, including the established
   // admin_attestation evidence. Do not ask existing profile owners to approve
   // public visibility again or create duplicate acknowledgement rows on edits.
-  if (!latestAcknowledgement.hasPublicConsent) {
+  if (visibility === 'registered_only' || !latestAcknowledgement.hasPublicConsent) {
     const { error: acknowledgementError } = await admin
       .from('professional_profile_acknowledgements')
       .insert({
