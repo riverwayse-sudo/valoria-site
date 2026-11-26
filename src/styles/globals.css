@@ -283,4 +283,8 @@ html body select.vi-select--light {
   color: #1A1A2E !important; border-color: #D4C9A8 !important;
 }
 html body select.vi-select--light option { background-color: #FAFAF7 !important; color: #1A1A2E !important; }
+html body select.vi-select--light:focus-visible {
+  outline: 2px solid var(--vi-select-border-hover) !important; outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--vi-select-focus) !important;
+}
 
