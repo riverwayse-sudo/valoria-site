@@ -138,6 +138,16 @@ describe('journey integrity contract', () => {
     expect(page).toContain('AUTOMATED SUGGESTION — HUMAN REVIEW REQUIRED')
   })
 
+
+  test('unreviewed decisions cannot close reconciliation queues', () => {
+    const route = read('src/app/api/admin/reconciliation/reviews/route.js')
+    const page = read('src/app/admin/reconciliation/page.jsx')
+    expect(route).toContain("if(!review.reviewed_by) review.application_state='awaiting_human_review'")
+    expect(page).toContain("review&&review.reviewed_by&&review.decision==='resolved_no_link'")
+    expect(page).toContain("review&&review.reviewed_by&&(review.decision==='resolved_no_link'||review.application_state==='applied')")
+    expect(page).toContain("r.reviewed_by||'Not human-reviewed'")
+  })
+
   test('historical assessment claim verifies every critical persistence step', () => {
     const source = read('src/app/api/assessment/claim/route.js')
     expect(source).toContain('verifyError')
