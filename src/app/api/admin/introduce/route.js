@@ -86,7 +86,7 @@ export async function POST(request) {
     const safeMessage = escapeHtml(enquiry.body || '').replace(/\r?\n/g, '<br/>')
 
     const toBuyerHtml = `
-      <div style="font-family:sans-serif;font-size:14px;line-height:1.7;color:#1A1A2E;max-width:520px;">
+      <div style="font-family:'Raleway',sans-serif;font-size:14px;line-height:1.7;color:#1A1A2E;max-width:520px;">
         <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">${safeLabel.toUpperCase()} — INTRODUCTION</p>
         <p>Hi ${safeBuyerFirstName},</p>
         <p>You're introduced. Here's how to reach <strong>${safeProfName}</strong> directly:</p>
@@ -99,7 +99,7 @@ export async function POST(request) {
       </div>`
 
     const toProfHtml = `
-      <div style="font-family:sans-serif;font-size:14px;line-height:1.7;color:#1A1A2E;max-width:520px;">
+      <div style="font-family:'Raleway',sans-serif;font-size:14px;line-height:1.7;color:#1A1A2E;max-width:520px;">
         <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">${safeLabel.toUpperCase()} — INTRODUCTION</p>
         <p>Hi ${escapeHtml(profName.split(' ')[0])},</p>
         <p>You're introduced. Here's who reached out and how to reach them:</p>
