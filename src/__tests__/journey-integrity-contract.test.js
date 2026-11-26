@@ -107,6 +107,16 @@ describe('journey integrity contract', () => {
     expect(route).not.toContain('.update({ user_id:')
   })
 
+
+  test('reconciliation review queue closes a Taster link only after same-owner persistence and audit', () => {
+    const route = read('src/app/api/admin/reconciliation/reviews/route.js')
+    expect(route).toContain("from('platform_audit_events')")
+    expect(route).toContain("row.after_state?.taster_id")
+    expect(route).toContain('assessment.user_id===taster.user_id')
+    expect(route).toContain('hasAudit')
+    expect(route).not.toContain('norm(assessment.name)===norm(taster.name)')
+  })
+
   test('historical assessment claim verifies every critical persistence step', () => {
     const source = read('src/app/api/assessment/claim/route.js')
     expect(source).toContain('verifyError')
