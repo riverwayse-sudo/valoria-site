@@ -2,7 +2,7 @@
 
 import resendEmail from '@/lib/resend-email.cjs'
 
-const { sendResendEmail, escapeHtml } = resendEmail
+const { sendResendEmail, escapeHtml, getSiteOrigin } = resendEmail
 
 export async function POST(request) {
   let body
@@ -19,6 +19,7 @@ export async function POST(request) {
     return Response.json({ ok: false, error: 'A valid email is required.' }, { status: 400 })
   }
 
+  const siteOrigin = getSiteOrigin()
   const firstName = escapeHtml((typeof name === 'string' ? name.trim().split(/\\s+/)[0] : '') || 'there')
   const html = `
     <div style="font-family:'Raleway',sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;max-width:520px;margin:0 auto;">
@@ -31,7 +32,7 @@ export async function POST(request) {
         <li style="margin-bottom:6px;">Request an introduction to a professional, speaker or facilitator</li>
         <li>Use your dashboard to track requests and your Valoria journey</li>
       </ul>
-      <a href="https://valoriainstitute.com/marketplace" style="display:inline-block;margin-top:8px;padding:12px 24px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.08em;">EXPLORE THE MARKETPLACE</a>
+      <a href="${siteOrigin}/marketplace" style="display:inline-block;margin-top:8px;padding:12px 24px;background:#C9A84C;color:#0F0F1A;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.08em;">EXPLORE THE MARKETPLACE</a>
       <p style="margin:28px 0 0;font-size:12px;color:#8A8578;">— The Valoria Institute team</p>
     </div>`
 
@@ -39,7 +40,7 @@ export async function POST(request) {
     to: normalizedEmail,
     subject: 'Welcome to Valoria Institute',
     html,
-    text: `Welcome to Valoria Institute, ${typeof name === 'string' ? name.trim() : 'there'}.\n\nExplore assessment-informed professional profiles, request introductions, and use your dashboard to track your Valoria journey.\n\nExplore the marketplace: https://valoriainstitute.com/marketplace\n\nThe Valoria Institute team`,
+    text: `Welcome to Valoria Institute, ${typeof name === 'string' ? name.trim() : 'there'}.\n\nExplore assessment-informed professional profiles, request introductions, and use your dashboard to track your Valoria journey.\n\nExplore the marketplace: ${siteOrigin}/marketplace\n\nThe Valoria Institute team`,
     tags: { category: 'welcome-email', audience: 'buyer' },
     idempotencyKey: `valoria/welcome/${normalizedEmail}`,
   })
