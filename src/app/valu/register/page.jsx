@@ -4,10 +4,6 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/password-policy'
-import authConfirmation from '@/lib/auth-confirmation.cjs'
-
-const { getValuTasterConfirmationRedirect } = authConfirmation
-
 const GOLD = '#C9A84C'
 const DARK = '#0F0F1A'
 const MIDNIGHT = '#1A1A2E'
@@ -20,12 +16,6 @@ const EXPERIENCE = [
   ['16+', '16+ years'],
 ]
 
-function confirmationUrl() {
-  const redirect = getValuTasterConfirmationRedirect(window.location.origin)
-  if (!redirect) throw new Error('Email confirmation must be started from the official Valoria site.')
-  return redirect
-}
-
 export default function ValuRegisterPage() {
   const [form, setForm] = useState({
     name: '', role: '', experience: '', email: '', password: '', confirmPassword: '',
@@ -34,12 +24,11 @@ export default function ValuRegisterPage() {
   const [hasSession, setHasSession] = useState(false)
   const [checkingSession, setCheckingSession] = useState(true)
   const [loading, setLoading] = useState(false)
-  const [confirmationSent, setConfirmationSent] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
 
   const valid = useMemo(() => {
-    const identityValid = form.name.trim() && form.role.trim() && form.experience && form.email.trim() && form.privacyAcknowledged
+    const identityValid = !!(form.name.trim() && form.role.trim() && form.experience && form.email.trim() && form.privacyAcknowledged)
     if (!identityValid) return false
     return hasSession || (
       form.password.length >= PASSWORD_POLICY.minLength &&
@@ -86,7 +75,7 @@ export default function ValuRegisterPage() {
           marketingConsent: metadata.marketing_consent === true,
         }
         setForm(current => ({ ...current, ...next }))
-        const ready = user.email_confirmed_at && metadata.valu_taster_signup === true &&
+        const ready = !!user.email_confirmed_at && metadata.valu_taster_signup === true &&
           metadata.privacy_acknowledged === true && next.name && next.role && next.experience
         if (ready) {
           setNotice('Your confirmed account is ready. Preparing your secure Taster access…')
@@ -128,56 +117,33 @@ export default function ValuRegisterPage() {
         if (updateError) throw updateError
         const { data: { session } } = await supabase.auth.getSession()
         if (!session?.access_token || !data?.user?.email_confirmed_at) {
-          throw new Error('Confirm your email address before beginning the Taster.')
+          throw new Error('Sign in with a confirmed Valoria account to begin the Taster. New accounts can begin before email confirmation.')
         }
         await startTaster(session.access_token)
         return
       }
 
-      const { data, error: signupError } = await supabase.auth.signUp({
-        email: form.email.trim().toLowerCase(),
-        password: form.password,
-        options: {
-          emailRedirectTo: confirmationUrl(),
-          data: metadata,
-        },
+      const response = await fetch('/api/valu-taster/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+        body: JSON.stringify({
+          name: form.name.trim(),
+          role: form.role.trim(),
+          experience: form.experience,
+          email: form.email.trim().toLowerCase(),
+          password: form.password,
+          privacyAcknowledged: form.privacyAcknowledged,
+          marketingConsent: form.marketingConsent,
+        }),
       })
-      if (signupError) throw signupError
-      if (!data?.user?.id) throw new Error('Your Valoria account could not be created.')
-
-      if (Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-        const returnTo = encodeURIComponent('/valu/register/?journey=valu_taster')
-        window.location.replace(`/login?returnTo=${returnTo}`)
-        return
+      const result = await response.json().catch(() => ({}))
+      if (!response.ok || !result.url) {
+        throw new Error(result.error || 'Your Valoria account could not be securely prepared.')
       }
-
-      if (data.session?.access_token && data.user.email_confirmed_at) {
-        await startTaster(data.session.access_token)
-        return
-      }
-      setConfirmationSent(true)
+      window.location.replace(result.url)
     } catch (reason) {
       setError(reason?.message || 'We could not create your Valoria account. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function resendConfirmation() {
-    if (loading || !form.email.trim()) return
-    setLoading(true)
-    setError('')
-    setNotice('')
-    try {
-      const { error: resendError } = await supabase.auth.resend({
-        type: 'signup',
-        email: form.email.trim().toLowerCase(),
-        options: { emailRedirectTo: confirmationUrl() },
-      })
-      if (resendError) throw resendError
-      setNotice('A fresh confirmation email has been requested. Use the link in that email to continue.')
-    } catch (reason) {
-      setError(reason?.message || 'We could not resend the confirmation email. Please try again shortly.')
     } finally {
       setLoading(false)
     }
@@ -187,24 +153,12 @@ export default function ValuRegisterPage() {
     return <main style={styles.page}><section style={styles.card}><div style={styles.eyebrow}>VALORIA INSTITUTE</div><h1 style={styles.title}>Preparing your account.</h1><p style={styles.copy}>Checking your secure Valoria session…</p></section></main>
   }
 
-  if (confirmationSent) {
-    return <main style={styles.page}><section style={styles.card}>
-      <div style={styles.eyebrow}>EMAIL CONFIRMATION</div>
-      <h1 style={styles.title}>One confirmation. <em>Then your Taster.</em></h1>
-      <p style={styles.copy}>We sent a secure confirmation link to <strong>{form.email.trim().toLowerCase()}</strong>. Open that email on this device to confirm your account. Your Taster will begin only after Valoria verifies your email.</p>
-      {error && <p role="alert" style={styles.error}>{error}</p>}
-      {notice && <p role="status" style={styles.notice}>{notice}</p>}
-      <button type="button" onClick={resendConfirmation} disabled={loading} style={styles.secondary}>{loading ? 'REQUESTING…' : 'RESEND CONFIRMATION EMAIL'}</button>
-      <p style={styles.small}>Check your inbox and spam folder. You can return here after confirmation; your account details have been saved.</p>
-    </section></main>
-  }
-
   return <main style={styles.page}>
     <section style={styles.card}>
       <Link href="/" style={styles.brand}>VALORIA INSTITUTE</Link>
       <div style={styles.eyebrow}>YOUR VALU INDEX JOURNEY</div>
-      <h1 style={styles.title}>Your account comes <em>first.</em></h1>
-      <p style={styles.copy}>Create or sign in to your Valoria account. After email confirmation, you can begin your Taster and continue your VALU Index journey.</p>
+      <h1 style={styles.title}>Your account comes first.</h1>
+      <p style={styles.copy}>Create your Valoria account, complete your Taster, then confirm your email to access your dashboard and full VALU Index.</p>
       {hasSession && <p style={styles.notice}>You are signed in. Complete or confirm your professional details to begin.</p>}
       <form onSubmit={submit} style={styles.form}>
         <label style={styles.label}>FULL NAME
@@ -241,7 +195,7 @@ export default function ValuRegisterPage() {
         </label>
         {error && <p role="alert" style={styles.error}>{error}</p>}
         {notice && <p role="status" style={styles.notice}>{notice}</p>}
-        <button type="submit" disabled={!valid || loading} style={{ ...styles.primary, opacity: !valid || loading ? .55 : 1 }}>{loading ? 'SAVING…' : hasSession ? 'SAVE DETAILS & BEGIN TASTER →' : 'CREATE ACCOUNT →'}</button>
+        <button type="submit" disabled={!valid || loading} style={{ ...styles.primary, opacity: !valid || loading ? .55 : 1 }}>{loading ? 'SAVING…' : hasSession ? 'SAVE DETAILS & BEGIN TASTER →' : 'CREATE ACCOUNT & BEGIN TASTER →'}</button>
       </form>
       <p style={styles.small}>Already have a Valoria account? <Link href="/login?returnTo=%2Fvalu%2Fregister%2F%3Fjourney%3Dvalu_taster" style={styles.inlineLink}>Sign in to continue.</Link></p>
     </section>
