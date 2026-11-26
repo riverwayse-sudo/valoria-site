@@ -348,6 +348,7 @@ function ProfilePreviewModal({ profile, onClose, activeTrack = 'all' }) {
   const assessmentSummary = !isSpecializedView && isFull ? displayText(profile.assessment_summary || '') : ''
   const profilePath = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
   const profileHref = isSpecializedView ? `${profilePath}?track=${encodeURIComponent(selectedTrack)}` : profilePath
+  const modalHeadline = selectedTrack === 'candidate' ? (profile.current_job_title || profile.headline) : (profile.headline || profile.current_job_title)
   const enquiryActions = [
     { key: 'candidate', enquiryType: 'candidate', ctaLabel: 'REQUEST TALENT INTRO' },
     { key: 'speaker', enquiryType: 'speaker_booking', ctaLabel: 'BOOK SPEAKER' },
@@ -367,7 +368,7 @@ function ProfilePreviewModal({ profile, onClose, activeTrack = 'all' }) {
             <div className={styles.modalIdentityCopy}>
               <p className={styles.modalEyebrow}>ATB PROFILE ID · {displayText(profile.atb_id || 'PENDING')}</p>
               <h2 id="profile-preview-title">{displayText(profile.full_name || 'Professional profile')}</h2>
-              <p className={styles.modalHeadline}>{displayText(profile.current_job_title || profile.headline || 'Professional capability')}</p>
+              <p className={styles.modalHeadline}>{displayText(modalHeadline || 'Professional capability')}</p>
               <div className={styles.modalMeta}>
                 {displayText(profile.industry) && <span>{displayText(profile.industry)}</span>}
                 {displayText(profile.location) && <span>{displayText(profile.location)}</span>}
