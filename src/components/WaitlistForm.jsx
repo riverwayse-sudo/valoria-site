@@ -234,7 +234,7 @@ export default function WaitlistForm() {
               onChange={e => setRole(e.target.value)} />
 
             <label className="wl-field-label" htmlFor="wlf-interest">I AM A...</label>
-            <select id="wlf-interest" className="wl-field"
+            <select id="wlf-interest" className="wl-field vi-select"
               value={interest} onChange={e => setInterest(e.target.value)}>
               <option value="">Select one</option>
               <option value="professional">Professional / Talent</option>
