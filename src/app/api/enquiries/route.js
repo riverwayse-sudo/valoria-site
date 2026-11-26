@@ -59,7 +59,7 @@ async function notifyAdmin({ enquiryId, enquiryType, atbId, buyerName, buyerEmai
     replyTo: buyerEmail,
     subject: `${label} — ${atbId}`,
     html,
-    text: `New ${label}\nProfessional: ${atbId}\nFrom: ${buyerName} <${buyerEmail}>\nCompany: ${buyerCompany || 'Not provided'}\nSubject: ${subject || '(none given)'}\n\n${body || ''}\n\nReview: https://valoriainstitute.com/admin`,
+    text: `New ${label}\nProfessional: ${atbId}\nFrom: ${buyerName} <${buyerEmail}>\nCompany: ${buyerCompany || 'Not provided'}\nSubject: ${subject || '(none given)'}\n\n${body || ''}\n\nReview: ${SITE_ORIGIN}/admin`,
     tags: { category: 'enquiry', enquiry_type: enquiryType },
     idempotencyKey: `valoria/enquiry/${enquiryId}/admin`,
   })
@@ -120,7 +120,7 @@ async function notifyProfessional({ supabase, enquiryId, professionalProfileId, 
     to: userRow.user.email,
     subject: `New ${label.toLowerCase()} — ${safeAtbId}`,
     html,
-    text: `${buyerName}${buyerCompany ? ` from ${buyerCompany}` : ''} has requested an introduction through Valoria Institute.\n\nValoria will review and be in touch with next steps — no action needed from you right now.\n\nView your profile: https://valoriainstitute.com${actionUrl}`,
+    text: `${buyerName}${buyerCompany ? ` from ${buyerCompany}` : ''} has requested an introduction through Valoria Institute.\n\nValoria will review and be in touch with next steps — no action needed from you right now.\n\nView your profile: ${SITE_ORIGIN}${actionUrl}`,
     tags: { category: 'enquiry-professional-notify', enquiry_type: enquiryType },
     idempotencyKey: `valoria/enquiry/${enquiryId}/professional`,
   })
