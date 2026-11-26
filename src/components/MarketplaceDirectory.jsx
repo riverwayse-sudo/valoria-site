@@ -259,7 +259,7 @@ function Profile({p, onSelect, activeTrack = 'all'}) {
             <small>VALU INDEX</small><b>{p.valu_index}</b><span>POINTS</span>
           </div>
           <span className={`${styles.tierBadge} ${designationClass}`}>{designation}</span>
-        </> : <span className={styles.assessmentPending}>{p.assessment_access === 'basic' ? 'PUBLIC PROFILE' : 'VALU INDEX INSIGHT UNAVAILABLE'}</span>) : (
+        </> : <span className={styles.assessmentPending}>{p.assessment_access === 'basic' ? 'BASIC LISTING' : 'VALU INDEX INSIGHT UNAVAILABLE'}</span>) : (
           <span className={styles.assessmentPending}>{normalizedTrack === 'candidate' ? 'TALENT CAPABILITY' : normalizedTrack === 'speaker' ? 'SPEAKER CAPABILITY' : 'FACILITATOR CAPABILITY'}</span>
         )}
       </div>
