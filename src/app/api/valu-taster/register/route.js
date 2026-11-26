@@ -35,6 +35,29 @@ export async function POST(request) {
   const passwordCheck = validatePassword(password)
   if (!passwordCheck.valid) return fail(passwordCheck.errors.join(' '), 400)
 
+  const ip = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const ipKey = createHash('sha256').update(ip).digest('hex')
+  try {
+    const limited = await fetch(`${url}/rest/v1/rpc/consume_rate_limit`, {
+      method: 'POST',
+      headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_rate_key: `valu-taster-account-create:${ipKey}`, p_limit: 8, p_window_seconds: 3600 }),
+      cache: 'no-store',
+    })
+    if (!limited.ok) throw new Error(`rate-limit:${limited.status}`)
+    const result = await limited.json()
+    const limit = Array.isArray(result) ? result[0] : result
+    if (!limit?.allowed) {
+      return NextResponse.json({ error: 'Too many account registration attempts. Please try again later.' }, {
+        status: 429,
+        headers: { 'Cache-Control': 'no-store', 'Retry-After': String(limit?.retry_after_seconds || 3600) },
+      })
+    }
+  } catch (error) {
+    console.error('VALU account registration rate limiter failed:', error?.message || error)
+    return fail('Registration is temporarily unavailable. Please try again shortly.', 503)
+  }
+
   const admin = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } })
   const metadata = {
     display_name: name,
