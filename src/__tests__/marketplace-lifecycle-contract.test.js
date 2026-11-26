@@ -141,6 +141,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(setup).toContain("visibility: 'public'")
     expect(setup).toContain('form.consent && !saving')
     expect(setup).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
+    expect(setup).toContain('choose public visibility and meet Valoria’s listing requirements')
     expect(setup).toContain('PUBLIC_PROFILE_CONSENT_TEXT')
     expect(setup).toContain('REGISTERED_PROFILE_CONSENT_TEXT')
     expect(setup).toContain("fetch('/api/profile/acknowledgements'")
