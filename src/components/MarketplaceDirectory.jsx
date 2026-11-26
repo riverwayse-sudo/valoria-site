@@ -342,12 +342,12 @@ function ProfilePreviewModal({ profile, onClose, activeTrack = 'all' }) {
                 {Array.isArray(profile.languages) && profile.languages.length > 0 && <span>{labelValues(profile.languages).slice(0, 3).join(' · ')}</span>}
               </div>
             </div>
-            <div className={styles.modalIndex}>
+            {!isSpecializedView && <div className={styles.modalIndex}>
               <small>{isFull ? 'VALU INDEX' : 'PROFILE'}</small>
               <strong>{isFull ? profile.valu_index : 'PUBLIC'}</strong>
               <span>{isFull ? 'POINTS' : 'PROFILE'}</span>
               {tier && <b>{tier.name}</b>}
-            </div>
+            </div>}
           </div>
           <div className={styles.modalGrid}>
             <section className={styles.modalPanel}>
