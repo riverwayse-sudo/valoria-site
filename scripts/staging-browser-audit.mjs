@@ -249,12 +249,12 @@ try {
       })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
+      const normalisePath = value => value.replace(/\/+$/, '') || '/'
       const expectedRedirect = expectedRedirectPaths[route.name]
       if (expectedRedirect && normalisePath(state.currentPath) !== expectedRedirect) {
         report.failures.push(`${route.name}/${viewport.name}: expected canonical redirect to ${expectedRedirect}, reached ${state.currentPath}`)
       }
       const canonicalTasterEntries = new Set(['/valu/register'])
-      const normalisePath = value => value.replace(/\/+$/, '') || '/'
       if (['homepage', 'valu', 'valu-start'].includes(route.name) &&
           (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => !canonicalTasterEntries.has(normalisePath(href))))) {
         report.failures.push(route.name + '/' + viewport.name + ': public Taster entry must require the canonical account-first registration route; found ' + JSON.stringify(state.tasterEntryLinks))
