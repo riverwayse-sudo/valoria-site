@@ -37,3 +37,7 @@
 | Lead capture, consent-preserving sync and email failure recovery | NOT VERIFIED | End-to-end integration audit pending |
 
 Update status only with traceable evidence. Known Critical or High defects block production release.
+
+## Shared requirements authority
+
+Use [VALORIA_REQUIREMENTS_REGISTER.md](docs/engineering/VALORIA_REQUIREMENTS_REGISTER.md) for cross-repository requirement IDs, source authority, decisions and acceptance criteria. This quality register remains the site-specific evidence record; do not infer PASS from the shared requirement text. Link each status to the relevant site commit, CI run, staging/production evidence and remediation.
