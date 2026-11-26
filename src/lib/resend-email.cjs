@@ -11,7 +11,7 @@ function normalizeTags(tags) {
     .filter(([, value]) => value !== undefined && value !== null && String(value).trim())
     .map(([name, value]) => ({
       name: String(name).toLowerCase().replace(/[^a-z0-9_-]/g, '_').slice(0, 50) || 'category',
-      value: String(value).slice(0, 256),
+      value: String(value).toLowerCase().replace(/[^a-z0-9_-]/g, '_').slice(0, 256),
     }))
 }
 
@@ -57,11 +57,15 @@ async function sendResendEmail({
   if (idempotencyKey) headers['Idempotency-Key'] = String(idempotencyKey).slice(0, 256)
 
   try {
-    const response = await fetch(RESEND_ENDPOINT, {
+    const requestOptions = {
       method: 'POST',
       headers,
       body: JSON.stringify(payload),
-    })
+    }
+    if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+      requestOptions.signal = AbortSignal.timeout(12000)
+    }
+    const response = await fetch(RESEND_ENDPOINT, requestOptions)
     const result = await response.json().catch(() => ({}))
     return {
       ok: response.ok,
