@@ -22,6 +22,8 @@ for (const token of [
 ]) {
   if (!css.includes(token)) throw new Error(`Dropdown design system missing contract: ${token}`);
 }
+if (!css.includes('select.vi-select--light:focus-visible')) throw new Error('Light native dropdowns must expose the same visible keyboard focus state.');
+
 let count = 0;
 for (const file of auditedFiles) {
   const source = fs.readFileSync(file, 'utf8')
