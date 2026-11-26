@@ -121,19 +121,19 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
         </div>
         <details className={styles.filterHelp}><summary>How filtering works</summary><p>Filter by professional area, skills, sector or assessment score. We only show information approved for public display.</p></details>
       </section>
-      <section className={styles.directory}>
+      <section className={styles.directory} data-directory-root="true">
         <div className={styles.container}>
-          <div className={styles.directoryHead}>
-            <div><p className={styles.eyebrow}>PUBLIC MARKETPLACE</p><h2>{dataUnavailable ? 'Directory unavailable' : `${results.length} ${results.length===1?'professional':'professionals'}`}</h2></div>
+          <div className={styles.directoryHead} data-directory-head="true">
+            <div><p className={styles.eyebrow}>PUBLIC MARKETPLACE</p><h2 data-directory-count="true">{dataUnavailable ? 'Directory unavailable' : `${results.length} ${results.length===1?'professional':'professionals'}`}</h2></div>
             <span>Assessment-informed professional profiles</span>
           </div>
           {dataUnavailable ? (
-            <div className={styles.empty}>
+            <div className={styles.empty} data-directory-empty="true">
               <strong>Marketplace data could not be verified.</strong>
               <p>The directory is temporarily unavailable. Try again shortly.</p>
               <button type="button" className={styles.view} onClick={() => router.refresh()}>RETRY →</button>
             </div>
-          ) : results.length ? <div className={styles.grid}>{results.map(p=><Profile key={p.id} p={p} onSelect={() => setSelectedProfile(p)}/>)}</div> :
+          ) : results.length ? <div className={styles.grid} data-directory-grid="true">{results.map(p=><Profile key={p.id} p={p} onSelect={() => setSelectedProfile(p)}/>)}</div> :
             rows.length === 0 && activeTrack === 'all' ? (
               <div className={styles.empty}>
                 <strong>No public professional profiles are currently available.</strong>
