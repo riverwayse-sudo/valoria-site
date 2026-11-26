@@ -485,14 +485,18 @@ describe('journey integrity contract', () => {
     expect(signup).toContain('VALU Index Taster')
     expect(signup).toContain('full VALU Index')
   })
-  test('account-first registration starts a Taster only after confirmed authentication', () => {
+  test('registration creates an unconfirmed account and immediately issues a scoped Taster handoff', () => {
     const register = read('src/app/valu/register/page.jsx')
-    const start = read('src/app/api/valu-taster/start/route.js')
-    expect(register).toContain('supabase.auth.signUp')
-    expect(register).toContain('emailRedirectTo: confirmationUrl()')
-    expect(register).toContain("fetch('/api/valu-taster/start'")
-    expect(start).toContain('user.email_confirmed_at')
-    expect(start).toContain("metadata.valu_taster_signup !== true")
+    const create = read('src/app/api/valu-taster/register/route.js')
+    const exchange = read('src/app/api/valu-taster/start/route.js')
+    expect(register).toContain("fetch('/api/valu-taster/register'")
+    expect(create).toContain('admin.createUser')
+    expect(create).toContain('email_confirm: false')
+    expect(create).toContain("entry_point: 'taster_start'")
+    expect(create).toContain("target_stage: 'taster'")
+    expect(create).toContain("source: 'unconfirmed_account_taster_signup'")
+    expect(exchange).toContain('user.email_confirmed_at')
+    expect(exchange).toContain("metadata.valu_taster_signup !== true")
   })
   test('dashboard launches the secure assessment handoff directly without an interstitial', () => {
     const nav = read('src/components/Nav.jsx')
@@ -521,29 +525,31 @@ describe('journey integrity contract', () => {
   })
 
 
-  test('professional account signup and email confirmation happen after the completed Taster', () => {
-    const register = read('src/app/valu/register/page.jsx')
-    const professionalSignup = read('src/app/professional-signup/page.jsx')
+  test('Taster completion requests email confirmation only after verifying the exact saved registration', () => {
+    const completion = read('src/app/api/valu-taster/complete/route.js')
+    const page = read('src/app/valu/confirm-taster/page.jsx')
     const callback = read('src/app/auth/callback/page.jsx')
     const publicSignup = read('src/app/signup/page.jsx')
-    expect(register).toContain('supabase.auth.signUp')
-    expect(register).toContain('supabase.auth.signUp')
-    expect(professionalSignup).toContain('pending_taster_id')
-    expect(professionalSignup).toContain('supabase.auth.verifyOtp')
-    expect(professionalSignup).toContain("fetch('/api/link-taster'")
-    expect(professionalSignup).toContain('Your taster is saved')
+    expect(completion).toContain(".eq('id', tasterId)")
+    expect(completion).toContain(".eq('taster_id', tasterId)")
+    expect(completion).toContain("lead?.source !== 'valu_taster_signup'")
+    expect(completion).toContain('admin.auth.admin.getUserById')
+    expect(completion).toContain("type: 'signup'")
+    expect(page).toContain("fetch('/api/valu-taster/complete'")
+    expect(page).toContain('Your Taster is complete')
     expect(callback).toContain("fetch('/api/link-taster'")
     expect(callback).toContain('pendingTasterId')
     expect(publicSignup).toContain('href="/valu/register/?journey=valu_taster"')
-    expect(publicSignup).toContain('account first')
   })
 
-  test('legacy registration URL now provides the canonical account-first Taster entry', () => {
+  test('legacy registration URL provides the account-at-entry, Taster-before-confirmation flow', () => {
     const register = read('src/app/valu/register/page.jsx')
-    expect(register).toContain('supabase.auth.signUp')
-    expect(register).toContain('supabase.auth.getUser()')
-    expect(register).toContain("fetch('/api/valu-taster/start'")
-    expect(register).toContain('email_confirmed_at')
+    const create = read('src/app/api/valu-taster/register/route.js')
+    expect(register).toContain("fetch('/api/valu-taster/register'")
+    expect(register).toContain('CREATE ACCOUNT & BEGIN TASTER')
+    expect(create).toContain('email_confirm: false')
+    expect(create).toContain('admin.auth.admin.createUser')
+    expect(create).toContain('privacy_acknowledged: true')
   })
 
 
