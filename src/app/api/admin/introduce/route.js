@@ -61,6 +61,9 @@ export async function POST(request) {
       .eq('id', enquiryId)
       .single()
     if (enqErr || !enquiry) return Response.json({ error: 'Enquiry not found.' }, { status: 404 })
+    if (enquiry.status === 'introduced') {
+      return Response.json({ introduced: true, alreadyIntroduced: true, buyerEmailSent: false, professionalEmailSent: false }, { status: 200 })
+    }
 
     const { data: profUser, error: profUserErr } = await supabase.auth.admin.getUserById(enquiry.professional_profile_id)
     if (profUserErr || !profUser?.user?.email) {
