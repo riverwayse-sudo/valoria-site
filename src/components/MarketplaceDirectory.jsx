@@ -166,7 +166,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
         </div>
       </section>
     </main>
-    <ProfilePreviewModal profile={selectedProfile} onClose={closeProfilePreview} />
+    <ProfilePreviewModal profile={selectedProfile} onClose={closeProfilePreview} activeTrack={activeTrack} />
     <Footer />
   </div>
 }
@@ -178,6 +178,45 @@ function labelValues(value) {
     if (!item || typeof item !== 'object') return ''
     return cleanSkill(item.label ?? item.name ?? item.skill_name ?? item.title ?? item.value)
   }).filter(Boolean))]
+}
+
+function evidenceValues(value, fields) {
+  if (!Array.isArray(value)) return []
+  return [...new Set(value.map(item => {
+    if (typeof item === 'string') return cleanSkill(item)
+    if (!item || typeof item !== 'object') return ''
+    return fields.map(field => displayText(item[field])).filter(Boolean).join(' · ')
+  }).filter(Boolean))]
+}
+
+function getSpecialistEvidence(profile, track) {
+  const capability = normalize(track)
+  const sections = capability === 'candidate'
+    ? [
+        { label: 'Core skills', items: labelValues(profile.skills) },
+        { label: 'Professional context', items: [
+          displayText(profile.current_job_title),
+          displayText(profile.industry),
+          profile.experience_years != null ? `${profile.experience_years} years' experience` : '',
+        ].filter(Boolean) },
+      ]
+    : capability === 'speaker'
+      ? [
+          { label: 'Speaking topics', items: labelValues(profile.topics) },
+          { label: 'Speaking formats', items: labelValues(profile.format_capabilities) },
+          { label: 'Audience experience', items: labelValues(profile.audience_sizes) },
+          { label: 'Speaking engagements', items: evidenceValues(profile.past_events, ['name', 'role']) },
+        ]
+      : capability === 'facilitator'
+        ? [
+            { label: 'Facilitation topics', items: labelValues(profile.facilitation_topics) },
+            { label: 'Programme types', items: labelValues(profile.programme_types) },
+            { label: 'Delivery formats', items: labelValues(profile.format_capabilities) },
+            { label: 'Audience experience', items: labelValues(profile.audience_sizes) },
+            { label: 'Clients & programmes', items: evidenceValues(profile.past_clients, ['name', 'programme']) },
+          ]
+        : []
+  return sections.filter(section => section.items.length > 0)
 }
 
 function getCapabilitySelection(profile) {
@@ -259,7 +298,7 @@ function Profile({p, onSelect}) {
 }
 
 // The public preview receives only the consent-gated, route-safe roster projection.
-function ProfilePreviewModal({ profile, onClose }) {
+function ProfilePreviewModal({ profile, onClose, activeTrack = 'all' }) {
   const closeButtonRef = useRef(null)
 
   useEffect(() => {
@@ -309,8 +348,12 @@ function ProfilePreviewModal({ profile, onClose }) {
   ]
   const skills = labelValues(profile.skills).slice(0, 4)
   const topics = labelValues(profile.topics).slice(0, 3)
-  const assessmentSummary = isFull ? displayText(profile.assessment_summary || '') : ''
-  const profileHref = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
+  const isSpecializedView = activeTrack !== 'all'
+  const specialistSections = isSpecializedView ? getSpecialistEvidence(profile, activeTrack) : []
+  const specialistItemCount = specialistSections.reduce((count, section) => count + section.items.length, 0)
+  const assessmentSummary = !isSpecializedView && isFull ? displayText(profile.assessment_summary || '') : ''
+  const profilePath = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
+  const profileHref = isSpecializedView ? `${profilePath}?track=${encodeURIComponent(activeTrack)}` : profilePath
   const enquiryActions = [
     { key: 'candidate', enquiryType: 'candidate', ctaLabel: 'REQUEST TALENT INTRO' },
     { key: 'speaker', enquiryType: 'speaker_booking', ctaLabel: 'BOOK SPEAKER' },
@@ -346,16 +389,20 @@ function ProfilePreviewModal({ profile, onClose }) {
           </div>
           <div className={styles.modalGrid}>
             <section className={styles.modalPanel}>
-              <p className={styles.modalSectionLabel}>VALU INDEX · PROFESSIONAL INSIGHT</p>
+              <p className={styles.modalSectionLabel}>{isSpecializedView ? 'SPECIALIST CAPABILITY EVIDENCE' : 'VALU INDEX · PROFESSIONAL INSIGHT'}</p>
               <p id="profile-preview-description" className={styles.modalSummary}>
-                {isFull
-                  ? (assessmentSummary || 'The Full VALU Index is complete. The professional insight is being prepared.')
-                  : 'This profile introduces the professional’s public identity, declared capabilities and areas of expertise. Additional VALU Index insight appears when available.'}
+                {isSpecializedView
+                  ? (specialistItemCount
+                    ? 'This view presents evidence specific to the selected capability. The overall VALU Index narrative remains separate.'
+                    : 'No published evidence is available for this capability yet. The overall VALU Index insight remains available in All professionals.')
+                  : isFull
+                    ? (assessmentSummary || 'The Full VALU Index is complete. The professional insight is being prepared.')
+                    : 'This profile introduces the professional’s public identity, declared capabilities and areas of expertise. Additional VALU Index insight appears when available.'}
               </p>
-              <div className={styles.modalCredential}>
+              {!isSpecializedView && <div className={styles.modalCredential}>
                 <span>{isFull ? 'VALU INDEX INSIGHT' : 'PROFILE OVERVIEW'}</span>
                 <strong>{tier ? tier.name : 'VALU INDEX SCORE NOT DISPLAYED'}</strong>
-              </div>
+              </div>}
             </section>
             <section className={styles.modalPanel}>
               <p className={styles.modalSectionLabel}>CAPABILITY SELECTION</p>
@@ -370,8 +417,19 @@ function ProfilePreviewModal({ profile, onClose }) {
               </div>
             </section>
           </div>
-          {skills.length > 0 && <section className={styles.modalListSection}><p className={styles.modalSectionLabel}>PROFESSIONAL SKILLS</p><div className={styles.modalChips}>{skills.map(skill => <span key={skill}>{skill}</span>)}</div></section>}
-          {topics.length > 0 && <section className={styles.modalListSection}><p className={styles.modalSectionLabel}>AREAS OF EXPERTISE</p><div className={styles.modalChips}>{topics.map(topic => <span key={topic}>{topic}</span>)}</div></section>}
+          {isSpecializedView ? (
+            specialistSections.map(section => (
+              <section key={section.label} className={styles.modalListSection}>
+                <p className={styles.modalSectionLabel}>{section.label}</p>
+                <div className={styles.modalChips}>{section.items.map(item => <span key={item}>{item}</span>)}</div>
+              </section>
+            ))
+          ) : (
+            <>
+              {skills.length > 0 && <section className={styles.modalListSection}><p className={styles.modalSectionLabel}>PROFESSIONAL SKILLS</p><div className={styles.modalChips}>{skills.map(skill => <span key={skill}>{skill}</span>)}</div></section>}
+              {topics.length > 0 && <section className={styles.modalListSection}><p className={styles.modalSectionLabel}>AREAS OF EXPERTISE</p><div className={styles.modalChips}>{topics.map(topic => <span key={topic}>{topic}</span>)}</div></section>}
+            </>
+          )}
           <div className={styles.modalFooter}>
             <p>Choose the introduction that matches this professional’s selected capability. Valoria will review the request and coordinate the next step.</p>
             <div className={styles.modalActions}>
