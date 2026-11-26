@@ -1,4 +1,5 @@
-# Re-run the Cloudflare production build for the merged marketplace card update (#310).
+# Production promotion is deliberately opt-in. A push must carry [deploy-production],
+# or a manual dispatch must explicitly select DEPLOY.
 name: Deploy Valoria site to Cloudflare production
 
 on:
@@ -13,6 +14,15 @@ on:
       - "package-lock.json"
       - ".github/workflows/cloudflare-site-worker-deploy.yml"
   workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Select DEPLOY to authorize production promotion"
+        required: true
+        default: "NO"
+        type: choice
+        options:
+          - "NO"
+          - "DEPLOY"
 
 permissions:
   contents: read
@@ -23,6 +33,10 @@ concurrency:
 
 jobs:
   deploy-production:
+    if: >-
+      (github.event_name == 'push' && contains(github.event.head_commit.message, '[deploy-production]')) ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'DEPLOY')
+    environment: production
     name: Build, deploy and smoke-test production Cloudflare Worker
     runs-on: ubuntu-latest
     steps:
