@@ -4,7 +4,7 @@ const {
   normalizeCapabilityTrack,
   getCapabilityEvidence,
   getCapabilityEvidenceSummary,
-} = require('../lib/profile-capability-evidence')
+} = require('../lib/profile-capability-evidence.cjs')
 
 const read = (file) => fs.readFileSync(path.join(__dirname, '..', file), 'utf8')
 
