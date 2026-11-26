@@ -42,7 +42,7 @@ export async function GET(request) {
   }
   const latest=Object.values(latestBySource)
   for(const review of latest){
-    if(review.decision==='verified_match'&&!review.reviewed_by) review.application_state='awaiting_human_review'
+    if(!review.reviewed_by) review.application_state='awaiting_human_review'
   }
   const linkReviews=latest.filter(review=>review.reviewed_by&&review.source_record_type==='assessment'&&review.decision==='verified_match'&&review.candidate_record_type==='taster'&&review.candidate_record_id)
   const ownerReviews=latest.filter(review=>review.reviewed_by&&review.source_record_type==='taster'&&review.decision==='verified_match'&&review.candidate_record_type==='account'&&review.candidate_record_id)
