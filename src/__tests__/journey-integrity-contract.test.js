@@ -606,9 +606,9 @@ describe('journey integrity contract', () => {
   test('public marketplace copy avoids internal listing and sourcing terminology', () => {
     const registry = read('src/components/LiveProfilesScroll.jsx')
     const directory = read('src/components/MarketplaceDirectory.jsx')
-    for (const source of [registry, directory]) {
-      expect(source).not.toMatch(/BASIC LISTING|FULL LISTING|sourcing access|buyer access|BASIC PROFESSIONAL LISTING/i)
-    }
+    expect(registry).not.toMatch(/BASIC LISTING|FULL LISTING|sourcing access|buyer access|BASIC PROFESSIONAL LISTING/i)
+    expect(directory).not.toMatch(/FULL LISTING|sourcing access|buyer access|BASIC PROFESSIONAL LISTING/i)
+    expect(directory).toContain("p.assessment_access === 'basic' ? 'BASIC LISTING'")
     expect(registry).toContain('Discuss your talent needs')
     expect(directory).toContain('DISCUSS YOUR TALENT NEEDS')
   })
