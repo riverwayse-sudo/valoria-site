@@ -313,7 +313,6 @@ function ProfilePreviewModal({ profile, onClose, activeTrack = 'all' }) {
   const isSpecializedView = activeTrack !== 'all'
   const specialistSections = isSpecializedView ? getCapabilityEvidence(profile, activeTrack) : []
   const specialistSummary = isSpecializedView ? getCapabilityEvidenceSummary(profile, activeTrack) : ''
-  const specialistItemCount = specialistSections.reduce((count, section) => count + section.items.length, 0)
   const assessmentSummary = !isSpecializedView && isFull ? displayText(profile.assessment_summary || '') : ''
   const profilePath = `/profile/${encodeURIComponent(displayText(profile.atb_id || profile.id))}`
   const profileHref = isSpecializedView ? `${profilePath}?track=${encodeURIComponent(activeTrack)}` : profilePath
