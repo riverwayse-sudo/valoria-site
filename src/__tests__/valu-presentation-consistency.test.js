@@ -121,5 +121,8 @@ describe('VALU presentation consistency', () => {
     expect(prototype).toContain('does not create an account, send email or store your responses')
     expect(prototype).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
     expect(prototype).not.toMatch(/9 opening questions|remaining 49 questions|58 in total/i)
+    const prototypeLayout = read('src/app/test/assessment/layout.jsx')
+    expect(prototypeLayout).toContain('index: false')
+    expect(prototypeLayout).toContain('noarchive: true')
   })
 })
