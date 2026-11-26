@@ -51,14 +51,14 @@ export async function POST(request) {
 
   const admin = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } })
   const { data: taster, error: tasterError } = await admin.from('taster_sessions')
-    .select('id,name,role,completed_at,lead_capture_id')
+    .select('id,name,role,completed_at,lead_capture_id,user_id')
     .eq('id', tasterId)
     .maybeSingle()
   if (tasterError) return fail('We could not verify your completed Taster.', 502)
   if (!taster?.completed_at || !taster.lead_capture_id) return fail('Complete your Taster before requesting email confirmation.', 409)
 
   const { data: candidate, error: candidateError } = await admin.from('taster_identity_candidates')
-    .select('candidate_name,candidate_role,candidate_email,lead_capture_id')
+    .select('candidate_name,candidate_role,candidate_email,lead_capture_id,linked_user_id')
     .eq('taster_id', tasterId)
     .maybeSingle()
   if (candidateError) return fail('We could not verify the Taster registration identity.', 502)
@@ -82,6 +82,12 @@ export async function POST(request) {
   const user = authData?.user
   if (authError || !user || String(user.email || '').trim().toLowerCase() !== email) {
     return fail('The registered Valoria account could not be verified.', 403)
+  }
+  if (taster.user_id && taster.user_id !== user.id) {
+    return fail('This completed Taster is already linked to another account. Contact Valoria support.', 409)
+  }
+  if (candidate.linked_user_id && candidate.linked_user_id !== user.id) {
+    return fail('The Taster identity evidence is already linked to another account. Contact Valoria support.', 409)
   }
   if (user.email_confirmed_at) {
     return NextResponse.json({ already_confirmed: true }, { headers: { 'Cache-Control': 'no-store' } })
