@@ -202,3 +202,16 @@ nav.vi-nav.scrolled,
   .session-series-primary,
   .session-series-secondary { transition:none; }
 }
+
+
+/* Homepage profile rail: pause for intentional interaction; touch uses manual browsing. */
+.live-profiles .vi-scroll-mask:hover .vi-scroll-track,
+.live-profiles .vi-scroll-mask:focus-within .vi-scroll-track {
+  animation-play-state: paused;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .live-profiles .vi-scroll-track {
+    animation: none;
+  }
+}
