@@ -7,6 +7,7 @@ import Footer from '@/components/Footer'
 import EnquiryForm from '@/components/EnquiryForm'
 import ValoriaAvatar from '@/components/ValoriaAvatar'
 import { getValuTier, PRIME_CLUSTERS, PRIME_CLUSTER_NAMES } from '@/lib/brand'
+import { normalizeCapabilityTrack, getCapabilityEvidence, getCapabilityEvidenceSummary } from '@/lib/profile-capability-evidence'
 
 // ─── helpers ─────────────────────────────────────────────
 function getInitials(name) {
@@ -260,35 +261,38 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
     </>
   )
 
-  const p           = profile
-  const tracks        = p.active_tracks || (p.user_type ? [p.user_type] : [])
-  const isSpeaker     = tracks.includes('speaker')
-  const isFacilitator = tracks.includes('facilitator')
-  const isCandidate   = tracks.includes('candidate') || tracks.includes('talent') || tracks.length === 0
-  const initials    = getInitials(p.display_name)
+  const p = profile
+  const tracks = p.active_tracks || (p.user_type ? [p.user_type] : [])
+  const normalizedTracks = tracks.map(normalizeCapabilityTrack)
+  const isSpeaker = normalizedTracks.includes('speaker')
+  const isFacilitator = normalizedTracks.includes('facilitator')
+  const isCandidate = normalizedTracks.includes('candidate') || normalizedTracks.length === 0
+  const initials = getInitials(p.display_name)
   const avatarLetters = getAvatarLetters(p.display_name)
-  const atbId       = String(p.atb_id || '—').normalize('NFKC')
-  const videos      = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
-  const compensation = (isSpeaker || isFacilitator) ? (p.fee_range || p.salary_expectation || null) : (p.salary_expectation || p.fee_range || null)
-  const compLabel   = (isSpeaker || isFacilitator) ? 'Fee Range' : 'Salary Range'
-  // Which track's framing (headline placeholder, CTA copy, tags shown) to
-  // display. If the marketplace page someone clicked in from tells us which
-  // track they were browsing (?track=speaker etc.), honour that — otherwise
-  // fall back to a fixed priority. Previously this always showed
-  // facilitator-first for anyone with multiple tracks, so a profile that was
-  // both Speaker and Facilitator showed "Request Facilitator" even when
-  // reached from the Speaker marketplace.
+  const atbId = String(p.atb_id || '—').normalize('NFKC')
+  const videos = (p.youtube_links || []).filter(v => v && !v.includes('dQw4w9WgXcQ'))
   const requestedTrack = searchParams?.track
-  const displayTrack = (requestedTrack && tracks.includes(requestedTrack))
-    ? requestedTrack
+  const normalizedRequestedTrack = normalizeCapabilityTrack(requestedTrack)
+  const isSpecializedView = Boolean(requestedTrack && normalizedTracks.includes(normalizedRequestedTrack))
+  // Without a requested spectrum, the page is the general profile view.
+  const displayTrack = isSpecializedView
+    ? normalizedRequestedTrack
     : (isFacilitator ? 'facilitator' : isSpeaker ? 'speaker' : 'candidate')
-  const tags        = displayTrack === 'facilitator' ? (p.programme_types || []) : displayTrack === 'speaker' ? (p.topics || []) : (p.skills || [])
+  const tags = isSpecializedView
+    ? (displayTrack === 'facilitator' ? (p.programme_types || []) : displayTrack === 'speaker' ? (p.topics || []) : (p.skills || []))
+    : [...new Set([...(p.skills || []), ...(p.topics || []), ...(p.facilitation_topics || []), ...(p.programme_types || [])])]
+  const specialistSections = isSpecializedView ? getCapabilityEvidence(p, displayTrack) : []
+  const specialistSummary = isSpecializedView ? getCapabilityEvidenceSummary(p, displayTrack) : ''
+  const compensation = (displayTrack === 'speaker' || displayTrack === 'facilitator')
+    ? (p.fee_range || p.salary_expectation || null)
+    : (p.salary_expectation || p.fee_range || null)
+  const compLabel = (displayTrack === 'speaker' || displayTrack === 'facilitator') ? 'Fee Range' : 'Salary Range'
   const isOwnProfile = !!(currentUser && currentUser.id === p.id)
 
   const stats = [
-    { label:'Location',   value: p.location || '—' },
-    { label:'Industry',   value: p.industry || '—' },
-    { label:'Experience', value: p.years_experience ? `${p.years_experience} yrs` : '—' },
+    { label:'Location', value: p.location || '—' },
+    { label:'Industry', value: p.industry || '—' },
+    { label:'Experience', value: p.experience_years != null ? `${p.experience_years} yrs` : '—' },
     { label:'VALU Index', value: p.valu_score != null ? `${p.valu_score} points` : 'Basic listing', href: p.valu_score != null ? '#valu-card' : null },
   ]
 
@@ -470,7 +474,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                 <>
                   <div style={{ fontSize:'52px', fontWeight:700, color: GOLD, lineHeight:1, marginBottom:'4px' }}>{p.valu_score}<span style={{ fontSize:'16px', color: DIM, fontWeight:400 }}> points</span></div>
                   {getValuTier(p.valu_score, 'full') && <div style={{ fontSize:'11px', fontWeight:700, color: GOLD, marginBottom:'20px', letterSpacing:'.1em', textTransform:'uppercase' }}>{getValuTier(p.valu_score, 'full').name} · {getValuTier(p.valu_score, 'full').stars}</div>}
-                  {p.cluster_scores && (
+                  {!isSpecializedView && p.cluster_scores && (
                     <div style={{ marginTop:'8px' }}>
                       <PrimeRadarChart scores={p.cluster_scores} />
                     </div>
@@ -549,12 +553,28 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               ) : null
             })()}
 
-            {/* The public profile summary is generated from the VALU Index report, not a self-written bio or CV summary. */}
-            <Section label="VALU Index Summary">
-              {p.assessment_summary
-                ? <p style={{ fontSize:'15px', fontWeight:300, color: DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
-                : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>{p.assessment_access === 'basic' ? 'A Basic listing presents professional identity and capability information. VALU Index insight is not displayed at this tier.' : 'Your VALU Index summary will appear here when your VALU Index and listing requirements are complete.'}</p>}
-            </Section>
+            {isSpecializedView ? (
+              <Section label={`${displayTrack === 'candidate' ? 'Talent' : displayTrack === 'speaker' ? 'Speaker' : 'Facilitator'} Capability Evidence`}>
+                <p style={{ fontSize:'15px', fontWeight:300, color:DIM, lineHeight:1.8 }}>{specialistSummary}</p>
+                {specialistSections.filter(section => !['Speaking engagements', 'Clients and programmes'].includes(section.label)).map(section => (
+                  <div key={section.label} style={{ marginTop:'18px' }}>
+                    <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.16em', color:GOLD, textTransform:'uppercase', marginBottom:'10px' }}>{section.label}</div>
+                    <div style={{ display:'flex', flexWrap:'wrap', gap:'9px' }}>
+                      {section.items.map(item => <span key={item} style={{ padding:'8px 13px', border:`1px solid ${GLINE2}`, fontSize:'12px', color:DIM }}>{item}</span>)}
+                    </div>
+                  </div>
+                ))}
+              </Section>
+            ) : (
+              <>
+                {/* The general profile summary is generated from the overall VALU Index report, not a self-written bio or CV summary. */}
+                <Section label="VALU Index Summary">
+                  {p.assessment_summary
+                    ? <p style={{ fontSize:'15px', fontWeight:300, color:DIM, lineHeight:1.8 }}>{p.assessment_summary}</p>
+                    : <p style={{ fontSize:'13px', fontWeight:300, color:'rgba(247,244,238,.3)', fontStyle:'italic' }}>{p.assessment_access === 'basic' ? 'A Basic listing presents professional identity and capability information. VALU Index insight is not displayed at this tier.' : 'Your VALU Index summary will appear here when your VALU Index and listing requirements are complete.'}</p>}
+                </Section>
+              </>
+            )}
 
             {/* Key Strengths — rectangular card, gold background per brand,
                 surfacing the top-scoring PRIME clusters as concrete points
@@ -582,8 +602,8 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               </div>
             )}
 
-            {/* Skills / Topics */}
-            {tags.length > 0 && (
+            {/* General view shows the combined capability set; specialist views use their own evidence adapter above. */}
+            {!isSpecializedView && tags.length > 0 && (
               <Section label={displayTrack === 'facilitator' ? 'Programme Types' : displayTrack === 'speaker' ? 'Speaking Topics' : 'Core Skills'}>
                 <div style={{ display:'flex', flexWrap:'wrap', gap:'10px' }}>
                   {tags.map(t => (
@@ -595,7 +615,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               </Section>
             )}
 
-            {displayTrack === 'speaker' && p.past_events?.length > 0 && (
+            {(!isSpecializedView || displayTrack === 'speaker') && displayTrack === 'speaker' && p.past_events?.length > 0 && (
               <Section label="Speaking Engagements">
                 <div style={{ display:'grid', gap:'10px' }}>
                   {p.past_events.filter(event => event?.name).map((event, index) => (
@@ -608,7 +628,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
               </Section>
             )}
 
-            {displayTrack === 'facilitator' && p.past_clients?.length > 0 && (
+            {(!isSpecializedView || displayTrack === 'facilitator') && displayTrack === 'facilitator' && p.past_clients?.length > 0 && (
               <Section label="Clients & Programmes">
                 <div style={{ display:'grid', gap:'10px' }}>
                   {p.past_clients.filter(client => client?.name).map((client, index) => (
