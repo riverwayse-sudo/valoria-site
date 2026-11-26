@@ -22,6 +22,8 @@ jobs:
         run: npm ci
       - name: Verify protected Valoria governance contract
         run: npm run governance:check
+        env:
+          VALORIA_GOVERNANCE_PEER_REF: ${{ github.event_name == 'pull_request' && startsWith(github.head_ref, 'governance/') && github.head_ref || '' }}
       - name: Run excellence and profile regression guards
         run: npm run excellence:check
       - name: Lint critical user journeys for undefined identifiers
