@@ -91,6 +91,7 @@ describe('specialized profile content contract', () => {
     expect(directory).toContain('getCapabilityCardLabels(p, normalizedTrack)')
     expect(directory).toContain("const modalHeadline = selectedTrack === 'candidate'")
     expect(directory).toContain("selectedTrack === 'all' && <select")
+    expect((directory.match(/selectedTrack === 'all' && <select/g) || []).length).toBe(2)
     expect(directory).toContain('isGeneralView && strongestCluster')
     expect(directory).toContain("(selectedTrack === 'all' ? Number(scored(b))")
     expect(directory).toContain('isGeneralView ? (isFull ?')
