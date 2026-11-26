@@ -29,7 +29,6 @@ function getSupabase() {
 }
 
 const FROM_EMAIL = 'info@valoriainstitute.com'
-const SITE_ORIGIN = getSiteOrigin()
 
 const TYPE_LABELS = {
   candidate: 'Candidate Introduction',
@@ -38,6 +37,7 @@ const TYPE_LABELS = {
 }
 
 async function notifyAdmin({ enquiryId, enquiryType, atbId, buyerName, buyerEmail, buyerCompany, subject, body }) {
+  const siteOrigin = getSiteOrigin()
   const label = TYPE_LABELS[enquiryType] || 'Enquiry'
   const safeAtbId = escapeHtml(atbId)
   const safeBuyerName = escapeHtml(buyerName)
@@ -52,7 +52,7 @@ async function notifyAdmin({ enquiryId, enquiryType, atbId, buyerName, buyerEmai
       <p><strong>From:</strong> ${safeBuyerName} &lt;${safeBuyerEmail}&gt;${buyerCompany ? ` — ${safeBuyerCompany}` : ''}</p>
       <p><strong>Subject:</strong> ${safeSubject}</p>
       <p><strong>Message:</strong><br/>${safeBody}</p>
-      <p style="margin-top:20px;"><a href="${SITE_ORIGIN}/admin">Review in admin dashboard</a></p>
+      <p style="margin-top:20px;"><a href="${siteOrigin}/admin">Review in admin dashboard</a></p>
     </div>`
   const result = await sendResendEmail({
     to: FROM_EMAIL,
@@ -91,6 +91,7 @@ async function confirmToBuyer({ enquiryId, enquiryType, atbId, buyerName, buyerE
 }
 
 async function notifyProfessional({ supabase, enquiryId, professionalProfileId, enquiryType, atbId, buyerName, buyerCompany, actionUrl }) {
+  const siteOrigin = getSiteOrigin()
   const label = TYPE_LABELS[enquiryType] || 'Enquiry'
   const safeAtbId = escapeHtml(atbId)
   const safeBuyerName = escapeHtml(buyerName)
