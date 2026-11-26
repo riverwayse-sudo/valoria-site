@@ -45,7 +45,7 @@ async function notifyAdmin({ enquiryId, enquiryType, atbId, buyerName, buyerEmai
   const safeSubject = escapeHtml(subject || '(none given)')
   const safeBody = escapeHtml(body || '').replace(/\r?\n/g, '<br/>')
   const html = `
-    <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;">
+    <div style="font-family:'Raleway',sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;">
       <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">NEW ${label.toUpperCase()}</p>
       <p><strong>Professional:</strong> ${safeAtbId}</p>
       <p><strong>From:</strong> ${safeBuyerName} &lt;${safeBuyerEmail}&gt;${buyerCompany ? ` — ${safeBuyerCompany}` : ''}</p>
@@ -71,7 +71,7 @@ async function confirmToBuyer({ enquiryId, enquiryType, atbId, buyerName, buyerE
   const safeFirstName = escapeHtml(buyerName.split(' ')[0] || 'there')
   const safeAtbId = escapeHtml(atbId)
   const html = `
-    <div style="font-family:sans-serif;font-size:14px;line-height:1.7;color:#1A1A2E;">
+    <div style="font-family:'Raleway',sans-serif;font-size:14px;line-height:1.7;color:#1A1A2E;">
       <p>Hi ${safeFirstName},</p>
       <p>We've received your ${label.toLowerCase()} regarding <strong>${safeAtbId}</strong>. Valoria Institute facilitates all introductions — someone from our team will be in touch shortly.</p>
       <p style="color:#888;font-size:12px;">Valoria Institute · African Talent Bureau Ltd</p>
@@ -109,7 +109,7 @@ async function notifyProfessional({ supabase, enquiryId, professionalProfileId, 
     return false
   }
   const html = `
-    <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;">
+    <div style="font-family:'Raleway',sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;">
       <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">NEW ${label.toUpperCase()}</p>
       <p>${safeBuyerName}${buyerCompany ? ` from ${safeBuyerCompany}` : ''} has requested an introduction through Valoria Institute.</p>
       <p>Valoria will review and be in touch with next steps — no action needed from you right now.</p>
