@@ -756,7 +756,7 @@ test('staging visual audit captures clearly labelled synthetic profile-card fixt
 
 test('staging profile-card preview fails closed when fixture markup is absent', () => {
   const audit = read('scripts/staging-browser-audit.mjs')
-  expect(audit).toContain('if (!previewReady) report.failures.push')
+  expect(audit).toContain('if (!previewReady.ready) report.failures.push')
 })
 
 
