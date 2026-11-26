@@ -21,7 +21,7 @@ export async function POST(request) {
 
   const firstName = escapeHtml((typeof name === 'string' ? name.trim().split(/\\s+/)[0] : '') || 'there')
   const html = `
-    <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;max-width:520px;margin:0 auto;">
+    <div style="font-family:'Raleway',sans-serif;font-size:14px;line-height:1.6;color:#1A1A2E;max-width:520px;margin:0 auto;">
       <p style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin:0 0 16px;">VALORIA INSTITUTE</p>
       <h1 style="font-size:22px;font-weight:400;margin:0 0 16px;">Welcome to Valoria.</h1>
       <p style="margin:0 0 12px;">Hi ${firstName},</p>
