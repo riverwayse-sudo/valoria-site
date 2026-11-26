@@ -62,7 +62,7 @@ export async function POST(request) {
     .eq('taster_id', tasterId)
     .maybeSingle()
   if (candidateError) return fail('We could not verify the Taster registration identity.', 502)
-  if (!candidate?.candidate_email || candidate.lead_capture_id !== taster.lead_capture_id ||
+  if (!candidate || !candidate.candidate_email || candidate.lead_capture_id !== taster.lead_capture_id ||
       candidate.candidate_name !== taster.name || candidate.candidate_role !== taster.role) {
     return fail('The completed Taster does not match its registered account details. Contact Valoria support.', 403)
   }
