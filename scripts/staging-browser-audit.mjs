@@ -41,7 +41,14 @@ const report = {
 }
 async function auditDropdownInteractions(page, route, viewport) {
   const failures = []
-  const result = { nativeSelects: 0, desktopMenus: 0, mobileMenu: false, disabledStyle: null, optionPalette: null }
+  const result = {
+    nativeSelects: 0,
+    desktopMenus: 0,
+    mobileMenu: false,
+    notificationPanel: 'not-present-in-unauthenticated-staging-context',
+    disabledStyle: null,
+    optionPalette: null,
+  }
 
   if (route.name === 'homepage' && !viewport.isMobile) {
     const triggers = page.locator('button.nav-trigger[aria-haspopup="true"][aria-controls]')
@@ -55,20 +62,22 @@ async function auditDropdownInteractions(page, route, viewport) {
       if (await menu.getAttribute('aria-hidden') !== 'true' || await menu.getAttribute('inert') === null) {
         failures.push(`desktop menu ${id} is not hidden and inert while closed`)
       }
-      await trigger.click()
+      await trigger.focus()
+      await page.keyboard.press('Enter')
       await page.waitForFunction((menuId) => {
         const element = document.getElementById(menuId)
         return element && element.getAttribute('aria-hidden') === 'false' && !element.hasAttribute('inert')
       }, id, { timeout: 5000 })
-      if (await trigger.getAttribute('aria-expanded') !== 'true') failures.push(`desktop menu ${id} did not expose aria-expanded=true`)
+      if (await trigger.getAttribute('aria-expanded') !== 'true') failures.push(`desktop menu ${id} did not expose aria-expanded=true after keyboard activation`)
       await page.keyboard.press('Escape')
       await page.waitForFunction((menuId) => {
         const element = document.getElementById(menuId)
         return element && element.getAttribute('aria-hidden') === 'true' && element.hasAttribute('inert')
       }, id, { timeout: 5000 })
       if (await trigger.getAttribute('aria-expanded') !== 'false') failures.push(`desktop menu ${id} did not close on Escape`)
-      const focusReturned = await trigger.evaluate(element => document.activeElement === element)
-      if (!focusReturned) failures.push(`desktop menu ${id} did not retain focus on its trigger after Escape`)
+      if (!await trigger.evaluate(element => document.activeElement === element)) {
+        failures.push(`desktop menu ${id} did not retain focus on its trigger after Escape`)
+      }
     }
   }
 
@@ -80,47 +89,107 @@ async function auditDropdownInteractions(page, route, viewport) {
       if (await mobileNav.getAttribute('aria-hidden') !== 'true' || await mobileNav.getAttribute('inert') === null) {
         failures.push('mobile navigation is not hidden and inert while closed')
       }
-      await burger.click()
+      await burger.focus()
+      await page.keyboard.press('Enter')
       await page.waitForFunction(() => {
         const nav = document.getElementById('vi-mobile-navigation')
         return nav && nav.getAttribute('aria-hidden') === 'false' && !nav.hasAttribute('inert')
       }, null, { timeout: 5000 })
-      if (await burger.getAttribute('aria-expanded') !== 'true') failures.push('mobile navigation did not expose aria-expanded=true')
+      if (await burger.getAttribute('aria-expanded') !== 'true') failures.push('mobile navigation did not expose aria-expanded=true after keyboard activation')
       await page.keyboard.press('Escape')
       await page.waitForFunction(() => {
         const nav = document.getElementById('vi-mobile-navigation')
         return nav && nav.getAttribute('aria-hidden') === 'true' && nav.hasAttribute('inert')
       }, null, { timeout: 5000 })
       if (await burger.getAttribute('aria-expanded') !== 'false') failures.push('mobile navigation did not close on Escape')
+      if (!await burger.evaluate(element => document.activeElement === element)) {
+        failures.push('mobile navigation did not retain focus on its toggle after Escape')
+      }
       result.mobileMenu = true
     } else {
       failures.push('mobile navigation toggle was not found')
     }
   }
 
-  if (route.site) {
-    const selects = page.locator('select')
-    result.nativeSelects = await selects.count()
+  const bell = page.locator('button[aria-controls="vi-notification-panel"]')
+  if (await bell.count()) {
+    await bell.focus()
+    await page.keyboard.press('Enter')
+    const panel = page.locator('#vi-notification-panel')
+    if (!await panel.isVisible()) failures.push('notification dropdown did not open from keyboard activation')
+    else result.notificationPanel = 'opened'
+    await page.keyboard.press('Escape')
+    if (await bell.getAttribute('aria-expanded') !== 'false') failures.push('notification dropdown did not close on Escape')
+    if (!await bell.evaluate(element => document.activeElement === element)) {
+      failures.push('notification dropdown did not retain focus on its trigger after Escape')
+    }
+  }
+
+  const selects = page.locator('select')
+  result.nativeSelects = await selects.count()
   for (let i = 0; i < result.nativeSelects; i++) {
     const select = selects.nth(i)
     const className = await select.getAttribute('class') || ''
-    if (!/(^|\s)vi-select(?:--light)?(\s|$)/.test(className)) failures.push(`native select ${i + 1} on ${route.name} is missing the shared select class`)
+    const classes = className.split(/\s+/).filter(Boolean)
+    if (!classes.includes('vi-select') && !classes.includes('vi-select--light')) {
+      failures.push(`native select ${i + 1} on ${route.name} is missing the shared select class`)
+    }
     const hasLabel = await select.evaluate(element =>
-      Boolean((element.labels && element.labels.length) || element.getAttribute('aria-label') || element.closest('label'))
+      Boolean(
+        (element.labels && element.labels.length) ||
+        element.getAttribute('aria-label') ||
+        element.getAttribute('aria-labelledby') ||
+        element.closest('label')
+      )
     )
     if (!hasLabel) failures.push(`native select ${i + 1} on ${route.name} has no accessible label`)
-    if (await select.isVisible()) {
-      await page.keyboard.press('Tab')
-      await select.focus()
-      const focusStyle = await select.evaluate(element => {
-        const style = getComputedStyle(element)
-        return { outlineWidth: parseFloat(style.outlineWidth) || 0, outlineStyle: style.outlineStyle, boxShadow: style.boxShadow }
-      })
-      if (focusStyle.outlineWidth < 1 || focusStyle.outlineStyle === 'none') {
-        failures.push(`native select ${i + 1} on ${route.name} has no visible keyboard focus treatment`)
+
+    const palette = await select.evaluate(element => {
+      const style = getComputedStyle(element)
+      const option = element.options[0]
+      const optionStyle = option ? getComputedStyle(option) : style
+      return {
+        color: style.color,
+        backgroundColor: style.backgroundColor,
+        optionColor: optionStyle.color,
+        optionBackgroundColor: optionStyle.backgroundColor,
+        light: element.classList.contains('vi-select--light'),
       }
-      await select.evaluate(element => element.blur())
+    })
+    const expected = palette.light
+      ? { color: 'rgb(26, 26, 46)', background: 'rgb(250, 250, 247)' }
+      : { color: 'rgb(247, 244, 238)', background: 'rgb(26, 26, 46)' }
+    if (palette.color !== expected.color || palette.backgroundColor !== expected.background ||
+        palette.optionColor !== expected.color || palette.optionBackgroundColor !== expected.background) {
+      failures.push(`native select ${i + 1} on ${route.name} has an incorrect ${palette.light ? 'light' : 'dark'} control/option palette: ${JSON.stringify(palette)}`)
     }
+
+    if (await select.isVisible() && !(await select.isDisabled())) {
+      await page.evaluate(() => {
+        document.activeElement?.blur()
+        document.body.setAttribute('tabindex', '-1')
+        document.body.focus()
+        document.body.removeAttribute('tabindex')
+      })
+      let reachedByKeyboard = false
+      for (let step = 0; step < 100; step++) {
+        await page.keyboard.press('Tab')
+        if (await select.evaluate(element => document.activeElement === element)) {
+          reachedByKeyboard = true
+          break
+        }
+      }
+      if (!reachedByKeyboard) {
+        failures.push(`native select ${i + 1} on ${route.name} is not reachable by keyboard Tab`)
+      } else {
+        const focusStyle = await select.evaluate(element => {
+          const style = getComputedStyle(element)
+          return { outlineWidth: parseFloat(style.outlineWidth) || 0, outlineStyle: style.outlineStyle }
+        })
+        if (focusStyle.outlineWidth < 1 || focusStyle.outlineStyle === 'none') {
+          failures.push(`native select ${i + 1} on ${route.name} has no visible keyboard focus treatment`)
+        }
+      }
     }
   }
 
