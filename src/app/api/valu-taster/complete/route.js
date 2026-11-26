@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createHash } from 'node:crypto'\nimport { createClient } from '@supabase/supabase-js'
 
 function fail(message, status) {
   return NextResponse.json({ error: message }, {
@@ -19,6 +19,29 @@ export async function POST(request) {
   const tasterId = String(body?.taster_id || '')
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(tasterId)) {
     return fail('The completed Taster reference is invalid.', 400)
+  }
+
+  const ip = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const ipKey = createHash('sha256').update(ip).digest('hex')
+  try {
+    const limited = await fetch(`${url}/rest/v1/rpc/consume_rate_limit`, {
+      method: 'POST',
+      headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_rate_key: `valu-taster-confirm-ip:${ipKey}`, p_limit: 8, p_window_seconds: 3600 }),
+      cache: 'no-store',
+    })
+    if (!limited.ok) throw new Error(`rate-limit:${limited.status}`)
+    const result = await limited.json()
+    const limit = Array.isArray(result) ? result[0] : result
+    if (!limit?.allowed) {
+      return NextResponse.json({ error: 'Too many confirmation requests. Please try again later.' }, {
+        status: 429,
+        headers: { 'Cache-Control': 'no-store', 'Retry-After': String(limit?.retry_after_seconds || 3600) },
+      })
+    }
+  } catch (error) {
+    console.error('VALU Taster confirmation rate limiter failed:', error?.message || error)
+    return fail('Confirmation is temporarily unavailable. Please try again shortly.', 503)
   }
 
   const admin = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } })
