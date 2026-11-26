@@ -94,6 +94,13 @@ jobs:
           curl -fsS "$base/" -o /tmp/valoria-production-home.html
           grep -q 'href="/valu/register/?journey=valu_taster"' /tmp/valoria-production-home.html
 
+          curl -fsS "$base/marketplace" -o /tmp/valoria-production-marketplace.html
+          grep -q 'Assessment-informed professional profiles' /tmp/valoria-production-marketplace.html
+          if grep -qi 'Marketplace data could not be verified' /tmp/valoria-production-marketplace.html; then
+            echo "Production marketplace data could not be verified; refusing to pass the deployment smoke test."
+            exit 1
+          fi
+
           register_status="$(curl -sSL --retry 3 --retry-all-errors --max-time 25 -o /tmp/valoria-register.html -w '%{http_code}' "$base/valu/register?journey=valu_taster")"
           if [[ "$register_status" != "200" ]]; then
             echo "Account-first VALU registration returned HTTP $register_status"
