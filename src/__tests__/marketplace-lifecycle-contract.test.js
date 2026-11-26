@@ -597,4 +597,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(dashboard).toContain('isDirectoryListed === null')
   })
 
+  test('existing public-display consent is reused without a repeat visibility approval', () => {
+    const consentApi = read('src/app/api/profile/acknowledgements/route.js')
+    const setup = read('src/app/profile/setup/page.jsx')
+    expect(consentApi).toContain('export async function GET')
+    expect(consentApi).toContain("'admin_attestation'")
+    expect(consentApi).toContain('if (!latestAcknowledgement.hasPublicConsent)')
+    expect(setup).toContain('has_public_consent === true')
+    expect(setup).toContain('consentRecorded ?')
+    expect(setup).not.toContain('name="profile-visibility"')
+  })
+
 })
