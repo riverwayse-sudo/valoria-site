@@ -4,6 +4,7 @@ const {
   normalizeCapabilityTrack,
   getCapabilityEvidence,
   getCapabilityEvidenceSummary,
+  getCapabilityCardLabels,
 } = require('../lib/profile-capability-evidence.cjs')
 
 const read = (file) => fs.readFileSync(path.join(__dirname, '..', file), 'utf8')
@@ -62,6 +63,19 @@ describe('specialized profile content contract', () => {
     expect(sections[4].items).toEqual(['Northstar Group · Leadership academy'])
   })
 
+  test('specialist cards use track-specific chips rather than general Talent skills', () => {
+    const profile = {
+      skills: ['Talent skill'],
+      topics: ['Speaking topic'],
+      format_capabilities: ['Keynote'],
+      facilitation_topics: ['Facilitation topic'],
+      programme_types: ['Leadership programme'],
+    }
+    expect(getCapabilityCardLabels(profile, 'candidate')).toEqual(['Talent skill'])
+    expect(getCapabilityCardLabels(profile, 'speaker')).toEqual(['Speaking topic', 'Keynote'])
+    expect(getCapabilityCardLabels(profile, 'facilitator')).toEqual(['Facilitation topic', 'Leadership programme'])
+  })
+
   test('missing specialist evidence uses a neutral fallback, never the general VALU summary', () => {
     const profile = { assessment_summary: 'General report narrative.' }
     expect(getCapabilityEvidence(profile, 'speaker')).toEqual([])
@@ -74,6 +88,11 @@ describe('specialized profile content contract', () => {
     const profile = read('app/profile/[id]/ProfileClient.jsx')
     const data = read('lib/marketplace-data.js')
     expect(directory).toContain('getCapabilityEvidence(profile, selectedTrack)')
+    expect(directory).toContain('getCapabilityCardLabels(p, normalizedTrack)')
+    expect(directory).toContain("selectedTrack === 'all' && <select")
+    expect(directory).toContain('isGeneralView && strongestCluster')
+    expect(directory).toContain('TALENT CAPABILITY')
+    expect(directory).toContain('SPEAKER CAPABILITY')
     expect(directory).toContain('!isSpecializedView && isFull')
     expect(directory).toContain('activeTrack={activeTrack}')
     expect(directory).toContain('encodeURIComponent(selectedTrack)')
