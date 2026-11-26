@@ -277,7 +277,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
   const isSpecializedView = Boolean(requestedTrack && normalizedTracks.includes(normalizedRequestedTrack))
   // A requested spectrum controls specialist evidence and enquiry framing.
   // Without one, the page is the general profile view: it shows the overall
-  // VALU report and the combined capability set. The fixed fallback below is
+  // Assessment report and the combined capability set. The fixed fallback below is
   // used only for a sensible enquiry type when a single CTA is needed.
   const displayTrack = isSpecializedView
     ? normalizedRequestedTrack
