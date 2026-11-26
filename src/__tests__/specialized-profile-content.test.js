@@ -96,7 +96,7 @@ describe('specialized profile content contract', () => {
     expect(directory).toContain('TALENT CAPABILITY')
     expect(directory).toContain('SPEAKER CAPABILITY')
     expect(directory).toContain('!isSpecializedView && isFull')
-    expect(directory).toContain('activeTrack={activeTrack}')
+    expect(directory).toContain('activeTrack={selectedTrack}')
     expect(directory).toContain('encodeURIComponent(selectedTrack)')
     expect(profile).toContain('getCapabilityEvidence(p, displayTrack)')
     expect(profile).toContain('!isSpecializedView && p.cluster_scores')
