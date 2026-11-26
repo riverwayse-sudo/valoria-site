@@ -129,6 +129,15 @@ describe('journey integrity contract', () => {
     expect(page).toContain('review.reviewed_by&&review.decision')
   })
 
+
+  test('automated verified-match suggestions are visibly held for human review', () => {
+    const route = read('src/app/api/admin/reconciliation/reviews/route.js')
+    const page = read('src/app/admin/reconciliation/page.jsx')
+    expect(route).toContain("review.application_state='awaiting_human_review'")
+    expect(route).toContain("review.reviewed_by&&review.source_record_type")
+    expect(page).toContain('AUTOMATED SUGGESTION — HUMAN REVIEW REQUIRED')
+  })
+
   test('historical assessment claim verifies every critical persistence step', () => {
     const source = read('src/app/api/assessment/claim/route.js')
     expect(source).toContain('verifyError')
