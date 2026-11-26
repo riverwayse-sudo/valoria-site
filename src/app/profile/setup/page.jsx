@@ -560,8 +560,8 @@ function ProfileSetupForm() {
     }
 
     setSaving(false)
-    window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'profile_setup_completed', params: { profile_complete: row.profile_complete === true, assessment_access: acknowledgementResult.assessment_access || 'unknown', visibility_choice: acknowledgementResult.visibility || form.visibility } } }))
-    if ((acknowledgementResult.visibility || form.visibility) === 'public') {
+    window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'profile_setup_completed', params: { profile_complete: row.profile_complete === true, assessment_access: acknowledgementResult.assessment_access || 'unknown', public_display_consent_recorded: true } } }))
+    if (!consentRecorded && (acknowledgementResult.visibility || form.visibility) === 'public') {
       window.dispatchEvent(new CustomEvent('valoria:analytics', { detail: { name: 'public_visibility_consent_granted', params: { source: 'profile_setup' } } }))
     }
     setSubmittedInfo({ atb_id: row?.atb_id || null, listing_status: acknowledgementResult.listing_status || row?.listing_status || 'pending', visibility: acknowledgementResult.visibility || form.visibility, assessment_access: acknowledgementResult.assessment_access || null })
@@ -599,7 +599,7 @@ function ProfileSetupForm() {
           <div style={{ background:'rgba(201,168,76,.05)', border:`1px solid ${GLINE}`, padding:'20px', marginBottom:'28px', textAlign:'left' }}>
             <div style={{ fontSize:'9px', fontWeight:700, letterSpacing:'.18em', color:'rgba(201,168,76,.45)', marginBottom:'10px' }}>WHAT HAPPENS NEXT</div>
             <p style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.8, margin:0 }}>
-              Status: <strong style={{ color:PARCH }}>{submittedInfo.visibility === 'public' && submittedInfo.listing_status === 'listed' ? `Public ${submittedInfo.assessment_access === 'basic' ? 'Basic' : 'Full'} listing` : submittedInfo.assessment_access ? `${submittedInfo.assessment_access === 'basic' ? 'Basic' : 'Full'} tier · Registered only` : 'Not yet listed'}</strong>. A completed taster can support a Basic listing. The Full VALU Index adds points, PRIME insight and Full-tier benefits. Public display follows your recorded public-display consent and the applicable identity, eligibility and listing checks.
+              Status: <strong style={{ color:PARCH }}>{submittedInfo.visibility === 'public' && submittedInfo.listing_status === 'listed' ? `Public ${submittedInfo.assessment_access === 'basic' ? 'Basic' : 'Full'} listing` : submittedInfo.assessment_access ? `${submittedInfo.assessment_access === 'basic' ? 'Basic' : 'Full'} tier · Public listing pending` : 'Profile submitted · Listing status pending'}</strong>. A completed taster can support a Basic listing. The Full VALU Index adds points, PRIME insight and Full-tier benefits. Public display follows your recorded public-display consent and the applicable identity, eligibility and listing checks.
             </p>
           </div>
 
