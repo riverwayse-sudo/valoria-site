@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import {
   PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION,
+  PUBLIC_PROFILE_CONSENT_SOURCES,
   REGISTERED_PROFILE_ACKNOWLEDGEMENT_VERSION,
   PUBLIC_PROFILE_CONSENT_TEXT,
   REGISTERED_PROFILE_CONSENT_TEXT,
@@ -33,7 +34,7 @@ async function getLatestAcknowledgement(admin, professionalId) {
   const hasPublicConsent = Boolean(
     data &&
     data.acknowledgement_version === PUBLIC_PROFILE_ACKNOWLEDGEMENT_VERSION &&
-    ['profile_setup', 'profile_edit', 'admin_attestation'].includes(data.source)
+    PUBLIC_PROFILE_CONSENT_SOURCES.includes(data.source)
   )
   return { data: data || null, error: null, hasPublicConsent }
 }
