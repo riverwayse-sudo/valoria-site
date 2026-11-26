@@ -1,13 +1,15 @@
-const { sendResendEmail, escapeHtml } = require('../lib/resend-email.cjs')
+const { sendResendEmail, escapeHtml, getSiteOrigin } = require('../lib/resend-email.cjs')
 
 describe('Resend transactional email helper', () => {
   const originalKey = process.env.RESEND_API_KEY
   const originalFrom = process.env.RESEND_FROM_EMAIL
   const originalFetch = global.fetch
+  const originalSiteUrl = process.env.NEXT_PUBLIC_SITE_URL
 
   beforeEach(() => {
     process.env.RESEND_API_KEY = 're_test_key'
     delete process.env.RESEND_FROM_EMAIL
+    delete process.env.NEXT_PUBLIC_SITE_URL
     global.fetch = jest.fn()
   })
 
@@ -17,6 +19,8 @@ describe('Resend transactional email helper', () => {
     if (originalFrom === undefined) delete process.env.RESEND_FROM_EMAIL
     else process.env.RESEND_FROM_EMAIL = originalFrom
     global.fetch = originalFetch
+    if (originalSiteUrl === undefined) delete process.env.NEXT_PUBLIC_SITE_URL
+    else process.env.NEXT_PUBLIC_SITE_URL = originalSiteUrl
     jest.clearAllMocks()
   })
 
@@ -73,6 +77,13 @@ describe('Resend transactional email helper', () => {
 
     const result = await sendResendEmail({ to: 'bad@example.com', subject: 'Test', text: 'Hello' })
     expect(result).toEqual({ ok: false, status: 422, id: null, error: 'Invalid recipient' })
+  })
+
+  test('uses the configured HTTPS site origin and rejects non-HTTPS origins', () => {
+    process.env.NEXT_PUBLIC_SITE_URL = 'https://staging.valoriainstitute.com/path'
+    expect(getSiteOrigin()).toBe('https://staging.valoriainstitute.com')
+    process.env.NEXT_PUBLIC_SITE_URL = 'http://untrusted.example'
+    expect(getSiteOrigin()).toBe('https://valoriainstitute.com')
   })
 
   test('escapes user-controlled values before inserting them into email HTML', () => {
