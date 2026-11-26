@@ -18,7 +18,7 @@ export default function ValuPage() {
         <div className="valu-wrap">
           <div className="valu-kicker"><span /> THE VALU INDEX</div>
           <h1>Make your capability<br /><em>visible and actionable.</em></h1>
-          <p className="valu-lede">The VALU Index Taster introduces the PRIME framework and gives you an initial view of your professional capability. Create or sign in to your Valoria account first. After email confirmation, complete the separate VALU Index Taster and continue from your dashboard to the full VALU Index for your official points result and PRIME profile.</p>
+          <p className="valu-lede">The VALU Index Taster introduces the PRIME framework and gives you an initial view of your professional capability. Create your Valoria account and complete the VALU Index Taster. Confirm your email afterwards to activate your account, then continue from your dashboard to the separate full VALU Index for your official points result and PRIME profile.</p>
           <div className="valu-actions">
             <AssessmentStartLink href="/valu/register/?journey=valu_taster" className="valu-btn valu-btn-gold">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
             <a href="#how-it-works" className="valu-btn valu-btn-ghost">HOW THE VALU INDEX SUPPORTS YOUR GROWTH <span>↓</span></a>
@@ -40,8 +40,8 @@ export default function ValuPage() {
           <h2>A clear starting point.<br /><em>A fuller professional picture.</em></h2>
           <div className="valu-steps">
             <article><b>01</b><h3>Create or sign in to your account</h3><p>Start with a secure Valoria account using your professional details.</p></article>
-            <article><b>02</b><h3>Confirm your email</h3><p>Verify your email address to activate your account and protect your assessment record.</p></article>
-            <article><b>03</b><h3>Complete your guided Taster</h3><p>Complete the separate Taster. Your responses and initial result are saved to your confirmed account.</p></article>
+            <article><b>02</b><h3>Confirm your email</h3><p>Verify your email address after completing the Taster to activate your account and protect your assessment record.</p></article>
+            <article><b>03</b><h3>Complete your guided Taster</h3><p>Complete the separate Taster. Your responses and initial result are saved securely before email confirmation.</p></article>
             <article><b>04</b><h3>Continue to the full VALU Index</h3><p>Continue from your dashboard to the separate full assessment across all 17 PRIME skills. Completion establishes your official VALU Index in points and your earned designation. Results remain valid for 12 months.</p></article>
           </div>
         </div>
