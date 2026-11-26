@@ -60,7 +60,7 @@ export default function HomePage() {
               <span><b>FREE</b> ENTRY</span><i>·</i><span><b>5</b> PRIME DIMENSIONS</span>
             </div>
             <div className="home-dual-actions">
-              <AssessmentStartLink href="/valu/register/?journey=valu_taster" className="btn-gold">START THE VALU INDEX TASTER <span aria-hidden="true">→</span></AssessmentStartLink>
+              <AssessmentStartLink href="/valu/register/?journey=valu_taster" className="btn-gold">CREATE ACCOUNT TO BEGIN <span aria-hidden="true">→</span></AssessmentStartLink>
               <a href="/valu" className="text-link">SEE HOW THE VALU INDEX WORKS <span aria-hidden="true">→</span></a>
             </div>
             <p className="valu-conversion-note">A starting signal, not a final designation.</p>
@@ -87,11 +87,11 @@ export default function HomePage() {
               <div className="vcc-radar-center">VALU INDEX</div>
             </div>
             <div className="vcc-steps">
-              <div className="vcc-step is-active"><span>01</span><div><b>See your signal</b><small>Begin with your Taster</small></div></div>
-              <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Complete the full VALU Index</small></div></div>
-              <div className="vcc-step"><span>03</span><div><b>Connect to opportunity</b><small>Bring your capability into view</small></div></div>
+              <div className="vcc-step is-active"><span>01</span><div><b>Create your account</b><small>Confirm your email before beginning the Taster</small></div></div>
+              <div className="vcc-step"><span>02</span><div><b>Complete your Taster</b><small>Get an initial view of your professional capability</small></div></div>
+              <div className="vcc-step"><span>03</span><div><b>Complete the full VALU Index</b><small>Establish your official points result and PRIME profile</small></div></div>
             </div>
-            <AssessmentStartLink href="/valu/register/?journey=valu_taster" className="vcc-bottom-cta">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
+            <AssessmentStartLink href="/valu/register/?journey=valu_taster" className="vcc-bottom-cta">CREATE ACCOUNT TO BEGIN <span>→</span></AssessmentStartLink>
           </Reveal>
         </div>
       </section>
@@ -102,4 +102,4 @@ export default function HomePage() {
   </>
 }
 
-/* Cloudflare production rollout marker: public Taster-first journey. */
+/* Cloudflare production rollout marker: public account-first journey. */
