@@ -284,7 +284,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
     : (isFacilitator ? 'facilitator' : isSpeaker ? 'speaker' : 'candidate')
   const tags = isSpecializedView
     ? (displayTrack === 'facilitator' ? (p.programme_types || []) : displayTrack === 'speaker' ? (p.topics || []) : (p.skills || []))
-    : [...new Set([...(p.skills || []), ...(p.topics || []), ...(p.facilitation_topics || []), ...(p.programme_types || [])])]
+    : [...new Set([...(p.skills || []), ...(p.topics || []), ...(p.facilitation_topics || []), ...(p.programme_types || []), ...(p.format_capabilities || []), ...(p.audience_sizes || [])])]
   const specialistSections = isSpecializedView ? getCapabilityEvidence(p, displayTrack) : []
   const specialistSummary = isSpecializedView ? getCapabilityEvidenceSummary(p, displayTrack) : ''
   const compensation = (displayTrack === 'speaker' || displayTrack === 'facilitator')
