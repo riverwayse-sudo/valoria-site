@@ -30,6 +30,23 @@ describe('Valoria transactional email provider contract', () => {
     expect(introductions).toContain('valoria/introduction/\u0024{enquiryId}/professional')
   })
 
+  test('public welcome emails are rate-limited and waitlist links use configured HTTPS origin', () => {
+    const welcome = read('src/app/api/welcome-email/route.js')
+    const waitlist = read('src/app/api/waitlist/route.js')
+    expect(welcome).toContain('welcome-email:ip:')
+    expect(welcome).toContain('welcome-email:email:')
+    expect(waitlist).toContain('const siteOrigin = getSiteOrigin()')
+    expect(waitlist).not.toContain('new URL(request.url).origin')
+  })
+
+  test('already-introduced enquiries do not send duplicate introduction emails', () => {
+    const introductions = read('src/app/api/admin/introduce/route.js')
+    const guard = introductions.indexOf("if (enquiry.status === 'introduced')")
+    const send = introductions.indexOf('sendResendEmail(')
+    expect(guard).toBeGreaterThan(-1)
+    expect(send).toBeGreaterThan(guard)
+  })
+
   test('an enquiry is marked introduced only after both emails are accepted', () => {
     const introductions = read('src/app/api/admin/introduce/route.js')
     const gate = introductions.indexOf('if (!buyerSent.ok || !profSent.ok)')
