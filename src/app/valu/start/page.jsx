@@ -4,7 +4,7 @@ import Footer from '@/components/Footer'
 
 export const metadata = {
   title: 'Start the VALU Index Taster — Valoria Institute',
-  description: 'Create or sign in to your Valoria account first. Confirm your email, complete the VALU Index Taster, then continue to the full VALU Index for your official points result and PRIME profile.',
+  description: 'Create your Valoria account, complete the VALU Index Taster, then confirm your email to access your dashboard and separate full VALU Index.',
 }
 
 const dimensions = [
@@ -16,12 +16,12 @@ const dimensions = [
 ]
 
 const faqs = [
-  ['How does it work?', 'Create or sign in to your Valoria account, confirm your email, complete the VALU Index Taster, then complete the separate full VALU Index. You will receive your official result in points and PRIME profile.'],
-  ['Do I need an account first?', 'Yes. Create or sign in to your Valoria account and confirm your email before beginning the Taster.'],
+  ['How does it work?', 'Create your Valoria account, complete the VALU Index Taster, confirm your email, then complete the separate full VALU Index. You will receive your official result in points and PRIME profile.'],
+  ['Do I need an account first?', 'Create an account before beginning. You will confirm your email after completing the Taster.'],
   ['Who is it for?', 'It is designed for professionals across industries and markets—including leaders, speakers, facilitators, event organisers and organisations—who want credible insight, visibility and access to opportunity.'],
   ['Is it free?', 'Yes. The VALU Index Taster and full VALU Index are free to complete. The wider Valoria ecosystem connects insight to development, visibility and opportunity.'],
   ['Does the result define me?', 'No. The taster is directional, not an official score or permanent label. Your official points result is issued after you complete the full VALU Index.'],
-  ['What happens after I finish?', 'Your Taster is saved to your Valoria account. Continue from your dashboard to complete the separate full VALU Index. Your official points result and merit designation are issued only after the full assessment. Public visibility also requires your permission.'],
+  ['What happens after I finish?', 'Your Taster is saved first. Confirm your email to activate your account, then continue from your dashboard to complete the separate full VALU Index. Your official points result and merit designation are issued only after the full assessment. Public visibility also requires your permission.'],
   ['Can I pause part-way through?', 'Yes. Your progress is saved as you go, and you can return to your dashboard to continue without restarting.'],
 ]
 
@@ -78,11 +78,11 @@ export default function ValuStartPage() {
       <section className="vs-light vs-journey">
         <div className="vs-shell">
           <div className="vs-kicker dark"><span /> HOW IT WORKS</div>
-          <h2>Create your account. Confirm your email. Begin your Taster.<br /><em>Then build your next step.</em></h2>
+          <h2>Create your account. Complete your Taster. Confirm your email.<br /><em>Then build your next step.</em></h2>
           <div className="vs-journey-grid">
             <article><span>01</span><h3>Create or sign in to your account</h3><p>Start with a secure Valoria account using your professional details.</p></article>
-            <article><span>02</span><h3>Confirm your email</h3><p>Verify your email address before beginning the Taster.</p></article>
-            <article><span>03</span><h3>Complete your Taster</h3><p>Complete the guided directional Taster. Your responses and initial result are saved to your confirmed account.</p></article>
+            <article><span>02</span><h3>Complete your Taster</h3><p>Complete the guided directional Taster. Your responses and initial result are saved securely before email confirmation.</p></article>
+            <article><span>03</span><h3>Confirm your email</h3><p>After completing the Taster, verify your email to activate your account and access your dashboard.</p></article>
             <article><span>04</span><h3>Continue to the full VALU Index</h3><p>The full VALU Index establishes your official points result and PRIME capability profile. It is separate from the Taster and supports full access.</p></article>
             <article><span>05</span><h3>Build and discover</h3><p>Complete your professional profile. Marketplace visibility follows the relevant eligibility checks and your explicit permission.</p></article>
           </div>
@@ -115,7 +115,7 @@ export default function ValuStartPage() {
       </section>
 
       <section className="vs-final">
-        <div className="vs-shell"><div className="vs-kicker"><span /> WORTH. BUILT.</div><h2>Your capability deserves<br /><em>more than a CV.</em></h2><p>Create or sign in to your Valoria account first. After email confirmation, complete the Taster and continue to the separate full VALU Index when you are ready.</p><AssessmentStartLink href="/valu/register/?journey=valu_taster" className="vs-btn vs-primary">START THE VALU INDEX TASTER <b>→</b></AssessmentStartLink><p className="vs-back">Already completed a taster? <Link href="/professional-signup/recover">Recover your saved taster</Link>.</p><Link href="/valu" className="vs-back">Learn more about VALU →</Link></div>
+        <div className="vs-shell"><div className="vs-kicker"><span /> WORTH. BUILT.</div><h2>Your capability deserves<br /><em>more than a CV.</em></h2><p>Create your Valoria account and complete the Taster. Confirm your email afterwards to activate your account and access the separate full VALU Index.</p><AssessmentStartLink href="/valu/register/?journey=valu_taster" className="vs-btn vs-primary">START THE VALU INDEX TASTER <b>→</b></AssessmentStartLink><p className="vs-back">Already completed a taster? <Link href="/professional-signup/recover">Recover your saved taster</Link>.</p><Link href="/valu" className="vs-back">Learn more about VALU →</Link></div>
       </section>
     </main>
     <Footer />
