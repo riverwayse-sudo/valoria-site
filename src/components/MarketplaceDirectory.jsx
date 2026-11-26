@@ -231,7 +231,7 @@ function Profile({p, onSelect, activeTrack = 'all'}) {
   const designation = tier?.name || 'Assessment Follow-up'
   const designationClass = tier ? styles[tier.name.toLowerCase()] || '' : ''
   const profileId = displayText(p.atb_id)
-  const skills = isGeneralView ? [...new Set([...labelValues(p.skills), ...labelValues(p.topics), ...labelValues(p.facilitation_topics), ...labelValues(p.programme_types)])].slice(0, 3) : getCapabilityCardLabels(p, normalizedTrack)
+  const skills = isGeneralView ? [...new Set([...labelValues(p.skills), ...labelValues(p.topics), ...labelValues(p.facilitation_topics), ...labelValues(p.programme_types), ...labelValues(p.format_capabilities)])].slice(0, 3) : getCapabilityCardLabels(p, normalizedTrack)
   const cardEvidenceLabel = isGeneralView ? 'Professional capabilities' : normalizedTrack === 'candidate' ? 'Talent skills' : normalizedTrack === 'speaker' ? 'Speaking expertise' : 'Facilitation expertise'
   const availability = displayText(p.availability_status)
   const role = displayText(normalizedTrack === 'candidate' ? (p.current_job_title || p.headline) : (p.headline || p.current_job_title))
