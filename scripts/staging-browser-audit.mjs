@@ -25,11 +25,45 @@ const routes = [
   { name: 'professional-signup-post-taster', url: `${SITE}/professional-signup/?taster_id=${POST_TASTER_ID}&name=Staging%20Participant&role=Staging%20QA&experience=0-3&email=staging-participant%40example.invalid`, site: true },
   { name: 'prime', url: `${SITE}/prime`, site: true },
   { name: 'about', url: `${SITE}/about-us`, site: true },
+  { name: 'assessment-legacy', url: `${SITE}/assessment`, site: true },
+  { name: 'privacy-legacy', url: `${SITE}/privacy`, site: true },
+  { name: 'terms-legacy', url: `${SITE}/terms`, site: true },
+  { name: 'privacy-policy', url: `${SITE}/privacypolicy`, site: true },
+  { name: 'terms-of-use', url: `${SITE}/terms-of-use`, site: true },
+  { name: 'programmes', url: `${SITE}/programmes`, site: true },
+  { name: 'develop-legacy', url: `${SITE}/develop`, site: true },
+  { name: 'facilitators-legacy', url: `${SITE}/facilitators`, site: true },
+  { name: 'valoria-develop-legacy', url: `${SITE}/valoria-develop`, site: true },
+  { name: 'atb-connect-legacy', url: `${SITE}/atb-connect`, site: true },
+  { name: 'atb-spotlight-legacy', url: `${SITE}/atb-spotlight`, site: true },
+  { name: 'spotlight-legacy', url: `${SITE}/spotlight`, site: true },
+  { name: 'marketplace-talent', url: `${SITE}/marketplace/talent`, site: true },
+  { name: 'marketplace-speakers', url: `${SITE}/marketplace/speakers`, site: true },
+  { name: 'marketplace-facilitators', url: `${SITE}/marketplace/facilitators`, site: true },
+  { name: 'opportunities', url: `${SITE}/opportunities`, site: true },
+  { name: 'opportunity-submit', url: `${SITE}/opportunities/submit`, site: true },
+  { name: 'contact-us', url: `${SITE}/contact-us`, site: true },
+  { name: 'careers', url: `${SITE}/careers`, site: true },
+  { name: 'insights', url: `${SITE}/insights`, site: true },
+  { name: 'login', url: `${SITE}/login`, site: true },
+  { name: 'signup', url: `${SITE}/signup`, site: true },
+  { name: 'register', url: `${SITE}/register`, site: true },
   { name: 'dashboard-preview', url: `${SITE}/dashboard?preview=1`, site: true },
   { name: 'assessment-proxy', url: `${SITE}/valu/assessment/`, site: true },
   { name: 'assessment-host', url: `${ASSESSMENT}/`, site: false },
   { name: 'assessment-account-first-taster-gate', url: `${ASSESSMENT}/valu/assessment/?journey=account-first#taster_start_code=staging-invalid-probe`, site: false },
 ]
+const expectedRedirectPaths = {
+  'assessment-legacy': '/valu',
+  'privacy-legacy': '/privacypolicy',
+  'terms-legacy': '/terms-of-use',
+  'develop-legacy': '/programmes',
+  'facilitators-legacy': '/programmes',
+  'valoria-develop-legacy': '/programmes',
+  'atb-connect-legacy': '/marketplace/talent',
+  'atb-spotlight-legacy': '/marketplace/speakers',
+  'spotlight-legacy': '/marketplace/speakers',
+}
 const report = {
   generatedAt: new Date().toISOString(),
   environment: 'Cloudflare staging only',
@@ -209,12 +243,16 @@ try {
       if (state.analyticsLoaded) report.failures.push(`${route.name}/${viewport.name}: production analytics loaded in staging`)
       if (forbiddenRequests.length) report.failures.push(`${route.name}/${viewport.name}: production Supabase/assessment request detected`)
       if (state.literalNewlineVisible && route.name.startsWith('assessment-')) report.failures.push(`${route.name}/${viewport.name}: literal \\n text is visible in the assessment UI`)
-      if (state.visibleInternalTerms?.length) report.failures.push(`${route.name}/${viewport.name}: internal participant copy is visible: ${state.visibleInternalTerms.join(', ')}`)
+      if (!['terms-of-use', 'privacy-policy'].includes(route.name) && state.visibleInternalTerms?.length) report.failures.push(`${route.name}/${viewport.name}: internal participant copy is visible: ${state.visibleInternalTerms.join(', ')}`)
       if (route.name.startsWith('assessment-') && state.assessmentSiteLinks.some(href => {
         try { return ['valoriainstitute.com', 'www.valoriainstitute.com'].includes(new URL(href).hostname) } catch { return false }
       })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
+      const expectedRedirect = expectedRedirectPaths[route.name]
+      if (expectedRedirect && normalisePath(state.currentPath) !== expectedRedirect) {
+        report.failures.push(`${route.name}/${viewport.name}: expected canonical redirect to ${expectedRedirect}, reached ${state.currentPath}`)
+      }
       const canonicalTasterEntries = new Set(['/valu/register'])
       const normalisePath = value => value.replace(/\/+$/, '') || '/'
       if (['homepage', 'valu', 'valu-start'].includes(route.name) &&
