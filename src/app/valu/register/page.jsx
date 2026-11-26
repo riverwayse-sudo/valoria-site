@@ -4,10 +4,6 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { PASSWORD_POLICY, passwordPolicyMessage, validatePassword } from '@/lib/password-policy'
-import authConfirmation from '@/lib/auth-confirmation.cjs'
-
-const { getValuTasterConfirmationRedirect } = authConfirmation
-
 const GOLD = '#C9A84C'
 const DARK = '#0F0F1A'
 const MIDNIGHT = '#1A1A2E'
@@ -20,12 +16,6 @@ const EXPERIENCE = [
   ['16+', '16+ years'],
 ]
 
-function confirmationUrl() {
-  const redirect = getValuTasterConfirmationRedirect(window.location.origin)
-  if (!redirect) throw new Error('Email confirmation must be started from the official Valoria site.')
-  return redirect
-}
-
 export default function ValuRegisterPage() {
   const [form, setForm] = useState({
     name: '', role: '', experience: '', email: '', password: '', confirmPassword: '',
@@ -34,9 +24,7 @@ export default function ValuRegisterPage() {
   const [hasSession, setHasSession] = useState(false)
   const [checkingSession, setCheckingSession] = useState(true)
   const [loading, setLoading] = useState(false)
-  const [confirmationSent, setConfirmationSent] = useState(false)
   const [error, setError] = useState('')
-  const [notice, setNotice] = useState('')
 
   const valid = useMemo(() => {
     const identityValid = form.name.trim() && form.role.trim() && form.experience && form.email.trim() && form.privacyAcknowledged
@@ -161,38 +149,16 @@ export default function ValuRegisterPage() {
     }
   }
 
-  async function resendConfirmation() {
-    if (loading || !form.email.trim()) return
-    setLoading(true)
-    setError('')
-    setNotice('')
-    try {
-      const { error: resendError } = await supabase.auth.resend({
-        type: 'signup',
-        email: form.email.trim().toLowerCase(),
-        options: { emailRedirectTo: confirmationUrl() },
-      })
-      if (resendError) throw resendError
-      setNotice('A fresh confirmation email has been requested. Use the link in that email to continue.')
-    } catch (reason) {
-      setError(reason?.message || 'We could not resend the confirmation email. Please try again shortly.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   if (checkingSession) {
     return <main style={styles.page}><section style={styles.card}><div style={styles.eyebrow}>VALORIA INSTITUTE</div><h1 style={styles.title}>Preparing your account.</h1><p style={styles.copy}>Checking your secure Valoria session…</p></section></main>
   }
 
-  if (confirmationSent) {
-    return <main style={styles.page}><section style={styles.card}>
+  return <main style={styles.page}><section style={styles.card}>
       <div style={styles.eyebrow}>EMAIL CONFIRMATION</div>
       <h1 style={styles.title}>One confirmation. <em>Then your Taster.</em></h1>
       <p style={styles.copy}>We sent a secure confirmation link to <strong>{form.email.trim().toLowerCase()}</strong>. Open that email on this device to confirm your account. Your Taster will begin only after Valoria verifies your email.</p>
       {error && <p role="alert" style={styles.error}>{error}</p>}
-      {notice && <p role="status" style={styles.notice}>{notice}</p>}
-      <button type="button" onClick={resendConfirmation} disabled={loading} style={styles.secondary}>{loading ? 'REQUESTING…' : 'RESEND CONFIRMATION EMAIL'}</button>
+            <button type="button" onClick={resendConfirmation} disabled={loading} style={styles.secondary}>{loading ? 'REQUESTING…' : 'RESEND CONFIRMATION EMAIL'}</button>
       <p style={styles.small}>Check your inbox and spam folder. You can return here after confirmation; your account details have been saved.</p>
     </section></main>
   }
@@ -262,5 +228,4 @@ const styles = {
   inlineLink: { color: GOLD, textDecoration: 'underline' },
   small: { color: 'rgba(247,244,238,.42)', fontSize: 11, lineHeight: 1.65, marginTop: 14 },
   error: { color: '#F0A5A5', fontSize: 12, lineHeight: 1.6 },
-  notice: { color: '#D4C9A8', fontSize: 12, lineHeight: 1.6 },
 }
