@@ -20,6 +20,7 @@ const routes = [
   { name: 'programmes', url: `${SITE}/programmes`, site: true },
   { name: 'facilitators-redirect', url: `${SITE}/facilitators`, site: true },
   { name: 'events', url: `${SITE}/events`, site: true },
+  { name: 'opportunities', url: `${SITE}/opportunities`, site: true },
   { name: 'valu', url: `${SITE}/valu`, site: true },
   { name: 'valu-start', url: `${SITE}/valu/start`, site: true },
   { name: 'valu-register', url: `${SITE}/valu/register`, site: true },
@@ -371,6 +372,10 @@ try {
           directoryEmptyTitle: document.querySelector('[data-directory-empty] strong')?.innerText || '',
           directoryUnavailable: document.body.innerText.includes('Directory unavailable'),
           directoryGridCards: document.querySelector('[data-directory-grid]')?.children.length || 0,
+          opportunityEmptyTitle: document.querySelector('.opportunities-empty h2')?.innerText || '',
+          opportunityError: document.querySelector('.opportunities-error')?.innerText || '',
+          opportunityCards: document.querySelectorAll('.opportunity-card').length,
+          opportunitySubmitHref: [...document.querySelectorAll('a')].find(a => /POST AN OPPORTUNITY/i.test(a.innerText))?.getAttribute('href') || '',
           journeyParam,
           savedTasterCopy,
           signInLink,
@@ -442,6 +447,12 @@ try {
            !state.registrationForm.password || !state.accountCreationAction ||
            !state.savedTasterCopy || state.urlTasterId !== POST_TASTER_ID)) {
         report.failures.push(route.name + '/' + viewport.name + ': saved Taster handoff must open post-Taster account creation with the original identity and Taster ID')
+      }
+      if (route.name === 'opportunities' &&
+          (state.opportunityError || state.opportunityCards !== 0 ||
+           state.opportunityEmptyTitle !== 'No public opportunities yet.' ||
+           state.opportunitySubmitHref !== '/opportunities/submit')) {
+        report.failures.push(`${route.name}/${viewport.name}: opportunity discovery must show the verified empty state and retain the buyer submission route; error=${state.opportunityError}, cards=${state.opportunityCards}, empty=${state.opportunityEmptyTitle}, submit=${state.opportunitySubmitHref}`)
       }
       if (route.name === 'marketplace' &&
           (state.directoryUnavailable || state.directoryGridCards !== 0 ||
