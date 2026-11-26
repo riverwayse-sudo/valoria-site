@@ -8,8 +8,6 @@ export const BRAND = {
   promise: ['Develop', 'Surface', 'Connect'],
   email: 'info@valoriainstitute.com',
   copyrightEntity: 'African Talent Bureau Ltd',
-  location: 'Lagos, Nigeria',
-  compliance: 'NDPA 2023 Compliant',
   assessmentUrl: '/valu/register/?journey=valu_taster',
   logo: '/logo.png',
 }
