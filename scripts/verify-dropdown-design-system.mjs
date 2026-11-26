@@ -49,4 +49,11 @@ if (!notifications.includes("event.key === 'Escape'") || !notifications.includes
   throw new Error('Notification dropdown must expose its controlled region and support Escape dismissal.');
 }
 
+if (!notifications.includes('triggerRef.current?.focus()') ||
+    !notifications.includes('data-dropdown-panel="notifications"') ||
+    !notifications.includes('type="button"') ||
+    !notifications.includes("width: 'min(340px, calc(100vw - 24px))")) {
+  throw new Error('Notification dropdown must be keyboard-operable, return focus and remain within the viewport.')
+}
+
 console.log(`Dropdown design-system contract passed: ${count} native selects across ${auditedFiles.length} audited files.`);
