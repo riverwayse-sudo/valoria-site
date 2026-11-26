@@ -164,6 +164,7 @@ function ProfileSetupForm() {
   const hadExistingTracksRef = useRef(false)
 
   const [form, setForm] = useState(EMPTY_FORM)
+  const [consentRecorded, setConsentRecorded] = useState(false)
 
   const isCandidate   = form.active_tracks.includes('candidate')
   const isSpeaker     = form.active_tracks.includes('speaker')
@@ -195,6 +196,28 @@ function ProfileSetupForm() {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { router.push('/login'); return }
       setUser(user)
+
+      // Reuse the current public-display acknowledgement when one is already
+      // on record, including an established administrator attestation. This
+      // avoids asking returning profile owners to approve visibility again.
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.access_token) {
+        try {
+          const consentResponse = await fetch('/api/profile/acknowledgements', {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+            cache: 'no-store',
+          })
+          if (consentResponse.ok) {
+            const consentStatus = await consentResponse.json()
+            if (consentStatus.has_public_consent === true) {
+              setConsentRecorded(true)
+              setForm(f => ({ ...f, consent: true }))
+            }
+          }
+        } catch (consentError) {
+          console.warn('Existing profile consent could not be loaded:', consentError)
+        }
+      }
 
       // Prefill from an existing row so this page also serves as "edit" —
       // previously it only ever started blank, even for someone who'd
@@ -659,7 +682,7 @@ function ProfileSetupForm() {
           photoUploading={photoUploading} photoError={photoError} fileRef={fileRef} uploadPhoto={uploadPhoto}
           cvUploading={cvUploading} cvError={cvError} cvFileRef={cvFileRef} uploadCV={uploadCV} downloadExistingCV={downloadExistingCV}
           isCandidate={isCandidate} isSpeaker={isSpeaker} isFacilitator={isFacilitator}
-          tags={tags} videoLinks={videoLinks} handleFinish={handleFinish}
+          tags={tags} videoLinks={videoLinks} handleFinish={handleFinish} consentRecorded={consentRecorded}
           onChangeTracks={() => { setEditingTracks(true); setScreenIndex(0) }}
         />
           </div>
@@ -732,7 +755,7 @@ function ScreenBody(props) {
   const { screen, form, set, toggleArr, updateListItem, selectAndAdvance, goNext, saving,
           photoUploading, photoError, fileRef, uploadPhoto,
           cvUploading, cvError, cvFileRef, uploadCV, downloadExistingCV,
-          isSpeaker, tags, videoLinks, handleFinish, onChangeTracks } = props
+          isSpeaker, tags, videoLinks, handleFinish, consentRecorded, onChangeTracks } = props
 
   const val = form[screen.key]
 
@@ -1085,7 +1108,7 @@ function ScreenBody(props) {
     }
 
     case 'review': {
-      return <ReviewScreen {...props} tags={tags} videoLinks={videoLinks} handleFinish={handleFinish} onChangeTracks={onChangeTracks} />
+      return <ReviewScreen {...props} tags={tags} videoLinks={videoLinks} handleFinish={handleFinish} consentRecorded={consentRecorded} onChangeTracks={onChangeTracks} />
     }
 
     default:
@@ -1093,7 +1116,7 @@ function ScreenBody(props) {
   }
 }
 
-function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, videoLinks, handleFinish, saving, saveError, set, onChangeTracks }) {
+function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, videoLinks, handleFinish, saving, saveError, set, consentRecorded, onChangeTracks }) {
   return (
     <div>
       <Title>Review &amp;<br/><Em>submit.</Em></Title>
@@ -1173,12 +1196,18 @@ function ReviewScreen({ form, isCandidate, isSpeaker, isFacilitator, tags, video
 
 
 
-      <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'28px' }}>
-        <input type="checkbox" checked={form.consent} onChange={e => set('consent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
-        <span style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7 }}>
-          {PUBLIC_PROFILE_CONSENT_TEXT}
-        </span>
-      </label>
+      {consentRecorded ? (
+        <p style={{ fontSize:'13px', color:'GOLD', lineHeight:1.7, margin:'0 0 28px' }}>
+          ✓ Public-display consent is already on record. No further visibility approval is required.
+        </p>
+      ) : (
+        <label style={{ display:'flex', alignItems:'flex-start', gap:'12px', cursor:'pointer', marginBottom:'28px' }}>
+          <input type="checkbox" checked={form.consent} onChange={e => set('consent', e.target.checked)} style={{ width:'16px', height:'16px', accentColor:GOLD, marginTop:'2px', flexShrink:0 }} />
+          <span style={{ fontSize:'13px', fontWeight:300, color:DIM, lineHeight:1.7 }}>
+            {PUBLIC_PROFILE_CONSENT_TEXT}
+          </span>
+        </label>
+      )}
 
       {saveError && (
         <p style={{ fontSize:'12px', color:'#F09595', margin:'0 0 14px', lineHeight:1.6 }}>{saveError}</p>
