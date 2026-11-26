@@ -266,7 +266,7 @@ export default function SignupPage() {
             <form onSubmit={handleSignup} style={S.form}>
               {[
                 { key: 'name', label: 'Full Name', type: 'text', placeholder: 'Your full name' },
-                { key: 'company', label: userType === 'organiser' ? 'Organisation / Event Company' : 'Company Name', type: 'text', placeholder: userType === 'organiser' ? 'e.g. Lagos Event Group' : 'e.g. Zenith Capital Ltd' },
+                { key: 'company', label: userType === 'organiser' ? 'Organisation / Event Company' : 'Company Name', type: 'text', placeholder: userType === 'organiser' ? 'e.g. Northstar Events' : 'e.g. Zenith Capital Ltd' },
                 { key: 'email', label: 'Work Email Address', type: 'email', placeholder: 'you@company.com' },
                 { key: 'password', label: 'Password', type: 'password', placeholder: `Minimum ${PASSWORD_POLICY.minLength} characters` },
                 { key: 'confirmPassword', label: 'Confirm Password', type: 'password', placeholder: 'Re-enter your password' },
