@@ -12,7 +12,7 @@ describe('homepage expired event promotion removal', () => {
   test('the hero contains only the institutional introduction and no event invitation', () => {
     const hero = read('src/components/HeroSlider.jsx')
     expect(hero).toContain('Capability should decide')
-    expect(hero).toContain('START THE VALU INDEX TASTER')
+    expect(hero).toContain('CREATE ACCOUNT TO BEGIN')
     expect(hero).not.toContain('hero-event-slide')
     expect(hero).not.toContain('JOIN THE LIVE EVENT')
     expect(hero).not.toContain('EventRegistrationModal')
