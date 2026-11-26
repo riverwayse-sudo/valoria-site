@@ -470,7 +470,7 @@ try {
       }
       if (route.name === 'opportunities-submit' &&
           (!state.opportunitySubmitForm || state.opportunitySubmitRequiredFields < 5 ||
-           !state.opportunitySubmitSelectClass.split(/\\s+/).some(token => token === 'vi-select' || token === 'vi-select--light'))) {
+           !state.opportunitySubmitSelectClass.split(/\s+/).some(token => token === 'vi-select' || token === 'vi-select--light'))) {
         report.failures.push(`${route.name}/${viewport.name}: opportunity submission form must render with required fields and the shared select control; required=${state.opportunitySubmitRequiredFields}, selectClass=${state.opportunitySubmitSelectClass}`)
       }
       if (route.name === 'opportunities' &&
