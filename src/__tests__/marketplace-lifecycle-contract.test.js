@@ -27,14 +27,15 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(facilitators).toContain("getMarketplaceDirectoryData('facilitator')")
   })
 
-  test('marketplace preserves Basic and Full data without assigning Basic a merit tier', () => {
+  test('marketplace preserves Basic and Full data without exposing internal listing tiers', () => {
     const directory = read('src/components/MarketplaceDirectory.jsx')
     const data = read('src/lib/marketplace-data.js')
     expect(data).toContain("assessmentAccess === 'basic'")
     expect(data).toContain("assessment_access === 'full'")
     expect(directory).toContain("p.assessment_access === 'full'")
     expect(directory).toContain("p.assessment_access === 'full' && p.valu_index != null")
-    expect(directory).toContain("p.assessment_access === 'basic' ? 'BASIC LISTING'")
+    expect(directory).toContain("p.assessment_access === 'basic' ? 'PUBLIC PROFILE'")
+    expect(directory).not.toContain('BASIC LISTING')
     expect(directory).toContain('isGeneralView ? (isFull ?')
     expect(directory).toContain('Public profiles appear when they meet Valoria’s listing requirements.')
   })
