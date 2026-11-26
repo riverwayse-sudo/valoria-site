@@ -4,14 +4,14 @@ import resendEmail from '@/lib/resend-email.cjs'
 const { sendResendEmail, escapeHtml, getSiteOrigin } = resendEmail
 
 async function sendWelcomeEmail({ email, fullName, journeyUrl, source }) {
-  const first = escapeHtml(fullName.split(/\\s+/)[0] || 'there')
+  const first = escapeHtml(fullName.split(/\s+/)[0] || 'there')
   const safeJourneyUrl = escapeHtml(journeyUrl)
   return sendResendEmail({
     to: email,
     replyTo: 'info@valoriainstitute.com',
     subject: 'Your Valoria journey starts here.',
     html: `<div style="font-family:'Raleway',sans-serif;background:#0F0F1A;color:#F7F4EE;padding:40px"><div style="max-width:560px;margin:auto;background:#1A1A2E;padding:40px"><p style="color:#C9A84C;letter-spacing:.16em;font-size:11px;font-weight:700">VALORIA INSTITUTE</p><h1 style="font-weight:400">Your place is saved.</h1><p>Hi ${first},</p><p>We've saved your interest with Valoria. You do not need to start over when you return.</p><p style="margin-top:28px"><a href="${safeJourneyUrl}" style="display:inline-block;background:#C9A84C;color:#1A1A2E;padding:14px 20px;text-decoration:none;font-weight:700">CONTINUE YOUR VALORIA JOURNEY →</a></p><p style="color:rgba(247,244,238,.55);font-size:12px">This continuation link is valid for 30 days.</p></div></div>`,
-    text: `Hi ${fullName.split(/\\s+/)[0] || 'there'},\n\nWe've saved your interest with Valoria. You do not need to start over when you return.\n\nContinue your Valoria journey: ${journeyUrl}\n\nThis continuation link is valid for 30 days.\n\nValoria Institute`,
+    text: `Hi ${fullName.split(/\s+/)[0] || 'there'},\n\nWe've saved your interest with Valoria. You do not need to start over when you return.\n\nContinue your Valoria journey: ${journeyUrl}\n\nThis continuation link is valid for 30 days.\n\nValoria Institute`,
     tags: { category: 'waitlist', source: source || 'waitlist_page' },
     idempotencyKey: `valoria/waitlist/${email}`,
   })
@@ -30,12 +30,13 @@ export async function POST(request) {
     const body = await request.json()
     const { full_name, email, role, interest, type, source, utm_source, utm_medium, utm_campaign } = body
 
-    if (!full_name?.trim() || !email?.trim()) {
+    if (typeof full_name !== 'string' || typeof email !== 'string' || !full_name.trim() || !email.trim()) {
       return Response.json({ error: 'Name and email are required.' }, { status: 400 })
     }
+    const normalizedEmail = normalizedEmail
 
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRe.test(email)) {
+    if (!emailRe.test(normalizedEmail)) {
       return Response.json({ error: 'Please enter a valid email address.' }, { status: 400 })
     }
 
@@ -62,7 +63,7 @@ export async function POST(request) {
       .from('waitlist')
       .insert([{
         full_name: full_name.trim(),
-        email:     email.trim().toLowerCase(),
+        email:     normalizedEmail,
         role:      role?.trim() || null,
         interest:  interest || null,
         type:      type || 'standalone',
@@ -81,7 +82,7 @@ export async function POST(request) {
       entry_point: 'lead_capture',
       target_stage: 'assess',
       source: 'website_waitlist',
-      source_id: email.trim().toLowerCase(),
+      source_id: normalizedEmail,
       expires_at: expiresAt,
     }).select('token').single()
     const siteOrigin = getSiteOrigin()
@@ -90,7 +91,7 @@ export async function POST(request) {
       : `${siteOrigin}/journey`
 
     const emailResult = await sendWelcomeEmail({
-      email: email.trim().toLowerCase(),
+      email: normalizedEmail,
       fullName: full_name.trim(),
       journeyUrl,
       source: baseSource,
