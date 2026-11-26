@@ -26,6 +26,13 @@ describe('institutional positioning and public copy contract', () => {
     expect(read('src/lib/profileOptions.js')).not.toContain('Lagos, Nigeria')
     expect(read('src/app/api/enquiries/route.js')).not.toContain('Lagos, Nigeria')
     expect(read('src/app/api/admin/introduce/route.js')).not.toContain('Lagos, Nigeria')
+    expect(read('src/app/layout.jsx')).not.toContain("locale:'en_NG'")
+    expect(read('src/app/layout.jsx')).not.toContain("addressLocality:'Lagos'")
+    expect(read('src/app/layout.jsx')).not.toContain('Nigeria talent search')
+    expect(read('src/app/about-us/page.jsx')).not.toContain('Lagos talent marketplace')
+    expect(read('src/app/facilitators/page.jsx')).not.toMatch(/Nigeria|Lagos/)
+    expect(read('src/app/signup/page.jsx')).not.toContain('Lagos Event Group')
+    expect(read('src/app/careers/page.jsx')).not.toContain('Lagos office')
   })
 
   test('metadata and development pages do not use geographic-first marketing keywords', () => {
