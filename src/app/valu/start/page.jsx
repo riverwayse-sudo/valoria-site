@@ -84,7 +84,7 @@ export default function ValuStartPage() {
             <article><span>02</span><h3>Complete your Taster</h3><p>Complete the guided directional Taster. Your responses and initial result are saved securely before email confirmation.</p></article>
             <article><span>03</span><h3>Confirm your email</h3><p>After completing the Taster, verify your email to activate your account and protect your assessment record.</p></article>
             <article><span>04</span><h3>Open your dashboard</h3><p>After confirmation, return to your dashboard already signed in, with your completed Taster attached to your account.</p></article>
-            <article><span>05</span><h3>Continue to the full VALU Index</h3><p>From your dashboard, begin the separate full assessment to establish your official points result and PRIME profile.</p></article>
+            <article><span>05</span><h3>Continue to the full VALU Index</h3><p>The full VALU Index establishes your official points result and PRIME profile. Begin it separately from your dashboard; it is not a continuation of the Taster.</p></article>
           </div>
         </div>
       </section>
