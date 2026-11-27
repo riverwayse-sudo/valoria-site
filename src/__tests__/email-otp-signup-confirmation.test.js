@@ -53,6 +53,9 @@ describe("email OTP signup confirmation", () => {
     expect(completeRoute).toContain("admin.auth.admin.getUserById");
     expect(completeRoute).toContain("user.email_confirmed_at");
     expect(completeRoute).toContain("type: 'signup'");
+    expect(completeRoute).toContain("const redirect = new URL('/auth/callback', request.url)");
+    expect(completeRoute).toContain("redirect.searchParams.set('pending_taster_id', tasterId)");
+    expect(completeRoute).toContain("emailRedirectTo: redirect.toString()");
     expect(completeRoute).toContain("candidate.lead_capture_id !== taster.lead_capture_id");
     expect(completeRoute).toContain("lead?.source !== 'valu_taster_signup'");
     expect(completeRoute).toContain("taster.user_id !== user.id")
