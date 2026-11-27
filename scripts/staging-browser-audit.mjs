@@ -119,6 +119,7 @@ try {
       const consoleErrors = []
       const forbiddenRequests = []
       let tasterHandoffExchangeAttempted = false
+      if (accessibilityRoutes.has(route.name)) await page.addInitScript({ content: axeSource })
       page.on('pageerror', error => pageErrors.push(error.message))
       page.on('console', message => {
         if (message.type() === 'error') consoleErrors.push(message.text())
@@ -163,7 +164,6 @@ try {
 
       let accessibilityAudit = null
       if (accessibilityRoutes.has(route.name)) {
-        await page.addScriptTag({ content: axeSource })
         accessibilityAudit = await page.evaluate(async () => {
           const result = await window.axe.run(document, {
             runOnly: {
