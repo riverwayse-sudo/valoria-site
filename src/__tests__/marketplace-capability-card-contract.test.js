@@ -14,6 +14,22 @@ describe('three-lane capability display contract', () => {
     expect(cards).not.toContain('capabilityBadges.filter')
   })
 
+  test('homepage profile rail moves seamlessly on desktop and remains accessible on touch/reduced-motion', () => {
+    const styles = read('src/app/home.css')
+    const motion = read('src/styles/motion.css')
+    expect(motion).toContain('.vi-scroll-track { animation: vi-scroll-x var(--motion-registry-loop) linear infinite; }')
+    expect(motion).toContain('@keyframes vi-scroll-x')
+    expect(motion).toContain('.live-profiles .vi-scroll-mask:hover .vi-scroll-track')
+    expect(motion).toContain('.live-profiles .vi-scroll-mask:focus-within .vi-scroll-track')
+    expect(motion).toContain('animation-play-state: paused')
+    expect(motion).toContain('@media (hover: none), (pointer: coarse)')
+    expect(motion).toContain('animation: none')
+    expect(styles).toContain('.live-profiles .vi-scroll-track {')
+    expect(styles).toContain('gap: 0;')
+    expect(styles).toContain('overflow-x: auto')
+    expect(styles).toContain('.live-profiles .vi-scroll-group[aria-hidden="true"]')
+  })
+
   test('homepage profile rail renders all three lanes and differentiates selected from unselected', () => {
     const rail = read('src/components/LiveProfilesScroll.jsx')
     const styles = read('src/app/home.css')

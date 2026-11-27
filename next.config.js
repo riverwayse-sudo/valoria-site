@@ -60,6 +60,15 @@ const nextConfig = {
     ...(publicSupabaseUrl ? { NEXT_PUBLIC_SUPABASE_URL: publicSupabaseUrl } : {}),
     ...(serverSupabaseUrl ? { SUPABASE_URL: serverSupabaseUrl } : {}),
   },
+  async redirects() {
+    return [
+      // Preserve the public URLs used in older campaigns and bookmarks while
+      // keeping one canonical destination for each institutional page.
+      { source: '/assessment', destination: '/valu', permanent: true },
+      { source: '/privacy', destination: '/privacypolicy', permanent: true },
+      { source: '/terms', destination: '/terms-of-use', permanent: true },
+    ]
+  },
   async rewrites() {
     if (!valuOrigin) return []
     const origin = valuOrigin

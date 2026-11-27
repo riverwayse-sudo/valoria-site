@@ -2745,3 +2745,31 @@
   font-size: 6.5px;
   letter-spacing: 0;
 }
+
+
+
+/* Homepage profile rail layout; motion is owned by src/styles/motion.css. */
+.live-profiles .vi-scroll-track {
+  gap: 0;
+}
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .live-profiles .vi-scroll-mask {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-mask-image: none;
+    mask-image: none;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(201,168,76,.45) transparent;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+
+  .live-profiles .vi-scroll-group[aria-hidden="true"] {
+    display: none;
+  }
+
+  .live-profiles .vi-scroll-card {
+    scroll-snap-align: start;
+  }
+}

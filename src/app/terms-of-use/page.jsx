@@ -5,8 +5,7 @@ import '../pages.css'
 export const metadata = {
   title: 'Terms of Use | Valoria Institute',
   description: 'Terms governing your use of the Valoria Institute platform — for professionals, employers, event organisers, and training buyers.',
-  robots: { index: true, follow: true },
-  alternates: { canonical: 'https://valoriainstitute.com/terms-of-use' },
+  alternates: { canonical: '/terms-of-use' },
 }
 
 const GOLD = '#C9A84C'

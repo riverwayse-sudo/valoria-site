@@ -25,11 +25,67 @@ const routes = [
   { name: 'professional-signup-post-taster', url: `${SITE}/professional-signup/?taster_id=${POST_TASTER_ID}&name=Staging%20Participant&role=Staging%20QA&experience=0-3&email=staging-participant%40example.invalid`, site: true },
   { name: 'prime', url: `${SITE}/prime`, site: true },
   { name: 'about', url: `${SITE}/about-us`, site: true },
+  { name: 'assessment-legacy', url: `${SITE}/assessment`, site: true },
+  { name: 'privacy-legacy', url: `${SITE}/privacy`, site: true },
+  { name: 'terms-legacy', url: `${SITE}/terms`, site: true },
+  { name: 'privacy-policy', url: `${SITE}/privacypolicy`, site: true },
+  { name: 'terms-of-use', url: `${SITE}/terms-of-use`, site: true },
+  { name: 'programmes', url: `${SITE}/programmes`, site: true },
+  { name: 'develop-legacy', url: `${SITE}/develop`, site: true },
+  { name: 'facilitators-legacy', url: `${SITE}/facilitators`, site: true },
+  { name: 'valoria-develop-legacy', url: `${SITE}/valoria-develop`, site: true },
+  { name: 'atb-connect-legacy', url: `${SITE}/atb-connect`, site: true },
+  { name: 'atb-spotlight-legacy', url: `${SITE}/atb-spotlight`, site: true },
+  { name: 'spotlight-legacy', url: `${SITE}/spotlight`, site: true },
+  { name: 'marketplace-talent', url: `${SITE}/marketplace/talent`, site: true },
+  { name: 'marketplace-speakers', url: `${SITE}/marketplace/speakers`, site: true },
+  { name: 'marketplace-facilitators', url: `${SITE}/marketplace/facilitators`, site: true },
+  { name: 'opportunities', url: `${SITE}/opportunities`, site: true },
+  { name: 'opportunity-submit', url: `${SITE}/opportunities/submit`, site: true },
+  { name: 'contact-us', url: `${SITE}/contact-us`, site: true },
+  { name: 'careers', url: `${SITE}/careers`, site: true },
+  { name: 'insights', url: `${SITE}/insights`, site: true },
+  { name: 'login', url: `${SITE}/login`, site: true },
+  { name: 'signup', url: `${SITE}/signup`, site: true },
+  { name: 'register', url: `${SITE}/register`, site: true },
+  { name: 'admin-reconciliation-unauthenticated', url: `${SITE}/admin/reconciliation`, site: true },
   { name: 'dashboard-preview', url: `${SITE}/dashboard?preview=1`, site: true },
   { name: 'assessment-proxy', url: `${SITE}/valu/assessment/`, site: true },
   { name: 'assessment-host', url: `${ASSESSMENT}/`, site: false },
   { name: 'assessment-account-first-taster-gate', url: `${ASSESSMENT}/valu/assessment/?journey=account-first#taster_start_code=staging-invalid-probe`, site: false },
 ]
+const visualRoutes = new Set([
+  'homepage',
+  'marketplace',
+  'events',
+  'valu',
+  'prime',
+  'about',
+  'programmes',
+  'marketplace-talent',
+  'marketplace-speakers',
+  'marketplace-facilitators',
+  'opportunities',
+  'opportunity-submit',
+  'contact-us',
+  'privacy-policy',
+  'terms-of-use',
+  'signup',
+  'login',
+  'admin-reconciliation-unauthenticated',
+])
+const expectedRedirectPaths = {
+  'assessment-legacy': '/valu',
+  'privacy-legacy': '/privacypolicy',
+  'terms-legacy': '/terms-of-use',
+  'develop-legacy': '/programmes',
+  'facilitators-legacy': '/programmes',
+  'valoria-develop-legacy': '/programmes',
+  'atb-connect-legacy': '/marketplace/talent',
+  'atb-spotlight-legacy': '/marketplace/speakers',
+  'spotlight-legacy': '/marketplace/speakers',
+  'admin-reconciliation-unauthenticated': '/admin/login',
+}
 const report = {
   generatedAt: new Date().toISOString(),
   environment: 'Cloudflare staging only',
@@ -180,8 +236,11 @@ try {
         }
       })
 
-      const filename = `${route.name}-${viewport.name}.png`
-      await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
+      const captureScreenshot = visualRoutes.has(route.name)
+      const filename = captureScreenshot ? `${route.name}-${viewport.name}.png` : null
+      if (captureScreenshot) {
+        await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
+      }
       const result = {
         route: route.name,
         url: route.url,
@@ -209,14 +268,18 @@ try {
       if (state.analyticsLoaded) report.failures.push(`${route.name}/${viewport.name}: production analytics loaded in staging`)
       if (forbiddenRequests.length) report.failures.push(`${route.name}/${viewport.name}: production Supabase/assessment request detected`)
       if (state.literalNewlineVisible && route.name.startsWith('assessment-')) report.failures.push(`${route.name}/${viewport.name}: literal \\n text is visible in the assessment UI`)
-      if (state.visibleInternalTerms?.length) report.failures.push(`${route.name}/${viewport.name}: internal participant copy is visible: ${state.visibleInternalTerms.join(', ')}`)
+      if (!['terms-of-use', 'terms-legacy', 'privacy-policy', 'privacy-legacy'].includes(route.name) && state.visibleInternalTerms?.length) report.failures.push(`${route.name}/${viewport.name}: internal participant copy is visible: ${state.visibleInternalTerms.join(', ')}`)
       if (route.name.startsWith('assessment-') && state.assessmentSiteLinks.some(href => {
         try { return ['valoriainstitute.com', 'www.valoriainstitute.com'].includes(new URL(href).hostname) } catch { return false }
       })) report.failures.push(`${route.name}/${viewport.name}: assessment navigation points to production site`)
       if (pageErrors.length) report.failures.push(`${route.name}/${viewport.name}: browser page errors detected`)
       if (state.eventPanel?.clipsContent) report.failures.push(`${route.name}/${viewport.name}: event card clips content`)
-      const canonicalTasterEntries = new Set(['/valu/register'])
       const normalisePath = value => value.replace(/\/+$/, '') || '/'
+      const expectedRedirect = expectedRedirectPaths[route.name]
+      if (expectedRedirect && normalisePath(state.currentPath) !== expectedRedirect) {
+        report.failures.push(`${route.name}/${viewport.name}: expected canonical redirect to ${expectedRedirect}, reached ${state.currentPath}`)
+      }
+      const canonicalTasterEntries = new Set(['/valu/register'])
       if (['homepage', 'valu', 'valu-start'].includes(route.name) &&
           (!state.tasterEntryLinks.length || state.tasterEntryLinks.some(href => !canonicalTasterEntries.has(normalisePath(href))))) {
         report.failures.push(route.name + '/' + viewport.name + ': public Taster entry must require the canonical account-first registration route; found ' + JSON.stringify(state.tasterEntryLinks))
@@ -280,65 +343,84 @@ try {
       note.innerHTML = '<span class="live-profiles-empty-title">VISUAL PREVIEW ONLY</span><p>Illustrative cards for layout QA. These are not public listings or participant records.</p>'
       const mask = document.createElement('div')
       mask.className = 'vi-scroll-mask'
+      const fixtureCards = `
+        <div class="vi-scroll-card" data-visual-fixture="true">
+          <div class="vi-scroll-avatar"><span>01</span></div>
+          <div class="vi-scroll-copy">
+            <div class="vi-scroll-topline">ATB-PREVIEW-001 <i>VISUAL FIXTURE</i></div>
+            <span class="vi-scroll-name">Illustrative Professional 01</span>
+            <div class="vi-scroll-headline">Strategy &amp; Operations</div>
+            <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-active">Speaker</span><span class="is-inactive">Facilitator</span></div>
+            <div class="vi-scroll-designation">Illustrative designation</div>
+            <div class="vi-scroll-summary">Synthetic content for layout review only</div>
+            <div class="vi-scroll-development">Not a participant profile</div>
+          </div>
+          <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>78</strong><span class="vi-scroll-score-max">PTS</span></div>
+          <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
+        </div>
+        <div class="vi-scroll-card" data-visual-fixture="true">
+          <div class="vi-scroll-avatar"><span>02</span></div>
+          <div class="vi-scroll-copy">
+            <div class="vi-scroll-topline">ATB-PREVIEW-002 <i>VISUAL FIXTURE</i></div>
+            <span class="vi-scroll-name">Illustrative Professional 02</span>
+            <div class="vi-scroll-headline">Finance &amp; Governance</div>
+            <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-inactive">Speaker</span><span class="is-active">Facilitator</span></div>
+            <div class="vi-scroll-designation">Illustrative designation</div>
+            <div class="vi-scroll-summary">Synthetic content for layout review only</div>
+            <div class="vi-scroll-development">Not a participant profile</div>
+          </div>
+          <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>84</strong><span class="vi-scroll-score-max">PTS</span></div>
+          <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
+        </div>
+        <div class="vi-scroll-card" data-visual-fixture="true">
+          <div class="vi-scroll-avatar"><span>03</span></div>
+          <div class="vi-scroll-copy">
+            <div class="vi-scroll-topline">ATB-PREVIEW-003 <i>VISUAL FIXTURE</i></div>
+            <span class="vi-scroll-name">Illustrative Professional 03</span>
+            <div class="vi-scroll-headline">Digital Transformation</div>
+            <div class="vi-scroll-track-label"><span class="is-inactive">Talent</span><span class="is-active">Speaker</span><span class="is-active">Facilitator</span></div>
+            <div class="vi-scroll-designation">Illustrative designation</div>
+            <div class="vi-scroll-summary">Synthetic content for layout review only</div>
+            <div class="vi-scroll-development">Not a participant profile</div>
+          </div>
+          <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>72</strong><span class="vi-scroll-score-max">PTS</span></div>
+          <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
+        </div>`
       mask.innerHTML = `
         <div class="vi-scroll-track">
-          <div class="vi-scroll-card" data-visual-fixture="true">
-            <div class="vi-scroll-avatar"><span>01</span></div>
-            <div class="vi-scroll-copy">
-              <div class="vi-scroll-topline">ATB-PREVIEW-001 <i>VISUAL FIXTURE</i></div>
-              <span class="vi-scroll-name">Illustrative Professional 01</span>
-              <div class="vi-scroll-headline">Strategy &amp; Operations</div>
-              <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-active">Speaker</span><span class="is-inactive">Facilitator</span></div>
-              <div class="vi-scroll-designation">Illustrative designation</div>
-              <div class="vi-scroll-summary">Synthetic content for layout review only</div>
-              <div class="vi-scroll-development">Not a participant profile</div>
-            </div>
-            <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>78</strong><span class="vi-scroll-score-max">PTS</span></div>
-            <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
-          </div>
-          <div class="vi-scroll-card" data-visual-fixture="true">
-            <div class="vi-scroll-avatar"><span>02</span></div>
-            <div class="vi-scroll-copy">
-              <div class="vi-scroll-topline">ATB-PREVIEW-002 <i>VISUAL FIXTURE</i></div>
-              <span class="vi-scroll-name">Illustrative Professional 02</span>
-              <div class="vi-scroll-headline">Finance &amp; Governance</div>
-              <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-inactive">Speaker</span><span class="is-active">Facilitator</span></div>
-              <div class="vi-scroll-designation">Illustrative designation</div>
-              <div class="vi-scroll-summary">Synthetic content for layout review only</div>
-              <div class="vi-scroll-development">Not a participant profile</div>
-            </div>
-            <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>84</strong><span class="vi-scroll-score-max">PTS</span></div>
-            <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
-          </div>
-          <div class="vi-scroll-card" data-visual-fixture="true">
-            <div class="vi-scroll-avatar"><span>03</span></div>
-            <div class="vi-scroll-copy">
-              <div class="vi-scroll-topline">ATB-PREVIEW-003 <i>VISUAL FIXTURE</i></div>
-              <span class="vi-scroll-name">Illustrative Professional 03</span>
-              <div class="vi-scroll-headline">Digital Transformation</div>
-              <div class="vi-scroll-track-label"><span class="is-inactive">Talent</span><span class="is-active">Speaker</span><span class="is-active">Facilitator</span></div>
-              <div class="vi-scroll-designation">Illustrative designation</div>
-              <div class="vi-scroll-summary">Synthetic content for layout review only</div>
-              <div class="vi-scroll-development">Not a participant profile</div>
-            </div>
-            <div class="vi-scroll-score"><span class="vi-scroll-score-label">VALU INDEX</span><strong>72</strong><span class="vi-scroll-score-max">PTS</span></div>
-            <span class="vi-scroll-card-arrow" aria-hidden="true">↗</span>
-          </div>
+          <div class="vi-scroll-group">${fixtureCards}</div>
+          <div class="vi-scroll-group" aria-hidden="true">${fixtureCards}</div>
         </div>`
       const bottom = shell.querySelector('.live-profiles-bottom')
       shell.insertBefore(note, bottom)
       shell.insertBefore(mask, bottom)
       const track = mask.querySelector('.vi-scroll-track')
-      if (track) {
-        track.style.animation = 'none'
-        track.style.transform = 'none'
+      const firstGroup = track?.querySelector('.vi-scroll-group:not([aria-hidden="true"])')
+      const cloneGroup = track?.querySelector('.vi-scroll-group[aria-hidden="true"]')
+      const trackStyle = track ? getComputedStyle(track) : null
+      const maskStyle = getComputedStyle(mask)
+      return {
+        ready: Boolean(firstGroup && cloneGroup &&
+          firstGroup.querySelectorAll('[data-visual-fixture="true"]').length === 3 &&
+          cloneGroup.querySelectorAll('[data-visual-fixture="true"]').length === 3),
+        animationName: trackStyle?.animationName || 'none',
+        animationPlayState: trackStyle?.animationPlayState || 'none',
+        overflowX: maskStyle.overflowX,
+        trackWidth: track?.scrollWidth || 0,
+        maskWidth: mask.clientWidth,
+        scrollable: Boolean(track && track.scrollWidth > mask.clientWidth + 4),
       }
-      return Boolean(track && mask.querySelectorAll('[data-visual-fixture="true"]').length === 3)
     })
     const filename = `homepage-profile-cards-preview-${viewport.name}.png`
     await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
-    report.profileCardPreviews.push({ viewport: viewport.name, status: response?.status() ?? null, screenshot: filename, syntheticFixtures: 3, clearlyLabelled: true, previewReady })
-    if (!previewReady) report.failures.push(`${viewport.name}: compact profile-card visual fixture could not be rendered`)
+    report.profileCardPreviews.push({ viewport: viewport.name, status: response?.status() ?? null, screenshot: filename, syntheticFixtures: 3, clearlyLabelled: true, ...previewReady })
+    if (!previewReady.ready) report.failures.push(`${viewport.name}: compact profile-card visual fixture could not be rendered`)
+    if (viewport.name === 'desktop' && previewReady.animationName !== 'vi-scroll-x') {
+      report.failures.push('desktop: homepage profile rail must use the canonical vi-scroll-x motion')
+    }
+    if (viewport.name === 'mobile' && (previewReady.animationName !== 'none' || previewReady.overflowX !== 'auto' || !previewReady.scrollable)) {
+      report.failures.push('mobile: homepage profile rail must remain manually scrollable without auto-motion')
+    }
     await context.close()
   }
 

@@ -11,7 +11,17 @@ export async function middleware(request) {
   const { pathname } = request.nextUrl
 
   if (pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname === '/favicon.ico' || pathname.match(/\.(png|jpg|jpeg|svg|ico|webp|woff|woff2|ttf)$/)) return NextResponse.next()
-  if (!SB_URL || !SB_ANON_KEY) return NextResponse.next()
+  if (!SB_URL || !SB_ANON_KEY) {
+    // Admin surfaces must fail closed when their authentication verifier is
+    // unavailable. Public pages remain renderable in a deliberately
+    // unconfigured preview, but protected admin routes never bypass the gate.
+    if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
+      const unavailableUrl = new URL('/admin/login', request.url)
+      unavailableUrl.searchParams.set('error', 'auth_unavailable')
+      return NextResponse.redirect(unavailableUrl)
+    }
+    return NextResponse.next()
+  }
 
   let response = NextResponse.next({ request: { headers: request.headers } })
   const supabase = createServerClient(SB_URL, SB_ANON_KEY, {

@@ -65,4 +65,27 @@ describe('Canonical VALU merit tiers', () => {
     expect(clusterNames).toHaveLength(5)
   })
 
+  test('Develop programme focus areas use the canonical PRIME skill names', () => {
+    const brand = read('src/lib/brand.js')
+    const programmes = read('src/app/programmes/page.jsx')
+    const canonicalSkills = [
+      'Communication', 'Negotiation', 'Personal Brand & Executive Presence',
+      'Emotional Intelligence', 'Conflict Resolution', 'People Development', 'Stakeholder Management',
+      'Critical Thinking', 'Strategic Thinking', 'Business Acumen', 'AI Fluency',
+      'Execution & Accountability', 'Resilience & Self-Leadership', 'Adaptability',
+      'Commercial Creativity', 'Influence Without Authority', 'Human-AI Collaboration',
+    ]
+    for (const skill of canonicalSkills) {
+      expect(brand).toContain(skill)
+    }
+    expect(programmes).toContain('{c.skills.join(\' · \')}')
+    for (const retired of [
+      'Composure under scrutiny', 'Trust-building', 'Collaborative intelligence',
+      'Network quality', 'Analytical depth', 'Decision-making', 'Cognitive agility',
+      'Execution discipline', 'Commercial thinking', 'Systems building', 'Venture mindset',
+    ]) {
+      expect(programmes).not.toContain(retired)
+    }
+  })
+
 })
