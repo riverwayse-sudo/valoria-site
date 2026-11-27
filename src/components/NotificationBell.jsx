@@ -93,11 +93,12 @@ export default function NotificationBell({ userId }) {
 
   const markAsRead = async (notificationId) => {
     try {
-      await fetch('/api/notifications', {
+      const res = await fetch('/api/notifications', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: notificationId }),
       })
+      if (!res.ok) throw new Error(`status ${res.status}`)
       setNotifications(prev =>
         prev.map(n => n.id === notificationId ? { ...n, read_at: new Date().toISOString() } : n)
       )
@@ -110,11 +111,12 @@ export default function NotificationBell({ userId }) {
   const markAllAsRead = async () => {
     if (!userId || unreadCount === 0) return
     try {
-      await fetch('/api/notifications', {
+      const res = await fetch('/api/notifications', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ all: true }),
       })
+      if (!res.ok) throw new Error(`status ${res.status}`)
       setNotifications(prev => prev.map(n => ({ ...n, read_at: n.read_at || new Date().toISOString() })))
       setUnreadCount(0)
     } catch (err) {
