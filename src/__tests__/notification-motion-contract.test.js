@@ -45,4 +45,13 @@ describe('notification micro-interaction contract', () => {
     expect(tokens).toContain('.vi-notification-item { min-height: var(--vi-target-min); }')
   })
 
+  test('opening the notification panel does not mark all items as read', () => {
+    const component = read('src/components/NotificationBell.jsx')
+    expect(component).toContain('const togglePanel = () => {')
+    expect(component).toContain('onClick={togglePanel}')
+    expect(component).toContain('if (!userId) {')
+    expect(component).toContain('setLoading(false)')
+    expect(component).not.toContain('if (unreadCount > 0) markAllAsRead()')
+  })
+
 })
