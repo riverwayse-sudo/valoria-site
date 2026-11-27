@@ -6,7 +6,7 @@ import { chromium } from 'playwright'
 
 const require = createRequire(import.meta.url)
 const axeSource = await fs.readFile(require.resolve('axe-core/axe.min.js'), 'utf8')
-const accessibilityRoutes = new Set(['homepage', 'marketplace', 'valu', 'valu-register', 'marketplace-talent', 'about'])
+const accessibilityRoutes = new Set(['homepage', 'marketplace', 'marketplace-talent', 'marketplace-speakers', 'marketplace-facilitators', 'valu', 'valu-register', 'professional-signup-account-first', 'login', 'signup', 'about', 'prime', 'programmes', 'events', 'contact-us', 'careers', 'insights', 'opportunities', 'opportunity-submit', 'privacy-policy', 'terms-of-use'])
 
 const SITE = process.env.STAGING_SITE_URL || 'https://staging.valoriainstitute.com'
 const ASSESSMENT = process.env.STAGING_ASSESSMENT_URL || 'https://assessment-staging.valoriainstitute.com'
@@ -170,13 +170,17 @@ try {
               type: 'tag',
               values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'],
             },
+            iframes: false,
+            timeout: 15000,
+            resultTypes: ['violations'],
           })
           return result.violations.map(violation => ({
             id: violation.id,
             impact: violation.impact,
             help: violation.help,
             helpUrl: violation.helpUrl,
-            nodes: violation.nodes.map(node => ({
+            nodeCount: violation.nodes.length,
+            nodes: violation.nodes.slice(0, 25).map(node => ({
               target: node.target,
               html: node.html.slice(0, 240),
               failureSummary: node.failureSummary,
