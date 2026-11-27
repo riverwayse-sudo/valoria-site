@@ -8,23 +8,26 @@ describe('Canonical VALU merit tiers', () => {
     const brand = read('src/lib/brand.js')
     const prime = read('src/app/prime/page.jsx')
 
-    expect(brand).toContain("{ level: 4, min: 90, max: 100, name: 'Elite'")
-    expect(brand).toContain("{ level: 3, min: 75, max: 89, name: 'Distinguished'")
-    expect(brand).toContain("{ level: 2, min: 55, max: 74, name: 'Proficient'")
-    expect(brand).toContain("{ level: 1, min: 35, max: 54, name: 'Standard'")
+    expect(brand).toContain("{ level: 4, min: 80, max: 100, name: 'Force to Align With'")
+    expect(brand).toContain("{ level: 3, min: 65, max: 79, name: 'Emerging Force'")
+    expect(brand).toContain("{ level: 2, min: 50, max: 64, name: 'Developing Professional'")
+    expect(brand).toContain("{ level: 1, min: 35, max: 49, name: 'Building Foundations'")
+    expect(brand).toContain("{ level: 0, min: 0, max: 34, name: 'At the Starting Point'")
 
-    for (const tier of ['Elite', 'Distinguished', 'Proficient', 'Standard']) {
+    for (const tier of ['Force to Align With', 'Emerging Force', 'Developing Professional', 'Building Foundations', 'At the Starting Point']) {
       expect(prime).toContain(`name: '${tier}'`)
     }
-    for (const retired of ['Force to Align With', 'Emerging Force', 'Developing Professional', 'Building Foundations']) {
+    for (const retired of ['Elite', 'Distinguished', 'Proficient', 'Standard']) {
       expect(brand).not.toContain(`name: '${retired}'`)
       expect(prime).not.toContain(`name: '${retired}'`)
     }
   })
 
-  test('scores below 35 receive no merit designation and remain outside score eligibility', () => {
+  test('scores below 35 receive At the Starting Point but remain outside marketplace eligibility', () => {
     const brand = read('src/lib/brand.js')
-    expect(brand).toContain("if (score < 35 || score > VALU_SCORE.maximum) return null")
+    expect(brand).toContain("if (score < 0 || score > VALU_SCORE.maximum) return null")
+    expect(brand).toContain("At the Starting Point")
+    expect(brand).toContain("MARKETPLACE_ACCESS_LEVELS")
   })
 
   test('basic listings remain without an official merit tier', () => {
