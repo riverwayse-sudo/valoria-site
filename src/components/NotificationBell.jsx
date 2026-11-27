@@ -247,12 +247,14 @@ export default function NotificationBell({ userId }) {
                   <p style={{ fontSize: '12px', color: DIM, margin: 0 }}>No notifications yet</p>
                 </div>
               ) : (
-                notifications.map((notif) => (
+                notifications.map((notif, index) => (
                   <button
                     type="button"
                     key={notif.id}
+                    className="vi-notification-item"
                     onClick={() => openNotification(notif)}
                     style={{
+                      '--vi-notification-index': Math.min(index, 6),
                       display: 'block',
                       width: '100%',
                       textAlign: 'left',
