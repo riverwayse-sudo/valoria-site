@@ -74,17 +74,19 @@ export const MARKETPLACE_ACCESS_LEVELS = {
 
 // Merit designations are derived from the full VALU Index points.
 // They are not certifications. Taster-only/basic listings receive no designation.
+// At the Starting Point is a valid designation; the separate marketplace eligibility gate remains 35 points.
 export const TIER_DESIGNATIONS = [
-  { level: 4, min: 90, max: 100, name: 'Elite', stars: '✦✦✦', badgeClass: 'elite' },
-  { level: 3, min: 75, max: 89, name: 'Distinguished', stars: '✦✦', badgeClass: 'distinguished' },
-  { level: 2, min: 55, max: 74, name: 'Proficient', stars: '✦', badgeClass: 'proficient' },
-  { level: 1, min: 35, max: 54, name: 'Standard', stars: '', badgeClass: 'standard' },
+  { level: 4, min: 80, max: 100, name: 'Force to Align With', stars: '✦✦✦', badgeClass: 'forceToAlignWith' },
+  { level: 3, min: 65, max: 79, name: 'Emerging Force', stars: '✦✦', badgeClass: 'emergingForce' },
+  { level: 2, min: 50, max: 64, name: 'Developing Professional', stars: '✦', badgeClass: 'developingProfessional' },
+  { level: 1, min: 35, max: 49, name: 'Building Foundations', stars: '', badgeClass: 'buildingFoundations' },
+  { level: 0, min: 0, max: 34, name: 'At the Starting Point', stars: '', badgeClass: 'atTheStartingPoint' },
 ]
 
 export function getValuTier(points, assessmentLevel = 'full') {
-  if (assessmentLevel !== 'full' || points == null || !Number.isFinite(Number(points))) return null
+  if (assessmentLevel !== 'full' || points == null || typeof points === 'boolean' || (typeof points === 'string' && points.trim() === '') || !Number.isFinite(Number(points))) return null
   const score = Number(points)
-  if (score < 35 || score > VALU_SCORE.maximum) return null
+  if (score < 0 || score > VALU_SCORE.maximum) return null
   return TIER_DESIGNATIONS.find(tier => score >= tier.min && score <= tier.max) || null
 }
 
