@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import adminAuth from '@/lib/server/admin-auth.cjs'
 
 function db() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -8,14 +9,9 @@ function db() {
 
 async function requireAdmin(request) {
   const supabase = db()
-  if (!supabase) return { supabase:null, response:Response.json({error:'Service not configured.'},{status:503}) }
-  const token=(request.headers.get('authorization')||'').replace(/^Bearer\s+/i,'')
-  if(!token) return {supabase,response:Response.json({error:'Not authenticated.'},{status:401})}
-  const {data,error}=await supabase.auth.getUser(token)
-  if(error||!data?.user?.id) return {supabase,response:Response.json({error:'Not authenticated.'},{status:401})}
-  const {data:admin}=await supabase.from('admin_users').select('id').eq('id',data.user.id).maybeSingle()
-  if(!admin) return {supabase,response:Response.json({error:'Admin access required.'},{status:403})}
-  return {supabase,user:data.user}
+  if (!supabase) return { supabase, response: Response.json({ error: 'Service not configured.' }, { status: 503 }) }
+  const authorization = await adminAuth.authorizeAdmin(request, supabase)
+  return { supabase, user: authorization.user, response: authorization.response }
 }
 
 export async function POST(request) {
