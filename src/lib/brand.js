@@ -74,6 +74,7 @@ export const MARKETPLACE_ACCESS_LEVELS = {
 
 // Merit designations are derived from the full VALU Index points.
 // They are not certifications. Taster-only/basic listings receive no designation.
+// At the Starting Point is a valid designation; the separate marketplace eligibility gate remains 35 points.
 export const TIER_DESIGNATIONS = [
   { level: 4, min: 80, max: 100, name: 'Force to Align With', stars: '✦✦✦', badgeClass: 'forceToAlignWith' },
   { level: 3, min: 65, max: 79, name: 'Emerging Force', stars: '✦✦', badgeClass: 'emergingForce' },
