@@ -84,7 +84,7 @@ export const TIER_DESIGNATIONS = [
 ]
 
 export function getValuTier(points, assessmentLevel = 'full') {
-  if (assessmentLevel !== 'full' || points == null || !Number.isFinite(Number(points))) return null
+  if (assessmentLevel !== 'full' || points == null || typeof points === 'boolean' || (typeof points === 'string' && points.trim() === '') || !Number.isFinite(Number(points))) return null
   const score = Number(points)
   if (score < 0 || score > VALU_SCORE.maximum) return null
   return TIER_DESIGNATIONS.find(tier => score >= tier.min && score <= tier.max) || null
