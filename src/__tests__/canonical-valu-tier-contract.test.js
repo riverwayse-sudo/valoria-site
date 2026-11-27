@@ -8,10 +8,10 @@ describe('Canonical VALU merit tiers', () => {
     const brand = read('src/lib/brand.js')
     const prime = read('src/app/prime/page.jsx')
 
-    expect(brand).toContain("{ level: 4, min: 80, max: 100, name: 'Force to Align With'")
-    expect(brand).toContain("{ level: 3, min: 65, max: 79, name: 'Emerging Force'")
-    expect(brand).toContain("{ level: 2, min: 50, max: 64, name: 'Developing Professional'")
-    expect(brand).toContain("{ level: 1, min: 35, max: 49, name: 'Building Foundations'")
+    expect(brand).toContain("{ level: 4, min: 90, max: 100, name: 'Elite'")
+    expect(brand).toContain("{ level: 3, min: 75, max: 89, name: 'Distinguished'")
+    expect(brand).toContain("{ level: 2, min: 55, max: 74, name: 'Proficient'")
+    expect(brand).toContain("{ level: 1, min: 35, max: 54, name: 'Standard'")
 
     for (const tier of ['Force to Align With', 'Emerging Force', 'Developing Professional', 'Building Foundations']) {
       expect(prime).toContain(`name: '${tier}'`)
