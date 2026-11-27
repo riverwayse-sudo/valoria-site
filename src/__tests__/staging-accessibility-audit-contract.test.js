@@ -5,6 +5,10 @@ const auditScript = fs.readFileSync(
   path.join(__dirname, '../../scripts/staging-browser-audit.mjs'),
   'utf8'
 );
+const globalsCss = fs.readFileSync(path.join(__dirname, '../styles/globals.css'), 'utf8');
+const homeCss = fs.readFileSync(path.join(__dirname, '../app/home.css'), 'utf8');
+const pagesCss = fs.readFileSync(path.join(__dirname, '../app/pages.css'), 'utf8');
+const registerPage = fs.readFileSync(path.join(__dirname, '../app/valu/register/page.jsx'), 'utf8');
 const stagingWorkflow = fs.readFileSync(
   path.join(__dirname, '../../.github/workflows/cloudflare-current-site-staging.yml'),
   'utf8'
@@ -25,5 +29,16 @@ describe('staging WCAG audit contract', () => {
   test('serious and critical WCAG violations fail the staging audit', () => {
     expect(auditScript).toContain("['serious', 'critical']");
     expect(auditScript).toContain('report.failures.push');
+  });
+
+  test('homepage, registration and about labels use contrast-safe semantic colors', () => {
+    expect(globalsCss).toContain('--gold-ink-on-light: #70530F');
+    expect(globalsCss).toContain('--muted-ink-on-light: #6C6C7A');
+    expect(homeCss).toContain('.home-section-heading .eyebrow-text');
+    expect(homeCss).toContain('color: var(--gold-ink-on-light)');
+    expect(homeCss).toContain('color: var(--gold-on-dark)');
+    expect(homeCss).toContain('color: var(--muted-on-dark)');
+    expect(pagesCss).toContain('color:var(--gold-on-dark)');
+    expect(registerPage).toContain('small: { color: MUTED');
   });
 });
