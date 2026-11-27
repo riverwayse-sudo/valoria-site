@@ -93,7 +93,7 @@ describe('journey integrity contract', () => {
     const route = read('src/app/api/admin/reconciliation/apply-taster-link/route.js')
     const page = read('src/app/admin/reconciliation/page.jsx')
     expect(page).toContain('/api/admin/reconciliation/apply-taster-link')
-    expect(route).toContain("from('admin_users')")
+    expect(route).toContain("adminAuth.authorizeAdmin(request, supabase)")
     expect(route).toContain("from('identity_reconciliation_reviews')")
     expect(route).toContain("review.decision!=='verified_match'")
     expect(route).toContain("review.candidate_record_type!=='taster'")
