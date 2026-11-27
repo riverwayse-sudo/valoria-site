@@ -76,7 +76,7 @@ describe("computeWeightedIndex", () => {
 });
 
 describe("getDesignation", () => {
-  const cases = [[100,"Force to Align With"],[80,"Force to Align With"],[79,"Emerging Force"],[65,"Emerging Force"],[64,"Developing Professional"],[50,"Developing Professional"],[49,"Building Foundations"],[35,"Building Foundations"]];
+  const cases = [[100,"Elite"],[90,"Elite"],[89,"Distinguished"],[75,"Distinguished"],[74,"Proficient"],[55,"Proficient"],[54,"Standard"],[35,"Standard"]];
   test.each(cases)("score %i points → %s", (score, expected) => expect(getDesignation(score).name).toBe(expected));
   test("scores below 35 points have no merit designation", () => {
     expect(getDesignation(34)).toBeNull();
