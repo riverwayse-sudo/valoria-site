@@ -346,7 +346,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(upload).toContain("verification_status:'pending'")
     expect(upload).toContain("from('professional_documents')")
     expect(upload).not.toContain("upsert:true")
-    expect(admin).toContain("from('admin_users')")
+    expect(admin).toContain("adminAuth.authorizeAdmin(request,db)")
     expect(admin).toContain("professional_document_reviews")
     expect(admin).toContain("'approved','changes_requested','rejected'")
     expect(admin).toContain('createSignedUrl')
