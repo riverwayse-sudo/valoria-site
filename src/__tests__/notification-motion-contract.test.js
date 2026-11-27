@@ -52,7 +52,7 @@ describe('notification micro-interaction contract', () => {
     expect(component).toContain('if (!userId) {')
     expect(component).toContain('setLoading(false)')
     expect(component).not.toContain('if (unreadCount > 0) markAllAsRead()')
-    expect(component.match(/if \\(!res\\.ok\\)/g)).toHaveLength(3)
+    expect(component.match(/if \(!res\.ok\)/g)).toHaveLength(3)
   })
 
 })
