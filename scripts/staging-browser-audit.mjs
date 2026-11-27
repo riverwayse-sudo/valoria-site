@@ -468,7 +468,7 @@ try {
 }
 
 await fs.writeFile(path.join(OUT, 'report.json'), JSON.stringify(report, null, 2))
-console.log(JSON.stringify({ pages: report.results.length, failures: report.failures, output: OUT }, null, 2))
+console.log(JSON.stringify({ pages: report.results.length, accessibilityAudits: report.accessibilityAudits.length, accessibilityViolations: report.accessibilityAudits.reduce((sum, item) => sum + item.violationCount, 0), failures: report.failures, output: OUT }, null, 2))
 if (report.failures.length) process.exitCode = 1
 
 // Re-run after the staging assessment Worker refresh so the current deployed banner and form are captured.
