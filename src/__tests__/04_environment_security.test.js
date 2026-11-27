@@ -10,7 +10,7 @@ const path = require("path");
 const { execFileSync } = require("child_process");
 
 // ── PATHS ─────────────────────────────────────────────────────────────────
-const ROOT = path.resolve(__dirname, "../../..");
+const ROOT = path.resolve(__dirname, "../..");
 const PLATFORM_ROOT = process.env.VALORIA_PLATFORM_ROOT || path.join(ROOT, "../valoria-platform/valoria-final");
 const SITE_ROOT     = process.env.VALORIA_SITE_ROOT     || ROOT;
 
