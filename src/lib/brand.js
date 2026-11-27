@@ -79,12 +79,13 @@ export const TIER_DESIGNATIONS = [
   { level: 3, min: 65, max: 79, name: 'Emerging Force', stars: '✦✦', badgeClass: 'emergingForce' },
   { level: 2, min: 50, max: 64, name: 'Developing Professional', stars: '✦', badgeClass: 'developingProfessional' },
   { level: 1, min: 35, max: 49, name: 'Building Foundations', stars: '', badgeClass: 'buildingFoundations' },
+  { level: 0, min: 0, max: 34, name: 'At the Starting Point', stars: '', badgeClass: 'atTheStartingPoint' },
 ]
 
 export function getValuTier(points, assessmentLevel = 'full') {
   if (assessmentLevel !== 'full' || points == null || !Number.isFinite(Number(points))) return null
   const score = Number(points)
-  if (score < 35 || score > VALU_SCORE.maximum) return null
+  if (score < 0 || score > VALU_SCORE.maximum) return null
   return TIER_DESIGNATIONS.find(tier => score >= tier.min && score <= tier.max) || null
 }
 
