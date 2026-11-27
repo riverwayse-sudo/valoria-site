@@ -1,10 +1,10 @@
 # Valoria Institute — Public Site
 
-The public Valoria Institute marketing and marketplace-entry site, built with Next.js 14 and deployed to Vercel.
+The public Valoria Institute marketing and marketplace-entry site, built with Next.js 14 and deployed to Cloudflare Workers.
 
 ## Staging deployment
 
-The `staging` branch is the integration validation branch. Changes must pass the Vercel build before production promotion.
+Valoria uses isolated Cloudflare staging Workers for integration validation. Changes must pass the relevant build, Worker validation, route, security and browser acceptance checks before explicit production promotion.
 
 ## Production architecture
 
@@ -72,7 +72,7 @@ npm test
 
 ## Deployment
 
-Production is deployed through Vercel from the `main` branch. Environment variables are configured in Vercel; public browser code must never contain a Supabase service-role secret.
+Production is deployed through the approved Cloudflare Workers release workflow from reviewed `main`-branch commits. Runtime bindings and secrets are managed in Cloudflare, with GitHub environment secrets scoped to their intended environment. Vercel is not an approved production deployment target. Public browser code must never contain a Supabase service-role secret.
 
 ## Closure baseline
 
