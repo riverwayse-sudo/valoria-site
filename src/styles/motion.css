@@ -237,7 +237,6 @@ nav.vi-nav.scrolled,
 }
 .vi-notification-item {
   animation: vi-notification-item-enter var(--motion-standard) var(--motion-ease) both;
-  animation-delay: calc(var(--vi-notification-index, 0) * 55ms);
 }
 @media (prefers-reduced-motion: reduce) {
   .notification-bell-trigger:hover .notification-bell-icon,
