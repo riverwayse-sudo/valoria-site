@@ -48,6 +48,10 @@ export default function NotificationBell({ userId }) {
   }, [userId])
 
   useEffect(() => {
+    if (!userId) {
+      setLoading(false)
+      return undefined
+    }
     fetchNotifications()
 
     // Subscribe to real-time notification inserts
@@ -82,13 +86,19 @@ export default function NotificationBell({ userId }) {
     return () => document.removeEventListener('keydown', onKeyDown)
   }, [isOpen, closePanel])
 
+  const togglePanel = () => {
+    if (isOpen) closePanel()
+    else setIsOpen(true)
+  }
+
   const markAsRead = async (notificationId) => {
     try {
-      await fetch('/api/notifications', {
+      const res = await fetch('/api/notifications', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: notificationId }),
       })
+      if (!res.ok) throw new Error(`status ${res.status}`)
       setNotifications(prev =>
         prev.map(n => n.id === notificationId ? { ...n, read_at: new Date().toISOString() } : n)
       )
@@ -101,11 +111,12 @@ export default function NotificationBell({ userId }) {
   const markAllAsRead = async () => {
     if (!userId || unreadCount === 0) return
     try {
-      await fetch('/api/notifications', {
+      const res = await fetch('/api/notifications', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ all: true }),
       })
+      if (!res.ok) throw new Error(`status ${res.status}`)
       setNotifications(prev => prev.map(n => ({ ...n, read_at: n.read_at || new Date().toISOString() })))
       setUnreadCount(0)
     } catch (err) {
@@ -153,22 +164,14 @@ export default function NotificationBell({ userId }) {
         type="button"
         ref={triggerRef}
         data-dropdown-trigger="notifications"
-        onClick={() => { if (isOpen) closePanel(); else { setIsOpen(true); if (unreadCount > 0) markAllAsRead() } }}
+        onClick={togglePanel}
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
         aria-expanded={isOpen}
         aria-controls="vi-notification-panel"
-        style={{
-          position: 'relative',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          padding: '8px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+        className="vi-icon-button notification-bell-trigger"
+        style={{ position: 'relative' }}
       >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: DIM }}>
+        <svg className="notification-bell-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: DIM }}>
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
           <path d="M13.73 21a2 2 0 0 1-3.46 0" />
         </svg>
@@ -255,12 +258,14 @@ export default function NotificationBell({ userId }) {
                   <p style={{ fontSize: '12px', color: DIM, margin: 0 }}>No notifications yet</p>
                 </div>
               ) : (
-                notifications.map((notif) => (
+                notifications.map((notif, index) => (
                   <button
                     type="button"
                     key={notif.id}
+                    className="vi-notification-item"
                     onClick={() => openNotification(notif)}
                     style={{
+                      animationDelay: `${Math.min(index, 6) * 55}ms`,
                       display: 'block',
                       width: '100%',
                       textAlign: 'left',

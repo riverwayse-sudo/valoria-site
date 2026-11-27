@@ -39,10 +39,11 @@ export default function ValuPage() {
           <div className="valu-kicker"><span /> A CLEAR PROFESSIONAL STARTING POINT</div>
           <h2>A clear starting point.<br /><em>A fuller professional picture.</em></h2>
           <div className="valu-steps">
-            <article><b>01</b><h3>Create or sign in to your account</h3><p>Start with a secure Valoria account using your professional details.</p></article>
-            <article><b>02</b><h3>Confirm your email</h3><p>Verify your email address after completing the Taster to activate your account and protect your assessment record.</p></article>
-            <article><b>03</b><h3>Complete your guided Taster</h3><p>Complete the separate Taster. Your responses and initial result are saved securely before email confirmation.</p></article>
-            <article><b>04</b><h3>Continue to the full VALU Index</h3><p>Continue from your dashboard to the separate full assessment across all 17 PRIME skills. Completion establishes your official VALU Index in points and your earned designation. Results remain valid for 12 months.</p></article>
+            <article><b>01</b><h3>Create your account</h3><p>Create your Valoria account before starting. Your Taster is connected to this account from the beginning.</p></article>
+            <article><b>02</b><h3>Complete your guided Taster</h3><p>Complete the separate Taster. Your responses and initial result are saved securely before email confirmation.</p></article>
+            <article><b>03</b><h3>Confirm your email</h3><p>After completing the Taster, verify your email to activate your account and protect your assessment record.</p></article>
+            <article><b>04</b><h3>Open your dashboard</h3><p>After confirmation, return to your dashboard already signed in, with your completed Taster attached to your account.</p></article>
+            <article><b>05</b><h3>Continue to the full VALU Index</h3><p>From your dashboard, begin the separate full assessment across all 17 PRIME skills to establish your official points result and PRIME profile.</p></article>
           </div>
         </div>
       </section>
