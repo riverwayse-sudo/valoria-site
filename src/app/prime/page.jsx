@@ -2,6 +2,8 @@ import Nav, { AssessmentStartLink } from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import { PRIME_CLUSTERS } from '@/lib/brand'
+
+// Staging contract: five merit designations; the 35-point marketplace eligibility gate remains separate.
 import '../pages.css'
 
 export const metadata = {
