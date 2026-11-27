@@ -109,7 +109,7 @@ describe('specialized profile content contract', () => {
     expect(profile).toContain('Facilitation Videos')
     expect(profile).toContain('p.experience_years')
     expect(profile).toContain('const profileHeadline = isSpecializedView')
-    const projection = read('src/lib/marketplace-projection-compat.cjs')
+    const projection = read('lib/marketplace-projection-compat.cjs')
     expect(projection).toContain('OPTIONAL_PROJECTION_COLUMNS')
     expect(projection).toContain("'facilitation_topics'")
     expect(projection).toContain("'format_capabilities'")
