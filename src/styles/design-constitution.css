@@ -203,3 +203,22 @@ body{overflow-x:clip}
 
 /* Steering-law target size: notification rows remain at least 48px tall. */
 .vi-notification-item { min-height: var(--vi-target-min); }
+
+
+/* Copy feedback morph: preserve the share control's footprint while confirming the real clipboard result. */
+.vi-copy-morph {
+  display: inline-flex;
+  min-width: 132px;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 9999px;
+  transition: transform var(--vi-motion-micro) var(--vi-motion-ease), background-color var(--vi-motion-standard) var(--vi-motion-ease), border-color var(--vi-motion-standard) var(--vi-motion-ease), color var(--vi-motion-standard) var(--vi-motion-ease);
+}
+.vi-copy-morph:active { transform: scale(.98); }
+.vi-copy-morph__icon { display: inline-grid; width: 16px; height: 16px; place-items: center; font-size: 13px; line-height: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .vi-copy-morph { transition: none; }
+  .vi-copy-morph:active { transform: none; }
+}
