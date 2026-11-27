@@ -41,4 +41,14 @@ describe('marketplace specialist projection schema compatibility', () => {
       message: 'Network request failed',
     })).toBe(false)
   })
+  test('marketplace retries with the compatible projection only for a known optional-column schema error', () => {
+    const fs = require('fs')
+    const path = require('path')
+    const source = fs.readFileSync(path.join(process.cwd(), 'src/lib/marketplace-data.js'), 'utf8')
+    expect(source).toContain('let result = await query(FULL_FIELDS)')
+    expect(source).toContain('if (result.error && isOptionalProjectionSchemaError(result.error))')
+    expect(source).toContain('result = await query(BASE_FIELDS)')
+    expect(source).toContain("throw new Error('Marketplace listings could not be loaded.')")
+  })
+
 })
