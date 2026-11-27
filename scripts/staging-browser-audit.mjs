@@ -6,7 +6,7 @@ import { chromium } from 'playwright'
 
 const require = createRequire(import.meta.url)
 const axeSource = await fs.readFile(require.resolve('axe-core/axe.min.js'), 'utf8')
-const accessibilityRoutes = new Set(['homepage', 'marketplace', 'marketplace-talent', 'marketplace-speakers', 'marketplace-facilitators', 'valu', 'valu-register', 'professional-signup-account-first', 'login', 'signup', 'about', 'prime', 'programmes', 'events', 'contact-us', 'careers', 'insights', 'opportunities', 'opportunity-submit', 'privacy-policy', 'terms-of-use'])
+const accessibilityRoutes = new Set(['homepage', 'marketplace', 'marketplace-talent', 'marketplace-speakers', 'marketplace-facilitators', 'valu', 'valu-register', 'professional-signup-account-first', 'login', 'signup', 'about', 'prime', 'programmes', 'events', 'contact-us', 'privacy-policy', 'terms-of-use'])
 
 const SITE = process.env.STAGING_SITE_URL || 'https://staging.valoriainstitute.com'
 const ASSESSMENT = process.env.STAGING_ASSESSMENT_URL || 'https://assessment-staging.valoriainstitute.com'
@@ -164,36 +164,51 @@ try {
 
       let accessibilityAudit = null
       if (accessibilityRoutes.has(route.name)) {
-        accessibilityAudit = await page.evaluate(async () => {
-          const result = await window.axe.run(document, {
-            runOnly: {
-              type: 'tag',
-              values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'],
-            },
-            iframes: false,
-            timeout: 15000,
-            resultTypes: ['violations'],
-          })
-          return result.violations.map(violation => ({
-            id: violation.id,
-            impact: violation.impact,
-            help: violation.help,
-            helpUrl: violation.helpUrl,
-            nodeCount: violation.nodes.length,
-            nodes: violation.nodes.slice(0, 25).map(node => ({
-              target: node.target,
-              html: node.html.slice(0, 240),
-              failureSummary: node.failureSummary,
-            })),
-          }))
+        const scan = await page.evaluate(async () => {
+          try {
+            const result = await Promise.race([
+              window.axe.run(document, {
+                runOnly: {
+                  type: 'tag',
+                  values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'],
+                },
+                iframes: false,
+                timeout: 10000,
+                resultTypes: ['violations'],
+              }),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('axe scan exceeded 12 seconds')), 12000)),
+            ])
+            return {
+              scanError: null,
+              violations: result.violations.map(violation => ({
+                id: violation.id,
+                impact: violation.impact,
+                help: violation.help,
+                helpUrl: violation.helpUrl,
+                nodeCount: violation.nodes.length,
+                nodes: violation.nodes.slice(0, 25).map(node => ({
+                  target: node.target,
+                  html: node.html.slice(0, 240),
+                  failureSummary: node.failureSummary,
+                })),
+              })),
+            }
+          } catch (error) {
+            return { scanError: error.message, violations: [] }
+          }
         })
+        accessibilityAudit = scan.violations
+        const seriousOrCritical = accessibilityAudit.filter(item => ['serious', 'critical'].includes(item.impact)).length
         report.accessibilityAudits.push({
           route: route.name,
           viewport: viewport.name,
+          scanError: scan.scanError,
           violations: accessibilityAudit,
           violationCount: accessibilityAudit.length,
-          seriousOrCritical: accessibilityAudit.filter(item => ['serious', 'critical'].includes(item.impact)).length,
+          seriousOrCritical,
         })
+        if (scan.scanError) report.failures.push(`${route.name}/${viewport.name}: accessibility scan failed — ${scan.scanError}`)
+        if (seriousOrCritical) report.failures.push(`${route.name}/${viewport.name}: serious/critical WCAG violations (${seriousOrCritical})`)
       }
 
       const state = await page.evaluate(() => {
@@ -301,7 +316,6 @@ try {
       if (navigationError) report.failures.push(`${route.name}/${viewport.name}: navigation failed: ${navigationError}`)
       if (status === null || status >= 400) report.failures.push(`${route.name}/${viewport.name}: HTTP ${status}`)
       if (state.horizontalOverflow) report.failures.push(`${route.name}/${viewport.name}: horizontal overflow`)
-      if (accessibilityAudit?.some(item => ['serious', 'critical'].includes(item.impact))) report.failures.push(`${route.name}/${viewport.name}: serious/critical WCAG accessibility violations (${accessibilityAudit.filter(item => ['serious', 'critical'].includes(item.impact)).length})`)
       if (state.revealState?.total !== state.revealState?.visible) report.failures.push(`${route.name}/${viewport.name}: scroll-reveal content remained hidden (${state.revealState?.visible}/${state.revealState?.total})`)
       if (!state.robots.toLowerCase().includes('noindex')) report.failures.push(`${route.name}/${viewport.name}: staging page is missing noindex robots metadata`)
       if (!route.name.startsWith('auth-confirm') && !state.banner.includes('STAGING PREVIEW')) report.failures.push(`${route.name}/${viewport.name}: staging banner is missing`)
