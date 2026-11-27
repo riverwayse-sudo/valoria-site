@@ -16,6 +16,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import resendEmail from '@/lib/resend-email.cjs'
+import adminAuth from '@/lib/server/admin-auth.cjs'
 
 const { sendResendEmail, escapeHtml } = resendEmail
 
@@ -35,22 +36,8 @@ const TYPE_LABELS = {
 export async function POST(request) {
   try {
     const supabase = getSupabase()
-    const authHeader = request.headers.get('authorization') || ''
-    const token = authHeader.replace(/^Bearer\s+/i, '')
-    if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
-
-    const { data: callerData, error: callerErr } = await supabase.auth.getUser(token)
-    if (callerErr || !callerData?.user?.id) {
-      return Response.json({ error: 'Not authenticated.' }, { status: 401 })
-    }
-    // Checks the same admin_users table middleware.js gates /admin on —
-    // this route previously checked the deprecated ADMIN_EMAILS array,
-    // which isn't kept in sync with admin_users, so anyone invited as an
-    // admin via /admin/signup wouldn't have been recognized here.
-    const { data: adminRow } = await supabase.from('admin_users').select('id').eq('id', callerData.user.id).maybeSingle()
-    if (!adminRow) {
-      return Response.json({ error: 'Not authorized.' }, { status: 403 })
-    }
+    const auth = await adminAuth.authorizeAdmin(request, supabase)
+    if (auth.response) return auth.response
 
     const { enquiryId } = await request.json()
     if (!enquiryId) return Response.json({ error: 'enquiryId is required.' }, { status: 400 })
