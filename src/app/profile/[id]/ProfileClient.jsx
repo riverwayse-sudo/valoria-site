@@ -125,7 +125,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
   const [loading, setLoading]     = useState(!initialProfile)
   const [notFound, setNotFound]   = useState(false)
   const [activeVideo, setActiveVideo] = useState(null)
-  const [copied, setCopied] = useState(false)
+  const [copyState, setCopyState] = useState('idle')
   const [currentUser, setCurrentUser] = useState(null)
   const [certificates, setCertificates] = useState([])
 
@@ -236,12 +236,16 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
     load()
   }, [id])
 
-  function copyLink() {
+  async function copyLink() {
     if (typeof window === 'undefined') return
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    }).catch(() => {})
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable')
+      await navigator.clipboard.writeText(window.location.href)
+      setCopyState('success')
+    } catch {
+      setCopyState('error')
+    }
+    window.setTimeout(() => setCopyState('idle'), 2200)
   }
 
   if (loading) return (
@@ -388,9 +392,24 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
                 The isOwnProfile branch below is the fix; the buyer-facing
                 branch is unchanged. */}
             <div style={{ display:'flex', gap:'10px', paddingBottom:'16px', flexShrink:0, flexWrap:'wrap' }}>
-              <button onClick={copyLink}
-                style={{ padding:'12px 18px', background:'transparent', border:`1px solid ${GLINE}`, color: DIM, fontSize:'11px', fontWeight:700, letterSpacing:'.12em', cursor:'pointer', fontFamily:'inherit' }}>
-                {copied ? 'LINK COPIED' : 'SHARE'}
+              <button
+                type="button"
+                onClick={copyLink}
+                className="vi-copy-morph"
+                data-state={copyState}
+                aria-live="polite"
+                aria-atomic="true"
+                aria-label={copyState === 'success' ? 'Profile link copied' : copyState === 'error' ? 'Could not copy profile link' : 'Share profile link'}
+                title={copyState === 'error' ? 'Clipboard access was unavailable. You can copy the address from your browser.' : undefined}
+                style={{
+                  padding:'12px 18px',
+                  background: copyState === 'success' ? 'rgba(201,168,76,.10)' : 'transparent',
+                  border:`1px solid ${copyState === 'success' ? 'rgba(201,168,76,.42)' : GLINE}`,
+                  color: copyState === 'success' ? GOLD : copyState === 'error' ? '#D58C86' : DIM,
+                  fontSize:'11px', fontWeight:700, letterSpacing:'.12em', cursor:'pointer', fontFamily:'inherit'
+                }}>
+                <span className="vi-copy-morph__icon" aria-hidden="true">{copyState === 'success' ? '✓' : copyState === 'error' ? '!' : '↗'}</span>
+                {copyState === 'success' ? 'LINK COPIED' : copyState === 'error' ? 'COPY FAILED' : 'SHARE'}
               </button>
               {isOwnProfile ? (
                 <Link href="/profile/edit"
