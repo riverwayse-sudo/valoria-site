@@ -275,7 +275,7 @@
 
 .hero-slider .vb-l,
 .hero-slider .vb-s {
-  color: rgba(247,244,238,.45);
+  color: var(--muted-on-dark);
   font-size: 9px;
   font-weight: 700;
 }
@@ -354,7 +354,7 @@
 }
 
 .hero-slider .hero-slider-index {
-  color: rgba(247,244,238,.38);
+  color: var(--muted-on-dark);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: .16em;
@@ -520,6 +520,10 @@
   border-bottom: 1px solid var(--valoria-brass);
 }
 
+.home-section-heading .eyebrow-text {
+  color: var(--gold-ink-on-light);
+}
+
 .home-pathways .home-pathway-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0,1fr));
@@ -555,15 +559,19 @@
 }
 
 .home-pathway-number {
-  color: var(--valoria-gold-deep);
+  color: var(--gold-ink-on-light);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: .18em;
 }
 
+.home-pathway-card.is-primary .home-pathway-number {
+  color: var(--gold-on-dark);
+}
+
 .home-pathway-label {
   margin-top: 10px;
-  color: #77778A;
+  color: var(--muted-ink-on-light);
   font-size: 9px;
   font-weight: 800;
   letter-spacing: .15em;
@@ -1018,7 +1026,7 @@
 .valu-conversion-note {
   max-width: 590px;
   margin-top: 18px;
-  color: rgba(247,244,238,.36);
+  color: var(--muted-on-dark);
   font-size: 11px;
   line-height: 1.6;
 }
