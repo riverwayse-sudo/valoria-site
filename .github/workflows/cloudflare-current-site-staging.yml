@@ -212,8 +212,8 @@ jobs:
             fi
           done
           echo "PASS: homepage exposes the canonical Taster-first entry."
-      - name: Install Playwright without changing project dependencies
-        run: npm install --no-save --package-lock=false playwright@1.65.0
+      - name: Install Playwright and axe-core without changing project dependencies
+        run: npm install --no-save --package-lock=false playwright@1.65.0 axe-core@4.10.3
       - name: Install Chromium for staging browser acceptance
         run: npx playwright install --only-shell chromium
       - name: Run desktop/mobile and fresh-session staging browser audit
