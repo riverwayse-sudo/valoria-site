@@ -97,3 +97,9 @@ footer.vi-footer{background:#1A1A2E!important;border-top:1px solid rgba(201,168,
 .vi-footer .uf-links a:hover,.vi-footer .uf-links button:hover{color:#C9A84C!important}
 .vi-footer .uf-bottom{color:rgba(247,244,238,.66)!important;border-top-color:rgba(247,244,238,.18)!important}
 .vi-footer .uf-bottom a{color:rgba(247,244,238,.72)!important}
+
+/* Design regression gate: keep component presentation out of JSX inline styles. */
+.nav-assessment-error{display:block;color:#F09595;font-size:12px;margin-top:6px}
+.uf-logo{height:52px;width:auto;display:block;margin-bottom:16px}
+.uf-col-title-spaced{margin-top:28px}
+.uf-link-muted{color:rgba(247,244,238,.2);text-decoration:none}
