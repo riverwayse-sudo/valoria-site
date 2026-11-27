@@ -48,6 +48,10 @@ export default function NotificationBell({ userId }) {
   }, [userId])
 
   useEffect(() => {
+    if (!userId) {
+      setLoading(false)
+      return undefined
+    }
     fetchNotifications()
 
     // Subscribe to real-time notification inserts
@@ -81,6 +85,11 @@ export default function NotificationBell({ userId }) {
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
   }, [isOpen, closePanel])
+
+  const togglePanel = () => {
+    if (isOpen) closePanel()
+    else setIsOpen(true)
+  }
 
   const markAsRead = async (notificationId) => {
     try {
@@ -153,7 +162,7 @@ export default function NotificationBell({ userId }) {
         type="button"
         ref={triggerRef}
         data-dropdown-trigger="notifications"
-        onClick={() => { if (isOpen) closePanel(); else { setIsOpen(true); if (unreadCount > 0) markAllAsRead() } }}
+        onClick={togglePanel}
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
         aria-expanded={isOpen}
         aria-controls="vi-notification-panel"
