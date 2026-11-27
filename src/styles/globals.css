@@ -59,6 +59,10 @@ button, [role="button"], input[type="submit"], input[type="button"] { font-famil
 :root {
   --gold: #C9A84C;
   --gold-light: #E2C97E;
+  --gold-ink-on-light: #70530F;
+  --gold-on-dark: #C9A84C;
+  --muted-ink-on-light: #6C6C7A;
+  --muted-on-dark: rgba(247,244,238,.68);
   --dark: #0F0F1A;
   --dark-mid: #1A1A2E;
   --dark-card: #161624;
