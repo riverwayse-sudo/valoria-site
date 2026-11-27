@@ -3,7 +3,7 @@
  * Reuse the request-scoped Supabase client for identity and membership checks.
  */
 async function authorizeAdmin(request, supabase) {
-  const token = request.headers.get('authorization')?.match(/^Bearer\\s+(.+)$/i)?.[1]
+  const token = request.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1]
   if (!token) {
     return { user: null, response: Response.json({ error: 'Not authenticated.' }, { status: 401 }) }
   }
