@@ -1152,33 +1152,6 @@
   line-height: 1.4;
 }
 
-.valu-conversion .vcc-bottom-cta {
-  display: flex;
-  min-height: 48px;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 16px;
-  padding: 0 16px;
-  background: var(--gold);
-  color: var(--dark-mid);
-  border: 1px solid var(--gold);
-  border-radius: var(--btn-radius);
-  text-decoration: none;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: .13em;
-}
-
-.valu-conversion .vcc-bottom-cta:hover,
-.valu-conversion .vcc-bottom-cta:focus-visible {
-  background: var(--gold-light);
-  border-color: var(--gold-light);
-  color: var(--dark-mid);
-  transform: translateY(-1px);
-  outline: none;
-}
-
 /* LIVE REGISTRY */
 .live-profiles {
   padding-top: var(--space-section);
@@ -1555,53 +1528,6 @@
   outline-offset: 3px;
 }
 
-.live-profiles-professional-cta {
-  width: min(var(--space-content-width), calc(100% - 2 * var(--pad)));
-  max-width: var(--space-content-width);
-  margin-inline: auto;
-  padding: 24px 0 28px;
-  display: grid;
-  grid-template-columns: 34px minmax(0,1fr) auto;
-  align-items: center;
-  gap: 20px;
-  border-top: 1px solid rgba(201,168,76,.10);
-}
-
-.live-profiles-professional-rule {
-  width: 34px;
-  height: 1px;
-  background: rgba(201,168,76,.50);
-}
-
-.live-profiles-professional-cta div {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.live-profiles-professional-cta small {
-  color: rgba(201,168,76,.62);
-  font-size: 7px;
-  font-weight: 800;
-  letter-spacing: .17em;
-}
-
-.live-profiles-professional-cta strong {
-  color: rgba(247,244,238,.72);
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.4;
-}
-
-.live-profiles-professional-cta a {
-  color: var(--gold);
-  font-size: 8px;
-  font-weight: 800;
-  letter-spacing: .13em;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
 /* Deprecated homepage sections are intentionally absent from the DOM. */
 .alignment,
 .entry-points {
@@ -1733,8 +1659,7 @@
   .home-redesign-root .container,
   .live-profiles-shell,
   .live-profiles-bottom,
-  .live-profiles-public-state,
-  .live-profiles-professional-cta {
+  .live-profiles-public-state {
     width: min(100% - 2 * var(--pad), var(--space-content-width));
   }
 
@@ -1815,10 +1740,6 @@
     height: 225px;
   }
 
-  .valu-conversion .vcc-bottom-cta {
-    width: 100%;
-  }
-
   .live-profiles-title {
     font-size: 38px;
   }
@@ -1848,30 +1769,13 @@
     flex-direction: column;
   }
 
-  .live-profiles-professional-cta {
-    grid-template-columns: 1fr;
-    gap: 11px;
-  }
-
-  .live-profiles-professional-rule {
-    display: none;
-  }
 }
 
 @media (hover: none), (pointer: coarse) {
   .home-pathway-card:hover,
   .live-profile-action:hover,
-  .vi-scroll-card:hover,
-  .valu-conversion .vcc-bottom-cta:hover {
+  .vi-scroll-card:hover {
     transform: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .home-pathway-card,
-  .live-profile-action,
-  .vi-scroll-card,
-  .valu-conversion .vcc-bottom-cta {
   }
 }
 
@@ -2482,8 +2386,6 @@
 .vi-scroll-score strong { font-size: 20px; }
 .vi-scroll-card-arrow { align-self: center; font-size: 14px; }
 .live-profiles-bottom { padding-bottom: 22px; }
-.live-profiles-professional-cta { margin-top: 22px; padding-top: 20px; }
-.live-profiles-professional-cta strong { max-width: 46ch; font-size: 14px; line-height: 1.5; }
 @media (max-width: 900px) {
   .live-profiles-shell { grid-template-columns: minmax(0,1fr); gap: 24px; }
   .live-profiles-actions { grid-template-columns: repeat(3,minmax(0,1fr)); }
@@ -2502,7 +2404,6 @@
   .vi-scroll-avatar { width: 40px; height: 40px; }
   .vi-scroll-name { font-size: 11px; }
   .vi-scroll-score strong { font-size: 18px; }
-  .live-profiles-professional-cta { grid-template-columns: minmax(0,1fr); gap: 10px; }
 }
 
 /* Homepage profile rail — compact editorial registry treatment.
