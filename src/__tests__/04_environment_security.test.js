@@ -7,12 +7,12 @@
 
 const fs   = require("fs");
 const path = require("path");
+const { execFileSync } = require("child_process");
 
 // ── PATHS ─────────────────────────────────────────────────────────────────
-// Adjust these to point to your actual repo locations when running locally.
-// In CI, set VALORIA_PLATFORM_ROOT and VALORIA_SITE_ROOT env vars.
-const PLATFORM_ROOT = process.env.VALORIA_PLATFORM_ROOT || path.join(__dirname, "../../valoria-platform/valoria-final");
-const SITE_ROOT     = process.env.VALORIA_SITE_ROOT     || path.join(__dirname, "../../valoria-site");
+const ROOT = path.resolve(__dirname, "../../..");
+const PLATFORM_ROOT = process.env.VALORIA_PLATFORM_ROOT || path.join(ROOT, "../valoria-platform/valoria-final");
+const SITE_ROOT     = process.env.VALORIA_SITE_ROOT     || ROOT;
 
 function repoExists(root) {
   return fs.existsSync(root);
@@ -65,6 +65,21 @@ describe("Environment variables — required keys", () => {
     SITE_ENV_KEYS.forEach(key => {
       expect(content).toContain(key);
     });
+  });
+});
+
+// ── SECTION 1B: Tracked environment-file guard ───────────────────────────
+describe("Tracked environment-file guard", () => {
+  test("no real .env files are committed", () => {
+    const tracked = execFileSync("git", ["ls-files", "-z"], {
+      cwd: ROOT,
+      encoding: "utf8",
+    }).split("\0").filter(Boolean);
+    const forbidden = tracked.filter((file) =>
+      /(^|\/)\.env(?:\..+)?$/.test(file) &&
+      !/(^|\/)\.env\.example$/.test(file)
+    );
+    expect(forbidden).toEqual([]);
   });
 });
 
