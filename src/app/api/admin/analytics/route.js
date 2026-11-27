@@ -2,6 +2,9 @@
 // Career-type and training-priority analytics for the admin Reports tab.
 
 import { createClient } from '@supabase/supabase-js'
+import adminAuth from '@/lib/server/admin-auth.cjs'
+
+const { authorizeAdmin } = adminAuth
 
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -24,15 +27,8 @@ export async function GET(request) {
   const supabase = getSupabase()
   if (!supabase) return Response.json({ error: 'Analytics service is not configured.' }, { status: 503 })
 
-  const authHeader = request.headers.get('authorization') || ''
-  const token = authHeader.replace(/^Bearer\s+/i, '')
-  if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
-
-  const { data: callerData, error: callerErr } = await supabase.auth.getUser(token)
-  if (callerErr || !callerData?.user?.id) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
-
-  const { data: adminRow } = await supabase.from('admin_users').select('id').eq('id', callerData.user.id).maybeSingle()
-  if (!adminRow) return Response.json({ error: 'Admin access required.' }, { status: 403 })
+  const auth = await authorizeAdmin(request, supabase)
+  if (auth.response) return auth.response
 
   const { data: profileMetrics, error: profileMetricsError } = await supabase
     .from('professional_profiles')
