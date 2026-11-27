@@ -1,7 +1,7 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
+import { BASE_FIELDS, FULL_FIELDS, isOptionalProjectionSchemaError } from './marketplace-projection-compat.cjs'
 
-const FIELDS = 'professional_id,full_name,location,languages,headline,current_job_title,capability,track,capabilities,selected_capabilities,atb_id,display_initials,photo_url,industry,skills,topics,programme_types,experience_years,facilitation_topics,format_capabilities,audience_sizes,past_events,past_clients,availability,valu_index,cluster_scores,assessment_summary,designation,availability_status,assessment_access'
 const SOURCE = 'marketplace_public_roster'
 
 function getAdminClient() {
@@ -95,15 +95,25 @@ function getApprovedPublicProfessionalIds(rows) {
     .map(row => row.professional_id))
 }
 
-export async function getMarketplaceRows(track = 'all') {
-  const admin = getAdminClient()
-
-  const { data, error } = await admin
+async function fetchMarketplaceProjection(admin) {
+  const query = fields => admin
     .from(SOURCE)
-    .select(FIELDS)
+    .select(fields)
     .in('assessment_access', ['full', 'basic'])
     .order('valu_index', { ascending: false, nullsFirst: false })
     .order('full_name', { ascending: true })
+
+  let result = await query(FULL_FIELDS)
+  if (result.error && isOptionalProjectionSchemaError(result.error)) {
+    console.warn('Marketplace specialist projection columns are not available; using the compatible general-roster projection.')
+    result = await query(BASE_FIELDS)
+  }
+  return result
+}
+
+export async function getMarketplaceRows(track = 'all') {
+  const admin = getAdminClient()
+  const { data, error } = await fetchMarketplaceProjection(admin)
 
   if (error) {
     console.error('Marketplace query failed:', error)
