@@ -2,6 +2,7 @@
 // Keeps privileged writes out of the browser because enquiries are intentionally
 // not exposed through broad client-side RLS policies.
 import { createClient } from '@supabase/supabase-js'
+import adminAuth from '@/lib/server/admin-auth.cjs'
 
 function getAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -15,19 +16,8 @@ const ALLOWED_STATUSES = new Set(['pending', 'reviewing', 'introduced', 'decline
 export async function PATCH(request) {
   try {
     const supabase = getAdminClient()
-    const token = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '')
-    if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
-
-    const { data: caller, error: authError } = await supabase.auth.getUser(token)
-    if (authError || !caller?.user?.id) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
-
-    const { data: admin } = await supabase
-      .from('admin_users')
-      .select('id')
-      .eq('id', caller.user.id)
-      .maybeSingle()
-
-    if (!admin) return Response.json({ error: 'Admin access required.' }, { status: 403 })
+    const authorization = await adminAuth.authorizeAdmin(request, supabase)
+    if (authorization.response) return authorization.response
 
     const { enquiryId, status } = await request.json()
     if (!enquiryId) return Response.json({ error: 'enquiryId is required.' }, { status: 400 })

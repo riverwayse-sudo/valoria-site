@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import adminAuth from '@/lib/server/admin-auth.cjs'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,19 +14,8 @@ export async function GET(request) {
   const supabase = getAdminClient()
   if (!supabase) return Response.json({ error: 'Roster service is not configured.' }, { status: 503 })
 
-  const token = (request.headers.get('authorization') || '').match(/^Bearer\s+(.+)$/i)?.[1]
-  if (!token) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
-
-  const { data: authData, error: authError } = await supabase.auth.getUser(token)
-  const userId = authData?.user?.id
-  if (authError || !userId) return Response.json({ error: 'Not authenticated.' }, { status: 401 })
-
-  const { data: admin, error: adminError } = await supabase
-    .from('admin_users')
-    .select('id')
-    .eq('id', userId)
-    .maybeSingle()
-  if (adminError || !admin) return Response.json({ error: 'Admin access required.' }, { status: 403 })
+  const authorization = await adminAuth.authorizeAdmin(request, supabase)
+  if (authorization.response) return authorization.response
 
   const { data: roster, error: rosterError } = await supabase
     .from('marketplace_public_roster')
