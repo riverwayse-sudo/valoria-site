@@ -37,4 +37,12 @@ describe('notification micro-interaction contract', () => {
     expect(motion).toContain('@media (prefers-reduced-motion: reduce)')
     expect(motion).toContain('.vi-notification-item')
   })
+  test('interactive targets and notification rows meet the 48px steering-law standard', () => {
+    const tokens = read('src/styles/design-constitution.css')
+    expect(tokens).toContain('--vi-target-min: 48px')
+    expect(tokens).toContain('width: 48px;')
+    expect(tokens).toContain('height: 48px;')
+    expect(tokens).toContain('.vi-notification-item { min-height: var(--vi-target-min); }')
+  })
+
 })
