@@ -254,7 +254,7 @@ export default function NotificationBell({ userId }) {
                     className="vi-notification-item"
                     onClick={() => openNotification(notif)}
                     style={{
-                      '--vi-notification-index': Math.min(index, 6),
+                      animationDelay: `${Math.min(index, 6) * 55}ms`,
                       display: 'block',
                       width: '100%',
                       textAlign: 'left',
