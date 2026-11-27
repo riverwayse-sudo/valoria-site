@@ -1,5 +1,7 @@
 # Valoria Engineering Quality Register — Site
 
+**Current cross-repository release status:** See [VALORIA_RELEASE_CLOSEOUT_2026-11-27.md](docs/engineering/VALORIA_RELEASE_CLOSEOUT_2026-11-27.md) for the authoritative shared release gates and current evidence. This file remains the site-specific quality record.
+
 **Audit status:** TARGETED STATIC, SECURITY AND CI CONTROLS VERIFIED; broader audit remains in progress. Findings are limited to repository source, GitHub Actions and previously inspected database evidence through 11 November 2026. This is not a full security, accessibility, runtime or production audit.
 
 | Gate | Status | Evidence / finding | Owner | Remediation |
