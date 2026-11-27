@@ -16,7 +16,7 @@ describe('Canonical VALU merit tiers', () => {
     for (const tier of ['Elite', 'Distinguished', 'Proficient', 'Standard']) {
       expect(prime).toContain(`name: '${tier}'`)
     }
-    for (const retired of ['Elite', 'Distinguished', 'Proficient', 'Standard']) {
+    for (const retired of ['Force to Align With', 'Emerging Force', 'Developing Professional', 'Building Foundations']) {
       expect(brand).not.toContain(`name: '${retired}'`)
       expect(prime).not.toContain(`name: '${retired}'`)
     }
