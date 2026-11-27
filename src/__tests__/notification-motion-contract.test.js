@@ -24,7 +24,7 @@ describe('notification micro-interaction contract', () => {
     const component = read('src/components/NotificationBell.jsx')
     expect(component).toContain('notifications.map((notif, index) => (')
     expect(component).toContain('className="vi-notification-item"')
-    expect(component).toContain("'--vi-notification-index': Math.min(index, 6)")
+    expect(component).toContain('animationDelay: `${Math.min(index, 6) * 55}ms`')
     expect(component).toContain('onClick={() => openNotification(notif)}')
   })
 
