@@ -91,7 +91,6 @@ export default function HomePage() {
               <div className="vcc-step"><span>02</span><div><b>Build your picture</b><small>Complete the full VALU Index</small></div></div>
               <div className="vcc-step"><span>03</span><div><b>Connect to opportunity</b><small>Bring your capability into view</small></div></div>
             </div>
-            <AssessmentStartLink href="/valu/register/?journey=valu_taster" className="vcc-bottom-cta">START THE VALU INDEX TASTER <span>→</span></AssessmentStartLink>
           </Reveal>
         </div>
       </section>
