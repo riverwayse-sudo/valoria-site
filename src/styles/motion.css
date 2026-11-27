@@ -162,8 +162,7 @@ nav.vi-nav.scrolled,
 .hero-slider-dot { transition: background-color var(--motion-standard) var(--motion-ease); }
 .ps-card { transition: transform var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), box-shadow var(--motion-standard) var(--motion-ease); }
 .ps-card-cta { transition: background-color var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), transform var(--motion-standard) var(--motion-ease); }
-.ps-card:hover { transform: translate3d(0,-3px,0); }
-.ps-card-cta:hover { transform: translate3d(2px,0,0); }
+/* Pointer-specific hover rules are defined in the touch-safe block below. */
 .vi-scroll-track { animation: vi-scroll-x var(--motion-registry-loop) linear infinite; }
 @keyframes vi-scroll-x { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
 @media (prefers-reduced-motion: reduce) {
@@ -258,4 +257,21 @@ nav.vi-nav.scrolled,
   .vi-notification-item {
     animation: none !important;
   }
+}
+
+
+/* Hover is a pointer affordance, not a persistent touch state. Keep equivalent
+   keyboard feedback without applying hover transforms to coarse pointers. */
+@media (hover: hover) and (pointer: fine) {
+  .ps-card:hover { transform: translate3d(0,-3px,0); }
+  .ps-card-cta:hover { transform: translate3d(2px,0,0); }
+}
+@media (hover: none), (pointer: coarse) {
+  .ps-card:hover,
+  .ps-card-cta:hover { transform: none; }
+}
+.ps-card:focus-visible,
+.ps-card-cta:focus-visible {
+  outline: 2px solid var(--vi-color-focus, #E2C97E);
+  outline-offset: 3px;
 }
