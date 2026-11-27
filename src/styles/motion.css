@@ -215,3 +215,47 @@ nav.vi-nav.scrolled,
     animation: none;
   }
 }
+
+/* Notification micro-interactions — canonical motion tokens only. */
+@keyframes vi-notification-bell-swing {
+  0% { transform: rotate(0deg); }
+  14% { transform: rotate(24deg); }
+  28% { transform: rotate(-19deg); }
+  42% { transform: rotate(14deg); }
+  56% { transform: rotate(-9deg); }
+  70% { transform: rotate(5deg); }
+  84% { transform: rotate(-2deg); }
+  100% { transform: rotate(0deg); }
+}
+.notification-bell-icon {
+  transform-origin: 50% 12%;
+}
+.notification-bell-trigger:hover .notification-bell-icon,
+.notification-bell-trigger:focus-visible .notification-bell-icon,
+.notification-bell-trigger[aria-expanded="true"] .notification-bell-icon {
+  animation: vi-notification-bell-swing 760ms var(--motion-ease) both;
+}
+@keyframes vi-notification-panel-enter {
+  from { opacity: 0; transform: translate3d(0,-7px,0) scale(.985); }
+  to { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+}
+#vi-notification-panel {
+  transform-origin: top right;
+  animation: vi-notification-panel-enter var(--motion-standard) var(--motion-ease) both;
+}
+@keyframes vi-notification-item-enter {
+  from { opacity: 0; transform: translate3d(0,8px,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
+}
+.vi-notification-item {
+  animation: vi-notification-item-enter var(--motion-standard) var(--motion-ease) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .notification-bell-trigger:hover .notification-bell-icon,
+  .notification-bell-trigger:focus-visible .notification-bell-icon,
+  .notification-bell-trigger[aria-expanded="true"] .notification-bell-icon,
+  #vi-notification-panel,
+  .vi-notification-item {
+    animation: none !important;
+  }
+}
