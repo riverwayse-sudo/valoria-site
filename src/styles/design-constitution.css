@@ -176,3 +176,26 @@ body{overflow-x:clip}
 @media (prefers-reduced-motion: reduce) {
   .vi-button:active:not(:disabled) { transform: none; }
 }
+
+
+/* Icon-only controls retain a comfortable touch target without changing their action. */
+.vi-icon-button {
+  display: inline-grid;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.vi-icon-button:hover:not(:disabled) {
+  border-color: rgba(201,168,76,.24);
+  background: rgba(201,168,76,.08);
+}
+.vi-icon-button:focus-visible { outline: 2px solid var(--vi-color-focus); outline-offset: 3px; }
+.vi-icon-button:disabled { opacity: .55; cursor: not-allowed; }
