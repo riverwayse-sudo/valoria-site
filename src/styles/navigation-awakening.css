@@ -59,3 +59,24 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+
+/* Staging-only editorial navigation: a centered, non-sticky pill. Production navigation is untouched. */
+@media (min-width: 1241px) {
+  body.staging-site nav.vi-nav {
+    position: relative !important;
+    inset: auto !important;
+    width: min(calc(100% - 48px), 1280px);
+    height: 76px !important;
+    margin: 22px auto 0;
+    padding-inline: clamp(22px, 3vw, 42px) !important;
+    border: 1px solid rgba(212, 201, 168, .32);
+    border-radius: 999px;
+    background: rgba(26, 26, 46, .94) !important;
+    box-shadow: 0 16px 48px rgba(15, 15, 26, .20);
+    backdrop-filter: blur(18px);
+  }
+  body.staging-site .nav-dropdown {
+    top: calc(100% + 12px);
+  }
+}
