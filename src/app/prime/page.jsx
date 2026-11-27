@@ -13,10 +13,11 @@ export const metadata = {
 
 
 const DESIGNATIONS = [
-  { name: 'Elite', range: '90–100 points', meaning: 'A high level of assessed capability, with strong alignment across the PRIME clusters.' },
-  { name: 'Distinguished', range: '75–89 points', meaning: 'A strong capability profile with clear evidence of applied professional strengths.' },
-  { name: 'Proficient', range: '55–74 points', meaning: 'A developing capability profile with demonstrated strengths and identifiable growth priorities.' },
-  { name: 'Standard', range: '35–54 points', meaning: 'A foundational capability profile with clear priorities for structured development.' },
+  { name: 'Force to Align With', range: '80–100 points', meaning: 'A high level of assessed capability, with strong alignment across the PRIME clusters.' },
+  { name: 'Emerging Force', range: '65–79 points', meaning: 'A strong capability profile with clear evidence of applied professional strengths.' },
+  { name: 'Developing Professional', range: '50–64 points', meaning: 'A developing capability profile with demonstrated strengths and identifiable growth priorities.' },
+  { name: 'Building Foundations', range: '35–49 points', meaning: 'A foundational capability profile with clear priorities for structured development.' },
+  { name: 'At the Starting Point', range: '0–34 points', meaning: 'Not yet eligible for public listing. Development is the first step.' },
 ]
 
 export default function PrimePage() {
@@ -71,7 +72,7 @@ export default function PrimePage() {
         <section className="page-section">
           <div className="page-section-inner">
             <Reveal>
-              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FOUR SCORE-BASED DESIGNATIONS</span></div>
+              <div className="eyebrow"><div className="eyebrow-line" /><span className="eyebrow-text">FIVE SCORE-BASED DESIGNATIONS</span></div>
               <h2 className="section-title">Progress is<br /><em>earned, not purchased.</em></h2>
             </Reveal>
             <div className="prime-tier-list">
@@ -82,7 +83,7 @@ export default function PrimePage() {
                 </article>
               ))}
             </div>
-            <p className="prime-copy">The four merit designations are score-based. Scores below 35 points receive no merit designation. Designations cannot be purchased, upgraded by subscription, or transferred. A designation is not, by itself, a public-listing decision. Listing also depends on the applicable profile, capability evidence, consent and governance requirements. A lower score points to a development pathway; it does not block access to the platform.</p>
+            <p className="prime-copy">The five merit designations are score-based. At the Starting Point applies below 35 points; the separate 35-point marketplace threshold remains unchanged. Designations cannot be purchased, upgraded by subscription, or transferred. A designation is not, by itself, a public-listing decision. Listing also depends on the applicable profile, capability evidence, consent and governance requirements. A lower score points to a development pathway; it does not block access to the platform.</p>
           </div>
         </section>
         <section className="page-section alt cta-banner">
