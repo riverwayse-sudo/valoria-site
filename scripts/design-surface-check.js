@@ -53,6 +53,8 @@ requireText('src/styles/design-constitution.css', [
   /--vi-motion-slow:\s*var\(--motion-emphasis\)/,
   /--vi-motion-ease:\s*var\(--motion-ease\)/,
 ], 'canonical design tokens');
+requireText('src/app/careers/careers.css', [/prefers-reduced-motion:\\s*reduce/, /careers-apply-button:hover/], 'careers reduced-motion contract');
+requireText('src/components/ValoriaJourneyCards.module.css', [/prefers-reduced-motion:\\s*reduce/, /webNode:hover/], 'journey-card reduced-motion contract');
 requireText('src/styles/card-system.css', [/--vi-card-transition:\s*var\(--motion-emphasis\)\s+var\(--motion-ease\)/], 'canonical card motion token');
 const motion = requireText('src/styles/motion.css', [
   /--motion-micro/,
