@@ -1,6 +1,6 @@
 # Valoria Institute — Consolidated Release Closeout
 
-**Updated:** 27 November 2026  
+**Updated:** 28 November 2026  
 **Applies to:** `riverwayse-sudo/valoria-site` and `riverwayse-sudo/valoria-platform`  
 **Authority:** Valoria Institute Website Review (20 pages), Valoria Website Content Overhaul (6 pages), 10 November 2026 Closeout Register/Addendum, current owner instructions, and the shared engineering governance documents.
 
