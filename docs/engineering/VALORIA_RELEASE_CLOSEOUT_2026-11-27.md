@@ -150,7 +150,7 @@ This addendum supersedes the earlier release and production snapshots in this do
 
 - Production site Worker: version **275**, last deployed 26 November at 00:33 UTC. It still serves the prior public-site copy and has not received the current site release candidate.
 - Production assessment Worker: version **304**, deployed 28 November at 11:48 UTC. It predates the open five-level platform release.
-- Production Supabase latest migration: `20261126111526`. The two production designation functions still contain the legacy four-band mapping. The five-level migration has not been applied to production.
+- Production Supabase latest migration: `20261126111526`. The production `marketplace_public_roster` also lacks the specialist evidence fields (`experience_years`, `facilitation_topics`, `format_capabilities`, `audience_sizes`, `past_events`, `past_clients`), and the two designation functions still contain the legacy four-band mapping. The existing specialist projection migration `20261127135134_project_specialized_profile_evidence_and_approved_designations.sql` and the five-level migration `20261128122216_restore_five_level_valu_designations.sql` have not been applied to production.
 - Staging Supabase is separate; the five-level migration is applied there only. Production has not been changed.
 
 ### Marketplace and historical identity reconciliation
