@@ -100,7 +100,8 @@ describe('main website left-alignment contract', () => {
   test('homepage replay does not depend on an owner-disabled embedded player', () => {
     const source = read('src/components/HomepageEvents.jsx')
     expect(source).toContain('home-events-video-link')
-    expect(source).toContain('i.ytimg.com/vi/')
+    expect(source).not.toContain('i.ytimg.com/vi/')
+    expect(read('src/app/home.css')).toContain('linear-gradient(135deg,#1A1A2E,#2E2E4A 58%,#090910)')
     expect(source).not.toContain('youtube-nocookie.com/embed/')
   })
 
