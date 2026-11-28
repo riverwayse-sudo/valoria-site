@@ -88,8 +88,8 @@ export default function ContactForm() {
           <input type="text" value={form.organisation} onChange={e => setForm({ ...form, organisation: e.target.value })} style={styles.input} placeholder="Company or event name" />
         </div>
         <div style={styles.field}>
-          <label style={styles.label}>What&apos;s this about</label>
-          <select className="vi-select" value={form.inquiryType} onChange={e => setForm({ ...form, inquiryType: e.target.value })} style={styles.input}>
+          <label htmlFor="inquiry-type" style={styles.label}>What&apos;s this about</label>
+          <select id="inquiry-type" className="vi-select" value={form.inquiryType} onChange={e => setForm({ ...form, inquiryType: e.target.value })} style={styles.input}>
             {INQUIRY_TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
           </select>
         </div>
