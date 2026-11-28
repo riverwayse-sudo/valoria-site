@@ -44,7 +44,16 @@ function saveConsent(value) {
 }
 
 function loadAnalytics(measurementId) {
-  if (!measurementId || window.__valoriaAnalyticsLoaded) return
+  if (!measurementId) return
+  if (window.__valoriaAnalyticsLoaded) {
+    window.gtag?.('consent', 'update', {
+      analytics_storage: 'granted',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+    })
+    return
+  }
   window.dataLayer = window.dataLayer || []
   window.gtag = window.gtag || function gtag(){ window.dataLayer.push(arguments) }
   window.gtag('js', new Date())
@@ -64,7 +73,11 @@ function loadAnalytics(measurementId) {
 }
 
 function loadMarketing(pixelId) {
-  if (!pixelId || window.__valoriaMarketingLoaded) return
+  if (!pixelId) return
+  if (window.__valoriaMarketingLoaded) {
+    window.fbq?.('consent', 'grant')
+    return
+  }
   !(function(f,b,e,v,n,t,s){
     if(f.fbq)return
     n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)}
