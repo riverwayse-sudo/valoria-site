@@ -298,7 +298,7 @@ export default function LoginPage() {
   return (
     <>
       <Nav />
-      <div style={styles.page}>
+      <main style={styles.page}>
       <div style={styles.card}>
         <div style={styles.eyebrow}>
           <div style={styles.eyebrowLine} />
@@ -394,7 +394,7 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-      </div>
+      </main>
     </>
   )
 }
