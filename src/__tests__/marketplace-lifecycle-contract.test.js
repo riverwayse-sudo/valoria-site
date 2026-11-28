@@ -427,10 +427,12 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(data).toContain('return filterRowsByApprovedCapability(rows, track)')
     expect(data).toContain('return countRowsByApprovedCapability(rows)')
     expect(data).toContain('rows: filterRowsByApprovedCapability(allRows, normalizedTrack)')
+    expect(data).toContain('const values = (Array.isArray(row.capabilities) ? row.capabilities : [])')
+    expect(data).not.toContain('row.capability,\n      row.track')
     expect(visibility).toContain('Array.isArray(row?.capabilities)')
     expect(visibility).not.toContain('row?.selectedCapabilities')
     const clientFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
-    expect(clientFilter).toContain('p.capabilities || p.tracks || [p.track]')
+    expect(clientFilter).toContain('Array.isArray(p.capabilities) ? p.capabilities : []')
     expect(clientFilter).not.toContain('p.selectedCapabilities || p.selected_capabilities')
   })
 
