@@ -183,7 +183,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div style={S.page}>
+    <main style={S.page}>
       <div style={S.card}>
 
         <div style={S.eyebrow}>
@@ -314,7 +314,7 @@ export default function SignupPage() {
           <Link href="/login" style={{ color: GOLD }}>Sign in</Link>
         </p>
       </div>
-    </div>
+    </main>
   )
 }
 
