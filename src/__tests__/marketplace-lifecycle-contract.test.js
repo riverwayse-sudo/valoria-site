@@ -412,7 +412,7 @@ describe('VALUI marketplace lifecycle contract', () => {
   })
 
 
-  test('marketplace category membership follows selected active capabilities for Full and Basic profiles', () => {
+  test('specialist directory membership and counts require evidence-approved public capabilities', () => {
     const data = read('src/lib/marketplace-data.js')
     const directory = read('src/components/MarketplaceDirectory.jsx')
     const projection = data.slice(data.indexOf('return rows.filter(row => {'), data.indexOf('function countMarketplaceRows'))
@@ -420,15 +420,16 @@ describe('VALUI marketplace lifecycle contract', () => {
     const directoryData = data.slice(data.indexOf('export async function getMarketplaceDirectoryData'))
     const clientFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
 
-    // Basic and Full public category membership follows declared active selections.
-    expect(projection).toContain('return row.selectedCapabilities.includes(capability)')
-    expect(projection).not.toContain("row.assessmentAccess === 'full' && row.capabilities.includes(capability)")
-    expect(counts).toContain('const visibleCapabilities = row.selectedCapabilities || []')
-    expect(counts).not.toContain('row.capabilities || []')
-    expect(directoryData).toContain('row.selectedCapabilities.includes(normalizedTrack)')
-    expect(directoryData).not.toContain('row.capabilities.includes(normalizedTrack)')
-    expect(clientFilter).toContain('p.selectedCapabilities || p.selected_capabilities || p.capabilities')
-    expect(clientFilter).not.toContain("p.assessment_access === 'basic' ?")
+    // Participant selections remain visible as declarations, but only the canonical
+    // roster's approved capabilities may appear in specialist directories or counts.
+    expect(projection).toContain('return row.capabilities.includes(capability)')
+    expect(projection).not.toContain('row.selectedCapabilities.includes(capability)')
+    expect(counts).toContain('const approvedCapabilities = row.capabilities || []')
+    expect(counts).not.toContain('row.selectedCapabilities || []')
+    expect(directoryData).toContain('row.capabilities.includes(normalizedTrack)')
+    expect(directoryData).not.toContain('row.selectedCapabilities.includes(normalizedTrack)')
+    expect(clientFilter).toContain('p.capabilities || p.tracks || [p.track]')
+    expect(clientFilter).not.toContain('p.selectedCapabilities || p.selected_capabilities')
   })
 
   test('existing capability eligibility is reconciled after historical evidence is marked pending', () => {
