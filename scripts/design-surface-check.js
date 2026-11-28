@@ -56,6 +56,8 @@ const motion = requireText('src/styles/motion.css', [
   /pointer\s*:\s*fine/,
 ], 'canonical motion system');
 requireText('MOTION_CONSTITUTION.md', [
+  /## Interaction state contract/i,
+  /Idle[\s\S]*Hover[\s\S]*Focus[\s\S]*Active[\s\S]*Loading[\s\S]*Success[\s\S]*Error[\s\S]*Disabled[\s\S]*Recovery/i,
   /Reduced motion is a release requirement/i,
   /One interaction has one dominant movement/i,
   /No page-specific motion hacks/i,
