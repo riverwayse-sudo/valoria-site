@@ -446,6 +446,7 @@ try {
             <div class="vi-scroll-topline">ATB-PREVIEW-001 <i>VISUAL FIXTURE</i></div>
             <span class="vi-scroll-name">Illustrative Professional 01</span>
             <div class="vi-scroll-headline">Strategy &amp; Operations</div>
+            <div class="vi-scroll-capability-heading">DECLARED CAPABILITIES</div>
             <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-active">Speaker</span><span class="is-inactive">Facilitator</span></div>
             <div class="vi-scroll-designation">Illustrative designation</div>
             <div class="vi-scroll-summary">Synthetic content for layout review only</div>
@@ -460,6 +461,7 @@ try {
             <div class="vi-scroll-topline">ATB-PREVIEW-002 <i>VISUAL FIXTURE</i></div>
             <span class="vi-scroll-name">Illustrative Professional 02</span>
             <div class="vi-scroll-headline">Finance &amp; Governance</div>
+            <div class="vi-scroll-capability-heading">DECLARED CAPABILITIES</div>
             <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-inactive">Speaker</span><span class="is-active">Facilitator</span></div>
             <div class="vi-scroll-designation">Illustrative designation</div>
             <div class="vi-scroll-summary">Synthetic content for layout review only</div>
@@ -474,6 +476,7 @@ try {
             <div class="vi-scroll-topline">ATB-PREVIEW-003 <i>VISUAL FIXTURE</i></div>
             <span class="vi-scroll-name">Illustrative Professional 03</span>
             <div class="vi-scroll-headline">Digital Transformation</div>
+            <div class="vi-scroll-capability-heading">DECLARED CAPABILITIES</div>
             <div class="vi-scroll-track-label"><span class="is-inactive">Talent</span><span class="is-active">Speaker</span><span class="is-active">Facilitator</span></div>
             <div class="vi-scroll-designation">Illustrative designation</div>
             <div class="vi-scroll-summary">Synthetic content for layout review only</div>
