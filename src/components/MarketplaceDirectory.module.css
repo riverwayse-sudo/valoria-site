@@ -1003,6 +1003,7 @@
 .profileMeta{display:flex;flex-wrap:wrap;gap:4px 12px;margin:8px 0 0!important;padding:0!important}
 .profileMeta p{margin:0!important;color:#514C43!important;font-size:10px!important;line-height:1.4}
 .specialistCapabilities{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.capabilitySelectionLabel{flex:0 0 100%;color:#716B60;font-size:8px;font-weight:900;letter-spacing:.12em;line-height:1.4}
 .specialistCapabilities .capabilitySelected{display:inline-flex;align-items:center;padding:6px 9px;border:1px solid #C9A84C;border-radius:5px;background:#EDE8DC;color:#1A1A2E;font-size:9px;font-weight:800}
 .strongestCapability{display:inline-flex;align-self:flex-start;margin-top:10px;padding:5px 8px;border-radius:4px;background:#EDE8DC;color:#2E2E4A;font-size:9px;font-weight:800;line-height:1.3}
 .assessmentPending{display:inline-flex;align-items:center;color:#514C43;font-size:9px;font-weight:700;line-height:1.4}
