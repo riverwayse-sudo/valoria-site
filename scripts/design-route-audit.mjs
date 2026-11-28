@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { promises as fsp } from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 
@@ -44,7 +45,7 @@ const report = {
   results,
   failures,
 };
-await fs.mkdir('artifacts/design-route-audit', { recursive: true });
+await fsp.mkdir('artifacts/design-route-audit', { recursive: true });
 const browser = await chromium.launch({ headless: true });
 
 try {
@@ -145,7 +146,7 @@ try {
   await browser.close();
 }
 
-await fs.writeFile('artifacts/design-route-audit/report.json', JSON.stringify(report, null, 2));
+await fsp.writeFile('artifacts/design-route-audit/report.json', JSON.stringify(report, null, 2));
 console.log('Design route audit: ' + routes.length + ' site routes x ' + viewports.length + ' viewports.');
 if (failures.length) {
   console.error('Design route audit FAILED: ' + failures.length + ' failing route/viewport checks.');
