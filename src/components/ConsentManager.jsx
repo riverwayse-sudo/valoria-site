@@ -5,6 +5,26 @@ import { useEffect, useRef, useState } from 'react'
 const COOKIE_NAME = 'vi_optional_tracking_consent'
 const EMPTY = { analytics: false, marketing: false }
 
+function clearCookies(prefixes) {
+  const names = document.cookie.split(';').map(value => value.trim().split('=')[0]).filter(Boolean)
+  const targets = names.filter(name => prefixes.some(prefix => name === prefix || name.startsWith(prefix)))
+  for (const name of targets) {
+    document.cookie = `${name}=; Path=/; Max-Age=0; SameSite=Lax`
+    document.cookie = `${name}=; Path=/; Domain=${window.location.hostname}; Max-Age=0; SameSite=Lax`
+    if (window.location.hostname.endsWith('valoriainstitute.com')) {
+      document.cookie = `${name}=; Path=/; Domain=.valoriainstitute.com; Max-Age=0; SameSite=Lax`
+    }
+  }
+}
+
+function clearAnalyticsCookies() {
+  clearCookies(['_ga', '_gid', '_gat', '_gcl_'])
+}
+
+function clearMarketingCookies() {
+  clearCookies(['_fbp', '_fbc'])
+}
+
 function readConsent() {
   const entry = document.cookie.split('; ').find(value => value.startsWith(`${COOKIE_NAME}=`))
   if (!entry) return null
@@ -66,6 +86,7 @@ export default function ConsentManager({ gaMeasurementId = null, metaPixelId = n
 
   useEffect(() => {
     const stored = readConsent()
+    if (!stored) { clearAnalyticsCookies(); clearMarketingCookies() }
     setConsent(stored)
     setDraft(stored || EMPTY)
     const openPreferences = () => {
@@ -79,9 +100,15 @@ export default function ConsentManager({ gaMeasurementId = null, metaPixelId = n
   useEffect(() => {
     if (!consent) return
     if (consent.analytics) loadAnalytics(gaMeasurementId)
-    else if (typeof window.gtag === 'function') window.gtag('consent', 'update', { analytics_storage: 'denied' })
+    else {
+      if (typeof window.gtag === 'function') window.gtag('consent', 'update', { analytics_storage: 'denied' })
+      clearAnalyticsCookies()
+    }
     if (consent.marketing) loadMarketing(metaPixelId)
-    else if (typeof window.fbq === 'function') window.fbq('consent', 'revoke')
+    else {
+      if (typeof window.fbq === 'function') window.fbq('consent', 'revoke')
+      clearMarketingCookies()
+    }
   }, [consent, gaMeasurementId, metaPixelId])
 
   useEffect(() => {
