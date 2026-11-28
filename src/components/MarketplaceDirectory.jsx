@@ -278,7 +278,8 @@ function Profile({p, onSelect, activeTrack = 'all'}) {
 
     {skills.length > 0 ? <div className={styles.profileSkills} aria-label={cardEvidenceLabel}>{skills.map(value=><span key={value}>{value}</span>)}</div> : !isGeneralView ? <div className={styles.profileSkills} aria-label={cardEvidenceLabel}>Specialist evidence not yet published</div> : null}
 
-    <div className={styles.specialistCapabilities} aria-label="Capability selections; selected capabilities are highlighted">
+    <div className={styles.specialistCapabilities} aria-label="Declared capability selections; selected capabilities are highlighted">
+      <span className={styles.capabilitySelectionLabel}>DECLARED CAPABILITIES</span>
       {capabilityBadges.map(([key,label]) => (
         <span key={key} className={selectedCaps.has(key) ? styles.capabilitySelected : styles.capabilityUnselected}>{label}</span>
       ))}
