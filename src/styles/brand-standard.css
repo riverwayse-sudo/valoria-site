@@ -47,7 +47,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif; }
   border: 1px solid var(--valoria-brass) !important;
   border-radius: var(--vi-card-radius) !important;
   box-shadow: 0 8px 30px rgba(26,26,46,.06) !important;
-  transition: background-color .24s cubic-bezier(.22,1,.36,1), border-color .24s cubic-bezier(.22,1,.36,1), box-shadow .24s cubic-bezier(.22,1,.36,1), transform .24s cubic-bezier(.22,1,.36,1) !important;
+  transition: background-color var(--motion-standard) var(--motion-var(--motion-ease)), border-color var(--motion-standard) var(--motion-var(--motion-ease)), box-shadow var(--motion-standard) var(--motion-var(--motion-ease)), transform var(--motion-standard) var(--motion-var(--motion-ease)) !important;
 }
 .card:hover, .vi-card:hover, .card-gold:hover, .waitlist-card:hover {
   border-color: var(--valoria-gold) !important;
@@ -97,7 +97,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif; }
   letter-spacing: .14em !important;
   text-decoration: none !important;
   cursor: pointer;
-  transition: background .2s ease, transform .2s ease, box-shadow .2s ease !important;
+  transition: background var(--motion-standard) var(--motion-ease), transform var(--motion-standard) var(--motion-ease), box-shadow var(--motion-standard) var(--motion-ease) !important;
 }
 
 .btn-gold:hover, .btn-primary:hover, .wl-btn:hover, .nav-cta:hover, .valu-btn-gold:hover {
@@ -129,7 +129,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif; }
   letter-spacing: .14em !important;
   text-decoration: none !important;
   cursor: pointer;
-  transition: background .2s ease, transform .2s ease, box-shadow .2s ease !important;
+  transition: background var(--motion-standard) var(--motion-ease), transform var(--motion-standard) var(--motion-ease), box-shadow var(--motion-standard) var(--motion-ease) !important;
 }
 .btn-secondary:hover {
   background: var(--valoria-slate) !important;
@@ -156,7 +156,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif; }
   letter-spacing: .14em !important;
   text-decoration: none !important;
   cursor: pointer;
-  transition: background .2s ease, transform .2s ease, box-shadow .2s ease !important;
+  transition: background var(--motion-standard) var(--motion-ease), transform var(--motion-standard) var(--motion-ease), box-shadow var(--motion-standard) var(--motion-ease) !important;
 }
 .btn-tertiary:hover { background: #E3DDCF !important; color: var(--valoria-slate) !important; transform: translateY(-1px) !important; }
 .btn-tertiary:active { transform: translateY(0) !important; box-shadow: inset 0 2px 4px rgba(46,46,74,.15) !important; }
@@ -180,7 +180,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif; }
   letter-spacing: .14em !important;
   text-decoration: none !important;
   cursor: pointer;
-  transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease !important;
+  transition: background var(--motion-standard) var(--motion-ease), color var(--motion-standard) var(--motion-ease), transform var(--motion-standard) var(--motion-ease), box-shadow var(--motion-standard) var(--motion-ease) !important;
 }
 .btn-outline:hover, .btn-ghost:hover, .valu-btn-ghost:hover {
   background: rgba(201,168,76,.10) !important;
@@ -219,6 +219,6 @@ input, textarea, select { font-family: 'Raleway', sans-serif !important; }
 /* HARD CONTROL + CARD CONSISTENCY — canonical interaction geometry. */
 .card, .vi-card, .card-gold, .waitlist-card { border-radius: var(--vi-card-radius) !important; }
 .btn-gold, .btn-primary, .btn-secondary, .btn-tertiary, .btn-outline, .btn-ghost, .wl-btn, .nav-cta, .valu-btn-gold, .valu-btn-ghost { text-align:center !important; align-items:center !important; justify-content:center !important; border-radius:var(--btn-radius) !important; }
-.ps-card-cta, .live-profile-action { display:inline-flex; align-items:center; justify-content:center; min-height:var(--vi-control-height); border-radius:var(--btn-radius); text-align:center; transition:background-color .24s cubic-bezier(.22,1,.36,1),border-color .24s cubic-bezier(.22,1,.36,1),color .24s cubic-bezier(.22,1,.36,1),transform .24s cubic-bezier(.22,1,.36,1),box-shadow .24s cubic-bezier(.22,1,.36,1); }
+.ps-card-cta, .live-profile-action { display:inline-flex; align-items:center; justify-content:center; min-height:var(--vi-control-height); border-radius:var(--btn-radius); text-align:center; transition: background-color var(--motion-standard) var(--motion-var(--motion-ease)), border-color var(--motion-standard) var(--motion-var(--motion-ease)), color var(--motion-standard) var(--motion-var(--motion-ease)), transform var(--motion-standard) var(--motion-var(--motion-ease)), box-shadow var(--motion-standard) var(--motion-var(--motion-ease)); }
 .ps-card-cta:hover, .ps-card-cta:focus-visible, .live-profile-action:hover, .live-profile-action:focus-visible { background:rgba(201,168,76,.12); border-color:var(--valoria-gold); color:var(--valoria-gold); transform:translateY(-2px); }
 @media (hover:none), (pointer:coarse) { .card:hover, .vi-card:hover, .card-gold:hover, .waitlist-card:hover { transform:none !important; } }
