@@ -92,10 +92,15 @@ jobs:
           set -euo pipefail
           if [[ -n "${SUPABASE_STAGING_SERVICE_ROLE_KEY:-}" ]]; then
             printf '%s' "$SUPABASE_STAGING_SERVICE_ROLE_KEY" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --config wrangler.jsonc --env staging
-            echo "PASS: staging-only Supabase service-role secret configured without exposing its value."
-          else
-            echo "::notice::SUPABASE_STAGING_SERVICE_ROLE_KEY is not configured; live Auth registration and confirmation remain fail-closed in staging."
           fi
+          secret_names="$(npx wrangler secret list --config wrangler.jsonc --env staging)"
+          for required_secret in SUPABASE_SERVICE_ROLE_KEY RESEND_API_KEY; do
+            if ! grep -q "$required_secret" <<< "$secret_names"; then
+              echo "::error::Required isolated staging secret binding is missing: $required_secret"
+              exit 1
+            fi
+          done
+          echo "PASS: isolated staging Worker has the required Supabase and Resend secret bindings; values were not displayed."
       - name: Smoke-test staging routes, canonical redirects and privacy boundaries
         shell: bash
         run: |
