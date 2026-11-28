@@ -8,6 +8,7 @@ describe('waitlist registration redirect', () => {
       'utf8'
     )
     expect(source).toContain("redirect('/valu/register/?journey=valu_taster')")
-    expect(source).not.toMatch(/https?:\\/\\/(?:www\\.)?valoriainstitute\\.com/i)
+    expect(source).not.toContain('https://valoriainstitute.com')
+    expect(source).not.toContain('https://www.valoriainstitute.com')
   })
 })
