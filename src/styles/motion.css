@@ -263,3 +263,36 @@ nav.vi-nav.scrolled,
   outline: 2px solid var(--vi-color-focus, #E2C97E);
   outline-offset: 3px;
 }
+
+
+/* Final reduced-motion enforcement for shared hover and focus movement. */
+@media (prefers-reduced-motion: reduce) {
+  .btn-gold:hover,
+  .btn-secondary:hover,
+  .btn-tertiary:hover,
+  .btn-outline:hover,
+  .btn-ghost:hover,
+  .btn-primary:hover,
+  .wl-btn:hover,
+  .nav-cta:hover,
+  .valu-btn-gold:hover,
+  .valu-btn-ghost:hover,
+  .card:hover,
+  .vi-card:hover,
+  .card-gold:hover,
+  .waitlist-card:hover,
+  .home-pathway-card:hover,
+  .home-pathway-card:focus-visible,
+  .session-series-card:hover,
+  .careers-apply-button:hover,
+  .ps-card:hover,
+  .ps-card-cta:hover,
+  .session-showcase-actions button:hover,
+  .session-showcase-actions a:hover,
+  .live-profile-action:hover,
+  .home-insights-copy .text-link:hover,
+  .home-dual-actions .text-link:hover,
+  .home-event-actions .text-link:hover {
+    transform: none !important;
+  }
+}
