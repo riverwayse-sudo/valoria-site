@@ -1,7 +1,10 @@
 name: Staging browser screenshots and UX audit
 
 on:
-  # Full browser audits run after the isolated staging deploy; manual dispatch remains available.
+  workflow_run:
+    workflows:
+      - Validate and deploy current-site audit to isolated Cloudflare staging
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -9,6 +12,7 @@ permissions:
 
 jobs:
   staging-browser-audit:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -29,11 +33,14 @@ jobs:
       - name: Capture staging screenshots and verify UX safeguards
         run: node scripts/staging-browser-audit.mjs
 
+      - name: Audit every discovered site route at desktop, tablet and mobile
+        run: node scripts/design-route-audit.mjs
+
       - name: Upload screenshots and audit report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: valoria-staging-browser-audit
-          path: artifacts/staging-browser-audit/
+          path: artifacts/staging-browser-audit/\n            artifacts/design-route-audit/
           if-no-files-found: warn
           retention-days: 7
