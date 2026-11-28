@@ -323,7 +323,7 @@
   background:rgba(8,9,20,.78);
   backdrop-filter:blur(8px);
   -webkit-backdrop-filter:blur(8px);
-  animation: homeEventFadeIn var(--motion-standard) var(--motion-ease) both;
+  animation:homeEventFadeIn var(--motion-standard) var(--motion-ease) both;
 }
 .homepage-event-popup{
   position:relative;
@@ -339,7 +339,7 @@
   border:1px solid rgba(201,168,76,.52);
   box-shadow:0 24px 80px rgba(0,0,0,.42);
   border-radius:4px;
-  animation: homeEventRiseIn var(--motion-emphasis) var(--motion-var(--motion-ease)) both;
+  animation:homeEventRiseIn var(--motion-emphasis) var(--motion-ease) both;
 }
 .homepage-event-popup-close{
   position:absolute;top:12px;right:12px;z-index:5;
@@ -419,7 +419,7 @@
   .homepage-event-popup-copy{padding:18px}
 }
 @media(prefers-reduced-motion:reduce){
-  .homepage-event-popup-backdrop,.homepage-event-popup{animation: none}
+  .homepage-event-popup-backdrop,.homepage-event-popup{animation:none}
 }
 
 
