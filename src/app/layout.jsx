@@ -1,3 +1,12 @@
+import '../styles/globals.css';
+import '../styles/brand-standard.css';
+import '../styles/card-system.css';
+import '../styles/homepage-actions.css';
+import '../styles/component-system.css';
+import '../styles/navigation-awakening.css';
+import '../styles/design-constitution.css';
+import './pages.css';
+import '../styles/motion.css';
 import '../styles/globals.css'
 import '../styles/brand-standard.css'
 import '../styles/card-system.css'
