@@ -76,7 +76,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(homepageRail).toContain('DECLARED CAPABILITIES')
     expect(homepageRail).toContain('Declared capabilities:')
     const categoryFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
-    expect(categoryFilter).toContain('p.capabilities || p.tracks || [p.track]')
+    expect(categoryFilter).toContain('Array.isArray(p.capabilities) ? p.capabilities : []')
     expect(categoryFilter).not.toContain('p.selectedCapabilities || p.selected_capabilities')
   })
 
