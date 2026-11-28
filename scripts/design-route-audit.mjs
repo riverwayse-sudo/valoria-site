@@ -90,6 +90,10 @@ try {
       }
       const dynamicNotFound = route.dynamic && status === 404;
       const badStatus = status == null || (status >= 400 && !dynamicNotFound);
+      const expectedHost = new URL(base).hostname;
+      let finalHost = '';
+      try { finalHost = new URL(finalUrl).hostname; } catch {}
+      const hostMismatch = finalHost !== expectedHost;
       const overflow = metrics && metrics.documentWidth > metrics.viewportWidth + 2;
       const blank = metrics && metrics.bodyTextLength === 0;
       const badFont = metrics && !/Raleway/i.test(metrics.fontFamily);
@@ -97,6 +101,7 @@ try {
       const missingH1 = metrics && metrics.h1Count !== 1;
       const routeFailures = [
         ...(badStatus ? ['HTTP ' + status] : []),
+        ...(hostMismatch ? ['redirect escaped staging origin: ' + finalUrl] : []),
         ...(navigationError ? [navigationError] : []),
         ...(overflow ? ['horizontal overflow ' + metrics.documentWidth + 'px > ' + metrics.viewportWidth + 'px'] : []),
         ...(blank ? ['blank rendered document'] : []),
@@ -129,10 +134,12 @@ try {
       page.on('pageerror', (error) => pageErrors.push(error.message));
       let status = null;
       let metrics = null;
+      let finalUrl = assessmentBase + '/valu/assessment/';
       let navigationError = null;
       try {
         const response = await page.goto(assessmentBase + '/valu/assessment/?journey=account-first', { waitUntil: 'domcontentloaded', timeout: 45000 });
         status = response?.status() ?? null;
+        finalUrl = page.url();
         await page.waitForTimeout(1500);
         metrics = await page.evaluate(() => ({
           viewportWidth: window.innerWidth,
@@ -144,15 +151,19 @@ try {
       } catch (error) {
         navigationError = error.message;
       }
+      let assessmentHost = '';
+      try { assessmentHost = new URL(finalUrl).hostname; } catch {}
+      const assessmentHostMismatch = assessmentHost !== new URL(assessmentBase).hostname;
       const errors = [
         ...(status == null || status >= 400 ? ['HTTP ' + status] : []),
+        ...(assessmentHostMismatch ? ['assessment route escaped staging origin: ' + finalUrl] : []),
         ...(navigationError ? [navigationError] : []),
         ...(metrics && metrics.documentWidth > metrics.viewportWidth + 2 ? ['assessment horizontal overflow'] : []),
         ...(metrics && metrics.bodyTextLength === 0 ? ['assessment rendered blank'] : []),
         ...(metrics && !/Raleway/i.test(metrics.fontFamily) ? ['assessment typeface mismatch: ' + metrics.fontFamily] : []),
         ...pageErrors,
       ];
-      const result = { route: '/valu/assessment/', viewport: viewport.name, status, metrics, errors };
+      const result = { route: '/valu/assessment/', viewport: viewport.name, status, finalUrl, metrics, errors };
       results.push(result);
       if (errors.length) failures.push(result);
       await context.close();
