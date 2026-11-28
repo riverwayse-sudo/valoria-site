@@ -1,3 +1,5 @@
+**28 November final-head design and motion acceptance:** Site release candidate commit `c090f7520e5fe2c9d910e68dbb820daf08ae82ea` passed isolated staging run `46147832917`. Cloudflare staging site Worker version 487 reached 100% on the isolated staging route. The final browser audit passed all 69 discovered routes at desktop, tablet and mobile; zero page errors, zero horizontal overflow and zero accessibility violations were reported. Artifacts `valoria-staging-browser-audit` and `valoria-staging-acceptance-diagnostics` are retained through 5 December 2026. This is route/design acceptance, not WCAG 2.2 AA certification or authenticated account-journey acceptance. No production deployment occurred.
+
 # Valoria Engineering Quality Register — Site
 
 **Current cross-repository release status:** See [VALORIA_RELEASE_CLOSEOUT_2026-11-27.md](docs/engineering/VALORIA_RELEASE_CLOSEOUT_2026-11-27.md) for the authoritative shared release gates and current evidence. This file remains the site-specific quality record.
