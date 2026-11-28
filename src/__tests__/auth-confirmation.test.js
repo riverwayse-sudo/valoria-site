@@ -59,7 +59,7 @@ describe('scanner-safe Supabase email confirmation', () => {
 
 
   test('published Supabase confirmation template matches the token-hash POST contract', () => {
-    const template = fs.readFileSync(path.join(__dirname, '../../../docs/supabase-auth-email-template.md'), 'utf8')
+    const template = fs.readFileSync(path.join(__dirname, '../../docs/supabase-auth-email-template.md'), 'utf8')
     expect(template).toContain('{{ .TokenHash }}')
     expect(template).toContain('token_hash={{ .TokenHash }}')
     expect(template).toContain('/auth/confirm?token_hash=')
