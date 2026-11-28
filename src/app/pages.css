@@ -528,3 +528,35 @@
   .insight-card h2 { margin-top: 28px; }
   .valu-hero { min-height: 0; padding: 112px 0 56px; }
 }
+
+
+/* WCAG AA contrast corrections — final-state surfaces */
+.page-section:not(.alt) .eyebrow-text,
+.info-card .eyebrow-text { color: #806020; }
+.page-section.alt .eyebrow-text { color: #D4C9A8; }
+.page-section.alt .page-sub,
+.page-section.alt .page-copy { color: #B8B6BF; }
+.page-section.alt .btn-outline { color: #D4C9A8; border-color: #D4C9A8; }
+
+.events-page .page-hero-inner .page-kicker,
+.events-page .replay-grid .page-kicker { color: #D4C9A8; }
+.events-page .events-list-kicker,
+.events-page .event-editorial-copy>span { color: #806020; }
+
+.vs-kicker.dark { color: #5F5D66; }
+.vs-light h2 em { color: #806020; }
+.vs-problems b,
+.vs-journey-grid span,
+.vs-next-list b { color: #806020; }
+.vs-result-copy li span { color: #B8B6BF; }
+
+.prime-signal { color: #B8B6BF; }
+.prime-tier-meta { color: #806020; }
+.prime-tier-range,
+.prime-tier-copy { color: #5F5D66; }
+
+.about-timeline-label { color: #D4C9A8; }
+.about-timeline-copy { color: #B8B6BF; }
+
+.programme-label,
+.facilitator-step { color: #6F5218; }
