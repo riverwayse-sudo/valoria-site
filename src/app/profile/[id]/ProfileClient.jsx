@@ -249,19 +249,19 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
   }
 
   if (loading) return (
-    <div style={{ minHeight:'100vh', background: DARK, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font,Raleway,sans-serif)', color: DIM, fontSize:'13px', letterSpacing:'.08em' }}>
-      Loading…
-    </div>
+    <main style={{ minHeight:'100vh', background: DARK, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font,Raleway,sans-serif)', color: DIM, fontSize:'13px', letterSpacing:'.08em' }}>
+      <h1>Loading professional profile…</h1>
+    </main>
   )
 
   if (notFound) return (
     <>
       <Nav />
-      <div style={{ minHeight:'100vh', background: DARK, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'16px', fontFamily:'var(--font,Raleway,sans-serif)', color: PARCH }}>
+      <main style={{ minHeight:'100vh', background: DARK, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'16px', fontFamily:'var(--font,Raleway,sans-serif)', color: PARCH }}>
         <div style={{ fontSize:'32px', color: GOLD }}>◈</div>
-        <p style={{ fontSize:'14px', fontWeight:300, color: DIM }}>Profile not found</p>
+        <h1 style={{ fontSize:'20px', fontWeight:500, color: DIM }}>Profile not found</h1>
         <Link href="/marketplace/talent" style={{ fontSize:'12px', color: GOLD, textDecoration:'none', letterSpacing:'.08em' }}>← Back to marketplace</Link>
-      </div>
+      </main>
       <Footer />
     </>
   )
@@ -318,7 +318,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
     <>
       <Nav />
 
-      <div style={{ minHeight:'100vh', background: DARK, color: PARCH, fontFamily:'var(--font,Raleway,sans-serif)', paddingTop:'67px' }}>
+      <main style={{ minHeight:'100vh', background: DARK, color: PARCH, fontFamily:'var(--font,Raleway,sans-serif)', paddingTop:'67px' }}>
 
         {/* PRIME stripe */}
         <div style={{ position:'fixed', top:0, left:0, right:0, height:'3px', display:'flex', zIndex:201, pointerEvents:'none' }}>
@@ -366,9 +366,9 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
 
             {/* ID block */}
             <div style={{ paddingBottom:'16px', flex:1, minWidth:'200px' }}>
-              <div style={{ fontSize:'clamp(22px,3.5vw,32px)', fontWeight:700, letterSpacing:'-.025em', lineHeight:1.1, marginBottom:'7px', color: PARCH }}>
+              <h1 style={{ fontSize:'clamp(22px,3.5vw,32px)', fontWeight:700, letterSpacing:'-.025em', lineHeight:1.1, margin:'0 0 7px', color: PARCH }}>
                 {p.display_name || 'Valoria Professional'}
-              </div>
+              </h1>
               <div style={{ fontSize:'9px', fontWeight:800, letterSpacing:'.12em', color: DIM, marginBottom:'10px', fontVariantNumeric:'tabular-nums' }}>
                 ATB PROFILE ID · {atbId}
               </div>
@@ -773,7 +773,7 @@ export default function ProfileClient({ id, searchParams, initialProfile = null 
             </div>
           </div>
         </div>
-      </div>
+      </main>
 
       <Footer />
 
