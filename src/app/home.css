@@ -682,10 +682,7 @@
   inset: 0;
   display: grid;
   place-items: center;
-  background-color: #090910;
-  background-image: linear-gradient(90deg,rgba(9,9,16,.24),rgba(9,9,16,.08)),var(--video-thumbnail);
-  background-position: center;
-  background-size: cover;
+  background: radial-gradient(circle at 72% 28%,rgba(201,168,76,.14),transparent 32%),linear-gradient(135deg,#1A1A2E,#2E2E4A 58%,#090910);
   color: var(--parchment);
   text-decoration: none;
 }
@@ -993,7 +990,7 @@
   align-items: center;
   gap: 8px 12px;
   margin-bottom: 22px;
-  color: rgba(247,244,238,.45);
+  color: #A6A5B0;
   font-size: 9px;
   font-weight: 800;
   letter-spacing: .12em;
@@ -1218,7 +1215,7 @@
 }
 
 .live-profiles-proof span {
-  color: rgba(247,244,238,.38);
+  color: #A6A5B0;
   font-size: 9px;
   font-weight: 800;
   letter-spacing: .11em;
@@ -2587,6 +2584,8 @@
 
 
 /* Homepage profile rail capability states: always show all three lanes. */
+.vi-scroll-capability-heading{margin-top:6px;color:rgba(247,244,238,.45);font-size:6px;font-weight:800;letter-spacing:.12em;line-height:1.3;text-transform:uppercase}
+
 .vi-scroll-track-label {
   display: flex;
   flex-wrap: nowrap;
@@ -2674,3 +2673,24 @@
     scroll-snap-align: start;
   }
 }
+
+
+/* WCAG AA contrast for homepage pathway and VALU conversion surfaces */
+.home-pathways .home-section-heading .eyebrow-text { color: #806020; }
+.home-pathway-card:not(.is-primary) .home-pathway-number { color: #806020; }
+.home-pathway-card.is-primary .home-pathway-number { color: #D4C9A8; }
+.home-pathway-label { color: #5F5D66; }
+.home-pathway-cta { min-height: 48px; }
+.home-pathway-card.is-primary .home-pathway-cta { color: #D4C9A8; }
+.home-pathway-card:hover .home-pathway-cta,
+.home-pathway-card:focus-visible .home-pathway-cta,
+.home-pathway-card.is-primary:hover .home-pathway-cta,
+.home-pathway-card.is-primary:focus-visible .home-pathway-cta { color: #1A1A2E; }
+
+.hero-slider .hero-actions .btn-outline { min-height: 48px; }
+
+.valu-conversion .eyebrow-text,
+.valu-conversion .text-link { color: #D4C9A8; }
+.valu-conversion-note,
+.valu-conversion .vcc-step > span,
+.valu-conversion .vcc-step small { color: #B8B6BF; }
