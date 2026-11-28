@@ -12,10 +12,10 @@
   --vi-space-8:96px;
   --vi-content:1160px;
   --vi-content-wide:1360px;
-  --vi-motion-fast:160ms;
-  --vi-motion-standard:220ms;
-  --vi-motion-slow:360ms;
-  --vi-motion-ease:cubic-bezier(.22,1,.36,1);
+  --vi-motion-fast:var(--motion-micro);
+  --vi-motion-standard:var(--motion-standard);
+  --vi-motion-slow:var(--motion-emphasis);
+  --vi-motion-ease:var(--motion-ease);
 }
 html{scroll-padding-top:88px}
 img,svg,video{max-width:100%}
@@ -111,7 +111,7 @@ body{overflow-x:clip}
 .vi-button--tertiary { background: var(--vi-color-linen); color: var(--vi-color-slate); }
 .vi-button--ghost { background: transparent; color: var(--vi-color-gold); border-color: currentColor; }
 .vi-button:focus-visible { outline: 2px solid var(--vi-color-focus); outline-offset: 3px; }
-.vi-button:active:not(:disabled) { transform: scale(.98); }
+.vi-button:active:not(:disabled) { transform: translateY(1px); }
 .vi-button:disabled, .vi-button[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
 .vi-button--compact { min-height: var(--vi-target-min); padding-inline: 18px; font-size: 14px; }
 
@@ -216,7 +216,7 @@ body{overflow-x:clip}
   border-radius: 9999px;
   transition: transform var(--vi-motion-micro) var(--vi-motion-ease), background-color var(--vi-motion-standard) var(--vi-motion-ease), border-color var(--vi-motion-standard) var(--vi-motion-ease), color var(--vi-motion-standard) var(--vi-motion-ease);
 }
-.vi-copy-morph:active { transform: scale(.98); }
+.vi-copy-morph:active { transform: translateY(1px); }
 .vi-copy-morph__icon { display: inline-grid; width: 16px; height: 16px; place-items: center; font-size: 13px; line-height: 1; }
 @media (prefers-reduced-motion: reduce) {
   .vi-copy-morph { transition: none; }

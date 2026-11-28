@@ -7,11 +7,12 @@
   --motion-emphasis: 420ms;
   --motion-reveal: 560ms;
   --motion-section: 720ms;
+  --motion-stagger-step: 55ms;
   --motion-registry-loop: 42s;
   --motion-ease: cubic-bezier(.22,1,.36,1);
   --motion-ease-linear: cubic-bezier(0,0,1,1);
-  --motion-distance: 20px;
-  --motion-distance-large: 32px;
+  --motion-distance: 12px;
+  --motion-distance-large: 16px;
 }
 
 .reveal {
@@ -77,11 +78,7 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .hero-scroll-cue svg { animation: valoria-scroll-cue 1800ms var(--motion-ease) infinite; }
-  @keyframes valoria-scroll-cue {
-    0%,100% { transform: translate3d(0,0,0); opacity: .55; }
-    50% { transform: translate3d(0,5px,0); opacity: 1; }
-  }
+  /* Scroll cue remains static; motion is reserved for meaningful state changes. */
 }
 
 .hero-slider .hero-slide {
@@ -154,12 +151,10 @@ nav.vi-nav.scrolled,
 }
 .nav-dropdown{transition:opacity var(--motion-standard) var(--motion-ease),transform var(--motion-standard) var(--motion-ease),visibility 0s linear var(--motion-standard)}
 .nav-dropdown.open{transition:opacity var(--motion-standard) var(--motion-ease),transform var(--motion-standard) var(--motion-ease),visibility 0s linear 0s}
-.nav-cta:hover { transform: translate3d(0,-1px,0); }
 .nav-burger.open span:nth-child(1) { transform: translate3d(0,6.5px,0) rotate(45deg); }
 .nav-burger.open span:nth-child(3) { transform: translate3d(0,-6.5px,0) rotate(-45deg); }
 
 /* Homepage interaction motion — timing remains canonical. */
-.hero-slider-dot { transition: background-color var(--motion-standard) var(--motion-ease); }
 .ps-card { transition: transform var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), box-shadow var(--motion-standard) var(--motion-ease); }
 .ps-card-cta { transition: background-color var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), transform var(--motion-standard) var(--motion-ease); }
 /* Pointer-specific hover rules are defined in the touch-safe block below. */
@@ -217,14 +212,8 @@ nav.vi-nav.scrolled,
 
 /* Notification micro-interactions — canonical motion tokens only. */
 @keyframes vi-notification-bell-swing {
-  0% { transform: rotate(0deg); }
-  14% { transform: rotate(24deg); }
-  28% { transform: rotate(-19deg); }
-  42% { transform: rotate(14deg); }
-  56% { transform: rotate(-9deg); }
-  70% { transform: rotate(5deg); }
-  84% { transform: rotate(-2deg); }
-  100% { transform: rotate(0deg); }
+  0%,100% { transform: rotate(0deg); }
+  50% { transform: rotate(8deg); }
 }
 .notification-bell-icon {
   transform-origin: 50% 12%;
@@ -232,11 +221,11 @@ nav.vi-nav.scrolled,
 .notification-bell-trigger:hover .notification-bell-icon,
 .notification-bell-trigger:focus-visible .notification-bell-icon,
 .notification-bell-trigger[aria-expanded="true"] .notification-bell-icon {
-  animation: vi-notification-bell-swing 760ms var(--motion-ease) both;
+  animation: vi-notification-bell-swing var(--motion-emphasis) var(--motion-ease) both;
 }
 @keyframes vi-notification-panel-enter {
-  from { opacity: 0; transform: translate3d(0,-7px,0) scale(.985); }
-  to { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+  from { opacity: 0; transform: translate3d(0,-7px,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
 }
 #vi-notification-panel {
   transform-origin: top right;
@@ -274,4 +263,37 @@ nav.vi-nav.scrolled,
 .ps-card-cta:focus-visible {
   outline: 2px solid var(--vi-color-focus, #E2C97E);
   outline-offset: 3px;
+}
+
+
+/* Final reduced-motion enforcement for shared hover and focus movement. */
+@media (prefers-reduced-motion: reduce) {
+  .btn-gold:hover,
+  .btn-secondary:hover,
+  .btn-tertiary:hover,
+  .btn-outline:hover,
+  .btn-ghost:hover,
+  .btn-primary:hover,
+  .wl-btn:hover,
+  .nav-cta:hover,
+  .valu-btn-gold:hover,
+  .valu-btn-ghost:hover,
+  .card:hover,
+  .vi-card:hover,
+  .card-gold:hover,
+  .waitlist-card:hover,
+  .home-pathway-card:hover,
+  .home-pathway-card:focus-visible,
+  .session-series-card:hover,
+  .careers-apply-button:hover,
+  .ps-card:hover,
+  .ps-card-cta:hover,
+  .session-showcase-actions button:hover,
+  .session-showcase-actions a:hover,
+  .live-profile-action:hover,
+  .home-insights-copy .text-link:hover,
+  .home-dual-actions .text-link:hover,
+  .home-event-actions .text-link:hover {
+    transform: none !important;
+  }
 }
