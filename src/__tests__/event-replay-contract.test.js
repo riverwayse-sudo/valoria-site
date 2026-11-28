@@ -8,6 +8,7 @@ describe('November event replay contract', () => {
     const catalogue = read('lib/professionalStandardSeries.js')
     expect(catalogue).toContain("id: '04'")
     expect(catalogue).toContain("youtubeVideoId: 'Ae9N59SlR_8', manuallyEnded: true")
+    expect(catalogue).toContain("if (session.manuallyEnded) return 'ended'")
   })
 
   test('the Events page features the November 14 replay and identifies its host', () => {
