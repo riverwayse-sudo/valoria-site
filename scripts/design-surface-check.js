@@ -8,12 +8,12 @@ const failures = [];
 const requireText = (file, patterns, label) => {
   const full = path.join(root, file);
   if (!fs.existsSync(full)) {
-    failures.push(\`Missing required \${label || 'file'}: \${file}\`);
+    failures.push('Missing required ' + (label || 'file') + ': ' + file);
     return '';
   }
   const text = fs.readFileSync(full, 'utf8');
   for (const pattern of patterns) {
-    if (!pattern.test(text)) failures.push(\`\${file}: missing required contract \${pattern}\`);
+    if (!pattern.test(text)) failures.push(file + ': missing required contract ' + pattern);
   }
   return text;
 };
@@ -65,7 +65,7 @@ const appRoot = path.join(root, 'src/app');
 const routeFiles = walk(appRoot).filter((file) => /[\\/](page|route)\.(js|jsx|ts|tsx)$/.test(file));
 const relativeRoutes = routeFiles.map((file) => path.relative(root, file).replaceAll(path.sep, '/'));
 if (routeFiles.length < 35) {
-  failures.push(\`Route coverage unexpectedly low: found \${routeFiles.length} page/route entrypoints; expected at least 35.\`);
+  failures.push('Route coverage unexpectedly low: found ' + routeFiles.length + ' page/route entrypoints; expected at least 35.');
 }
 
 const requiredRoutes = [
@@ -84,7 +84,7 @@ const requiredRoutes = [
   'src/app/profile/[id]/page.jsx',
 ];
 for (const route of requiredRoutes) {
-  if (!relativeRoutes.includes(route)) failures.push(\`Required user-journey route is missing from the application: \${route}\`);
+  if (!relativeRoutes.includes(route)) failures.push('Required user-journey route is missing from the application: ' + route);
 }
 
 if (!layout.includes('styles/motion.css') || !layout.includes('styles/design-constitution.css')) {
@@ -101,7 +101,7 @@ if (/transition\s*:\s*all\b/i.test(motion) || /animation\s*:\s*all\b/i.test(moti
 const allSource = walk(path.join(root, 'src')).filter((file) => /\.(css|jsx|js|ts|tsx)$/.test(file));
 const sourceText = allSource.map((file) => fs.readFileSync(file, 'utf8')).join('\n');
 for (const runtime of [/from ['"]gsap['"]/, /from ['"]lenis['"]/, /from ['"]animejs['"]/, /from ['"]motion(?:\/react)?['"]/]) {
-  if (runtime.test(sourceText)) failures.push(\`Non-canonical motion runtime detected: \${runtime}\`);
+  if (runtime.test(sourceText)) failures.push('Non-canonical motion runtime detected: ' + runtime);
 }
 
 if (failures.length) {
@@ -110,5 +110,5 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(\`Valoria full-surface design enforcement PASSED: \${routeFiles.length} page/route entrypoints inherit the canonical site design and motion layers.\`);
+console.log('Valoria full-surface design enforcement PASSED: ' + routeFiles.length + ' page/route entrypoints inherit the canonical site design and motion layers.');
 console.log('Protected journey coverage: registration, taster, confirmation, assessment, dashboard, marketplace and professional profiles.');
