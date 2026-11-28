@@ -148,6 +148,9 @@ try {
         const response = await page.goto(route.url, { waitUntil: 'domcontentloaded', timeout: 15000 })
         status = response?.status() ?? null
         await page.waitForTimeout(500)
+        if (route.name === 'homepage') {
+          await page.locator('[aria-label="Cookie preferences"]').waitFor({ state: 'visible', timeout: 5000 })
+        }
       } catch (error) {
         navigationError = error.message
       }
