@@ -47,7 +47,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif; }
   border: 1px solid var(--valoria-brass) !important;
   border-radius: var(--vi-card-radius) !important;
   box-shadow: 0 8px 30px rgba(26,26,46,.06) !important;
-  transition: background-color var(--motion-standard) var(--motion-var(--motion-ease)), border-color var(--motion-standard) var(--motion-var(--motion-ease)), box-shadow var(--motion-standard) var(--motion-var(--motion-ease)), transform var(--motion-standard) var(--motion-var(--motion-ease)) !important;
+  transition: background-color var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), box-shadow var(--motion-standard) var(--motion-ease), transform var(--motion-standard) var(--motion-ease) !important;
 }
 .card:hover, .vi-card:hover, .card-gold:hover, .waitlist-card:hover {
   border-color: var(--valoria-gold) !important;
@@ -219,6 +219,6 @@ input, textarea, select { font-family: 'Raleway', sans-serif !important; }
 /* HARD CONTROL + CARD CONSISTENCY — canonical interaction geometry. */
 .card, .vi-card, .card-gold, .waitlist-card { border-radius: var(--vi-card-radius) !important; }
 .btn-gold, .btn-primary, .btn-secondary, .btn-tertiary, .btn-outline, .btn-ghost, .wl-btn, .nav-cta, .valu-btn-gold, .valu-btn-ghost { text-align:center !important; align-items:center !important; justify-content:center !important; border-radius:var(--btn-radius) !important; }
-.ps-card-cta, .live-profile-action { display:inline-flex; align-items:center; justify-content:center; min-height:var(--vi-control-height); border-radius:var(--btn-radius); text-align:center; transition: background-color var(--motion-standard) var(--motion-var(--motion-ease)), border-color var(--motion-standard) var(--motion-var(--motion-ease)), color var(--motion-standard) var(--motion-var(--motion-ease)), transform var(--motion-standard) var(--motion-var(--motion-ease)), box-shadow var(--motion-standard) var(--motion-var(--motion-ease)); }
+.ps-card-cta, .live-profile-action { display:inline-flex; align-items:center; justify-content:center; min-height:var(--vi-control-height); border-radius:var(--btn-radius); text-align:center; transition:background-color var(--motion-standard) var(--motion-ease),border-color var(--motion-standard) var(--motion-ease),color var(--motion-standard) var(--motion-ease),transform var(--motion-standard) var(--motion-ease),box-shadow var(--motion-standard) var(--motion-ease); }
 .ps-card-cta:hover, .ps-card-cta:focus-visible, .live-profile-action:hover, .live-profile-action:focus-visible { background:rgba(201,168,76,.12); border-color:var(--valoria-gold); color:var(--valoria-gold); transform:translateY(-2px); }
 @media (hover:none), (pointer:coarse) { .card:hover, .vi-card:hover, .card-gold:hover, .waitlist-card:hover { transform:none !important; } }
