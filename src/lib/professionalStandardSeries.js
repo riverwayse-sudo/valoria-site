@@ -39,6 +39,7 @@ export const PROFESSIONAL_STANDARD_SERIES = [
 
 export function getSessionState(session, now = Date.now()) {
   if (!session.dateApproved) return 'coming-soon'
+  if (session.manuallyEnded) return 'ended'
   const start = new Date(session.start).getTime()
   const index = PROFESSIONAL_STANDARD_SERIES.findIndex((item) => item.id === session.id)
   const previous = index > 0 ? PROFESSIONAL_STANDARD_SERIES[index - 1] : null
@@ -49,7 +50,6 @@ export function getSessionState(session, now = Date.now()) {
   const previousEnd = previous?.end ? new Date(previous.end).getTime() : 0
   if (now < previousEnd) return 'locked'
   if (now < start) return 'registration-open'
-  if (session.manuallyEnded) return 'ended'
   if (!session.end) return 'live'
   if (now < new Date(session.end).getTime()) return 'live'
   return 'ended'
