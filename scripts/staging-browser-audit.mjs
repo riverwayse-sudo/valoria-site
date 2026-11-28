@@ -6,7 +6,7 @@ import { createRequire } from 'node:module'
 
 const require = createRequire(import.meta.url)
 const axeSource = await fs.readFile(require.resolve('axe-core/axe.min.js'), 'utf8')
-const accessibilityRoutes = new Set(['homepage', 'marketplace', 'marketplace-talent', 'marketplace-speakers', 'marketplace-facilitators', 'valu', 'valu-start', 'valu-register', 'professional-signup-account-first', 'login', 'signup', 'about', 'prime', 'programmes', 'events', 'contact-us', 'privacy-policy', 'terms-of-use'])
+const accessibilityRoutes = new Set(['homepage', 'prime', 'about', 'programmes'])
 
 const SITE = process.env.STAGING_SITE_URL || 'https://staging.valoriainstitute.com'
 const ASSESSMENT = process.env.STAGING_ASSESSMENT_URL || 'https://assessment-staging.valoriainstitute.com'
