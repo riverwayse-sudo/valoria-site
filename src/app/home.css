@@ -2678,7 +2678,8 @@
 
 /* WCAG AA contrast for homepage pathway and VALU conversion surfaces */
 .home-pathways .home-section-heading .eyebrow-text { color: #806020; }
-.home-pathway-number { color: #806020; }
+.home-pathway-card:not(.is-primary) .home-pathway-number { color: #806020; }
+.home-pathway-card.is-primary .home-pathway-number { color: #D4C9A8; }
 .home-pathway-label { color: #5F5D66; }
 .home-pathway-cta { min-height: 48px; }
 .home-pathway-card.is-primary .home-pathway-cta { color: #D4C9A8; }
