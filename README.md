@@ -153,3 +153,7 @@ The design review stack is informed by:
 
 ### 7. Anti-patterns
 Do not ship: generic SaaS gradients, arbitrary glassmorphism, mixed font families, inconsistent card radii, tiny low-contrast body text, decorative animation, duplicate CTA treatments, unexplained shadows, or multiple competing visual authorities.
+
+## Engineering standards
+
+Contributors must follow the [engineering standards](./docs/engineering/README.md), including the ASD-STE100 communication policy. Preserve approved brand, PRIME, VALU, assessment, and marketplace terminology and rules.
