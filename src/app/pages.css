@@ -531,7 +531,6 @@
 
 
 /* WCAG AA contrast corrections — final-state surfaces */
-.page-section:not(.alt) .eyebrow-text,
 .info-card .eyebrow-text { color: #806020; }
 .page-section.alt .eyebrow-text { color: #D4C9A8; }
 .page-section.alt .page-sub,
