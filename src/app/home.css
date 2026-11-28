@@ -1001,7 +1001,7 @@
   align-items: center;
   gap: 8px 12px;
   margin-bottom: 22px;
-  color: rgba(247,244,238,.45);
+  color: #A6A5B0;
   font-size: 9px;
   font-weight: 800;
   letter-spacing: .12em;
@@ -1226,7 +1226,7 @@
 }
 
 .live-profiles-proof span {
-  color: rgba(247,244,238,.38);
+  color: #A6A5B0;
   font-size: 9px;
   font-weight: 800;
   letter-spacing: .11em;
