@@ -14,7 +14,7 @@ describe('Marketplace category visibility', () => {
     expect(source).toContain('countRowsByApprovedCapability')
     expect(visibility).toContain('Array.isArray(row?.capabilities)')
     expect(visibility).not.toContain('row?.selectedCapabilities')
-    expect(component).toContain('p.capabilities || p.tracks || [p.track]')
+    expect(component).toContain('Array.isArray(p.capabilities) ? p.capabilities : []')
     expect(component).not.toContain('p.selectedCapabilities || p.selected_capabilities || p.capabilities')
     expect(component).toContain("p.assessment_access === 'basic' ? 'BASIC LISTING' : 'VALU INDEX INSIGHT UNAVAILABLE'")
   })
