@@ -120,6 +120,7 @@ for (const file of cssFiles) {
   for (const declaration of declarations) {
     const value = declaration[1];
     if (/^\s*none\b/.test(value)) continue;
+    if (/^\s*var\(/.test(value)) failures.push(path.relative(root, file) + ': transitions must name the properties they animate explicitly.');
     const withoutZeroTimes = value.replace(/\b0(?:\.0+)?s\b/g, '').replace(/\b0(?:\.0+)?ms\b/g, '');
     const rawTime = /(^|[^\w-])\d*\.?\d+(?:ms|s)\b/.test(withoutZeroTimes);
     const rawCurve = /cubic-bezier\(/.test(value) || /(^|[\s,])ease(?:-out|-in-out)?(?=[\s,;])/.test(value);
