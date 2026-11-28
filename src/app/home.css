@@ -2674,3 +2674,23 @@
     scroll-snap-align: start;
   }
 }
+
+
+/* WCAG AA contrast for homepage pathway and VALU conversion surfaces */
+.home-pathways .home-section-heading .eyebrow-text { color: #806020; }
+.home-pathway-number { color: #806020; }
+.home-pathway-label { color: #5F5D66; }
+.home-pathway-cta { min-height: 48px; }
+.home-pathway-card.is-primary .home-pathway-cta { color: #D4C9A8; }
+.home-pathway-card:hover .home-pathway-cta,
+.home-pathway-card:focus-visible .home-pathway-cta,
+.home-pathway-card.is-primary:hover .home-pathway-cta,
+.home-pathway-card.is-primary:focus-visible .home-pathway-cta { color: #1A1A2E; }
+
+.hero-slider .hero-actions .btn-outline { min-height: 48px; }
+
+.valu-conversion .eyebrow-text,
+.valu-conversion .text-link { color: #D4C9A8; }
+.valu-conversion-note,
+.valu-conversion .vcc-step > span,
+.valu-conversion .vcc-step small { color: #B8B6BF; }
