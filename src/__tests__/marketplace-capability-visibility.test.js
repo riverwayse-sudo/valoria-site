@@ -29,6 +29,17 @@ describe('approved specialist capability projection', () => {
     expect(filterRowsByApprovedCapability(profiles, 'facilitator').map(row => row.professional_id)).toEqual(['profile-approved-facilitator'])
   })
 
+  test('legacy row-level capability and track fields cannot create specialist placement', () => {
+    const legacyRow = {
+      professional_id: 'legacy-declared-speaker',
+      capability: 'speaker',
+      track: 'speaker',
+      selectedCapabilities: ['speaker'],
+    }
+    expect(approvedCapabilities(legacyRow)).toEqual([])
+    expect(filterRowsByApprovedCapability([legacyRow], 'speaker')).toEqual([])
+  })
+
   test('only approved capability arrays contribute to directory counts', () => {
     expect(countRowsByApprovedCapability(profiles)).toEqual({
       all: 3,
