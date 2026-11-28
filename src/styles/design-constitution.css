@@ -12,10 +12,10 @@
   --vi-space-8:96px;
   --vi-content:1160px;
   --vi-content-wide:1360px;
-  --vi-motion-fast:160ms;
-  --vi-motion-standard:220ms;
-  --vi-motion-slow:360ms;
-  --vi-motion-ease:cubic-bezier(.22,1,.36,1);
+  --vi-motion-fast:var(--motion-micro);
+  --vi-motion-standard:var(--motion-standard);
+  --vi-motion-slow:var(--motion-emphasis);
+  --vi-motion-ease:var(--motion-ease);
 }
 html{scroll-padding-top:88px}
 img,svg,video{max-width:100%}
@@ -111,7 +111,7 @@ body{overflow-x:clip}
 .vi-button--tertiary { background: var(--vi-color-linen); color: var(--vi-color-slate); }
 .vi-button--ghost { background: transparent; color: var(--vi-color-gold); border-color: currentColor; }
 .vi-button:focus-visible { outline: 2px solid var(--vi-color-focus); outline-offset: 3px; }
-.vi-button:active:not(:disabled) { transform: scale(.98); }
+.vi-button:active:not(:disabled) { transform: translateY(1px); }
 .vi-button:disabled, .vi-button[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
 .vi-button--compact { min-height: var(--vi-target-min); padding-inline: 18px; font-size: 14px; }
 
