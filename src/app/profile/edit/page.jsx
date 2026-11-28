@@ -442,9 +442,11 @@ function EditPageInner() {
 
 export default function ProfileEditPage() {
   return (
-    <Suspense fallback={<div style={S.page}><div style={S.loadingState}>Loading…</div></div>}>
-      <EditPageInner />
-    </Suspense>
+    <main id="main-content">
+      <Suspense fallback={<div style={S.page}><div style={S.loadingState}>Loading…</div></div>}>
+        <EditPageInner />
+      </Suspense>
+    </main>
   )
 }
 
