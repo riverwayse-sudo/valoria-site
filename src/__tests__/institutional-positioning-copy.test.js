@@ -86,5 +86,4 @@ describe('institutional positioning and public copy contract', () => {
     expect(terms).toContain('de-identified score profile')
     expect(terms).toContain('Valoria continues to treat the score profile as personal data')
   })
-  })
 })
