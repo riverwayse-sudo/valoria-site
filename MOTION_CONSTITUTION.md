@@ -47,6 +47,7 @@ Motion is part of Valoria's institutional identity. It must communicate hierarch
 - Arbitrary durations and easing values.
 - Motion that changes layout dimensions.
 
+
 ## Interaction state contract
 
 Every interactive component must define the states that apply to its role, using the shared component and accessibility conventions:
@@ -70,3 +71,12 @@ Assessment-specific contracts:
 - Resume and recovery must preserve saved progress rather than visually implying a reset.
 
 The previously mentioned catalogue of 18 microinteraction patterns was not enumerated in the approved source material. Do not claim that all 18 are implemented until that catalogue is explicitly specified and individually verified.
+
+
+## Cross-page motion enforcement
+
+- The root layout loads the shared motion stylesheet after the other global stylesheets.
+- Component styles and CSS modules may define component-specific transitions or keyframes only with the canonical `--motion-*` timing and easing tokens.
+- No raw per-component timing curves or arbitrary duration values are permitted in transition or animation declarations.
+- Hover and active feedback must not use scale-based enlargement; use restrained spatial translation within the stated movement limits.
+- One-time entrances may use opacity and short spatial translation. Reduced-motion preferences must suppress nonessential movement.
