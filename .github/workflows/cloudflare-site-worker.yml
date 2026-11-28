@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "src/**"
+      - "scripts/**"
       - "next.config.js"
       - "open-next.config.ts"
       - "wrangler.jsonc"
@@ -15,6 +16,7 @@ on:
     branches: [main, "fix/assessment-proxy-prefix-and-api"]
     paths:
       - "src/**"
+      - "scripts/**"
       - "next.config.js"
       - "open-next.config.ts"
       - "wrangler.jsonc"
