@@ -24,6 +24,8 @@ describe('institutional positioning and public copy contract', () => {
     expect(read('src/lib/brand.js')).not.toContain('Lagos, Nigeria')
     expect(read('src/app/contact-us/page.jsx')).toContain('Professional capability, made actionable.')
     expect(read('src/app/contact-us/page.jsx')).not.toMatch(/Africa-first|initial operating market is Africa|Nigeria.s professional capability marketplace/i)
+    expect(read('src/app/careers/page.jsx')).not.toMatch(/images\.pexels\.com|careers-hero-image/)
+    expect(read('src/app/careers/careers.css')).not.toContain('careers-hero-image')
     expect(read('src/app/contact-us/page.jsx')).toContain('Legal jurisdiction: Nigeria.')
     expect(read('src/lib/profileOptions.js')).not.toContain('Lagos, Nigeria')
     expect(read('src/lib/profileOptions.js')).toContain('Accra, Ghana')
