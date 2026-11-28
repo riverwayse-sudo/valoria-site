@@ -76,13 +76,13 @@ function FeedbackForm() {
     return (
       <>
         <Nav />
-        <div style={{ minHeight: '100vh', background: DARK, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, fontFamily: 'var(--font,Raleway,sans-serif)', color: PARCH, padding: '0 20px', textAlign: 'center' }}>
+        <main style={{ minHeight: '100vh', background: DARK, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, fontFamily: 'var(--font,Raleway,sans-serif)', color: PARCH, padding: '0 20px', textAlign: 'center' }}>
           <div style={{ fontSize: 32, color: GOLD }}>◈</div>
           <h1 style={{ fontSize: 24, fontWeight: 300 }}>Thank you</h1>
           <p style={{ fontSize: 14, color: DIM, maxWidth: 400, lineHeight: 1.7 }}>
             Your feedback helps us shape what Valoria Institute builds next.
           </p>
-        </div>
+        </main>
         <Footer />
       </>
     )
@@ -91,7 +91,7 @@ function FeedbackForm() {
   return (
     <>
       <Nav />
-      <div style={{ minHeight: '100vh', background: DARK, color: PARCH, fontFamily: 'var(--font,Raleway,sans-serif)', paddingTop: '110px', paddingBottom: 80 }}>
+      <main style={{ minHeight: '100vh', background: DARK, color: PARCH, fontFamily: 'var(--font,Raleway,sans-serif)', paddingTop: '110px', paddingBottom: 80 }}>
         <div style={{ maxWidth: 560, margin: '0 auto', padding: '0 clamp(20px,4vw,40px)' }}>
           <div style={{ fontSize: 11, fontWeight: 600, color: 'rgba(201,168,76,.6)', letterSpacing: '.14em', marginBottom: 16 }}>WEBINAR FEEDBACK</div>
           <h1 style={{ fontFamily: 'var(--font,Raleway,sans-serif)', fontSize: 'clamp(26px,4vw,34px)', fontWeight: 200, lineHeight: 1.2, marginBottom: 12 }}>
@@ -169,7 +169,7 @@ function FeedbackForm() {
             )}
           </form>
         </div>
-      </div>
+      </main>
       <Footer />
     </>
   )
