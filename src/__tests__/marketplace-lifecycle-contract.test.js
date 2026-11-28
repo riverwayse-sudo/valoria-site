@@ -49,10 +49,12 @@ describe('VALUI marketplace lifecycle contract', () => {
     const source = read('src/lib/marketplace-data.js')
     expect(source).toContain('professional_id')
     expect(source).toContain('new Set')
-    expect(source).toContain('all: (rows || []).length')
-    expect(source).toContain('candidate: byTrack.candidate.size')
-    expect(source).toContain('speaker: byTrack.speaker.size')
-    expect(source).toContain('facilitator: byTrack.facilitator.size')
+    expect(source).toContain('countRowsByApprovedCapability(rows)')
+    const visibility = read('src/lib/marketplace-capability-visibility.cjs')
+    expect(visibility).toContain('all: professionals.size')
+    expect(visibility).toContain('candidate: byTrack.candidate.size')
+    expect(visibility).toContain('speaker: byTrack.speaker.size')
+    expect(visibility).toContain('facilitator: byTrack.facilitator.size')
   })
 
   test('marketplace cards display selected capability roles and category filters apply to every assessment tier', () => {
@@ -414,20 +416,16 @@ describe('VALUI marketplace lifecycle contract', () => {
 
   test('specialist directory membership and counts require evidence-approved public capabilities', () => {
     const data = read('src/lib/marketplace-data.js')
+    const visibility = read('src/lib/marketplace-capability-visibility.cjs')
     const directory = read('src/components/MarketplaceDirectory.jsx')
-    const projection = data.slice(data.indexOf('return rows.filter(row => {'), data.indexOf('function countMarketplaceRows'))
-    const counts = data.slice(data.indexOf('function countMarketplaceRows'), data.indexOf('export async function getMarketplaceCounts'))
-    const directoryData = data.slice(data.indexOf('export async function getMarketplaceDirectoryData'))
+    expect(data).toContain('filterRowsByApprovedCapability')
+    expect(data).toContain('countRowsByApprovedCapability')
+    expect(data).toContain('return filterRowsByApprovedCapability(rows, track)')
+    expect(data).toContain('return countRowsByApprovedCapability(rows)')
+    expect(data).toContain('rows: filterRowsByApprovedCapability(allRows, normalizedTrack)')
+    expect(visibility).toContain('Array.isArray(row?.capabilities)')
+    expect(visibility).not.toContain('row?.selectedCapabilities')
     const clientFilter = directory.slice(directory.indexOf('const results = useMemo'), directory.indexOf('return <div className={styles.page}'))
-
-    // Participant selections remain visible as declarations, but only the canonical
-    // roster's approved capabilities may appear in specialist directories or counts.
-    expect(projection).toContain('return row.capabilities.includes(capability)')
-    expect(projection).not.toContain('row.selectedCapabilities.includes(capability)')
-    expect(counts).toContain('const approvedCapabilities = row.capabilities || []')
-    expect(counts).not.toContain('row.selectedCapabilities || []')
-    expect(directoryData).toContain('row.capabilities.includes(normalizedTrack)')
-    expect(directoryData).not.toContain('row.selectedCapabilities.includes(normalizedTrack)')
     expect(clientFilter).toContain('p.capabilities || p.tracks || [p.track]')
     expect(clientFilter).not.toContain('p.selectedCapabilities || p.selected_capabilities')
   })
