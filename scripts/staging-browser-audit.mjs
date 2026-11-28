@@ -135,9 +135,9 @@ try {
       let status = null
       let navigationError = null
       try {
-        const response = await page.goto(route.url, { waitUntil: 'domcontentloaded', timeout: 60000 })
+        const response = await page.goto(route.url, { waitUntil: 'domcontentloaded', timeout: 25000 })
         status = response?.status() ?? null
-        await page.waitForTimeout(1800)
+        await page.waitForTimeout(800)
       } catch (error) {
         navigationError = error.message
       }
@@ -149,11 +149,11 @@ try {
         const reveals = [...document.querySelectorAll('.reveal')]
         for (const element of reveals) {
           element.scrollIntoView({ block: 'center', behavior: 'auto' })
-          await new Promise(resolve => setTimeout(resolve, 100))
+          await new Promise(resolve => setTimeout(resolve, 25))
         }
         window.scrollTo({ top: 0, behavior: 'auto' })
       })
-      await page.waitForTimeout(350)
+      await page.waitForTimeout(250)
 
       const state = await page.evaluate(() => {
         const robots = document.querySelector('meta[name="robots"]')?.content || ''
@@ -239,7 +239,7 @@ try {
       const captureScreenshot = visualRoutes.has(route.name)
       const filename = captureScreenshot ? `${route.name}-${viewport.name}.png` : null
       if (captureScreenshot) {
-        await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
+        await page.screenshot({ path: path.join(OUT, filename), fullPage: true, timeout: 15000, animations: 'disabled' })
       }
       const result = {
         route: route.name,
@@ -323,17 +323,17 @@ try {
       hasTouch: viewport.isMobile,
     })
     const page = await context.newPage()
-    const response = await page.goto(`${SITE}/`, { waitUntil: 'domcontentloaded', timeout: 60000 })
-    await page.waitForTimeout(1800)
+    const response = await page.goto(`${SITE}/`, { waitUntil: 'domcontentloaded', timeout: 25000 })
+    await page.waitForTimeout(800)
     await page.evaluate(async () => {
       const reveals = [...document.querySelectorAll('.reveal')]
       for (const element of reveals) {
         element.scrollIntoView({ block: 'center', behavior: 'auto' })
-        await new Promise(resolve => setTimeout(resolve, 100))
+        await new Promise(resolve => setTimeout(resolve, 25))
       }
       window.scrollTo({ top: 0, behavior: 'auto' })
     })
-    await page.waitForTimeout(350)
+    await page.waitForTimeout(250)
     const previewReady = await page.evaluate(() => {
       const shell = document.querySelector('.live-profiles-shell')
       if (!shell) return false
@@ -412,7 +412,7 @@ try {
       }
     })
     const filename = `homepage-profile-cards-preview-${viewport.name}.png`
-    await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
+    await page.screenshot({ path: path.join(OUT, filename), fullPage: true, timeout: 15000, animations: 'disabled' })
     report.profileCardPreviews.push({ viewport: viewport.name, status: response?.status() ?? null, screenshot: filename, syntheticFixtures: 3, clearlyLabelled: true, ...previewReady })
     if (!previewReady.ready) report.failures.push(`${viewport.name}: compact profile-card visual fixture could not be rendered`)
     if (viewport.name === 'desktop' && previewReady.animationName !== 'vi-scroll-x') {
