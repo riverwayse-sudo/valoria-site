@@ -166,6 +166,11 @@ try {
       await page.waitForTimeout(150)
 
       if (accessibilityRoutes.has(route.name)) {
+        await page.addStyleTag({ content: `
+          html { scroll-behavior: auto !important; }
+          .reveal, .reveal.visible { opacity: 1 !important; transform: none !important; transition: none !important; }
+          *, *::before, *::after { animation-duration: 0s !important; animation-delay: 0s !important; transition-duration: 0s !important; transition-delay: 0s !important; }
+        ` })
         const scan = await page.evaluate(async () => {
           try {
             const result = await Promise.race([
