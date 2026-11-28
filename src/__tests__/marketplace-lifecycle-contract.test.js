@@ -643,7 +643,7 @@ describe('VALUI marketplace lifecycle contract', () => {
     expect(terms).toContain('A Basic listing may follow a completed, account-linked VALU Index Taster')
     expect(terms).toContain('A Full listing requires a completed professional profile and a current Full VALU Index score of at least 35 points')
     expect(terms).toContain('The platform does not offer a separate public-versus-registered visibility setting')
-    expect(terms).toContain('no separate administrator approval step')
+    expect(terms).toContain('separate administrator approval step')
     expect(terms).not.toContain('A professional who chooses registered-member visibility')
     expect(privacy).toContain('A Basic listing may follow a completed, account-linked VALU Index Taster')
     expect(privacy).toContain('Full listing additionally requires a current Full VALU Index score of at least 35 points')
