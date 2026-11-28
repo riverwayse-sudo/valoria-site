@@ -176,11 +176,11 @@ export default function ConsentManager({ gaMeasurementId = null, metaPixelId = n
           <span style={styles.alwaysOn}>ALWAYS ON</span>
         </div>
         <label style={styles.preferenceRow}>
-          <span><strong>Analytics</strong><p style={styles.preferenceDescription}>Allows Google Analytics to measure visits and site interactions.</p></span>
+          <div><strong>Analytics</strong><p style={styles.preferenceDescription}>Allows Google Analytics to measure visits and site interactions.</p></div>
           <input type="checkbox" checked={draft.analytics} onChange={event => setDraft(value => ({ ...value, analytics: event.target.checked }))} />
         </label>
         <label style={styles.preferenceRow}>
-          <span><strong>Marketing</strong><p style={styles.preferenceDescription}>Allows Meta Pixel to measure campaign activity.</p></span>
+          <div><strong>Marketing</strong><p style={styles.preferenceDescription}>Allows Meta Pixel to measure campaign activity.</p></div>
           <input type="checkbox" checked={draft.marketing} onChange={event => setDraft(value => ({ ...value, marketing: event.target.checked }))} />
         </label>
         <div style={styles.actions}>
