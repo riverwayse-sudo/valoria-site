@@ -48,7 +48,12 @@ requireText('src/styles/design-constitution.css', [
   /--vi-color-brass:\s*#D4C9A8/i,
   /--vi-color-ivory:\s*#FAFAF7/i,
   /--vi-target-min:\s*48px/,
+  /--vi-motion-fast:\s*var\(--motion-micro\)/,
+  /--vi-motion-standard:\s*var\(--motion-standard\)/,
+  /--vi-motion-slow:\s*var\(--motion-emphasis\)/,
+  /--vi-motion-ease:\s*var\(--motion-ease\)/,
 ], 'canonical design tokens');
+requireText('src/styles/card-system.css', [/--vi-card-transition:\s*var\(--motion-emphasis\)\s+var\(--motion-ease\)/], 'canonical card motion token');
 const motion = requireText('src/styles/motion.css', [
   /--motion-micro/,
   /--motion-standard/,
