@@ -213,7 +213,7 @@ jobs:
           done
           echo "PASS: homepage exposes the canonical account-first registration entry."
       - name: Install Playwright without changing project dependencies
-        run: npm install --no-save --package-lock=false playwright@1.65.0
+        run: npm install --no-save --package-lock=false playwright@1.65.0 axe-core@4.10.3
       - name: Install Chromium for staging browser acceptance
         run: npx playwright install --only-shell chromium
       - name: Run desktop/mobile and fresh-session staging browser audit
@@ -221,6 +221,7 @@ jobs:
         env:
           STAGING_SITE_URL: https://staging.valoriainstitute.com
           STAGING_ASSESSMENT_URL: https://assessment-staging.valoriainstitute.com
+          STAGING_AUDIT_MODE: focused
       - name: Upload staging diagnostics
         if: always()
         uses: actions/upload-artifact@v4
