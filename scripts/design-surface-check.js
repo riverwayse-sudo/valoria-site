@@ -91,7 +91,7 @@ if (!layout.includes('styles/motion.css') || !layout.includes('styles/design-con
   failures.push('The root layout must load the canonical design and motion systems for every route.');
 }
 if (!globals.includes('Raleway')) failures.push('The global type system must retain the approved Raleway typeface.');
-if (/DM Mono|Space Grotesk|Inter|Montserrat/i.test(globals)) {
+if (/\b(?:DM\s+Mono|Space\s+Grotesk|Inter|Montserrat)\b/i.test(globals)) {
   failures.push('A non-approved display/body typeface was introduced into the global site typography layer.');
 }
 if (/transition\s*:\s*all\b/i.test(motion) || /animation\s*:\s*all\b/i.test(motion)) {
