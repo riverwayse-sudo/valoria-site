@@ -88,7 +88,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div style={S.page}>
+    <main style={S.page}>
       <div style={S.card}>
 
         <div style={S.eyebrow}>
@@ -104,19 +104,20 @@ export default function ResetPasswordPage() {
         {done ? (
           <>
             <div style={{ fontSize: '28px', color: '#1D9E75', textAlign: 'center', marginBottom: '16px' }}>✓</div>
-            <h2 style={{ ...S.title, fontSize: '24px' }}>Password updated.</h2>
+            <h1 style={{ ...S.title, fontSize: '24px' }}>Password updated.</h1>
             <p style={S.sub}>You'll be signed out in a moment. Sign in with your new password.</p>
             <Link href="/login" style={S.btnGold}>SIGN IN →</Link>
           </>
         ) : noSession && !sessionReady ? (
           <>
             <div style={{ fontSize: '28px', color: '#D85A30', textAlign: 'center', marginBottom: '16px' }}>⚠</div>
-            <h2 style={{ ...S.title, fontSize: '22px' }}>Link expired or invalid.</h2>
+            <h1 style={{ ...S.title, fontSize: '22px' }}>Link expired or invalid.</h1>
             <p style={S.sub}>The reset link may have expired, already been used, or could not be verified on this device. Request a fresh link from the sign-in page.</p>
             <Link href="/login" style={S.btnGold}>BACK TO SIGN IN →</Link>
           </>
         ) : !sessionReady ? (
           <div style={{ textAlign: 'center', padding: '32px 0' }}>
+            <h1 style={S.title}>Reset your password.</h1>
             <div style={{ fontSize: '13px', color: DIM }}>Verifying reset link…</div>
           </div>
         ) : (
@@ -179,7 +180,7 @@ export default function ResetPasswordPage() {
           </>
         )}
       </div>
-    </div>
+    </main>
   )
 }
 
