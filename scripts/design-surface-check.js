@@ -30,7 +30,7 @@ const layout = requireText('src/app/layout.jsx', [
   /styles\/motion\.css/,
   /styles\/design-constitution\.css/,
   /styles\/component-system\.css/,
-  \.\/pages\.css/,
+  /\.\/pages\.css/,
 ], 'global application layout');
 const globalStyleOrder = [layout.indexOf('styles/component-system.css'), layout.indexOf('styles/navigation-awakening.css'), layout.indexOf('styles/design-constitution.css'), layout.indexOf('./pages.css'), layout.indexOf('styles/motion.css')];
 if (globalStyleOrder.some((index) => index < 0) || globalStyleOrder.some((index, i) => i > 0 && index < globalStyleOrder[i - 1])) failures.push('The canonical motion stylesheet must load after all global and page styles.');
