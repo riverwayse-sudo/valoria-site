@@ -319,13 +319,13 @@ describe("Build configuration checks", () => {
     expect(pkg.scripts).toHaveProperty("build");
   });
 
-  test("valoria-site uses Next.js 14", () => {
+  test("valoria-site uses Next.js 15", () => {
     if (!repoExists(SITE_ROOT)) return;
     const pkgPath = path.join(SITE_ROOT, "package.json");
     if (!fs.existsSync(pkgPath)) return;
     const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
     const nextVersion = pkg.dependencies?.next || pkg.devDependencies?.next || "";
-    expect(nextVersion).toMatch(/^14/);
+    expect(nextVersion).toMatch(/^15\./);
   });
 
   test("valoria-platform uses Vite + React", () => {
