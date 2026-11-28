@@ -129,3 +129,45 @@ The source catalogue supplied on 27 November contains **five groups of six patte
 Apply these patterns only where the corresponding interaction already exists in Valoria. Do not invent payment, cart, map, media, download or unlock features merely to reproduce a reference animation. Preserve the user's motion rules: morph rather than abruptly swap; follow rather than teleport; cascade rather than dump; settle rather than stop abruptly; respond without distracting. All motion must respect reduced-motion preferences, remain keyboard/touch accessible, preserve state and never imply server success before confirmation.
 
 Site PR #486 and platform PR #293 establish the first shared design-token/component foundation and semantic five-stage assessment-journey treatment. They do **not** constitute completion of all 30 interaction patterns or visual acceptance. The next implementation pass must map each applicable pattern to an existing Valoria component, implement only those with a real product use case, and verify desktop/mobile, keyboard, touch and reduced-motion behaviour before merge.
+
+
+---
+
+## 2026-11-28 acceptance and reconciliation addendum
+
+This addendum supersedes the earlier release and production snapshots in this document where dates, deployment versions, roster counts or acceptance states differ.
+
+### Release candidates and staging evidence
+
+- Site release PR #512 remains open and unmerged. Its current branch includes the five source-approved VALU designations, evidence-approved specialist directory filtering, declared-capability card labels, expired-event correction, privacy/consent copy and route/accessibility hardening. Current branch CI, security checks, production build and Cloudflare Worker bundling passed.
+- Platform release PR #310 remains open and unmerged. Its five-level designation contract and guarded database migration are ready; current branch CI and Cloudflare Worker validation passed.
+- Isolated platform staging PR #313 passed workflow `46144584836` on 28 November and deployed assessment Worker version 192. It passed 47 suites / 452 tests, Worker routing/CORS, Taster-first handoff, idempotent completion retry and desktop/tablet/mobile assessment design checks. The run used a synthetic `.example.com` address, created a Taster fixture only, created no Auth user or public profile, and sent no email.
+- The guarded five-level migration was dry-run and applied to the staging Supabase project only. Staging migration history version `20261128122216` is aligned with the repository migration filename. Both designation functions were verified to contain all five approved bands and no retired four-band labels. A temporary trigger probe verified boundaries 0, 34, 35, 49, 50, 64, 65, 79, 80 and 100; the probe transaction was rolled back.
+- The combined site staging acceptance is still in progress. Earlier focused browser checks found one mobile programme-page reveal item not yet visible after the audit's 15ms scroll delay; the audit was corrected to wait for IntersectionObserver and capture hidden-item diagnostics. The route audit was also hardened to wait for the global Raleway stylesheet and the root not-found page now has a main landmark. Do not call site acceptance complete until the current-head staging run passes.
+- No real confirmation email, authenticated full 58-question assessment submission, production migration, production score rewrite, identity correction or production deployment has been performed.
+
+### Current production snapshot — 28 November 2026
+
+- Production site Worker: version **275**, last deployed 26 November at 00:33 UTC. It still serves the prior public-site copy and has not received the current site release candidate.
+- Production assessment Worker: version **304**, deployed 28 November at 11:48 UTC. It predates the open five-level platform release.
+- Production Supabase latest migration: `20261126111526`. The two production designation functions still contain the legacy four-band mapping. The five-level migration has not been applied to production.
+- Staging Supabase is separate; the five-level migration is applied there only. Production has not been changed.
+
+### Marketplace and historical identity reconciliation
+
+- Production has 23 professional profiles, including 5 test fixtures and 18 non-test profiles. The public roster contains **13 profiles**. All 13 are eligible and consented; there are **0 eligible-but-unlisted profiles** and 0 roster membership mismatches. Five non-test profiles remain unlisted or revoked; do not force the count to 17 or publish a profile without eligibility and public-consent evidence.
+- Production has 47 Taster sessions; 42 remain unlinked. Version provenance is 9 at v4.0, 3 at v4.1 and 35 `legacy_unknown`. The current canonical Taster code is v4.2; do not infer v4.2 for historical rows.
+- There are 18 completed full assessments; 17 have no `taster_id`. The identity review queue has 42 open cases: 17 contact candidates, 23 unresolved and 2 conflicting. Five Taster-to-account and five assessment-to-account links have already been applied; assessment-account matches do not repair missing Taster links. Preserve unresolved/conflicting rows for manual review.
+- Nine journey records are older than seven days: 4 `signed_up` and 5 `profile_incomplete`. These are participant next-action states, not automatic repair instructions.
+- One assessment report failed with `REQUEST_TIMEOUT` after five attempts. Do not retry or send it until the recipient and delivery authorization are verified.
+- The current public roster is internally consistent at 13. The previous target of 17 must not override eligibility, consent or verified identity rules.
+
+### Remaining release gates
+
+1. Finish the current site staging route and mobile reveal audit; verify the public route set at desktop, tablet and mobile with zero errors, zero overflow and zero accessibility violations.
+2. Complete one controlled account-first registration → authenticated Taster → post-Taster confirmation → dashboard test using an approved QA inbox. No test email has been sent yet.
+3. Complete the independent 58-question full assessment in isolated staging, including save/resume, submission, points, five-level designation, report generation and marketplace projection.
+4. Complete manual review of the 42 open historical identity cases. Do not auto-link contact candidates, unresolved or conflicting records.
+5. Review the one failed report before any retry or delivery.
+6. Enable Supabase leaked-password protection on staging; the staging Security Advisor currently reports it disabled. Production's migration history includes the relevant hardening migration, but the production Auth setting should be verified separately.
+7. Resolve the production release sequence. The site and platform release PRs remain unmerged; production Workers and production Supabase remain on the prior four-band implementation. No production release is authorized by the staging work.
