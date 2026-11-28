@@ -190,3 +190,49 @@ This addendum supersedes the earlier release and production snapshots in this do
 ### Production build-control invariant
 
 Cloudflare Workers Builds for `valoria-assessment` is connected to `main` as its production branch. A push to `main` can trigger a production Worker deployment independently of the guarded GitHub production workflow. Therefore, do not merge either release PR to `main` as a documentation or code housekeeping action. Verify Cloudflare build/deployment controls and deployment history, and obtain explicit owner release approval before any production-bound merge. A skipped GitHub workflow is not evidence that no production deployment occurred.
+
+
+## 2026-11-28 final staging acceptance update
+
+This addendum supersedes earlier pending staging gates and environment snapshots where the latest evidence below differs.
+
+### Site acceptance — passed in isolated staging
+
+- Final site candidate head: `075a5b8aa34c1fe8f87ec0b4bf7bbbc231609921`; staging workflow run `46180939256`; temporary staging PR #524 was not merged.
+- Cloudflare `valoria-staging-site` is deployed at 100% on Worker version **493**. Production `valoria-institute-site` remains on version **275**.
+- The full route audit passed **207/207 route-and-viewport checks** (69 routes × desktop, tablet and mobile), all HTTP 200, with zero browser errors, zero console errors, zero horizontal overflow, and zero cross-environment redirects.
+- The `/waitlist` redirect is now same-origin: staging resolves to `https://staging.valoriainstitute.com/valu/register?journey=valu_taster`. A regression guard now fails the route audit if any site or assessment route escapes its expected staging host.
+- The focused browser audit passed 8/8 desktop/mobile route checks. Eight axe scans across homepage, PRIME, About and Programmes reported zero violations.
+- Profile-card preview used three clearly labelled screenshot-only fixtures; no profile rows were written. All three declared capability labels rendered. Desktop `vi-scroll-x` motion ran; mobile retained manual horizontal scrolling. No public profiles were seeded into staging.
+
+### Assessment acceptance — automated staging checks passed
+
+- Final platform candidate head: `a6b8bef1a19806408ea5fbe5829a36cd45a424bc`; staging workflow run `46180174885`; temporary staging PR #318 was not merged.
+- Cloudflare `valoria-staging-assessment` is deployed at 100% on Worker version **197**. Production `valoria-assessment` remains on version **304**.
+- Platform validation passed **458 tests across 49 suites**, Worker routing/response-adapter tests, staging CORS and protected-route smoke checks, Taster save/resume/completion/retry compatibility, and assessment design checks at desktop, tablet and mobile.
+- The account-first journey remains: account registration → separate 9-question Taster → email confirmation → authenticated dashboard → separate 58-question full VALU Index. The post-Taster screen was corrected: it now identifies email confirmation as the next step and the dashboard as the step after confirmation. Regression tests protect this wording and order.
+- The automated staging run did not create a real Auth participant, send an email, submit a full 58-question assessment, generate an AI report or mutate production data. The current authenticated email-confirmation and full-assessment acceptance gates remain open.
+
+### Database, security and production boundary
+
+- Staging Supabase has both release migrations applied: `20261127135134_project_specialized_profile_evidence_and_approved_designations` and `20261128122216_restore_five_level_valu_designations`. Read-only function checks confirm all five approved designation bands and preservation of the separate 35-point threshold.
+- Production Supabase remains at migration `20261126111526`; neither release migration has been applied to production. No production schema, participant record, score or roster was changed.
+- Production public roster remains **13 profiles**. The current aggregate shows 23 profile rows (5 test fixtures and 18 non-test), 13 public/consented profiles, and zero eligible-but-unlisted profiles. Five non-test profiles remain unlisted or revoked; do not force the former target of 17 or publish without eligibility and public-consent evidence.
+- Production still has 47 Taster sessions, 42 unlinked and 42 open identity-review cases. A refreshed aggregate-only probe found 37 open cases with no exact Auth-email match and 5 with an exact email match (1 already conflicting, 4 unresolved); one of the four unresolved matches also meets the strict confirmed-email, name and role checks. No record was automatically linked. The 18 completed full assessments include 17 without a `taster_id`; all 18 are already associated with user accounts, but the missing Taster links remain unresolved. Manual review and participant confirmation are required.
+- Supabase Security Advisor reports leaked-password protection disabled in both production and staging. Supabase documents this control as Pro-plan-and-above; it is unavailable on the current Free plan. No upgrade was made. This is a plan-level decision, not a code regression. Service-role-only tables with RLS enabled and no client policies remain intentionally inaccessible to anon/authenticated roles.
+- One earlier report-generation attempt remains in `REQUEST_TIMEOUT` after five attempts, with no generated report and no email sent. Retrying requires a paid Anthropic generation call; do not retry without explicit approval.
+
+### Corrected acceptance findings
+
+- The earlier claim that the Privacy Policy contained a 55-question mismatch was incorrect; source review did not substantiate it. No policy change is required on that basis. The Terms describe automatic listing only after profile readiness and participant-entered public-profile consent; this is not an admin-approval gate.
+- The event-state implementation marks the 14 November session as ended and keeps the unapproved 5 December session unpublished. The expired homepage event popup is removed.
+- Staging is live as an isolated preview, not as production. Its empty public roster is intentional; screenshot-only profile fixtures are not database records.
+
+### Remaining release gates
+
+1. Complete one controlled account-first registration → 9-question Taster → real confirmation email → signed-in dashboard test using an approved QA inbox.
+2. Complete the independent 58-question full assessment in isolated staging, including save/resume, submission, points, five-level designation and marketplace projection. Do not trigger paid AI report generation without explicit approval.
+3. Manually review the 42 open historical identity cases and 17 missing Taster links. Do not auto-link unresolved or conflicting records.
+4. Review the one failed report; no retry or delivery without explicit approval for the paid generation attempt.
+5. Decide whether to upgrade Supabase to Pro for leaked-password protection; it cannot be enabled on the current Free plan.
+6. Keep site PR #512 and platform PR #310 unmerged until the authenticated gates are complete and the owner explicitly authorizes the production release sequence. Apply the two production migrations before promoting the corresponding Workers; production deployment remains unauthorized by staging acceptance.
