@@ -216,7 +216,7 @@ body{overflow-x:clip}
   border-radius: 9999px;
   transition: transform var(--vi-motion-micro) var(--vi-motion-ease), background-color var(--vi-motion-standard) var(--vi-motion-ease), border-color var(--vi-motion-standard) var(--vi-motion-ease), color var(--vi-motion-standard) var(--vi-motion-ease);
 }
-.vi-copy-morph:active { transform: scale(.98); }
+.vi-copy-morph:active { transform: translateY(1px); }
 .vi-copy-morph__icon { display: inline-grid; width: 16px; height: 16px; place-items: center; font-size: 13px; line-height: 1; }
 @media (prefers-reduced-motion: reduce) {
   .vi-copy-morph { transition: none; }
