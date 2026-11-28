@@ -9,7 +9,7 @@ const GOLD = '#C9A84C'
 const MIDNIGHT = '#1A1A2E'
 const PARCHMENT = '#F7F4EE'
 const DARK = '#0F0F1A'
-const DIM = 'rgba(247,244,238,.45)'
+const DIM = '#B8B6BF'
 
 // Talent and speakers sign up via the assessment platform.
 // This page only handles employer and organiser accounts.
@@ -341,7 +341,7 @@ const S = {
   input: { padding: '12px 14px', background: 'rgba(255,255,255,.04)', border: '1px solid', borderRadius: '6px', color: PARCHMENT, fontSize: '14px', fontFamily: "'Raleway',sans-serif", outline: 'none', width: '100%', boxSizing: 'border-box' },
   btnGold: { display: 'block', width: '100%', padding: '14px', background: GOLD, color: MIDNIGHT, fontSize: '12px', fontWeight: 700, letterSpacing: '.14em', borderRadius: '999px', textAlign: 'center', textDecoration: 'none', fontFamily: "'Raleway',sans-serif", marginTop: '8px', cursor: 'pointer' },
   errorBox: { padding: '12px 14px', background: 'rgba(216,90,48,.12)', border: '1px solid rgba(216,90,48,.3)', borderRadius: '6px', fontSize: '13px', color: '#F09595' },
-  passwordHint: { fontSize: '11px', color: 'rgba(247,244,238,.32)', lineHeight: 1.5, margin: '-8px 0 0' },
-  terms: { fontSize: '12px', color: 'rgba(247,244,238,.35)', textAlign: 'center', lineHeight: 1.6 },
-  loginLink: { marginTop: '18px', fontSize: '13px', color: 'rgba(247,244,238,.4)', textAlign: 'center' },
+  passwordHint: { fontSize: '11px', color: '#B8B6BF', lineHeight: 1.5, margin: '-8px 0 0' },
+  terms: { fontSize: '12px', color: '#B8B6BF', textAlign: 'center', lineHeight: 1.6 },
+  loginLink: { marginTop: '18px', fontSize: '13px', color: '#B8B6BF', textAlign: 'center' },
 }
