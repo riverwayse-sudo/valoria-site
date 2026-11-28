@@ -11,6 +11,7 @@ const accessibilityRoutes = new Set(['homepage', 'prime', 'about', 'programmes']
 const SITE = process.env.STAGING_SITE_URL || 'https://staging.valoriainstitute.com'
 const ASSESSMENT = process.env.STAGING_ASSESSMENT_URL || 'https://assessment-staging.valoriainstitute.com'
 const POST_TASTER_ID = '66666666-6666-4666-8666-666666666666'
+const stagingHosts = new Set([new URL(SITE).hostname, new URL(ASSESSMENT).hostname])
 const OUT = path.resolve('artifacts/staging-browser-audit')
 const viewports = [
   { name: 'desktop', width: 1440, height: 960, isMobile: false },
@@ -328,6 +329,10 @@ try {
         }
       })
 
+      const finalUrl = page.url()
+      const expectedHost = new URL(route.site ? SITE : ASSESSMENT).hostname
+      let finalHost = ''
+      try { finalHost = new URL(finalUrl).hostname } catch {}
       const captureScreenshot = visualRoutes.has(route.name)
       const filename = captureScreenshot ? `${route.name}-${viewport.name}.png` : null
       if (captureScreenshot) {
@@ -336,6 +341,7 @@ try {
       const result = {
         route: route.name,
         url: route.url,
+        finalUrl,
         viewport: viewport.name,
         status,
         navigationError,
@@ -350,6 +356,7 @@ try {
 
       if (navigationError) report.failures.push(`${route.name}/${viewport.name}: navigation failed: ${navigationError}`)
       if (status === null || status >= 400) report.failures.push(`${route.name}/${viewport.name}: HTTP ${status}`)
+      if (finalHost !== expectedHost || !stagingHosts.has(finalHost)) report.failures.push(`${route.name}/${viewport.name}: redirect escaped its isolated staging origin (${finalUrl})`)
       if (state.horizontalOverflow) report.failures.push(`${route.name}/${viewport.name}: horizontal overflow`)
       if (state.revealState?.total !== state.revealState?.visible) report.failures.push(`${route.name}/${viewport.name}: scroll-reveal content remained hidden (${state.revealState?.visible}/${state.revealState?.total})`)
       if (!state.robots.toLowerCase().includes('noindex')) report.failures.push(`${route.name}/${viewport.name}: staging page is missing noindex robots metadata`)
