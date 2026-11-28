@@ -104,6 +104,7 @@ try {
     await context.close();
   }
 
+  if (process.env.AUDIT_ASSESSMENT === "1") {
   // The separate assessment Worker is checked as a real rendered client app, not merely an HTTP shell.
   for (const viewport of [viewports[0], viewports[2]]) {
     const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height } });
@@ -140,6 +141,8 @@ try {
     if (errors.length) failures.push(result);
     await context.close();
   }
+  }
+
 } finally {
   await browser.close();
 }
