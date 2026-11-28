@@ -221,6 +221,10 @@ jobs:
         env:
           STAGING_SITE_URL: https://staging.valoriainstitute.com
           STAGING_ASSESSMENT_URL: https://assessment-staging.valoriainstitute.com
+      - name: Audit every discovered site route at desktop, tablet and mobile
+        run: node scripts/design-route-audit.mjs
+        env:
+          STAGING_SITE_URL: https://staging.valoriainstitute.com
       - name: Upload staging diagnostics
         if: always()
         uses: actions/upload-artifact@v4
@@ -234,6 +238,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: valoria-staging-browser-audit
-          path: artifacts/staging-browser-audit/
+          path: |
+            artifacts/staging-browser-audit/
+            artifacts/design-route-audit/
           if-no-files-found: warn
           retention-days: 7
