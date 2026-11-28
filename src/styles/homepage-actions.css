@@ -27,7 +27,7 @@
   text-transform:uppercase !important;
   text-decoration:none !important;
   white-space:nowrap !important;
-  transition: background var(--motion-standard) var(--motion-ease), color var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), transform var(--motion-standard) var(--motion-ease), box-shadow var(--motion-standard) var(--motion-ease) !important;
+  transition:background var(--motion-standard) var(--motion-ease),color var(--motion-standard) var(--motion-ease),border-color var(--motion-standard) var(--motion-ease),transform var(--motion-standard) var(--motion-ease),box-shadow var(--motion-standard) var(--motion-ease) !important;
 }
 .home-dual-actions .text-link:hover,
 .home-event-actions .text-link:hover,
@@ -59,7 +59,7 @@
   letter-spacing:.13em !important;
   text-transform:uppercase !important;
   text-decoration:none !important;
-  transition: background var(--motion-standard) var(--motion-ease), color var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), transform var(--motion-standard) var(--motion-ease), box-shadow var(--motion-standard) var(--motion-ease) !important;
+  transition:background var(--motion-standard) var(--motion-ease),color var(--motion-standard) var(--motion-ease),border-color var(--motion-standard) var(--motion-ease),transform var(--motion-standard) var(--motion-ease),box-shadow var(--motion-standard) var(--motion-ease) !important;
 }
 .home-pathway-cta span { color:currentColor !important; margin-left:0 !important; }
 .home-pathway-card:hover .home-pathway-cta,
@@ -86,7 +86,7 @@
 }
 
 @media(prefers-reduced-motion:reduce){
-  .home-dual-actions .text-link,.home-event-actions .text-link,.home-insights-copy .text-link,.home-pathway-cta { transition: none !important; }
+  .home-dual-actions .text-link,.home-event-actions .text-link,.home-insights-copy .text-link,.home-pathway-cta { transition:none !important; }
 }
 
 
