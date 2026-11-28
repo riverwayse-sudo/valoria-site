@@ -24,7 +24,7 @@ const sections = [
   },
   {
     title: '3. Why we collect it',
-    body: `We process your personal data for the following purposes:\n\n• To operate the Valoria Institute marketplace — matching assessed professionals with employers, event organisers, and training buyers.\n• To administer the VALU Index — computing your score, generating your AI report, and maintaining your assessment history.\n• To list your profile in the marketplace — if you are a professional who scores 35 or above and consents to listing.\n• To facilitate introductions between buyers and professionals — all contact is mediated by Valoria; contact details are never shared directly.\n• To send transactional communications — account verification, assessment results, and enquiry notifications.\n• To maintain platform security — detecting unusual activity, integrity flags on assessments, and preventing abuse.`,
+    body: `We process your personal data for the following purposes:\n\n• To operate the Valoria Institute marketplace — matching assessed professionals with employers, event organisers, and training buyers.\n• To administer the VALU Index — computing your score, generating your AI report, and maintaining your assessment history.\n• To operate public professional listings. A Basic listing may follow a completed, account-linked VALU Index Taster once the professional profile, minimum public identity requirements, explicit public-display consent and integrity checks are complete. A Full listing additionally requires a current Full VALU Index score of at least 35 points and the applicable profile and listing checks.\n• To facilitate introductions between buyers and professionals — all contact is mediated by Valoria; contact details are never shared directly.\n• To send transactional communications — account verification, assessment results, and enquiry notifications.\n• To maintain platform security — detecting unusual activity, integrity flags on assessments, and preventing abuse.`,
   },
   {
     title: '4. Legal basis for processing',
@@ -79,7 +79,7 @@ export default function PrivacyPolicyPage() {
             African Talent Bureau Ltd is committed to protecting your personal data. This policy explains what we collect, why, and how — in plain language, compliant with the Nigeria Data Protection Act 2023.
           </p>
           <p style={{ fontSize: '12px', color: '#B8B6BF', marginTop: '16px' }}>
-            Last updated: 1 July 2026 · NDPA 2023 Compliant
+            Last updated: 28 November 2026 · NDPA 2023
           </p>
         </section>
 
