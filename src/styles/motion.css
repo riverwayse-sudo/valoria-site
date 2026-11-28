@@ -77,11 +77,7 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .hero-scroll-cue svg { animation: valoria-scroll-cue 1800ms var(--motion-ease) infinite; }
-  @keyframes valoria-scroll-cue {
-    0%,100% { transform: translate3d(0,0,0); opacity: .55; }
-    50% { transform: translate3d(0,5px,0); opacity: 1; }
-  }
+  /* Scroll cue remains static; motion is reserved for meaningful state changes. */
 }
 
 .hero-slider .hero-slide {
@@ -217,14 +213,8 @@ nav.vi-nav.scrolled,
 
 /* Notification micro-interactions — canonical motion tokens only. */
 @keyframes vi-notification-bell-swing {
-  0% { transform: rotate(0deg); }
-  14% { transform: rotate(24deg); }
-  28% { transform: rotate(-19deg); }
-  42% { transform: rotate(14deg); }
-  56% { transform: rotate(-9deg); }
-  70% { transform: rotate(5deg); }
-  84% { transform: rotate(-2deg); }
-  100% { transform: rotate(0deg); }
+  0%,100% { transform: rotate(0deg); }
+  50% { transform: rotate(8deg); }
 }
 .notification-bell-icon {
   transform-origin: 50% 12%;
@@ -232,11 +222,11 @@ nav.vi-nav.scrolled,
 .notification-bell-trigger:hover .notification-bell-icon,
 .notification-bell-trigger:focus-visible .notification-bell-icon,
 .notification-bell-trigger[aria-expanded="true"] .notification-bell-icon {
-  animation: vi-notification-bell-swing 760ms var(--motion-ease) both;
+  animation: vi-notification-bell-swing var(--motion-emphasis) var(--motion-ease) both;
 }
 @keyframes vi-notification-panel-enter {
-  from { opacity: 0; transform: translate3d(0,-7px,0) scale(.985); }
-  to { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+  from { opacity: 0; transform: translate3d(0,-7px,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
 }
 #vi-notification-panel {
   transform-origin: top right;
