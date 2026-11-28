@@ -502,6 +502,7 @@ try {
         ready: Boolean(firstGroup && cloneGroup &&
           firstGroup.querySelectorAll('[data-visual-fixture="true"]').length === 3 &&
           cloneGroup.querySelectorAll('[data-visual-fixture="true"]').length === 3),
+        declaredCapabilityLabels: firstGroup?.querySelectorAll('.vi-scroll-capability-heading').length || 0,
         animationName: trackStyle?.animationName || 'none',
         animationPlayState: trackStyle?.animationPlayState || 'none',
         overflowX: maskStyle.overflowX,
@@ -514,6 +515,7 @@ try {
     await page.screenshot({ path: path.join(OUT, filename), fullPage: true, timeout: 10000, animations: 'disabled' })
     report.profileCardPreviews.push({ viewport: viewport.name, status: response?.status() ?? null, screenshot: filename, syntheticFixtures: 3, clearlyLabelled: true, ...previewReady })
     if (!previewReady.ready) report.failures.push(`${viewport.name}: compact profile-card visual fixture could not be rendered`)
+    if (previewReady.declaredCapabilityLabels !== 3) report.failures.push(`${viewport.name}: all three visual profile fixtures must label selections as declared capabilities`)
     if (viewport.name === 'desktop' && previewReady.animationName !== 'vi-scroll-x') {
       report.failures.push('desktop: homepage profile rail must use the canonical vi-scroll-x motion')
     }
