@@ -7,6 +7,7 @@ on:
     branches: [main]
     paths:
       - "src/**"
+      - "scripts/**"
       - "next.config.js"
       - "open-next.config.ts"
       - "wrangler.jsonc"
