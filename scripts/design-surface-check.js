@@ -62,6 +62,7 @@ const motion = requireText('src/styles/motion.css', [
   /--motion-emphasis/,
   /--motion-reveal/,
   /--motion-section/,
+  /--motion-stagger-step:\s*55ms/,
   /--motion-ease/,
   /prefers-reduced-motion:\s*reduce/,
   /hover\s*:\s*hover/,
@@ -74,6 +75,9 @@ requireText('MOTION_CONSTITUTION.md', [
   /One interaction has one dominant movement/i,
   /No page-specific motion hacks/i,
 ], 'motion governance');
+
+const notification = requireText('src/components/NotificationBell.jsx', [/animationDelay/, /var\(--motion-stagger-step\)/], 'notification stagger motion contract');
+if (/animationDelay:\s*`[^`]*\d+ms/.test(notification)) failures.push('Notification stagger delays must use the canonical motion token.');
 
 const appRoot = path.join(root, 'src/app');
 const routeFiles = walk(appRoot).filter((file) => /[\\/](page|route)\.(js|jsx|ts|tsx)$/.test(file));
