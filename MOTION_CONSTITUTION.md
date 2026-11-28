@@ -80,3 +80,17 @@ The previously mentioned catalogue of 18 microinteraction patterns was not enume
 - No raw per-component timing curves or arbitrary duration values are permitted in transition or animation declarations.
 - Hover and active feedback must not use scale-based enlargement; use restrained spatial translation within the stated movement limits.
 - One-time entrances may use opacity and short spatial translation. Reduced-motion preferences must suppress nonessential movement.
+
+
+## Canonical timing values
+
+- Micro feedback: `--motion-micro` (160ms).
+- Standard interaction: `--motion-standard` (240ms).
+- Emphasis feedback: `--motion-emphasis` (420ms).
+- Reveal and section transitions: `--motion-reveal` (560ms) and `--motion-section` (720ms).
+- Notification cascade step: `--motion-stagger-step` (55ms).
+- Registry marquee: `--motion-registry-loop` (42s), with mobile/reduced-motion behaviour remaining non-animated or manually scrollable.
+
+## Pattern applicability boundary
+
+The previously discussed 18-pattern microinteraction catalogue is illustrative and proposed, not a mandate to add unrelated product features. Apply motion patterns to existing Valoria components and journeys. Do not introduce new payment or checkout flows, map pins, file-drop tools, photo viewers, speed dials, or long-press actions solely to satisfy a generic pattern list. Preserve approved product workflows and implement only interactions that have a real Valoria use case.
