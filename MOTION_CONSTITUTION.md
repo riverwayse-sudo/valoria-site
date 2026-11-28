@@ -46,3 +46,27 @@ Motion is part of Valoria's institutional identity. It must communicate hierarch
 - Multiple GSAP/CSS/inline implementations for the same interaction.
 - Arbitrary durations and easing values.
 - Motion that changes layout dimensions.
+
+## Interaction state contract
+
+Every interactive component must define the states that apply to its role, using the shared component and accessibility conventions:
+
+1. **Idle** — available and ready for interaction.
+2. **Hover** — pointer-only feedback; never the only way to discover or operate a control.
+3. **Focus** — visible keyboard focus with an equivalent action path.
+4. **Active** — immediate acknowledgement of activation or selection.
+5. **Loading** — pending work is explicit; duplicate submission is prevented where appropriate.
+6. **Success** — completion is communicated clearly.
+7. **Error** — failure is specific, perceivable and recoverable.
+8. **Disabled** — unavailable controls do not retain hover or active movement.
+9. **Recovery** — retry or resume preserves valid user context and saved progress.
+
+Not every component needs every state. Each applicable state must be semantic, accessible and consistent with its function. Colour or animation alone must never be the only state signal.
+
+Assessment-specific contracts:
+- Answer options expose their selected state semantically and acknowledge activation immediately.
+- Submission exposes pending state accessibly and preserves the control's position and dimensions.
+- Progress reflects persisted journey state; it must not expose internal question counts.
+- Resume and recovery must preserve saved progress rather than visually implying a reset.
+
+The previously mentioned catalogue of 18 microinteraction patterns was not enumerated in the approved source material. Do not claim that all 18 are implemented until that catalogue is explicitly specified and individually verified.
