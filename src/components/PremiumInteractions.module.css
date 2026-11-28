@@ -1,5 +1,5 @@
 .premiumTrigger {
-  transition: filter .2s ease, transform .2s ease, box-shadow .2s ease !important;
+  transition: filter var(--motion-standard) var(--motion-ease), transform var(--motion-standard) var(--motion-ease), box-shadow var(--motion-standard) var(--motion-ease) !important;
 }
 
 .premiumTrigger:hover:not(:disabled) {
