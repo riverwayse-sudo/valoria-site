@@ -2,6 +2,11 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { chromium } from 'playwright'
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+const axeSource = await fs.readFile(require.resolve('axe-core/axe.min.js'), 'utf8')
+const accessibilityRoutes = new Set(['homepage', 'marketplace', 'marketplace-talent', 'marketplace-speakers', 'marketplace-facilitators', 'valu', 'valu-start', 'valu-register', 'professional-signup-account-first', 'login', 'signup', 'about', 'prime', 'programmes', 'events', 'contact-us', 'privacy-policy', 'terms-of-use'])
 
 const SITE = process.env.STAGING_SITE_URL || 'https://staging.valoriainstitute.com'
 const ASSESSMENT = process.env.STAGING_ASSESSMENT_URL || 'https://assessment-staging.valoriainstitute.com'
@@ -54,6 +59,9 @@ const routes = [
   { name: 'assessment-host', url: `${ASSESSMENT}/`, site: false },
   { name: 'assessment-account-first-taster-gate', url: `${ASSESSMENT}/valu/assessment/?journey=account-first#taster_start_code=staging-invalid-probe`, site: false },
 ]
+const selectedRoutes = process.env.STAGING_AUDIT_MODE === 'focused'
+  ? routes.filter(route => accessibilityRoutes.has(route.name))
+  : routes
 const visualRoutes = new Set([
   'homepage',
   'marketplace',
@@ -93,6 +101,7 @@ const report = {
   assessment: ASSESSMENT,
   viewports: viewports.map(({name,width,height}) => ({name,width,height})),
   results: [],
+  accessibilityAudits: [],
   profileCardPreviews: [],
   failures: [],
 }
@@ -100,7 +109,7 @@ await fs.mkdir(OUT, { recursive: true })
 const browser = await chromium.launch({ headless: true })
 
 try {
-  for (const route of routes) {
+  for (const route of selectedRoutes) {
     for (const viewport of viewports) {
       const context = await browser.newContext({
         viewport: { width: viewport.width, height: viewport.height },
@@ -109,6 +118,7 @@ try {
         hasTouch: viewport.isMobile,
       })
       const page = await context.newPage()
+      if (accessibilityRoutes.has(route.name)) await page.addInitScript({ content: axeSource })
       const pageErrors = []
       const consoleErrors = []
       const forbiddenRequests = []
@@ -154,6 +164,53 @@ try {
         window.scrollTo({ top: 0, behavior: 'auto' })
       })
       await page.waitForTimeout(150)
+
+      if (accessibilityRoutes.has(route.name)) {
+        const scan = await page.evaluate(async () => {
+          try {
+            const result = await Promise.race([
+              window.axe.run(document, {
+                runOnly: {
+                  type: 'tag',
+                  values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'],
+                },
+                iframes: false,
+                timeout: 10000,
+                resultTypes: ['violations'],
+              }),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('axe scan exceeded 12 seconds')), 12000)),
+            ])
+            return {
+              scanError: null,
+              violations: result.violations.map(violation => ({
+                id: violation.id,
+                impact: violation.impact,
+                help: violation.help,
+                helpUrl: violation.helpUrl,
+                nodeCount: violation.nodes.length,
+                nodes: violation.nodes.slice(0, 25).map(node => ({
+                  target: node.target,
+                  html: node.html.slice(0, 240),
+                  failureSummary: node.failureSummary,
+                })),
+              })),
+            }
+          } catch (error) {
+            return { scanError: error.message, violations: [] }
+          }
+        })
+        const seriousOrCritical = scan.violations.filter(item => ['serious', 'critical'].includes(item.impact)).length
+        report.accessibilityAudits.push({
+          route: route.name,
+          viewport: viewport.name,
+          scanError: scan.scanError,
+          violations: scan.violations,
+          violationCount: scan.violations.length,
+          seriousOrCritical,
+        })
+        if (scan.scanError) report.failures.push(`${route.name}/${viewport.name}: accessibility scan failed — ${scan.scanError}`)
+        if (seriousOrCritical) report.failures.push(`${route.name}/${viewport.name}: serious/critical WCAG violations (${seriousOrCritical})`)
+      }
 
       const state = await page.evaluate(() => {
         const robots = document.querySelector('meta[name="robots"]')?.content || ''
@@ -429,7 +486,7 @@ try {
 }
 
 await fs.writeFile(path.join(OUT, 'report.json'), JSON.stringify(report, null, 2))
-console.log(JSON.stringify({ pages: report.results.length, failures: report.failures, output: OUT }, null, 2))
+console.log(JSON.stringify({ pages: report.results.length, accessibilityAudits: report.accessibilityAudits.length, accessibilityViolations: report.accessibilityAudits.reduce((sum, item) => sum + item.violationCount, 0), failures: report.failures, output: OUT }, null, 2))
 if (report.failures.length) process.exitCode = 1
 
 // Re-run after the staging assessment Worker refresh so the current deployed banner and form are captured.
