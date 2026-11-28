@@ -282,6 +282,13 @@ try {
           overflowingCards,
           revealState,
           analyticsLoaded: Boolean(window.gtag || window.fbq),
+          cookieConsent: {
+            bannerVisible: Boolean(document.querySelector('[aria-label="Cookie preferences"]')),
+            acceptButton: [...document.querySelectorAll('button')].some(button => button.innerText.trim() === 'ACCEPT ALL'),
+            rejectButton: [...document.querySelectorAll('button')].some(button => button.innerText.trim() === 'REJECT OPTIONAL'),
+            preferencesButton: [...document.querySelectorAll('button')].some(button => button.innerText.trim() === 'PREFERENCES'),
+            optionalScriptsLoaded: Boolean(document.querySelector('script[data-valoria-analytics], script[src*="googletagmanager.com/gtag/js"], script[src*="connect.facebook.net/en_US/fbevents.js"]')),
+          },
           literalNewlineVisible,
           visibleInternalTerms,
           assessmentSiteLinks: [navBrand, navDashboard].filter(Boolean),
@@ -328,6 +335,33 @@ try {
       if (route.name === 'auth-confirm-legacy' && state.confirmationNext !== '/auth/callback?valu_taster=1') report.failures.push(`${route.name}/${viewport.name}: legacy confirmation callback flag was not preserved`)
       if (route.name === 'auth-confirm-post-taster' && state.confirmationNext !== `/auth/callback?pending_taster_id=${POST_TASTER_ID}`) report.failures.push(`${route.name}/${viewport.name}: completed Taster reference was not preserved through confirmation`)
       if (state.analyticsLoaded) report.failures.push(`${route.name}/${viewport.name}: production analytics loaded in staging`)
+      if (route.name === 'homepage') {
+        if (!state.cookieConsent?.bannerVisible || !state.cookieConsent.acceptButton || !state.cookieConsent.rejectButton || !state.cookieConsent.preferencesButton) {
+          report.failures.push(`${route.name}/${viewport.name}: first-visit cookie consent banner is incomplete`)
+        }
+        if (state.cookieConsent?.optionalScriptsLoaded) report.failures.push(`${route.name}/${viewport.name}: optional tracking script loaded before consent`)
+        try {
+          await page.getByRole('button', { name: 'PREFERENCES', exact: true }).click()
+          const dialog = page.getByRole('dialog', { name: 'Cookie preferences' })
+          if (!(await dialog.isVisible())) throw new Error('cookie preferences dialog did not open')
+          await dialog.getByRole('button', { name: 'REJECT OPTIONAL', exact: true }).click()
+          const savedChoice = await page.evaluate(() => {
+            const item = document.cookie.split('; ').find(value => value.startsWith('vi_optional_tracking_consent='))
+            if (!item) return false
+            try {
+              const value = JSON.parse(decodeURIComponent(item.slice('vi_optional_tracking_consent='.length)))
+              return value.analytics === false && value.marketing === false
+            } catch { return false }
+          })
+          if (!savedChoice) throw new Error('reject-optional choice was not persisted')
+          if (await page.evaluate(() => Boolean(window.gtag || window.fbq))) throw new Error('optional analytics globals appeared after rejection')
+          await page.getByRole('button', { name: 'Cookie Preferences', exact: true }).click()
+          if (!(await page.getByRole('dialog', { name: 'Cookie preferences' }).isVisible())) throw new Error('footer cookie preferences control did not reopen the dialog')
+          await page.getByRole('dialog', { name: 'Cookie preferences' }).getByRole('button', { name: 'CANCEL', exact: true }).click()
+        } catch (error) {
+          report.failures.push(`${route.name}/${viewport.name}: cookie consent interaction failed — ${error.message}`)
+        }
+      }
       if (forbiddenRequests.length) report.failures.push(`${route.name}/${viewport.name}: production Supabase/assessment request detected`)
       if (state.literalNewlineVisible && route.name.startsWith('assessment-')) report.failures.push(`${route.name}/${viewport.name}: literal \\n text is visible in the assessment UI`)
       if (!['terms-of-use', 'terms-legacy', 'privacy-policy', 'privacy-legacy'].includes(route.name) && state.visibleInternalTerms?.length) report.failures.push(`${route.name}/${viewport.name}: internal participant copy is visible: ${state.visibleInternalTerms.join(', ')}`)
