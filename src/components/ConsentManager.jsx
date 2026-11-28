@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const COOKIE_NAME = 'vi_optional_tracking_consent'
 const EMPTY = { analytics: false, marketing: false }
@@ -62,6 +62,7 @@ export default function ConsentManager({ gaMeasurementId = null, metaPixelId = n
   const [consent, setConsent] = useState(null)
   const [preferencesOpen, setPreferencesOpen] = useState(false)
   const [draft, setDraft] = useState(EMPTY)
+  const dialogRef = useRef(null)
 
   useEffect(() => {
     const stored = readConsent()
@@ -82,6 +83,36 @@ export default function ConsentManager({ gaMeasurementId = null, metaPixelId = n
     if (consent.marketing) loadMarketing(metaPixelId)
     else if (typeof window.fbq === 'function') window.fbq('consent', 'revoke')
   }, [consent, gaMeasurementId, metaPixelId])
+
+  useEffect(() => {
+    if (!preferencesOpen) return
+    const previousFocus = document.activeElement
+    const dialog = dialogRef.current
+    dialog?.focus()
+    function onKeyDown(event) {
+      if (event.key === 'Escape') {
+        setPreferencesOpen(false)
+        return
+      }
+      if (event.key !== 'Tab' || !dialog) return
+      const focusable = dialog.querySelectorAll('button:not([disabled]), input:not([disabled])')
+      if (!focusable.length) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      previousFocus?.focus?.()
+    }
+  }, [preferencesOpen])
 
   function choose(value) {
     saveConsent(value)
@@ -108,7 +139,7 @@ export default function ConsentManager({ gaMeasurementId = null, metaPixelId = n
 
   return preferencesOpen ? (
     <div style={styles.backdrop} role="presentation">
-      <section role="dialog" aria-modal="true" aria-labelledby="cookie-title" style={styles.dialog}>
+      <section ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="cookie-title" style={styles.dialog}>
         <p style={styles.kicker}>VALORIA INSTITUTE · PRIVACY</p>
         <h2 id="cookie-title" style={styles.dialogTitle}>Cookie preferences</h2>
         <p style={styles.description}>Choose whether Valoria may use optional analytics and marketing technologies. Essential cookies are always active because they support core site functions.</p>
