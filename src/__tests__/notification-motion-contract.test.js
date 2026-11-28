@@ -31,7 +31,8 @@ describe('notification micro-interaction contract', () => {
   test('bell, panel and rows use canonical timing and support reduced motion', () => {
     const motion = read('src/styles/motion.css')
     expect(motion).toContain('@keyframes vi-notification-bell-swing')
-    expect(motion).toContain('vi-notification-bell-swing 760ms var(--motion-ease)')
+    expect(motion).toContain('50% { transform: rotate(8deg); }')
+    expect(motion).toContain('vi-notification-bell-swing var(--motion-emphasis) var(--motion-ease)')
     expect(motion).toContain('animation: vi-notification-panel-enter var(--motion-standard) var(--motion-ease)')
     expect(motion).toContain('animation: vi-notification-item-enter var(--motion-standard) var(--motion-ease)')
     expect(motion).toContain('@media (prefers-reduced-motion: reduce)')
