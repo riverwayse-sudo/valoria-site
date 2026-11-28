@@ -28,11 +28,11 @@ const sections = [
   },
   {
     title: '4. Legal basis for processing',
-    body: `Under the Nigeria Data Protection Act 2023 (NDPA), we process your data on the following bases:\n\n• Contract: processing necessary to provide the services you have requested.\n• Legitimate interest: platform security, fraud prevention, and service improvement.\n• Consent: for any processing not covered above — including marketplace listing and AI report generation. You may withdraw consent at any time by contacting us.`,
+    body: `Under the Nigeria Data Protection Act 2023 (NDPA), we process your data on the following bases:\n\n• Contract: processing necessary to provide the services you have requested.\n• Legitimate interest: platform security, fraud prevention, and service improvement.\n• Consent: for processing that requires your permission — including public marketplace display, AI report generation where applicable, and optional analytics or marketing technologies. You may change optional cookie choices through Cookie Preferences or withdraw other consent by contacting us.`,
   },
   {
     title: '5. Who we share data with',
-    body: `We do not sell your personal data. We share data only with:\n\n• Supabase (database and authentication infrastructure) — your data is stored on their servers under data processing agreements.\n• Anthropic (AI report generation) — your anonymised VALU Index score profile is sent to generate your AI report. No personally identifiable information is sent.\n• Resend (transactional email) — your email address is used solely to send verification and notification emails.\n\nWe do not share your contact details, assessment answers, or personal information with employers, organisers, or other platform users. All introductions are facilitated by Valoria Institute staff.`,
+    body: `We do not sell your personal data. We share data only with:\n\n• Supabase (database and authentication infrastructure) — your data is stored on their servers under data processing agreements.\n• Anthropic (AI report generation) — your anonymised VALU Index score profile is sent to generate your AI report. No personally identifiable information is sent.\n• Resend (transactional email) — your email address is used to send verification and notification emails.\n• Google Analytics 4 (Google LLC) — site usage, device/browser and interaction data are processed only if you enable analytics cookies.\n• Meta Pixel (Meta Platforms, Inc.) — campaign and site-interaction events are processed only if you enable marketing cookies.\n\nGoogle Analytics and Meta Pixel are not loaded before the corresponding optional consent is given. We do not share your contact details or assessment answers with employers, organisers, or other platform users. All introductions are facilitated by Valoria Institute staff.`,
   },
   {
     title: '6. How long we keep your data',
@@ -44,7 +44,7 @@ const sections = [
   },
   {
     title: '8. Cookies and tracking',
-    body: `We use a single functional cookie (vi_waitlist_v2) to remember that you have registered for the waitlist and allow you to access the platform. This is a strictly necessary cookie and does not track you across other websites.\n\nWe do not use advertising cookies, third-party tracking, or analytics cookies on this platform.`,
+    body: `We use essential first-party cookies where required for account access, security and core site functions. These are necessary for the service to operate.\n\nOptional analytics and marketing technologies are disabled by default. Google Analytics 4 is loaded only after you enable Analytics, and Meta Pixel is loaded only after you enable Marketing. Your choices are stored in a first-party consent cookie. If you reject optional technologies, neither service is loaded.\n\nYou can change or withdraw your optional cookie choices at any time using Cookie Preferences in the site footer.`,
   },
   {
     title: '9. Data security',
