@@ -73,11 +73,10 @@ function dedupeProfessionals(rows) {
       })
     }
     const target = map.get(row.professional_id)
-    const values = [
-      ...(Array.isArray(row.capabilities) ? row.capabilities : []),
-      row.capability,
-      row.track,
-    ].map(normalizeTrack).filter(Boolean)
+    // Only the canonical capabilities projection is evidence-approved.
+    // Legacy row-level capability/track fields are not trusted for specialist placement.
+    const values = (Array.isArray(row.capabilities) ? row.capabilities : [])
+      .map(normalizeTrack).filter(Boolean)
     const selectedValues = (Array.isArray(row.selected_capabilities) ? row.selected_capabilities : [])
       .map(normalizeTrack).filter(Boolean)
     target.capabilities = [...new Set([...target.capabilities, ...values])]
