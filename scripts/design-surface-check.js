@@ -121,6 +121,7 @@ for (const file of cssFiles) {
     const property = declaration[1];
     const value = declaration[2];
     if (/^\s*none\b/.test(value)) continue;
+    if (property === 'transition' && /^\s*all\b/i.test(value)) failures.push(path.relative(root, file) + ': transition: all is prohibited; enumerate the properties being animated.');
     if (property === 'transition' && /^\s*var\(/.test(value)) failures.push(path.relative(root, file) + ': transitions must name the properties they animate explicitly.');
     const withoutZeroTimes = value.replace(/\b0(?:\.0+)?s\b/g, '').replace(/\b0(?:\.0+)?ms\b/g, '');
     const rawTime = /(^|[^\w-])\d*\.?\d+(?:ms|s)\b/.test(withoutZeroTimes);
