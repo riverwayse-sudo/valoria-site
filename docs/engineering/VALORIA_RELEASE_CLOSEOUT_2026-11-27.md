@@ -140,6 +140,7 @@ This addendum supersedes the earlier release and production snapshots in this do
 ### Release candidates and staging evidence
 
 - AI report generation was hardened to remove participant name and role from the Anthropic prompt and from the report-generation lookup. Only aggregate score, canonical designation, cluster scores and skill scores are sent; the new regression test protects the boundary. No production report was regenerated.
+- The event-state contract now gives an explicit manual end precedence over future start dates and prior-session locks. The 14 November replay remains available as completed, the unapproved 5 December session remains unpublished, and the homepage no longer mounts the expired event popup; regression tests cover these states.
 
 
 - Site release PR #512 remains open and unmerged. Its current branch includes the five source-approved VALU designations, evidence-approved specialist directory filtering, declared-capability card labels, expired-event correction, privacy/consent copy and route/accessibility hardening. Current branch CI, security checks, production build and Cloudflare Worker bundling passed.
