@@ -17,7 +17,9 @@
 .reveal {
   opacity: 0;
   transform: translate3d(0,var(--motion-distance),0);
-  transition: opacity var(--motion-reveal) var(--motion-var(--motion-ease)), transform var(--motion-reveal) var(--motion-var(--motion-ease));
+  transition:
+    opacity var(--motion-reveal) var(--motion-ease),
+    transform var(--motion-reveal) var(--motion-ease);
   will-change: opacity, transform;
 }
 .reveal.visible {
@@ -32,7 +34,7 @@
 .au {
   opacity: 0;
   transform: translate3d(0,var(--motion-distance-large),0);
-  animation: valoria-enter var(--motion-reveal) var(--motion-var(--motion-ease)) forwards;
+  animation: valoria-enter var(--motion-reveal) var(--motion-ease) forwards;
 }
 .d1 { animation-delay: 60ms; }
 .d2 { animation-delay: 120ms; }
@@ -57,7 +59,12 @@
 .card,
 .vi-card,
 .event-card {
-  transition: transform var(--motion-standard) var(--motion-var(--motion-ease)), background-color var(--motion-standard) var(--motion-var(--motion-ease)), border-color var(--motion-standard) var(--motion-var(--motion-ease)), color var(--motion-standard) var(--motion-var(--motion-ease)), box-shadow var(--motion-standard) var(--motion-var(--motion-ease));
+  transition:
+    transform var(--motion-standard) var(--motion-ease),
+    background-color var(--motion-standard) var(--motion-ease),
+    border-color var(--motion-standard) var(--motion-ease),
+    color var(--motion-standard) var(--motion-ease),
+    box-shadow var(--motion-standard) var(--motion-ease);
 }
 
 .btn-gold:hover,
@@ -70,7 +77,7 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .hero-scroll-cue svg { animation: valoria-scroll-cue 1800ms var(--motion-var(--motion-ease)) infinite; }
+  .hero-scroll-cue svg { animation: valoria-scroll-cue 1800ms var(--motion-ease) infinite; }
   @keyframes valoria-scroll-cue {
     0%,100% { transform: translate3d(0,0,0); opacity: .55; }
     50% { transform: translate3d(0,5px,0); opacity: 1; }
@@ -80,16 +87,24 @@
 .hero-slider .hero-slide {
   opacity: 0;
   transform: translate3d(var(--motion-distance),0,0);
-  transition: opacity var(--motion-section) var(--motion-var(--motion-ease)), transform var(--motion-section) var(--motion-var(--motion-ease)), visibility 0ms linear var(--motion-section);
+  transition:
+    opacity var(--motion-section) var(--motion-ease),
+    transform var(--motion-section) var(--motion-ease),
+    visibility 0ms linear var(--motion-section);
 }
 .hero-slider .hero-slide.is-active {
   opacity: 1;
   transform: translate3d(0,0,0);
-  transition: opacity var(--motion-section) var(--motion-var(--motion-ease)), transform var(--motion-section) var(--motion-var(--motion-ease)), visibility 0ms linear;
+  transition:
+    opacity var(--motion-section) var(--motion-ease),
+    transform var(--motion-section) var(--motion-ease),
+    visibility 0ms linear;
 }
 
 .hero-slider-dot {
-  transition: width var(--motion-standard) var(--motion-var(--motion-ease)), background-color var(--motion-standard) var(--motion-var(--motion-ease));
+  transition:
+    width var(--motion-standard) var(--motion-ease),
+    background-color var(--motion-standard) var(--motion-ease);
 }
 
 @media (hover:hover) and (pointer:fine) {
@@ -130,18 +145,23 @@ nav.vi-nav.scrolled,
 .nav-burger span,
 .uf-links a,
 .uf-links button {
-  transition: background-color var(--motion-standard) var(--motion-var(--motion-ease)), color var(--motion-standard) var(--motion-var(--motion-ease)), border-color var(--motion-standard) var(--motion-var(--motion-ease)), box-shadow var(--motion-standard) var(--motion-var(--motion-ease)), transform var(--motion-standard) var(--motion-var(--motion-ease));
+  transition:
+    background-color var(--motion-standard) var(--motion-ease),
+    color var(--motion-standard) var(--motion-ease),
+    border-color var(--motion-standard) var(--motion-ease),
+    box-shadow var(--motion-standard) var(--motion-ease),
+    transform var(--motion-standard) var(--motion-ease);
 }
-.nav-dropdown{transition: opacity var(--motion-standard) var(--motion-var(--motion-ease)), transform var(--motion-standard) var(--motion-var(--motion-ease)), visibility 0s linear var(--motion-standard)}
-.nav-dropdown.open{transition:opacity var(--motion-standard) var(--motion-var(--motion-ease)), transform var(--motion-standard) var(--motion-var(--motion-ease)), visibility 0s linear 0s}
-.nav-cta:hover { transform: translate3d(0, -1px var(--motion-ease), 0) var(--motion-ease); }
+.nav-dropdown{transition:opacity var(--motion-standard) var(--motion-ease),transform var(--motion-standard) var(--motion-ease),visibility 0s linear var(--motion-standard)}
+.nav-dropdown.open{transition:opacity var(--motion-standard) var(--motion-ease),transform var(--motion-standard) var(--motion-ease),visibility 0s linear 0s}
+.nav-cta:hover { transform: translate3d(0,-1px,0); }
 .nav-burger.open span:nth-child(1) { transform: translate3d(0,6.5px,0) rotate(45deg); }
 .nav-burger.open span:nth-child(3) { transform: translate3d(0,-6.5px,0) rotate(-45deg); }
 
 /* Homepage interaction motion — timing remains canonical. */
-.hero-slider-dot { transition: background-color var(--motion-standard) var(--motion-var(--motion-ease)); }
-.ps-card { transition: transform var(--motion-standard) var(--motion-var(--motion-ease)), border-color var(--motion-standard) var(--motion-var(--motion-ease)), box-shadow var(--motion-standard) var(--motion-var(--motion-ease)); }
-.ps-card-cta { transition: background-color var(--motion-standard) var(--motion-var(--motion-ease)), border-color var(--motion-standard) var(--motion-var(--motion-ease)), transform var(--motion-standard) var(--motion-var(--motion-ease)); }
+.hero-slider-dot { transition: background-color var(--motion-standard) var(--motion-ease); }
+.ps-card { transition: transform var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), box-shadow var(--motion-standard) var(--motion-ease); }
+.ps-card-cta { transition: background-color var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), transform var(--motion-standard) var(--motion-ease); }
 /* Pointer-specific hover rules are defined in the touch-safe block below. */
 .vi-scroll-track { animation: vi-scroll-x var(--motion-registry-loop) linear infinite; }
 @keyframes vi-scroll-x { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
@@ -162,7 +182,13 @@ nav.vi-nav.scrolled,
 .flyer-expand,
 .session-series-primary,
 .session-series-secondary {
-  transition: transform var(--motion-standard) var(--motion-var(--motion-ease)), opacity var(--motion-standard) var(--motion-var(--motion-ease)), background-color var(--motion-standard) var(--motion-var(--motion-ease)), border-color var(--motion-standard) var(--motion-var(--motion-ease)), color var(--motion-standard) var(--motion-var(--motion-ease)), width var(--motion-standard) var(--motion-var(--motion-ease));
+  transition:
+    transform var(--motion-standard) var(--motion-ease),
+    opacity var(--motion-standard) var(--motion-ease),
+    background-color var(--motion-standard) var(--motion-ease),
+    border-color var(--motion-standard) var(--motion-ease),
+    color var(--motion-standard) var(--motion-ease),
+    width var(--motion-standard) var(--motion-ease);
 }
 @media (prefers-reduced-motion: reduce) {
   .session-showcase-actions button,
@@ -173,7 +199,7 @@ nav.vi-nav.scrolled,
   .session-series-flyer img,
   .flyer-expand,
   .session-series-primary,
-  .session-series-secondary { transition: none; }
+  .session-series-secondary { transition:none; }
 }
 
 
@@ -206,7 +232,7 @@ nav.vi-nav.scrolled,
 .notification-bell-trigger:hover .notification-bell-icon,
 .notification-bell-trigger:focus-visible .notification-bell-icon,
 .notification-bell-trigger[aria-expanded="true"] .notification-bell-icon {
-  animation: vi-notification-bell-swing 760ms var(--motion-var(--motion-ease)) both;
+  animation: vi-notification-bell-swing 760ms var(--motion-ease) both;
 }
 @keyframes vi-notification-panel-enter {
   from { opacity: 0; transform: translate3d(0,-7px,0) scale(.985); }
@@ -214,14 +240,14 @@ nav.vi-nav.scrolled,
 }
 #vi-notification-panel {
   transform-origin: top right;
-  animation: vi-notification-panel-enter var(--motion-standard) var(--motion-var(--motion-ease)) both;
+  animation: vi-notification-panel-enter var(--motion-standard) var(--motion-ease) both;
 }
 @keyframes vi-notification-item-enter {
   from { opacity: 0; transform: translate3d(0,8px,0); }
   to { opacity: 1; transform: translate3d(0,0,0); }
 }
 .vi-notification-item {
-  animation: vi-notification-item-enter var(--motion-standard) var(--motion-var(--motion-ease)) both;
+  animation: vi-notification-item-enter var(--motion-standard) var(--motion-ease) both;
 }
 @media (prefers-reduced-motion: reduce) {
   .notification-bell-trigger:hover .notification-bell-icon,
