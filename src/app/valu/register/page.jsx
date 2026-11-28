@@ -216,7 +216,7 @@ const styles = {
   primary: { width: '100%', minHeight: 48, border: 0, borderRadius: 999, background: GOLD, color: DARK, fontSize: 10, fontWeight: 900, letterSpacing: '.12em', cursor: 'pointer', marginTop: 6 },
   secondary: { width: '100%', minHeight: 44, border: '1px solid rgba(201,168,76,.35)', borderRadius: 999, background: 'transparent', color: GOLD, fontSize: 10, fontWeight: 800, letterSpacing: '.1em', cursor: 'pointer' },
   inlineLink: { color: GOLD, textDecoration: 'underline' },
-  small: { color: 'rgba(247,244,238,.42)', fontSize: 11, lineHeight: 1.65, marginTop: 14 },
+  small: { color: '#B8B6BF', fontSize: 11, lineHeight: 1.65, marginTop: 14 },
   error: { color: '#F0A5A5', fontSize: 12, lineHeight: 1.6 },
   notice: { color: '#D4C9A8', fontSize: 12, lineHeight: 1.6 },
 }

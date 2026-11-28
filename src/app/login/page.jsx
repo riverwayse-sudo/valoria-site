@@ -383,14 +383,14 @@ export default function LoginPage() {
         </form>
         )}
 
-        <div style={{ marginTop: '18px', fontSize: '12px', color: 'rgba(247,244,238,.4)', textAlign: 'center', lineHeight: 1.8 }}>
+        <div style={{ marginTop: '18px', fontSize: '12px', color: '#B8B6BF', textAlign: 'center', lineHeight: 1.8 }}>
           <p style={{ margin: '0 0 4px' }}>
             Employer or organiser?{' '}
             <Link href="/signup" style={{ color: GOLD }}>Create account</Link>
           </p>
           <p style={{ margin: 0 }}>
             Talent or speaker?{' '}
-            <a href="https://valoriainstitute.com/valu/register/?journey=valu_taster" target="_blank" rel="noopener noreferrer" style={{ color: GOLD }}>Take the VALU Index</a>
+            <a href="/valu/register/?journey=valu_taster" style={{ color: GOLD }}>Take the VALU Index</a>
           </p>
         </div>
       </div>
@@ -421,14 +421,14 @@ const styles = {
   eyebrowLine: { flex: 1, height: '1px', background: 'rgba(201,168,76,.3)' },
   eyebrowText: { fontSize: '10px', fontWeight: 700, letterSpacing: '.16em', color: GOLD },
   title: { fontSize: 'clamp(28px,4vw,42px)', fontWeight: 200, color: PARCHMENT, lineHeight: 1.1, marginBottom: '12px', letterSpacing: '-.02em' },
-  sub: { fontSize: '14px', fontWeight: 300, color: 'rgba(247,244,238,.5)', marginBottom: '22px', lineHeight: 1.6 },
+  sub: { fontSize: '14px', fontWeight: 300, color: '#B8B6BF', marginBottom: '22px', lineHeight: 1.6 },
   form: { display: 'flex', flexDirection: 'column', gap: '12px' },
   field: { display: 'flex', flexDirection: 'column', gap: '6px' },
-  label: { fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: 'rgba(247,244,238,.5)', textTransform: 'uppercase' },
+  label: { fontSize: '11px', fontWeight: 700, letterSpacing: '.1em', color: '#B8B6BF', textTransform: 'uppercase' },
   input: { padding: '12px 14px', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(201,168,76,.2)', borderRadius: '6px', color: PARCHMENT, fontSize: '14px', fontFamily: "'Raleway', sans-serif", outline: 'none' },
   btnGold: { display: 'block', width: '100%', padding: '14px', background: GOLD, color: MIDNIGHT, fontSize: '12px', fontWeight: 700, letterSpacing: '.14em', borderRadius: '999px', border: 'none', cursor: 'pointer', textAlign: 'center', textDecoration: 'none', fontFamily: "'Raleway', sans-serif", marginTop: '8px' },
-  forgotBtn: { background: 'none', border: 'none', color: 'rgba(247,244,238,.4)', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline', textAlign: 'center', padding: '4px' },
+  forgotBtn: { background: 'none', border: 'none', color: '#B8B6BF', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline', textAlign: 'center', padding: '4px' },
   errorBox: { padding: '12px 14px', background: 'rgba(216,90,48,.12)', border: '1px solid rgba(216,90,48,.3)', borderRadius: '6px', fontSize: '13px', color: '#F09595' },
   successBox: { padding: '12px 14px', background: 'rgba(29,158,117,.12)', border: '1px solid rgba(29,158,117,.3)', borderRadius: '6px', fontSize: '13px', color: '#7FD9B8' },
-  loginLink: { marginTop: '24px', fontSize: '13px', color: 'rgba(247,244,238,.4)', textAlign: 'center' },
+  loginLink: { marginTop: '24px', fontSize: '13px', color: '#B8B6BF', textAlign: 'center' },
 }

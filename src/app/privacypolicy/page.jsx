@@ -78,7 +78,7 @@ export default function PrivacyPolicyPage() {
           <p style={{ fontSize: '15px', fontWeight: 300, color: DIM, lineHeight: 1.8, maxWidth: '560px' }}>
             African Talent Bureau Ltd is committed to protecting your personal data. This policy explains what we collect, why, and how — in plain language, compliant with the Nigeria Data Protection Act 2023.
           </p>
-          <p style={{ fontSize: '12px', color: 'rgba(247,244,238,.3)', marginTop: '16px' }}>
+          <p style={{ fontSize: '12px', color: '#B8B6BF', marginTop: '16px' }}>
             Last updated: 1 July 2026 · NDPA 2023 Compliant
           </p>
         </section>

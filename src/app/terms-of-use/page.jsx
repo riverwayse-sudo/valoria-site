@@ -86,7 +86,7 @@ export default function TermsPage() {
           <p style={{ fontSize: '15px', fontWeight: 300, color: DIM, lineHeight: 1.8, maxWidth: '560px' }}>
             These terms govern your use of Valoria Institute — the marketplace, the VALU Index, and all associated services. They apply to all user types: professionals, employers, event organisers, and training buyers.
           </p>
-          <p style={{ fontSize: '12px', color: 'rgba(247,244,238,.3)', marginTop: '16px' }}>
+          <p style={{ fontSize: '12px', color: '#B8B6BF', marginTop: '16px' }}>
             Last updated: 1 July 2026 · Governing law: Federal Republic of Nigeria
           </p>
         </section>
