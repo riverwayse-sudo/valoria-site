@@ -331,11 +331,14 @@ describe('journey integrity contract', () => {
     ]) expect(source).toContain(marker)
   })
   
-  test('marketplace uses the canonical public roster and counts multi-capability professionals uniquely', () => {
+  test('marketplace uses the canonical public roster and counts evidence-approved capabilities uniquely', () => {
     const source = read('src/lib/marketplace-data.js')
+    const visibility = read('src/lib/marketplace-capability-visibility.cjs')
     expect(source).toContain("const SOURCE = 'marketplace_public_roster'")
-    expect(source).toContain('new Set()')
-    expect(source).toContain('row.capabilities')
+    expect(source).toContain('countRowsByApprovedCapability(rows)')
+    expect(visibility).toContain('new Set()')
+    expect(visibility).toContain('row?.capabilities')
+    expect(visibility).not.toContain('row?.selectedCapabilities')
   })
 
   test('legacy PRIME color tokens are removed from the active design system', () => {
