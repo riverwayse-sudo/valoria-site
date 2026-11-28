@@ -74,7 +74,9 @@ try {
           null,
           { timeout: 8000 }
         );
-        if (document.fonts?.ready) await page.evaluate(() => document.fonts.ready);
+        await page.evaluate(async () => {
+          if (document.fonts?.ready) await document.fonts.ready;
+        });
         metrics = await page.evaluate(() => ({
           viewportWidth: window.innerWidth,
           documentWidth: document.documentElement.scrollWidth,
