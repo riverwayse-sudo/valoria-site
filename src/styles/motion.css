@@ -150,12 +150,10 @@ nav.vi-nav.scrolled,
 }
 .nav-dropdown{transition:opacity var(--motion-standard) var(--motion-ease),transform var(--motion-standard) var(--motion-ease),visibility 0s linear var(--motion-standard)}
 .nav-dropdown.open{transition:opacity var(--motion-standard) var(--motion-ease),transform var(--motion-standard) var(--motion-ease),visibility 0s linear 0s}
-.nav-cta:hover { transform: translate3d(0,-1px,0); }
 .nav-burger.open span:nth-child(1) { transform: translate3d(0,6.5px,0) rotate(45deg); }
 .nav-burger.open span:nth-child(3) { transform: translate3d(0,-6.5px,0) rotate(-45deg); }
 
 /* Homepage interaction motion — timing remains canonical. */
-.hero-slider-dot { transition: background-color var(--motion-standard) var(--motion-ease); }
 .ps-card { transition: transform var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), box-shadow var(--motion-standard) var(--motion-ease); }
 .ps-card-cta { transition: background-color var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), transform var(--motion-standard) var(--motion-ease); }
 /* Pointer-specific hover rules are defined in the touch-safe block below. */
