@@ -162,10 +162,19 @@ try {
         const reveals = [...document.querySelectorAll('.reveal')]
         for (const element of reveals) {
           element.scrollIntoView({ block: 'center', behavior: 'auto' })
-          await new Promise(resolve => setTimeout(resolve, 15))
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+          await new Promise(resolve => setTimeout(resolve, 80))
         }
         window.scrollTo({ top: 0, behavior: 'auto' })
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
       })
+      // Let the IntersectionObserver finish its final callbacks on mobile,
+      // where a 15ms per-element delay can race the reveal observer.
+      await page.waitForFunction(
+        () => [...document.querySelectorAll('.reveal')].every(element => element.classList.contains('visible')),
+        null,
+        { timeout: 5000 }
+      ).catch(() => {})
       await page.waitForTimeout(150)
 
       if (accessibilityRoutes.has(route.name)) {
@@ -256,6 +265,16 @@ try {
         const visibleInternalPattern = /(WANT TO BE DISCOVERED|Become discoverable|buyer access|sourcing access|BASIC LISTING|FULL LISTING|\b1 of 58\b|\b1 of 9\b|54 scored questions|four validity checks|nine[- ]questions?|9[- ]questions?|58[- ]questions?|55[- ]questions?|84 \/ 100|\b[0-9]+\s*\/\s*100\b)/gi
         const visibleInternalTerms = [...document.body.innerText.matchAll(visibleInternalPattern)].map(match => match[0])
         const revealElements = [...document.querySelectorAll('.reveal')]
+        const hiddenRevealItems = revealElements
+          .filter(element => !element.classList.contains('visible'))
+          .map(element => ({
+            tag: element.tagName.toLowerCase(),
+            className: String(element.className || ''),
+            text: (element.innerText || '').trim().replace(/\\s+/g, ' ').slice(0, 120),
+            parentClass: String(element.parentElement?.className || ''),
+            top: Math.round(element.getBoundingClientRect().top),
+            height: Math.round(element.getBoundingClientRect().height),
+          }))
         const revealState = { total: revealElements.length, visible: revealElements.filter(element => element.classList.contains('visible')).length }
         const track = document.querySelector('.vi-scroll-track')
         const panel = document.querySelector('.hero-event-panel')
@@ -284,6 +303,7 @@ try {
           } : null,
           overflowingCards,
           revealState,
+          hiddenRevealItems,
           analyticsLoaded: Boolean(window.gtag || window.fbq),
           cookieConsent: {
             bannerVisible: Boolean(document.querySelector('[aria-label="Cookie preferences"]')),
