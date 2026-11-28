@@ -116,11 +116,12 @@ const cssFiles = allSource.filter((file) => file.endsWith('.css'));
 for (const file of cssFiles) {
   const css = fs.readFileSync(file, 'utf8');
   if (/\bscale\s*\(/.test(css)) failures.push(path.relative(root, file) + ': remove hover/active scale feedback; use restrained translation.');
-  const declarations = [...css.matchAll(/(?:transition|animation)\s*:\s*([^;}]+)[;}]/g)];
+  const declarations = [...css.matchAll(/[;{]\s*(transition|animation)\s*:\s*([^;}]+)[;}]/g)];
   for (const declaration of declarations) {
-    const property = declaration[1];\n    const value = declaration[2];
+    const property = declaration[1];
+    const value = declaration[2];
     if (/^\s*none\b/.test(value)) continue;
-    if (/^\s*var\(/.test(value)) failures.push(path.relative(root, file) + ': transitions must name the properties they animate explicitly.');
+    if (property === 'transition' && /^\s*var\(/.test(value)) failures.push(path.relative(root, file) + ': transitions must name the properties they animate explicitly.');
     const withoutZeroTimes = value.replace(/\b0(?:\.0+)?s\b/g, '').replace(/\b0(?:\.0+)?ms\b/g, '');
     const rawTime = /(^|[^\w-])\d*\.?\d+(?:ms|s)\b/.test(withoutZeroTimes);
     const rawCurve = /cubic-bezier\(/.test(value) || /(^|[\s,])ease(?:-out|-in-out)?(?=[\s,;])/.test(value);
@@ -129,7 +130,6 @@ for (const file of cssFiles) {
     }
   }
 }
-
 for (const runtime of [/from ['"]gsap['"]/, /from ['"]lenis['"]/, /from ['"]animejs['"]/, /from ['"]motion(?:\/react)?['"]/]) {
   if (runtime.test(sourceText)) failures.push('Non-canonical motion runtime detected: ' + runtime);
 }
