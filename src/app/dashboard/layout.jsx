@@ -8,7 +8,7 @@ export const metadata = {
 export default function DashboardLayout({ children }) {
   return (
     <>
-      {children}
+      <main id="main-content">{children}</main>
       <ValoriaJourneyCards />
     </>
   )
