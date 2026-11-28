@@ -139,6 +139,9 @@ This addendum supersedes the earlier release and production snapshots in this do
 
 ### Release candidates and staging evidence
 
+- AI report generation was hardened to remove participant name and role from the Anthropic prompt and from the report-generation lookup. Only aggregate score, canonical designation, cluster scores and skill scores are sent; the new regression test protects the boundary. No production report was regenerated.
+
+
 - Site release PR #512 remains open and unmerged. Its current branch includes the five source-approved VALU designations, evidence-approved specialist directory filtering, declared-capability card labels, expired-event correction, privacy/consent copy and route/accessibility hardening. Current branch CI, security checks, production build and Cloudflare Worker bundling passed.
 - Platform release PR #310 remains open and unmerged. Its five-level designation contract and guarded database migration are ready; current branch CI and Cloudflare Worker validation passed.
 - Isolated platform staging PR #313 passed workflow `46144584836` on 28 November and deployed assessment Worker version 192. It passed 47 suites / 452 tests, Worker routing/CORS, Taster-first handoff, idempotent completion retry and desktop/tablet/mobile assessment design checks. The run used a synthetic `.example.com` address, created a Taster fixture only, created no Auth user or public profile, and sent no email.
