@@ -118,7 +118,7 @@ for (const file of cssFiles) {
   if (/\bscale\s*\(/.test(css)) failures.push(path.relative(root, file) + ': remove hover/active scale feedback; use restrained translation.');
   const declarations = [...css.matchAll(/(?:transition|animation)\s*:\s*([^;}]+)[;}]/g)];
   for (const declaration of declarations) {
-    const value = declaration[1];
+    const property = declaration[1];\n    const value = declaration[2];
     if (/^\s*none\b/.test(value)) continue;
     if (/^\s*var\(/.test(value)) failures.push(path.relative(root, file) + ': transitions must name the properties they animate explicitly.');
     const withoutZeroTimes = value.replace(/\b0(?:\.0+)?s\b/g, '').replace(/\b0(?:\.0+)?ms\b/g, '');
