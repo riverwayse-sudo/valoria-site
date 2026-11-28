@@ -115,7 +115,8 @@ export default function ConsentManager({ gaMeasurementId = null, metaPixelId = n
     if (!preferencesOpen) return
     const previousFocus = document.activeElement
     const dialog = dialogRef.current
-    dialog?.focus()
+    const firstControl = dialog?.querySelector('button:not([disabled]), input:not([disabled])')
+    firstControl?.focus()
     function onKeyDown(event) {
       if (event.key === 'Escape') {
         setPreferencesOpen(false)
