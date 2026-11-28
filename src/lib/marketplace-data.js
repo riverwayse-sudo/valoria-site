@@ -1,6 +1,7 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 import { BASE_FIELDS, FULL_FIELDS, isOptionalProjectionSchemaError } from './marketplace-projection-compat.cjs'
+import { filterRowsByApprovedCapability, countRowsByApprovedCapability } from './marketplace-capability-visibility.cjs'
 
 const SOURCE = 'marketplace_public_roster'
 
@@ -127,35 +128,13 @@ export async function getMarketplaceRows(track = 'all') {
     .map(row => row.assessmentAccess === 'basic'
       ? { ...row, valu_index: null, cluster_scores: null, assessment_summary: null, designation: null }
       : row)
-  // Directory placement is restricted to capabilities approved for public listing.
-  // selectedCapabilities are participant declarations and are displayed as declarations
-  // on the general profile card; they must never be treated as verified specialist supply.
-  // The canonical roster's capabilities array contains only evidence-approved placements.
-  return rows.filter(row => {
-    if (track === 'all') return true
-    const capability = normalizeTrack(track)
-    return row.capabilities.includes(capability)
-  })
+  // Directory placement is restricted to the canonical roster's evidence-approved
+  // capabilities. Participant selections remain descriptive profile data only.
+  return filterRowsByApprovedCapability(rows, track)
 }
 
 function countMarketplaceRows(rows) {
-  const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
-
-  for (const row of rows || []) {
-    // Counts represent only evidence-approved public directory placements.
-    // Participant-declared selections are intentionally excluded from supply counts.
-    const approvedCapabilities = row.capabilities || []
-    for (const capability of new Set(approvedCapabilities)) {
-      if (byTrack[capability]) byTrack[capability].add(row.professional_id)
-    }
-  }
-
-  return {
-    all: (rows || []).length,
-    candidate: byTrack.candidate.size,
-    speaker: byTrack.speaker.size,
-    facilitator: byTrack.facilitator.size,
-  }
+  return countRowsByApprovedCapability(rows)
 }
 
 export async function getMarketplaceCounts(existingRows) {
@@ -167,9 +146,7 @@ export async function getMarketplaceDirectoryData(track = 'all') {
   const allRows = await getMarketplaceRows('all')
   const normalizedTrack = normalizeTrack(track)
   return {
-    rows: normalizedTrack === 'all' ? allRows : allRows.filter(row =>
-      row.capabilities.includes(normalizedTrack)
-    ),
+    rows: filterRowsByApprovedCapability(allRows, normalizedTrack),
     counts: countMarketplaceRows(allRows),
   }
 }
