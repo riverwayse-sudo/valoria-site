@@ -122,4 +122,23 @@ describe('VALU presentation consistency', () => {
     expect(prototype).not.toMatch(/Question\s+\d+\s+of\s+\d+/i)
     expect(prototype).not.toMatch(/9 opening questions|remaining 49 questions|58 in total/i)
   })
+  test('login Taster entry remains on the current site origin', () => {
+    const login = read('src/app/login/page.jsx')
+    expect(login).toContain('href="/valu/register/?journey=valu_taster"')
+    expect(login).not.toContain('https://valoriainstitute.com/valu/register')
+  })
+
+  test('contact enquiry select has a programmatic label', () => {
+    const contact = read('src/app/contact-us/ContactForm.jsx')
+    expect(contact).toContain('htmlFor="inquiry-type"')
+    expect(contact).toContain('id="inquiry-type"')
+  })
+
+  test('light-surface gold labels use accessible contrast tokens', () => {
+    const pages = read('src/app/pages.css')
+    expect(pages).toContain('.events-page .page-kicker,.events-page .events-list-kicker{color:#806020}')
+    expect(pages).toContain('.contact-location{color:#1A1A2E')
+    expect(pages).toContain('.programme-label{font-size:11px;font-weight:700;letter-spacing:.1em;color:#806020')
+  })
+
 })

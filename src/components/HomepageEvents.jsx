@@ -47,7 +47,6 @@ export default function HomepageEvents() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={'Watch ' + featured.title + ' on YouTube'}
-                style={{ '--video-thumbnail': 'url(https://i.ytimg.com/vi/' + featured.youtubeVideoId + '/hqdefault.jpg)' }}
               >
                 <span className="home-events-play" aria-hidden="true">▶</span>
                 <span className="home-events-video-label">

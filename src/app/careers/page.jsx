@@ -18,14 +18,6 @@ export default function CareersPage() {
           <h1 className="page-title">Do work that creates <em>opportunity.</em></h1>
           <p className="page-sub">Explore our open role. Read the job description or open the application when you are ready.</p>
         </div>
-        <figure className="careers-hero-image">
-          <img
-            src="https://images.pexels.com/photos/30677719/pexels-photo-30677719/free-photo-of-professional-collaboration-in-lagos-office.jpeg?auto=compress&cs=tinysrgb&w=1400"
-            alt="Two professionals collaborating over a laptop in an office"
-            fetchPriority="high"
-          />
-          <figcaption>Good work starts with meaningful collaboration.</figcaption>
-        </figure>
       </div>
     </section>
 

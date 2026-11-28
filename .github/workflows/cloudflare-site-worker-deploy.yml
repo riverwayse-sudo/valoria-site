@@ -56,7 +56,7 @@ jobs:
 
       - name: Provide production build configuration
         run: |
-          cat > .env <<'EOF'
+          cat >> "$GITHUB_ENV" <<'EOF'
           NEXT_PUBLIC_SUPABASE_URL=https://sbkgpisgkuhbalsxqkdr.supabase.co
           SUPABASE_URL=https://sbkgpisgkuhbalsxqkdr.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_qQGMH7up2CqrRH8TsEe7LQ_t2u48c6e

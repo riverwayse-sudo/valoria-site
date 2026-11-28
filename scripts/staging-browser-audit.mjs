@@ -2,10 +2,16 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { chromium } from 'playwright'
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+const axeSource = await fs.readFile(require.resolve('axe-core/axe.min.js'), 'utf8')
+const accessibilityRoutes = new Set(['homepage', 'prime', 'about', 'programmes'])
 
 const SITE = process.env.STAGING_SITE_URL || 'https://staging.valoriainstitute.com'
 const ASSESSMENT = process.env.STAGING_ASSESSMENT_URL || 'https://assessment-staging.valoriainstitute.com'
 const POST_TASTER_ID = '66666666-6666-4666-8666-666666666666'
+const stagingHosts = new Set([new URL(SITE).hostname, new URL(ASSESSMENT).hostname])
 const OUT = path.resolve('artifacts/staging-browser-audit')
 const viewports = [
   { name: 'desktop', width: 1440, height: 960, isMobile: false },
@@ -54,6 +60,9 @@ const routes = [
   { name: 'assessment-host', url: `${ASSESSMENT}/`, site: false },
   { name: 'assessment-account-first-taster-gate', url: `${ASSESSMENT}/valu/assessment/?journey=account-first#taster_start_code=staging-invalid-probe`, site: false },
 ]
+const selectedRoutes = process.env.STAGING_AUDIT_MODE === 'focused'
+  ? routes.filter(route => accessibilityRoutes.has(route.name))
+  : routes
 const visualRoutes = new Set([
   'homepage',
   'marketplace',
@@ -93,6 +102,7 @@ const report = {
   assessment: ASSESSMENT,
   viewports: viewports.map(({name,width,height}) => ({name,width,height})),
   results: [],
+  accessibilityAudits: [],
   profileCardPreviews: [],
   failures: [],
 }
@@ -100,7 +110,7 @@ await fs.mkdir(OUT, { recursive: true })
 const browser = await chromium.launch({ headless: true })
 
 try {
-  for (const route of routes) {
+  for (const route of selectedRoutes) {
     for (const viewport of viewports) {
       const context = await browser.newContext({
         viewport: { width: viewport.width, height: viewport.height },
@@ -109,6 +119,7 @@ try {
         hasTouch: viewport.isMobile,
       })
       const page = await context.newPage()
+      if (accessibilityRoutes.has(route.name)) await page.addInitScript({ content: axeSource })
       const pageErrors = []
       const consoleErrors = []
       const forbiddenRequests = []
@@ -135,9 +146,12 @@ try {
       let status = null
       let navigationError = null
       try {
-        const response = await page.goto(route.url, { waitUntil: 'domcontentloaded', timeout: 60000 })
+        const response = await page.goto(route.url, { waitUntil: 'domcontentloaded', timeout: 15000 })
         status = response?.status() ?? null
-        await page.waitForTimeout(1800)
+        await page.waitForTimeout(500)
+        if (route.name === 'homepage') {
+          await page.locator('[aria-label="Cookie preferences"]').waitFor({ state: 'visible', timeout: 5000 })
+        }
       } catch (error) {
         navigationError = error.message
       }
@@ -149,11 +163,72 @@ try {
         const reveals = [...document.querySelectorAll('.reveal')]
         for (const element of reveals) {
           element.scrollIntoView({ block: 'center', behavior: 'auto' })
-          await new Promise(resolve => setTimeout(resolve, 100))
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+          await new Promise(resolve => setTimeout(resolve, 80))
         }
         window.scrollTo({ top: 0, behavior: 'auto' })
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
       })
-      await page.waitForTimeout(350)
+      // Let the IntersectionObserver finish its final callbacks on mobile,
+      // where a 15ms per-element delay can race the reveal observer.
+      await page.waitForFunction(
+        () => [...document.querySelectorAll('.reveal')].every(element => element.classList.contains('visible')),
+        null,
+        { timeout: 5000 }
+      ).catch(() => {})
+      await page.waitForTimeout(150)
+
+      if (accessibilityRoutes.has(route.name)) {
+        await page.addStyleTag({ content: `
+          html { scroll-behavior: auto !important; }
+          .reveal, .reveal.visible { opacity: 1 !important; transform: none !important; transition: none !important; }
+          *, *::before, *::after { animation-duration: 0s !important; animation-delay: 0s !important; transition-duration: 0s !important; transition-delay: 0s !important; }
+        ` })
+        const scan = await page.evaluate(async () => {
+          try {
+            const result = await Promise.race([
+              window.axe.run(document, {
+                runOnly: {
+                  type: 'tag',
+                  values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'],
+                },
+                iframes: false,
+                timeout: 10000,
+                resultTypes: ['violations'],
+              }),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('axe scan exceeded 12 seconds')), 12000)),
+            ])
+            return {
+              scanError: null,
+              violations: result.violations.map(violation => ({
+                id: violation.id,
+                impact: violation.impact,
+                help: violation.help,
+                helpUrl: violation.helpUrl,
+                nodeCount: violation.nodes.length,
+                nodes: violation.nodes.slice(0, 25).map(node => ({
+                  target: node.target,
+                  html: node.html.slice(0, 240),
+                  failureSummary: node.failureSummary,
+                })),
+              })),
+            }
+          } catch (error) {
+            return { scanError: error.message, violations: [] }
+          }
+        })
+        const seriousOrCritical = scan.violations.filter(item => ['serious', 'critical'].includes(item.impact)).length
+        report.accessibilityAudits.push({
+          route: route.name,
+          viewport: viewport.name,
+          scanError: scan.scanError,
+          violations: scan.violations,
+          violationCount: scan.violations.length,
+          seriousOrCritical,
+        })
+        if (scan.scanError) report.failures.push(`${route.name}/${viewport.name}: accessibility scan failed — ${scan.scanError}`)
+        if (seriousOrCritical) report.failures.push(`${route.name}/${viewport.name}: serious/critical WCAG violations (${seriousOrCritical})`)
+      }
 
       const state = await page.evaluate(() => {
         const robots = document.querySelector('meta[name="robots"]')?.content || ''
@@ -191,6 +266,16 @@ try {
         const visibleInternalPattern = /(WANT TO BE DISCOVERED|Become discoverable|buyer access|sourcing access|BASIC LISTING|FULL LISTING|\b1 of 58\b|\b1 of 9\b|54 scored questions|four validity checks|nine[- ]questions?|9[- ]questions?|58[- ]questions?|55[- ]questions?|84 \/ 100|\b[0-9]+\s*\/\s*100\b)/gi
         const visibleInternalTerms = [...document.body.innerText.matchAll(visibleInternalPattern)].map(match => match[0])
         const revealElements = [...document.querySelectorAll('.reveal')]
+        const hiddenRevealItems = revealElements
+          .filter(element => !element.classList.contains('visible'))
+          .map(element => ({
+            tag: element.tagName.toLowerCase(),
+            className: String(element.className || ''),
+            text: (element.innerText || '').trim().replace(/\\s+/g, ' ').slice(0, 120),
+            parentClass: String(element.parentElement?.className || ''),
+            top: Math.round(element.getBoundingClientRect().top),
+            height: Math.round(element.getBoundingClientRect().height),
+          }))
         const revealState = { total: revealElements.length, visible: revealElements.filter(element => element.classList.contains('visible')).length }
         const track = document.querySelector('.vi-scroll-track')
         const panel = document.querySelector('.hero-event-panel')
@@ -219,7 +304,15 @@ try {
           } : null,
           overflowingCards,
           revealState,
+          hiddenRevealItems,
           analyticsLoaded: Boolean(window.gtag || window.fbq),
+          cookieConsent: {
+            bannerVisible: Boolean(document.querySelector('[aria-label="Cookie preferences"]')),
+            acceptButton: [...document.querySelectorAll('button')].some(button => button.innerText.trim() === 'ACCEPT ALL'),
+            rejectButton: [...document.querySelectorAll('button')].some(button => button.innerText.trim() === 'REJECT OPTIONAL'),
+            preferencesButton: [...document.querySelectorAll('button')].some(button => button.innerText.trim() === 'PREFERENCES'),
+            optionalScriptsLoaded: Boolean(document.querySelector('script[data-valoria-analytics], script[src*="googletagmanager.com/gtag/js"], script[src*="connect.facebook.net/en_US/fbevents.js"]')),
+          },
           literalNewlineVisible,
           visibleInternalTerms,
           assessmentSiteLinks: [navBrand, navDashboard].filter(Boolean),
@@ -236,14 +329,19 @@ try {
         }
       })
 
+      const finalUrl = page.url()
+      const expectedHost = new URL(route.site ? SITE : ASSESSMENT).hostname
+      let finalHost = ''
+      try { finalHost = new URL(finalUrl).hostname } catch {}
       const captureScreenshot = visualRoutes.has(route.name)
       const filename = captureScreenshot ? `${route.name}-${viewport.name}.png` : null
       if (captureScreenshot) {
-        await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
+        await page.screenshot({ path: path.join(OUT, filename), fullPage: true, timeout: 10000, animations: 'disabled' })
       }
       const result = {
         route: route.name,
         url: route.url,
+        finalUrl,
         viewport: viewport.name,
         status,
         navigationError,
@@ -258,6 +356,7 @@ try {
 
       if (navigationError) report.failures.push(`${route.name}/${viewport.name}: navigation failed: ${navigationError}`)
       if (status === null || status >= 400) report.failures.push(`${route.name}/${viewport.name}: HTTP ${status}`)
+      if (finalHost !== expectedHost || !stagingHosts.has(finalHost)) report.failures.push(`${route.name}/${viewport.name}: redirect escaped its isolated staging origin (${finalUrl})`)
       if (state.horizontalOverflow) report.failures.push(`${route.name}/${viewport.name}: horizontal overflow`)
       if (state.revealState?.total !== state.revealState?.visible) report.failures.push(`${route.name}/${viewport.name}: scroll-reveal content remained hidden (${state.revealState?.visible}/${state.revealState?.total})`)
       if (!state.robots.toLowerCase().includes('noindex')) report.failures.push(`${route.name}/${viewport.name}: staging page is missing noindex robots metadata`)
@@ -266,6 +365,33 @@ try {
       if (route.name === 'auth-confirm-legacy' && state.confirmationNext !== '/auth/callback?valu_taster=1') report.failures.push(`${route.name}/${viewport.name}: legacy confirmation callback flag was not preserved`)
       if (route.name === 'auth-confirm-post-taster' && state.confirmationNext !== `/auth/callback?pending_taster_id=${POST_TASTER_ID}`) report.failures.push(`${route.name}/${viewport.name}: completed Taster reference was not preserved through confirmation`)
       if (state.analyticsLoaded) report.failures.push(`${route.name}/${viewport.name}: production analytics loaded in staging`)
+      if (route.name === 'homepage') {
+        if (!state.cookieConsent?.bannerVisible || !state.cookieConsent.acceptButton || !state.cookieConsent.rejectButton || !state.cookieConsent.preferencesButton) {
+          report.failures.push(`${route.name}/${viewport.name}: first-visit cookie consent banner is incomplete`)
+        }
+        if (state.cookieConsent?.optionalScriptsLoaded) report.failures.push(`${route.name}/${viewport.name}: optional tracking script loaded before consent`)
+        try {
+          await page.getByRole('button', { name: 'PREFERENCES', exact: true }).click()
+          const dialog = page.getByRole('dialog', { name: 'Cookie preferences' })
+          if (!(await dialog.isVisible())) throw new Error('cookie preferences dialog did not open')
+          await dialog.getByRole('button', { name: 'REJECT OPTIONAL', exact: true }).click()
+          const savedChoice = await page.evaluate(() => {
+            const item = document.cookie.split('; ').find(value => value.startsWith('vi_optional_tracking_consent='))
+            if (!item) return false
+            try {
+              const value = JSON.parse(decodeURIComponent(item.slice('vi_optional_tracking_consent='.length)))
+              return value.analytics === false && value.marketing === false
+            } catch { return false }
+          })
+          if (!savedChoice) throw new Error('reject-optional choice was not persisted')
+          if (await page.evaluate(() => Boolean(window.gtag || window.fbq))) throw new Error('optional analytics globals appeared after rejection')
+          await page.getByRole('button', { name: 'Cookie Preferences', exact: true }).click()
+          if (!(await page.getByRole('dialog', { name: 'Cookie preferences' }).isVisible())) throw new Error('footer cookie preferences control did not reopen the dialog')
+          await page.getByRole('dialog', { name: 'Cookie preferences' }).getByRole('button', { name: 'CANCEL', exact: true }).click()
+        } catch (error) {
+          report.failures.push(`${route.name}/${viewport.name}: cookie consent interaction failed — ${error.message}`)
+        }
+      }
       if (forbiddenRequests.length) report.failures.push(`${route.name}/${viewport.name}: production Supabase/assessment request detected`)
       if (state.literalNewlineVisible && route.name.startsWith('assessment-')) report.failures.push(`${route.name}/${viewport.name}: literal \\n text is visible in the assessment UI`)
       if (!['terms-of-use', 'terms-legacy', 'privacy-policy', 'privacy-legacy'].includes(route.name) && state.visibleInternalTerms?.length) report.failures.push(`${route.name}/${viewport.name}: internal participant copy is visible: ${state.visibleInternalTerms.join(', ')}`)
@@ -323,17 +449,17 @@ try {
       hasTouch: viewport.isMobile,
     })
     const page = await context.newPage()
-    const response = await page.goto(`${SITE}/`, { waitUntil: 'domcontentloaded', timeout: 60000 })
-    await page.waitForTimeout(1800)
+    const response = await page.goto(`${SITE}/`, { waitUntil: 'domcontentloaded', timeout: 15000 })
+    await page.waitForTimeout(500)
     await page.evaluate(async () => {
       const reveals = [...document.querySelectorAll('.reveal')]
       for (const element of reveals) {
         element.scrollIntoView({ block: 'center', behavior: 'auto' })
-        await new Promise(resolve => setTimeout(resolve, 100))
+        await new Promise(resolve => setTimeout(resolve, 15))
       }
       window.scrollTo({ top: 0, behavior: 'auto' })
     })
-    await page.waitForTimeout(350)
+    await page.waitForTimeout(150)
     const previewReady = await page.evaluate(() => {
       const shell = document.querySelector('.live-profiles-shell')
       if (!shell) return false
@@ -350,6 +476,7 @@ try {
             <div class="vi-scroll-topline">ATB-PREVIEW-001 <i>VISUAL FIXTURE</i></div>
             <span class="vi-scroll-name">Illustrative Professional 01</span>
             <div class="vi-scroll-headline">Strategy &amp; Operations</div>
+            <div class="vi-scroll-capability-heading">DECLARED CAPABILITIES</div>
             <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-active">Speaker</span><span class="is-inactive">Facilitator</span></div>
             <div class="vi-scroll-designation">Illustrative designation</div>
             <div class="vi-scroll-summary">Synthetic content for layout review only</div>
@@ -364,6 +491,7 @@ try {
             <div class="vi-scroll-topline">ATB-PREVIEW-002 <i>VISUAL FIXTURE</i></div>
             <span class="vi-scroll-name">Illustrative Professional 02</span>
             <div class="vi-scroll-headline">Finance &amp; Governance</div>
+            <div class="vi-scroll-capability-heading">DECLARED CAPABILITIES</div>
             <div class="vi-scroll-track-label"><span class="is-active">Talent</span><span class="is-inactive">Speaker</span><span class="is-active">Facilitator</span></div>
             <div class="vi-scroll-designation">Illustrative designation</div>
             <div class="vi-scroll-summary">Synthetic content for layout review only</div>
@@ -378,6 +506,7 @@ try {
             <div class="vi-scroll-topline">ATB-PREVIEW-003 <i>VISUAL FIXTURE</i></div>
             <span class="vi-scroll-name">Illustrative Professional 03</span>
             <div class="vi-scroll-headline">Digital Transformation</div>
+            <div class="vi-scroll-capability-heading">DECLARED CAPABILITIES</div>
             <div class="vi-scroll-track-label"><span class="is-inactive">Talent</span><span class="is-active">Speaker</span><span class="is-active">Facilitator</span></div>
             <div class="vi-scroll-designation">Illustrative designation</div>
             <div class="vi-scroll-summary">Synthetic content for layout review only</div>
@@ -403,6 +532,7 @@ try {
         ready: Boolean(firstGroup && cloneGroup &&
           firstGroup.querySelectorAll('[data-visual-fixture="true"]').length === 3 &&
           cloneGroup.querySelectorAll('[data-visual-fixture="true"]').length === 3),
+        declaredCapabilityLabels: firstGroup?.querySelectorAll('.vi-scroll-capability-heading').length || 0,
         animationName: trackStyle?.animationName || 'none',
         animationPlayState: trackStyle?.animationPlayState || 'none',
         overflowX: maskStyle.overflowX,
@@ -412,9 +542,10 @@ try {
       }
     })
     const filename = `homepage-profile-cards-preview-${viewport.name}.png`
-    await page.screenshot({ path: path.join(OUT, filename), fullPage: true })
+    await page.screenshot({ path: path.join(OUT, filename), fullPage: true, timeout: 10000, animations: 'disabled' })
     report.profileCardPreviews.push({ viewport: viewport.name, status: response?.status() ?? null, screenshot: filename, syntheticFixtures: 3, clearlyLabelled: true, ...previewReady })
     if (!previewReady.ready) report.failures.push(`${viewport.name}: compact profile-card visual fixture could not be rendered`)
+    if (previewReady.declaredCapabilityLabels !== 3) report.failures.push(`${viewport.name}: all three visual profile fixtures must label selections as declared capabilities`)
     if (viewport.name === 'desktop' && previewReady.animationName !== 'vi-scroll-x') {
       report.failures.push('desktop: homepage profile rail must use the canonical vi-scroll-x motion')
     }
@@ -429,7 +560,7 @@ try {
 }
 
 await fs.writeFile(path.join(OUT, 'report.json'), JSON.stringify(report, null, 2))
-console.log(JSON.stringify({ pages: report.results.length, failures: report.failures, output: OUT }, null, 2))
+console.log(JSON.stringify({ pages: report.results.length, accessibilityAudits: report.accessibilityAudits.length, accessibilityViolations: report.accessibilityAudits.reduce((sum, item) => sum + item.violationCount, 0), failures: report.failures, output: OUT }, null, 2))
 if (report.failures.length) process.exitCode = 1
 
 // Re-run after the staging assessment Worker refresh so the current deployed banner and form are captured.

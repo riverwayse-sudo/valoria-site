@@ -25,7 +25,7 @@ export const PROFESSIONAL_STANDARD_SERIES = [
     id: '04', cluster: 'ENTERPRISE',
     title: 'Influence Without Authority: The Real Currency of Organisational Power',
     description: 'A practical conversation about building influence, earning trust and shaping decisions across an organisation — even when you do not hold formal authority.',
-    start: '2026-11-14T10:00:00+01:00', dateApproved: true, // No approved end time; session remains live until explicitly ended.
+    start: '2026-11-14T10:00:00+01:00', dateApproved: true, // No approved end time; the replay is published and this session is explicitly marked ended.
     speaker: 'Yinlayefa Thompson, SPHRi', host: 'Temitayo Adetokunbo',
     youtubeVideoId: 'Ae9N59SlR_8', manuallyEnded: true,
   },
@@ -39,6 +39,7 @@ export const PROFESSIONAL_STANDARD_SERIES = [
 
 export function getSessionState(session, now = Date.now()) {
   if (!session.dateApproved) return 'coming-soon'
+  if (session.manuallyEnded) return 'ended'
   const start = new Date(session.start).getTime()
   const index = PROFESSIONAL_STANDARD_SERIES.findIndex((item) => item.id === session.id)
   const previous = index > 0 ? PROFESSIONAL_STANDARD_SERIES[index - 1] : null
@@ -49,7 +50,6 @@ export function getSessionState(session, now = Date.now()) {
   const previousEnd = previous?.end ? new Date(previous.end).getTime() : 0
   if (now < previousEnd) return 'locked'
   if (now < start) return 'registration-open'
-  if (session.manuallyEnded) return 'ended'
   if (!session.end) return 'live'
   if (now < new Date(session.end).getTime()) return 'live'
   return 'ended'

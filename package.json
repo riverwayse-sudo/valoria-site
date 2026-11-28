@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "npm test -- --runInBand && npm run design:check && npm run excellence:check && npm run dropdown:check",
+    "prebuild": "npm test -- --runInBand && npm run design:check && npm run design:surface:check && npm run excellence:check && npm run dropdown:check",
     "build": "next build",
     "start": "next start",
     "test": "jest",
     "design:check": "node scripts/design-check.js",
+    "design:surface:check": "node scripts/design-surface-check.js",
     "excellence:check": "node scripts/excellence-check.js",
     "lint:critical": "npx --yes eslint@8.57.1 --no-eslintrc --env browser,node,es2021 --parser-options '{\"ecmaVersion\":\"latest\",\"sourceType\":\"module\",\"ecmaFeatures\":{\"jsx\":true}}' --rule 'no-undef:error' 'src/app/profile/[id]/page.jsx' 'src/app/profile/[id]/ProfileClient.jsx' src/app/login/page.jsx src/app/signup/page.jsx src/app/professional-signup/page.jsx src/app/dashboard/page.jsx src/app/report/page.jsx src/app/profile/onboarding/page.jsx",
     "dropdown:check": "node scripts/verify-dropdown-design-system.mjs",

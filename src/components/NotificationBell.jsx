@@ -265,7 +265,7 @@ export default function NotificationBell({ userId }) {
                     className="vi-notification-item"
                     onClick={() => openNotification(notif)}
                     style={{
-                      animationDelay: `${Math.min(index, 6) * 55}ms`,
+                      animationDelay: `calc(var(--motion-stagger-step) * ${Math.min(index, 6)})`,
                       display: 'block',
                       width: '100%',
                       textAlign: 'left',

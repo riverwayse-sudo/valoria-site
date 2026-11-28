@@ -19,7 +19,7 @@ export default function OpportunityDetail({params}){
   load()
   return ()=>{active=false}
  },[params.slug])
- if(loading)return <main style={{minHeight:'100vh',background:PARCH,padding:80}}>Loading…</main>
+ if(loading)return <main style={{minHeight:'100vh',background:PARCH,padding:80}}><h1>Loading opportunity…</h1><p>Retrieving the opportunity details.</p></main>
  if(error)return <main style={{minHeight:'100vh',background:PARCH,color:DARK,padding:80,fontFamily:'Raleway,sans-serif'}}><h1>We could not load this opportunity.</h1><p>{error}</p><Link href="/opportunities">Back to opportunities</Link></main>
  if(!o)return <main style={{minHeight:'100vh',background:PARCH,padding:80}}><h1>Opportunity not found.</h1><Link href="/opportunities">Back to opportunities</Link></main>
  async function apply(){setApplyError('');if(!session){window.location.href='/login?returnTo='+encodeURIComponent(window.location.pathname);return}setApplying(true);try{const r=await fetch('/api/opportunities/applications',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.access_token},body:JSON.stringify({opportunity_id:o.id,cover_note:coverNote})});const x=await r.json().catch(()=>({}));if(!r.ok)throw new Error(x.error||'Application could not be submitted.');setApplied(true)}catch(e){setApplyError(e.message||'Application could not be submitted.')}finally{setApplying(false)}}

@@ -120,9 +120,11 @@ function buildScreens(form, showTrackScreens, allowAddTrack) {
 // (and the useSearchParams call) is ProfileSetupForm below.
 export default function ProfileSetupPage() {
   return (
-    <Suspense fallback={null}>
-      <ProfileSetupForm />
-    </Suspense>
+    <main id="main-content">
+      <Suspense fallback={null}>
+        <ProfileSetupForm />
+      </Suspense>
+    </main>
   )
 }
 

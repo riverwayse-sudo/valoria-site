@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div style={styles.page}>
+    <main style={styles.page}>
       <div style={styles.card}>
         <div style={styles.eyebrow}>
           <div style={styles.eyebrowLine} />
@@ -80,7 +80,7 @@ export default function AdminLoginPage() {
           Not an admin? This is not the general Valoria Institute login.
         </p>
       </div>
-    </div>
+    </main>
   )
 }
 

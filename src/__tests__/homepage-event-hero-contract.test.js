@@ -20,6 +20,15 @@ describe('homepage expired event promotion removal', () => {
     expect(hero).not.toContain('hero-slider-controls')
   })
 
+  test('event replay feature uses a typographic surface rather than a remote thumbnail image', () => {
+    const events = read('src/components/HomepageEvents.jsx')
+    const homeStyles = read('src/app/home.css')
+    expect(events).not.toContain('i.ytimg.com')
+    expect(events).not.toContain('--video-thumbnail')
+    expect(homeStyles).not.toContain('var(--video-thumbnail)')
+    expect(homeStyles).toContain('linear-gradient(135deg,#1A1A2E,#2E2E4A 58%,#090910)')
+  })
+
   test('the homepage does not render the expired event feature section', () => {
     const page = read('src/app/page.jsx')
     expect(page).not.toContain("import HomepageEvents from '@/components/HomepageEvents'")

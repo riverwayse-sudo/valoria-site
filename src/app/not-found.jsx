@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function NotFound() {
   return (
-    <div style={{
+    <main style={{
       minHeight: '100vh',
       background: '#0F0F1A',
       fontFamily: "'Raleway','Helvetica Neue',Arial,sans-serif",
@@ -64,6 +64,6 @@ export default function NotFound() {
       <Link href="/" style={{ lineHeight: 0, marginTop: '60px', opacity: 0.4 }}>
         <img src="/logo.png" alt="Valoria Institute" style={{ height: '32px', width: 'auto' }} />
       </Link>
-    </div>
+    </main>
   )
 }

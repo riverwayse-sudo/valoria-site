@@ -1,6 +1,7 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 import { BASE_FIELDS, FULL_FIELDS, isOptionalProjectionSchemaError } from './marketplace-projection-compat.cjs'
+import { filterRowsByApprovedCapability, countRowsByApprovedCapability } from './marketplace-capability-visibility.cjs'
 
 const SOURCE = 'marketplace_public_roster'
 
@@ -72,11 +73,10 @@ function dedupeProfessionals(rows) {
       })
     }
     const target = map.get(row.professional_id)
-    const values = [
-      ...(Array.isArray(row.capabilities) ? row.capabilities : []),
-      row.capability,
-      row.track,
-    ].map(normalizeTrack).filter(Boolean)
+    // Only the canonical capabilities projection is evidence-approved.
+    // Legacy row-level capability/track fields are not trusted for specialist placement.
+    const values = (Array.isArray(row.capabilities) ? row.capabilities : [])
+      .map(normalizeTrack).filter(Boolean)
     const selectedValues = (Array.isArray(row.selected_capabilities) ? row.selected_capabilities : [])
       .map(normalizeTrack).filter(Boolean)
     target.capabilities = [...new Set([...target.capabilities, ...values])]
@@ -127,35 +127,13 @@ export async function getMarketplaceRows(track = 'all') {
     .map(row => row.assessmentAccess === 'basic'
       ? { ...row, valu_index: null, cluster_scores: null, assessment_summary: null, designation: null }
       : row)
-  // Category membership follows the participant's publicly declared active capability selection.
-  // This is distinct from evidence-approved capability readiness: selection determines the
-  // directory lane, while readiness remains separately governed in the admin workflow.
-  // Automatic listing eligibility, assessment validity and revocation checks are enforced above.
-  return rows.filter(row => {
-    if (track === 'all') return true
-    const capability = normalizeTrack(track)
-    return row.selectedCapabilities.includes(capability)
-  })
+  // Directory placement is restricted to the canonical roster's evidence-approved
+  // capabilities. Participant selections remain descriptive profile data only.
+  return filterRowsByApprovedCapability(rows, track)
 }
 
 function countMarketplaceRows(rows) {
-  const byTrack = { candidate: new Set(), speaker: new Set(), facilitator: new Set() }
-
-  for (const row of rows || []) {
-    // Category counts follow publicly declared active selections for both Basic and Full profiles.
-    // Evidence-approved readiness remains a separate admin eligibility state.
-    const visibleCapabilities = row.selectedCapabilities || []
-    for (const capability of new Set(visibleCapabilities)) {
-      if (byTrack[capability]) byTrack[capability].add(row.professional_id)
-    }
-  }
-
-  return {
-    all: (rows || []).length,
-    candidate: byTrack.candidate.size,
-    speaker: byTrack.speaker.size,
-    facilitator: byTrack.facilitator.size,
-  }
+  return countRowsByApprovedCapability(rows)
 }
 
 export async function getMarketplaceCounts(existingRows) {
@@ -167,9 +145,7 @@ export async function getMarketplaceDirectoryData(track = 'all') {
   const allRows = await getMarketplaceRows('all')
   const normalizedTrack = normalizeTrack(track)
   return {
-    rows: normalizedTrack === 'all' ? allRows : allRows.filter(row =>
-      row.selectedCapabilities.includes(normalizedTrack)
-    ),
+    rows: filterRowsByApprovedCapability(allRows, normalizedTrack),
     counts: countMarketplaceRows(allRows),
   }
 }

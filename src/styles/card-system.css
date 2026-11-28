@@ -8,7 +8,7 @@
   --vi-card-pad-x: clamp(24px, 3vw, 36px);
   --vi-card-hover: #C9A84C;
   --vi-card-hover-text: #0F0F1A;
-  --vi-card-transition: .42s cubic-bezier(.22,1,.36,1);
+  --vi-card-transition: var(--motion-emphasis) var(--motion-ease);
 }
 
 /* Standard standalone cards */
@@ -19,7 +19,7 @@
   overflow: hidden !important;
   border-radius: var(--vi-card-radius) !important;
   padding: var(--vi-card-pad-y) var(--vi-card-pad-x) !important;
-  transition: background var(--vi-card-transition), color .32s ease, border-color .32s ease, box-shadow .35s ease, transform .35s cubic-bezier(.22,1,.36,1) !important;
+  transition: background var(--vi-card-transition), color var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), box-shadow var(--motion-emphasis) var(--motion-ease), transform var(--motion-emphasis) var(--motion-ease) !important;
 }
 
 /* Canonical connected card cells: outer grid owns the radius. */
@@ -28,7 +28,7 @@
   overflow: hidden !important;
   border-radius: var(--vi-card-radius) !important;
   padding: var(--vi-card-pad-y) var(--vi-card-pad-x) !important;
-  transition: background var(--vi-card-transition), color .32s ease, border-color .32s ease, box-shadow .35s ease, transform .35s cubic-bezier(.22,1,.36,1) !important;
+  transition: background var(--vi-card-transition), color var(--motion-standard) var(--motion-ease), border-color var(--motion-standard) var(--motion-ease), box-shadow var(--motion-emphasis) var(--motion-ease), transform var(--motion-emphasis) var(--motion-ease) !important;
 }
 .vi-card-grid > .vi-card { border-radius: 0 !important; }
 .vi-card-grid { border-radius: var(--vi-card-radius) !important; overflow: hidden !important; }
@@ -90,7 +90,7 @@
   background: var(--card-color, var(--gold)) !important;
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform .42s cubic-bezier(.22,1,.36,1), background .32s ease;
+  transition: transform var(--motion-emphasis) var(--motion-ease), background var(--motion-standard) var(--motion-ease);
   z-index: 2;
 }
 .card:hover::before,.card-gold:hover::before,.waitlist-card:hover::before,.vi-card:hover::before,

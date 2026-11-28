@@ -57,6 +57,16 @@ describe('scanner-safe Supabase email confirmation', () => {
       .toBe('&lt;img src=x onerror=&quot;x&quot;&gt;&amp;&#39;')
   })
 
+
+  test('published Supabase confirmation template matches the token-hash POST contract', () => {
+    const template = fs.readFileSync(path.join(__dirname, '../../docs/supabase-auth-email-template.md'), 'utf8')
+    expect(template).toContain('{{ .TokenHash }}')
+    expect(template).toContain('token_hash={{ .TokenHash }}')
+    expect(template).toContain('/auth/confirm?token_hash=')
+    expect(template).not.toContain('{{ .ConfirmationURL }}')
+    expect(template).not.toMatch(/\{\{\s*\.Token\s*\}\}/)
+  })
+
   test('GET only renders the form and POST is the only code path that consumes the token', () => {
     const route = fs.readFileSync(path.join(__dirname, '../app/auth/confirm/route.js'), 'utf8')
     const getHandler = route.split('export async function POST')[0]
