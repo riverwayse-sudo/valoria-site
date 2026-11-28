@@ -77,4 +77,14 @@ describe('institutional positioning and public copy contract', () => {
     expect(privacy).toContain('registered in Nigeria')
     expect(terms).toContain('African Talent Bureau Ltd')
   })
+
+  test('AI report disclosures match the de-identified Anthropic request contract', () => {
+    const privacy = read('src/app/privacypolicy/page.jsx')
+    const terms = read('src/app/terms-of-use/page.jsx')
+    expect(privacy).toContain('de-identified VALU Index score profile')
+    expect(privacy).toContain('Your name, email, account/user ID, identity hash, raw answers and profile text are not included in the AI request.')
+    expect(terms).toContain('de-identified score profile')
+    expect(terms).toContain('Valoria continues to treat the score profile as personal data')
+  })
+  })
 })
