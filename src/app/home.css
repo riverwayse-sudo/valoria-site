@@ -708,7 +708,7 @@
 }
 .home-events-video-link:hover .home-events-play,
 .home-events-video-link:focus-visible .home-events-play {
-  transform: scale(1.06);
+  transform: translateY(-1px);
   background: var(--dark-mid);
 }
 .home-events-video-label {
