@@ -65,6 +65,16 @@ try {
         finalUrl = page.url();
         await page.locator('body').waitFor({ state: 'visible', timeout: 10000 });
         await page.waitForTimeout(250);
+        // Wait for the route's global brand stylesheet to apply before
+        // measuring typography. DOMContentLoaded alone can precede the CSS
+        // chunk on a cold desktop request and produce a false Times New Roman
+        // result even though the same route is correctly styled on reload.
+        await page.waitForFunction(
+          () => /Raleway/i.test(getComputedStyle(document.body).fontFamily),
+          null,
+          { timeout: 8000 }
+        );
+        if (document.fonts?.ready) await page.evaluate(() => document.fonts.ready);
         metrics = await page.evaluate(() => ({
           viewportWidth: window.innerWidth,
           documentWidth: document.documentElement.scrollWidth,
