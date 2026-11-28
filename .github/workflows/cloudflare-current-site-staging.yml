@@ -53,7 +53,7 @@ jobs:
         run: npm test -- --runInBand
       - name: Provide staging-only build configuration
         run: |
-          cat > .env <<'EOF'
+          cat >> "$GITHUB_ENV" <<'EOF'
           NEXT_PUBLIC_SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
           SUPABASE_URL=https://yccxgjdqworgcbircnvn.supabase.co
           NEXT_PUBLIC_SITE_URL=https://staging.valoriainstitute.com
@@ -211,9 +211,9 @@ jobs:
               exit 1
             fi
           done
-          echo "PASS: homepage exposes the canonical Taster-first entry."
+          echo "PASS: homepage exposes the canonical account-first registration entry."
       - name: Install Playwright without changing project dependencies
-        run: npm install --no-save --package-lock=false playwright@1.65.0
+        run: npm install --no-save --package-lock=false playwright@1.65.0 axe-core@4.10.3
       - name: Install Chromium for staging browser acceptance
         run: npx playwright install --only-shell chromium
       - name: Run desktop/mobile and fresh-session staging browser audit
@@ -221,6 +221,7 @@ jobs:
         env:
           STAGING_SITE_URL: https://staging.valoriainstitute.com
           STAGING_ASSESSMENT_URL: https://assessment-staging.valoriainstitute.com
+          STAGING_AUDIT_MODE: focused
       - name: Audit every discovered site route at desktop, tablet and mobile
         run: node scripts/design-route-audit.mjs
         env:
