@@ -81,12 +81,16 @@ try {
       const overflow = metrics && metrics.documentWidth > metrics.viewportWidth + 2;
       const blank = metrics && metrics.bodyTextLength === 0;
       const badFont = metrics && !/Raleway/i.test(metrics.fontFamily);
+      const missingMain = metrics && metrics.mainLandmarks !== 1;
+      const missingH1 = metrics && metrics.h1Count !== 1;
       const routeFailures = [
         ...(badStatus ? ['HTTP ' + status] : []),
         ...(navigationError ? [navigationError] : []),
         ...(overflow ? ['horizontal overflow ' + metrics.documentWidth + 'px > ' + metrics.viewportWidth + 'px'] : []),
         ...(blank ? ['blank rendered document'] : []),
         ...(badFont ? ['unexpected body typeface: ' + metrics.fontFamily] : []),
+        ...(missingMain ? ['expected exactly one main landmark; found ' + metrics.mainLandmarks] : []),
+        ...(missingH1 ? ['expected exactly one H1; found ' + metrics.h1Count] : []),
         ...pageErrors,
       ];
       const result = {
