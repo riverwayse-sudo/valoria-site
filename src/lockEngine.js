@@ -1,8 +1,9 @@
-// lockEngine.js — Single source of truth for assessment lock logic.
+// lockEngine.js — Test-side mirror of the platform assessment lock logic.
 // Extracted from assessmentLock.js v2.2.
-// Covers: fingerprint generation, lock read/write, lock validation.
-// Must stay byte-identical between valoria-platform (.cjs) and
-// valoria-site (.js) — see scoringEngine header for why.
+// Covers: fingerprint generation, lock validation, and lock record construction.
+// Keep the core function behavior in sync with valoria-platform's ESM module.
+// The site uses CommonJS for Jest; the platform uses ESM for its Vite/runtime build.
+// Parity is behavioral, not byte-for-byte — see the shared lock-engine tests.
 
 "use strict";
 
