@@ -7,6 +7,7 @@
   --motion-emphasis: 420ms;
   --motion-reveal: 560ms;
   --motion-section: 720ms;
+  --motion-stagger-step: 55ms;
   --motion-registry-loop: 42s;
   --motion-ease: cubic-bezier(.22,1,.36,1);
   --motion-ease-linear: cubic-bezier(0,0,1,1);
