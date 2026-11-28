@@ -29,7 +29,12 @@ const layout = requireText('src/app/layout.jsx', [
   /styles\/globals\.css/,
   /styles\/motion\.css/,
   /styles\/design-constitution\.css/,
+  /styles\/component-system\.css/,
+  \.\/pages\.css/,
 ], 'global application layout');
+const globalStyleOrder = [layout.indexOf('styles/component-system.css'), layout.indexOf('styles/navigation-awakening.css'), layout.indexOf('styles/design-constitution.css'), layout.indexOf('./pages.css'), layout.indexOf('styles/motion.css')];
+if (globalStyleOrder.some((index) => index < 0) || globalStyleOrder.some((index, i) => i > 0 && index < globalStyleOrder[i - 1])) failures.push('The canonical motion stylesheet must load after all global and page styles.');
+
 const globals = requireText('src/styles/globals.css', [
   /Raleway/,
   /--vi-font-family:\s*'Raleway'/,
@@ -102,6 +107,23 @@ if (/transition\s*:\s*all\b/i.test(motion) || /animation\s*:\s*all\b/i.test(moti
 
 const allSource = walk(path.join(root, 'src')).filter((file) => /\.(css|jsx|js|ts|tsx)$/.test(file));
 const sourceText = allSource.map((file) => fs.readFileSync(file, 'utf8')).join('\n');
+const cssFiles = allSource.filter((file) => file.endsWith('.css'));
+for (const file of cssFiles) {
+  const css = fs.readFileSync(file, 'utf8');
+  if (/\bscale\s*\(/.test(css)) failures.push(path.relative(root, file) + ': remove hover/active scale feedback; use restrained translation.');
+  const declarations = [...css.matchAll(/(?:transition|animation)\s*:\s*([^;}]+)[;}]/g)];
+  for (const declaration of declarations) {
+    const value = declaration[1];
+    if (/^\s*none\b/.test(value)) continue;
+    const withoutZeroTimes = value.replace(/\b0(?:\.0+)?s\b/g, '').replace(/\b0(?:\.0+)?ms\b/g, '');
+    const rawTime = /(^|[^\w-])\d*\.?\d+(?:ms|s)\b/.test(withoutZeroTimes);
+    const rawCurve = /cubic-bezier\(/.test(value) || /(^|[\s,])ease(?:-out|-in-out)?(?=[\s,;])/.test(value);
+    if ((rawTime || rawCurve) && !/var\(--motion-(?:micro|standard|emphasis|reveal|section|registry-loop)\)/.test(value) && !/var\(--vi-motion-(?:fast|standard|slow|ease)\)/.test(value) && !/var\(--vi-card-transition\)/.test(value) && !/\blinear\b|\bsteps\(/.test(value)) {
+      failures.push(path.relative(root, file) + ': transition/animation must use canonical motion tokens: ' + value);
+    }
+  }
+}
+
 for (const runtime of [/from ['"]gsap['"]/, /from ['"]lenis['"]/, /from ['"]animejs['"]/, /from ['"]motion(?:\/react)?['"]/]) {
   if (runtime.test(sourceText)) failures.push('Non-canonical motion runtime detected: ' + runtime);
 }
