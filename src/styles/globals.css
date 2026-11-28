@@ -124,7 +124,7 @@ body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-i
 
 /* Legacy outline remains an alias for Ghost so old markup does not create a fifth visual language. */
 
-.skip-link { position: absolute; top: -100%; left: 0; background: var(--gold); color: var(--dark); padding: 12px 24px; font-size: 13px; font-weight: 500; letter-spacing: .1em; z-index: 9999; transition: top var(--motion-standard) var(--motion-var(--motion-ease)); text-decoration: none; }
+.skip-link { position: absolute; top: -100%; left: 0; background: var(--gold); color: var(--dark); padding: 12px 24px; font-size: 13px; font-weight: 500; letter-spacing: .1em; z-index: 9999; transition: top var(--motion-standard) var(--motion-ease); text-decoration: none; }
 .skip-link:focus { top: 0; }
 
 /* Base card: curved by default. */
@@ -133,7 +133,7 @@ body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-i
 
 /* APPROVED CONNECTED CARD SYSTEM — shared Valoria visual language. */
  .vi-card { background: var(--dark-card); border: 0; border-radius: var(--card-radius); padding: clamp(28px,3.5vw,44px) clamp(24px,3vw,36px); position: relative; overflow: hidden; transition: background var(--motion-emphasis) var(--motion-ease), box-shadow var(--motion-emphasis) var(--motion-ease), transform var(--motion-emphasis) var(--motion-ease); cursor: default; }
-.vi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--card-color, #C9A84C); transform: scaleX(0); transform-origin: left; transition: transform var(--motion-emphasis) var(--motion-var(--motion-ease)); }
+.vi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--card-color, #C9A84C); transform: scaleX(0); transform-origin: left; transition: transform var(--motion-emphasis) var(--motion-ease); }
 .vi-card:hover { background: rgba(18,18,28,.98); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,.3); }
 .vi-card:hover::before { transform: scaleX(1); }
 .vi-card-grid { display: grid; gap: 0; background: rgba(201,168,76,.12); border: 1px solid rgba(201,168,76,.12); border-radius: var(--card-radius); overflow: hidden; }
