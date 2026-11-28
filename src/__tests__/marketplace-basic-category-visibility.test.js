@@ -3,17 +3,17 @@ const path = require('path')
 const read = file => fs.readFileSync(path.join(process.cwd(), file), 'utf8')
 
 describe('Marketplace category visibility', () => {
-  test('Basic and Full category listings follow publicly declared capability selections', () => {
+  test('specialist categories require evidence-approved capabilities for Basic and Full profiles', () => {
     const source = read('src/lib/marketplace-data.js')
     const component = read('src/components/MarketplaceDirectory.jsx')
     expect(source).toContain("row.assessmentAccess === 'basic'")
     expect(source).toContain('assessmentAccess: row.assessment_access')
     expect(source).toContain('valu_index: null, cluster_scores: null, assessment_summary: null, designation: null')
-    expect(source).toContain('return row.selectedCapabilities.includes(capability)')
-    expect(source).toContain('const visibleCapabilities = row.selectedCapabilities || []')
-    expect(source).not.toContain("row.assessmentAccess === 'full' && row.capabilities.includes(capability)")
-    expect(source).toContain("row.assessmentAccess === 'basic'")
-    expect(component).toContain('p.selectedCapabilities || p.selected_capabilities || p.capabilities')
+    expect(source).toContain('return row.capabilities.includes(capability)')
+    expect(source).toContain('const approvedCapabilities = row.capabilities || []')
+    expect(source).not.toContain('row.selectedCapabilities.includes(capability)')
+    expect(component).toContain('p.capabilities || p.tracks || [p.track]')
+    expect(component).not.toContain('p.selectedCapabilities || p.selected_capabilities || p.capabilities')
     expect(component).toContain("p.assessment_access === 'basic' ? 'BASIC LISTING' : 'VALU INDEX INSIGHT UNAVAILABLE'")
   })
 })
