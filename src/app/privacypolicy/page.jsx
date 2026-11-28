@@ -44,7 +44,7 @@ const sections = [
   },
   {
     title: '8. Cookies and tracking',
-    body: `We use essential first-party cookies where required for account access, security and core site functions. These are necessary for the service to operate.\n\nOptional analytics and marketing technologies are disabled by default. Google Analytics 4 is loaded only after you enable Analytics, and Meta Pixel is loaded only after you enable Marketing. Your choices are stored in a first-party consent cookie. If you reject optional technologies, neither service is loaded.\n\nYou can change or withdraw your optional cookie choices at any time using Cookie Preferences in the site footer.`,
+    body: `We use essential first-party cookies where required for account access, security and core site functions. These are necessary for the service to operate.\n\nOptional analytics and marketing technologies are disabled by default. Google Analytics 4 is loaded only after you enable Analytics, and Meta Pixel is loaded only after you enable Marketing. Your choices are stored in a first-party consent cookie for six months. If you reject optional technologies, neither service is loaded.\n\nYou can change or withdraw your optional cookie choices at any time using Cookie Preferences in the site footer.`,
   },
   {
     title: '9. Data security',
