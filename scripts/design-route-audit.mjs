@@ -35,6 +35,29 @@ const routes = [...new Map(pageFiles.map((file) => routeFromPage(file)).filter(B
   .sort((a, b) => a.path.localeCompare(b.path));
 if (routes.length < 30) throw new Error('Route inventory unexpectedly small: ' + routes.length);
 
+const readStableMetrics = async (page) => {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      return await page.evaluate(() => ({
+        viewportWidth: window.innerWidth,
+        documentWidth: document.documentElement.scrollWidth,
+        bodyTextLength: (document.body?.innerText || '').trim().length,
+        fontFamily: getComputedStyle(document.body).fontFamily,
+        mainLandmarks: document.querySelectorAll('main,[role="main"]').length,
+        h1Count: document.querySelectorAll('h1').length,
+      }));
+    } catch (error) {
+      const message = String(error?.message || error);
+      const navigationRace = /execution context was destroyed|cannot find context with specified id|frame was detached/i.test(message);
+      if (!navigationRace || attempt === 2) throw error;
+      await page.waitForLoadState('domcontentloaded').catch(() => {});
+      await page.locator('body').waitFor({ state: 'visible', timeout: 10000 });
+      await page.waitForTimeout(300);
+    }
+  }
+  throw new Error('Unable to capture stable route metrics after client-side navigation.');
+};
+
 const report = {
   generatedAt: new Date().toISOString(),
   base,
@@ -65,14 +88,8 @@ try {
         finalUrl = page.url();
         await page.locator('body').waitFor({ state: 'visible', timeout: 10000 });
         await page.waitForTimeout(250);
-        metrics = await page.evaluate(() => ({
-          viewportWidth: window.innerWidth,
-          documentWidth: document.documentElement.scrollWidth,
-          bodyTextLength: (document.body?.innerText || '').trim().length,
-          fontFamily: getComputedStyle(document.body).fontFamily,
-          mainLandmarks: document.querySelectorAll('main,[role="main"]').length,
-          h1Count: document.querySelectorAll('h1').length,
-        }));
+        metrics = await readStableMetrics(page);
+        finalUrl = page.url();
       } catch (error) {
         navigationError = error.message;
       }
