@@ -9,6 +9,12 @@ describe('November event replay contract', () => {
     expect(catalogue).toContain("id: '04'")
     expect(catalogue).toContain("youtubeVideoId: 'Ae9N59SlR_8', manuallyEnded: true")
     expect(catalogue).toContain("if (session.manuallyEnded) return 'ended'")
+    const manualEndCheck = catalogue.indexOf("if (session.manuallyEnded) return 'ended'")
+    const previousLockCheck = catalogue.indexOf("if (previous && !previous.end && !previous.manuallyEnded)")
+    const futureStartCheck = catalogue.indexOf("if (now < start) return 'registration-open'")
+    expect(manualEndCheck).toBeGreaterThanOrEqual(0)
+    expect(manualEndCheck).toBeLessThan(previousLockCheck)
+    expect(manualEndCheck).toBeLessThan(futureStartCheck)
   })
 
   test('the Events page features the November 14 replay and identifies its host', () => {
