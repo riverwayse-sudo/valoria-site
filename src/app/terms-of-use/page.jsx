@@ -28,7 +28,7 @@ const sections = [
   },
   {
     title: '4. Marketplace listing',
-    body: `Professionals may be listed automatically when they satisfy the applicable listing pathway and have no unresolved integrity flags. A Full listing requires a completed professional profile and a current VALU Index score of at least 35 points. A Basic listing may be available after a completed, account-linked taster and the minimum public identity requirements.\n\nPublic marketplace visibility requires the professional’s explicit, recorded consent. A professional who chooses registered-member visibility is not displayed to public visitors. General profile listing is separate from capability-specific placement: Talent, Speaker and Facilitator category placement requires the applicable capability requirements and verified supporting evidence.\n\nValoria Institute reserves the right to suspend or remove any listing that violates these terms, contains false information, or is associated with substantiated integrity concerns.\n\nYour contact details are never shown to buyers. All introductions are facilitated by Valoria Institute. You may receive communication from buyers only via the platform's managed introduction process.`,
+    body: `Professionals are listed automatically when the applicable listing pathway is complete and there are no unresolved integrity flags. A Basic listing may follow a completed, account-linked VALU Index Taster once the professional profile and minimum public identity requirements are complete. A Full listing requires a completed professional profile and a current Full VALU Index score of at least 35 points.\n\nPublic display requires the professional’s explicit, recorded consent during profile setup. The platform does not offer a separate public-versus-registered visibility setting or require a separate administrator approval step. Once consent and the applicable identity, profile and listing checks are satisfied, the listing is automatic. General profile listing is separate from capability-specific placement: Talent, Speaker and Facilitator category placement requires the applicable capability requirements and verified supporting evidence.\n\nValoria Institute reserves the right to suspend or remove any listing that violates these terms, contains false information, or is associated with substantiated integrity concerns.\n\nYour contact details are never shown to buyers. All introductions are facilitated by Valoria Institute. You may receive communication from buyers only via the platform's managed introduction process.`,
   },
   {
     title: '5. Buyer obligations',
@@ -87,7 +87,7 @@ export default function TermsPage() {
             These terms govern your use of Valoria Institute — the marketplace, the VALU Index, and all associated services. They apply to all user types: professionals, employers, event organisers, and training buyers.
           </p>
           <p style={{ fontSize: '12px', color: '#B8B6BF', marginTop: '16px' }}>
-            Last updated: 1 July 2026 · Governing law: Federal Republic of Nigeria
+            Last updated: 28 November 2026 · Governing law: Federal Republic of Nigeria
           </p>
         </section>
 
