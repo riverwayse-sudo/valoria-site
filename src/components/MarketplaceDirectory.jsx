@@ -76,7 +76,7 @@ export default function MarketplaceDirectory({ rows = [], counts = {}, activeTra
   const results = useMemo(() => {
     const q=query.trim().toLowerCase()
     return rows.filter(p => {
-      const caps=(p.selectedCapabilities || p.selected_capabilities || p.capabilities || p.tracks || [p.track]).map(normalize)
+      const caps=(p.capabilities || p.tracks || [p.track]).map(normalize)
       if(selectedTrack !== 'all' && !caps.includes(selectedTrack)) return false
       if(sector && displayText(p.industry) !== sector) return false
       const trackEvidence = selectedTrack === 'all'
